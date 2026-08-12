@@ -124,6 +124,10 @@
 - [ ] (2026-08-11, 공통 TDD Guard 배포 전 검증 완료 후 보류) 배포 환경에 `.env.example`의 운영 필수 값과 `MAIN_PREVIEW_INFO_ID`, `MAIN_PREVIEW_PRODUCT_ID`, `CLOUDINARY_UPLOAD_PRESET`을 등록하고 실제 배포 URL로 Lighthouse 감사를 실행해야 함 — 현재 미배포 상태라 로컬·PR CI 검증 범위에서 제외함.
 - [ ] (2026-08-11, KG이니시스 `inicis_v2` 테스트 채널 확정 후 보류) 배포된 HTTPS 환경에서 PortOne 실제 결제 manual smoke를 수행해야 함 — GUI self-hosted runner(`self-hosted`, `linux`, `x64`, `portone-smoke`)와 사람의 카드사 인증으로 12,000원 결제, `PAID` 조회, store/TEST channel/payment ID 검증, 전액 취소 및 `CANCELLED` 재조회를 확인하고 실패 시에도 cleanup을 보장해야 함.
 - [ ] (2026-08-11, PortOne webhook 구현 후 배포 검증 보류) 배포 URL을 PortOne webhook으로 등록하고 운영 `PORTONE_WEBHOOK_SECRET`을 설정한 뒤 진위 검증, 멱등 처리 및 주문 상태 반영을 실제 webhook 전달로 확인해야 함 — `src/app/api/webhooks/portone/route.ts` 및 `src/server/services/payment.service.ts`.
+- [ ] (2026-08-12, 요구 scope 산정 수정 중 실측) 타입을 값 구문으로 import하는 표기가 요구 scope를 부풀린다 — `src/**` 비테스트 410개 중 **310개(76%)** 가 integration 요구. 판정기를 TS AST로 바꿔도 308개로, `import type` 표기가 소스에 거의 없어 실효가 2개뿐이다(대표: `src/client/components/organisms/ProductFeatures.tsx:2` — `import { PremiumFeature } from "@/server/services"`, `PremiumFeature`는 타입). `@typescript-eslint/consistent-type-imports` 위반이 **210파일 / 286건**이고 전부 autofix 가능. 해법은 3층(eslint autofix → 배럴 `consistent-type-exports` → tsconfig `verbatimModuleSyntax`)이며 별도 `refactor` 브랜치로 진행한다. 인박스의 배럴 강제 규칙 항목과 같은 뿌리다.
+- [ ] (2026-08-12, 위 항목 측정 중 파생) 요구 scope 판정이 import 전이 폐포를 쓰는 게 옳은지 재검토 필요 — 직접 import만 경계로 치면 69/410(17%)까지 떨어지지만, `src/server/actions/*`처럼 service를 경유해 DB에 닿는 파일이 unit만 요구하게 되어 과소 요구로 뒤집힌다. `docs/validation/testing-classification.md:16`의 "둘 이상의 실제 경계를 연결" 기준에 맞는 중간 규칙이 필요하다. 위 타입 import 정리 이후 수치를 다시 보고 판단한다.
+- [ ] (2026-08-12, guard 자체 수정 절차 확인 중 발견) `scripts/tdd-guard/core/run-vitest.mjs:6`의 `projectFor`가 scope `unit`이면 항상 project `unit`을 반환해 `scripts/**/*.test.mjs`(project `guard`)를 실행하지 못한다. guarded 범위가 `src/`로 좁혀져 당장 실害는 없으나, scripts 테스트를 Red/Green proof 흐름으로 돌릴 수단이 없다는 사실은 남는다.
+- [ ] (2026-08-12, AST 판정기 수정 중 관측) `scripts/test-scope/test-graph.mjs:41`의 `element.isTypeOnly`가 TypeScript deprecation 경고(TS6385) 대상 — 대체 API 확인 후 정리 필요.
 
 ### 처리 완료 · 전제 소멸 (2026-08-12 전수 재검증)
 
