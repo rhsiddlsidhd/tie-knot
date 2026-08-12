@@ -240,6 +240,7 @@ describe("필수 Guard 상태 전이", () => {
 });
 
 describe("exceptions", () => {
+  it("예외 파일이 없으면 빈 목록을 반환한다", () => { expect(loadExceptions(temp())).toEqual([]); });
   it("유효 예외는 지정 범위만 허용한다", () => { const dir = temp(); write(path.join(dir, "tdd-exceptions.json"), JSON.stringify([{ id: "TDD-EX-001", paths: ["src/generated/**"], rules: ["test-not-required"], owner: "team", reason: "generated fixture", expiresAt: "2026-08-20T00:00:00.000Z" }])); const entries = loadExceptions(dir, new Date("2026-08-10T00:00:00.000Z")); expect(exceptionAllows(entries, "src/generated/a.ts", "test-not-required")).toBe(true); expect(exceptionAllows(entries, "src/a.ts", "test-not-required")).toBe(false); });
   it("만료 예외를 차단한다", () => { const dir = temp(); write(path.join(dir, "tdd-exceptions.json"), JSON.stringify([{ id: "TDD-EX-001", paths: ["src/a.ts"], rules: ["test-not-required"], owner: "team", reason: "temporary", expiresAt: "2026-08-09T00:00:00.000Z" }])); expect(() => loadExceptions(dir, new Date("2026-08-10T00:00:00.000Z"))).toThrow(/expired/); });
   it("30일 초과 예외를 차단한다", () => { const dir = temp(); write(path.join(dir, "tdd-exceptions.json"), JSON.stringify([{ id: "TDD-EX-001", paths: ["src/a.ts"], rules: ["test-not-required"], owner: "team", reason: "too broad", expiresAt: "2026-10-10T00:00:00.000Z" }])); expect(() => loadExceptions(dir, new Date("2026-08-10T00:00:00.000Z"))).toThrow(/30 days/); });

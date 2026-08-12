@@ -28,14 +28,13 @@ function fixture() {
   write(path.join(root, "package.json"), "{}\n");
   write(path.join(root, "package-lock.json"), "{}\n");
   write(path.join(root, "stryker.config.mjs"), "export default {};\n");
-  write(path.join(root, "tdd-exceptions.json"), "[]\n");
   write(path.join(root, "vitest.config.ts"), `
     import { defineConfig } from "vitest/config";
     export default defineConfig({ test: { projects: [{ test: { name: "unit", environment: "node", include: ["src/**/*.test.ts"] } }] } });
   `);
   write(path.join(root, "src/value.ts"), "export const value = 1;\n");
   fs.symlinkSync(path.join(projectRoot, "node_modules"), path.join(root, "node_modules"), "dir");
-  execFileSync("git", ["add", "package.json", "package-lock.json", "stryker.config.mjs", "tdd-exceptions.json", "vitest.config.ts", "src/value.ts"], { cwd: root });
+  execFileSync("git", ["add", "package.json", "package-lock.json", "stryker.config.mjs", "vitest.config.ts", "src/value.ts"], { cwd: root });
   execFileSync("git", ["commit", "-qm", "baseline"], { cwd: root });
   return { root, state };
 }
