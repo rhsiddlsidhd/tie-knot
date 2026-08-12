@@ -39,8 +39,6 @@ src/server/actions/
 
 | 문서                   | 위치          | 트리거                               | 요약                                    |
 | ---------------------- | ------------- | ------------------------------------ | --------------------------------------- |
-| `ERROR_HANDLING.md`    | `docs/`       | 에러 처리 로직 작성/수정 시          | 채널 A 상세 규칙 |
 | `AGENTS.md`            | `src/`        | Proxy/인증·인가 검증 규칙 확인 시    | Proxy 의존 금지 등 인증/인가 검증 규칙  |
 | `AGENTS.md`            | `src/server/` | 응답/에러 계약(Route/Client) 확인 시 | 이 폴더가 제외된 응답/에러 계약         |
 | `AGENTS.md`            | `src/client/` | 클라이언트 소비 쪽 계약 확인 시      | 이 폴더가 제외된 응답/에러 계약         |
-| `testing-practices.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | 리턴값 assertion 패턴 |

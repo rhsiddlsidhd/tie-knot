@@ -68,4 +68,3 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 | `AGENTS.md` | `src/server/actions/`              | Server Actions 확인 시                    | Server Action 컨벤션     |
 | `AGENTS.md` | `src/server/`                      | 응답/에러 계약(Route Handler) 확인 시     | 성공/에러 응답 빌더 계약 |
 | `AGENTS.md` | `src/client/`                      | 응답/에러 계약(Client fetch) 확인 시      | fetcher 계약             |
-| `ROUTE_NAMING.md` | `docs/`                       | 새 라우트 세그먼트(폴더) 이름 지을 때     | kebab-case/명사우선/약어 어휘화 기준/복수-단수 규칙 4가지 |

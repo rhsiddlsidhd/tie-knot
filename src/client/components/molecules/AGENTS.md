@@ -41,4 +41,3 @@ src/client/components/molecules/
 | ---------------------- | ------------------------------------ | ----------------------------- | -------------------------- |
 | `AGENTS.md`            | `src/client/components/organisms/`   | 더 복잡한 다음 단계 확인 시   | organism 정의              |
 | `AGENTS.md`            | `src/app/`                           | 라우트 전용 승격 대기 공간 확인 시 | 컨테이너 승격 규칙    |
-| `testing-practices.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | 렌더링+단일 상호작용 assertion 패턴 |

@@ -46,4 +46,3 @@ src/shared/schemas/
 | ---------------------- | ---------------------- | ----------------------------------- | ------------------------ |
 | `AGENTS.md`            | `src/client/hooks/`    | 이 스키마를 쓰는 폼 훅 확인 시      | 훅 컨벤션                |
 | `AGENTS.md`            | `src/shared/types/`    | 이 폴더와의 소유권 경계 확인 시     | 타입 원본 소유권 경계    |
-| `testing-classification.md`, `testing-practices.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | 분류와 테스트 범위 선택 |

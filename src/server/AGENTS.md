@@ -35,7 +35,6 @@ src/server/
 
 | 문서                | 위치                  | 트리거                                      | 요약                                                     |
 | ------------------- | --------------------- | ------------------------------------------- | -------------------------------------------------------- |
-| `ERROR_HANDLING.md` | `docs/`               | 에러 처리 로직 작성/수정 시                 | 채널 A/B/C 전체 흐름 + 채널별(A/B/C) 상세 규칙 단일 소스 |
 | `AGENTS.md`         | `src/client/`         | 클라이언트 fetch 계약(fetcher) 작업 시      | `boundary.ts` envelope를 소비하는 쪽 계약                |
 | `AGENTS.md`         | `src/server/actions/` | Server Action(채널 A) 작업 시               | 이 계약에서 제외된 Server Actions 규칙                   |
 | `AGENTS.md`         | `src/app/api/`        | route.ts 작성/수정 시                       | 이 계약을 쓰는 Route Handlers 규칙                       |

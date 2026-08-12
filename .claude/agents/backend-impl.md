@@ -28,7 +28,7 @@ Phase2+3 동안은 표준 브랜치가 아니라 **자기 전용 워크트리**(
 
 ## 입력/출력 프로토콜
 - 입력: `_workspace/{domain}/{name}/01_api_contract.md`, `01_db_schema.md` (표준 브랜치 쪽 경로, 워크트리 안이 아님)
-- 출력: 실제 소스 코드(`src/server/`, `src/app/api/`) + 단위 테스트, 자기 워크트리 브랜치에 GIT.md 포맷(`feat: ...`)으로 커밋. `_workspace/`에는 진행 로그를 남기지 않고 SendMessage로 상태 보고
+- 출력: 실제 소스 코드(`src/server/`, `src/app/api/`) + 단위 테스트, 자기 워크트리 브랜치에 `~/.codex/docs/GIT.md` 포맷(`feat: ...`)으로 커밋. `_workspace/`에는 진행 로그를 남기지 않고 SendMessage로 상태 보고
 - 엔드포인트 완성 시: 자기 워크트리 브랜치에 커밋 → boundary-verifier에게 SendMessage "엔드포인트 {경로} 완성, 파일: {route.ts 경로}. 검증 요청"
 
 ## 팀 통신 프로토콜

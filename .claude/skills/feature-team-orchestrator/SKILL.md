@@ -7,7 +7,7 @@ description: "이 프로젝트(tie-knot)에서 TODO.md '새 피처' 섹션급 �
 
 풀스택 신규 기능(`feat`) 구현을 위해 API/UI/DB 설계자 팀 → 백엔드/프론트 구현자+경계면 검증자 팀 → 통합 테스트 → PR로 이어지는 5-Phase 파이프라인을 조율한다. 이 스킬 자체가 PM 역할이다 — 별도 PM 에이전트를 스폰하지 않고, 이 스킬을 실행하는 주체(리더)가 요구사항 분해·브랜치/워크트리 관리·Phase 게이트·통합 리포트·PR 생성을 직접 담당한다.
 
-**스코프:** `feat` prefix 작업만. `{domain}`은 `docs/GIT.md` 브랜치 prefix(사실상 `feat` 고정), `{name}`은 브랜치 슬러그다 — `_workspace/{domain}/{name}/`은 브랜치명 `{domain}/{name}`을 그대로 미러한다(비즈니스 영역 그룹핑 아님).
+**스코프:** `feat` prefix 작업만. `{domain}`은 `~/.codex/docs/GIT.md` 브랜치 prefix(사실상 `feat` 고정), `{name}`은 브랜치 슬러그다 — `_workspace/{domain}/{name}/`은 브랜치명 `{domain}/{name}`을 그대로 미러한다(비즈니스 영역 그룹핑 아님).
 
 **진행 방식:** 기본은 순차 — 한 번의 실행은 피처 하나(`{domain}/{name}`)를 Phase 0부터 Phase 5(또는 사람 개입이 필요한 블로킹 지점)까지 완주하고 종료한다. 완료 후 다음 피처로 자동 이어가지 않는다.
 
@@ -71,7 +71,7 @@ description: "이 프로젝트(tie-knot)에서 TODO.md '새 피처' 섹션급 �
 
 Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하나의 연속 세션**으로 운영한다.
 
-**표준 브랜치 `feat/{name}`은 TODO.md/GIT.md가 말하는 "작업 1개 = 브랜치 1개"의 그 브랜치다.** 아래 backend/frontend 서브 워크트리는 그 안에서 두 에이전트의 동시 쓰기(git 레이스)를 막는 **내부 임시 메커니즘**일 뿐이고, Phase 종료 시 표준 브랜치로 전부 합쳐진 뒤 제거된다 — PR/dev 시점에서 보면 여전히 "1 작업 = 1 브랜치 = 1 PR" 그대로다.
+**표준 브랜치 `feat/{name}`은 TODO.md와 `~/.codex/docs/GIT.md`가 말하는 "작업 1개 = 브랜치 1개"의 그 브랜치다.** 아래 backend/frontend 서브 워크트리는 그 안에서 두 에이전트의 동시 쓰기(git 레이스)를 막는 **내부 임시 메커니즘**일 뿐이고, Phase 종료 시 표준 브랜치로 전부 합쳐진 뒤 제거된다 — PR/dev 시점에서 보면 여전히 "1 작업 = 1 브랜치 = 1 PR" 그대로다.
 
 1. 워크트리 생성 (리더가 표준 브랜치 위에서):
    ```
@@ -83,9 +83,9 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 3. kickoff SendMessage 공통:
    - 동료 2명의 id
    - `01_api_contract.md`/`01_ui_flow.md`/`01_db_schema.md` 경로(표준 브랜치 쪽 `_workspace/`, 워크트리 안이 아님)
-   - "표준 브랜치는 TODO.md/GIT.md의 '작업 1개=브랜치 1개' 그 자체다. 지금 워크트리는 병렬 쓰기 충돌을 막는 내부 메커니즘이고 이 Phase 끝나면 사라진다"
+   - "표준 브랜치는 TODO.md와 `~/.codex/docs/GIT.md`의 '작업 1개=브랜치 1개' 그 자체다. 지금 워크트리는 병렬 쓰기 충돌을 막는 내부 메커니즘이고 이 Phase 끝나면 사라진다"
    - frontend-impl에게: "backend 완성 기다리지 말고 계약 shape 그대로 mock부터 만들어 전부 연결하라(mock-first)"
-   - backend-impl/frontend-impl에게: "유닛(엔드포인트/화면) 하나 끝나면 자기 워크트리 브랜치에 GIT.md 포맷(`feat: ...`)으로 커밋 → boundary-verifier에게 검증 요청 → PASS 받으면 그 즉시 리더에게 병합 요청 SendMessage(브랜치명+커밋 확인 포함) — 다 끝날 때까지 몰아두지 말 것"
+   - backend-impl/frontend-impl에게: "유닛(엔드포인트/화면) 하나 끝나면 자기 워크트리 브랜치에 `~/.codex/docs/GIT.md` 포맷(`feat: ...`)으로 커밋 → boundary-verifier에게 검증 요청 → PASS 받으면 그 즉시 리더에게 병합 요청 SendMessage(브랜치명+커밋 확인 포함) — 다 끝날 때까지 몰아두지 말 것"
    - boundary-verifier에게: "완성 알림마다 즉시 판정, 두 워크트리 절대경로를 동시에 Read해서 교차비교, REDO 카운터는 `_workspace/feat/{name}/03_boundary/{endpoint-slug}.json`에 기록"
    - 종료조건: 모든 유닛이 PASS(또는 강제 PASS) 되면 각자 리더에게 완료 알림
 4. **로컬 merge는 리더만 수행한다.** 구현자로부터 "유닛 X PASS, 병합 요청" SendMessage를 받으면, 리더가 표준 브랜치에서 `git merge feat/{name}--backend`(또는 `--frontend`)를 그 즉시 실행 — 몰아두지 않는다.

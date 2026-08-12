@@ -28,4 +28,3 @@ src/shared/utils/
 ## 관련 문서
 
 - side-effect 로직과의 경계: `src/server/lib/AGENTS.md`(서버 전용), `src/client/lib/AGENTS.md`(브라우저 전용)
-- 테스트 분류와 작성 원칙: `docs/validation/testing-classification.md`, `docs/validation/testing-practices.md`
