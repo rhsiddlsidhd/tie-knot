@@ -4,8 +4,8 @@ import { normalizePath } from "./classify-file.mjs";
 
 export function classifyScope(file) {
   const normalized = normalizePath(file);
-  if (/^e2e\/.*\.spec\.[jt]s$/.test(normalized)) return "e2e";
-  if (/\.integration\.test\.[jt]sx?$/.test(normalized) || normalized.startsWith("tests/integration/")) {
+  if (/^testing\/e2e\/.*\.spec\.[jt]s$/.test(normalized)) return "e2e";
+  if (/\.integration\.test\.[jt]sx?$/.test(normalized)) {
     return "integration";
   }
   return "unit";

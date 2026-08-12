@@ -6,7 +6,7 @@ const DEFAULT_EXCLUDES = [
   /\.d\.ts$/,
   /\.(css|scss|sass|less)$/,
   /(^|\/)(generated|__generated__)\//,
-  /(^|\/)src\/test\/setup\//,
+  /(^|\/)testing\/support\//,
   /(^|\/)scripts\/e2e\/server\.mjs$/,
   /(^|\/)scripts\/tdd-guard\/adapters\/(?:claude|codex)\.mjs$/,
   /(^|\/)type\.ts$/,
@@ -19,7 +19,7 @@ export function normalizePath(file) {
 }
 
 export function isTestFile(file) {
-  return /(?:^|\/)(?:e2e\/.*\.spec|.*\.(?:unit\.|integration\.)?test)\.(?:[jt]sx?|mjs)$/.test(
+  return /(?:^|\/)(?:testing\/e2e\/.*\.spec|.*\.(?:unit\.|integration\.)?test)\.(?:[jt]sx?|mjs)$/.test(
     normalizePath(file),
   );
 }

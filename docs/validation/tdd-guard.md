@@ -2,6 +2,15 @@
 
 TDD Guard는 테스트와 제품 코드 변경을 연결해 Red → Green → mutation 검증 순서를 확인하는 공통 가드레일이다. 정책 판정은 `scripts/tdd-guard/core/`에 있고, npm 명령·에이전트 Hook·CI는 `scripts/tdd-guard/bin/guard.mjs`를 공통 진입점으로 사용한다.
 
+## 테스트 경로와 범위
+
+- `src/**/*.test.*`, `scripts/**/*.test.mjs`: unit
+- `src/**/*.integration.test.*`: integration
+- `testing/e2e/**/*.spec.ts`: E2E
+- `testing/support/`: 테스트가 아니라 공용 setup·factory·DB helper
+
+integration의 client/server/app 구분은 공개 taxonomy가 아니라 Vitest 실행 환경을 선택하기 위한 내부 프로젝트다. 구체적인 분류 기준은 [테스트 가이드라인](testing-guideline.md)을 따른다.
+
 ## 로컬 흐름
 
 1. 변경할 제품 코드와 연결된 테스트를 먼저 수정한다.

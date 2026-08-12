@@ -18,7 +18,7 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildProductInput, clearCollections } from "@/test";
+import { buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
 
 vi.mock("@/server/lib/cloudinary", () => ({

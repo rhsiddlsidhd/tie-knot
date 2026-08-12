@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./e2e",
+  testDir: "./testing/e2e",
   testMatch: "portone-smoke.spec.ts",
   timeout: 15 * 60_000,
   expect: { timeout: 10_000 },

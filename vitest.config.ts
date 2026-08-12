@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react(), tsconfigPaths()],
   test: {
     environment: "jsdom",
-    setupFiles: ["./src/test/setup/jsdom-polyfill.ts"],
+    setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
     // 실행 조건이 다른 두 묶음으로 나눈다 — mongodb-memory-server 인스턴스는 스위트
     // 전체가 1개를 공유하므로 DB 테스트는 순차로 돌려야 한다. 그 제약이 DB를 안 쓰는
     // 나머지 테스트까지 직렬로 묶이지 않도록 실행 경계를 분리한다.
@@ -46,7 +46,7 @@ export default defineConfig({
             "src/client/**/*.integration.test.{ts,tsx}",
             "src/app/**/_hooks/**/*.integration.test.{ts,tsx}",
           ],
-          setupFiles: ["./src/test/setup/jsdom-polyfill.ts"],
+          setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
         },
       },
       {
@@ -58,25 +58,25 @@ export default defineConfig({
             "src/server/**/*.integration.test.{ts,tsx}",
             "src/app/api/**/*.integration.test.{ts,tsx}",
           ],
-          globalSetup: ["./src/test/setup/mongo-server.ts"],
+          globalSetup: ["./testing/support/setup/mongo-server.ts"],
           // 파일을 병렬로 돌리면 한 파일의 beforeEach(clearCollections)가 다른 파일이
           // 막 써넣은 데이터를 지워버리는 크로스파일 오염이 생긴다.
           fileParallelism: false,
           maxWorkers: 1,
-          setupFiles: ["./src/test/setup/node-polyfill.ts"],
+          setupFiles: ["./testing/support/setup/node-polyfill.ts"],
         },
       },
       {
         extends: true,
         test: {
-          name: "integration-rsc",
+          name: "integration-app",
           environment: "jsdom",
           include: ["src/app/**/*.integration.test.{ts,tsx}"],
           exclude: [
             "src/app/api/**/*.integration.test.{ts,tsx}",
             "src/app/**/_hooks/**/*.integration.test.{ts,tsx}",
           ],
-          globalSetup: ["./src/test/setup/mongo-server.ts"],
+          globalSetup: ["./testing/support/setup/mongo-server.ts"],
           fileParallelism: false,
           maxWorkers: 1,
         },

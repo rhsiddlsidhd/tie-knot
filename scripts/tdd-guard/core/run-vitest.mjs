@@ -5,14 +5,10 @@ import path from "node:path";
 
 export function projectFor(root, test, scope) {
   if (scope !== "integration") return "unit";
-  const source = fs.readFileSync(path.join(root, test), "utf8");
-  if (
-    /(?:from\s+|import\s*)["'](?:@testing-library\/(?:react|user-event)|msw)["']|@vitest-environment\s+jsdom/.test(source)
-  ) return "integration-client";
-  if (
-    /(?:from\s+|import\s*)["'](?:mongoose|mongodb-memory-server|next\/server)["']|["']use server["']/.test(source)
-  ) return "integration-server";
-  if (test.startsWith("src/app/") && !test.startsWith("src/app/api/")) return "integration-rsc";
+  if (test.startsWith("src/client/") || test.startsWith("src/app/") && test.includes("/_hooks/")) {
+    return "integration-client";
+  }
+  if (test.startsWith("src/app/") && !test.startsWith("src/app/api/")) return "integration-app";
   return "integration-server";
 }
 

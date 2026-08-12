@@ -7,7 +7,6 @@ import { shouldGuard } from "../tdd-guard/core/policy.mjs";
 
 const TEST_PATTERNS = [
   "src/**/*.test.{ts,tsx}",
-  "tests/integration/**/*.{test,spec}.{ts,tsx}",
   "scripts/**/*.test.mjs",
 ];
 const CODE_EXTENSIONS = new Set([".js", ".jsx", ".mjs", ".cjs", ".ts", ".tsx", ".mts", ".cts"]);

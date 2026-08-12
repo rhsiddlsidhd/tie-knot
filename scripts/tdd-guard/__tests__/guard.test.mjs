@@ -5,6 +5,7 @@ import { execFileSync } from "node:child_process";
 import { afterEach, describe, expect, it } from "vitest";
 import { analyzeTestQuality } from "../core/analyze-test-quality.mjs";
 import { extractFiles } from "../bin/guard.mjs";
+import { classifyFile } from "../core/classify-file.mjs";
 import { classifyScope, requiredScopePolicy, requiredScopes } from "../core/classify-scope.mjs";
 import { ciChangedFiles } from "../core/ci-policy.mjs";
 import { configHash, diffHash, head, sha256 } from "../core/hash-worktree.mjs";
@@ -83,7 +84,11 @@ describe("scope, proof hash and adapters", () => {
       if (githubBaseRef) process.env.GITHUB_BASE_REF = githubBaseRef;
     }
   });
-  it("unit/integration/e2e를 분류한다", () => { expect(classifyScope("src/a.test.ts")).toBe("unit"); expect(classifyScope("src/a.integration.test.ts")).toBe("integration"); expect(classifyScope("e2e/a.spec.ts")).toBe("e2e"); });
+  it("unit/integration/e2e를 분류한다", () => { expect(classifyScope("src/a.test.ts")).toBe("unit"); expect(classifyScope("src/a.integration.test.ts")).toBe("integration"); expect(classifyScope("testing/e2e/a.spec.ts")).toBe("e2e"); });
+  it("testing/support는 제품 코드와 테스트 파일 양쪽에서 제외한다", () => {
+    expect(classifyFile("testing/support/db.ts")).toEqual({ kind: "excluded", guarded: false });
+    expect(classifyFile("testing/support/setup/mongo-server.ts")).toEqual({ kind: "excluded", guarded: false });
+  });
   it("폴더 계층과 무관하게 모든 component 공개 계약은 unit 후보다", () => {
     const dir = temp();
     write(path.join(dir, "src/client/components/molecules/A.tsx"), "export const A = () => null;\n");
@@ -105,12 +110,14 @@ describe("scope, proof hash and adapters", () => {
     write(path.join(dir, "src/features/product.ts"), `import mongoose from "mongoose"; export const Product = mongoose.model("Product", new mongoose.Schema({}));\n`);
     expect(requiredScopes(["src/features/save.ts"], dir)).toEqual(["integration", "unit"]);
   });
-  it("integration 실행 프로젝트는 atomic 폴더가 아니라 테스트 runtime 경계로 선택한다", () => {
+  it("integration 실행 프로젝트는 테스트 소유 경계로 선택한다", () => {
     const dir = temp();
     write(path.join(dir, "src/anything/ui.integration.test.tsx"), `import { render } from "@testing-library/react";\n`);
     write(path.join(dir, "src/anything/db.integration.test.ts"), `import mongoose from "mongoose";\n`);
-    expect(projectFor(dir, "src/anything/ui.integration.test.tsx", "integration")).toBe("integration-client");
-    expect(projectFor(dir, "src/anything/db.integration.test.ts", "integration")).toBe("integration-server");
+    expect(projectFor(dir, "src/client/ui.integration.test.tsx", "integration")).toBe("integration-client");
+    expect(projectFor(dir, "src/app/search/_hooks/useSearch.integration.test.tsx", "integration")).toBe("integration-client");
+    expect(projectFor(dir, "src/app/page.integration.test.tsx", "integration")).toBe("integration-app");
+    expect(projectFor(dir, "src/server/db.integration.test.ts", "integration")).toBe("integration-server");
   });
   it("HEAD 변경을 검출한다", () => { const dir = repo(); const before = head(dir); write(path.join(dir, "new"), "x"); execFileSync("git", ["add", "new"], { cwd: dir }); execFileSync("git", ["commit", "-qm", "next"], { cwd: dir }); expect(head(dir)).not.toBe(before); });
   it("제품 변경 시 hash가 바뀐다", () => { const dir = repo(); const before = diffHash(dir, ["src/value.ts"]); write(path.join(dir, "src/value.ts"), "export const value = 2;\n"); expect(diffHash(dir, ["src/value.ts"])).not.toBe(before); });
