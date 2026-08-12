@@ -96,7 +96,7 @@ export async function logoutService() {
 // 실패를 곧바로 redirect로 처리한다. 인증 확인이 role 확인보다 먼저 와야 한다 — 순서를
 // 바꾸면 미인증 유저가 role-mismatch(/)로 오분류돼 재로그인 유도(/login)를 못 받는다.
 // cache()로 감싸 같은 렌더 패스 안 반복 호출(page 게이트 + service 재확인)이 세션을
-// 중복 조회하지 않게 한다(docs/PAGE_ACCESS_CONTROL.md 참고).
+// 중복 조회하지 않게 한다(docs/security/page-access-control.md 참고).
 export const verifySession = cache(async (requiredRole?: UserRole): Promise<AuthSession> => {
   const session = await getAuth();
   if (!session) {

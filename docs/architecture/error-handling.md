@@ -1,4 +1,4 @@
-# docs/ERROR_HANDLING.md
+# 에러 처리
 
 > Last updated: 2026-07-29
 > `src/CLAUDE.md`에서 분리됨. 여러 레이어(services/actions/route/client)에 걸친 공통 규칙 + 채널별(A/B/C) 상세 규칙까지 이 문서가 단일 소스다 — 레이어별 CLAUDE.md는 더 이상 상세 규칙을 중복 서술하지 않고 이 문서를 가리키기만 한다.
@@ -24,7 +24,7 @@ ErrorPayload = { 분류, message, fieldErrors? }
 
 ## 채널 분리 규칙
 
-`docs/DATA_ACCESS.md`와 짝을 이루는 3개 채널로 나눈다: **A** Server Action, **B** Route Handler(route.ts), **C** 클라이언트 `useSWR`(폼은 `useActionState`로 채널 A 결과를 받는다).
+`docs/architecture/data-access.md`와 짝을 이루는 3개 채널로 나눈다: **A** Server Action, **B** Route Handler(route.ts), **C** 클라이언트 `useSWR`(폼은 `useActionState`로 채널 A 결과를 받는다).
 
 - A/B는 **최종 리턴 타입**이 근본적으로 다르다(함수 리턴값 vs HTTP Response) — 이건 Next.js 공식 제약(Server Function은 직렬화 가능한 값을, Route Handler는 `Response`를 리턴해야 함)이라 협상 불가. 이 최종 wrapping은 채널별로 다른 **함수**(`actionError`/`routeError`)로 분리한다.
 - 단 이 제약은 "함수는 분리"를 요구할 뿐 "파일도 분리"를 요구하지 않는다 — Next.js 공식 문서 어디에도 이 내부 로직(변환이든 최종 wrapping이든)을 파일 단위로 채널별 분리하라는 규정은 없다(`node_modules/next/dist/docs/01-app/01-getting-started/10-error-handling.md`, `15-route-handlers.md` 확인 완료). 그래서 `routeSuccess`/`routeError`/`actionError`/`toErrorPayload`는 전부 `src/server/boundary.ts` 한 파일에 같이 둔다. 과거엔 이 문서가 "채널별로 각자 만든다, 하나로 묶지 않는다"며 파일 단위 분리까지 요구했고, 그 다음엔 성공/실패-wrapping/실패-변환을 `response.ts`/`errorHandlers.ts`/`errorPayload.ts` 3파일로 나눴었다 — 둘 다 프로젝트 자체 판단이었지 프레임워크 요구사항은 아니었다. 최종적으로 코드량(총 ~65줄) 대비 과분할이라 판단해 `boundary.ts` 하나로 합쳤다.

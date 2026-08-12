@@ -1,4 +1,4 @@
-# docs/PAGE_ACCESS_CONTROL.md
+# 페이지 접근 제어
 
 > Last updated: 2026-07-28
 > TODO #5(인증 UI 가드) 그릴링 결론 — 구현 완료(`verifySession`, PR #61/#62). 인증/인가 필요한 모든 page.tsx가 아래 Page-level DAL 게이트를 호출한다.

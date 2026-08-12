@@ -16,7 +16,7 @@ test-suite가 이번에 추가한 건 그 위에 얹는 **여러 레이어를 �
 | `src/server/actions/updateProduct.integration.test.ts` | action → `updateProductService` → 실DB(discriminator 모델 선택 포함) | **REQ-7 회귀 픽스처(최우선)** |
 | `src/server/actions/createOrder.integration.test.ts` | action → `createOrderService`(REQ-5 DB 재조회) → 실DB | REQ-5 골든패스/에러 흐름 + **회귀 픽스처(레거시 문서)를 action 레이어까지 닫음** |
 
-세 파일 다 외부 연동(Cloudinary `uploadProductImage`)만 `vi.mock`하고, `requireAuth`/`getCookie`는 `"@/server/services"`/`"@/server/lib/cookies"`의 **부분 mock**(`importOriginal` + 필요한 함수만 override)으로 결과만 고정했다 — `createProductService`/`updateProductService`/`createOrderService`/`getProductQuantityBoundsService`/`getAllProductsService`는 전부 실제 구현 그대로 실행된다(`docs/TESTING_GUIDELINE.md` 목킹 정책 준수 — mongoose model을 mock하지 않음).
+세 파일 다 외부 연동(Cloudinary `uploadProductImage`)만 `vi.mock`하고, `requireAuth`/`getCookie`는 `"@/server/services"`/`"@/server/lib/cookies"`의 **부분 mock**(`importOriginal` + 필요한 함수만 override)으로 결과만 고정했다 — `createProductService`/`updateProductService`/`createOrderService`/`getProductQuantityBoundsService`/`getAllProductsService`는 전부 실제 구현 그대로 실행된다(`docs/validation/testing-guideline.md` 목킹 정책 준수 — mongoose model을 mock하지 않음).
 
 ## 회귀 픽스처 2건 커버 현황
 

@@ -8,7 +8,7 @@
 // (_workspace/feat/product-category-quantity/04_integration_report.md
 // "Phase4에 반드시 넘길 회귀 픽스처" 대응, test-suite 담당).
 //
-// 외부 연동(Cloudinary)만 mock한다(docs/TESTING_GUIDELINE.md 목킹 정책) —
+// 외부 연동(Cloudinary)만 mock한다(docs/validation/testing-guideline.md 목킹 정책) —
 // requireAuth는 실제 세션 쿠키 체계를 타지 않고 결과만 override한다(다른
 // 통합 테스트 선례와 동일하게 "@/server/services" 부분 mock).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";

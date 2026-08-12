@@ -2,7 +2,7 @@
 
 > 작성: api-designer-subcat
 > 대상: REQ-4(딥링크 도달) 계약. REQ-1/REQ-2(category.ts 리팩토링)는 이 문서의 값 원천이자 전제.
-> 근거 문서: `src/server/boundary.ts`, `docs/ERROR_HANDLING.md`, `docs/DATA_ACCESS.md`, `src/shared/schemas/CLAUDE.md`, `src/app/api/CLAUDE.md`
+> 근거 문서: `src/server/boundary.ts`, `docs/architecture/error-handling.md`, `docs/architecture/data-access.md`, `src/shared/schemas/CLAUDE.md`, `src/app/api/CLAUDE.md`
 
 ---
 
@@ -28,7 +28,7 @@
 
 즉 REQ-4 acceptance("추가 클릭 없이 이미 필터링된 상태")는 `initialFilterState.subCategory`의 하드코딩 `"all"`을 URL에서 읽은 값으로 갈아끼우는 것만으로 충족된다. 서버 왕복도, 새 응답 필드도 필요 없다.
 
-`docs/DATA_ACCESS.md` 표 기준으로도 이 기능은 **row 1(서버 렌더 시점 데이터 — services 직접 import)** 에 그대로 머문다. row 2(mutation)도 row 3(브라우저 캐싱 필요 조회)도 아니다.
+`docs/architecture/data-access.md` 표 기준으로도 이 기능은 **row 1(서버 렌더 시점 데이터 — services 직접 import)** 에 그대로 머문다. row 2(mutation)도 row 3(브라우저 캐싱 필요 조회)도 아니다.
 
 ---
 
@@ -116,7 +116,7 @@ DB 측이 보증하는 범위는 "저장값은 `SUB_CATEGORY_MAP` 원소와 문�
 근거:
 
 - 경로 세그먼트 `[category]`는 **리소스 식별자**라 무효 시 `notFound()`가 맞다(현행 유지). 쿼리 파라미터 `subCategory`는 **뷰 옵션**이라 무효여도 페이지 자체는 존재한다 — 404로 승격시키지 않는다.
-- Server Component 렌더 경로는 채널 A도 B도 아니라서 `{ success:false, error }` envelope을 **돌려줄 수단 자체가 없다**(`docs/ERROR_HANDLING.md` §채널 분리 규칙 — A는 함수 리턴값, B는 `Response`). 여기서 VALIDATION 에러를 만들려면 envelope 밖의 새 에러 표현을 발명해야 하는데, 그건 명시적 금지 사항이다.
+- Server Component 렌더 경로는 채널 A도 B도 아니라서 `{ success:false, error }` envelope을 **돌려줄 수단 자체가 없다**(`docs/architecture/error-handling.md` §채널 분리 규칙 — A는 함수 리턴값, B는 `Response`). 여기서 VALIDATION 에러를 만들려면 envelope 밖의 새 에러 표현을 발명해야 하는데, 그건 명시적 금지 사항이다.
 - 따라서 **UI 쪽에 "잘못된 파라미터" 에러 상태를 새로 만들지 않는다.** 빈 상태 문구 분기도 필요 없다(무효값은 전체 목록으로 떨어지므로 결과가 비지 않는다).
 
 ### 4.4 검증 방식

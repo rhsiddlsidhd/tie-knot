@@ -329,7 +329,7 @@ productSchema.index(
 | "전체" 표현 | **파라미터 부재 = 필터 미적용**이 정규(canonical) 형태. `?subCategory=all`은 소비 측만 수용(→전체)하고 **링크 생성 측은 만들지 않는다** |
 | 무효값 (`vip` 등) | **400 아님. 조용히 무시 → 전체.** `isSubCategory()` 실패 시 `"all"` 폴백, `notFound()`도 안 냄 |
 
-무효값을 400이 아닌 무시로 정한 근거(api-designer): 이 파라미터를 읽는 곳이 Server Component 렌더 경로라 `{success:false, error}` envelope을 돌려줄 채널 자체가 없다(`docs/ERROR_HANDLING.md` 채널 분리 규칙). 경로 세그먼트 `[category]`는 리소스 식별자라 404 유지, 쿼리파라미터는 뷰 옵션이라 무효여도 페이지는 존재한다는 구분.
+무효값을 400이 아닌 무시로 정한 근거(api-designer): 이 파라미터를 읽는 곳이 Server Component 렌더 경로라 `{success:false, error}` envelope을 돌려줄 채널 자체가 없다(`docs/architecture/error-handling.md` 채널 분리 규칙). 경로 세그먼트 `[category]`는 리소스 식별자라 404 유지, 쿼리파라미터는 뷰 옵션이라 무효여도 페이지는 존재한다는 구분.
 
 **DB 관점 검토 결과: 어느 쪽이든 안전하며 이 결정에 이견 없다.** 등치 매칭이라 주입 위험이 없고, 애초에 §6-2대로 이 값이 몽고 쿼리까지 내려가지도 않는다. 오히려 "부재 = 전체" 정규형이 `{ subCategory: "all" }`이라는 존재하지 않는 값으로 쿼리가 나가는 사고를 구조적으로 차단한다.
 
