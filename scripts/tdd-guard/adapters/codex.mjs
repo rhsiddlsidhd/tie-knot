@@ -2,6 +2,7 @@
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { buildPreEditResponse } from "./pre-edit-response.mjs";
 
 const command = process.argv[2];
 let input = "";
@@ -21,16 +22,8 @@ if (result.status === 0) {
   process.exit(0);
 }
 
-let reason;
-try { reason = JSON.parse(result.stdout).reason; } catch {}
-reason ||= `TDD Guard 실행 오류. 편집을 차단합니다. node scripts/tdd-guard/bin/guard.mjs ${command}를 직접 실행하세요.`;
+const { hookSpecificOutput } = buildPreEditResponse(result, command);
 
-process.stdout.write(`${JSON.stringify({
-  hookSpecificOutput: {
-    hookEventName: "PreToolUse",
-    permissionDecision: "deny",
-    permissionDecisionReason: reason,
-  },
-}, null, 2)}\n`);
+process.stdout.write(`${JSON.stringify({ hookSpecificOutput }, null, 2)}\n`);
 process.stderr.write(result.stderr || "");
 process.exit(0);
