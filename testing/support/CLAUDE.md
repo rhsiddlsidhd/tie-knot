@@ -24,7 +24,7 @@ testing/support/
 
 ## Critical Convention
 
-- **이 폴더에 테스트 파일(`*.test.ts(x)`)을 두지 않는다** — 테스트는 대상 파일 옆에 colocate한다(`docs/validation/testing-guideline.md`). 이 폴더는 지원 자산 전용이다.
+- **이 폴더에 테스트 파일(`*.test.ts(x)`)을 두지 않는다** — 테스트는 대상 파일 옆에 colocate한다(`docs/validation/testing-classification.md`). 이 폴더는 지원 자산 전용이다.
 - **`setup/` 하위는 `vitest.config.ts`에서만 참조하고 배럴(`index.ts`)에 넣지 않는다** — `jsdom-polyfill.ts`는 import되는 즉시 전역(`Element.prototype`, `globalThis.ResizeObserver` 등)을 변조하므로, 배럴에 실리면 `@testing/support`를 import하는 것만으로 node 환경 테스트까지 이 부수효과를 받는다.
 - **jsdom 폴리필은 `jsdom-polyfill.ts`의 `if (typeof window !== "undefined")` 가드 안에 추가한다** — 가드 밖에 쓰면 `// @vitest-environment node`로 도는 service/action 테스트가 `Element is not defined`로 터진다.
 - **팩토리는 순수 객체만 리턴하고 DB에 쓰지 않는다** — `Model.create()` 호출은 테스트가 직접 한다. 팩토리가 DB까지 건드리면 어떤 문서가 언제 저장됐는지가 테스트 본문에서 안 보인다.
@@ -36,5 +36,5 @@ testing/support/
 
 | 문서                   | 위치                 | 트리거                    | 요약                                            |
 | ---------------------- | -------------------- | ------------------------- | ----------------------------------------------- |
-| `testing-guideline.md` | `docs/validation/`   | Vitest 테스트 작성/수정 시 | 파일 배치·DB 전략·목킹 정책·assertion 패턴      |
+| `testing-classification.md`, `testing-practices.md`, `test-infrastructure.md` | `docs/validation/` | Vitest 테스트 작성/수정 시 | 파일 배치·DB 전략·목킹 정책·assertion 패턴 |
 | `CLAUDE.md`            | `src/server/models/` | 팩토리 추가/수정 시        | 팩토리가 대응하는 스키마 정의                   |

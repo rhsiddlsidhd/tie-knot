@@ -41,4 +41,4 @@
 | `DATA_ACCESS.md`         | `docs/` | 데이터 접근 경로 선택, Server Component/Server Action/route.ts 분기           | 데이터 접근 경로 3분기표                                  |
 | `ERROR_HANDLING.md`      | `docs/` | 에러 처리 로직, services/actions/route/client 레이어 횡단                     | 에러 흐름·채널 분리·분류표·레이어별 규칙 index            |
 | `PAGE_ACCESS_CONTROL.md` | `docs/` | 인증/인가, 접근 제어, Proxy, page.tsx, token 쿠키, access/refresh 토큰 설계    | 3단계 접근 제어 설계 + 인증 토큰 아키텍처                 |
-| `TESTING_GUIDELINE.md`   | `docs/` | vitest 테스트 작성/수정                                                       | DB/목킹 전략, assertion 패턴, 파일 배치 컨벤션            |
+| `testing-classification.md`, `testing-practices.md`, `test-infrastructure.md` | `docs/validation/` | Vitest 테스트 작성/수정 | 파일 배치·DB/목킹 전략·assertion 패턴 |

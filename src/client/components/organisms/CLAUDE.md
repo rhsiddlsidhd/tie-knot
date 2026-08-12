@@ -34,4 +34,4 @@ src/client/components/organisms/
 | ---------------------- | ------------------------------------ | ----------------------------------- | ----------------------------- |
 | `CLAUDE.md`            | `src/app/`                           | 컨테이너(도메인 로직) 승격 규칙 확인 시 | 컨테이너 및 승격 규칙     |
 | `CLAUDE.md`            | `src/client/components/molecules/`   | 조합 재료 확인 시                   | molecule 정의                 |
-| `TESTING_GUIDELINE.md` | `docs/`                              | 이 폴더 테스트 작성 시              | 렌더링+상호작용 오케스트레이션 assertion 패턴 |
+| `testing-practices.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | 렌더링+상호작용 오케스트레이션 assertion 패턴 |

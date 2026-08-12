@@ -38,4 +38,4 @@ src/app/api/
 | `CLAUDE.md`            | `src/server/`          | 응답/에러 계약 확인 시            | 성공/에러 응답 빌더 계약 |
 | `CLAUDE.md`            | `src/server/services/` | 이 라우트가 호출하는 비즈니스 로직 확인 시 | 서비스 레이어 컨벤션 |
 | `CLAUDE.md`            | `src/server/actions/`  | Server Actions(자매 컨텍스트) 확인 시 | Server Action 컨벤션 |
-| `TESTING_GUIDELINE.md` | `docs/`                | 이 폴더 테스트 작성 시(1차 범위에서 후순위) | 테스트 컨벤션      |
+| `testing-classification.md`, `testing-practices.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | 분류와 route assertion 원칙 |
