@@ -25,7 +25,3 @@ src/shared/
 ## Gotchas
 
 - `schemas/`의 실제 파일명(`coupleInfo.schema.ts`/`premiumFeature.schema.ts`/`pwConfirm.schema.ts`/`userEmail.schema.ts`)은 camelCase다 — 위 kebab-case 원칙과 다르다. `constants`/`types`/`utils`엔 지금 다단어 파일명 사례가 없어서 이 원칙이 실제로 충돌 없이 지켜지는지 검증된 적이 없다 — `schemas/`가 의도된 예외인지, 그냥 안 맞춰진 드리프트인지 문서화된 근거가 없다.
-
-## 관련 문서
-
-- server/client/shared 3분할 배경: `docs/architecture/README.md`
