@@ -37,25 +37,18 @@
 >
 > 처리 순서: **선행(가드레일)을 먼저** 끝낸 뒤 클러스터 1~3으로 간다. 클러스터 안에서는 위→아래 순서를 권장한다(파일·맥락 겹침 기준).
 >
-> 선행 3건의 권장 착수 순서는 나열 순서와 다르다 — **3 → 2 → 1**.
-> - **3번(커밋 규칙·리뷰 강제 복원)이 먼저**: 가장 싸고(unguarded라 proof 불필요) 이후 모든 커밋에 효과가 붙는다.
-> - **2번(scope 부풀림)이 그다음**: 자체 비용은 있지만 클러스터 1~3 전부의 작업 단가를 낮춘다.
+> **2026-08-12 갱신**: 과거 선행 3건 중 "TDD Guard 요구 scope가 type-only import를 정규식으로 오판" 항목은 `c342ef9`(#14, AST 산정 전환)로 해소돼 처리 완료로 이관했다. 남은 2건의 권장 착수 순서는 나열 순서와 다르다 — **2 → 1**.
+> - **2번(커밋 규칙·리뷰 강제 복원)이 먼저**: 가장 싸고(unguarded라 proof 불필요) 이후 모든 커밋에 효과가 붙는다.
 > - **1번(하네스 문서)은 다음 기능 착수 전까지**: 이 문서가 발동하는 경로는 `feature-team-orchestrator`(`feat` 전용)뿐이라, 전부 `fix`/UI인 아래 클러스터 작업은 막지 않는다. 직접 작업 시의 TDD Guard 절차는 `docs/validation/tdd-guard.md`에 이미 정확히 있다.
 
 ### 선행 — 가드레일 정합·복원 (아래 순서대로)
 
-- [ ] **하네스 문서가 존재하지 않는 pre-commit 게이트를 계약으로 명시 — 구현 에이전트가 TDD Guard를 모른 채 차단당함** (2026-08-12 발견 [발견: TODO 전수 재검증 중 가드레일 구조 감사]) — `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md` 세 파일에 TDD Guard·`test:red`·proof 언급이 **0건**이다. 대신 `backend-impl.md:44`와 `frontend-impl.md:44`가 "pre-commit 훅(lint/coverage80%/typecheck)에 막히면 원인 해결 후 재시도, 3회 실패 시 에스컬레이션"이라는 절차를 규정하는데 **그 훅은 존재하지 않는다**(`.git/hooks/`에 훅 0개, `.claude/settings.json`은 TDD Guard PreToolUse/PostToolUse만 등록).
+- [ ] **하네스 문서가 존재하지 않는 pre-commit 게이트를 계약으로 명시 — 구현 에이전트가 TDD Guard를 모른 채 차단당함** (2026-08-12 발견 [발견: TODO 전수 재검증 중 가드레일 구조 감사], 2026-08-12 코드 대조로 여전히 유효 확인) — `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md` 세 파일에 TDD Guard·`test:red`·proof 언급이 **0건**이다. 대신 `backend-impl.md:44`와 `frontend-impl.md:44`가 "pre-commit 훅(lint/coverage80%/typecheck)에 막히면 원인 해결 후 재시도, 3회 실패 시 에스컬레이션"이라는 절차를 규정하는데 **그 훅은 존재하지 않는다**(`.git/hooks/`에 훅 0개, `.claude/settings.json`은 TDD Guard PreToolUse/PostToolUse만 등록).
   - **실제 동작**: `guard.mjs pre-edit`가 유효 proof 없는 guarded 파일 편집을 `permissionDecision: "deny"`로 차단한다(`bin/guard.mjs:64`). 즉 구현 에이전트는 첫 `Edit`/`Write`에서 막히는데, 대응 절차(`npm run test:red -- --scope <scope>`)가 지침에 없어 복구 경로가 없다.
   - **내부 모순**: `feature-team-orchestrator/SKILL.md:14`는 TDD Guard 계약으로 갱신됐는데 같은 파일 `:140`은 여전히 phantom pre-commit 게이트를 표로 남겨뒀다.
   - **부수**: `.claude/agents/test-suite.md:27`이 지시하는 `npm run test`는 현재 실패하는 명령이다(아래 "단독" 섹션 항목 참고).
   - **비용**: 대상 파일이 전부 unguarded(`docs/` 및 `.claude/`)라 Red proof 없이 수정 가능 — 착수 비용이 가장 낮다.
-
-- [ ] **TDD Guard의 요구 scope 산정이 type-only import를 런타임 경계로 오판해 부풀린다** (2026-08-12 발견 [발견: 항목별 게이트 비용 측정 중], 실증 완료) — `scripts/tdd-guard/core/classify-scope.mjs`의 `localDependencies`가 정규식 `(?:from\s+|import\s*)["']([^"']+)["']`로 import를 긁어 **`import type`을 걸러내지 않는다**. 그래서 타입 하나만 참조해도 그 사슬 끝의 mongoose·`use server` 경계가 걸려 `integration` proof가 강제된다.
-  - **실증(2026-08-12)**: 프로브 파일 대조 — `import type { PremiumFeature } from "@/server/services"` 한 줄만 있는 파일이 `requiredScopes: ["integration","unit"]`(사유 "Mongoose/MongoDB 실행 경계 변경"), import를 지우면 `["unit"]`.
-  - **영향 범위**: `guard.mjs classify`로 측정한 결과 아래 클러스터 대상 파일이 **전부** `integration` 요구 — 순수 프레젠테이셔널인 `ProductFeatures.tsx`, `OrderSummary.tsx`, `ProductSummary.tsx`, `ProductRegistrationForm.tsx`, `(admin)/admin/layout.tsx` 포함. 문구 한 줄 수정에도 mongod 기동 + 직렬 integration 실행이 붙는다.
-  - **정답이 이미 있음**: 같은 가드의 `scripts/test-scope/test-graph.mjs:runtimeSpecifiers`가 TypeScript AST로 type-only import를 정확히 배제한다. 두 모듈이 같은 판정을 다르게 하고 있어 정합만 맞추면 된다.
-  - **증폭 요인**: 배럴 강제 규칙(인박스 항목 참고)이 타입 하나를 `@/server/services` 배럴 경유로 mongoose 사슬에 연결시킨다.
-  - **주의**: 게이트 완화 방향의 변경이다. `scripts/`는 guarded라 이 수정 자체에 Red proof가 필요하며, `scripts/tdd-guard/__tests__/`에 회귀 테스트를 먼저 세운다.
+  - **중복 제보**: 인박스에 같은 증상이 `claude.mjs` 어댑터 버그 수정(#15) 중 재발견돼 한 번 더 적혔다 — 새 정보 없이 이 항목과 동일해 병합, 인박스 쪽은 제거.
 
 - [ ] **저장소 분리 때 유실된 커밋 규칙·리뷰 강제 복원** (2026-08-12 발견 [발견: 훅 부재 확인 중 원본 저장소 대조]) — tie-knot은 `9d69d51 chore: tie-knot 저장소를 분리`로 agent-benchmark 모노레포에서 떨어져 나왔는데, 그때 추적 대상이 아니거나 삭제된 가드레일 자산이 재생성되지 않았다.
   - **`commit-msg` 훅 이식**: 전역 `GIT.md`의 Naming 규칙을 검사하는 훅이 tie-knot에 없어, prefix 택소노미·`{prefix}({scope}): {message}` 형식·72자 상한을 강제하는 지점이 **로컬에도 CI에도 0개**다(`.github/workflows/`에 commitlint·PR 제목 검증 job 없음). 원본은 `/home/rhsiddlsidhd/agent-benchmark/.git/hooks/commit-msg`(2026-08-10)에 살아 있고 이미 고쳐진 버전이다 — 정규식 `^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9]+(-[a-z0-9]+)*\))?!?: ` 에 72자·소문자 시작·마침표 금지 검사까지 포함해 현행 `GIT.md`와 일치한다(과거형·명사구 판별만 미구현).
@@ -119,22 +112,22 @@
 > 항목 형식: `- [ ] (날짜, 발견 맥락) 증상 — 위치/근거`
 
 - [ ] (2026-08-09, connect.ts 가드를 연결 시점으로 옮기며 발견 — 2026-08-12 재확인 `connect.ts:35`) `connect.ts`의 `testUri ?? srvUri`가 빈 문자열을 "값 있음"으로 취급 — `MONGO_TEST_URI=`처럼 키만 있고 값이 빈 경우 `??`가 폴백하지 않아 `uri`가 빈 문자열이 되고 연결이 원인 불명 에러로 실패한다. `||`로 바꾸면 해소되나 프로덕션 동작 변경이라 별도 판단 필요.
-- [ ] (2026-08-10, 변경 테스트 범위 실측 중 발견 — 2026-08-12 근거 갱신) 배럴 강제 규칙의 누적 비용 — `src/` 전체의 `vi.mock("@/...")` 호출이 **112건**이고 그중 배럴 디렉터리를 그대로 mock하는 상위가 `@/server/services` 27, `@/server/actions` 14, `@/client/hooks` 14, `@/client/components/organisms` 8이며, 타입 하나를 배럴로 가져오는 것만으로 TDD Guard의 요구 scope가 `integration`으로 부풀어 오른다(버그수정 "선행" 두 번째 항목과 직결). 규칙 재검토 필요.
+- [ ] (2026-08-10, 변경 테스트 범위 실측 중 발견 — 2026-08-12 근거 갱신, 2026-08-12 재확인: 타입 import 정리(#16) 후에도 잔존) 배럴 강제 규칙의 누적 비용 — `src/` 전체의 `vi.mock("@/...")` 호출이 **112건**이고 그중 배럴 디렉터리를 그대로 mock하는 상위가 `@/server/services` 27, `@/server/actions` 14, `@/client/hooks` 14, `@/client/components/organisms` 8이며, 타입 하나를 배럴로 가져오는 것만으로 TDD Guard의 요구 scope가 `integration`으로 부풀어 오른다. `import type`/`export type` 강제(#16)로 타입 단독 참조 케이스는 줄었지만 배럴이 값도 함께 재수출하는 한 근본 해소는 아니다 — 아래 "요구 scope 판정" 재검토 항목과 직결. 규칙 재검토 필요.
 - [ ] (2026-08-10, Vitest 실행 로그 점검 중 발견 — 2026-08-12 재확인: 실행당 **6줄**) `vite-tsconfig-paths`가 Vite 네이티브 `resolve.tsconfigPaths: true`로 교체하라는 경고를 매 실행 출력 — 플러그인 제거와 네이티브 설정 전환 검토 필요.
 - [ ] (2026-08-11, 공통 TDD Guard 배포 전 검증 완료 후 보류) 배포 환경에 `.env.example`의 운영 필수 값과 `MAIN_PREVIEW_INFO_ID`, `MAIN_PREVIEW_PRODUCT_ID`, `CLOUDINARY_UPLOAD_PRESET`을 등록하고 실제 배포 URL로 Lighthouse 감사를 실행해야 함 — 현재 미배포 상태라 로컬·PR CI 검증 범위에서 제외함.
 - [ ] (2026-08-11, KG이니시스 `inicis_v2` 테스트 채널 확정 후 보류) 배포된 HTTPS 환경에서 PortOne 실제 결제 manual smoke를 수행해야 함 — GUI self-hosted runner(`self-hosted`, `linux`, `x64`, `portone-smoke`)와 사람의 카드사 인증으로 12,000원 결제, `PAID` 조회, store/TEST channel/payment ID 검증, 전액 취소 및 `CANCELLED` 재조회를 확인하고 실패 시에도 cleanup을 보장해야 함.
 - [ ] (2026-08-11, PortOne webhook 구현 후 배포 검증 보류) 배포 URL을 PortOne webhook으로 등록하고 운영 `PORTONE_WEBHOOK_SECRET`을 설정한 뒤 진위 검증, 멱등 처리 및 주문 상태 반영을 실제 webhook 전달로 확인해야 함 — `src/app/api/webhooks/portone/route.ts` 및 `src/server/services/payment.service.ts`.
-- [ ] (2026-08-12, 요구 scope 산정 수정 중 실측) 타입을 값 구문으로 import하는 표기가 요구 scope를 부풀린다 — `src/**` 비테스트 410개 중 **310개(76%)** 가 integration 요구. 판정기를 TS AST로 바꿔도 308개로, `import type` 표기가 소스에 거의 없어 실효가 2개뿐이다(대표: `src/client/components/organisms/ProductFeatures.tsx:2` — `import { PremiumFeature } from "@/server/services"`, `PremiumFeature`는 타입). `@typescript-eslint/consistent-type-imports` 위반이 **210파일 / 286건**이고 전부 autofix 가능. 해법은 3층(eslint autofix → 배럴 `consistent-type-exports` → tsconfig `verbatimModuleSyntax`)이며 별도 `refactor` 브랜치로 진행한다. 인박스의 배럴 강제 규칙 항목과 같은 뿌리다.
-- [ ] (2026-08-12, 위 항목 측정 중 파생) 요구 scope 판정이 import 전이 폐포를 쓰는 게 옳은지 재검토 필요 — 직접 import만 경계로 치면 69/410(17%)까지 떨어지지만, `src/server/actions/*`처럼 service를 경유해 DB에 닿는 파일이 unit만 요구하게 되어 과소 요구로 뒤집힌다. `docs/validation/testing-classification.md:16`의 "둘 이상의 실제 경계를 연결" 기준에 맞는 중간 규칙이 필요하다. 위 타입 import 정리 이후 수치를 다시 보고 판단한다.
+- [ ] (2026-08-12, 위 항목 측정 중 파생, 2026-08-12 실측치 갱신) 요구 scope 판정이 import 전이 폐포를 쓰는 게 옳은지 재검토 필요 — 직접 import만 경계로 치면 69/410(17%)까지 떨어지지만, `src/server/actions/*`처럼 service를 경유해 DB에 닿는 파일이 unit만 요구하게 되어 과소 요구로 뒤집힌다. `docs/validation/testing-classification.md:16`의 "둘 이상의 실제 경계를 연결" 기준에 맞는 중간 규칙이 필요하다. **타입 import 정리(#16) 완료 후 수치: 308/410(75.1%) → 262/410(63.9%)** — 나머지 262개는 실제 값 의존이라 이 규칙만으로는 안 줄어든다. 위 배럴 강제 규칙 누적비용 항목과 함께 이제 판단 시점.
 - [ ] (2026-08-12, guard 자체 수정 절차 확인 중 발견) `scripts/tdd-guard/core/run-vitest.mjs:6`의 `projectFor`가 scope `unit`이면 항상 project `unit`을 반환해 `scripts/**/*.test.mjs`(project `guard`)를 실행하지 못한다. guarded 범위가 `src/`로 좁혀져 당장 실害는 없으나, scripts 테스트를 Red/Green proof 흐름으로 돌릴 수단이 없다는 사실은 남는다.
 - [ ] (2026-08-12, AST 판정기 수정 중 관측) `scripts/test-scope/test-graph.mjs:41`의 `element.isTypeOnly`가 TypeScript deprecation 경고(TS6385) 대상 — 대체 API 확인 후 정리 필요.
-- [ ] (2026-08-12, `claude.mjs` 어댑터 사유 미전달 버그 수정 중 발견) `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md`가 존재하지 않는 pre-commit 게이트(lint/coverage80%/typecheck)를 계약으로 규정하고 TDD Guard·`test:red`·proof는 0건 언급 — `feature-team-orchestrator/SKILL.md:140`도 같은 유령 게이트를 표로 남김. 에이전트가 TDD Guard에 막혔을 때 복구 절차를 문서에서 못 찾는 문제로 이어짐.
 - [ ] (2026-08-12, 위와 같은 조사 중 보류) `codex.mjs`가 내보내는 `hookSpecificOutput`/`hookEventName: "PreToolUse"`/`permissionDecision`은 Claude Code 스키마 어휘라 Codex CLI가 실제로 이 형태를 소비하는지 미확인 — `.codex/hooks.json`도 Claude Code 구조(`matcher`/`statusMessage`)를 그대로 본떴다. 계약이 다르면 `exit 0`으로 나가 차단 자체가 안 걸릴 수 있음. Codex 문서 확인 + 실증 필요.
-- [ ] (2026-08-12, `refactor/type-import-conventions`에서 127번 항목 실행 완료 후 실측) 3층 규칙(eslint autofix 286건 + 배럴 `consistent-type-exports` 8건 + `verbatimModuleSyntax`) 적용 결과 integration 요구가 308/410(75.1%) → 262/410(63.9%)로 46개(11.2%p) 감소. 기대만큼 극적이지 않음 — 나머지 262개는 타입이 아니라 실제 값(함수·컴포넌트)이 `src/server/actions/*` 등을 거쳐 진짜 경계에 닿아서다. 129번(direct-import 대안)·122번(배럴 강제 규칙 누적비용) 항목과 함께 재검토 대상. 상세: `docs/conventions/type-imports.md`.
-- [ ] (2026-08-12, 위 리팩토링 진행 중 등록) `tdd-exceptions.json`의 `type-import-convention-refactor-2026-08` 항목이 `expiresAt: 2026-08-26`로 살아있다 — PR 머지 후 만료 전에 삭제할 것(만료 시 `loadExceptions`가 throw해 전체 TDD Guard가 막힌다). 삭제는 이 리팩토링과 무관한 별도 커밋으로 처리.
 
 ### 처리 완료 · 전제 소멸 (2026-08-12 전수 재검증)
 
+- [x] (2026-08-12 완료, `#14` `c342ef9`) TDD Guard 요구 scope 산정이 type-only import를 정규식으로 긁어 걸러내지 못하던 문제 — `classify-scope.mjs`가 `test-graph.mjs`의 TS AST(`runtimeSpecifiers`)로 판정하도록 전환. 원래 "선행" 2번 항목이었다.
+- [x] (2026-08-12 완료, `#16` `refactor/type-import-conventions`) 위 AST 전환 후에도 소스에 `import type` 표기 자체가 거의 없어 실효가 2개뿐이던 잔여 문제 — `@typescript-eslint/consistent-type-imports`(autofix 286건) + `consistent-type-exports`(배럴 재수출 정리, autofix 8건) + `tsconfig.json` `verbatimModuleSyntax: true`(잔여 TS1484 6건 수동)로 3층 규약을 강제. 결과: `src/**` integration 요구 308/410(75.1%) → 262/410(63.9%), 46개(11.2%p) 감소 — 극적이지 않은 이유와 남은 262개의 성격은 인박스 "요구 scope 판정" 재검토 항목·`docs/conventions/type-imports.md` 참고. `AGENTS.md` Cross-cutting References에 트리거 등록 완료.
+- [x] (2026-08-12 완료, `#17` `chore/remove-type-import-exception`) `#16` 작업에 쓰인 `tdd-exceptions.json`의 `type-import-convention-refactor-2026-08`(만료 2026-08-26) 예외를 작업 종료 즉시 삭제 — 만료까지 기다리지 않고 조기 처리.
+- [x] (2026-08-12 완료) `.claude/agents/backend-impl.md`/`frontend-impl.md`가 규정하는 phantom pre-commit 게이트 항목이 `claude.mjs` 어댑터 버그 수정(#15) 중 재발견돼 인박스에 중복 등록됐던 것 — 새 정보 없이 "선행" 1번 항목과 동일해 그쪽에 흡수, 인박스 사본은 제거.
 - [x] (2026-08-12 완료) `src/shared/AGENTS.md`의 근거 없는 server/client/shared 3분할 배경 문서 참조를 제거.
 - [x] (2026-08-12 완료) 소스→테스트 매핑을 `scripts/test-scope/test-graph.mjs`로 통합하고 `scripts/tdd-guard/core/resolve-tests.mjs`에서 사용하도록 정리.
 - [x] (2026-08-12 해소 확인) `updateProduct`의 `thumbnail` required 부채 — `src/shared/schemas/request/product.schema.ts:31`이 `File | URL string` union으로 바뀌었고 `updateProduct.ts:45,73`에 `currentThumbnail` 폴백이 있다. 수정 시 썸네일 재업로드 강제가 없다.
@@ -144,6 +137,6 @@
   - **결함 클래스 재발 없음 확인**: `vitest list --project unit "src/app/(admin)"`이 테스트를 정상 수집한다(위치인자는 substring 매칭이라 괄호가 문제되지 않음). 나아가 `scripts/test-scope/unit-shards.mjs`의 `verifyUnitShards`가 "모든 unit 테스트 파일이 정확히 1개 샤드에 속함"을 CI에서 강제해 침묵 누락 구멍이 구조적으로 막혀 있다.
 - [x] (2026-08-12 전제 소멸) 라우트 그룹 컴포넌트 4개의 line coverage 80% 미달 부채 — 커버리지 측정·게이트가 제거되어 기준 자체가 없다. 품질 부채를 다시 재려면 mutation 기준으로 재정의해야 한다.
 - [x] (2026-08-12 전제 소멸) Vitest `--coverage.changed`가 unstaged/untracked를 포함하던 관측 항목 — 커버리지 경로 자체가 없다.
-- [x] (2026-08-12 정식 섹션 이관) `.git/hooks/commit-msg` prefix 정규식이 전역 `GIT.md` 택소노미와 어긋나던 문제 — 정규식은 2026-08-10에 이미 고쳐졌고, 남은 문제는 그 훅이 저장소 분리 때 tie-knot으로 따라오지 못했다는 것이다. 버그수정 "선행" 세 번째 항목으로 옮김.
+- [x] (2026-08-12 정식 섹션 이관) `.git/hooks/commit-msg` prefix 정규식이 전역 `GIT.md` 택소노미와 어긋나던 문제 — 정규식은 2026-08-10에 이미 고쳐졌고, 남은 문제는 그 훅이 저장소 분리 때 tie-knot으로 따라오지 못했다는 것이다. 버그수정 "선행" 항목(저장소 분리 유실물 복원)으로 옮김.
 - [x] (2026-08-12 불필요 판정) `.claude/hooks/pre-commit-check.sh`가 Git hook이 아니라는 항목 — 파일·디렉터리째 사라졌고 그것이 부르던 `npm run test:paired`도 `package.json`에 없다. 코드 검사 책임은 TDD Guard(에이전트 훅)와 PR CI가 나눠 가지므로 복원하지 않는다. 커밋 규칙 강제는 메시지 검사(`commit-msg`)로만 되살린다.
 - [x] (2026-08-12 전제 소멸) WSL 메모리 상한에 맞춘 `maxWorkers: "50%"` 제안 — 현재 `vitest.config.ts`는 project별로 `maxWorkers`를 명시(`guard`/`unit` 2, mongo 계열 1)하는 구조라 제안 내용이 그대로 적용되지 않는다.
