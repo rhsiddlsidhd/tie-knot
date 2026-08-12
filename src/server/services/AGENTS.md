@@ -69,5 +69,3 @@ src/server/services/
 | `AGENTS.md`          | `src/server/lib/`       | 외부 연동 wrapper 확인 시            | 외부 연동 컨벤션                    |
 | `AGENTS.md`          | `src/app/api/`          | 이 서비스를 호출하는 쪽(route.ts) 확인 시 | Route Handler 컨벤션           |
 | `AGENTS.md`          | `src/server/actions/`   | 이 서비스를 호출하는 쪽(action) 확인 시   | Server Action 컨벤션           |
-| `testing-practices.md`, `test-infrastructure.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | DB/목킹 전략, assertion 패턴 |
-| `ERROR_HANDLING.md`  | `docs/`                 | 에러 처리 로직 작성/수정 시          | 레이어 간 에러 흐름, 분류 taxonomy  |

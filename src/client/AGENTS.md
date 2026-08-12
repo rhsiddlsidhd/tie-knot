@@ -43,7 +43,6 @@ src/client/
 
 | 문서                | 위치                  | 트리거                                         | 요약                     |
 | ------------------- | --------------------- | ---------------------------------------------- | ------------------------ |
-| `ERROR_HANDLING.md` | `docs/`               | 에러 처리 로직 작성/수정 시                    | 채널 C 상세 규칙         |
 | `AGENTS.md`         | `src/server/`         | Route Handler 응답 계약(`boundary.ts`) 확인 시 | 성공/에러 응답 빌더 계약 |
 | `AGENTS.md`         | `src/server/actions/` | 이 계약에서 제외된 Server Actions 확인 시      | Server Action 리턴 계약  |
 | `AGENTS.md`         | `src/app/api/`        | 이 계약을 쓰는 Route Handlers 확인 시          | Route Handler 컨벤션     |

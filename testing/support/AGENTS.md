@@ -36,5 +36,4 @@ testing/support/
 
 | 문서                   | 위치                 | 트리거                    | 요약                                            |
 | ---------------------- | -------------------- | ------------------------- | ----------------------------------------------- |
-| `testing-classification.md`, `testing-practices.md`, `test-infrastructure.md` | `docs/validation/` | Vitest 테스트 작성/수정 시 | 파일 배치·DB 전략·목킹 정책·assertion 패턴 |
 | `AGENTS.md`            | `src/server/models/` | 팩토리 추가/수정 시        | 팩토리가 대응하는 스키마 정의                   |

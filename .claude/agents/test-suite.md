@@ -16,7 +16,7 @@ Phase2/3에서 팀이 이미 점진적 검증(단위 테스트 + boundary-verifi
 3. 기존 관련 기능에 회귀가 없는지 확인하는 테스트 보강 (이번 기능이 건드린 기존 서비스/모델에 대해)
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `docs/validation/testing-classification.md`, `docs/validation/testing-practices.md`, `docs/validation/test-infrastructure.md`, `testing/support/factories/`(기존 factory 재사용, 새 데이터 임의 생성 금지)
+- 먼저 반드시 읽는다: `docs/validation/testing-classification.md`, `docs/validation/testing-practices.md`, `testing/support/AGENTS.md`, `testing/support/factories/`(기존 factory 재사용, 새 데이터 임의 생성 금지). Vitest·Playwright·MongoDB·jsdom·factory 등 테스트 인프라를 변경할 때만 `docs/validation/test-infrastructure.md`도 읽는다.
 - 새 factory가 필요하면 기존 `testing/support/factories/*.factory.ts` 패턴을 따라 추가
 - 이미 backend-impl이 작성한 서비스/액션 단위 테스트와 중복되는 좁은 범위 테스트는 만들지 않는다 — 이 에이전트는 여러 계층을 관통하는 시나리오에 집중
 - mutation testing(`stryker`)까지 돌릴 필요는 없음 — 회귀 스위트 작성이 목적
