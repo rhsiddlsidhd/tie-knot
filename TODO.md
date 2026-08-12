@@ -103,6 +103,12 @@
   근거: 카테고리 1→5종 확장으로 category 필터에 실질적 선택도 발생, 현재 `_id` 외 인덱스 없음
   완료 기준: 실데이터 규모 확인 후 필요시 인덱스 추가 + 쿼리플랜 전후 대조(수치)
 
+- [ ] **PR CI가 변경 파일과 무관하게 14개 job 전량 실행** (2026-08-13 발견, PR #19가 TODO.md 1줄 변경으로 unit×7/integration×2/e2e/mutation 등 14개 전부 트리거됨)
+  할 일: `dorny/paths-filter`로 첫 job에서 changed-files boolean 산출 → 나머지 14개 job은 `needs: filter`로 받아 실제 테스트 실행 스텝만 `if:`로 감싼다. **워크플로우 레벨 `paths-ignore`나 job 자체 skip은 쓰지 않는다** — job이 안 돌면 required check가 "Pending"에 멈춰 PR이 영구 대기(GitHub 공식 문서 확인된 gotcha).
+  위치: `.github/workflows/tdd.yml`
+  근거: `dev` 브랜치 protection에 14개 전부 required_status_checks로 걸려있고 `enforce_admins:true`(`gh api repos/.../branches/dev/protection` 확인) — job은 유지한 채 내부 스텝만 조건부 skip해야 required 계약이 안 깨짐. 업계 표준(빠른 건 자주, 느린 건 조건부)과도 일치, `dorny/paths-filter`+`needs`/`if:` 패턴이 사실상 정석([GitHub 공식 트러블슈팅](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/collaborating-on-repositories-with-code-quality-features/troubleshooting-required-status-checks), [Pantsbuild](https://www.pantsbuild.org/blog/2022/10/10/skipping-github-actions-jobs-without-breaking-branch-protection)).
+  완료 기준: docs-only PR에서 무거운 job(e2e/mutation/integration/unit)이 실제 테스트 없이 즉시 success 보고 + required check 14개 전부 정상 충족 확인, src/scripts 변경 PR에서는 기존과 동일하게 전부 실행되는 것도 대조 확인
+
 ---
 
 ## UI 수정
