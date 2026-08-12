@@ -26,7 +26,7 @@ function compilerOptions(root) {
   };
 }
 
-function runtimeSpecifiers(source, file) {
+export function runtimeSpecifiers(source, file) {
   const kind = file.endsWith("x") ? ts.ScriptKind.TSX : file.endsWith(".mjs") ? ts.ScriptKind.JS : ts.ScriptKind.TS;
   const tree = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, kind);
   const specifiers = [];

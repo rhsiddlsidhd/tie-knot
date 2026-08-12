@@ -85,6 +85,11 @@ describe("scope, proof hash and adapters", () => {
     }
   });
   it("unit/integration/e2e를 분류한다", () => { expect(classifyScope("src/a.test.ts")).toBe("unit"); expect(classifyScope("src/a.integration.test.ts")).toBe("integration"); expect(classifyScope("testing/e2e/a.spec.ts")).toBe("e2e"); });
+  it("상태 전이로 지키는 대상은 src 제품 코드이고 scripts 도구는 아니다", () => {
+    expect(classifyFile("src/server/services/product.service.ts")).toEqual({ kind: "product", guarded: true });
+    expect(classifyFile("scripts/tdd-guard/core/policy.mjs")).toEqual({ kind: "excluded", guarded: false });
+    expect(classifyFile("scripts/test-scope/test-graph.mjs")).toEqual({ kind: "excluded", guarded: false });
+  });
   it("testing/support는 제품 코드와 테스트 파일 양쪽에서 제외한다", () => {
     expect(classifyFile("testing/support/db.ts")).toEqual({ kind: "excluded", guarded: false });
     expect(classifyFile("testing/support/setup/mongo-server.ts")).toEqual({ kind: "excluded", guarded: false });
@@ -109,6 +114,36 @@ describe("scope, proof hash and adapters", () => {
     write(path.join(dir, "src/features/save.ts"), `import { Product } from "./product"; export const save = Product.create;\n`);
     write(path.join(dir, "src/features/product.ts"), `import mongoose from "mongoose"; export const Product = mongoose.model("Product", new mongoose.Schema({}));\n`);
     expect(requiredScopes(["src/features/save.ts"], dir)).toEqual(["integration", "unit"]);
+  });
+  it("type-only import는 런타임 의존이 아니므로 경계를 타고 넘지 않는다", () => {
+    const dir = temp();
+    write(path.join(dir, "src/ui/Badge.tsx"), `import type { Product } from "./product"; export const Badge = (product: Product) => null;\n`);
+    write(path.join(dir, "src/ui/product.ts"), `import mongoose from "mongoose"; export const Product = mongoose.model("Product", new mongoose.Schema({}));\n`);
+    expect(requiredScopes(["src/ui/Badge.tsx"], dir)).toEqual(["unit"]);
+  });
+  it("named import이 전부 type-only여도 런타임 의존이 아니다", () => {
+    const dir = temp();
+    write(path.join(dir, "src/ui/Card.tsx"), `import { type Product, type Option } from "./product"; export const Card = (product: Product) => null;\n`);
+    write(path.join(dir, "src/ui/product.ts"), `import mongoose from "mongoose"; export const Product = mongoose.model("Product", new mongoose.Schema({}));\n`);
+    expect(requiredScopes(["src/ui/Card.tsx"], dir)).toEqual(["unit"]);
+  });
+  it("값을 하나라도 함께 가져오면 런타임 의존으로 남는다", () => {
+    const dir = temp();
+    write(path.join(dir, "src/ui/Form.tsx"), `import { type Product, save } from "./product"; export const Form = () => save;\n`);
+    write(path.join(dir, "src/ui/product.ts"), `import mongoose from "mongoose"; export const save = mongoose.model("Product", new mongoose.Schema({})).create;\n`);
+    expect(requiredScopes(["src/ui/Form.tsx"], dir)).toEqual(["integration", "unit"]);
+  });
+  it("주석·문자열·정규식에 등장한 모듈명은 경계가 아니다", () => {
+    const dir = temp();
+    write(path.join(dir, "src/features/text.ts"), `// import mongoose from "mongoose"\nexport const pattern = /mongodb-memory-server/;\nexport const label = 'import "cloudinary"';\n`);
+    expect(requiredScopes(["src/features/text.ts"], dir)).toEqual(["unit"]);
+  });
+  it("require와 동적 import도 런타임 경계로 잡는다", () => {
+    const dir = temp();
+    write(path.join(dir, "src/features/lazy.ts"), `export const load = () => import("cloudinary");\n`);
+    write(path.join(dir, "src/features/legacy.ts"), `const mongoose = require("mongoose"); export const model = mongoose.model;\n`);
+    expect(requiredScopes(["src/features/lazy.ts"], dir)).toEqual(["integration", "unit"]);
+    expect(requiredScopes(["src/features/legacy.ts"], dir)).toEqual(["integration", "unit"]);
   });
   it("integration 실행 프로젝트는 테스트 소유 경계로 선택한다", () => {
     const dir = temp();
@@ -144,15 +179,15 @@ describe("필수 Guard 상태 전이", () => {
   });
   it("이동으로 삭제된 tracked 테스트는 건너뛰고 새 경로를 연결한다", () => {
     const dir = repo();
-    write(path.join(dir, "scripts/old.mjs"), "export const value = 1;\n");
-    write(path.join(dir, "scripts/old.test.mjs"), `import { value } from "./old.mjs";\n`);
-    execFileSync("git", ["add", "scripts/old.mjs", "scripts/old.test.mjs"], { cwd: dir });
-    execFileSync("git", ["commit", "-qm", "add scripts"], { cwd: dir });
-    fs.renameSync(path.join(dir, "scripts/old.mjs"), path.join(dir, "scripts/new.mjs"));
-    fs.renameSync(path.join(dir, "scripts/old.test.mjs"), path.join(dir, "scripts/new.test.mjs"));
-    write(path.join(dir, "scripts/new.test.mjs"), `import { value } from "./new.mjs";\n`);
+    write(path.join(dir, "src/features/old.ts"), "export const value = 1;\n");
+    write(path.join(dir, "src/features/old.test.ts"), `import { value } from "./old";\n`);
+    execFileSync("git", ["add", "src/features/old.ts", "src/features/old.test.ts"], { cwd: dir });
+    execFileSync("git", ["commit", "-qm", "add feature"], { cwd: dir });
+    fs.renameSync(path.join(dir, "src/features/old.ts"), path.join(dir, "src/features/new.ts"));
+    fs.renameSync(path.join(dir, "src/features/old.test.ts"), path.join(dir, "src/features/new.test.ts"));
+    write(path.join(dir, "src/features/new.test.ts"), `import { value } from "./new";\n`);
 
-    expect(resolveTests(dir, "scripts/new.mjs")).toEqual(["scripts/new.test.mjs"]);
+    expect(resolveTests(dir, "src/features/new.ts")).toEqual(["src/features/new.test.ts"]);
   });
   it("신규 assertion 실패만 Red로 인정한다", () => {
     expect(newRedFailures(

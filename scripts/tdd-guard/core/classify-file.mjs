@@ -30,7 +30,9 @@ export function classifyFile(file) {
   if (DEFAULT_EXCLUDES.some((pattern) => pattern.test(normalized))) {
     return { kind: "excluded", guarded: false };
   }
-  if (/\.[cm]?[jt]sx?$/.test(normalized) && (normalized.startsWith("src/") || normalized.startsWith("scripts/"))) {
+  // Guard가 상태 전이로 증명하는 대상은 제품 코드다. scripts는 그 증명을 수행하는 도구라
+  // 같은 절차로 자기 자신을 통과시킬 수 없다 — 테스트는 `guard` project와 CI가 강제한다.
+  if (/\.[cm]?[jt]sx?$/.test(normalized) && normalized.startsWith("src/")) {
     return { kind: "product", guarded: true };
   }
   return { kind: "excluded", guarded: false };
