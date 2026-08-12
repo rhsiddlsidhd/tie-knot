@@ -19,7 +19,24 @@ env:
   DEPLOYMENT_BASE_URL: http://127.0.0.1:3100
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          predicate-quantifier: some-with-excludes
+          filters: |
+            code:
+              - '**'
+              - '!**/*.md'
+
   static:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
@@ -36,10 +53,12 @@ jobs:
         with:
           path: ~/.cache/mongodb-binaries
           key: mongodb-8.2.6-${{ runner.os }}
-      - run: npm run lint && npm run typecheck && node scripts/ci/build.mjs
+      - if: needs.changes.outputs.code == 'true'
+        run: npm run lint && npm run typecheck && node scripts/ci/build.mjs
 
   unit-shard:
     name: unit-${{ matrix.shard }}
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -55,6 +74,7 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci
       - name: Run unit shard
+        if: needs.changes.outputs.code == 'true'
         run: |
           echo '| Shard | Files | Tests | Duration |' >> "$GITHUB_STEP_SUMMARY"
           echo '| --- | ---: | ---: | ---: |' >> "$GITHUB_STEP_SUMMARY"
@@ -62,7 +82,7 @@ jobs:
 
   unit:
     if: always()
-    needs: unit-shard
+    needs: [changes, unit-shard]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -70,6 +90,7 @@ jobs:
         run: test '${{ needs.unit-shard.result }}' = 'success'
 
   integration-client:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -80,9 +101,11 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npm run test:integration:client
+      - if: needs.changes.outputs.code == 'true'
+        run: npm run test:integration:client
 
   integration-server:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -100,9 +123,11 @@ jobs:
           path: ~/.cache/mongodb-binaries
           key: mongodb-8.2.6-${{ runner.os }}
       - run: npm ci
-      - run: npm run test:integration:server
+      - if: needs.changes.outputs.code == 'true'
+        run: npm run test:integration:server
 
   e2e-core:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -113,10 +138,13 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - if: needs.changes.outputs.code == 'true'
+        run: npx playwright install --with-deps chromium
+      - if: needs.changes.outputs.code == 'true'
+        run: npm run test:e2e
 
   mutation-changed:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -135,9 +163,11 @@ jobs:
           path: ~/.cache/mongodb-binaries
           key: mongodb-8.2.6-${{ runner.os }}
       - run: npm ci
-      - run: npm run test:mutation -- --base origin/dev
+      - if: needs.changes.outputs.code == 'true'
+        run: npm run test:mutation -- --base origin/dev
 
   tdd-policy:
+    needs: changes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -150,6 +180,9 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npx vitest run --project guard
-      - run: node scripts/test-scope/unit-shards.mjs verify
-      - run: node scripts/tdd-guard/bin/guard.mjs verify --ci
+      - if: needs.changes.outputs.code == 'true'
+        run: npx vitest run --project guard
+      - if: needs.changes.outputs.code == 'true'
+        run: node scripts/test-scope/unit-shards.mjs verify
+      - if: needs.changes.outputs.code == 'true'
+        run: node scripts/tdd-guard/bin/guard.mjs verify --ci
