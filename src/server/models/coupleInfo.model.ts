@@ -1,4 +1,5 @@
-import mongoose, { Schema, Model, Types } from "mongoose";
+import type { Model, Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // 공통 타입 정의
 interface Person {

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button, TypographyH1, TypographyMuted } from "@/client/components/atoms";
-import { ProductJSON } from "@/server/models";
+import type { ProductJSON } from "@/server/models";
 import { routes } from "@/shared/constants";
 import { TABLE_COLUMNS } from "../_constants";
 import { ProductTableRow } from "./ProductTableRow";

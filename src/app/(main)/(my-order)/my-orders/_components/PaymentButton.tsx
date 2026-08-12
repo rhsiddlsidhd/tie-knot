@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/client/components/atoms";
 import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/client/store";
-import { OrderJSON } from "@/server/models";
-import { CheckoutItem } from "@/shared/types";
+import type { OrderJSON } from "@/server/models";
+import type { CheckoutItem } from "@/shared/types";
 import { routes } from "@/shared/constants";
 
 const PaymentButton = ({ order }: { order: OrderJSON }) => {

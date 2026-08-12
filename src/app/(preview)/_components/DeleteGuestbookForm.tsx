@@ -5,7 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { deleteGuestbook } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { hasFieldErrors } from "@/shared/utils";
 import { useGuestbookModalStore } from "@/client/store";
 import { DeleteGuestbookForm as PureDeleteGuestbookForm } from "@/client/components/organisms";

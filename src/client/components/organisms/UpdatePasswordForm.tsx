@@ -3,7 +3,7 @@ import { Button, TypographyH1, TypographyMuted } from "@/client/components/atoms
 import { TextField } from "@/client/components/molecules";
 import Link from "next/link";
 import { getFieldError } from "@/shared/utils";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { routes } from "@/shared/constants";
 
 interface UpdatePasswordFormProps {

@@ -11,7 +11,7 @@ import { Checkbox, Button, Label, TypographyH1, TypographyMuted } from "@/client
 
 import { TextField } from "@/client/components/molecules";
 import { getFieldError } from "@/shared/utils";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { routes } from "@/shared/constants";
 
 interface SignupFormProps {

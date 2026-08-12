@@ -1,5 +1,5 @@
 import React from "react";
-import { AlertProps, AlertType } from "@/shared/types";
+import type { AlertProps, AlertType } from "@/shared/types";
 import { TypographyP } from "../atoms/typography";
 const Alert = ({ type = "info", children }: AlertProps) => {
   const config: { [key in AlertType]: string } = {

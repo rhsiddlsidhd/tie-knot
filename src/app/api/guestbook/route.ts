@@ -1,9 +1,10 @@
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/shared/types";
 import { getGuestbookService } from "@/server/services";
-import { IGuestbook } from "@/server/models";
-import { GuestbookListResponse } from "@/shared/schemas";
-import { NextRequest } from "next/server";
+import type { IGuestbook } from "@/server/models";
+import type { GuestbookListResponse } from "@/shared/schemas";
+import type { NextRequest } from "next/server";
 
 // getGuestbookService가 이미 password/__v/updatedAt은 select에서 제외한다 —
 // 여기선 응답 계약(GuestbookListResponse)에 맞춰 createdAt만 ISO 문자열로 명시 변환한다.

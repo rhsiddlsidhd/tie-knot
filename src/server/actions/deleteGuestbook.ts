@@ -1,6 +1,6 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { comparePasswords } from "@/server/lib/bcrypt";
 import { validateAndFlatten } from "@/shared/utils";
 import { GuestbookSchema } from "@/shared/schemas";

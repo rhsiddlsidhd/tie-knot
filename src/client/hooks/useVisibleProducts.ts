@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 
-import { Product } from "@/server/services";
-import { ProductFilterState } from "@/client/context/productFilter";
+import type { Product } from "@/server/services";
+import type { ProductFilterState } from "@/client/context/productFilter";
 import { getChosung } from "@/shared/utils";
 
 const useVisibleProducts = ({

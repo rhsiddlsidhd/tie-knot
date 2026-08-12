@@ -1,6 +1,6 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { requireAuth, deleteProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/shared/constants";

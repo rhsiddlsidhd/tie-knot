@@ -3,9 +3,9 @@
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/server/services";
 import { updatePremiumFeature } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { hasFieldErrors } from "@/shared/utils";
 import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "@/client/components/organisms";
 export function PremiumFeatureDialog({

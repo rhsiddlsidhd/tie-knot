@@ -1,7 +1,7 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
-import { Status } from "@/server/models";
+import type { APIResponse } from "@/shared/types";
+import type { Status } from "@/server/models";
 import { requireAuth, updateProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/shared/constants";

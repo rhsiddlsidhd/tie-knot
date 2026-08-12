@@ -1,4 +1,5 @@
-import mongoose, { Schema, Model, Types } from "mongoose";
+import type { Model, Types } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // Guestbook 문서 인터페이스
 export interface IGuestbook {

@@ -1,10 +1,13 @@
-import { ProductModel, InvitationProductModel, ProductJSON, ProductDB, IProduct } from "@/server/models";
-import { ProductDto } from "@/shared/schemas";
+import type { ProductJSON, ProductDB, IProduct } from "@/server/models";
+import { ProductModel, InvitationProductModel } from "@/server/models";
+import type { ProductDto } from "@/shared/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
 import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/shared/utils";
 import { AppError } from "@/shared/types";
-import { InvitationTheme, POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
-import mongoose, { Model, Types } from "mongoose";
+import type { InvitationTheme} from "@/shared/constants";
+import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
+import type { Model, Types } from "mongoose";
+import mongoose from "mongoose";
 
 // Product 타입을 export (다른 파일에서 사용)
 export type Product = ProductJSON;

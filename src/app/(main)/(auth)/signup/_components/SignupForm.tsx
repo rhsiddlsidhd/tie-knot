@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { signupUser } from "@/server/actions";
 import { hasFieldErrors } from "@/shared/utils";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { SignupForm as PureSignupForm } from "@/client/components/organisms";
 import { routes } from "@/shared/constants";
 export function SignupForm() {

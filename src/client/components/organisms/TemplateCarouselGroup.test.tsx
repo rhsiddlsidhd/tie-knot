@@ -1,10 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { Product } from "@/server/services";
+import type { Product } from "@/server/services";
+import type * as AtomsModule from "@/client/components/atoms";
 
 vi.mock("@/client/components/atoms", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/client/components/atoms")>();
+  const actual = await importOriginal<typeof AtomsModule>();
   return {
     ...actual,
     Carousel: ({ children }: { children: ReactNode }) => <div>{children}</div>,

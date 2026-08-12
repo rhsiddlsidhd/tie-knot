@@ -1,6 +1,6 @@
 "use client";
 import { fetcher } from "@/client/fetcher";
-import { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/server/models";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 

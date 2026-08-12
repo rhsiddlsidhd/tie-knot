@@ -1,6 +1,7 @@
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeSuccess, routeError } from "@/server/boundary";
 import { getAuth } from "@/server/services";
-import { AuthSessionResponse } from "@/shared/schemas";
+import type { AuthSessionResponse } from "@/shared/schemas";
 
 export const GET = async (): Promise<
   APIRouteResponse<AuthSessionResponse>

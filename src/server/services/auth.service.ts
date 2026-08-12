@@ -1,10 +1,11 @@
-import { UserModel, UserRole } from "@/server/models";
+import type { UserRole } from "@/server/models";
+import { UserModel } from "@/server/models";
 import { dbConnect } from "@/server/lib/mongodb";
 import { getCookie, deleteCookie } from "@/server/lib/cookies";
 import { decrypt } from "@/server/lib/jose";
 import mongoose from "mongoose";
 import { AppError } from "@/shared/types";
-import { AuthSession } from "@/shared/schemas";
+import type { AuthSession } from "@/shared/schemas";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { routes } from "@/shared/constants";

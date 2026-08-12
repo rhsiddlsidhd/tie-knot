@@ -1,4 +1,4 @@
-import { SelectFeatureDto } from "@/shared/schemas";
+import type { SelectFeatureDto } from "@/shared/schemas";
 
 export interface CheckoutItem {
   productId: string;

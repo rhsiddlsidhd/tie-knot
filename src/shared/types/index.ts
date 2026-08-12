@@ -1,6 +1,6 @@
-export * from "./alert";
-export * from "./announcement";
-export * from "./checkout";
+export type * from "./alert";
+export type * from "./announcement";
+export type * from "./checkout";
 export * from "./error";
-export * from "./field";
-export * from "./image";
+export type * from "./field";
+export type * from "./image";

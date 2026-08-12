@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
-import { OrderJSON } from "@/server/models";
+import type { OrderJSON } from "@/server/models";
 import { routes } from "@/shared/constants";
 import { PAYMENT_STATUS, PAY_METHOD_LABEL } from "../_constants";
 import { PaymentButton } from "./PaymentButton";

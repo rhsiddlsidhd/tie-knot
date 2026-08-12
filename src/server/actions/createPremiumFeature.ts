@@ -1,5 +1,5 @@
 "use server";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { premiumFeatureSchema } from "@/shared/schemas";
 import { createPremiumFeatureService, requireAuth } from "@/server/services";
 import { actionError } from "@/server/boundary";

@@ -2,8 +2,8 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/client/fetcher";
-import { Product } from "@/server/services";
-import { ProductCategory } from "@/shared/constants";
+import type { Product } from "@/server/services";
+import type { ProductCategory } from "@/shared/constants";
 
 export function useProducts(
   category: ProductCategory,

@@ -1,6 +1,7 @@
-import {
+import type {
   ProductCategory,
-  SubCategory,
+  SubCategory} from "@/shared/constants";
+import {
   SUB_CATEGORY_MAP,
   productCategoryLabels,
   subCategoryLabels,

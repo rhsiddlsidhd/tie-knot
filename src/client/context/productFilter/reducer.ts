@@ -2,7 +2,7 @@
 
 import { useReducer } from "react";
 import { createStateContext } from "../createStateContext";
-import { ProductFilterAction, ProductFilterState } from "./type";
+import type { ProductFilterAction, ProductFilterState } from "./type";
 
 const initialFilterState: ProductFilterState = {
   keyword: "",

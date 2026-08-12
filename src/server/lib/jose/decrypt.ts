@@ -1,5 +1,6 @@
-import { JWTPayload, jwtVerify, JWTVerifyResult } from "jose";
-import { DecryptProps, EncryptProps } from "./type";
+import type { JWTPayload, JWTVerifyResult } from "jose";
+import { jwtVerify } from "jose";
+import type { DecryptProps, EncryptProps } from "./type";
 import { ENTRY_ENCODED_KEY, JWT_ENCODED_KEY } from "./config";
 import { AppError } from "@/shared/types";
 

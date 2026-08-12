@@ -5,7 +5,7 @@ import { CloudImage } from "@/client/components/molecules";
 import { DELIVERY_FEE } from "@/shared/constants";
 
 import { useCheckoutData } from "@/client/hooks";
-import { SelectFeatureDto } from "@/shared/schemas";
+import type { SelectFeatureDto } from "@/shared/schemas";
 
 export const OrderSummary = () => {
   const { data, loading } = useCheckoutData();

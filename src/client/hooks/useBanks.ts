@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/client/fetcher";
-import { BanksResponse } from "@/shared/schemas";
+import type { BanksResponse } from "@/shared/schemas";
 
 export function useBanks() {
   const { data, error, isLoading } = useSWR<BanksResponse>("/api/banks", fetcher);

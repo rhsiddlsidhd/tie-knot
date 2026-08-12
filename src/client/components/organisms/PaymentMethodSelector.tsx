@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/client/components/atoms";
-import { PayMethod } from "@/server/models";
+import type { PayMethod } from "@/server/models";
 import { ArrowRightLeft, CreditCard, Landmark, Phone, Gift, Wallet } from "lucide-react";
 import React from "react";
-import { RadioField, RadioFieldOption, Alert } from "@/client/components/molecules";
+import type { RadioFieldOption} from "@/client/components/molecules";
+import { RadioField, Alert } from "@/client/components/molecules";
 
 const PAYMENT_METHODS: RadioFieldOption<PayMethod>[] = [
   {

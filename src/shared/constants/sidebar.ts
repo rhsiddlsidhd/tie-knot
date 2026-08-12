@@ -1,7 +1,8 @@
+import type {
+  LucideProps} from "lucide-react";
 import {
   HelpCircle,
   LayoutDashboard,
-  LucideProps,
   Package,
   Settings,
   ShoppingCart,

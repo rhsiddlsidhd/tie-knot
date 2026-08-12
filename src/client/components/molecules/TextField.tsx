@@ -2,8 +2,9 @@
 
 import { Input } from "@/client/components/atoms";
 import { FormField } from "@/client/components/molecules";
-import { FieldBase } from "@/shared/types";
-import { HTMLInputTypeAttribute, useState } from "react";
+import type { FieldBase } from "@/shared/types";
+import type { HTMLInputTypeAttribute} from "react";
+import { useState } from "react";
 
 export interface TextFieldProps extends FieldBase {
   type?: HTMLInputTypeAttribute;

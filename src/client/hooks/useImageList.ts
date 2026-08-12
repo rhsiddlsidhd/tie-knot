@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ImageListPayload } from "@/shared/types";
+import type { ImageListPayload } from "@/shared/types";
 
 export type ImageItem =
   | { type: "existing"; id: string; preview: string; originalUrl: string }

@@ -4,7 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import { UploadCloud, X } from "lucide-react";
-import { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/server/services";
 import { Alert, ImageField, SelectField } from "@/client/components/molecules";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Textarea, Switch, Checkbox, Label, TypographyMuted, TypographyH4 } from "@/client/components/atoms";
 
@@ -13,8 +13,9 @@ import { useImageList, type ImageItem } from "@/client/hooks";
 
 import { getCategoryOptions, getSubCategoryOptions } from "@/shared/utils";
 import { getFieldError } from "@/shared/utils";
-import { getInvitationThemeOptions, ProductCategory } from "@/shared/constants";
-import { APIResponse } from "@/shared/types";
+import type { ProductCategory } from "@/shared/constants";
+import { getInvitationThemeOptions } from "@/shared/constants";
+import type { APIResponse } from "@/shared/types";
 
 interface ProductRegistrationFormProps {
   premiumFeatures: PremiumFeature[];

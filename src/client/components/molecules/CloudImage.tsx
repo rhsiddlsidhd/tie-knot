@@ -1,6 +1,7 @@
 "use client";
 import { cn } from "@/client/lib/cn";
-import Image, { ImageLoaderProps, StaticImageData } from "next/image";
+import type { ImageLoaderProps, StaticImageData } from "next/image";
+import Image from "next/image";
 import React from "react";
 
 const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {

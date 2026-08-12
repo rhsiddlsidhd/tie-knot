@@ -1,4 +1,4 @@
-import { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/server/models";
 export interface GallerySectionProps {
   images: string[];
   lightboxEnabled: boolean;

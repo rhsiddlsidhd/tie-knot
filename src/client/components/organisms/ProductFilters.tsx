@@ -7,22 +7,24 @@ import { Command, CommandInput, Button, DropdownMenu, DropdownMenuContent, Dropd
 import { useSuggestProducts } from "@/client/hooks";
 
 
-import { Dispatch, useState } from "react";
+import type { Dispatch} from "react";
+import { useState } from "react";
 
-import { ProductFilterState, ProductFilterAction } from "@/client/context/productFilter";
-import { Product, PremiumFeature } from "@/server/services";
+import type { ProductFilterState, ProductFilterAction } from "@/client/context/productFilter";
+import type { Product, PremiumFeature } from "@/server/services";
 
 import { getSubCategoryOptions } from "@/shared/utils";
 
-import {
+import type {
   SubCategory,
   ProductCategory,
+  ProductSortType} from "@/shared/constants";
+import {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
   PREMIUM_FEATURE_LABELS,
   PRODUCT_SORT_KEYS,
-  PRODUCT_PRICE_KEYS,
-  ProductSortType,
+  PRODUCT_PRICE_KEYS
 } from "@/shared/constants";
 
 export function ProductFilters({

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Product } from "@/server/services";
+import type { Product } from "@/server/services";
 const useSuggestProducts = ({
   data,
   keyword,

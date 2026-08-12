@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createOrder, type CreateOrderResult } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { useOrderStore } from "@/client/store";
 import { usePortOnePayment } from "@/client/hooks";
 import { useCheckoutData } from "@/client/hooks";

@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Metadata } from "next";
+import type { Metadata } from "next";
 
 if (!process.env.BASE_URL || !process.env.DEPLOYMENT_BASE_URL) {
   throw new Error("환경변수가 설정되지 않았습니다.");

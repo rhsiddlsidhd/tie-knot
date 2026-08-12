@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createGuestbook } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { hasFieldErrors } from "@/shared/utils";
 import { useGuestbookModalStore } from "@/client/store";
 import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/client/components/organisms";

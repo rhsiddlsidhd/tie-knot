@@ -1,5 +1,5 @@
 import { ProductFeatures } from "@/client/components/organisms";
-import { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/server/services";
 import { ProductSummary } from "./ProductSummary";
 import { ProductViewTracker } from "./ProductViewTracker";
 

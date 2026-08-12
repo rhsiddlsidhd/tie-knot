@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext } from "react";
 
 export function createStateContext<State, InitialValue>(
   useValue: (initialValue: InitialValue) => State,

@@ -1,6 +1,6 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/shared/utils";

@@ -1,5 +1,6 @@
 import { AppError } from "@/shared/types";
-import { UserModel, BaseUser, IUser } from "@/server/models";
+import type { BaseUser, IUser } from "@/server/models";
+import { UserModel } from "@/server/models";
 import bcrypt from "bcryptjs";
 import { dbConnect } from "@/server/lib/mongodb";
 // 유저 생성

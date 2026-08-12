@@ -1,8 +1,10 @@
-import { NextRequest } from "next/server";
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
+import type { NextRequest } from "next/server";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/shared/types";
 import { requireAuth } from "@/server/services";
-import { signUploadRequest, UploadSignature } from "@/server/lib/cloudinary";
+import type { UploadSignature } from "@/server/lib/cloudinary";
+import { signUploadRequest } from "@/server/lib/cloudinary";
 
 export const POST = async (
   request: NextRequest,

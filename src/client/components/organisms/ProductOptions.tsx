@@ -6,10 +6,10 @@ import { toast } from "sonner";
 import { Badge, Button } from "@/client/components/atoms";
 
 import { QuantityStepper, StatusSelect } from "@/client/components/molecules";
-import { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/server/services";
 
-import { CheckoutItem } from "@/shared/types";
-import { SelectFeatureDto } from "@/shared/schemas";
+import type { CheckoutItem } from "@/shared/types";
+import type { SelectFeatureDto } from "@/shared/schemas";
 import { calculatePrice, formatPriceWithComma } from "@/shared/utils";
 
 // 무제한(maxQuantity===0) 모드의 stepper 상한 — DB/서버 제약이 아니라 순수 UI 편의 상한이다.

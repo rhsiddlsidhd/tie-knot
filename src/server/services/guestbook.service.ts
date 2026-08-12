@@ -1,5 +1,6 @@
-import { GuestbookModel, IGuestbook } from "@/server/models";
-import { GuestbookType } from "@/shared/schemas";
+import type { IGuestbook } from "@/server/models";
+import { GuestbookModel } from "@/server/models";
+import type { GuestbookType } from "@/shared/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
 import { AppError } from "@/shared/types";
 

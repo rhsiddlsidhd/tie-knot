@@ -1,10 +1,11 @@
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/shared/types";
 import { requireAuth, getCoupleInfoById } from "@/server/services";
-import { ICoupleInfo } from "@/server/models";
-import { CoupleInfoResponse } from "@/shared/schemas";
+import type { ICoupleInfo } from "@/server/models";
+import type { CoupleInfoResponse } from "@/shared/schemas";
 
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 // getCoupleInfoById는 .lean() 원본을 그대로 준다(_id/userId가 ObjectId, weddingDate/createdAt/updatedAt이 Date) —
 // NextResponse.json이 어차피 문자열로 직렬화하지만, 응답 타입(CoupleInfoResponse)과 실제로 맞춰서 명시한다.

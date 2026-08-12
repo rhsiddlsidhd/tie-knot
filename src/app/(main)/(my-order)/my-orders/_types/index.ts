@@ -1,1 +1,1 @@
-export * from "./orderStatus";
+export type * from "./orderStatus";

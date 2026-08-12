@@ -1,5 +1,5 @@
 import { AppError } from "@/shared/types";
-import { CloudinaryResource, UploadedCloudinaryAsset } from "./type";
+import type { CloudinaryResource, UploadedCloudinaryAsset } from "./type";
 
 const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = process.env.CLOUDINARY_UPLOAD_PRESET;

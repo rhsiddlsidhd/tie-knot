@@ -1,7 +1,8 @@
 "use client";
 
 import { ProductEditDialog } from "@/app/(admin)/admin/products/_components";
-import { AdminModalState, useAdminModalStore } from "@/client/store";
+import type { AdminModalState} from "@/client/store";
+import { useAdminModalStore } from "@/client/store";
 import React from "react";
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/client/components/atoms";

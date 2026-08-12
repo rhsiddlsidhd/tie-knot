@@ -2,7 +2,7 @@ import { Alert, TextField } from "@/client/components/molecules";
 import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/client/components/atoms";
 
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { getFieldError } from "@/shared/utils";
 
 interface DeleteGuestbookFormProps {

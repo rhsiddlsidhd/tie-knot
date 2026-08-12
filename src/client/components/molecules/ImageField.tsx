@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useRef, ChangeEvent } from "react";
+import type { ChangeEvent } from "react";
+import React, { useRef } from "react";
 import { Upload, Plus } from "lucide-react";
 import { ImagePreviewItem } from "@/client/components/molecules";
 import { Button, TypographyMuted } from "@/client/components/atoms";

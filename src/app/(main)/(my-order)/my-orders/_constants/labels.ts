@@ -1,5 +1,5 @@
-import { PayMethod } from "@/server/models";
-import { OrderStatus } from "../_types";
+import type { PayMethod } from "@/server/models";
+import type { OrderStatus } from "../_types";
 
 export const PAYMENT_STATUS: Record<OrderStatus, string> = {
   PENDING: "주문대기",

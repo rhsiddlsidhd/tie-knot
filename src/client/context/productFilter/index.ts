@@ -1,2 +1,2 @@
 export * from "./reducer";
-export * from "./type";
+export type * from "./type";
