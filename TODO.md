@@ -128,6 +128,8 @@
 - [ ] (2026-08-12, 위 항목 측정 중 파생) 요구 scope 판정이 import 전이 폐포를 쓰는 게 옳은지 재검토 필요 — 직접 import만 경계로 치면 69/410(17%)까지 떨어지지만, `src/server/actions/*`처럼 service를 경유해 DB에 닿는 파일이 unit만 요구하게 되어 과소 요구로 뒤집힌다. `docs/validation/testing-classification.md:16`의 "둘 이상의 실제 경계를 연결" 기준에 맞는 중간 규칙이 필요하다. 위 타입 import 정리 이후 수치를 다시 보고 판단한다.
 - [ ] (2026-08-12, guard 자체 수정 절차 확인 중 발견) `scripts/tdd-guard/core/run-vitest.mjs:6`의 `projectFor`가 scope `unit`이면 항상 project `unit`을 반환해 `scripts/**/*.test.mjs`(project `guard`)를 실행하지 못한다. guarded 범위가 `src/`로 좁혀져 당장 실害는 없으나, scripts 테스트를 Red/Green proof 흐름으로 돌릴 수단이 없다는 사실은 남는다.
 - [ ] (2026-08-12, AST 판정기 수정 중 관측) `scripts/test-scope/test-graph.mjs:41`의 `element.isTypeOnly`가 TypeScript deprecation 경고(TS6385) 대상 — 대체 API 확인 후 정리 필요.
+- [ ] (2026-08-12, `claude.mjs` 어댑터 사유 미전달 버그 수정 중 발견) `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md`가 존재하지 않는 pre-commit 게이트(lint/coverage80%/typecheck)를 계약으로 규정하고 TDD Guard·`test:red`·proof는 0건 언급 — `feature-team-orchestrator/SKILL.md:140`도 같은 유령 게이트를 표로 남김. 에이전트가 TDD Guard에 막혔을 때 복구 절차를 문서에서 못 찾는 문제로 이어짐.
+- [ ] (2026-08-12, 위와 같은 조사 중 보류) `codex.mjs`가 내보내는 `hookSpecificOutput`/`hookEventName: "PreToolUse"`/`permissionDecision`은 Claude Code 스키마 어휘라 Codex CLI가 실제로 이 형태를 소비하는지 미확인 — `.codex/hooks.json`도 Claude Code 구조(`matcher`/`statusMessage`)를 그대로 본떴다. 계약이 다르면 `exit 0`으로 나가 차단 자체가 안 걸릴 수 있음. Codex 문서 확인 + 실증 필요.
 
 ### 처리 완료 · 전제 소멸 (2026-08-12 전수 재검증)
 
