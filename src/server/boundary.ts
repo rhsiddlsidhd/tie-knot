@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
-import {
-  AppError,
+import type {
   ErrorCategory,
   ErrorPayload,
   SuccessResponse,
   ErrorResponse,
   APIResponse,
-  APIRouteResponse,
+  APIRouteResponse} from "@/shared/types";
+import {
+  AppError
 } from "@/shared/types";
 import { ERROR_SAFE_MESSAGES } from "@/shared/constants";
 

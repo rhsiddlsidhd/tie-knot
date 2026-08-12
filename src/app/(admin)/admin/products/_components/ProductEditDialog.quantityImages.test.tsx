@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type * as UtilsModule from "@/shared/utils";
 
 vi.mock("@/server/actions", () => ({
   updateProduct: () => async (): Promise<null> => null,
@@ -29,7 +30,7 @@ vi.mock("@/client/hooks", () => ({
 
 // REQ-6 검증용 — 실제 category.ts(REQ-1, backend-impl 담당)와 무관하게 조건부 렌더 로직만 검증.
 vi.mock("@/shared/utils", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/shared/utils")>();
+  const actual = await importOriginal<typeof UtilsModule>();
   return {
     ...actual,
     getCategoryOptions: () => [
@@ -43,7 +44,7 @@ vi.mock("@/shared/utils", async (importOriginal) => {
   };
 });
 
-import { Product } from "@/server/services";
+import type { Product } from "@/server/services";
 import { ProductEditDialog } from "./ProductEditDialog";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({

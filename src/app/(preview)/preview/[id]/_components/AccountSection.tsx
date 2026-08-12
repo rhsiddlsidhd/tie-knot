@@ -9,7 +9,7 @@ import { useCopy } from "@/client/hooks";
 import { cn } from "@/client/lib/cn";
 import { useBanks } from "@/client/hooks";
 
-import {
+import type {
   AccountInfo,
   AccountSectionMappedProps,
 } from "../_utils/accountSection.mapper";

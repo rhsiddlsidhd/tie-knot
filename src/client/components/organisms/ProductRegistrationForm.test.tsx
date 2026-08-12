@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
-import { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/server/services";
 
 const buildFeature = (overrides?: Partial<PremiumFeature>): PremiumFeature => ({
   _id: "feature-1",

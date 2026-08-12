@@ -1,6 +1,6 @@
-import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import type { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
-import { CookieName } from "./type";
+import type { CookieName } from "./type";
 
 interface SetCookieArgs {
   value: string;

@@ -1,7 +1,9 @@
-import { NextRequest } from "next/server";
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
+import type { NextRequest } from "next/server";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeSuccess, routeError } from "@/server/boundary";
 import { searchProductsService } from "@/server/services";
-import { ProductResponse, productSearchRequestSchema } from "@/shared/schemas";
+import type { ProductResponse} from "@/shared/schemas";
+import { productSearchRequestSchema } from "@/shared/schemas";
 import { validateAndFlatten } from "@/shared/utils";
 import { AppError } from "@/shared/types";
 

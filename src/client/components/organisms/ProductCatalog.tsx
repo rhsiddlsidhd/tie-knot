@@ -7,9 +7,9 @@ import {
 } from "@/client/context/productFilter";
 import React from "react";
 import { ProductFilters, ProductGrid } from "@/client/components/organisms";
-import { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/server/services";
 
-import { ProductCategory, SubCategory } from "@/shared/constants";
+import type { ProductCategory, SubCategory } from "@/shared/constants";
 
 interface ProductCatalogProps {
   products: Product[];

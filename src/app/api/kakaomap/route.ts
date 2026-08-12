@@ -1,7 +1,8 @@
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/shared/types";
-import { KakaomapResponse } from "@/shared/schemas";
-import { NextRequest } from "next/server";
+import type { KakaomapResponse } from "@/shared/schemas";
+import type { NextRequest } from "next/server";
 
 export const GET = async (
   req: NextRequest,

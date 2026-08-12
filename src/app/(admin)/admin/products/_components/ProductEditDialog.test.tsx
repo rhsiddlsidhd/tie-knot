@@ -19,7 +19,7 @@ vi.mock("@/client/hooks", () => ({
   }),
 }));
 
-import { Product } from "@/server/services";
+import type { Product } from "@/server/services";
 import { ProductEditDialog } from "./ProductEditDialog";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({

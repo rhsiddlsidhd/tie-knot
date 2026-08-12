@@ -7,7 +7,7 @@ import { Button, Dialog, DialogContent, DialogTitle } from "@/client/components/
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";
-import { GallerySectionProps } from "../_utils/gallerySection.mapper";
+import type { GallerySectionProps } from "../_utils/gallerySection.mapper";
 
 export function GallerySection({
   images,

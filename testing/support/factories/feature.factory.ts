@@ -1,4 +1,4 @@
-import { PremiumFeatureDto } from "@/shared/schemas";
+import type { PremiumFeatureDto } from "@/shared/schemas";
 
 export const buildFeatureInput = (
   overrides?: Partial<PremiumFeatureDto>,

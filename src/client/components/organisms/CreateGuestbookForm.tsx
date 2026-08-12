@@ -3,7 +3,7 @@ import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, Dia
 import { TextField, SwitchField } from "@/client/components/molecules";
 
 import { cn } from "@/client/lib/cn";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { getFieldError } from "@/shared/utils";
 
 interface CreateGuestbookFormProps {

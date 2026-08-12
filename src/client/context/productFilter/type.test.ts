@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ProductFilterState, ProductFilterAction } from "./type";
+import type { ProductFilterState, ProductFilterAction } from "./type";
 
 describe("ProductFilterState/ProductFilterAction 타입 계약", () => {
   it("ProductFilterState는 필터 UI가 쓰는 필드를 전부 포함한다", () => {

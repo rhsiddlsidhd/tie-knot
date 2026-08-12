@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { createCoupleInfo, updateCoupleInfo } from "@/server/actions";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { useImageUpload } from "./useImageUpload";
 import { useImageList } from "./useImageList";
 import { useFetchCoupleInfo } from "./useFetchCoupleInfo";

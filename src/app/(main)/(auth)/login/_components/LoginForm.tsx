@@ -6,8 +6,8 @@ import { mutate } from "swr";
 import { toast } from "sonner";
 
 import { loginUser } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
-import { UserRole } from "@/server/models";
+import type { APIResponse } from "@/shared/types";
+import type { UserRole } from "@/server/models";
 import { getFieldError, hasFieldErrors } from "@/shared/utils";
 import { LoginForm as PureLoginForm } from "@/client/components/organisms";
 import { routes } from "@/shared/constants";

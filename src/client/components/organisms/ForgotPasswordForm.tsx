@@ -5,7 +5,7 @@ import { Card, Button, TypographyH1, TypographyLarge, TypographyMuted, Typograph
 
 import { TextField } from "@/client/components/molecules";
 import { getFieldError } from "@/shared/utils";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { routes } from "@/shared/constants";
 
 interface ForgotPasswordFormProps {

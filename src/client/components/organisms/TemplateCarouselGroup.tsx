@@ -2,7 +2,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import React from "react";
 import { ProductCard } from "./ProductCard";
 
-import { ProductJSON } from "@/server/models";
+import type { ProductJSON } from "@/server/models";
 interface TemplateCarouselGroupProps {
   data: ProductJSON[];
   title: string;

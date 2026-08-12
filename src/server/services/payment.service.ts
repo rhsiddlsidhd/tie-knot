@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import * as PortOne from "@portone/server-sdk";
-import {
-  PaymentModel,
+import type {
   PayStatus,
   PayMethod,
   PaymentMethodDetail,
-  IPayment,
+  IPayment} from "@/server/models";
+import {
+  PaymentModel,
   OrderModel,
   ProductModel,
 } from "@/server/models";

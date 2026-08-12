@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
-import { CheckoutItem } from "@/shared/types";
+import type { CheckoutItem } from "@/shared/types";
 
 const { pushMock, setOrderMock } = vi.hoisted(() => ({
   pushMock: vi.fn(),

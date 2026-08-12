@@ -6,7 +6,7 @@ import { BankField, TextField } from "@/client/components/molecules";
 
 import { ChevronDown } from "lucide-react";
 
-import { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/server/models";
 import type { BanksResponse } from "@/shared/schemas";
 
 import { useState } from "react";

@@ -4,7 +4,7 @@ import { encrypt } from "@/server/lib/jose";
 import { validateAndFlatten } from "@/shared/utils";
 import { sendEmail } from "@/server/lib/nodemailer";
 import { emailSchema } from "@/shared/schemas";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { checkEmailDuplicate } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/shared/constants";

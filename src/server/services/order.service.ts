@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
-import { IOrder, OrderJSON, OrderModel } from "@/server/models";
-import { CreateOrderDto } from "@/shared/schemas";
+import type { IOrder, OrderJSON} from "@/server/models";
+import { OrderModel } from "@/server/models";
+import type { CreateOrderDto } from "@/shared/schemas";
 import { generateUid } from "@/shared/utils";
 import { dbConnect } from "@/server/lib/mongodb";
 import { AppError } from "@/shared/types";

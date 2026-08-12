@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/client/components/atoms";
 import { navigationButtons } from "@/shared/constants";
-import { NavigationGeo } from "@/client/hooks";
+import type { NavigationGeo } from "@/client/hooks";
 import Image from "next/image";
 import React from "react";
 

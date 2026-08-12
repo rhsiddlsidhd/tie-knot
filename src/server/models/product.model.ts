@@ -1,10 +1,12 @@
-import mongoose, { model, Schema, Model } from "mongoose";
-import {
+import type { Model } from "mongoose";
+import mongoose, { model, Schema } from "mongoose";
+import type {
   ProductCategory,
   SubCategory,
+  InvitationTheme} from "@/shared/constants";
+import {
   SUB_CATEGORY_MAP,
-  PRODUCT_CATEGORIES,
-  InvitationTheme,
+  PRODUCT_CATEGORIES
 } from "@/shared/constants";
 
 export type { ProductCategory, SubCategory };

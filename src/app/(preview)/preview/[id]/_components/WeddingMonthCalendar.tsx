@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { DigitalWatch } from "@/client/components/molecules";
 import { useCountdown } from "@/client/hooks";
 
-import { WeddingMonthCalendarProps } from "../_utils/weddingMonthCalendar.mapper";
+import type { WeddingMonthCalendarProps } from "../_utils/weddingMonthCalendar.mapper";
 
 const getDayOfMonth = (year: number, month: number) => {
   const dayInMonth = [];

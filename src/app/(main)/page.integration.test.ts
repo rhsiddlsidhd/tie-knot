@@ -17,6 +17,7 @@
 //    (01_api_contract.md §3, §4의 계약을 실행으로 확인).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
+import type * as ServicesModule from "@/server/services";
 import { dbConnect } from "@/server/lib/mongodb";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
@@ -27,7 +28,7 @@ import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
 // createProductService/updateProductLikeService/getFeaturedTemplatesService/
 // getProductService는 실제 구현 그대로(spread) 둔다.
 vi.mock("@/server/services", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/server/services")>();
+  const actual = await importOriginal<typeof ServicesModule>();
   return {
     ...actual,
     getPopularProductsService: vi.fn(actual.getPopularProductsService),

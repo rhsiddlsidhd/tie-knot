@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import type * as AtomsModule from "@/client/components/atoms";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
 vi.mock("@/client/hooks", () => ({ useAuth: useAuthMock }));
 vi.mock("@/client/components/atoms", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/client/components/atoms")>();
+  const actual = await importOriginal<typeof AtomsModule>();
   const Passthrough = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );

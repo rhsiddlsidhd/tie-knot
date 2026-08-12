@@ -1,6 +1,7 @@
 "use client";
 
-import { GuestbookModalType, useGuestbookModalStore } from "@/client/store";
+import type { GuestbookModalType} from "@/client/store";
+import { useGuestbookModalStore } from "@/client/store";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent } from "@/client/components/atoms";

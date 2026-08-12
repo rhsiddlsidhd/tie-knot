@@ -1,6 +1,6 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { validateAndFlatten } from "@/shared/utils";
 import { premiumFeatureSchema } from "@/shared/schemas";
 import { updatePremiumFeatureService, requireAuth } from "@/server/services";

@@ -5,7 +5,7 @@ import { useCopy, useNavigationGeo, useSubwayLineInfo } from "@/client/hooks";
 import { EyebrowSection } from "./EyebrowSection";
 
 import { Navigation } from "./Navigation";
-import { LocationSectionProps } from "../_utils/locationSection.mapper";
+import type { LocationSectionProps } from "../_utils/locationSection.mapper";
 
 export function LocationSection({
   venueName,

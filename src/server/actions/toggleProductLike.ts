@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { APIResponse, AppError } from "@/shared/types";
+import type { APIResponse} from "@/shared/types";
+import { AppError } from "@/shared/types";
 import { requireAuth, updateProductLikeService } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/shared/constants";

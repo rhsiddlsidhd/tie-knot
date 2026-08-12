@@ -1,6 +1,7 @@
-import { APIRouteResponse, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/server/boundary";
+import { routeError } from "@/server/boundary";
 import { AppError } from "@/shared/types";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { validateAndFlatten } from "@/shared/utils";
 import { requireAuth } from "@/server/services";

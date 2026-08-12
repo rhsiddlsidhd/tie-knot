@@ -1,6 +1,6 @@
-import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
+import type { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
-import { CookieName } from "./type";
+import type { CookieName } from "./type";
 
 export const getCookie = async (
   key: CookieName,

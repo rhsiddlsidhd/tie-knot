@@ -1,5 +1,6 @@
-import { PAY_METHOD } from "@/shared/constants";
-import mongoose, { Schema, Types, Model } from "mongoose";
+import type { PAY_METHOD } from "@/shared/constants";
+import type { Types, Model } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // --- Enums --- TRANS 실시간 계좌이체 VBANK 가상 계좌
 

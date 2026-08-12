@@ -4,9 +4,10 @@ import { useState, startTransition } from "react";
 import type React from "react";
 import { toast } from "sonner";
 import { validateAndFlatten } from "@/shared/utils";
-import { BuyerInfo, BuyerInfoSchema } from "@/shared/schemas";
-import { CheckoutItem } from "@/shared/types";
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import type { BuyerInfo} from "@/shared/schemas";
+import { BuyerInfoSchema } from "@/shared/schemas";
+import type { CheckoutItem } from "@/shared/types";
+import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { routes } from "@/shared/constants";
 
 interface UseCheckoutFormOptions {

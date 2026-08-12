@@ -1,5 +1,6 @@
-import { FeatureModel, IFeature } from "@/server/models";
-import { PremiumFeatureDto } from "@/shared/schemas";
+import type { IFeature } from "@/server/models";
+import { FeatureModel } from "@/server/models";
+import type { PremiumFeatureDto } from "@/shared/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
 
 import mongoose from "mongoose";

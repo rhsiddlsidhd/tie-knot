@@ -1,5 +1,6 @@
-import mongoose, { Schema, Types, Model } from "mongoose";
-import { PayMethod } from "./payment.model";
+import type { Types, Model } from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import type { PayMethod } from "./payment.model";
 import { PAY_METHOD } from "@/shared/constants";
 interface ProductPricing {
   originalPrice: number;

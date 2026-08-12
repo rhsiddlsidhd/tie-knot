@@ -130,6 +130,8 @@
 - [ ] (2026-08-12, AST 판정기 수정 중 관측) `scripts/test-scope/test-graph.mjs:41`의 `element.isTypeOnly`가 TypeScript deprecation 경고(TS6385) 대상 — 대체 API 확인 후 정리 필요.
 - [ ] (2026-08-12, `claude.mjs` 어댑터 사유 미전달 버그 수정 중 발견) `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md`가 존재하지 않는 pre-commit 게이트(lint/coverage80%/typecheck)를 계약으로 규정하고 TDD Guard·`test:red`·proof는 0건 언급 — `feature-team-orchestrator/SKILL.md:140`도 같은 유령 게이트를 표로 남김. 에이전트가 TDD Guard에 막혔을 때 복구 절차를 문서에서 못 찾는 문제로 이어짐.
 - [ ] (2026-08-12, 위와 같은 조사 중 보류) `codex.mjs`가 내보내는 `hookSpecificOutput`/`hookEventName: "PreToolUse"`/`permissionDecision`은 Claude Code 스키마 어휘라 Codex CLI가 실제로 이 형태를 소비하는지 미확인 — `.codex/hooks.json`도 Claude Code 구조(`matcher`/`statusMessage`)를 그대로 본떴다. 계약이 다르면 `exit 0`으로 나가 차단 자체가 안 걸릴 수 있음. Codex 문서 확인 + 실증 필요.
+- [ ] (2026-08-12, `refactor/type-import-conventions`에서 127번 항목 실행 완료 후 실측) 3층 규칙(eslint autofix 286건 + 배럴 `consistent-type-exports` 8건 + `verbatimModuleSyntax`) 적용 결과 integration 요구가 308/410(75.1%) → 262/410(63.9%)로 46개(11.2%p) 감소. 기대만큼 극적이지 않음 — 나머지 262개는 타입이 아니라 실제 값(함수·컴포넌트)이 `src/server/actions/*` 등을 거쳐 진짜 경계에 닿아서다. 129번(direct-import 대안)·122번(배럴 강제 규칙 누적비용) 항목과 함께 재검토 대상. 상세: `docs/conventions/type-imports.md`.
+- [ ] (2026-08-12, 위 리팩토링 진행 중 등록) `tdd-exceptions.json`의 `type-import-convention-refactor-2026-08` 항목이 `expiresAt: 2026-08-26`로 살아있다 — PR 머지 후 만료 전에 삭제할 것(만료 시 `loadExceptions`가 throw해 전체 TDD Guard가 막힌다). 삭제는 이 리팩토링과 무관한 별도 커밋으로 처리.
 
 ### 처리 완료 · 전제 소멸 (2026-08-12 전수 재검증)
 

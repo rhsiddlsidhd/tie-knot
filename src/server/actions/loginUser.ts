@@ -1,13 +1,13 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 
 import { validateAndFlatten } from "@/shared/utils";
 import { LoginSchema } from "@/shared/schemas";
 import { encrypt } from "@/server/lib/jose";
 import { setCookie } from "@/server/lib/cookies";
 import { getUser } from "@/server/services";
-import { UserRole } from "@/server/models";
+import type { UserRole } from "@/server/models";
 import { comparePasswords } from "@/server/lib/bcrypt";
 import { actionError } from "@/server/boundary";
 

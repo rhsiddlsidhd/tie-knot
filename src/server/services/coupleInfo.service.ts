@@ -1,5 +1,6 @@
-import { CoupleInfoModel, ICoupleInfo } from "@/server/models";
-import { CoupleInfoSchemaDto } from "@/shared/schemas";
+import type { ICoupleInfo } from "@/server/models";
+import { CoupleInfoModel } from "@/server/models";
+import type { CoupleInfoSchemaDto } from "@/shared/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
 import { AppError } from "@/shared/types";
 

@@ -13,6 +13,7 @@
 // 통합 테스트 선례와 동일하게 "@/server/services" 부분 mock).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
+import type * as ServicesModule from "@/server/services";
 import { dbConnect } from "@/server/lib/mongodb";
 import { clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
@@ -29,7 +30,7 @@ vi.mock("next/cache", () => ({
 }));
 
 vi.mock("@/server/services", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/server/services")>();
+  const actual = await importOriginal<typeof ServicesModule>();
   return {
     ...actual,
     requireAuth: vi.fn(),

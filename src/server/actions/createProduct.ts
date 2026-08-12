@@ -1,6 +1,6 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { deleteProductAsset, uploadProductImage } from "@/server/lib/cloudinary";
 import { requireAuth, createProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";

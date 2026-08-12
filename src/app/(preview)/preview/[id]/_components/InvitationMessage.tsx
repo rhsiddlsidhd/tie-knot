@@ -5,7 +5,7 @@ import { EyebrowSection } from "./EyebrowSection";
 
 
 import { useGuestbookModalStore } from "@/client/store";
-import { InvitationMessageMappedProps } from "../_utils/invitationMessage.mapper";
+import type { InvitationMessageMappedProps } from "../_utils/invitationMessage.mapper";
 
 const pinMessage = [
   "저희 두 사람의 소중한 첫걸음에",

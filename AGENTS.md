@@ -37,6 +37,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - TDD Guard의 정책·명령·구현을 변경할 때는 먼저 `docs/validation/tdd-guard.md`를 끝까지 읽는다.
 - mutation testing의 범위·정책·명령을 변경할 때는 먼저 `docs/validation/mutation-testing.md`를 끝까지 읽는다.
 - CI workflow나 브랜치 보호·필수 체크를 변경할 때는 먼저 `docs/validation/ci-gates.md`를 끝까지 읽는다.
+- import 구문을 추가·수정하거나 배럴(`index.ts`)의 재수출을 바꿀 때는 먼저 `docs/conventions/type-imports.md`를 끝까지 읽는다.
 
 ---
 

@@ -2,7 +2,7 @@
 
 import { FormField, AutoCompleteList } from "@/client/components/molecules";
 import { Command, CommandInput } from "@/client/components/atoms";
-import { FieldBase } from "@/shared/types";
+import type { FieldBase } from "@/shared/types";
 import { useMemo, useState } from "react";
 
 type ComboboxOption = { value: string; label: string };

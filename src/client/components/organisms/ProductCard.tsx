@@ -1,8 +1,9 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import { Product } from "@/server/services";
+import type { Product } from "@/server/services";
 import { calculatePrice } from "@/shared/utils";
-import { SubCategory, subCategoryLabels } from "@/shared/constants";
+import type { SubCategory} from "@/shared/constants";
+import { subCategoryLabels } from "@/shared/constants";
 import { Badge } from "../atoms/badge";
 import { TypographyMuted } from "../atoms/typography";
 import { CloudImage } from "../molecules/CloudImage";

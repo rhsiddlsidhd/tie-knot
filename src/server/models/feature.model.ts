@@ -1,4 +1,5 @@
-import mongoose, { Schema, Types, Model } from "mongoose";
+import type { Types, Model } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 // toJSON() 반환 타입 정의
 

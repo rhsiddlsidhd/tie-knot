@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
+import type * as ReactModule from "react";
 
 const { useActionStateMock, routerPushMock, uploadMock, getPayloadMock, searchParamsMock } =
   vi.hoisted(() => ({
@@ -11,7 +12,7 @@ const { useActionStateMock, routerPushMock, uploadMock, getPayloadMock, searchPa
   }));
 
 vi.mock("react", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react")>();
+  const actual = await importOriginal<typeof ReactModule>();
   return { ...actual, useActionState: useActionStateMock };
 });
 

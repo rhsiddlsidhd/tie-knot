@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { ProductJSON } from "@/server/models";
+import type { ProductJSON } from "@/server/models";
 import { LiveDemoSection } from "./LiveDemoSection";
 
 const buildProduct = (): ProductJSON =>

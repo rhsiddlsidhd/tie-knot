@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 
-import { PayStatus } from "@/server/models";
-import { BuyerInfo } from "@/shared/schemas";
+import type { PayStatus } from "@/server/models";
+import type { BuyerInfo } from "@/shared/schemas";
 
 import { Spinner } from "@/client/components/molecules";
 import { PaymentPendingOverlay } from "@/app/(main)/(checkout)/payment/_components/PaymentPendingOverlay";

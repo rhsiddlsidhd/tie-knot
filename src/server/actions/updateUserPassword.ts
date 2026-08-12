@@ -2,7 +2,7 @@
 
 import { validateAndFlatten } from "@/shared/utils";
 import { PWConfirmSchema } from "@/shared/schemas";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { changePassword } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { decrypt } from "@/server/lib/jose";

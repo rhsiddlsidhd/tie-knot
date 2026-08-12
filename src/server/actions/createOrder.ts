@@ -1,6 +1,6 @@
 "use server";
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { redirect } from "next/navigation";
 
 import { getCookie } from "@/server/lib/cookies";
@@ -9,7 +9,7 @@ import { actionError } from "@/server/boundary";
 
 import { validateAndFlatten } from "@/shared/utils";
 import { createOrderSchema } from "@/shared/schemas";
-import { PayMethod } from "@/server/models";
+import type { PayMethod } from "@/server/models";
 import { routes } from "@/shared/constants";
 export type CreateOrderResult = {
   merchantUid: string;

@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { OrderJSON } from "@/server/models";
+import type { OrderJSON } from "@/server/models";
 
 export const groupOrdersByDate = (orders: OrderJSON[]) => {
   const grouped: Record<string, OrderJSON[]> = {};

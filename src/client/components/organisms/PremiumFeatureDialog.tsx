@@ -3,9 +3,9 @@ import { Button, DialogFooter, Input, TypographyMuted, Textarea, Label } from "@
 
 
 
-import { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/server/services";
 import { Alert, TextField } from "@/client/components/molecules";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 import { getFieldError } from "@/shared/utils";
 
 interface PremiumFeatureDialogProps {

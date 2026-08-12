@@ -4,7 +4,7 @@ import type React from "react";
 import { useActionState, useEffect, useState } from "react";
 import { UploadCloud, X } from "lucide-react";
 import { updateProduct } from "@/server/actions";
-import { Product } from "@/server/services";
+import type { Product } from "@/server/services";
 import { Alert, ImageField, SelectField, Spinner, CloudImage } from "@/client/components/molecules";
 import { Input, Button, Textarea, Switch, Checkbox, Label, TypographyH4, TypographyMuted } from "@/client/components/atoms";
 
@@ -14,7 +14,8 @@ import { usePremiumFeature, useImageList, type ImageItem } from "@/client/hooks"
 
 
 import { getCategoryOptions, getFieldError, getSubCategoryOptions } from "@/shared/utils";
-import { getInvitationThemeOptions, InvitationTheme, ProductCategory, SubCategory } from "@/shared/constants";
+import type { InvitationTheme, ProductCategory, SubCategory } from "@/shared/constants";
+import { getInvitationThemeOptions } from "@/shared/constants";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/client/store";
 interface ProductEditDialogProps {

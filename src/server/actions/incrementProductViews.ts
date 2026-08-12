@@ -2,7 +2,7 @@
 
 import { incrementProductViewsService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 
 export const incrementProductViews = async (
   productId: string,

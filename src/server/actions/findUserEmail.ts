@@ -4,7 +4,7 @@
  * DB에서 아이디 가져오기
  */
 
-import { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/shared/types";
 
 import { UserEmailSchema } from "@/shared/schemas";
 

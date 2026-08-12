@@ -3,8 +3,8 @@
 import { Label, RadioGroup, RadioGroupItem } from "@/client/components/atoms";
 
 import React, { useState } from "react";
-import { LucideIcon } from "lucide-react";
-import { FieldBase } from "@/shared/types";
+import type { LucideIcon } from "lucide-react";
+import type { FieldBase } from "@/shared/types";
 import { TypographyMuted, TypographySmall } from "../atoms/typography";
 
 export type RadioFieldOption<T = string> = {
