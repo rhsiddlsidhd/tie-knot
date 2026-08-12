@@ -263,7 +263,7 @@ export const syncPayment = async (paymentId: string) => {
 
       // 4~6. Payment 저장 + Order 상태 전이 + Product salesCount 증가는 하나의
       // 논리적 단위라 트랜잭션으로 묶는다 — 중간에 하나라도 실패하면 전부
-      // 롤백된다(services/CLAUDE.md "트랜잭션" 섹션 참고).
+      // 롤백된다(services/AGENTS.md "트랜잭션" 섹션 참고).
       let payment!: mongoose.HydratedDocument<IPayment>;
 
       await mongoose.connection.transaction(async (session) => {

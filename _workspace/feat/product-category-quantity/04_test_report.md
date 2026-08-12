@@ -74,11 +74,11 @@ await ProductModel.findOneAndUpdate(
 ```
 5회 반복 재현, 100% 재현됨. `updateProductService`를 통해 호출해도 동일(대상 id가 없으면 항상 재현).
 
-**원인 추정**: `product.model.ts`의 `subCategory` 비동기 validator가 `this.get("category")`로 먼저 페이로드의 category를 읽으려 시도하는데(모델 CLAUDE.md Gotchas에 기록된 기존 로직), 실제로는 update 쿼리 컨텍스트에서 이 값이 기대만큼 페이로드를 반영하지 못하고 `this.model.findOne(this.getQuery())` DB 폴백으로 넘어가는 것으로 보인다. 대상 문서가 존재하지 않으면 이 폴백 조회도 빈 값을 리턴 → `category`가 계속 `undefined` → subCategory 검증이 무조건 실패 → mongoose가 `ValidationError`를 던지고 `updateProductService`가 이를 `AppError("INTERNAL")`로 감싼다. 반면 REQ-7의 실제 시나리오(category를 `invitation`으로 바꾸는 경우)는 discriminator 모델(`InvitationProductModel`)의 쿼리 조건 자동 주입 경로를 타면서 이 문제를 우회해 깔끔하게 `null`(→`NOT_FOUND`)로 귀결된다 — 그래서 REQ-7 자체 테스트는 정상 통과한다.
+**원인 추정**: `product.model.ts`의 `subCategory` 비동기 validator가 `this.get("category")`로 먼저 페이로드의 category를 읽으려 시도하는데(모델 AGENTS.md Gotchas에 기록된 기존 로직), 실제로는 update 쿼리 컨텍스트에서 이 값이 기대만큼 페이로드를 반영하지 못하고 `this.model.findOne(this.getQuery())` DB 폴백으로 넘어가는 것으로 보인다. 대상 문서가 존재하지 않으면 이 폴백 조회도 빈 값을 리턴 → `category`가 계속 `undefined` → subCategory 검증이 무조건 실패 → mongoose가 `ValidationError`를 던지고 `updateProductService`가 이를 `AppError("INTERNAL")`로 감싼다. 반면 REQ-7의 실제 시나리오(category를 `invitation`으로 바꾸는 경우)는 discriminator 모델(`InvitationProductModel`)의 쿼리 조건 자동 주입 경로를 타면서 이 문제를 우회해 깔끔하게 `null`(→`NOT_FOUND`)로 귀결된다 — 그래서 REQ-7 자체 테스트는 정상 통과한다.
 
 **영향 범위**: REQ-1로 새로 늘어난 4개 카테고리(favor/accessory/guestbook/ceremony)는 전부 discriminator 없는 base `ProductModel`을 쓴다(REQ-7 acceptance criteria §. discriminator는 invitation에만 존재). 따라서 이 4개 카테고리 상품을 잘못된/삭제된 productId로 수정 시도하면(관리자 오탈자, 경합 상태로 방금 삭제된 상품 등) 관리자에게 "상품을 찾을 수 없습니다"가 아니라 일반화된 "서버에 문제가 발생했습니다"가 뜬다 — 에러 분류가 실제 원인과 다르게 표시되는 문제다.
 
-**test-suite가 고치지 않은 이유**: `product.model.ts`의 async validator 폴백 로직 자체를 건드려야 하는 수정이라(모델 CLAUDE.md의 기존 Gotchas 기록과 얽혀 있고, mongoose update-validator 컨텍스트에 대한 재설계 판단이 필요) "사소한 수정"보다는 설계 판단이 필요한 영역으로 판단해 플래그만 남긴다. REQ-7 자체 acceptance(카테고리 변경 시도 → NOT_FOUND)는 이 버그와 무관하게 정상 동작하며 테스트로 확인 완료했다.
+**test-suite가 고치지 않은 이유**: `product.model.ts`의 async validator 폴백 로직 자체를 건드려야 하는 수정이라(모델 AGENTS.md의 기존 Gotchas 기록과 얽혀 있고, mongoose update-validator 컨텍스트에 대한 재설계 판단이 필요) "사소한 수정"보다는 설계 판단이 필요한 영역으로 판단해 플래그만 남긴다. REQ-7 자체 acceptance(카테고리 변경 시도 → NOT_FOUND)는 이 버그와 무관하게 정상 동작하며 테스트로 확인 완료했다.
 
 **권장**: 별도 이슈로 `TODO.md` 버그수정 섹션 등록 검토(리더 판단 요청). 재현 스크립트는 이 리포트에 그대로 남겨둔다.
 

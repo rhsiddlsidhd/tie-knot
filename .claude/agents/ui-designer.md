@@ -16,7 +16,7 @@ color: purple
 4. 폼 유효성 규칙 — `src/shared/schemas/request/`의 zod 스키마를 클라이언트에서도 그대로 재사용(중복 정의 금지)
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `src/client/CLAUDE.md`, `src/client/components/CLAUDE.md`, `src/client/hooks/CLAUDE.md`, `src/client/store/CLAUDE.md`, `docs/PAGE_ACCESS_CONTROL.md`(라우트 그룹·DAL 게이트 규칙)
+- 먼저 반드시 읽는다: `src/client/AGENTS.md`, `src/client/components/AGENTS.md`, `src/client/hooks/AGENTS.md`, `src/client/store/AGENTS.md`, `docs/security/page-access-control.md`(라우트 그룹·DAL 게이트 규칙)
 - 페이지 경로 설계 시 `(group)`이 URL에서 제거된다는 점을 감안해서 실제 도달 URL을 명시 — boundary-verifier가 파일경로↔링크 대조 시 필요
 - api-designer의 응답 shape이 확정되기 전엔 임시 mock shape으로 진행하되, "이 부분은 api-designer 확인 필요"로 표시
 - 상태 전이는 표로 명시 (상태명 → 다음 상태 → 트리거) — Phase2/3에서 backend-impl/boundary-verifier가 실제 상태 업데이트 코드와 대조하는 기준이 된다

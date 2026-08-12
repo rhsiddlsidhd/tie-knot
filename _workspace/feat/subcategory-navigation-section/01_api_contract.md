@@ -2,7 +2,7 @@
 
 > 작성: api-designer-subcat
 > 대상: REQ-4(딥링크 도달) 계약. REQ-1/REQ-2(category.ts 리팩토링)는 이 문서의 값 원천이자 전제.
-> 근거 문서: `src/server/boundary.ts`, `docs/architecture/error-handling.md`, `docs/architecture/data-access.md`, `src/shared/schemas/CLAUDE.md`, `src/app/api/CLAUDE.md`
+> 근거 문서: `src/server/boundary.ts`, `docs/architecture/error-handling.md`, `docs/architecture/data-access.md`, `src/shared/schemas/AGENTS.md`, `src/app/api/AGENTS.md`
 
 ---
 
@@ -81,7 +81,7 @@ byCategory: (category: string, subCategory?: SubCategory) =>
   subCategory ? `/products/${category}?subCategory=${subCategory}` : `/products/${category}`,
 ```
 
-빌더로 가는 이유 — `src/shared/constants/CLAUDE.md` L24가 "라우트 경로 문자열을 소비처에 리터럴로 흩어 쓰지 않는다, 동적 세그먼트는 문자열 템플릿이 아니라 경로 빌더 함수로 제공한다"를 이미 규정한다. 이 계약이 요구하는 "하드코딩 금지"와 "무변환"은 그대로 충족된다(`category`는 prop, `subCategory`는 `SUB_CATEGORY_MAP` 순회값을 변환 없이 그대로 끼움). 부수 효과로 파라미터명이 바뀌어도 수정 지점이 `routes.ts` 한 곳으로 국한된다.
+빌더로 가는 이유 — `src/shared/constants/AGENTS.md` L24가 "라우트 경로 문자열을 소비처에 리터럴로 흩어 쓰지 않는다, 동적 세그먼트는 문자열 템플릿이 아니라 경로 빌더 함수로 제공한다"를 이미 규정한다. 이 계약이 요구하는 "하드코딩 금지"와 "무변환"은 그대로 충족된다(`category`는 prop, `subCategory`는 `SUB_CATEGORY_MAP` 순회값을 변환 없이 그대로 끼움). 부수 효과로 파라미터명이 바뀌어도 수정 지점이 `routes.ts` 한 곳으로 국한된다.
 
 - optional 인자라 기존 단일 인자 호출부(`navigation.ts`, `SearchEmptyState.tsx`)는 무회귀 — 다만 회귀 확인 대상으로 남긴다.
 - **인자 부재 시 파라미터 자체를 안 붙이는 분기가 §4.3의 "부재 = 전체(정규형)"와 정확히 일치한다** — 빌더가 `?subCategory=all`을 생성할 경로가 구조적으로 없다.
@@ -263,7 +263,7 @@ useVisibleProducts — 기존 로직 그대로, 코드 변경 없음
 | db-migrator-subcat | 응답 스키마 L17 `subCategory` 좁히기 | **양측 독립적으로 "좁히지 않음" 결론 일치.** §7 |
 | db-migrator-subcat | 하이픈 유실 → 무증상 빈 목록 리스크 제기 | **수용, 계약에 반영.** 무변환 규칙을 §4.2에 필수 조항으로 신설 + ui-designer에 전달 완료 |
 | db-migrator-subcat | 응답 스키마 L16 `category` (3번째 중복) | **리더 결정: REQ-2 범위 포함 확정.** 교체 대상 3파일 — §7.1 |
-| ui-designer-subcat | href 조립을 `routes.ts` 빌더로 이관 | **채택.** `constants/CLAUDE.md` L24 경로 빌더 규칙에 부합하고, 계약의 하드코딩 금지·무변환 요건을 그대로 충족 — §4.2 |
+| ui-designer-subcat | href 조립을 `routes.ts` 빌더로 이관 | **채택.** `constants/AGENTS.md` L24 경로 빌더 규칙에 부합하고, 계약의 하드코딩 금지·무변환 요건을 그대로 충족 — §4.2 |
 | ui-designer-subcat | 빌더 2번째 인자 타입 `SubCategory` | **확정(ui-designer 수용).** 무변환 규칙이 컴파일타임 강제로 승격 — §4.2 |
 
 **미해결 쟁점: 없음.** 리더 판단 대기 건도 없음(§7.1 L16 스코프 건은 포함으로 확정 종결).
@@ -273,7 +273,7 @@ useVisibleProducts — 기존 로직 그대로, 코드 변경 없음
 
 ## 11. 구현자 체크리스트
 
-1. `page.tsx`가 `searchParams: Promise<{ subCategory?: string }>`를 받고 `await`로 푼다 (`src/app/api/CLAUDE.md`의 params 비동기 규칙과 동일 계열).
+1. `page.tsx`가 `searchParams: Promise<{ subCategory?: string }>`를 받고 `await`로 푼다 (`src/app/api/AGENTS.md`의 params 비동기 규칙과 동일 계열).
 2. `isSubCategory()` 통과 실패 시 `"all"` — `notFound()` 호출하지 않는다.
 3. `initialSubCategory` prop 이름으로 `ProductCatalog` 두 층을 통과시킨다.
 4. `ProductFilterProvider initialValue`에 spread로 주입한다. `initialFilterState` 상수 자체는 건드리지 않는다.

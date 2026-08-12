@@ -187,7 +187,7 @@ export const getOrdersByUserId = async (
     .sort({ createdAt: -1 })
     .lean<IOrder[]>();
 
-  // .lean() 결과의 ObjectId 필드를 명시적으로 문자열화한다(services/CLAUDE.md
+  // .lean() 결과의 ObjectId 필드를 명시적으로 문자열화한다(services/AGENTS.md
   // 컨벤션) — Server Component(my-orders/page.tsx)가 Client Component로 그대로
   // 넘기므로, ObjectId 인스턴스가 하나라도 남으면 "Only plain objects..." 에러가 난다.
   return orders.map((order) => ({

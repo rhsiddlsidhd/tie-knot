@@ -40,7 +40,7 @@ export async function signupUser(
   if (isEmail) {
     return {
       success: false,
-      // 409 Conflict는 taxonomy(src/CLAUDE.md)에 없음 — 입력값(이메일) 자체의 문제라 VALIDATION으로 분류(400)
+      // 409 Conflict는 taxonomy(src/AGENTS.md)에 없음 — 입력값(이메일) 자체의 문제라 VALIDATION으로 분류(400)
       error: { category: "VALIDATION", message: "이미 존재하는 이메일 입니다." },
     };
   }

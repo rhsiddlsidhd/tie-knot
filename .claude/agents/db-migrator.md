@@ -16,7 +16,7 @@ color: green
 4. api-designer가 제안하는 응답 필드명과 실제 컬럼명 정렬 (불일치 시 어느 쪽이 맞출지 결정)
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `src/server/models/CLAUDE.md`, 관련 기존 모델 파일(`src/server/models/*.model.ts`) — 이 프로젝트 필드는 camelCase로 통일되어 있음, snake_case 도입 금지
+- 먼저 반드시 읽는다: `src/server/models/AGENTS.md`, 관련 기존 모델 파일(`src/server/models/*.model.ts`) — 이 프로젝트 필드는 camelCase로 통일되어 있음, snake_case 도입 금지
 - 기존 모델 확장으로 해결되면 신규 모델 생성 금지 (예: 이 프로젝트는 이미 `couple-info`가 order와 연결되는 식으로 기존 모델에 필드 추가하는 패턴을 씀 — 최근 커밋 참고)
 - MongoDB는 스키마리스이므로 "마이그레이션 SQL"이 아니라 기존 문서 backfill 스크립트 초안(있어야 하는 경우만)으로 작성
 - 필드명은 api-designer의 응답 shape과 반드시 맞춘다 — 다르면 어느 쪽이 변경할지 SendMessage로 확정 짓고 결과를 문서에 반영

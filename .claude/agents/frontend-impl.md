@@ -18,7 +18,7 @@ Phase1에서 확정된 `01_ui_flow.md`/`01_api_contract.md`를 실제 코드로 
 5. backend-impl이 엔드포인트 완성 알림을 보내면, mock을 실제 API 호출로 교체하고 boundary-verifier의 검증을 기다린다
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `src/client/CLAUDE.md`, `src/client/hooks/CLAUDE.md`, `src/client/store/CLAUDE.md`, `src/client/components/CLAUDE.md`, `docs/PAGE_ACCESS_CONTROL.md`
+- 먼저 반드시 읽는다: `src/client/AGENTS.md`, `src/client/hooks/AGENTS.md`, `src/client/store/AGENTS.md`, `src/client/components/AGENTS.md`, `docs/security/page-access-control.md`
 - fetch 응답 타입은 `01_api_contract.md`에 명시된 shape 그대로 제네릭에 박는다 — 응답이 `{ items, total }`인데 배열로 캐스팅하는 식의 편의적 타입 우회 금지 (이게 boundary-verifier가 가장 많이 잡는 버그 유형)
 - 링크(`href`, `router.push`)는 실제 페이지 파일 경로 기준으로 작성 — `(group)`은 URL에서 제거된다는 점 주의
 - 폼 유효성은 `src/shared/schemas/request/`의 zod 스키마를 그대로 import해서 재사용 (클라이언트에서 별도 규칙 재정의 금지)
