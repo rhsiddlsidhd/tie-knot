@@ -1,4 +1,4 @@
-# docs/TESTING_GUIDELINE.md
+# 테스트 가이드라인
 
 > Last updated: 2026-08-11
 > vitest 설치 완료 — `vitest.config.ts`(루트), 공개 `test`/`test:unit`/`test:integration:*` 스크립트, `vite-tsconfig-paths`로 alias 해석. `mongodb-memory-server`도 설치·연동 완료(`src/test/setup/mongo-server.ts` globalSetup, `src/server/lib/mongodb/connect.ts`의 `MONGO_TEST_URI` 오버라이드) — 아래 Tooling/DB 테스트 섹션 참고. 팩토리는 `src/test/factories/`에 도메인당 1개씩 있다.

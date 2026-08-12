@@ -23,7 +23,7 @@ src/app/api/
 - `next/headers`의 `cookies()`/`headers()`를 동기 함수처럼 호출하지 않는다 — 두 함수 모두 비동기이므로 `await cookies()`/`await headers()`로 사용한다.
 - GET 이외의 메서드(POST/PUT/PATCH/DELETE)에 캐싱 옵트인(`export const dynamic = 'force-static'`)을 적용하지 않는다 — 공식 문서: GET을 제외한 나머지 메서드는 같은 파일에 캐시되는 GET과 나란히 있어도 캐시되지 않는다.
 - Route Handler 안에서 `updateTag()`를 호출하지 않는다 — 공식 문서: `updateTag`는 Server Action 전용이며 Route Handler에서 호출하면 에러가 던져진다. Route Handler에서 캐시를 무효화해야 하면 `revalidateTag`/`revalidatePath`를 쓴다.
-- 응답은 `src/server/boundary.ts`의 `routeSuccess`(성공)/`routeError`(에러)로만 만든다 — `NextResponse.json(...)`/`Response.json(...)`을 route.ts 안에서 직접 호출하지 않는다. Server Action은 이 계약 대상이 아니다(예상된 실패를 이 envelope 없이 plain 객체로 직접 리턴, `actionError` 사용 — `src/server/actions/CLAUDE.md` 참고). `routeSuccess`/`routeError`가 뭘 하는지는 `src/server/CLAUDE.md`(Key Files), 왜 두 채널이 갈라지는지는 `docs/ERROR_HANDLING.md` §채널 분리 규칙 참고.
+- 응답은 `src/server/boundary.ts`의 `routeSuccess`(성공)/`routeError`(에러)로만 만든다 — `NextResponse.json(...)`/`Response.json(...)`을 route.ts 안에서 직접 호출하지 않는다. Server Action은 이 계약 대상이 아니다(예상된 실패를 이 envelope 없이 plain 객체로 직접 리턴, `actionError` 사용 — `src/server/actions/CLAUDE.md` 참고). `routeSuccess`/`routeError`가 뭘 하는지는 `src/server/CLAUDE.md`(Key Files), 왜 두 채널이 갈라지는지는 `docs/architecture/error-handling.md` §채널 분리 규칙 참고.
 
 ## Gotchas
 

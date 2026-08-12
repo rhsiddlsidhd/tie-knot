@@ -5,7 +5,7 @@
 // searchProductsService를 추가하면서, 바로 옆에 있는 기존
 // getAllProductsService(및 그걸 감싸는 이 route.ts)의 동작을 건드리지
 // 않았는지 실제 DB를 관통해 확인한다. 이 route.ts는 지금까지 route 레벨
-// 테스트가 없었다(docs/TESTING_GUIDELINE.md 상 서비스 레이어가 이미
+// 테스트가 없었다(docs/validation/testing-guideline.md 상 서비스 레이어가 이미
 // getAllProductsService를 커버해 후순위였음) — 이번 기능 변경 범위에
 // 인접한 파일이라 최소 스모크만 추가한다.
 import { describe, it, expect, beforeEach, afterAll } from "vitest";

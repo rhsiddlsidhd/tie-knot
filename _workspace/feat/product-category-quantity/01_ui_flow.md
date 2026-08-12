@@ -85,7 +85,7 @@
 ### 1-B. 관리자 등록 플로우
 
 ```
-/admin/products/new   [page.tsx — verifySession() 게이트 필수, docs/PAGE_ACCESS_CONTROL.md]
+/admin/products/new   [page.tsx — verifySession() 게이트 필수, docs/security/page-access-control.md]
   └ _components/ProductRegistrationForm (컨테이너: useActionState(createProduct))
       └ organisms/ProductRegistrationForm (순수, 로컬 UI state 보유)
           ├ 카테고리 선택(SelectField) → selectedCategory

@@ -2,7 +2,7 @@
 
 > 작성: api-designer-popular
 > 대상 요구사항: REQ-1(조회 경로), REQ-2/REQ-3에 대한 데이터 계약 부분
-> 근거 문서: `docs/DATA_ACCESS.md`, `docs/ERROR_HANDLING.md`, `src/server/boundary.ts`, `src/app/api/CLAUDE.md`, `src/shared/schemas/CLAUDE.md`, `src/server/services/CLAUDE.md`
+> 근거 문서: `docs/architecture/data-access.md`, `docs/architecture/error-handling.md`, `src/server/boundary.ts`, `src/app/api/CLAUDE.md`, `src/shared/schemas/CLAUDE.md`, `src/server/services/CLAUDE.md`
 
 ---
 
@@ -22,7 +22,7 @@
 
 ## 1. 채널 결정 — 신규 엔드포인트 없음
 
-`docs/DATA_ACCESS.md` 표 기준으로 판정한다.
+`docs/architecture/data-access.md` 표 기준으로 판정한다.
 
 | 표 행 | 조건 | 이번 기능 해당 여부 |
 | --- | --- | --- |
@@ -154,7 +154,7 @@ return (
 
 ## 4. 에러/빈 결과 흐름
 
-`docs/ERROR_HANDLING.md` 기준으로 이번 기능이 실제로 만드는 에러 경로는 하나뿐이다.
+`docs/architecture/error-handling.md` 기준으로 이번 기능이 실제로 만드는 에러 경로는 하나뿐이다.
 
 | 상황 | 서비스 동작 | 호출부(page.tsx) | 최종 UI |
 | --- | --- | --- | --- |

@@ -2,7 +2,7 @@
 
 > 작성: api-designer / Phase1
 > 대상 요구사항: REQ-1 (REQ-3·REQ-4의 소비 계약 포함)
-> 근거 문서: `src/server/boundary.ts`, `src/app/api/CLAUDE.md`, `src/server/services/CLAUDE.md`, `src/shared/schemas/CLAUDE.md`, `docs/DATA_ACCESS.md`, `docs/ERROR_HANDLING.md`
+> 근거 문서: `src/server/boundary.ts`, `src/app/api/CLAUDE.md`, `src/server/services/CLAUDE.md`, `src/shared/schemas/CLAUDE.md`, `docs/architecture/data-access.md`, `docs/architecture/error-handling.md`
 >
 > **개정 이력**
 > - v2 (현재) — 리더 정정 반영: 쿼리 파라미터는 **`q` 하나뿐**(별도 `category`/`subCategory` 필터 파라미터 없음). db-migrator 지적 반영: 라벨 역조회를 **부분일치**로 변경(정확일치면 "돌잔"이 "돌잔치"에 매칭 실패).
@@ -29,7 +29,7 @@
 
 ## 1. 채널 선택 근거 (채널 B = `route.ts`)
 
-`docs/DATA_ACCESS.md`의 3분기표 기준:
+`docs/architecture/data-access.md`의 3분기표 기준:
 
 - row 3 — **"브라우저가 캐싱/재검증(dedupe, revalidate) 필요한 조회(GET)" → `route.ts` + `fetcher`(`useSWR`)**.
 - REQ-3이 `/search` 페이지에서 `useSWR` + `fetcher`로 호출하도록 명시했고, 검색어 입력마다 반복 호출되는 조회라 dedupe/revalidate가 실제로 필요하다. row 1(Server Component 직접 import)은 검색어가 클라이언트 상태라 해당 없고, row 2(Server Action)는 mutation이 아니라 해당 없다.
@@ -227,7 +227,7 @@ db-migrator 지적: 정확일치로 짜면 `"돌잔"` 검색이 라벨 `"돌잔�
 
 1. **`route.ts`는 얇은 어댑터라는 기존 계약.** `src/app/api/products/route.ts`는 `searchParams` 파싱 → 서비스 호출 → `routeSuccess/routeError` 3줄이 전부다. `src/app/api/CLAUDE.md`도 응답 빌더 규칙만 다루고 도메인 로직을 route에 두는 것을 전제하지 않는다.
 2. **역조회는 도메인 로직이다.** `productCategoryLabels`/`subCategoryLabels`(`src/shared/utils/category.ts` — 카테고리 타입의 단일 소스)에 의존하는 비즈니스 규칙이고, `src/server/services/CLAUDE.md` Overview가 "DB 접근 + 비즈니스 로직"을 services 소관으로 규정한다.
-3. **결정적 근거 — 재사용 경로.** `docs/DATA_ACCESS.md` row 1에 따라 Server Component가 나중에 검색을 서버 렌더 시점에 쓰면 `route.ts`를 거치지 않고 서비스를 직접 import한다. 역조회가 `route.ts`에 있으면 그 경로에서 통째로 누락돼, 같은 함수가 호출 경로에 따라 다르게 동작한다.
+3. **결정적 근거 — 재사용 경로.** `docs/architecture/data-access.md` row 1에 따라 Server Component가 나중에 검색을 서버 렌더 시점에 쓰면 `route.ts`를 거치지 않고 서비스를 직접 import한다. 역조회가 `route.ts`에 있으면 그 경로에서 통째로 누락돼, 같은 함수가 호출 경로에 따라 다르게 동작한다.
 
 **단, 역조회 *헬퍼 함수 자체*는 `src/shared/utils/category.ts`에 둔다** — 라벨 맵의 소유자가 그 파일이고(`src/shared/utils/CLAUDE.md` Gotchas: "`category.ts`의 `ProductCategory`는 카테고리 타입의 단일 소스"), 새 카테고리 추가 시 한 파일만 고치면 되게 유지하기 위함이다. 즉 **헬퍼는 `category.ts`, 그 헬퍼를 호출해 쿼리를 만드는 것은 서비스**다.
 

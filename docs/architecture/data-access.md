@@ -1,4 +1,4 @@
-# docs/DATA_ACCESS.md
+# 데이터 접근 경로
 
 > Last updated: 2026-07-28
 > `src/CLAUDE.md`에서 분리됨.

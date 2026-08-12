@@ -4,7 +4,7 @@
 
 ## Overview
 
-Server Component가 `src/server/services/*`를 직접 import해서 호출하는 것과 같은 축이다 — route.ts를 안 거치고 함수를 직접 호출한다는 점은 동일하다(`docs/DATA_ACCESS.md` 참고). 다른 점은 호출 트리거뿐이다: Client Component가 이 폴더의 함수를 `useActionState`나 form `action`에 직접 넘기면, Next.js가 그 함수 참조를 RPC로 변환해 서버에서 실행한다
+Server Component가 `src/server/services/*`를 직접 import해서 호출하는 것과 같은 축이다 — route.ts를 안 거치고 함수를 직접 호출한다는 점은 동일하다(`docs/architecture/data-access.md` 참고). 다른 점은 호출 트리거뿐이다: Client Component가 이 폴더의 함수를 `useActionState`나 form `action`에 직접 넘기면, Next.js가 그 함수 참조를 RPC로 변환해 서버에서 실행한다
 
 ## Structure
 
@@ -20,7 +20,7 @@ src/server/actions/
 - Server Action 파일에 `"use server"` 지시어 없이 서버 전용 함수를 export하지 않는다 — 이 지시어가 파일(또는 함수) 최상단에 있어야 React/Next가 해당 함수를 Server Action으로 인식한다.
 - `redirect()`를 try/catch 블록 안에서 호출하지 않는다 — 공식 문서: `redirect`는 내부적으로 에러를 throw해 동작하므로 반드시 try/catch 밖에서 호출해야 한다. try 안에서 호출하면 catch가 리다이렉트 신호를 삼켜 리다이렉트가 동작하지 않는다.
 - **예상 가능한 실패(입력 검증 실패, 비즈니스 규칙 위반 등)는 throw하지 않고 리턴값으로 모델링한다** — 공식 문서(`error-handling.md`): "avoid using try/catch blocks and throw errors [for expected errors]. Instead, model expected errors as return values." `try/catch`는 진짜 예측 불가능한 예외(DB 연결 실패 등)에만 쓰고, 잡은 뒤엔 구체적 원인을 노출하지 않는 일반 메시지로 변환해서 리턴한다. 반환 타입은 각 액션이 자기 유스케이스에 맞게 직접 정의한다 — 공용 계약은 `src/server/CLAUDE.md`(Route Handler), `src/client/CLAUDE.md`(Client fetch) 참고(이 폴더 소관 아님).
-  - 서비스 레이어가 던진 `AppError`를 액션이 다시 throw해서 `boundary.ts`의 `actionError`가 캐치·번역(`{ success:false, error }`)하는 것도 이 규칙 위반 아님 — 액션 "자신의" 검증 실패가 아니라 더 아래 레이어에서 이미 난 예외를 리턴값으로 옮기는 것뿐이다. 상세 규칙은 `docs/ERROR_HANDLING.md` §채널 A 참고.
+  - 서비스 레이어가 던진 `AppError`를 액션이 다시 throw해서 `boundary.ts`의 `actionError`가 캐치·번역(`{ success:false, error }`)하는 것도 이 규칙 위반 아님 — 액션 "자신의" 검증 실패가 아니라 더 아래 레이어에서 이미 난 예외를 리턴값으로 옮기는 것뿐이다. 상세 규칙은 `docs/architecture/error-handling.md` §채널 A 참고.
 - 클라이언트가 넘긴 값을 소유권 판단 없이 그대로 DB 조회/수정 조건으로 쓰지 않는다 — 리소스 참조(ID)와 변경 내용만 클라이언트에서 받고, 소유자/권한은 세션에서 다시 조회해 대조한다. zod 등 스키마 검증은 값의 "형태"만 보장할 뿐 소유권을 보장하지 않는다.
 - DB 레코드를 그대로 반환값으로 넘기지 않는다 — Server Action의 리턴값은 클라이언트로 직렬화되므로, UI가 실제로 쓰는 필드만 추려 반환한다.
 - mutation 이후 관련 캐시를 갱신하지 않고 끝내지 않는다 — Server Action 안에서는 즉시 반영(read-your-own-writes)이 필요하면 `updateTag`를, 오리진이 Route Handler 등 Server Action 바깥이면 `revalidateTag`/`revalidatePath`를 쓴다(`updateTag`는 Server Action 밖에서 호출하면 에러가 던져진다).

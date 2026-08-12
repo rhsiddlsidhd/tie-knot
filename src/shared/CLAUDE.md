@@ -28,4 +28,4 @@ src/shared/
 
 ## 관련 문서
 
-- server/client/shared 3분할 배경: `docs/ARCHITECTURE.md`
+- server/client/shared 3분할 배경: `docs/architecture/README.md`

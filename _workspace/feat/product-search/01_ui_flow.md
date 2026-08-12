@@ -434,10 +434,10 @@ export function ProductSearch() {
 | | 원인 | 시각적 표현 | 문구 |
 |---|---|---|---|
 | `LOADING` | 응답 대기 | `Spinner` (회전) | 없음 |
-| `ERROR` | 네트워크 실패 / 서버 5xx·4xx | `Alert type="error"` (빨간 배경) | 서버가 준 `ErrorPayload.message` **그대로**. 클라이언트가 문구를 재작성하지 않는다 (`docs/ERROR_HANDLING.md` §채널 C) |
+| `ERROR` | 네트워크 실패 / 서버 5xx·4xx | `Alert type="error"` (빨간 배경) | 서버가 준 `ErrorPayload.message` **그대로**. 클라이언트가 문구를 재작성하지 않는다 (`docs/architecture/error-handling.md` §채널 C) |
 | `EMPTY` | 200 + `data: []` | 점선 테두리 박스 + 중립 아이콘 | "검색결과가 없습니다" |
 
-에러 문구를 클라이언트에서 category별로 매핑하지 않는 이유: `docs/ERROR_HANDLING.md`가 "클라이언트는 실패를 해석하지 않는다 — 서버가 준 `ErrorPayload`를 그대로 렌더한다"고 못박고 있고, 민감 분류(INTERNAL/EXTERNAL_SERVICE)의 message 일반화는 이미 서버 `toErrorPayload`가 끝냈다.
+에러 문구를 클라이언트에서 category별로 매핑하지 않는 이유: `docs/architecture/error-handling.md`가 "클라이언트는 실패를 해석하지 않는다 — 서버가 준 `ErrorPayload`를 그대로 렌더한다"고 못박고 있고, 민감 분류(INTERNAL/EXTERNAL_SERVICE)의 message 일반화는 이미 서버 `toErrorPayload`가 끝냈다.
 
 ---
 
@@ -553,7 +553,7 @@ export function SearchEmptyState({ query }: { query: string }) {
 | 최대 길이 100자 | `<Input maxLength={100}>` | HTML 속성만으로 충분. 별도 검증 로직 불필요 |
 | 그 외 형식 검증 없음 | — | 검색어에 특수문자/공백이 들어와도 정상 입력이다. `encodeURIComponent`로 전송 안전성만 확보 |
 | 서버가 `q`에 zod 제약(min/max 등)을 둔다면 | `@/shared/schemas`에서 **그 스키마를 import해 재사용**한다. 클라이언트에서 동일 규칙을 재정의하지 않는다 | 프로젝트 원칙(스키마 중복 정의 금지) — 현재 `src/shared/schemas/request/`에 검색용 스키마는 없다 |
-| 검증 실패 시 표시 | 서버가 내려준 `ErrorPayload`(`category: "VALIDATION"`)를 `Alert`에 그대로 렌더 | `docs/ERROR_HANDLING.md` §채널 C. `fieldErrors`는 검색창이 단일 필드라 사실상 안 쓰임 |
+| 검증 실패 시 표시 | 서버가 내려준 `ErrorPayload`(`category: "VALIDATION"`)를 `Alert`에 그대로 렌더 | `docs/architecture/error-handling.md` §채널 C. `fieldErrors`는 검색창이 단일 필드라 사실상 안 쓰임 |
 
 ---
 

@@ -52,7 +52,7 @@ Home은 정적 렌더(ISR, `revalidate = 3600`) 페이지라 사용자 인터랙
 4. 카드 목록은 가로로 넘긴다(터치 스와이프 / 트랙패드 가로 스크롤 / Tab 이동 시 브라우저 자동 스크롤). 화살표 버튼 없음(§3.2 근거).
 5. 카드 클릭 → `ProductCard`가 이미 갖고 있는 `<Link href={routes.products.detail(category, _id)}>`로 상세 페이지 이동. **신규 네비게이션 코드 없음.**
 
-접근 제어: Home은 `docs/PAGE_ACCESS_CONTROL.md`의 인증 필요 페이지 목록에 없는 공개 라우트다 — `verifySession()` 게이트 대상 아니고, 이번 섹션이 그 판단을 바꾸지 않는다(로그인 여부와 무관하게 동일 노출).
+접근 제어: Home은 `docs/security/page-access-control.md`의 인증 필요 페이지 목록에 없는 공개 라우트다 — `verifySession()` 게이트 대상 아니고, 이번 섹션이 그 판단을 바꾸지 않는다(로그인 여부와 무관하게 동일 노출).
 
 ---
 

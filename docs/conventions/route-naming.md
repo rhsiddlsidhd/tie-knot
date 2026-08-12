@@ -1,4 +1,4 @@
-# ROUTE_NAMING
+# 라우트 명명 규칙
 
 > Last updated: 2026-08-08
 
