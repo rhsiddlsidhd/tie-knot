@@ -35,9 +35,9 @@
 
 > **2026-08-12 전수 재검증 완료** — 코드 대조로 항목 유효성과 위치를 다시 확인했다. 이 날짜 이후 다시 낡을 수 있으므로 착수 전 해당 파일을 먼저 읽는다.
 >
-> 처리 순서: **선행 2건(가드레일)을 먼저** 끝낸 뒤 클러스터 1~3으로 간다. 선행 항목은 나머지 전부의 작업 단가를 좌우한다. 클러스터 안에서는 위→아래 순서를 권장한다(파일·맥락 겹침 기준).
+> 처리 순서: **선행 3건(가드레일)을 먼저** 끝낸 뒤 클러스터 1~3으로 간다. 앞의 2건은 나머지 전부의 작업 단가를 좌우하고, 3번째는 그 작업들이 남길 커밋의 규칙 강제를 되살린다. 클러스터 안에서는 위→아래 순서를 권장한다(파일·맥락 겹침 기준).
 
-### 선행 — 가드레일 정합 (아래 순서대로, 나머지 작업의 비용을 좌우)
+### 선행 — 가드레일 정합·복원 (아래 순서대로)
 
 - [ ] **하네스 문서가 존재하지 않는 pre-commit 게이트를 계약으로 명시 — 구현 에이전트가 TDD Guard를 모른 채 차단당함** (2026-08-12 발견 [발견: TODO 전수 재검증 중 가드레일 구조 감사]) — `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md` 세 파일에 TDD Guard·`test:red`·proof 언급이 **0건**이다. 대신 `backend-impl.md:44`와 `frontend-impl.md:44`가 "pre-commit 훅(lint/coverage80%/typecheck)에 막히면 원인 해결 후 재시도, 3회 실패 시 에스컬레이션"이라는 절차를 규정하는데 **그 훅은 존재하지 않는다**(`.git/hooks/`에 훅 0개, `.claude/settings.json`은 TDD Guard PreToolUse/PostToolUse만 등록).
   - **실제 동작**: `guard.mjs pre-edit`가 유효 proof 없는 guarded 파일 편집을 `permissionDecision: "deny"`로 차단한다(`bin/guard.mjs:64`). 즉 구현 에이전트는 첫 `Edit`/`Write`에서 막히는데, 대응 절차(`npm run test:red -- --scope <scope>`)가 지침에 없어 복구 경로가 없다.
@@ -51,6 +51,13 @@
   - **정답이 이미 있음**: 같은 가드의 `scripts/test-scope/test-graph.mjs:runtimeSpecifiers`가 TypeScript AST로 type-only import를 정확히 배제한다. 두 모듈이 같은 판정을 다르게 하고 있어 정합만 맞추면 된다.
   - **증폭 요인**: 배럴 강제 규칙(인박스 항목 참고)이 타입 하나를 `@/server/services` 배럴 경유로 mongoose 사슬에 연결시킨다.
   - **주의**: 게이트 완화 방향의 변경이다. `scripts/`는 guarded라 이 수정 자체에 Red proof가 필요하며, `scripts/tdd-guard/__tests__/`에 회귀 테스트를 먼저 세운다.
+
+- [ ] **저장소 분리 때 유실된 커밋 규칙·리뷰 강제 복원** (2026-08-12 발견 [발견: 훅 부재 확인 중 원본 저장소 대조]) — tie-knot은 `9d69d51 chore: tie-knot 저장소를 분리`로 agent-benchmark 모노레포에서 떨어져 나왔는데, 그때 추적 대상이 아니거나 삭제된 가드레일 자산이 재생성되지 않았다.
+  - **`commit-msg` 훅 이식**: 전역 `GIT.md`의 Naming 규칙을 검사하는 훅이 tie-knot에 없어, prefix 택소노미·`{prefix}({scope}): {message}` 형식·72자 상한을 강제하는 지점이 **로컬에도 CI에도 0개**다(`.github/workflows/`에 commitlint·PR 제목 검증 job 없음). 원본은 `/home/rhsiddlsidhd/agent-benchmark/.git/hooks/commit-msg`(2026-08-10)에 살아 있고 이미 고쳐진 버전이다 — 정규식 `^(feat|fix|docs|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9]+(-[a-z0-9]+)*\))?!?: ` 에 72자·소문자 시작·마침표 금지 검사까지 포함해 현행 `GIT.md`와 일치한다(과거형·명사구 판별만 미구현).
+    - **추적되는 위치로 승격할 것**: `.git/hooks/`는 Git 추적 대상이 아니라 clone·저장소 재구성마다 증발한다. 이번 유실이 정확히 그 경로였다. 저장소 내 스크립트 + `core.hooksPath`(또는 husky)로 두어야 재발하지 않는다.
+    - 검사 대상은 메시지 텍스트뿐이다. 코드 검사(`pre-commit` 계열)는 복원 대상이 아니다 — TDD Guard(에이전트 훅)와 PR CI가 그 책임을 나눠 갖는다.
+  - **`.github/CODEOWNERS` 재생성**: 분리 커밋이 지운 뒤 tie-knot에 다시 만들어지지 않았다. 원본은 `scripts/tdd-guard/`, `.claude/settings.json`, `.codex/hooks.json`, `tdd-exceptions.json`, `.github/workflows/tdd.yml`, `.github/workflows/portone-smoke.yml`을 소유자 리뷰 필수로 묶고 있었다(`git show 9d69d51^:.github/CODEOWNERS`, 경로는 모노레포 기준이라 tie-knot 기준으로 다시 써야 함). 지금은 가드레일 자체를 무력화하는 변경에 리뷰 강제가 없다.
+  - **PR 템플릿 부재**: 저장소에 템플릿이 없다. 전역 규칙상 `~/.codex/docs/references/pull_request_template.md`를 쓰거나 저장소 템플릿을 신설한다.
 
 ### 클러스터 1 — 이미지 파이프라인 (아래 순서)
 
@@ -124,8 +131,6 @@
   - **결함 클래스 재발 없음 확인**: `vitest list --project unit "src/app/(admin)"`이 테스트를 정상 수집한다(위치인자는 substring 매칭이라 괄호가 문제되지 않음). 나아가 `scripts/test-scope/unit-shards.mjs`의 `verifyUnitShards`가 "모든 unit 테스트 파일이 정확히 1개 샤드에 속함"을 CI에서 강제해 침묵 누락 구멍이 구조적으로 막혀 있다.
 - [x] (2026-08-12 전제 소멸) 라우트 그룹 컴포넌트 4개의 line coverage 80% 미달 부채 — 커버리지 측정·게이트가 제거되어 기준 자체가 없다. 품질 부채를 다시 재려면 mutation 기준으로 재정의해야 한다.
 - [x] (2026-08-12 전제 소멸) Vitest `--coverage.changed`가 unstaged/untracked를 포함하던 관측 항목 — 커버리지 경로 자체가 없다.
-- [x] (2026-08-12 전제 소멸) `.git/hooks/commit-msg` prefix 정규식이 전역 `GIT.md` 택소노미와 어긋나던 문제 — 해당 훅 파일이 없다(`.git/hooks/`에 sample 외 훅 0개). `perf`/`ci` 등 prefix가 로컬에서 막히지 않는다.
-- [x] (2026-08-12 전제 소멸) `.claude/hooks/pre-commit-check.sh`가 Git hook이 아니라는 항목 — 그 파일과 `.claude/hooks/` 디렉터리 자체가 없다. 현재 로컬 강제 지점은 `.claude/settings.json`의 TDD Guard PreToolUse/PostToolUse뿐이고, 터미널 직접 커밋에 걸리는 Git hook은 존재하지 않는다. 사람·에이전트 양쪽에 동일 게이트가 필요하다는 원래 문제의식은 아래 신규 항목으로 남긴다.
+- [x] (2026-08-12 정식 섹션 이관) `.git/hooks/commit-msg` prefix 정규식이 전역 `GIT.md` 택소노미와 어긋나던 문제 — 정규식은 2026-08-10에 이미 고쳐졌고, 남은 문제는 그 훅이 저장소 분리 때 tie-knot으로 따라오지 못했다는 것이다. 버그수정 "선행" 세 번째 항목으로 옮김.
+- [x] (2026-08-12 불필요 판정) `.claude/hooks/pre-commit-check.sh`가 Git hook이 아니라는 항목 — 파일·디렉터리째 사라졌고 그것이 부르던 `npm run test:paired`도 `package.json`에 없다. 코드 검사 책임은 TDD Guard(에이전트 훅)와 PR CI가 나눠 가지므로 복원하지 않는다. 커밋 규칙 강제는 메시지 검사(`commit-msg`)로만 되살린다.
 - [x] (2026-08-12 전제 소멸) WSL 메모리 상한에 맞춘 `maxWorkers: "50%"` 제안 — 현재 `vitest.config.ts`는 project별로 `maxWorkers`를 명시(`guard`/`unit` 2, mongo 계열 1)하는 구조라 제안 내용이 그대로 적용되지 않는다.
-
-- [ ] (2026-08-12, 위 훅 부재 확인 중 발견) 터미널에서 직접 커밋하면 어떤 로컬 검사도 실행되지 않는다 — TDD Guard는 Claude/Codex 에이전트 훅으로만 걸려 있고 Git hook은 없다. PR CI가 `dev` 진입은 막지만 로컬 피드백 루프가 사람과 에이전트에서 비대칭이다. `.git/hooks/pre-commit` 또는 husky로 `guard.mjs verify` 계열을 거는 안을 검토한다.
