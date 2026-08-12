@@ -2,7 +2,7 @@
 
 > 작성: db-migrator (Phase1 설계 팬아웃)
 > **상태: 확정 (리더 리뷰 통과, 2026-07-31)** — 미해결 쟁점 0건, §8 참고. backend-impl 착수 가능.
-> 근거 파일: `src/server/models/product.model.ts`, `src/server/services/product.service.ts`, `src/shared/utils/category.ts`, `src/server/models/CLAUDE.md`, `src/server/services/CLAUDE.md`, `TODO.md` L38/L45
+> 근거 파일: `src/server/models/product.model.ts`, `src/server/services/product.service.ts`, `src/shared/utils/category.ts`, `src/server/models/AGENTS.md`, `src/server/services/AGENTS.md`, `TODO.md` L38/L45
 
 ---
 
@@ -41,7 +41,7 @@
 
 - 이 프로젝트엔 이미 초성 검색이 있다 — `src/client/hooks/useVisibleProducts.ts`가 `getChosung()`(`src/shared/utils/hangul.ts`)으로 `item.title`을 초성 변환해 클라이언트에서 매칭한다.
 - MongoDB `$regex`는 초성 매칭을 **원리적으로 못 한다**("ㄷㅈㅊ"와 "돌잔치"는 유니코드 코드포인트가 전혀 다르다). 서버 검색에서 초성을 지원하려면 `titleChosung` 같은 비정규화 필드를 저장하고 `pre('save')`로 동기화하는 수밖에 없다.
-- 지금 안 하는 이유: (a) REQ-1~4 어디에도 초성 요구가 없다, (b) 비정규화 필드는 `title` 수정 경로 전부와 동기화 의무가 생기는데 `product.model.ts` 훅에 도메인 로직을 두는 건 `src/server/models/CLAUDE.md`가 금지하고 update 경로(`findOneAndUpdate`)에선 `pre('save')`가 아예 발화하지 않아 조용히 어긋난다, (c) 기존 문서 전체 backfill이 필요해진다 — 요구사항 없는 기능에 마이그레이션 부채를 먼저 만드는 셈.
+- 지금 안 하는 이유: (a) REQ-1~4 어디에도 초성 요구가 없다, (b) 비정규화 필드는 `title` 수정 경로 전부와 동기화 의무가 생기는데 `product.model.ts` 훅에 도메인 로직을 두는 건 `src/server/models/AGENTS.md`가 금지하고 update 경로(`findOneAndUpdate`)에선 `pre('save')`가 아예 발화하지 않아 조용히 어긋난다, (c) 기존 문서 전체 backfill이 필요해진다 — 요구사항 없는 기능에 마이그레이션 부채를 먼저 만드는 셈.
 - **재검토 트리거**: `/search`에서 초성 입력 요구가 실제로 들어오는 시점. 그때는 이 필드가 아니라 Atlas Search(§3 참고)가 더 나은 답일 수 있으므로 둘을 같이 비교한다.
 
 > ⚠️ **경계면 이슈 — 리더 판정 완료(2026-07-31): 이번 스코프에서 안 맞춘다. `04_integration_report.md`에 known limitation으로 기록 + boundary-verifier에 공유, 리더가 직접 관리한다.** 이 프로젝트에 이제 검색 의미론이 **두 개** 생긴다.
@@ -59,7 +59,7 @@
 근거:
 
 - `product.model.ts` L85-89 — `category: { type: String, enum: ["invitation"] }`. 허용값이 영문 key `"invitation"` 하나로 스키마에 고정돼 있다. 한글 `"초대장"`을 저장하려 하면 mongoose ValidationError로 거부된다.
-- `product.model.ts` L141 — `discriminatorKey: "category"`, L159 — `ProductModel.discriminator("invitation", ...)`. **discriminator 이름이 곧 `category` 필드에 저장되는 값**이다(모델 CLAUDE.md 명시). 즉 `category`는 mongoose 내부 판별키로도 쓰여서 값이 `"invitation"`으로 고정될 수밖에 없다.
+- `product.model.ts` L141 — `discriminatorKey: "category"`, L159 — `ProductModel.discriminator("invitation", ...)`. **discriminator 이름이 곧 `category` 필드에 저장되는 값**이다(모델 AGENTS.md 명시). 즉 `category`는 mongoose 내부 판별키로도 쓰여서 값이 `"invitation"`으로 고정될 수밖에 없다.
 - `product.model.ts` L90-112 — `subCategory` validator가 `SUB_CATEGORY_MAP[category]`에 `value`가 포함되는지 검사한다. `SUB_CATEGORY_MAP.invitation = ["wedding", "first-birthday", "vip", "business"]`(`category.ts` L4-6)이므로 **저장 가능한 값은 이 영문 key 4개뿐**이다.
 - 한글 라벨은 `category.ts`의 `productCategoryLabels`(`invitation → "초대장"`), `subCategoryLabels`(`wedding → "청첩장"`, `first-birthday → "돌잔치"`, `vip → "VIP"`, `business → "비즈니스"`)에만 존재하는 **표시 전용 매핑**이다.
 
@@ -117,7 +117,7 @@ const matchSubCategoryKeysByLabel = (keyword: string): SubCategory[] =>
 2. **데이터 규모가 인덱스 무의미 구간이다.** `TODO.md` L45: "지금 tie-knot은 카테고리 1종뿐", L15: "현재 `invitation` 외 실 데이터 없음". 문서 수백 건 규모에서 컬렉션 스캔은 밀리초 이하다.
 3. **이미 전건을 클라이언트로 내리고 있다.** `useVisibleProducts.ts`는 상품 목록 **전체**를 받아 브라우저 메모리에서 필터링한다. 전체 페이로드를 네트워크로 통째로 보내는 게 성립하는 규모에서 서버 인덱스를 논하는 건 순서가 뒤바뀐 것이다.
 4. **인덱스는 공짜가 아니다.** 쓰기 증폭 + "검색 인덱스가 있다"는 착각을 만든다. 실제로는 안 쓰이는 인덱스가 남으면, 나중에 진짜 느려졌을 때 "인덱스 있는데 왜 느리지"로 진단이 한 번 꼬인다.
-5. **프로젝트 원칙과 일치.** `TODO.md` L32가 동일 논리로 "별도 Category 컬렉션 동적화" 기각("지금 카테고리 추가 빈도에 비해 오버스펙"), `models/CLAUDE.md`도 "하위 타입 전용 필드가 아직 없는 카테고리는 discriminator를 미리 만들지 않는다(과설계 방지)"를 명시한다.
+5. **프로젝트 원칙과 일치.** `TODO.md` L32가 동일 논리로 "별도 Category 컬렉션 동적화" 기각("지금 카테고리 추가 빈도에 비해 오버스펙"), `models/AGENTS.md`도 "하위 타입 전용 필드가 아직 없는 카테고리는 discriminator를 미리 만들지 않는다(과설계 방지)"를 명시한다.
 
 ### 3-4. 재검토 트리거 (지금 정해두는 조건)
 
@@ -220,7 +220,7 @@ export const searchProductsService = async (
 
 ### 4-2. 모델 선택: base `ProductModel`을 쓴다
 
-`InvitationProductModel`로 조회하면 안 된다. `category`가 `discriminatorKey`라 mongoose가 discriminator 모델 쿼리에 `category: "invitation"`을 **자동 주입**한다 — 지금은 카테고리가 하나라 티가 안 나지만 카테고리가 늘어나는 순간 검색이 조용히 invitation만 반환한다. 읽기는 base 모델로 해도 mongoose가 `discriminatorKey` 값을 보고 올바른 서브타입으로 hydrate한다(`models/CLAUDE.md` Gotchas). 기존 `getAllProductsService`도 base를 쓴다.
+`InvitationProductModel`로 조회하면 안 된다. `category`가 `discriminatorKey`라 mongoose가 discriminator 모델 쿼리에 `category: "invitation"`을 **자동 주입**한다 — 지금은 카테고리가 하나라 티가 안 나지만 카테고리가 늘어나는 순간 검색이 조용히 invitation만 반환한다. 읽기는 base 모델로 해도 mongoose가 `discriminatorKey` 값을 보고 올바른 서브타입으로 hydrate한다(`models/AGENTS.md` Gotchas). 기존 `getAllProductsService`도 base를 쓴다.
 
 ### 4-3. `status` 필터 — 넣지 않는다 ✅ 확정 (리더 채택, 2026-07-31)
 
@@ -238,9 +238,9 @@ MongoDB는 빈 `$or`/`$and`/`$nor` 배열을 거부한다 — `"$and/$or/$nor mu
 
 ### 5-2. 사용자 입력을 `$regex`에 그대로 넣으면 500이 난다
 
-검색창은 임의 문자가 들어오는 입구다. `(`, `[`, `*`, `+`, `?`, `\` 같은 정규식 메타문자가 오면 패턴 컴파일이 실패해 `"Regular expression is invalid"`로 요청이 터진다 — 사용자 입력 오류가 서버 예외로 올라가는 형태라 `services/CLAUDE.md`의 에러 분류(사용자 입력 오류 vs 서버 예외)와도 어긋난다. **메타문자를 이스케이프한 뒤 넣는다.** 이스케이프하면 사용자가 백트래킹 폭발 패턴(ReDoS)을 주입할 여지도 함께 사라진다.
+검색창은 임의 문자가 들어오는 입구다. `(`, `[`, `*`, `+`, `?`, `\` 같은 정규식 메타문자가 오면 패턴 컴파일이 실패해 `"Regular expression is invalid"`로 요청이 터진다 — 사용자 입력 오류가 서버 예외로 올라가는 형태라 `services/AGENTS.md`의 에러 분류(사용자 입력 오류 vs 서버 예외)와도 어긋난다. **메타문자를 이스케이프한 뒤 넣는다.** 이스케이프하면 사용자가 백트래킹 폭발 패턴(ReDoS)을 주입할 여지도 함께 사라진다.
 
-이스케이프 헬퍼는 side-effect 없는 순수 함수이므로 `src/shared/utils/` 소관이다(`shared/utils/CLAUDE.md`). 파일명/함수명에 도메인(product/search)을 드러내지 않는다 — 같은 규칙이 `src/CLAUDE.md`에도 있다. 배럴(`index.ts`) 경유 import 필수.
+이스케이프 헬퍼는 side-effect 없는 순수 함수이므로 `src/shared/utils/` 소관이다(`shared/utils/AGENTS.md`). 파일명/함수명에 도메인(product/search)을 드러내지 않는다 — 같은 규칙이 `src/AGENTS.md`에도 있다. 배럴(`index.ts`) 경유 import 필수.
 
 ### 5-3. `deletedAt: null`은 top-level에 둔다
 

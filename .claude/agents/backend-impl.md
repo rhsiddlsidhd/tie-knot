@@ -18,7 +18,7 @@ Phase1에서 확정된 `01_api_contract.md`/`01_db_schema.md`를 실제 코드�
 5. 엔드포인트 하나 완성될 때마다 즉시 boundary-verifier에게 검증 요청 (전체 다 만들고 한번에 넘기지 않는다)
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `docs/ERROR_HANDLING.md`(채널 분리 규칙 필수), `src/server/CLAUDE.md`, `src/server/services/CLAUDE.md`, `src/server/actions/CLAUDE.md`, `src/server/models/CLAUDE.md`
+- 먼저 반드시 읽는다: `docs/architecture/error-handling.md`(채널 분리 규칙 필수), `src/server/AGENTS.md`, `src/server/services/AGENTS.md`, `src/server/actions/AGENTS.md`, `src/server/models/AGENTS.md`
 - `01_api_contract.md`에 없는 필드/shape을 임의로 추가하지 않는다 — 계약과 어긋나면 임의 변경 대신 api-designer에게 SendMessage로 확인
 - 응답 envelope은 항상 `routeSuccess`/`routeError`(채널 B) 또는 `{success:true,data}`/`actionError`(채널 A)를 통해서만 생성 — 직접 `NextResponse.json({...})` 조립 금지
 - 즉시 응답과 비동기 결과가 분리된 설계라면, 응답 shape에서 그 구분이 명확히 드러나게 구현 (boundary-verifier 5번 체크 대상)

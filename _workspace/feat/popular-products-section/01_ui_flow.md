@@ -95,12 +95,12 @@ PopularProductsSection (신규, Server Component, 순수 presentational)
 
 → **신규 컴포넌트 1개(≈30줄, 상태 없음, JS 없음)**가 "기존 공용 컴포넌트를 고쳐 다목적화하는 것"보다 작고 안전하다. 과설계가 아니라 오히려 최소안이다.
 
-### 3.3 배치 위치 판단 (컴포넌트 CLAUDE.md 축 A/축 B)
+### 3.3 배치 위치 판단 (컴포넌트 AGENTS.md 축 A/축 B)
 
-- **축 B(물리적 위치): `src/app/(main)/_components/`.** 이 섹션의 유일한 소비자는 `HomeTemplate`이고, `HomeTemplate`도 `(main)/page.tsx` 1곳 전용이다. `src/client/components/CLAUDE.md`의 "소비자 수는 전이적으로 센다 — 최종 도달 라우트 개수만 본다" 규칙상 실질 소비 라우트가 1곳이므로 공용 `organisms/`로 승격하지 않는다. Phase3 `SubCategoryNavSection`이 정확히 같은 판단으로 여기에 있다(직접 선례).
+- **축 B(물리적 위치): `src/app/(main)/_components/`.** 이 섹션의 유일한 소비자는 `HomeTemplate`이고, `HomeTemplate`도 `(main)/page.tsx` 1곳 전용이다. `src/client/components/AGENTS.md`의 "소비자 수는 전이적으로 센다 — 최종 도달 라우트 개수만 본다" 규칙상 실질 소비 라우트가 1곳이므로 공용 `organisms/`로 승격하지 않는다. Phase3 `SubCategoryNavSection`이 정확히 같은 판단으로 여기에 있다(직접 선례).
 - **축 A(티어): 페이지 안의 한 구획 = organism 성격.** 다만 축 B에 의해 물리적으로는 라우트 로컬에 둔다(두 축은 독립이라 충돌 아님).
 - **순수성(핵심 원칙 1) 유지**: 데이터 페칭·Server Action 없음, `products` prop만 받는다. 페칭은 `page.tsx`가 한다.
-- **배럴(`_components/index.tsx`) 등재 안 함**: `src/app/CLAUDE.md` 규칙상 배럴은 `page.tsx`/`layout.tsx`가 직접 import하는 파일만 올리면 되고, 이 컴포넌트는 `HomeTemplate`이 상대경로로 직접 import한다(`SubCategoryNavSection`과 동일 처리).
+- **배럴(`_components/index.tsx`) 등재 안 함**: `src/app/AGENTS.md` 규칙상 배럴은 `page.tsx`/`layout.tsx`가 직접 import하는 파일만 올리면 되고, 이 컴포넌트는 `HomeTemplate`이 상대경로로 직접 import한다(`SubCategoryNavSection`과 동일 처리).
 
 ### 3.4 480px 캡 준수 규칙 (신규 코드 하드 룰)
 

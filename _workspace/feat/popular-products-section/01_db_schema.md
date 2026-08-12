@@ -2,7 +2,7 @@
 
 > 작성: db-migrator-popular (Phase1 설계 팬아웃, 2026-08-05)
 > **상태: 확정** — 미해결 쟁점 **0건**. api-designer-popular와 쟁점 4건 전건 합의 + 보강 4건 반영 완료(§8), 계약 확정본 `01_api_contract.md` §2.3/§2.3.1과 내용 일치.
-> 근거 파일: `src/server/models/product.model.ts`, `src/server/models/CLAUDE.md`, `src/server/services/product.service.ts`, `src/server/services/CLAUDE.md`, `src/shared/schemas/response/product.schema.ts`, `node_modules/mongoose/lib/helpers/aggregate/prepareDiscriminatorPipeline.js`
+> 근거 파일: `src/server/models/product.model.ts`, `src/server/models/AGENTS.md`, `src/server/services/product.service.ts`, `src/server/services/AGENTS.md`, `src/shared/schemas/response/product.schema.ts`, `node_modules/mongoose/lib/helpers/aggregate/prepareDiscriminatorPipeline.js`
 > 선행 문서: `_workspace/feat/subcategory-navigation-section/01_db_schema.md` §6 (Product 인덱스 0개 / 인덱스 미생성 판단 — 본 문서가 **같은 결론을 다른 근거로 재확인**한다)
 > **실측 근거**: 이 문서의 파이프라인 동작 주장은 전부 `mongodb-memory-server`(MongoDB 8.2.6, 단일 노드 replSet) + 이 프로젝트의 `mongoose@8.20.3`로 **직접 실행해 확인**했다(§3). 후보 구현체는 프로젝트 `tsconfig` 설정으로 `tsc --noEmit` **통과 확인**(§4-3).
 
@@ -46,7 +46,7 @@ likes: {
 | soft delete 유지 | ✅ | `deletedAt: { type: Date, default: null }` (product.model.ts:136) |
 | 상품 카드 표시 필드 | ✅ | 가격/할인/서브카테고리/좋아요수 전부 기존 필드. `00_requirements.json` background[2]가 확인 |
 
-→ **`models/CLAUDE.md`의 "기존 모델 확장으로 해결되면 신규 모델 생성 금지" 원칙에 따라 모델 파일은 한 글자도 건드리지 않는다.** `likesCount` 비정규화 필드 추가는 §7에서 명시적으로 기각한다.
+→ **`models/AGENTS.md`의 "기존 모델 확장으로 해결되면 신규 모델 생성 금지" 원칙에 따라 모델 파일은 한 글자도 건드리지 않는다.** `likesCount` 비정규화 필드 추가는 §7에서 명시적으로 기각한다.
 
 ---
 
@@ -164,7 +164,7 @@ REQ-3이 카드에 `rank`(1/2/3…)를 그리므로 **같은 데이터에 대해
 
 aggregate 출력은 `find().lean()` 출력과 **형태가 같다**: `_id`는 `ObjectId`, `likes`는 `ObjectId[]`, `createdAt`/`updatedAt`은 `Date`. 따라서 `_id.toString()`, `likes.map(String)`, ISO 변환, `discountedPrice` 계산, `isLiked` 판정이 전부 기존과 동일하게 동작한다.
 
-- `.lean()`을 **붙이지 않는다** — `aggregate()`는 이미 POJO를 리턴한다(Document 인스턴스가 아니라 `.lean()` 자체가 존재하지 않는 개념). `services/CLAUDE.md`의 lean 규칙은 `find()` 계열 대상이다.
+- `.lean()`을 **붙이지 않는다** — `aggregate()`는 이미 POJO를 리턴한다(Document 인스턴스가 아니라 `.lean()` 자체가 존재하지 않는 개념). `services/AGENTS.md`의 lean 규칙은 `find()` 계열 대상이다.
 - aggregate는 스키마 default/캐스팅을 적용하지 않지만, **기존 읽기 경로가 전부 `.lean()`이라 역시 default 미적용**이다 → 동등하다. `transformProduct`가 새로 깨질 지점 없음.
 - invitation discriminator 전용 필드(`previewUrl`/`theme`)도 같은 컬렉션이라 그대로 실려 온다(§3 #6 실측).
 
@@ -209,8 +209,8 @@ export const getPopularProductsService = async (
 };
 ```
 
-- `await dbConnect()`를 **먼저** 호출한다 — aggregate도 예외가 아니다. 이 프로젝트는 `bufferCommands: false`라 커넥션 전 호출이 즉시 에러가 된다(`services/CLAUDE.md`).
-- `.catch()`로 `AppError("INTERNAL", ...)` 래핑 — `services/CLAUDE.md`의 "raw mongoose 에러를 그대로 던지지 않는다" 규칙. mongoose `Aggregate`는 thenable이라 `.catch()`가 실재한다(`lib/aggregate.js:1158`).
+- `await dbConnect()`를 **먼저** 호출한다 — aggregate도 예외가 아니다. 이 프로젝트는 `bufferCommands: false`라 커넥션 전 호출이 즉시 에러가 된다(`services/AGENTS.md`).
+- `.catch()`로 `AppError("INTERNAL", ...)` 래핑 — `services/AGENTS.md`의 "raw mongoose 에러를 그대로 던지지 않는다" 규칙. mongoose `Aggregate`는 thenable이라 `.catch()`가 실재한다(`lib/aggregate.js:1158`).
 - `ProductModel.aggregate<LeanProduct>([...])` 제네릭을 준다 — **`as LeanProduct[]` 캐스팅 금지.** `aggregate()`의 기본 리턴이 `any[]`라 `as`로 받으면 파이프라인이 바뀌어도 타입이 안 잡는다.
 
 ### 4-4. 🔴 base `ProductModel`로만 호출 + 파이프라인을 모듈 상수로 빼지 않는다
@@ -309,7 +309,7 @@ db.products.countDocuments({ likes: { $exists: false } });                // §2
 | 마이그레이션 | 기존 전 문서에 `likesCount = likes.length` 백필 필요 |
 | 이득 | 현재 데이터 규모(2건)에서 **0** |
 
-→ **§5-4 트리거 #1 도달 시 재검토한다. 가정만으로 미리 만들지 않는다**(`services/CLAUDE.md`의 트랜잭션 옵션 판단과 같은 원칙).
+→ **§5-4 트리거 #1 도달 시 재검토한다. 가정만으로 미리 만들지 않는다**(`services/AGENTS.md`의 트랜잭션 옵션 판단과 같은 원칙).
 
 ### 7-3. 전체 조회 후 JS 정렬 — 기각
 

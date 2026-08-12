@@ -9,7 +9,7 @@ import { Spinner, Alert } from "@/client/components/molecules";
 import { ProductGrid } from "@/client/components/organisms";
 import { initialFilterState } from "@/client/context/productFilter";
 
-// 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/CLAUDE.md)
+// 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/AGENTS.md)
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function ProductSearch() {

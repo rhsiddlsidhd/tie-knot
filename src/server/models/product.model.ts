@@ -155,7 +155,7 @@ const productSchema = new Schema<IProduct>(
   {
     timestamps: true,
     // 이미 존재하는 category 필드를 판별키로 재사용한다 — 카테고리별 discriminator를
-    // 추가할 때 새 필드를 만들지 않는다(src/server/models/CLAUDE.md 참고).
+    // 추가할 때 새 필드를 만들지 않는다(src/server/models/AGENTS.md 참고).
     discriminatorKey: "category",
   },
 );

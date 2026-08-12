@@ -13,7 +13,7 @@ import { ERROR_SAFE_MESSAGES } from "@/shared/constants";
 // Re-export types for convenience
 export type { SuccessResponse, ErrorResponse, APIResponse, APIRouteResponse };
 
-// 분류→HTTP status 매핑 — services/AppError는 HTTP를 모르므로 이 경계에서만 번역한다(src/CLAUDE.md 참고).
+// 분류→HTTP status 매핑 — services/AppError는 HTTP를 모르므로 이 경계에서만 번역한다(src/AGENTS.md 참고).
 export const ERROR_STATUS_MAP: Record<ErrorCategory, number> = {
   VALIDATION: 400,
   UNAUTHENTICATED: 401,

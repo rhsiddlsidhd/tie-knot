@@ -1,7 +1,7 @@
 # 에러 처리
 
 > Last updated: 2026-07-29
-> `src/CLAUDE.md`에서 분리됨. 여러 레이어(services/actions/route/client)에 걸친 공통 규칙 + 채널별(A/B/C) 상세 규칙까지 이 문서가 단일 소스다 — 레이어별 CLAUDE.md는 더 이상 상세 규칙을 중복 서술하지 않고 이 문서를 가리키기만 한다.
+> `src/AGENTS.md`에서 분리됨. 여러 레이어(services/actions/route/client)에 걸친 공통 규칙 + 채널별(A/B/C) 상세 규칙까지 이 문서가 단일 소스다 — 레이어별 AGENTS.md는 더 이상 상세 규칙을 중복 서술하지 않고 이 문서를 가리키기만 한다.
 
 ## 흐름
 
@@ -78,8 +78,8 @@ ErrorPayload = { 분류, message, fieldErrors? }
 
 | 채널/레이어 | 목적(요약) | 상세 규칙 |
 |---|---|---|
-| services | `AppError` throw / `null` 리턴 — 구조화된 에러 원본 생산, HTTP 모름 | `src/server/services/CLAUDE.md` |
+| services | `AppError` throw / `null` 리턴 — 구조화된 에러 원본 생산, HTTP 모름 | `src/server/services/AGENTS.md` |
 | Server Action(채널 A) | `AppError` 캐치 → 로깅 + 민감분류 일반화 + `ErrorPayload` 리턴 | 이 문서 §채널 A |
 | route.ts(채널 B) | `AppError` 캐치 → 로깅 + 민감분류 일반화 + 분류→status 매핑 + Response 번역 | 이 문서 §채널 B |
-| 에러 타입 정의 | `AppError`/분류 taxonomy/`ErrorPayload` — 여러 레이어 공유 계약 | `src/shared/types/CLAUDE.md` |
+| 에러 타입 정의 | `AppError`/분류 taxonomy/`ErrorPayload` — 여러 레이어 공유 계약 | `src/shared/types/AGENTS.md` |
 | 클라이언트 소비(채널 C) | `useSWR` `error` 렌더 + `useActionState` state 렌더 — 서버가 준 `ErrorPayload` 그대로, 판단 로직 없음 | 이 문서 §채널 C |

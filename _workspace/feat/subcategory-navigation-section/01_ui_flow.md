@@ -106,7 +106,7 @@
 
 ### 2.2 링크 생성은 `routes.ts` 빌더로 (문자열 템플릿 금지)
 
-api-designer 계약은 "`SUB_CATEGORY_MAP` 순회로 `/products/${category}?subCategory=${sub}` 조립, 경로 세그먼트도 하드코딩 금지"다. 이를 만족시키는 형태로 **문자열 템플릿을 컴포넌트에 두지 않고 `routes.ts` 빌더에 흡수한다** — `src/shared/constants/CLAUDE.md`가 "동적 세그먼트는 문자열 템플릿이 아니라 경로 빌더 함수로 제공"을 명시하기 때문이다. `category`는 prop, `subCategory`는 map 순회값이라 리터럴 하드코딩은 어디에도 남지 않으며, 파라미터명이 바뀌어도 고칠 파일이 `routes.ts` 하나로 국한된다.
+api-designer 계약은 "`SUB_CATEGORY_MAP` 순회로 `/products/${category}?subCategory=${sub}` 조립, 경로 세그먼트도 하드코딩 금지"다. 이를 만족시키는 형태로 **문자열 템플릿을 컴포넌트에 두지 않고 `routes.ts` 빌더에 흡수한다** — `src/shared/constants/AGENTS.md`가 "동적 세그먼트는 문자열 템플릿이 아니라 경로 빌더 함수로 제공"을 명시하기 때문이다. `category`는 prop, `subCategory`는 map 순회값이라 리터럴 하드코딩은 어디에도 남지 않으며, 파라미터명이 바뀌어도 고칠 파일이 `routes.ts` 하나로 국한된다.
 
 ```ts
 // src/shared/constants/routes.ts (수정)
@@ -182,7 +182,7 @@ src/app/(main)/page.tsx                      [RSC, 기존]  ── 수정 없음
     └── StartActionCTA                       [organisms, 기존, 재사용]
 
 src/app/(main)/_constants/ ★신규 폴더
-├── index.ts                                 [배럴 — app/CLAUDE.md 강제 형태]
+├── index.ts                                 [배럴 — app/AGENTS.md 강제 형태]
 └── subCategoryIcons.ts ★신규                [SubCategory → LucideIcon 매핑]
 
 --- 목적지 쪽 (REQ-4) ---
@@ -198,11 +198,11 @@ src/app/(main)/(products)/products/[category]/page.tsx  [RSC, 기존] ── ★
 
 | 컴포넌트 | 판정 | 티어(축 A) | 위치(축 B) | 근거 |
 | --- | --- | --- | --- | --- |
-| `SubCategoryNavSection` | **신규** | organism(페이지 안의 뚜렷한 한 구획, 하위 조각 N개 조합) | `src/app/(main)/_components/` | 최종 소비 라우트가 `/` 1곳뿐 → `components/CLAUDE.md` 승격 규칙상 라우트 로컬. §3.4 참고 |
+| `SubCategoryNavSection` | **신규** | organism(페이지 안의 뚜렷한 한 구획, 하위 조각 N개 조합) | `src/app/(main)/_components/` | 최종 소비 라우트가 `/` 1곳뿐 → `components/AGENTS.md` 승격 규칙상 라우트 로컬. §3.4 참고 |
 | `SubCategoryNavItem` | **신규** | molecule(아이콘+라벨, 단일 책임) | `src/app/(main)/_components/` | 유일 소비자가 위 섹션이고 그 섹션도 라우트 1곳 전용 → 전이적으로 1라우트 |
 | `subCategoryIcons` | **신규(상수)** | — | `src/app/(main)/_constants/` | §3.3 |
 | `TypographySmall`/`TypographyP`/`TypographyH2` | 재사용 | atoms | 기존 | 프로젝트 타이포 프리미티브 |
-| `next/link` `<Link>` | 재사용 | — | — | `components/CLAUDE.md` 예외 2 — 단순 페이지 이동은 `useRouter().push()` 대신 `<Link>`. **덕분에 컨테이너 분리도, `"use client"`도 필요 없다** |
+| `next/link` `<Link>` | 재사용 | — | — | `components/AGENTS.md` 예외 2 — 단순 페이지 이동은 `useRouter().push()` 대신 `<Link>`. **덕분에 컨테이너 분리도, `"use client"`도 필요 없다** |
 | `lucide-react` Heart/Cake | 재사용 | — | — | 요구사항 지정 아이콘 |
 | `Carousel`(atoms) | **미채택** | — | — | REQ-3이 "가로 스크롤 리스트"를 요구 — embla 캐러셀은 클라이언트 JS·좌우 버튼·`md:` 브레이크포인트를 끌고 온다(§5.2 480px 이슈와 충돌). CSS `overflow-x-auto`로 충분 |
 | `ProductFilters` / `ProductGrid` / `useVisibleProducts` | 재사용(무수정) | organisms/hooks | 기존 | 필터 state 초기값만 갈아끼우면 기존 필터링 로직이 그대로 동작 — §4.2 |
@@ -225,17 +225,17 @@ export const subCategoryIcons: Record<SubCategory, LucideIcon> = {
 ```
 
 - **컴포넌트는 `SUB_CATEGORY_MAP[category].map(...)`만 돌린다** — 아이템을 나열하는 JSX가 없다. 서브카테고리가 늘면 고치는 파일은 `category.ts`(값 추가) + `subCategoryLabels`(라벨) + `subCategoryIcons`(아이콘) 세 lookup map뿐이고, 컴포넌트는 그대로다. REQ-3 acceptance 충족.
-- 식별자 케이스는 `subCategoryIcons`(camelCase)가 맞다 — `shared/constants/CLAUDE.md` 규칙상 "값 안에 컴포넌트 참조가 섞이면 camelCase"(`navigation.ts`의 `userNavItems` 선례).
-- **⚠️ 이 매핑을 `src/shared/utils/category.ts`에 넣지 않는다.** `category.ts`는 `product.model.ts`(서버/DB)가 import하는 파일이고 `shared/utils/CLAUDE.md`가 "side-effect 없는 도메인-무관 순수 함수" 전담으로 규정한다 — 여기 lucide-react(React 컴포넌트)를 넣으면 서버 모델이 배럴 경유로 UI 라이브러리를 끌어온다.
+- 식별자 케이스는 `subCategoryIcons`(camelCase)가 맞다 — `shared/constants/AGENTS.md` 규칙상 "값 안에 컴포넌트 참조가 섞이면 camelCase"(`navigation.ts`의 `userNavItems` 선례).
+- **⚠️ 이 매핑을 `src/shared/utils/category.ts`에 넣지 않는다.** `category.ts`는 `product.model.ts`(서버/DB)가 import하는 파일이고 `shared/utils/AGENTS.md`가 "side-effect 없는 도메인-무관 순수 함수" 전담으로 규정한다 — 여기 lucide-react(React 컴포넌트)를 넣으면 서버 모델이 배럴 경유로 UI 라이브러리를 끌어온다.
 - **⚠️ key는 `SUB_CATEGORY_MAP` 원소와 문자 단위로 동일해야 한다**(`"first-birthday"`, 하이픈 유지). `Record<SubCategory, ...>` 타입 덕에 `firstBirthday`로 쓰면 컴파일 에러로 잡히지만, **아이콘 매핑용 정규화 유틸을 만드는 순간 그게 href 쪽으로 전염된다** — §2.3 무변환 규칙 참고. 정규화 유틸 자체를 만들지 않는다.
 - 승격 트리거: 나중에 `/products` 쪽에서도 같은 진입 리스트를 쓰게 되면(라우트 2곳) 그때 `src/client/components/`와 `src/shared/constants/`로 올린다. 지금 미리 올리지 않는다.
 
 ### 3.4 `organisms/`가 아니라 `(main)/_components/`인 이유 (+ 기존 형제와의 불일치)
 
-`EcommerceHero`/`LiveDemoSection`/`StartActionCTA`/`TemplateCarouselGroup`은 전부 `src/client/components/organisms/`에 있지만, grep 결과 **소비자가 `HomeTemplate` 하나뿐**이다(= 라우트 1곳). 즉 기존 배치는 `components/CLAUDE.md` 승격 규칙과 이미 어긋나 있다. `src/app/CLAUDE.md` Gotchas가 "이 패턴은 새 라우트/새 기능부터 강제하고 기존 라우트를 일괄 전환하지는 않는다"고 명시하므로, **신규인 이번 섹션은 규칙대로 `(main)/_components/`에 둔다.**
+`EcommerceHero`/`LiveDemoSection`/`StartActionCTA`/`TemplateCarouselGroup`은 전부 `src/client/components/organisms/`에 있지만, grep 결과 **소비자가 `HomeTemplate` 하나뿐**이다(= 라우트 1곳). 즉 기존 배치는 `components/AGENTS.md` 승격 규칙과 이미 어긋나 있다. `src/app/AGENTS.md` Gotchas가 "이 패턴은 새 라우트/새 기능부터 강제하고 기존 라우트를 일괄 전환하지는 않는다"고 명시하므로, **신규인 이번 섹션은 규칙대로 `(main)/_components/`에 둔다.**
 
 - 리스크: 같은 Home 화면의 섹션들이 두 곳에 흩어져 보인다. 구현자가 "형제들이 organisms에 있으니 나도"라고 판단하지 않도록 여기에 근거를 남긴다.
-- **✅ 리더 승인 확정** — 기존 `organisms/` 배치 Home 섹션 4개(`EcommerceHero`/`LiveDemoSection`/`StartActionCTA`/`TemplateCarouselGroup`)는 **그대로 두고 이번에 옮기지 않는다**. 일관성을 이유로 신규를 `organisms/`에 맞추지도 않는다 — `src/app/CLAUDE.md` Gotchas("새 라우트/새 기능부터 강제, 기존 일괄 전환은 안 함") 그대로 적용. 즉 두 곳에 흩어진 상태는 **의도된 과도기**이며 구현자가 임의로 정리하지 않는다.
+- **✅ 리더 승인 확정** — 기존 `organisms/` 배치 Home 섹션 4개(`EcommerceHero`/`LiveDemoSection`/`StartActionCTA`/`TemplateCarouselGroup`)는 **그대로 두고 이번에 옮기지 않는다**. 일관성을 이유로 신규를 `organisms/`에 맞추지도 않는다 — `src/app/AGENTS.md` Gotchas("새 라우트/새 기능부터 강제, 기존 일괄 전환은 안 함") 그대로 적용. 즉 두 곳에 흩어진 상태는 **의도된 과도기**이며 구현자가 임의로 정리하지 않는다.
 
 ### 3.5 배치 위치 — HomeTemplate 안 어디에?
 
@@ -271,7 +271,7 @@ StartActionCTA
 **이 섹션에는 로딩/에러/빈 상태가 존재하지 않는다.** 근거를 명시해둔다(리뷰어가 "왜 skeleton이 없냐"고 묻는 걸 방지):
 
 - 데이터 소스가 `SUB_CATEGORY_MAP`(컴파일타임 상수)이다 — fetch도, `useSWR`도, Server Action도 없다.
-- 따라서 `fetcher`/`ErrorPayload` 계약(`src/client/CLAUDE.md`)의 적용 대상이 아니다.
+- 따라서 `fetcher`/`ErrorPayload` 계약(`src/client/AGENTS.md`)의 적용 대상이 아니다.
 - `"use client"`도 불필요하다 — `<Link>` + lucide 아이콘 + CSS 스크롤뿐이라 순수 RSC로 렌더된다(lucide-react는 이미 `ProductCard.tsx`/`Header.tsx` 등 서버 컴포넌트에서 쓰이고 있어 검증됨). **클라이언트 번들 증가분 0.**
 
 | 상태 | 조건 | 렌더 |
@@ -389,7 +389,7 @@ searchParams.subCategory ──검증──→ initialSubCategory: SubCategory |
 
 ### 6.2 남은 확인 사항
 
-1. **네비게이션 중 로딩 표시 없음(T-0)** — 프로젝트 전체에 `loading.tsx`가 0개이며 `src/app/CLAUDE.md`는 "필요해지면 그때 기준을 추가한다"고 유보 중이다. 이번 기능이 Home→목록 이동을 처음으로 눈에 띄게 만들지만, **로딩 규약 신설은 이번 스코프 밖**으로 둔다(단일 라우트에 `loading.tsx`를 넣으면 프로젝트 전체 규약을 이 PR에서 정하는 셈이 된다). 목록 페이지 체감 지연이 실제 문제로 확인되면 별도 이슈로.
+1. **네비게이션 중 로딩 표시 없음(T-0)** — 프로젝트 전체에 `loading.tsx`가 0개이며 `src/app/AGENTS.md`는 "필요해지면 그때 기준을 추가한다"고 유보 중이다. 이번 기능이 Home→목록 이동을 처음으로 눈에 띄게 만들지만, **로딩 규약 신설은 이번 스코프 밖**으로 둔다(단일 라우트에 `loading.tsx`를 넣으면 프로젝트 전체 규약을 이 PR에서 정하는 셈이 된다). 목록 페이지 체감 지연이 실제 문제로 확인되면 별도 이슈로.
 2. **REQ-1 선행 의존(구현 순서 제약)** — `subCategoryIcons`가 `Record<SubCategory, LucideIcon>`이라, REQ-1(vip/business 제거)이 먼저 반영돼야 아이콘 4개를 채우라는 컴파일 에러가 안 난다. **구현 순서: REQ-1 → REQ-3.**
 3. **Phase 4 착수 시 인계 사항(미결 아님)** — 이번 PR로 Hero 바로 다음 자리는 이 섹션이 차지한다(리더 승인). TODO.md Phase 4의 "Hero 바로 다음" 문구는 §3.5 기준으로 "nav 띠 아래"로 읽는다.
 

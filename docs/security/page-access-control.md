@@ -2,18 +2,18 @@
 
 > Last updated: 2026-07-28
 > TODO #5(인증 UI 가드) 그릴링 결론 — 구현 완료(`verifySession`, PR #61/#62). 인증/인가 필요한 모든 page.tsx가 아래 Page-level DAL 게이트를 호출한다.
-> 아래 "인증 토큰" 섹션(`token` 단일 쿠키, access/refresh 이중 토큰 없음)이 구현된 상태를 전제로 한다 — 이 문서의 page 게이트 설계는 그 위에서만 성립한다(아래 Page-level DAL 게이트 참고). `src/CLAUDE.md`에서 분리 병합됨.
+> 아래 "인증 토큰" 섹션(`token` 단일 쿠키, access/refresh 이중 토큰 없음)이 구현된 상태를 전제로 한다 — 이 문서의 page 게이트 설계는 그 위에서만 성립한다(아래 Page-level DAL 게이트 참고). `src/AGENTS.md`에서 분리 병합됨.
 
 ## Overview
 
-페이지(Server Component) 렌더링 시점의 접근 제어를 3단계로 나눈다: Proxy(낙관적) → page.tsx(라우팅 게이트) → service 함수(데이터 게이트). `src/CLAUDE.md`가 이미 "Server Action은 Proxy에 위임하지 않고 내부 재검증" 원칙을 갖고 있는데, 이 문서는 그 원칙의 페이지 렌더링 버전이다.
+페이지(Server Component) 렌더링 시점의 접근 제어를 3단계로 나눈다: Proxy(낙관적) → page.tsx(라우팅 게이트) → service 함수(데이터 게이트). `src/AGENTS.md`가 이미 "Server Action은 Proxy에 위임하지 않고 내부 재검증" 원칙을 갖고 있는데, 이 문서는 그 원칙의 페이지 렌더링 버전이다.
 
 ## Proxy
 
 - Proxy는 protected path 전체(admin 포함)에 동일하게 `token` 쿠키를 decrypt해서 검사한다 — path별로 decrypt 여부를 다르게 두지 않는다, presence-only 체크(존재 여부만 봄)로 두지 않는다. 이유: 공식 문서 예제가 낙관적 리다이렉트에도 decrypt를 쓴다, presence-only는 만료/변조 세션을 걸러내지 못한다.
-- Proxy 통과를 인가 완료로 취급하지 않는다 — 반드시 아래 page-level 게이트를 다시 태운다. 이유: Proxy는 공식 문서상 낙관적 체크 전용이지 인가의 전체 솔루션이 아니다(`src/CLAUDE.md` Critical Convention에 이미 명시).
+- Proxy 통과를 인가 완료로 취급하지 않는다 — 반드시 아래 page-level 게이트를 다시 태운다. 이유: Proxy는 공식 문서상 낙관적 체크 전용이지 인가의 전체 솔루션이 아니다(`src/AGENTS.md` Critical Convention에 이미 명시).
 - Proxy 자체의 미인증 실패도 아래 "Redirect 목적지" 규칙을 그대로 따른다(`/login`) — page-level 게이트가 뒤에서 잡는 것과 동일한 실패를 Proxy가 먼저 잡았다고 해서 다른 목적지로 보내지 않는다. 이유: 사용자 입장에서 "미인증"은 어느 레이어가 잡았든 같은 실패이고, 다음 행동(재로그인)도 같다 — 레이어에 따라 목적지가 갈리면 그 자체가 비일관 경험이다.
-- `/login` 진입에 별도 관문(과거 `entry` 쿠키 요구, `issueEntryToken` 경유 강제)을 두지 않는다 — 로그인 안 한 유저는 `/login`에 직접 진입해도 된다. 이유: 이미 로그인한 유저를 auth 페이지에서 쫓아내는 Proxy의 기존 규칙(`src/CLAUDE.md` Key Files, "로그인 유저의 auth 페이지 차단")이 별도로 있어 그걸로 충분하고, 로그인 안 한 유저 쪽엔 막을 이유가 없다 — 실제로 지금 코드에서도 이 관문(`issueEntryToken`의 `token` 쿠키 삭제)은 그 "이미 로그인한 유저" 분기가 먼저 걸려 도달조차 안 되는 죽은 경로였다. `ENTRY` JWT 타입 자체는 비밀번호 재설정 용도로 남는다(아래 "인증 토큰" 참고) — 이건 그 타입의 로그인-게이트 용도만 폐기하는 것이다.
+- `/login` 진입에 별도 관문(과거 `entry` 쿠키 요구, `issueEntryToken` 경유 강제)을 두지 않는다 — 로그인 안 한 유저는 `/login`에 직접 진입해도 된다. 이유: 이미 로그인한 유저를 auth 페이지에서 쫓아내는 Proxy의 기존 규칙(`src/AGENTS.md` Key Files, "로그인 유저의 auth 페이지 차단")이 별도로 있어 그걸로 충분하고, 로그인 안 한 유저 쪽엔 막을 이유가 없다 — 실제로 지금 코드에서도 이 관문(`issueEntryToken`의 `token` 쿠키 삭제)은 그 "이미 로그인한 유저" 분기가 먼저 걸려 도달조차 안 되는 죽은 경로였다. `ENTRY` JWT 타입 자체는 비밀번호 재설정 용도로 남는다(아래 "인증 토큰" 참고) — 이건 그 타입의 로그인-게이트 용도만 폐기하는 것이다.
 
 ## Page-level DAL 게이트
 
@@ -34,9 +34,9 @@
 
 ## Service 레이어 방어(defense-in-depth)
 
-- 관리자 전용 데이터 또는 특정 사용자 소유 데이터를 다루는 service 함수는, 그 데이터를 호출하는 page.tsx가 이미 게이트를 통과했더라도 내부에서 인가를 다시 확인한다 — page 게이트 하나만 믿고 생략하지 않는다. 이유: `src/server/services/CLAUDE.md`가 이미 services를 "DAL(비즈니스 로직 + DB 접근 + 인가)"로 정의하고 있고, service 함수는 향후 다른 page/action에서 재사용될 수 있어 그 시점의 page 게이트 존재를 전제할 수 없다.
+- 관리자 전용 데이터 또는 특정 사용자 소유 데이터를 다루는 service 함수는, 그 데이터를 호출하는 page.tsx가 이미 게이트를 통과했더라도 내부에서 인가를 다시 확인한다 — page 게이트 하나만 믿고 생략하지 않는다. 이유: `src/server/services/AGENTS.md`가 이미 services를 "DAL(비즈니스 로직 + DB 접근 + 인가)"로 정의하고 있고, service 함수는 향후 다른 page/action에서 재사용될 수 있어 그 시점의 page 게이트 존재를 전제할 수 없다.
 - 이 인가 재확인은 page 게이트와 별도의 세션 조회를 새로 만들지 않는다 — 같은 렌더 패스 안이면 위 `cache()` 덕분에 추가 DB 비용 없이 재확인이 가능하다.
-- 관리자 전용 데이터와 특정 유저 소유 데이터를 같은 service 함수가 같이 다뤄야 하는 경우(예: admin은 전체 조회, 유저는 자기 소유만)의 파라미터 형태는 지금 정하지 않는다 — 현재 코드에 그런 인스턴스가 없다(`admin/orders/page.tsx`가 아직 빈 스텁). 실제로 그 필요가 생기는 시점에 그 자리에서 재검토한다(가정만으로 미리 만들지 않는다, `src/server/services/CLAUDE.md` 트랜잭션 섹션과 같은 원칙).
+- 관리자 전용 데이터와 특정 유저 소유 데이터를 같은 service 함수가 같이 다뤄야 하는 경우(예: admin은 전체 조회, 유저는 자기 소유만)의 파라미터 형태는 지금 정하지 않는다 — 현재 코드에 그런 인스턴스가 없다(`admin/orders/page.tsx`가 아직 빈 스텁). 실제로 그 필요가 생기는 시점에 그 자리에서 재검토한다(가정만으로 미리 만들지 않는다, `src/server/services/AGENTS.md` 트랜잭션 섹션과 같은 원칙).
 
 ## Gotchas
 
@@ -54,5 +54,5 @@
 
 ## 관련 문서
 
-- Proxy/Server Action 원칙: `src/CLAUDE.md` (Critical Convention, "Proxy에 위임하지 않는다")
-- 기존 세션 조회 함수(`getUser`/`getAuth`/`requireAuth`) 계약: `src/server/services/CLAUDE.md`
+- Proxy/Server Action 원칙: `src/AGENTS.md` (Critical Convention, "Proxy에 위임하지 않는다")
+- 기존 세션 조회 함수(`getUser`/`getAuth`/`requireAuth`) 계약: `src/server/services/AGENTS.md`
