@@ -28,4 +28,4 @@ src/shared/utils/
 ## 관련 문서
 
 - side-effect 로직과의 경계: `src/server/lib/CLAUDE.md`(서버 전용), `src/client/lib/CLAUDE.md`(브라우저 전용)
-- 테스트 작성 컨벤션(1차 커버 범위 우선순위): `docs/validation/testing-guideline.md`
+- 테스트 분류와 작성 원칙: `docs/validation/testing-classification.md`, `docs/validation/testing-practices.md`

@@ -46,4 +46,4 @@ src/shared/schemas/
 | ---------------------- | ---------------------- | ----------------------------------- | ------------------------ |
 | `CLAUDE.md`            | `src/client/hooks/`    | 이 스키마를 쓰는 폼 훅 확인 시      | 훅 컨벤션                |
 | `CLAUDE.md`            | `src/shared/types/`    | 이 폴더와의 소유권 경계 확인 시     | 타입 원본 소유권 경계    |
-| `TESTING_GUIDELINE.md` | `docs/`                | 이 폴더 테스트 작성 시              | 1차 커버 범위 우선순위   |
+| `testing-classification.md`, `testing-practices.md` | `docs/validation/` | 이 폴더 테스트 작성 시 | 분류와 테스트 범위 선택 |
