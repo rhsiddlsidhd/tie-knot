@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildUserInput, clearCollections } from "@/test";
+import { buildUserInput, clearCollections } from "@testing/support";
 import { AppError } from "@/shared/types";
 import { UserModel } from "@/server/models";
 import {

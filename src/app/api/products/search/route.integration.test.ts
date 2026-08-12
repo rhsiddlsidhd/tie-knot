@@ -12,7 +12,7 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildProductInput, clearCollections } from "@/test";
+import { buildProductInput, clearCollections } from "@testing/support";
 import { createProductService } from "@/server/services";
 import { GET } from "./route";
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildFeatureInput, clearCollections } from "@/test";
+import { buildFeatureInput, clearCollections } from "@testing/support";
 import { FeatureModel } from "@/server/models";
 import {
   createPremiumFeatureService,

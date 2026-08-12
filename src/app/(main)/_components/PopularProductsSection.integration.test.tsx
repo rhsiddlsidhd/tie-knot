@@ -12,7 +12,7 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildProductInput, clearCollections } from "@/test";
+import { buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
 import {
   createProductService,

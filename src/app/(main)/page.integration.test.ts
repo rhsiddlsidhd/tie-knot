@@ -18,7 +18,7 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildProductInput, clearCollections } from "@/test";
+import { buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
 import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
 
@@ -77,7 +77,6 @@ describe("(main)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     await likeNTimes(p3!._id.toString(), 2);
     await likeNTimes(p4!._id.toString(), 1);
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const element = (await page()) as any;
 
     expect(
@@ -101,7 +100,6 @@ describe("(main)/page — 통합(DB~page.tsx 데이터 배선)", () => {
 
     // reject가 흡수되지 않으면 이 await 자체가 던지면서 테스트가 실패한다 —
     // 즉 "Home 전체가 죽지 않는다"는 이 await가 정상 resolve된다는 사실 자체로 증명된다.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const element = (await page()) as any;
 
     expect(element.props.popularProducts).toEqual([]);

@@ -1,7 +1,7 @@
 # 테스트 가이드라인
 
-> Last updated: 2026-08-11
-> vitest 설치 완료 — `vitest.config.ts`(루트), 공개 `test`/`test:unit`/`test:integration:*` 스크립트, `vite-tsconfig-paths`로 alias 해석. `mongodb-memory-server`도 설치·연동 완료(`src/test/setup/mongo-server.ts` globalSetup, `src/server/lib/mongodb/connect.ts`의 `MONGO_TEST_URI` 오버라이드) — 아래 Tooling/DB 테스트 섹션 참고. 팩토리는 `src/test/factories/`에 도메인당 1개씩 있다.
+> Last updated: 2026-08-12
+> vitest 설치 완료 — `vitest.config.ts`(루트), 공개 `test`/`test:unit`/`test:integration:*` 스크립트, `vite-tsconfig-paths`로 alias 해석. `mongodb-memory-server`도 설치·연동 완료(`testing/support/setup/mongo-server.ts` globalSetup, `src/server/lib/mongodb/connect.ts`의 `MONGO_TEST_URI` 오버라이드) — 아래 Tooling/DB 테스트 섹션 참고. 팩토리는 `testing/support/factories/`에 도메인당 1개씩 있다.
 
 ## Overview
 
@@ -18,32 +18,32 @@
 ## Structure
 
 ```
-src/
-├── services/
+src/                                  # 제품 테스트는 대상 코드 옆에 colocate
+├── server/services/
 │   ├── auth.service.ts
-│   └── auth.service.integration.test.ts  # colocate. DB에 붙으므로 .integration
-├── actions/
-│   ├── createOrder.ts
-│   └── createOrder.test.ts      # colocate — 대상 파일 옆에 .test.ts
-├── schemas/request/
-│   ├── login.schema.ts
-│   └── login.schema.test.ts
-└── test/                          # 테스트 전용 공용 지원 자산 — src/test/CLAUDE.md
-    ├── index.ts                     # 배럴 — 테스트는 `@/test` 하나로만 import한다
-    ├── db.ts                        # beforeEach에서 쓰는 컬렉션 clear 헬퍼
-    ├── setup/                       # vitest.config.ts 전용 진입점(배럴에 넣지 않는다)
-    │   ├── mongo-server.ts          # globalSetup — mongodb-memory-server 기동/종료
-    │   └── jsdom-polyfill.ts        # setupFiles — jsdom 미구현 API 대체 + RTL cleanup
-    └── factories/
-        ├── index.ts
-        ├── user.factory.ts          # buildUserInput(overrides?)
-        ├── product.factory.ts
-        └── ...                       # 모델당 파일 1개, src/server/models/ 구성과 1:1 대응
+│   └── auth.service.integration.test.ts
+└── server/actions/
+    ├── createOrder.ts
+    └── createOrder.test.ts
+
+scripts/                              # 도구 테스트도 대상 코드 옆에 colocate
+└── **/*.test.mjs
+
+testing/
+├── e2e/                              # Playwright 사용자 시나리오
+│   └── *.spec.ts
+└── support/                          # 공용 테스트 지원 자산
+    ├── index.ts                      # `@testing/support` 배럴
+    ├── db.ts
+    ├── setup/                        # Vitest 설정 전용 진입점
+    └── factories/                    # 모델별 입력 팩토리
 ```
 
 > 위 `services/`/`actions/`/`schemas/` 아래 파일들은 colocate 구조를 보여주기 위한 예시다.
 
-- **`src/test/`에는 테스트 파일을 두지 않는다** — 테스트는 대상 파일 옆에 colocate하고, 이 폴더는 여러 테스트가 공유하는 지원 자산(실행 인프라·헬퍼·팩토리) 전용이다. 폴더 이름만 보고 "테스트 모음"으로 오해하기 쉬운 지점이다.
+- **unit과 integration 테스트는 대상 코드 옆에 둔다** — `src/`와 `scripts/` 구조를 별도 테스트 디렉터리에 복제하지 않는다.
+- **`testing/support/`에는 테스트 파일을 두지 않는다** — 여러 테스트가 공유하는 실행 인프라·헬퍼·팩토리 전용이다.
+- **Playwright E2E만 `testing/e2e/`에 둔다** — 특정 소스 파일이 아니라 실행된 애플리케이션의 사용자 시나리오가 테스트 대상이기 때문이다.
 
 ## Critical Convention
 
@@ -57,21 +57,24 @@ src/
 
 ### 파일 네이밍 = 실행 묶음
 
-- **테스트 파일명은 `*.test.ts(x)`가 기본이고, 실물 mongod(`mongodb-memory-server`)에 붙는 테스트만 `*.integration.test.ts(x)`로 짓는다.** 판정 기준은 이것 하나다 — mock을 얼마나 썼는지, RTL을 썼는지, 모듈 여러 개가 얽혔는지는 기준이 아니다. `grep -lE "dbConnect|clearCollections"`로 기계적으로 판정된다.
-- **파일 안에 DB 테스트가 하나라도 있으면 그 파일 전체가 integration이다** — vitest의 실행 단위는 `it`이 아니라 파일이라, 파일 하나가 통째로 한 묶음에 들어간다.
+- **unit은 `*.test.ts(x)`로 짓는다.** 하나의 주된 대상을 프로세스 밖 자원이나 실제 애플리케이션 경계 없이 격리해 검증한다.
+- **integration은 `*.integration.test.ts(x)`로 짓는다.** 둘 이상의 실제 프로젝트 경계를 연결하거나 실제 테스트 인프라를 통과해 계약의 연결을 검증한다. 예: service→MongoDB, action→service→MongoDB, hook→SWR→fetch→MSW.
+- **외부 부작용을 mock해도 내부 경계를 실제로 연결하면 integration이다.** Cloudinary·PortOne·이메일 같은 외부 서비스는 integration에서도 mock한다. 반대로 핵심 의존성을 모두 mock하고 한 함수의 분기만 검증하면 unit이다.
+- **파일 안에 integration 테스트가 하나라도 있으면 파일 전체를 integration으로 둔다** — Vitest의 실행 분류 단위는 `it`이 아니라 파일이다.
 - **실행을 가르지 않는 접미사는 붙이지 않는다.** `vitest.config.ts`의 projects가 접미사와 경로로 실행 환경을 나누므로 접미사가 곧 실행 셀렉터다 — 분류 설명용 라벨(`*.regression.test.ts` 등)을 새로 만들지 않는다.
-- MSW나 `vi.mock`으로 네트워크만 가로챈 컴포넌트 테스트는 **unit 쪽**이다 — 테스트 분류 taxonomy가 아니라 "프로세스 밖 공유 자원을 쓰는가"가 기준이기 때문이다.
+- **E2E는 `testing/e2e/*.spec.ts`로 짓는다.** Playwright가 실행 중인 애플리케이션을 실제 브라우저로 조작한다.
 
 ### 공개 실행 묶음
 
 | 묶음 | 대상 | mongod | 파일 병렬 |
 | --- | --- | --- | --- |
 | `unit` | `*.test.ts(x)` (integration 제외) | 안 띄움 | 병렬 |
-| `integration-client` | `src/client`, `src/app/**/_hooks`의 integration | 안 띄움 | 병렬 |
+| `integration-client` | `src/client`, `src/app/**/_hooks`의 SWR·fetch·상태 경계 integration | 안 띄움 | 병렬 |
 | `integration-server` | `src/server`, `src/app/api`의 integration | 띄움 | 순차 |
-| `integration-rsc` | `src/app`의 API 외 integration | 띄움 | 순차 |
+| `integration-app` | `src/app`의 API 외 integration | 띄움 | 순차 |
 
-- 공개 명령은 `npm run test:unit`, `npm run test:integration:client`, `npm run test:integration:server`다. server 명령은 `integration-server`와 `integration-rsc` project를 함께 실행한다.
+- 공개 taxonomy는 unit, integration, E2E다. `integration-client`·`integration-server`·`integration-app`은 실행 환경과 공유 자원 차이를 처리하기 위한 Vitest 내부 프로젝트다.
+- 공개 명령은 `npm run test:unit`, `npm run test:integration:client`, `npm run test:integration:server`, `npm run test:e2e`다. server 명령은 `integration-server`와 `integration-app` project를 함께 실행한다.
 - **`connect.ts`의 URI 검증은 모듈 로드가 아니라 `dbConnect()` 호출 시점에 건다** — 지키려는 불변조건이 "테스트가 프로덕션 DB에 연결하지 않는다"라 검증도 연결 시점에 있어야 한다. 로드 시점에 두면 `unit` 묶음(mongod 없음)의 테스트가 배럴 캐스케이드로 그 모듈을 로드하는 것만으로 터진다.
 - 공통 TDD Guard 그래프는 `*.test.ts(x)`와 `*.integration.test.ts(x)`를 모두 제품 코드에 연결한다. 파일명 역산이 아니라 런타임 import 전이 관계로 관련 테스트를 찾는다.
 
@@ -84,11 +87,11 @@ src/
 ### DB 테스트
 
 - DB가 걸린 로직은 `mongodb-memory-server`로 실제 mongoose 쿼리를 실행해 검증한다 — mongoose model을 `vi.mock`으로 대체하지 않는다. 이유: mock은 쿼리 정확성(필터 조건, `.lean()`/`.toJSON()` 결과 shape)을 검증하지 못하고, 구현 디테일에 묶인 mock은 리팩터마다 재작성해야 한다 — 계약(입출력)만 보는 통합 테스트가 리팩터에 더 강하다.
-- `mongodb-memory-server` 인스턴스는 vitest `globalSetup`(`src/test/setup/mongo-server.ts`)에서 테스트 스위트 전체당 1개만 띄운다 — 테스트 파일마다 새 인스턴스를 만들지 않는다. 이유: 파일마다 기동하면 스위트 전체 시간이 선형으로 늘어난다. 테스트 간 격리는 각 `beforeEach`에서 관련 컬렉션을 `deleteMany`로 비워 확보한다(`clearCollections`, `src/test/db.ts`).
+- `mongodb-memory-server` 인스턴스는 vitest `globalSetup`(`testing/support/setup/mongo-server.ts`)에서 테스트 스위트 전체당 1개만 띄운다 — 테스트 파일마다 새 인스턴스를 만들지 않는다. 이유: 파일마다 기동하면 스위트 전체 시간이 선형으로 늘어난다. 테스트 간 격리는 각 `beforeEach`에서 관련 컬렉션을 `deleteMany`로 비워 확보한다(`clearCollections`, `testing/support/db.ts`).
 - **mongod 버전은 `mongo-server.ts`의 `MONGOD_VERSION`으로 고정한다** — 생략하면 `mongodb-memory-server` 패키지가 정한 기본 버전을 쓰므로, 패키지를 올릴 때 테스트가 도는 mongod 버전이 조용히 바뀐다. 운영(Atlas) 클러스터 버전을 올릴 때 이 값도 같이 맞춘다.
-- **이 격리는 테스트 파일들이 순차 실행될 때만 유효하다.** `integration-server`와 `integration-rsc`에 `fileParallelism: false`를 설정한다. 여러 파일이 같은 DB를 공유하므로 한 파일의 `beforeEach`가 다른 파일의 데이터를 지우는 레이스를 막기 위한 제약이며, DB를 쓰지 않는 unit/client에는 적용하지 않는다.
-- mongoose 테스트 데이터는 `src/test/factories/{도메인}.factory.ts`의 팩토리 함수(`buildUserInput(overrides?)` 등)로 만든다 — 매 테스트 파일에 객체 리터럴을 인라인으로 반복하지 않는다. 이유: 모델 스키마에 필수 필드가 추가되면 인라인 방식은 테스트 파일 전부 고쳐야 하지만 팩토리는 한 곳만 고치면 된다.
-- 팩토리와 헬퍼는 배럴 `@/test` 하나로만 import한다 — `@/test/db`나 `@/test/factories/product.factory` 같은 개별 경로로 찌르지 않는다(`src/CLAUDE.md` 배럴 전용 import 원칙).
+- **이 격리는 테스트 파일들이 순차 실행될 때만 유효하다.** `integration-server`와 `integration-app`에 `fileParallelism: false`를 설정한다. 여러 파일이 같은 DB를 공유하므로 한 파일의 `beforeEach`가 다른 파일의 데이터를 지우는 레이스를 막기 위한 제약이며, DB를 쓰지 않는 unit/client에는 적용하지 않는다.
+- mongoose 테스트 데이터는 `testing/support/factories/{도메인}.factory.ts`의 팩토리 함수(`buildUserInput(overrides?)` 등)로 만든다 — 매 테스트 파일에 객체 리터럴을 인라인으로 반복하지 않는다. 이유: 모델 스키마에 필수 필드가 추가되면 인라인 방식은 테스트 파일 전부 고쳐야 하지만 팩토리는 한 곳만 고치면 된다.
+- 팩토리와 헬퍼는 배럴 `@testing/support` 하나로만 import한다 — `@testing/support/db`나 `@testing/support/factories/product.factory` 같은 개별 경로로 찌르지 않는다(`src/CLAUDE.md` 배럴 전용 import 원칙).
 
 ### 목킹 정책
 
@@ -115,10 +118,10 @@ src/
 ### 컴포넌트 테스트 인프라 셋업
 
 - `.env`는 vitest가 Next.js처럼 자동으로 읽지 않는다 — `vitest.config.ts`에서 `@next/env`(Next 내장, 별도 설치 불필요)의 `loadEnvConfig(process.cwd())`를 `defineConfig` 호출 이전에 실행해 로드한다. 이거 없으면 배럴 import를 타고 들어온 무관한 모듈(예: 인증 코드)이 환경변수 누락으로 테스트를 깨뜨릴 수 있다.
-- RTL의 자동 `afterEach(cleanup)`은 이 프로젝트의 `globals: false` 설정에서는 안 걸린다 — `src/test/setup/jsdom-polyfill.ts`에 `afterEach(cleanup)`을 명시적으로 등록해뒀다. 이거 없으면 이전 테스트가 렌더한 DOM이 안 지워진 채 다음 테스트로 넘어가 쿼리가 여러 개 매칭되는 식으로 깨진다.
-- jsdom은 Pointer Events API(`hasPointerCapture`/`setPointerCapture`/`releasePointerCapture`)와 `scrollIntoView`를 구현하지 않는다 — Radix UI(Select/Dialog 등) 컴포넌트가 이 메서드들을 호출해서 폴리필 없으면 상호작용 테스트가 런타임에 터진다. `src/test/setup/jsdom-polyfill.ts`에 폴리필을 이미 등록해뒀다.
-- jsdom은 `ResizeObserver`도 구현하지 않는다 — `@radix-ui/react-use-size`가 Select 트리거 크기 측정에 쓰는데, Select를 2개 이상 동시에 렌더링하는 폼(`ProductRegistrationForm` 테스트 작성 중 처음 발견)에서 마운트 즉시 던진다. `src/test/setup/jsdom-polyfill.ts`에 mock 등록.
-- jsdom은 `DataTransfer`도 구현하지 않고, `HTMLInputElement.files` setter는 진짜 `FileList` 브랜드 체크를 한다 — `new DataTransfer() → input.files = dataTransfer.files` 패턴(파일 업로드 폼이 hidden input에 프로그래밍적으로 파일을 채울 때 흔한 방식)을 그대로 실행하면 던진다. `src/test/setup/jsdom-polyfill.ts`에서 `DataTransfer`를 mock하고 `HTMLInputElement.prototype.files`의 setter/getter를 테스트 환경 한정으로 느슨하게 재정의해뒀다 — `user-event.upload()`가 쓰는 인스턴스 전용 대입과는 간섭하지 않는다.
+- RTL의 자동 `afterEach(cleanup)`은 이 프로젝트의 `globals: false` 설정에서는 안 걸린다 — `testing/support/setup/jsdom-polyfill.ts`에 `afterEach(cleanup)`을 명시적으로 등록해뒀다. 이거 없으면 이전 테스트가 렌더한 DOM이 안 지워진 채 다음 테스트로 넘어가 쿼리가 여러 개 매칭되는 식으로 깨진다.
+- jsdom은 Pointer Events API(`hasPointerCapture`/`setPointerCapture`/`releasePointerCapture`)와 `scrollIntoView`를 구현하지 않는다 — Radix UI(Select/Dialog 등) 컴포넌트가 이 메서드들을 호출해서 폴리필 없으면 상호작용 테스트가 런타임에 터진다. `testing/support/setup/jsdom-polyfill.ts`에 폴리필을 이미 등록해뒀다.
+- jsdom은 `ResizeObserver`도 구현하지 않는다 — `@radix-ui/react-use-size`가 Select 트리거 크기 측정에 쓰는데, Select를 2개 이상 동시에 렌더링하는 폼(`ProductRegistrationForm` 테스트 작성 중 처음 발견)에서 마운트 즉시 던진다. `testing/support/setup/jsdom-polyfill.ts`에 mock 등록.
+- jsdom은 `DataTransfer`도 구현하지 않고, `HTMLInputElement.files` setter는 진짜 `FileList` 브랜드 체크를 한다 — `new DataTransfer() → input.files = dataTransfer.files` 패턴(파일 업로드 폼이 hidden input에 프로그래밍적으로 파일을 채울 때 흔한 방식)을 그대로 실행하면 던진다. `testing/support/setup/jsdom-polyfill.ts`에서 `DataTransfer`를 mock하고 `HTMLInputElement.prototype.files`의 setter/getter를 테스트 환경 한정으로 느슨하게 재정의해뒀다 — `user-event.upload()`가 쓰는 인스턴스 전용 대입과는 간섭하지 않는다.
 
 ### 스타일
 

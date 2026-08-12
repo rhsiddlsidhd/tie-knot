@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:integration:client": "vitest run --project integration-client",
-    "test:integration:server": "vitest run --project integration-server --project integration-rsc",
+    "test:integration:server": "vitest run --project integration-server --project integration-app",
     "test:e2e": "playwright test --project=core",
     "test:e2e:portone": "playwright test --config=playwright.portone.config.ts --headed",
     "test:mutation": "node scripts/test-scope/changed-mutation.mjs",

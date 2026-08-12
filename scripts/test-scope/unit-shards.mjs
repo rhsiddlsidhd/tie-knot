@@ -22,8 +22,8 @@ const SHARDS = {
     matches: (file) => file.startsWith("src/app/(admin)/"),
   },
   "app-main": {
-    paths: ["src/app/(main)"],
-    matches: (file) => file.startsWith("src/app/(main)/"),
+    paths: ["src/app/(main)", "src/app/(preview)"],
+    matches: (file) => file.startsWith("src/app/(main)/") || file.startsWith("src/app/(preview)/"),
   },
   "app-api": {
     paths: ["src/app/api", "src/app/global-error.test.tsx"],

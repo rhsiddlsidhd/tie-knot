@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
-import { buildOrderInput, buildProductInput, clearCollections } from "@/test";
+import { buildOrderInput, buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel, OrderModel, PaymentModel } from "@/server/models";
 import { createProductService } from "./product.service";
 import { createOrderService } from "./order.service";
