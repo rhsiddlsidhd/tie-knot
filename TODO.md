@@ -27,53 +27,77 @@
 - [ ] **마켓플레이스 전환 (제3자 판매자 입점)** (2026-08-06 방향성만 논의, 착수 아님) — 현재 `UserRole`은 `"USER" | "ADMIN"` 둘뿐이고(`user.model.ts:2`) 상품 등록은 `createProduct.ts`의 `role !== "ADMIN"` 체크로 관리자 전용(자사 직접판매몰 구조, `authorId`는 "등록한 관리자"만 의미). `SELLER` role 추가해 제3자 판매자가 직접 상품을 입점시키는 구조로 전환하는 방향이 논의됨. 착수 시 파급 범위 큼 — 착수 전 별도로 팬아웃 설계 필요:
   - 상품 등록/수정/삭제 권한 체크 전반에 `SELLER` 포함, 상품 소유권 개념 신설(자기 상품만 수정/삭제 가능하도록 인가 로직 추가 — `authorId`의 의미가 "등록한 관리자"에서 "소유 판매자"로 바뀜)
   - 판매자 정산/수수료 체계, 판매자 프로필/스토어 페이지, 관리자의 판매자 상품 검수 플로우 등 마켓플레이스 특유 기능 신규 설계
-  - 위 "상품 카테고리별 확장" 항목과 별개 트랙 — 섞어서 진행하지 않는다.
+  - "상품 카테고리별 확장"과 별개 트랙 — 섞어서 진행하지 않는다.
 
 ---
 
 ## 버그 수정
 
-> 아래 4개 클러스터는 주제 기준 서브그룹 — 클러스터 안에서 위→아래 순서로 처리 권장(2026-08-08 정리, 파일/맥락 겹침 기준). 단, **클러스터 간 순서로는 "단독" 클러스터의 `test:coverage:diff` 항목(#24)을 전체 중 최우선으로 먼저 처리 권장** — 원인 실증 완료, 이게 살아있는 한 나머지 클러스터 작업물의 커버리지 게이트가 무력함(상세는 해당 항목 참고).
+> **2026-08-12 전수 재검증 완료** — 코드 대조로 항목 유효성과 위치를 다시 확인했다. 이 날짜 이후 다시 낡을 수 있으므로 착수 전 해당 파일을 먼저 읽는다.
+>
+> 처리 순서: **선행 2건(가드레일)을 먼저** 끝낸 뒤 클러스터 1~3으로 간다. 선행 항목은 나머지 전부의 작업 단가를 좌우한다. 클러스터 안에서는 위→아래 순서를 권장한다(파일·맥락 겹침 기준).
 
-### 클러스터 1 — 이미지 파이프라인 (25 → 22 → 28 순서)
+### 선행 — 가드레일 정합 (아래 순서대로, 나머지 작업의 비용을 좌우)
 
-- [ ] **상품 이미지 업로드가 Server Action 기본 body size limit(1MB)에 걸리는 잠복버그** (2026-08-07 발견, 목데이터 삽입 준비 중 논의) — `createProduct`/`updateProduct`가 `thumbnail`/`images`(신규 갤러리, PR #95)를 File 객체 그대로 FormData에 실어 Server Action으로 보내는데, `next.config.ts`에 `experimental.serverActions.bodySizeLimit` 오버라이드가 없어 Next.js 16 기본값 1MB 그대로 적용된다(`node_modules/next/dist/docs/01-app/02-guides/server-actions.md:83`). 실사진(수 MB급) 몇 장만 같이 올려도 걸릴 가능성 높음 — vitest 목업 File은 작아서 지금까지 안 걸렸을 뿐. 청첩장(couple-info) 폼이 이미 같은 문제로 클라이언트 직접업로드(signed, `/api/upload/signature`)로 우회한 전례가 있음.
-  - **참고**: `next-cloudinary`(v6.17.5) 패키지가 이미 설치돼있고 `CldUploadWidget`/`CldUploadButton`(Cloudinary 공식 모달형 업로드 UI, 드래그드롭/카메라/구글드라이브 소스 지원)을 제공하는데 `src/` 어디서도 안 씀 — 상품 이미지 업로드를 이걸로 전환하면 body limit 문제가 구조적으로 사라짐(서버가 파일 바이트를 안 거침). 단, 이번 PR(#95)에서 확정한 `images` 요청 계약(`{existing: string[], newFiles: File[]}`)을 `string[]`로 바꿔야 하는 규모 있는 변경이라 별도 설계 필요.
-  - 목데이터 삽입(위 "상품 카테고리별 확장" 항목의 실 데이터 검증 단계)은 당장 작은 플레이스홀더 이미지로 우회 가능 — 이 항목이 그 착수를 막지는 않음.
-- [ ] **`updateProduct`의 `thumbnail` required 기존 부채** (2026-08-07 재확인, PR #95 스코프아웃) — `productSchema`가 `thumbnail`을 `File(size>0)` required로 잡아서 상품 수정 시마다 썸네일 재업로드가 강제된다. `images` 필드는 `existing` 합산 설계로 이 문제를 안 만들었지만 `thumbnail` 자체는 그대로.
-- [ ] **상품 상세 페이지가 `images`(상세 이미지 갤러리) 필드를 아예 렌더링하지 않음** (2026-08-07 발견, 목데이터 14건 실등록 검증 중 — PR #95 스코프아웃) — `ProductFeatures.tsx:45-48`의 "상세 정보" 섹션이 헤딩만 있고 본문이 완전히 비어있다. `ProductDetailTemplate.tsx`가 `ProductFeatures`엔 `options`(premiumFeatures)만 넘기고 `product`/`product.images` 자체를 전달하지 않는다 — 갤러리 소비 코드가 통째로 없다. 등록 폼에서는 non-invitation 카테고리에 `images`를 필수(최소 1장)로 강제해놓고 정작 고객에게는 노출이 안 되는 상태 — 사진으로 구매를 설득해야 하는 답례품/웨딩소품 카테고리에서 특히 치명적. `images: string[]`를 `ProductDetailTemplate`→`ProductFeatures`(또는 신규 갤러리 organism)로 내려서 렌더링 추가 필요.
+- [ ] **하네스 문서가 존재하지 않는 pre-commit 게이트를 계약으로 명시 — 구현 에이전트가 TDD Guard를 모른 채 차단당함** (2026-08-12 발견 [발견: TODO 전수 재검증 중 가드레일 구조 감사]) — `.claude/agents/backend-impl.md`, `frontend-impl.md`, `test-suite.md` 세 파일에 TDD Guard·`test:red`·proof 언급이 **0건**이다. 대신 `backend-impl.md:44`와 `frontend-impl.md:44`가 "pre-commit 훅(lint/coverage80%/typecheck)에 막히면 원인 해결 후 재시도, 3회 실패 시 에스컬레이션"이라는 절차를 규정하는데 **그 훅은 존재하지 않는다**(`.git/hooks/`에 훅 0개, `.claude/settings.json`은 TDD Guard PreToolUse/PostToolUse만 등록).
+  - **실제 동작**: `guard.mjs pre-edit`가 유효 proof 없는 guarded 파일 편집을 `permissionDecision: "deny"`로 차단한다(`bin/guard.mjs:64`). 즉 구현 에이전트는 첫 `Edit`/`Write`에서 막히는데, 대응 절차(`npm run test:red -- --scope <scope>`)가 지침에 없어 복구 경로가 없다.
+  - **내부 모순**: `feature-team-orchestrator/SKILL.md:14`는 TDD Guard 계약으로 갱신됐는데 같은 파일 `:140`은 여전히 phantom pre-commit 게이트를 표로 남겨뒀다.
+  - **부수**: `.claude/agents/test-suite.md:27`이 지시하는 `npm run test`는 현재 실패하는 명령이다(아래 "단독" 섹션 항목 참고).
+  - **비용**: 대상 파일이 전부 unguarded(`docs/` 및 `.claude/`)라 Red proof 없이 수정 가능 — 착수 비용이 가장 낮다.
+
+- [ ] **TDD Guard의 요구 scope 산정이 type-only import를 런타임 경계로 오판해 부풀린다** (2026-08-12 발견 [발견: 항목별 게이트 비용 측정 중], 실증 완료) — `scripts/tdd-guard/core/classify-scope.mjs`의 `localDependencies`가 정규식 `(?:from\s+|import\s*)["']([^"']+)["']`로 import를 긁어 **`import type`을 걸러내지 않는다**. 그래서 타입 하나만 참조해도 그 사슬 끝의 mongoose·`use server` 경계가 걸려 `integration` proof가 강제된다.
+  - **실증(2026-08-12)**: 프로브 파일 대조 — `import type { PremiumFeature } from "@/server/services"` 한 줄만 있는 파일이 `requiredScopes: ["integration","unit"]`(사유 "Mongoose/MongoDB 실행 경계 변경"), import를 지우면 `["unit"]`.
+  - **영향 범위**: `guard.mjs classify`로 측정한 결과 아래 클러스터 대상 파일이 **전부** `integration` 요구 — 순수 프레젠테이셔널인 `ProductFeatures.tsx`, `OrderSummary.tsx`, `ProductSummary.tsx`, `ProductRegistrationForm.tsx`, `(admin)/admin/layout.tsx` 포함. 문구 한 줄 수정에도 mongod 기동 + 직렬 integration 실행이 붙는다.
+  - **정답이 이미 있음**: 같은 가드의 `scripts/test-scope/test-graph.mjs:runtimeSpecifiers`가 TypeScript AST로 type-only import를 정확히 배제한다. 두 모듈이 같은 판정을 다르게 하고 있어 정합만 맞추면 된다.
+  - **증폭 요인**: 배럴 강제 규칙(인박스 항목 참고)이 타입 하나를 `@/server/services` 배럴 경유로 mongoose 사슬에 연결시킨다.
+  - **주의**: 게이트 완화 방향의 변경이다. `scripts/`는 guarded라 이 수정 자체에 Red proof가 필요하며, `scripts/tdd-guard/__tests__/`에 회귀 테스트를 먼저 세운다.
+
+### 클러스터 1 — 이미지 파이프라인 (아래 순서)
+
+- [ ] **상품 이미지 업로드가 Server Action 기본 body size limit(1MB)에 걸리는 잠복버그** (2026-08-07 발견, 목데이터 삽입 준비 중 논의 — 2026-08-12 재확인) — `createProduct`/`updateProduct`가 `thumbnail`/`images`를 File 객체 그대로 FormData에 실어 Server Action으로 보내는데, `next.config.ts`에 `experimental.serverActions.bodySizeLimit` 오버라이드가 없어 Next.js 16 기본값 1MB가 그대로 적용된다(`node_modules/next/dist/docs/01-app/02-guides/server-actions.md:83`). 실사진(수 MB급) 몇 장이면 걸린다 — vitest 목업 File이 작아서 지금까지 안 걸렸을 뿐. 청첩장(couple-info) 폼이 같은 문제로 클라이언트 직접업로드(signed, `src/app/api/upload/signature`)로 우회한 전례가 있다(2026-08-12 존재 확인).
+  - **참고**: `next-cloudinary`(v6.17.5)가 설치돼 있고 `CldUploadWidget`/`CldUploadButton`을 제공하는데 `src/` 어디서도 안 쓴다(2026-08-12 재확인, 사용 0건). 이걸로 전환하면 서버가 파일 바이트를 안 거쳐 body limit 문제가 구조적으로 사라진다. 단 `images` 요청 계약(`{existing: string[], newFiles: File[]}`)을 `string[]`로 바꿔야 하는 규모 있는 변경이라 별도 설계 필요.
+  - **비용**: `next.config.ts`는 guard 예외(`*.config.ts` 제외 규칙)라 임시 완화만 한다면 proof 없이 가능. 클라이언트 직접업로드 전환은 별개.
+  - 목데이터 삽입은 작은 플레이스홀더 이미지로 우회 가능 — 이 항목이 착수를 막지는 않는다.
+- [ ] **상품 상세 페이지가 `images`(상세 이미지 갤러리) 필드를 아예 렌더링하지 않음** (2026-08-07 발견, 목데이터 14건 실등록 검증 중 — 2026-08-12 재확인) — `src/client/components/organisms/ProductFeatures.tsx:47`의 "상세 정보" 섹션이 헤딩만 있고 본문이 0줄이다. `src/app/(main)/(products)/products/[category]/[id]/_components/ProductDetailTemplate.tsx:18`이 `ProductFeatures`에 `options`(premiumFeatures)만 넘기고 `product`/`product.images`를 전달하지 않는다 — 갤러리 소비 코드가 통째로 없다. 등록 폼은 non-invitation 카테고리에 `images`를 필수(최소 1장)로 강제하는데 정작 고객에게는 노출이 0인 상태 — 사진으로 구매를 설득해야 하는 답례품/웨딩소품에서 특히 치명적. `images: string[]`를 `ProductDetailTemplate`→`ProductFeatures`(또는 신규 갤러리 organism)로 내려서 렌더링을 추가한다.
 
 ### 클러스터 2 — 카테고리별 하드코딩 문구 (같이 고칠 것)
 
-- [ ] **`OrderSummary.tsx` "청첩장 템플릿" 하드코딩** (2026-08-07 발견, PR #95 스코프아웃) — 주문서 상품명 아래에 카테고리 무관하게 `"청첩장 템플릿"`을 하드코딩해서 렌더한다. 카테고리가 5종으로 늘어난 지금 답례품/방명록 등 주문서에도 그대로 뜬다. `CheckoutItem`에 카테고리 정보가 없어서 고치려면 `CheckoutItem` 계약 변경이 필요.
-- [ ] **상품 상세 페이지의 invitation 전용 안내 문구가 전 카테고리에 하드코딩 노출** (2026-08-07 발견, 목데이터 14건 실등록 검증 중) — `ProductSummary.tsx:125,131,137`의 "구매 후 즉시 사용 가능하며, 무제한으로 수정할 수 있습니다" / "평생 호스팅이 포함되어 있어 별도의 유지비가 없습니다" / "모바일과 데스크톱 모두에서 완벽하게 작동합니다" 문구가 캔들홀더 같은 실물 상품 상세페이지에도 카테고리 분기 없이 그대로 뜬다. 위 `OrderSummary.tsx` "청첩장 템플릿" 하드코딩 버그와 동일 패턴의 별도 미등록 지점 — 함께 고칠 것.
+- [ ] **`OrderSummary.tsx` "청첩장 템플릿" 하드코딩** (2026-08-07 발견 — 2026-08-12 재확인) — `src/client/components/organisms/OrderSummary.tsx:57`이 주문서 상품명 아래에 카테고리 무관하게 `"청첩장 템플릿"`을 렌더한다. 카테고리 5종인 지금 답례품/방명록 주문서에도 그대로 뜬다. `CheckoutItem`에 카테고리 정보가 없어서 고치려면 `CheckoutItem` 계약 변경이 필요.
+- [ ] **상품 상세 페이지의 invitation 전용 안내 문구가 전 카테고리에 하드코딩 노출** (2026-08-07 발견, 목데이터 14건 실등록 검증 중 — 2026-08-12 재확인) — `src/client/components/organisms/ProductSummary.tsx:120,126,132`의 "구매 후 즉시 사용 가능하며, 무제한으로 수정할 수 있습니다" / "평생 호스팅이 포함되어 있어 별도의 유지비가 없습니다" / "모바일과 데스크톱 모두에서 완벽하게 작동합니다"가 캔들홀더 같은 실물 상품 상세페이지에도 카테고리 분기 없이 뜬다. 위 `OrderSummary` 항목과 동일 패턴 — 함께 고친다.
+  - 이 컴포넌트는 pure(organisms) 쪽이다. 컨테이너는 `src/app/(main)/(products)/products/[category]/[id]/_components/ProductSummary.tsx`로 분리돼 있으니 둘을 혼동하지 않는다.
 
-### 클러스터 3 — 관리자 등록 폼 (`ProductRegistrationForm.tsx`, UI섹션 "연속 등록 워크플로우" 항목과 같은 파일 — 함께 처리 권장)
+### 클러스터 3 — 관리자 등록 폼 (`organisms/ProductRegistrationForm.tsx`, UI섹션 "연속 등록 워크플로우"와 같은 파일 — 함께 처리 권장)
 
-- [ ] **관리자 상품 등록 폼 가격 입력이 `step="1000"` 강제 + 실패 시 무피드백** (2026-08-07 발견, 목데이터 14건 실등록 검증 중) — `ProductRegistrationForm.tsx:203`(`src/client/components/organisms/`)의 `price` input이 `step="1000"`이라 1000원 배수가 아닌 값(예: 4,500원)을 입력하면 브라우저 네이티브 validation에 걸려 "상품 등록" 버튼 클릭이 조용히 씹힌다 — 화면에 에러 메시지가 전혀 뜨지 않아 관리자는 원인을 알 수 없다(직접 재현: 4500원 입력 후 클릭 시 서버 액션 자체가 호출 안 됨, `element.validity.valid === false`로 확인). 답례품처럼 저가·비정형 가격 책정이 흔한 카테고리에 특히 문제 — `step` 완화 또는 커스텀 에러 메시지 노출 필요.
+- [ ] **관리자 상품 등록 폼 가격 입력이 `step="1000"` 강제 + 실패 시 무피드백** (2026-08-07 발견, 목데이터 14건 실등록 검증 중 — 2026-08-12 재확인) — `src/client/components/organisms/ProductRegistrationForm.tsx:203`의 `price` input이 `step="1000"`이라 1000원 배수가 아닌 값(예: 4,500원)이 브라우저 네이티브 validation에 걸려 "상품 등록" 클릭이 조용히 씹힌다 — 화면에 에러가 전혀 안 떠서 관리자는 원인을 알 수 없다(재현: 4500원 입력 후 클릭 시 서버 액션 미호출, `element.validity.valid === false`). 답례품처럼 저가·비정형 가격이 흔한 카테고리에 특히 문제 — `step` 완화 또는 커스텀 에러 메시지 노출이 필요.
+  - 같은 파일 `:235,318,501,522`에도 `step`이 있다. 가격 외 필드는 의도된 제약일 수 있으니 함께 판단한다.
 
-### 단독 — 연관 항목 없음, 순서 무관 (단, #24는 아래 이유로 최우선 권장)
+### 단독 — 연관 항목 없음, 순서 무관
 
-- [ ] **어드민 사이드바가 최초 진입 시 관리자 계정도 "일반 계정"으로 잠깐 표시** (2026-08-07 발견 [발견: 목데이터 14건 실등록 워크스루], 2026-08-08 UI 수정 → 버그 수정으로 이동) — `/admin/products/new` 최초 진입 직후 사이드바 하단 계정 표시가 "일반 계정"으로 렌더됐다가 `/api/auth/me` 응답 도착 후 "관리자 계정"으로 정정된다(관리자로 로그인한 상태에서도 동일). role 정보가 비동기로 채워지기 전 기본값이 "일반 계정"이라 순간적으로 오탐 신호를 준다 — 기본값을 로딩 스켈레톤이나 빈 상태로 바꾸는 게 안전.
-  - **섹션 이동 근거**: 관리자에게 "일반 계정"을 보여주는 건 기존 스펙 위반이라 정답이 이미 있고, 회귀 테스트로 못박을 수 있다 — 시각 확인으로 닫는 UI 수정 섹션 기준에 맞지 않는다.
+- [ ] **사이드바가 최초 진입 시 관리자 계정도 "일반 계정"으로 잠깐 표시** (2026-08-07 발견 [발견: 목데이터 14건 실등록 워크스루], 2026-08-08 UI 수정 → 버그 수정으로 이동, 2026-08-12 범위 확대) — role 정보가 `/api/auth/me`로 비동기 도착하기 전 기본값이 "일반"이라 관리자에게 순간적으로 오탐 신호를 준다. 기본값을 로딩 스켈레톤이나 빈 상태로 바꾸는 게 안전.
+  - **위치 3곳** (TODO에 admin 1곳만 적혀 있었음): `src/app/(admin)/admin/layout.tsx:32`, `src/app/(main)/(my-order)/layout.tsx:25`, `src/app/(main)/(my-profile)/layout.tsx:25` — 전부 `{session?.role === "ADMIN" ? "관리자" : "일반"} 계정` 동일 패턴.
+  - **테스트 동반 수정 필요**: 세 layout의 테스트가 `"세션이 없으면 일반 계정으로 표시한다"`로 현재 동작을 스펙으로 못박고 있다(`layout.test.tsx` 각각). 고치려면 이 assertion부터 바꿔야 하고, 그게 곧 Red proof가 된다.
+  - **섹션 이동 근거**: 관리자에게 "일반 계정"을 보여주는 건 기존 스펙 위반이라 정답이 이미 있고 회귀 테스트로 못박을 수 있다 — 시각 확인으로 닫는 UI 수정 기준에 맞지 않는다.
 
-- [ ] **`test:coverage:diff`가 괄호 경로(라우트 그룹) 파일을 커버리지 게이트에서 조용히 누락** (2026-08-07 발견, PR #95 — 2026-08-08 원인 실증 완료) — `coverageInclude` 필터가 파일 경로를 글롭 패턴처럼 다뤄서 `src/app/(admin)/...`처럼 `(...)` 라우트 그룹이 든 경로가 매칭 실패로 커버리지 체크 대상에서 빠진다. 게이트 통과가 검사 완료를 보장하지 않는 상태 — `(admin)`/`(main)`/`(products)`/`(checkout)` 하위 전체 파일이 동일 영향권.
-  - **원인 확정**: `vitest.config.ts:37`의 `coverage.include`가 vitest 내부적으로 `picomatch`(`node_modules/vitest/dist/coverage.js:8-9`)로 필터링되는데, 괄호 든 경로가 매칭 실패로 조용히 탈락한다.
-  - **실증(2026-08-08)**: 동일 내용(함수 4개 중 1개만 테스트, line 25%) 파일을 두 위치에 만들어 대조 — 괄호 경로(`src/app/(admin)/...`)는 `coverage` 리포트 자체가 `0/0/0/0`으로 파일을 아예 못 잡고 게이트 통과(exit 0, 에러 없음). 괄호 없는 대조군(완전 동일 코드)은 `25%` 정상 집계되고 `ERROR: Coverage for lines (25%) does not meet global threshold (80%)`로 정상 fail. 같은 코드, 경로 괄호 유무만 다른데 게이트 동작이 갈림 — 확정.
-  - **우선순위 상향 근거**: 이 버그가 살아있는 한 `(admin)`/`(main)`/`(products)`/`(checkout)` 하위 파일들은 vitest coverage 게이트가 사실상 무검사 상태다 — 다른 fix 클러스터(1~3) 작업물의 커버리지도 이 경로들 안에 있으면 게이트가 못 잡아준다. 다른 클러스터보다 먼저 고치는 게 맞음.
-- [ ] **존재하지 않는 productId + non-invitation category로 `updateProduct` 호출 시 `NOT_FOUND` 아닌 `INTERNAL`(500) 반환** (2026-08-07 test-suite 발견, PR #95 스코프아웃) — `product.model.ts`의 `subCategory` 비동기 validator가 대상 문서를 못 찾으면 category를 못 읽어 무조건 검증 실패로 떨어지는 게 원인으로 추정(5/5 재현). 카테고리가 discriminator 없는 4종(favor/accessory/guestbook/ceremony)으로 늘어나며 새로 열린 경로. mongoose validator 재설계 필요해 최소조치로 안 됨 — 데이터 무결성 문제 아니라 에러코드 오분류 수준이라 우선순위 낮음.
+- [ ] **존재하지 않는 productId + non-invitation category로 `updateProduct` 호출 시 `NOT_FOUND` 아닌 `INTERNAL`(500) 반환** (2026-08-07 test-suite 발견 — 2026-08-12 원인 확정) — `product.model.ts:101`의 `subCategory` 비동기 validator가 `getQuery()` 폴백으로 기존 문서의 category를 읽는데, 문서가 없으면 `category`가 `undefined`가 되어 `allowed?.includes(value) ?? false`로 무조건 검증 실패한다. 그 ValidationError를 `src/server/services/product.service.ts:286`의 `.catch`가 전부 `AppError("INTERNAL")`로 뭉갠다.
+  - 카테고리가 discriminator 없는 4종(favor/accessory/guestbook/ceremony)으로 늘며 새로 열린 경로. 최소조치로는 안 되고 validator나 `.catch` 분기 재설계가 필요하다. 데이터 무결성 문제는 아니고 에러코드 오분류 수준이라 우선순위 낮음.
+
+- [ ] **`npm run test`(bare Vitest 진입점)가 실행 즉시 실패** (2026-08-11 발견 — 2026-08-12 영향 범위 확정) — `Projects "guard" and "integration-client" have different 'maxWorkers' but same 'sequence.groupOrder'`로 테스트 시작 전에 죽는다(2026-08-12 재현). `vitest.config.ts`에서 `guard`는 `maxWorkers: 2`인데 `integration-client`는 미지정(기본값)이라 같은 그룹에서 충돌한다.
+  - **영향 범위는 좁다**(2026-08-12 확인): PR CI 7개 job은 전부 project별 명령 또는 `unit-shards.mjs run`을 쓰고, TDD Guard의 Red/Green proof도 `run-vitest.mjs:18`에서 항상 `--project`를 지정한다. mutation 게이트도 무사하다 — `vitest.mutation.config.ts`는 project별 `maxWorkers`가 다르지만 mongo 그룹이 `fileParallelism: false`라 별도 그룹으로 갈려 충돌하지 않는다(unit+server integration 동시 실행으로 실증, 2파일 35테스트 통과).
+  - **실사용처는 `.claude/agents/test-suite.md:27` 한 줄**("테스트는 실제로 실행해서(`npm run test`) 통과 확인 후 보고"). 즉 게이트 문제가 아니라 하네스 지침 정합 문제다 — 위 "선행" 첫 항목과 함께 처리하는 편이 낫다.
+  - **방향 판단 필요**: (A) project별 `sequence.groupOrder`를 부여해 bare 진입점을 되살릴지, (B) `test` 스크립트를 제거·재정의하고 `test-suite.md`를 실제 명령으로 교정할지. 지금 설정이 project를 쪼갠 이유(샤딩·직렬 mongod)를 보면 B가 설계와 일관된다.
+  - **주의**: `vitest.mutation.config.ts`의 무사고는 `fileParallelism` 차이에 기댄 우연이다. 그룹 구성이 바뀌면 같은 오류가 mutation 게이트에서 재발할 수 있다.
 
 ---
 
 ## 성능 개선
 
-- [ ] **`Product` 복합 인덱스 추가 검토** (2026-08-07, PR #95 스코프아웃) — 카테고리가 1종→5종으로 늘면서 `category` 필터에 실질적 선택도가 처음 생겼다. 제안: `{deletedAt:1, category:1, isFeatured:-1, priority:-1, createdAt:-1}`(ESR 순서). 현재 `productSchema`엔 `_id` 외 인덱스가 0개(기존 부채) — 이번 기능 PR에 성능변경을 안 섞으려고 분리함. 이 인덱스는 `category` 지정 호출만 커버하고 전체 목록 경로(category 미지정)는 여전히 in-memory sort라, 두 경로 다 커버하려면 인덱스 2개 필요 — 실 데이터 규모 보고 판단.
+- [ ] **`Product` 복합 인덱스 추가 검토** (2026-08-07 — 2026-08-12 재확인: `_id` 외 인덱스 선언 0개) — 카테고리가 1종→5종으로 늘면서 `category` 필터에 실질적 선택도가 처음 생겼다. 제안: `{deletedAt:1, category:1, isFeatured:-1, priority:-1, createdAt:-1}`(ESR 순서). 이 인덱스는 `category` 지정 호출만 커버하고 전체 목록 경로(category 미지정)는 여전히 in-memory sort라, 두 경로를 다 커버하려면 인덱스 2개가 필요 — 실 데이터 규모를 보고 판단한다.
 
 ---
 
 ## UI 수정
 
-- [ ] **상품 등록 폼이 연속 등록 워크플로우를 지원하지 않음** (2026-08-07 발견 [발견: 목데이터 14건 실등록 워크스루], 버그수정 클러스터3 "관리자 등록 폼"과 같은 파일 — 함께 처리 권장) — "상품 등록" 성공 시 무조건 `/admin/products` 목록으로 리다이렉트한다(`ProductRegistrationForm.tsx` 컨테이너). 카테고리 확장처럼 여러 상품을 한 번에 등록하는 시나리오에서 매번 "상품 등록" 메뉴를 다시 눌러 폼을 처음부터 채워야 한다 — 카테고리/서브카테고리 등 직전 값을 유지한 채 "저장하고 계속 등록" 옵션이 있으면 대량 등록 작업이 크게 줄어든다.
+- [ ] **상품 등록 폼이 연속 등록 워크플로우를 지원하지 않음** (2026-08-07 발견 [발견: 목데이터 14건 실등록 워크스루], 버그수정 클러스터3과 같은 컴포넌트 — 함께 처리 권장, 2026-08-12 재확인) — 등록 성공 시 무조건 `/admin/products` 목록으로 리다이렉트한다(`src/app/(admin)/admin/products/new/_components/ProductRegistrationForm.tsx:27`). 여러 상품을 한 번에 등록하는 시나리오에서 매번 메뉴를 다시 눌러 폼을 처음부터 채워야 한다 — 카테고리/서브카테고리 등 직전 값을 유지한 채 "저장하고 계속 등록" 옵션이 있으면 대량 등록 비용이 크게 준다.
 
 ---
 
@@ -82,19 +106,26 @@
 > 작업 브랜치는 **이 구역에만 append**한다. 정식 섹션으로의 분류·이동·완료 체크는 `docs/todo-section-taxonomy` 브랜치에서만 한다.
 > 항목 형식: `- [ ] (날짜, 발견 맥락) 증상 — 위치/근거`
 
-- [ ] (2026-08-08, TODO 운영 규칙 정립 중 발견) `.git/hooks/commit-msg`의 prefix 검사가 전역 `GIT.md` 택소노미와 어긋남 — 정규식이 `^(feat|fix|docs|refactor|chore|test): ` 라서 ① `docs(agents):` 같은 scope 표기가 거부되고(전역 규칙은 `{prefix}({scope}): {message}`를 허용) ② `perf`/`build`/`ci`/`revert` 4개 prefix가 아예 막힌다. 성능 개선 항목을 커밋하려면 규칙과 훅 중 하나를 반드시 어겨야 하는 상태.
-- [ ] (2026-08-08, 위 커밋 진행 중 발견) `node_modules`에 `embla-carousel-wheel-gestures`가 설치돼 있지 않아 pre-commit 훅의 typecheck가 실패, 모든 커밋이 차단됨 — `package.json:46`에는 선언돼 있어 `npm install`로 해소됨(로컬 환경 드리프트). 재발하면 훅이 "설치 누락"과 "타입 에러"를 구분해 안내할 필요 있음.
-- [x] (2026-08-12 완료) `src/shared/AGENTS.md`의 근거 없는 server/client/shared 3분할 배경 문서 참조를 제거.
-- [ ] (2026-08-09, #24 수정 후 드러남) 라우트 그룹 경로 컴포넌트 4개가 line coverage 80% 미달 — `ProductEditDialog.tsx`(57.7%), `UpdatePasswordForm.tsx`(61.1%), `CheckoutForm.tsx`(69.0%), `ProductRegistrationForm.tsx`(admin, 72.7%). #24의 tinyglobby 순회 버그가 이 파일들을 커버리지 집계에서 통째로 빼고 있어 그동안 안 보이던 기존 부채다(신규 회귀 아님). CI가 없고 pre-commit은 `test:coverage:diff`(변경 파일 한정)라 당장 막히진 않으며, 해당 파일을 건드리는 커밋에서 걸린다.
-- [ ] (2026-08-09, connect.ts 가드를 연결 시점으로 옮기며 발견) `connect.ts`의 `testUri ?? srvUri`가 빈 문자열을 "값 있음"으로 취급 — `MONGO_TEST_URI=`처럼 키만 있고 값이 빈 경우 `??`가 폴백하지 않아 `uri`가 빈 문자열이 되고, 연결이 원인 불명 에러로 실패한다. `.env`에 키만 써두고 값을 비우는 실수에서 나올 수 있는 경로다. `||`로 바꾸면 해소되나 프로덕션 동작 변경이라 별도 판단 필요.
-- [ ] (2026-08-10, 테스트 게이트 재배치 중 발견) `.claude/hooks/pre-commit-check.sh`는 실제 Git hook이 아니라 Claude PreToolUse 훅이라 터미널에서 직접 커밋하면 검사가 전혀 실행되지 않음 — 사람과 에이전트 양쪽에 적용하려면 `.git/hooks/pre-commit` 또는 husky로 이전 필요.
-- [ ] (2026-08-10, 테스트 게이트 재배치 중 발견) `.claude/skills/feature-team-orchestrator/SKILL.md:14`의 검증 안내가 현재 구성과 어긋남 — `npm run test:coverage`가 아니라 `test:coverage:diff`를 쓰며 커버리지 부채도 “9개”가 아니라 이 인박스에 기록된 4개가 실측값.
-- [ ] (2026-08-10, 변경 테스트 범위 실측 중 발견) 배럴 강제 규칙의 누적 비용이 테스트 도구를 무력화함 — `scripts/tested-source-files.mjs`가 필요한 원인이고, Vitest `--changed dev`는 136개 중 108개를 관련 파일로 판정하며, `vi.mock`도 배럴 경로를 강제하는 사례가 3건 있어 규칙 재검토 필요.
-- [ ] (2026-08-10, Vitest 실행 로그 점검 중 발견) `vite-tsconfig-paths`가 실행마다 Vite 네이티브 `resolve.tsconfigPaths: true`로 교체하라는 경고를 3줄 출력 — 플러그인 제거와 네이티브 설정 전환 검토 필요.
-- [ ] (2026-08-10, coverage 전체 스위트 실행 중 발견) WSL 메모리 상한이 Vitest 워커 수를 제한함 — 3.7GB/8코어 환경에서는 `maxWorkers: "50%"`가 필요하며, `.wslconfig` 메모리 상향 시 제한을 되돌리면 스위트 시간을 단축할 수 있음.
-- [ ] (2026-08-10, `--coverage.changed` 동작 확인 중 발견) Vitest가 unstaged/untracked 파일까지 변경 대상으로 포함함(`git ls-files --other --modified`) — 끄는 옵션이 없어 WIP 파일 때문에 CI 커버리지가 막힐 가능성을 관찰해야 함.
-- [x] (2026-08-12 완료) 소스→테스트 매핑을 `scripts/test-scope/test-graph.mjs`로 통합하고 `scripts/tdd-guard/core/resolve-tests.mjs`에서 사용하도록 정리.
+- [ ] (2026-08-09, connect.ts 가드를 연결 시점으로 옮기며 발견 — 2026-08-12 재확인 `connect.ts:35`) `connect.ts`의 `testUri ?? srvUri`가 빈 문자열을 "값 있음"으로 취급 — `MONGO_TEST_URI=`처럼 키만 있고 값이 빈 경우 `??`가 폴백하지 않아 `uri`가 빈 문자열이 되고 연결이 원인 불명 에러로 실패한다. `||`로 바꾸면 해소되나 프로덕션 동작 변경이라 별도 판단 필요.
+- [ ] (2026-08-10, 변경 테스트 범위 실측 중 발견 — 2026-08-12 근거 갱신) 배럴 강제 규칙의 누적 비용 — `src/` 전체의 `vi.mock("@/...")` 호출이 **112건**이고 그중 배럴 디렉터리를 그대로 mock하는 상위가 `@/server/services` 27, `@/server/actions` 14, `@/client/hooks` 14, `@/client/components/organisms` 8이며, 타입 하나를 배럴로 가져오는 것만으로 TDD Guard의 요구 scope가 `integration`으로 부풀어 오른다(버그수정 "선행" 두 번째 항목과 직결). 규칙 재검토 필요.
+- [ ] (2026-08-10, Vitest 실행 로그 점검 중 발견 — 2026-08-12 재확인: 실행당 **6줄**) `vite-tsconfig-paths`가 Vite 네이티브 `resolve.tsconfigPaths: true`로 교체하라는 경고를 매 실행 출력 — 플러그인 제거와 네이티브 설정 전환 검토 필요.
 - [ ] (2026-08-11, 공통 TDD Guard 배포 전 검증 완료 후 보류) 배포 환경에 `.env.example`의 운영 필수 값과 `MAIN_PREVIEW_INFO_ID`, `MAIN_PREVIEW_PRODUCT_ID`, `CLOUDINARY_UPLOAD_PRESET`을 등록하고 실제 배포 URL로 Lighthouse 감사를 실행해야 함 — 현재 미배포 상태라 로컬·PR CI 검증 범위에서 제외함.
 - [ ] (2026-08-11, KG이니시스 `inicis_v2` 테스트 채널 확정 후 보류) 배포된 HTTPS 환경에서 PortOne 실제 결제 manual smoke를 수행해야 함 — GUI self-hosted runner(`self-hosted`, `linux`, `x64`, `portone-smoke`)와 사람의 카드사 인증으로 12,000원 결제, `PAID` 조회, store/TEST channel/payment ID 검증, 전액 취소 및 `CANCELLED` 재조회를 확인하고 실패 시에도 cleanup을 보장해야 함.
 - [ ] (2026-08-11, PortOne webhook 구현 후 배포 검증 보류) 배포 URL을 PortOne webhook으로 등록하고 운영 `PORTONE_WEBHOOK_SECRET`을 설정한 뒤 진위 검증, 멱등 처리 및 주문 상태 반영을 실제 webhook 전달로 확인해야 함 — `src/app/api/webhooks/portone/route.ts` 및 `src/server/services/payment.service.ts`.
-- [ ] (2026-08-11, API 계약 도구 제거 회귀 검증 중 발견) `npm run test`가 테스트를 시작하기 전에 `Projects "guard" and "integration-client" have different 'maxWorkers' but same 'sequence.groupOrder'`로 실패 — 개별 project 실행은 가능하고 CI도 project별 명령을 사용하지만, 로컬 전체 Vitest 진입점은 현재 동작하지 않는다. project별 `sequence.groupOrder`를 고유하게 지정하거나 worker 설정을 정합화해야 함.
+
+### 처리 완료 · 전제 소멸 (2026-08-12 전수 재검증)
+
+- [x] (2026-08-12 완료) `src/shared/AGENTS.md`의 근거 없는 server/client/shared 3분할 배경 문서 참조를 제거.
+- [x] (2026-08-12 완료) 소스→테스트 매핑을 `scripts/test-scope/test-graph.mjs`로 통합하고 `scripts/tdd-guard/core/resolve-tests.mjs`에서 사용하도록 정리.
+- [x] (2026-08-12 해소 확인) `updateProduct`의 `thumbnail` required 부채 — `src/shared/schemas/request/product.schema.ts:31`이 `File | URL string` union으로 바뀌었고 `updateProduct.ts:45,73`에 `currentThumbnail` 폴백이 있다. 수정 시 썸네일 재업로드 강제가 없다.
+- [x] (2026-08-12 해소 확인) `feature-team-orchestrator/SKILL.md:14`의 검증 안내 불일치 — 이미 TDD Guard 계약으로 갱신됨. 단 같은 파일 `:140`은 아직 낡아서 버그수정 "선행" 첫 항목으로 이관.
+- [x] (2026-08-12 해소 확인) `embla-carousel-wheel-gestures` 미설치 — 설치돼 있음(로컬 환경 드리프트였음).
+- [x] (2026-08-12 전제 소멸) `test:coverage:diff`가 괄호 경로(라우트 그룹)를 커버리지 게이트에서 누락하던 문제(#24) — 커버리지 게이트 자체가 제거됐다. `package.json`에 `test:coverage*` 스크립트가 없고 `vitest.config.ts`에 `coverage` 설정이 없으며, 게이트는 TDD Guard(Red/Green proof) + changed mutation으로 대체됐다.
+  - **결함 클래스 재발 없음 확인**: `vitest list --project unit "src/app/(admin)"`이 테스트를 정상 수집한다(위치인자는 substring 매칭이라 괄호가 문제되지 않음). 나아가 `scripts/test-scope/unit-shards.mjs`의 `verifyUnitShards`가 "모든 unit 테스트 파일이 정확히 1개 샤드에 속함"을 CI에서 강제해 침묵 누락 구멍이 구조적으로 막혀 있다.
+- [x] (2026-08-12 전제 소멸) 라우트 그룹 컴포넌트 4개의 line coverage 80% 미달 부채 — 커버리지 측정·게이트가 제거되어 기준 자체가 없다. 품질 부채를 다시 재려면 mutation 기준으로 재정의해야 한다.
+- [x] (2026-08-12 전제 소멸) Vitest `--coverage.changed`가 unstaged/untracked를 포함하던 관측 항목 — 커버리지 경로 자체가 없다.
+- [x] (2026-08-12 전제 소멸) `.git/hooks/commit-msg` prefix 정규식이 전역 `GIT.md` 택소노미와 어긋나던 문제 — 해당 훅 파일이 없다(`.git/hooks/`에 sample 외 훅 0개). `perf`/`ci` 등 prefix가 로컬에서 막히지 않는다.
+- [x] (2026-08-12 전제 소멸) `.claude/hooks/pre-commit-check.sh`가 Git hook이 아니라는 항목 — 그 파일과 `.claude/hooks/` 디렉터리 자체가 없다. 현재 로컬 강제 지점은 `.claude/settings.json`의 TDD Guard PreToolUse/PostToolUse뿐이고, 터미널 직접 커밋에 걸리는 Git hook은 존재하지 않는다. 사람·에이전트 양쪽에 동일 게이트가 필요하다는 원래 문제의식은 아래 신규 항목으로 남긴다.
+- [x] (2026-08-12 전제 소멸) WSL 메모리 상한에 맞춘 `maxWorkers: "50%"` 제안 — 현재 `vitest.config.ts`는 project별로 `maxWorkers`를 명시(`guard`/`unit` 2, mongo 계열 1)하는 구조라 제안 내용이 그대로 적용되지 않는다.
+
+- [ ] (2026-08-12, 위 훅 부재 확인 중 발견) 터미널에서 직접 커밋하면 어떤 로컬 검사도 실행되지 않는다 — TDD Guard는 Claude/Codex 에이전트 훅으로만 걸려 있고 Git hook은 없다. PR CI가 `dev` 진입은 막지만 로컬 피드백 루프가 사람과 에이전트에서 비대칭이다. `.git/hooks/pre-commit` 또는 husky로 `guard.mjs verify` 계열을 거는 안을 검토한다.
