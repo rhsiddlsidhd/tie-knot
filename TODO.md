@@ -84,7 +84,7 @@
 
 - [ ] (2026-08-08, TODO 운영 규칙 정립 중 발견) `.git/hooks/commit-msg`의 prefix 검사가 전역 `GIT.md` 택소노미와 어긋남 — 정규식이 `^(feat|fix|docs|refactor|chore|test): ` 라서 ① `docs(agents):` 같은 scope 표기가 거부되고(전역 규칙은 `{prefix}({scope}): {message}`를 허용) ② `perf`/`build`/`ci`/`revert` 4개 prefix가 아예 막힌다. 성능 개선 항목을 커밋하려면 규칙과 훅 중 하나를 반드시 어겨야 하는 상태.
 - [ ] (2026-08-08, 위 커밋 진행 중 발견) `node_modules`에 `embla-carousel-wheel-gestures`가 설치돼 있지 않아 pre-commit 훅의 typecheck가 실패, 모든 커밋이 차단됨 — `package.json:46`에는 선언돼 있어 `npm install`로 해소됨(로컬 환경 드리프트). 재발하면 훅이 "설치 누락"과 "타입 에러"를 구분해 안내할 필요 있음.
-- [x] (2026-08-12 완료) `src/shared/AGENTS.md`의 server/client/shared 3분할 배경 참조를 현재 문서인 `docs/architecture/README.md`로 수정.
+- [x] (2026-08-12 완료) `src/shared/AGENTS.md`의 근거 없는 server/client/shared 3분할 배경 문서 참조를 제거.
 - [ ] (2026-08-09, #24 수정 후 드러남) 라우트 그룹 경로 컴포넌트 4개가 line coverage 80% 미달 — `ProductEditDialog.tsx`(57.7%), `UpdatePasswordForm.tsx`(61.1%), `CheckoutForm.tsx`(69.0%), `ProductRegistrationForm.tsx`(admin, 72.7%). #24의 tinyglobby 순회 버그가 이 파일들을 커버리지 집계에서 통째로 빼고 있어 그동안 안 보이던 기존 부채다(신규 회귀 아님). CI가 없고 pre-commit은 `test:coverage:diff`(변경 파일 한정)라 당장 막히진 않으며, 해당 파일을 건드리는 커밋에서 걸린다.
 - [ ] (2026-08-09, connect.ts 가드를 연결 시점으로 옮기며 발견) `connect.ts`의 `testUri ?? srvUri`가 빈 문자열을 "값 있음"으로 취급 — `MONGO_TEST_URI=`처럼 키만 있고 값이 빈 경우 `??`가 폴백하지 않아 `uri`가 빈 문자열이 되고, 연결이 원인 불명 에러로 실패한다. `.env`에 키만 써두고 값을 비우는 실수에서 나올 수 있는 경로다. `||`로 바꾸면 해소되나 프로덕션 동작 변경이라 별도 판단 필요.
 - [ ] (2026-08-10, 테스트 게이트 재배치 중 발견) `.claude/hooks/pre-commit-check.sh`는 실제 Git hook이 아니라 Claude PreToolUse 훅이라 터미널에서 직접 커밋하면 검사가 전혀 실행되지 않음 — 사람과 에이전트 양쪽에 적용하려면 `.git/hooks/pre-commit` 또는 husky로 이전 필요.
@@ -93,7 +93,7 @@
 - [ ] (2026-08-10, Vitest 실행 로그 점검 중 발견) `vite-tsconfig-paths`가 실행마다 Vite 네이티브 `resolve.tsconfigPaths: true`로 교체하라는 경고를 3줄 출력 — 플러그인 제거와 네이티브 설정 전환 검토 필요.
 - [ ] (2026-08-10, coverage 전체 스위트 실행 중 발견) WSL 메모리 상한이 Vitest 워커 수를 제한함 — 3.7GB/8코어 환경에서는 `maxWorkers: "50%"`가 필요하며, `.wslconfig` 메모리 상향 시 제한을 되돌리면 스위트 시간을 단축할 수 있음.
 - [ ] (2026-08-10, `--coverage.changed` 동작 확인 중 발견) Vitest가 unstaged/untracked 파일까지 변경 대상으로 포함함(`git ls-files --other --modified`) — 끄는 옵션이 없어 WIP 파일 때문에 CI 커버리지가 막힐 가능성을 관찰해야 함.
-- [ ] (2026-08-10, 짝 테스트 모듈 추출 중 발견) 소스→짝 테스트 매핑이 `.claude/hooks/tdd-gate.js`와 `scripts/paired-test.js`에 중복됨 — `tdd-gate.js`는 fail-closed 게이트라 이번 변경에서 통합하지 않고 후속으로 미룸.
+- [x] (2026-08-12 완료) 소스→테스트 매핑을 `scripts/test-scope/test-graph.mjs`로 통합하고 `scripts/tdd-guard/core/resolve-tests.mjs`에서 사용하도록 정리.
 - [ ] (2026-08-11, 공통 TDD Guard 배포 전 검증 완료 후 보류) 배포 환경에 `.env.example`의 운영 필수 값과 `MAIN_PREVIEW_INFO_ID`, `MAIN_PREVIEW_PRODUCT_ID`, `CLOUDINARY_UPLOAD_PRESET`을 등록하고 실제 배포 URL로 Lighthouse 감사를 실행해야 함 — 현재 미배포 상태라 로컬·PR CI 검증 범위에서 제외함.
 - [ ] (2026-08-11, KG이니시스 `inicis_v2` 테스트 채널 확정 후 보류) 배포된 HTTPS 환경에서 PortOne 실제 결제 manual smoke를 수행해야 함 — GUI self-hosted runner(`self-hosted`, `linux`, `x64`, `portone-smoke`)와 사람의 카드사 인증으로 12,000원 결제, `PAID` 조회, store/TEST channel/payment ID 검증, 전액 취소 및 `CANCELLED` 재조회를 확인하고 실패 시에도 cleanup을 보장해야 함.
 - [ ] (2026-08-11, PortOne webhook 구현 후 배포 검증 보류) 배포 URL을 PortOne webhook으로 등록하고 운영 `PORTONE_WEBHOOK_SECRET`을 설정한 뒤 진위 검증, 멱등 처리 및 주문 상태 반영을 실제 webhook 전달로 확인해야 함 — `src/app/api/webhooks/portone/route.ts` 및 `src/server/services/payment.service.ts`.
