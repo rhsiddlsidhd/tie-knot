@@ -7,12 +7,13 @@ import { Toaster } from "sonner";
 import { SidebarNavItem } from "@/client/components/molecules";
 import { AdminModal } from "./_components";
 import { useAuth } from "@/client/hooks";
+import { Skeleton } from "@/client/components/atoms";
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { session } = useAuth();
+  const { session, isLoading } = useAuth();
 
   return (
     <SidebarProvider>
@@ -24,14 +25,18 @@ export default function AdminLayout({
 
           <SidebarFooter className="border-border border-t p-4">
             <div className="mb-2 flex items-center gap-3 px-2 py-2">
-              <div className="min-w-0 flex-1">
-                <p className="text-foreground truncate text-sm font-medium">
-                  {session?.email}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {session?.role === "ADMIN" ? "관리자" : "일반"} 계정
-                </p>
-              </div>
+              {isLoading ? (
+                <Skeleton className="h-9 w-full rounded-md" />
+              ) : (
+                <div className="min-w-0 flex-1">
+                  <p className="text-foreground truncate text-sm font-medium">
+                    {session?.email}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {session?.role === "ADMIN" ? "관리자" : "일반"} 계정
+                  </p>
+                </div>
+              )}
             </div>
           </SidebarFooter>
         </Sidebar>

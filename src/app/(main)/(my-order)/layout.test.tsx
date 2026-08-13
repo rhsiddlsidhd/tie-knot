@@ -51,4 +51,13 @@ describe("(my-order) Layout", () => {
 
     expect(screen.getByText("일반 계정")).toBeInTheDocument();
   });
+
+  it("로딩 중이면 관리자/일반 계정 어느 쪽도 표시하지 않는다", () => {
+    useAuthMock.mockReturnValue({ session: null, isLoading: true });
+
+    render(<Layout>children</Layout>);
+
+    expect(screen.queryByText("관리자 계정")).not.toBeInTheDocument();
+    expect(screen.queryByText("일반 계정")).not.toBeInTheDocument();
+  });
 });
