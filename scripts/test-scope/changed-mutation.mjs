@@ -47,6 +47,7 @@ export function mutationPlan(root = process.cwd(), base = "origin/dev") {
     for (const [start, end] of entries) targets.push(`${file}:${start}-${end}`);
     for (const test of graph.testsFor(file)) tests.add(test);
   }
+  targets.sort();
   const sourceHash = sha256(targets.map((target) => {
     const file = target.slice(0, target.lastIndexOf(":"));
     return `${target}\0${fs.readFileSync(path.join(root, file))}`;
@@ -55,7 +56,7 @@ export function mutationPlan(root = process.cwd(), base = "origin/dev") {
     base,
     mergeBase,
     head: git(root, ["rev-parse", "HEAD"]),
-    targets: targets.sort(),
+    targets,
     tests: [...tests].sort(),
     sourceHash,
   };
