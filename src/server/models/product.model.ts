@@ -162,6 +162,20 @@ const productSchema = new Schema<IProduct>(
   },
 );
 
+// getAllProductsService(category 지정) — deletedAt 등가 + category 등가 +
+// isFeatured/priority/createdAt 정렬을 index-only로 커버.
+productSchema.index(
+  { deletedAt: 1, category: 1, isFeatured: -1, priority: -1, createdAt: -1 },
+  { name: "deletedAt_category_isFeatured_priority_createdAt" },
+);
+
+// getAllProductsService(category 미지정)/searchProductsService의 deletedAt prefix —
+// category가 쿼리에 없을 때 위 인덱스는 category별 그룹이 섞여 정렬을 못 지켜준다.
+productSchema.index(
+  { deletedAt: 1, isFeatured: -1, priority: -1, createdAt: -1 },
+  { name: "deletedAt_isFeatured_priority_createdAt" },
+);
+
 export const ProductModel =
   (mongoose.models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);

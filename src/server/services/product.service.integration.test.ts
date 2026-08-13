@@ -4,6 +4,7 @@ import { dbConnect } from "@/server/lib/mongodb";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { AppError } from "@/shared/types";
 import { ProductModel, InvitationProductModel } from "@/server/models";
+import { escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/shared/utils";
 import {
   createProductService,
   getProductService,
@@ -739,6 +740,161 @@ describe("product.service", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].isLiked).toBe(true);
+    });
+  });
+
+  describe("Product 복합 인덱스 (explain)", () => {
+    interface ExplainPlanNode {
+      stage?: string;
+      indexName?: string;
+      inputStage?: ExplainPlanNode;
+      inputStages?: ExplainPlanNode[];
+      queryPlan?: ExplainPlanNode;
+    }
+
+    interface ExplainResult {
+      queryPlanner: { winningPlan: ExplainPlanNode };
+    }
+
+    // classic(`{stage, inputStage}` 체인)과 SBE(`{queryPlan:{...}, slotBasedPlan}`) 두 explain
+    // 출력 모양을 다 대응한다 — mongod 8.x는 쿼리에 따라 SBE 플래너를 쓸 수 있다.
+    const analyzeWinningPlan = (winningPlan: ExplainPlanNode) => {
+      const stages = new Set<string>();
+      const indexNames: string[] = [];
+
+      const walk = (node: ExplainPlanNode | undefined) => {
+        if (!node) return;
+        if (typeof node.stage === "string") {
+          stages.add(node.stage);
+          if (node.stage === "IXSCAN" && typeof node.indexName === "string") {
+            indexNames.push(node.indexName);
+          }
+        }
+        walk(node.inputStage);
+        node.inputStages?.forEach(walk);
+      };
+
+      walk(winningPlan.queryPlan ?? winningPlan);
+      return { stages, indexNames };
+    };
+
+    const buildIndexedProduct = (overrides: {
+      title: string;
+      category: string;
+      subCategory: string;
+      isFeatured: boolean;
+      priority: number;
+      createdAt: Date;
+      deletedAt?: Date | null;
+    }) => ({
+      authorId: "index-seed",
+      title: overrides.title,
+      description: "인덱스 검증용 시드 데이터",
+      thumbnail: "https://example.com/thumbnail.jpg",
+      price: 10000,
+      category: overrides.category,
+      subCategory: overrides.subCategory,
+      isPremium: false,
+      isFeatured: overrides.isFeatured,
+      priority: overrides.priority,
+      likes: [] as string[],
+      views: 0,
+      salesCount: 0,
+      discount: { discountType: "rate", value: 0 },
+      status: "active",
+      featureIds: [] as string[],
+      deletedAt: overrides.deletedAt ?? null,
+      images: [] as string[],
+      minQuantity: 1,
+      maxQuantity: 0,
+      createdAt: overrides.createdAt,
+      updatedAt: overrides.createdAt,
+    });
+
+    beforeEach(async () => {
+      // mongoose autoIndex는 모델 컴파일 시점에 비동기로 시작되고 앱 어디서도 await되지 않는다
+      // (`dbConnect()`는 연결만 기다린다) — explain/hint는 인덱스 빌드가 실제로 끝나야 그 인덱스를
+      // 후보로 인정하므로, 이 describe에서만 명시적으로 완료를 기다려 레이스를 없앤다.
+      await ProductModel.init();
+
+      // 옵티마이저가 IXSCAN/COLLSCAN을 무차별하게 고르지 않도록 충분한 문서 수 확보.
+      const now = Date.now();
+      const docs = Array.from({ length: 24 }, (_, i) =>
+        buildIndexedProduct({
+          title: `인덱스 시드 상품 ${i}`,
+          category: i % 2 === 0 ? "invitation" : "ceremony",
+          subCategory: i % 2 === 0 ? "wedding" : "program-book",
+          isFeatured: i % 3 === 0,
+          priority: i % 5,
+          createdAt: new Date(now - i * 60_000),
+          deletedAt: i % 8 === 7 ? new Date(now) : null,
+        }),
+      );
+      await ProductModel.collection.insertMany(docs as never[]);
+
+      // 이 파일의 다른 describe 블록들이 앞서 같은 query shape(예: {deletedAt:null} + 동일 sort)를
+      // 훨씬 적은 문서 수로 실행해 plan cache에 승자를 이미 남겨둘 수 있다 — 매 테스트가 지금 시드한
+      // 문서 분포로 실제 multi-plan competition을 다시 거치도록 강제로 비운다.
+      await mongoose.connection.db?.command({ planCacheClear: ProductModel.collection.collectionName });
+    });
+
+    it("getAllProductsService(category 지정, product.service.ts:164-171) 경로는 IXSCAN을 쓴다", async () => {
+      const explainResult = (await ProductModel.find({ deletedAt: null, category: "invitation" })
+        .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
+        .explain("executionStats")) as unknown as ExplainResult;
+
+      const { stages, indexNames } = analyzeWinningPlan(explainResult.queryPlanner.winningPlan);
+
+      expect(stages.has("COLLSCAN")).toBe(false);
+      expect(indexNames).toContain("deletedAt_category_isFeatured_priority_createdAt");
+    });
+
+    it("getAllProductsService(category 미지정, product.service.ts:164-171) 경로는 IXSCAN을 쓴다", async () => {
+      const explainResult = (await ProductModel.find({ deletedAt: null })
+        .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
+        .explain("executionStats")) as unknown as ExplainResult;
+
+      const { stages, indexNames } = analyzeWinningPlan(explainResult.queryPlanner.winningPlan);
+
+      expect(stages.has("COLLSCAN")).toBe(false);
+      expect(indexNames).toContain("deletedAt_isFeatured_priority_createdAt");
+    });
+
+    it("searchProductsService(product.service.ts:202-204)의 deletedAt prefix만으로도 IXSCAN을 쓴다", async () => {
+      const explainResult = (await ProductModel.find({ deletedAt: null })
+        .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
+        .explain("executionStats")) as unknown as ExplainResult;
+
+      const { indexNames } = analyzeWinningPlan(explainResult.queryPlanner.winningPlan);
+
+      expect(indexNames).toContain("deletedAt_isFeatured_priority_createdAt");
+    });
+
+    it("searchProductsService(product.service.ts:186-204)의 $or 쿼리도 deletedAt prefix로 COLLSCAN 없이 처리된다", async () => {
+      const term = "예식";
+      const or: Record<string, unknown>[] = [
+        { title: { $regex: escapeRegExp(term), $options: "i" } },
+      ];
+
+      const categoryKeys = findProductCategoriesByTerm(term);
+      expect(categoryKeys).toContain("ceremony");
+      or.push({ category: { $in: categoryKeys } });
+
+      const subCategoryKeys = findSubCategoriesByTerm(term);
+      expect(subCategoryKeys).toContain("program-book");
+      or.push({ subCategory: { $in: subCategoryKeys } });
+
+      const explainResult = (await ProductModel.find({ deletedAt: null, $or: or })
+        .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
+        .explain("executionStats")) as unknown as ExplainResult;
+
+      const { stages, indexNames } = analyzeWinningPlan(explainResult.queryPlanner.winningPlan);
+
+      // 실측 결과: title regex(anchor 없음)/subCategory 둘 다 전용 인덱스가 없지만, mongo는
+      // $or를 절별로 쪼개 COLLSCAN을 섞지 않는다 — deletedAt 등가만으로 Index B(IXSCAN) 하나를
+      // 골라 그 결과 집합에 $or 3절 전체를 FETCH 단계의 잔여 필터로 얹는다. COLLSCAN은 없다.
+      expect(stages.has("COLLSCAN")).toBe(false);
+      expect(indexNames).toContain("deletedAt_isFeatured_priority_createdAt");
     });
   });
 });
