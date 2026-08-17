@@ -1,7 +1,7 @@
 "use server";
 import type { APIResponse } from "@/core/domain";
 import { premiumFeatureSchema } from "@/core/schemas";
-import { createPremiumFeatureService, requireAuth } from "@/services";
+import { createPremiumFeatureAsAdminService } from "@/services";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";
@@ -27,15 +27,7 @@ export const createPremiumFeature = async (
   }
 
   try {
-    const { role } = await requireAuth();
-    if (role !== "ADMIN") {
-      return {
-        success: false,
-        error: { category: "FORBIDDEN", message: "관리자 권한이 필요합니다." },
-      };
-    }
-
-    await createPremiumFeatureService(parsed.data);
+    await createPremiumFeatureAsAdminService(parsed.data);
     revalidatePath(routes.admin.premiumFeatures.root);
     return { success: true, data: { message: "프리미엄 기능을 등록하였습니다." } };
   } catch (e) {

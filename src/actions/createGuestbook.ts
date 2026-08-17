@@ -1,10 +1,8 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { hashPassword } from "@/adapters/bcrypt";
-
 import { GuestbookSchema } from "@/core/schemas";
-import { createGuestbookService } from "@/services";
+import { createGuestbookWithPasswordService } from "@/services";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";
@@ -31,10 +29,7 @@ export const createGuestbook = async (
   }
 
   try {
-    const hashedPassword = await hashPassword(parsed.data.password);
-    await createGuestbookService({
-      data: { ...parsed.data, password: hashedPassword },
-    });
+    await createGuestbookWithPasswordService(parsed.data);
 
     revalidatePath(routes.preview.detail(parsed.data.coupleInfoId));
 

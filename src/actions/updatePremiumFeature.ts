@@ -3,7 +3,7 @@
 import type { APIResponse } from "@/core/domain";
 import { validateAndFlatten } from "@/core/utils";
 import { premiumFeatureSchema } from "@/core/schemas";
-import { updatePremiumFeatureService, requireAuth } from "@/services";
+import { updatePremiumFeatureAsAdminService } from "@/services";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";
@@ -38,15 +38,7 @@ export const updatePremiumFeature = async (
   }
 
   try {
-    const { role } = await requireAuth();
-    if (role !== "ADMIN") {
-      return {
-        success: false,
-        error: { category: "FORBIDDEN", message: "관리자 권한이 필요합니다." },
-      };
-    }
-
-    await updatePremiumFeatureService(featureId, parsed.data);
+    await updatePremiumFeatureAsAdminService(featureId, parsed.data);
 
     revalidatePath(routes.admin.premiumFeatures.root);
 

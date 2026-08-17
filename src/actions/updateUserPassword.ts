@@ -3,10 +3,8 @@
 import { validateAndFlatten } from "@/core/utils";
 import { PWConfirmSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
-import { changePassword } from "@/services";
+import { resetUserPasswordService } from "@/services";
 import { actionError } from "@/boundary";
-import { decrypt } from "@/adapters/jose";
-import { deleteCookie } from "@/adapters/cookies";
 
 // 유저가 비밀번호를 기억하지 못할 때 로그인하지 않은 상태에서 이메일로 비밀번호 변경
 export const updateUserPassword = async (
@@ -32,33 +30,8 @@ export const updateUserPassword = async (
     };
   }
 
-  const { password, token } = parsed.data;
-
   try {
-    const { payload } = await decrypt({ token, type: "ENTRY" });
-
-    if (!payload.id) {
-      return {
-        success: false,
-        error: {
-          category: "UNAUTHENTICATED",
-          message:
-            "유효하지 않거나 만료된 토큰입니다. 비밀번호 재설정을 다시 시도해주세요.",
-        },
-      };
-    }
-
-    const userFound = await changePassword(payload.id, password);
-    if (!userFound) {
-      return {
-        success: false,
-        error: {
-          category: "NOT_FOUND",
-          message: "해당 계정을 찾을 수 없습니다. 이메일 주소를 확인해주세요.",
-        },
-      };
-    }
-    await deleteCookie("userEmail");
+    await resetUserPasswordService(parsed.data);
     return {
       success: true,
       data: { message: "비밀번호가 성공적으로 변경되었습니다." },

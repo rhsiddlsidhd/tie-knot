@@ -35,6 +35,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
         { target: "./src/ui", from: "./src/db", message: "UI는 DB를 직접 못 만진다" },
         { target: "./src/actions", from: "./src/models", message: "action은 model을 직접 못 만진다" },
         { target: "./src/actions", from: "./src/db", message: "action은 DB를 직접 못 만진다" },
+        { target: "./src/actions", from: "./src/adapters", message: "action은 adapter를 직접 못 만진다" },
         { target: "./src/services", from: "./src/actions", message: "서비스는 action을 모른다" },
       ],
     }],

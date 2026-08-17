@@ -3,8 +3,7 @@
 import type { APIResponse } from "@/core/domain";
 import { redirect } from "next/navigation";
 
-import { getCookie } from "@/adapters/cookies";
-import { requireAuth, createOrderService } from "@/services";
+import { getAuth, createOrderForCurrentUserService } from "@/services";
 import { actionError } from "@/boundary";
 
 import { validateAndFlatten } from "@/core/utils";
@@ -29,8 +28,7 @@ export async function createOrder(
   formData: FormData,
 ): Promise<APIResponse<CreateOrderResult>> {
   // 로그인 안 된 상태면 로그인 페이지로(리다이렉트는 try/catch 밖에서)
-  const cookie = await getCookie("token");
-  if (!cookie?.value) {
+  if (!(await getAuth())) {
     redirect(routes.login);
   }
 
@@ -67,12 +65,7 @@ export async function createOrder(
   }
 
   try {
-    const { userId } = await requireAuth();
-
-    const order = await createOrderService({
-      ...parsed.data,
-      userId,
-    });
+    const order = await createOrderForCurrentUserService(parsed.data);
 
     return {
       success: true,

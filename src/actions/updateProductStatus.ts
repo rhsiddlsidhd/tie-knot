@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 import type { ProductStatus } from "@/core/domain";
-import { requireAuth, updateProductService } from "@/services";
+import { updateProductStatusAsAdminService } from "@/services";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 
@@ -13,21 +13,11 @@ export const updateProductStatus = async (
   status: ProductStatus,
 ): Promise<APIResponse<{ message: string }>> => {
   try {
-    const { role } = await requireAuth();
-    if (role !== "ADMIN") {
-      return {
-        success: false,
-        error: { category: "FORBIDDEN", message: "관리자 권한이 필요합니다." },
-      };
-    }
-
-    const updated = await updateProductService(productId, { status });
+    const updated = await updateProductStatusAsAdminService(productId, status);
 
     revalidatePath(routes.admin.products.root);
     revalidatePath(routes.products.root);
-    if (updated) {
-      revalidatePath(routes.products.detail(updated.category, productId));
-    }
+    revalidatePath(routes.products.detail(updated.category, productId));
 
     return {
       success: true,

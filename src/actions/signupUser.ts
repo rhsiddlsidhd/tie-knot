@@ -2,11 +2,9 @@
 
 import type { APIResponse } from "@/core/domain";
 
-import { hashPassword } from "@/adapters/bcrypt";
-
 import { validateAndFlatten } from "@/core/utils";
 import { RegisterSchema } from "@/core/schemas";
-import { checkEmailDuplicate, createUser } from "@/services";
+import { signupUserService } from "@/services";
 import { actionError } from "@/boundary";
 export async function signupUser(
   prev: unknown,
@@ -33,27 +31,8 @@ export async function signupUser(
     };
   }
 
-  const { email, name, phone, password } = parsed.data;
-
-  const isEmail = await checkEmailDuplicate(email);
-
-  if (isEmail) {
-    return {
-      success: false,
-      // 409 Conflict는 taxonomy(src/AGENTS.md)에 없음 — 입력값(이메일) 자체의 문제라 VALIDATION으로 분류(400)
-      error: { category: "VALIDATION", message: "이미 존재하는 이메일 입니다." },
-    };
-  }
-
   try {
-    const hashedPassword = await hashPassword(password);
-
-    await createUser({
-      password: hashedPassword,
-      email,
-      name,
-      phone,
-    });
+    await signupUserService(parsed.data);
 
     return {
       success: true,

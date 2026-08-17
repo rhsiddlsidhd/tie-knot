@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { requireAuth, deleteProductService } from "@/services";
+import { deleteProductAsAdminService } from "@/services";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 
@@ -11,15 +11,7 @@ export const deleteProduct = async (
   productId: string,
 ): Promise<APIResponse<{ message: string }>> => {
   try {
-    const { role } = await requireAuth();
-    if (role !== "ADMIN") {
-      return {
-        success: false,
-        error: { category: "FORBIDDEN", message: "관리자 권한이 필요합니다." },
-      };
-    }
-
-    await deleteProductService(productId);
+    await deleteProductAsAdminService(productId);
 
     revalidatePath(routes.admin.products.root);
     revalidatePath(routes.products.root);

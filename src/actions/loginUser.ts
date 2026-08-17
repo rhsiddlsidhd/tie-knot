@@ -4,11 +4,8 @@ import type { APIResponse } from "@/core/domain";
 
 import { validateAndFlatten } from "@/core/utils";
 import { LoginSchema } from "@/core/schemas";
-import { encrypt } from "@/adapters/jose";
-import { setCookie } from "@/adapters/cookies";
-import { getUser } from "@/services";
+import { loginUserService } from "@/services";
 import type { UserRole } from "@/core/domain";
-import { comparePasswords } from "@/adapters/bcrypt";
 import { actionError } from "@/boundary";
 
 export const loginUser = async (
@@ -41,40 +38,8 @@ export const loginUser = async (
     };
   }
 
-  const { email, password, remember } = parsed.data;
-
-  // 이메일를 바탕으로 사용자 조회
-  const user = await getUser({ email });
-
-  if (!user) {
-    return {
-      success: false,
-      error: { category: "UNAUTHENTICATED", message: "이메일 또는 비밀번호가 일치하지 않습니다." },
-    };
-  }
-
-  const isPasswordValid = await comparePasswords(password, user.password);
-
-  if (!isPasswordValid) {
-    return {
-      success: false,
-      error: { category: "UNAUTHENTICATED", message: "이메일 또는 비밀번호가 일치하지 않습니다." },
-    };
-  }
-
   try {
-    const refreshJWT = await encrypt({
-      id: user._id.toString(),
-      role: user.role,
-      type: "REFRESH",
-    });
-
-    await setCookie({ name: "token", value: refreshJWT, remember });
-
-    return {
-      success: true,
-      data: { role: user.role, email: user.email, userId: user._id.toString() },
-    };
+    return { success: true, data: await loginUserService(parsed.data) };
   } catch (e) {
     return actionError(e);
   }

@@ -1,10 +1,9 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { comparePasswords } from "@/adapters/bcrypt";
 import { validateAndFlatten } from "@/core/utils";
 import { GuestbookSchema } from "@/core/schemas";
-import { getPrivateGuestbookService, deleteGuestbookService } from "@/services";
+import { deleteGuestbookWithPasswordService } from "@/services";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 import * as z from "zod";
@@ -39,33 +38,7 @@ export const deleteGuestbook = async (
   }
 
   try {
-    const guestbook = await getPrivateGuestbookService(parsed.data.guestbookId);
-    if (!guestbook) {
-      return {
-        success: false,
-        error: { category: "NOT_FOUND", message: "해당 게시글을 찾을 수 없습니다." },
-      };
-    }
-
-    const isPasswordValid = await comparePasswords(
-      parsed.data.password,
-      guestbook.password,
-    );
-    if (!isPasswordValid) {
-      return {
-        success: false,
-        error: { category: "UNAUTHENTICATED", message: "비밀번호가 일치하지 않습니다." },
-      };
-    }
-
-    const deleteResult = await deleteGuestbookService(parsed.data.guestbookId);
-
-    if (!deleteResult.acknowledged || deleteResult.deletedCount === 0) {
-      return {
-        success: false,
-        error: { category: "INTERNAL", message: "게시글 삭제에 실패했습니다." },
-      };
-    }
+    await deleteGuestbookWithPasswordService(parsed.data);
 
     revalidatePath(routes.preview.detail(parsed.data.coupleInfoId));
 

@@ -1,18 +1,10 @@
 "use server";
 
-import { encrypt } from "@/adapters/jose";
 import { validateAndFlatten } from "@/core/utils";
-import { sendEmail } from "@/adapters/nodemailer";
 import { emailSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
-import { checkEmailDuplicate } from "@/services";
+import { requestPasswordResetService } from "@/services";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain";
-const createChangePWDomain = (token: string): string => {
-  return process.env.NODE_ENV === "development"
-    ? `http://localhost:3000${routes.changePw}?t=${encodeURIComponent(token)}`
-    : "";
-};
 
 export const requestPasswordReset = async (
   prev: unknown,
@@ -39,23 +31,8 @@ export const requestPasswordReset = async (
   }
   const { email } = parsed.data;
 
-  const isEmail = await checkEmailDuplicate(email);
-
-  if (!isEmail) {
-    return {
-      success: false,
-      error: { category: "VALIDATION", message: "등록되지 않은 이메일입니다." },
-    };
-  }
-
   try {
-    // entry token 발행 && createDomatin
-    const entryToken = await encrypt({ id: email, type: "ENTRY" });
-
-    // 도메인을 생성
-    const path = createChangePWDomain(entryToken);
-
-    await sendEmail({ email, path });
+    await requestPasswordResetService(email);
 
     return {
       success: true,
