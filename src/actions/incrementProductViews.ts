@@ -1,7 +1,7 @@
 "use server";
 
 import { incrementProductViewsService } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import type { APIResponse } from "@/core/domain";
 
 export const incrementProductViews = async (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useTransition } from "react";
-import { incrementProductViews } from "@/server/actions";
+import { incrementProductViews } from "@/actions";
 
 interface ProductViewTrackerProps {
   productId: string;

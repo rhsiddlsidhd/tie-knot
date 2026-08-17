@@ -1,40 +1,39 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/services";
-import { actionError } from "@/server/boundary";
+import {
+  requireAuth,
+  createCoupleInfoService,
+  isValidSubwayStationName,
+  attachCoupleInfoToOrder,
+} from "@/services";
+import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoSchema } from "@/core/schemas";
 
-export const updateCoupleInfo = async (
+export const createCoupleInfo = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ message: string; _id: string }>> => {
-  const coupleInfoId = formData.get("couple_info_id") as string;
-
-  if (!coupleInfoId) {
-    return {
-      success: false,
-      error: { category: "VALIDATION", message: "잘못된 접근입니다." },
-    };
-  }
-
   const thumbnailRaw = formData.get("thumbnailSource") as string;
   const galleryRaw = formData.get("gallerySource") as string;
 
   const galleryData: string[] = galleryRaw ? JSON.parse(galleryRaw) : [];
 
+  // Helper to build parent data only if name is provided
   const buildParentData = (prefix: string) => {
     const name = formData.get(`${prefix}_name`) as string;
     const phone = formData.get(`${prefix}_phone`) as string;
+    const bankName = formData.get(`${prefix}_bank_name`) as string;
+    const accountNumber = formData.get(`${prefix}_account_number`) as string;
 
-    if (!name || !phone) return undefined;
+    if (!name || !phone || !bankName || !accountNumber) return undefined;
 
     return {
       name,
       phone,
-      bankName: formData.get(`${prefix}_bank_name`) as string,
-      accountNumber: formData.get(`${prefix}_account_number`) as string,
+      bankName,
+      accountNumber,
     };
   };
 
@@ -92,20 +91,40 @@ export const updateCoupleInfo = async (
   try {
     const { userId } = await requireAuth();
 
-    const updated = await updateCoupleInfoService(coupleInfoId, userId, parsed.data);
+    const coupleInfo = await createCoupleInfoService({
+      userId,
+      groom: parsed.data.groom,
+      bride: parsed.data.bride,
+      weddingDate: parsed.data.weddingDate,
+      weddingTime: parsed.data.weddingTime,
+      venue: parsed.data.venue,
+      address: parsed.data.address,
+      addressDetail: parsed.data.addressDetail,
+      subwayStation: parsed.data.subwayStation,
+      guestbookEnabled: parsed.data.guestbookEnabled,
+      thumbnailImages: parsed.data.thumbnailImages,
+      galleryImages: parsed.data.galleryImages,
+    });
 
-    if (!updated) {
+    if (!coupleInfo) {
       return {
         success: false,
-        error: { category: "INTERNAL", message: "커플 정보 업데이트에 실패하였습니다." },
+        error: { category: "INTERNAL", message: "커플 정보 등록에 실패하였습니다." },
       };
+    }
+
+    // 결제 이후 my-orders 흐름(orderId 전달)에서는 생성한 커플 정보를 해당
+    // 주문에 연결한다 — orderId가 없으면(기존 흐름) 연결을 건너뛴다.
+    const orderId = formData.get("orderId") as string | null;
+    if (orderId) {
+      await attachCoupleInfoToOrder(orderId, coupleInfo._id.toString(), userId);
     }
 
     return {
       success: true,
       data: {
-        message: "커플 정보가 성공적으로 업데이트되었습니다.",
-        _id: coupleInfoId,
+        message: "커플 정보가 성공적으로 등록되었습니다.",
+        _id: coupleInfo._id.toString(),
       },
     };
   } catch (e) {

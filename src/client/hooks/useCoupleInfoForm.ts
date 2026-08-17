@@ -4,7 +4,7 @@ import { startTransition, useActionState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import { createCoupleInfo, updateCoupleInfo } from "@/server/actions";
+import { createCoupleInfo, updateCoupleInfo } from "@/actions";
 
 import type { APIResponse } from "@/core/domain";
 import { useImageUpload } from "./useImageUpload";

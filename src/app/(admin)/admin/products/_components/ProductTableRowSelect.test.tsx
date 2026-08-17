@@ -8,11 +8,11 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
 }));
 
-vi.mock("@/server/actions", () => ({
+vi.mock("@/actions", () => ({
   updateProductStatus: vi.fn(),
 }));
 
-import { updateProductStatus } from "@/server/actions";
+import { updateProductStatus } from "@/actions";
 import type { Product } from "@/services";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
 

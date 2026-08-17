@@ -1,16 +1,16 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import type { Status } from "@/models";
+import type { ProductStatus } from "@/core/domain";
 import { requireAuth, updateProductService } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";
 
 export const updateProductStatus = async (
   productId: string,
-  status: Status,
+  status: ProductStatus,
 ): Promise<APIResponse<{ message: string }>> => {
   try {
     const { role } = await requireAuth();

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { APIResponse} from "@/core/domain";
 import { AppError } from "@/core/domain";
 import { requireAuth, updateProductLikeService } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 
 export const toggleProductLike = async (

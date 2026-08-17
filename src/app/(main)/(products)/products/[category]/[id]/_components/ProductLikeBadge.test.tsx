@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
-vi.mock("@/server/actions", () => ({
+vi.mock("@/actions", () => ({
   toggleProductLike: vi.fn(),
 }));
 
@@ -15,7 +15,7 @@ vi.mock("sonner", () => ({
 vi.mock("@/client/hooks", () => ({ useAuth: useAuthMock }));
 
 import { toast } from "sonner";
-import { toggleProductLike } from "@/server/actions";
+import { toggleProductLike } from "@/actions";
 import { ProductLikeBadge } from "./ProductLikeBadge";
 
 describe("ProductLikeBadge", () => {

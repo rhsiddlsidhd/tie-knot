@@ -11,10 +11,10 @@ vi.mock("swr", () => ({ mutate: mutateMock }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
-vi.mock("@/server/actions", () => ({ loginUser: vi.fn() }));
+vi.mock("@/actions", () => ({ loginUser: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
-import { loginUser } from "@/server/actions";
+import { loginUser } from "@/actions";
 import { LoginForm } from "./LoginForm";
 
 describe("LoginForm (컨테이너)", () => {

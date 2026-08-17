@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse} from "@/server/boundary";
-import { routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/boundary";
+import { routeSuccess, routeError } from "@/boundary";
 import { searchProductsService } from "@/services";
 import type { ProductResponse} from "@/core/schemas";
 import { productSearchRequestSchema } from "@/core/schemas";

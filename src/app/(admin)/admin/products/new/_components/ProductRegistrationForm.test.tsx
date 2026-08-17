@@ -7,7 +7,7 @@ const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
-vi.mock("@/server/actions", () => ({ createProduct: vi.fn() }));
+vi.mock("@/actions", () => ({ createProduct: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 vi.mock("@/client/hooks", () => ({
   usePremiumFeature: () => ({ premiumFeatures: [] as unknown[], loading: false }),

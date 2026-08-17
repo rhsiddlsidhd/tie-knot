@@ -1,5 +1,5 @@
-import type { APIRouteResponse} from "@/server/boundary";
-import { routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/boundary";
+import { routeSuccess, routeError } from "@/boundary";
 import { getAllPremiumFeatureService } from "@/services";
 import type { PremiumFeaturesResponse } from "@/core/schemas";
 

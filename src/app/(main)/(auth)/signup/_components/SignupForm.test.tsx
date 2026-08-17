@@ -7,13 +7,13 @@ const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
-vi.mock("@/server/actions", () => ({ signupUser: vi.fn() }));
+vi.mock("@/actions", () => ({ signupUser: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 const alertMock = vi.fn();
 vi.stubGlobal("alert", alertMock);
 
-import { signupUser } from "@/server/actions";
+import { signupUser } from "@/actions";
 import { SignupForm } from "./SignupForm";
 
 describe("SignupForm (컨테이너)", () => {

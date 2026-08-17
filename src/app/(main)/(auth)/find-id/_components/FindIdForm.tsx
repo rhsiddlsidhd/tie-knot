@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { findUserEmail } from "@/server/actions";
+import { findUserEmail } from "@/actions";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 import { FindIdForm as PureFindIdForm } from "@/client/components/organisms";

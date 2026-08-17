@@ -4,7 +4,7 @@ import { validateAndFlatten } from "@/core/utils";
 import { PWConfirmSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
 import { changePassword } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { decrypt } from "@/adapters/jose";
 import { deleteCookie } from "@/adapters/cookies";
 

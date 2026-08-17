@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse} from "@/server/boundary";
-import { routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/boundary";
+import { routeSuccess, routeError } from "@/boundary";
 import { AppError } from "@/core/domain";
 import { requireAuth } from "@/services";
 import { signUploadRequest } from "@/adapters/cloudinary/sign";

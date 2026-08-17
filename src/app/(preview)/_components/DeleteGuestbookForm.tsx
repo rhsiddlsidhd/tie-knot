@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import { deleteGuestbook } from "@/server/actions";
+import { deleteGuestbook } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { hasFieldErrors } from "@/core/utils";
 import { useGuestbookModalStore } from "@/client/store";

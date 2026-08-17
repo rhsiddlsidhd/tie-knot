@@ -8,7 +8,7 @@ import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMe
 
 import { UserIcon, LogOut } from "lucide-react";
 import { userNavItems, routes } from "@/core/domain";
-import { logoutUser } from "@/server/actions";
+import { logoutUser } from "@/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
