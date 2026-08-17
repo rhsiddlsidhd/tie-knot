@@ -1,7 +1,7 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
 import { getAllSubwayStationNames } from "@/server/services";
-import type { SubwayStationsResponse } from "@/shared/schemas";
+import type { SubwayStationsResponse } from "@/core/schemas";
 
 export const GET = async (): Promise<
   APIRouteResponse<SubwayStationsResponse>

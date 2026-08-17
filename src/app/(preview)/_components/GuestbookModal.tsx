@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent } from "@/client/components/atoms";
 import { ViewContact } from "./ViewContact";
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils";
 import clsx from "clsx";
 import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
 import { CreateGuestbookForm } from "./CreateGuestbookForm";

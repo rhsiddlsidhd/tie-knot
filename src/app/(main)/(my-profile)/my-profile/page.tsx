@@ -6,7 +6,7 @@ import { TypographyH1, TypographyMuted } from "@/client/components/atoms";
 import { verifySession, getUser } from "@/server/services";
 import { redirect } from "next/navigation";
 import React from "react";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 const page = async () => {
   const session = await verifySession();

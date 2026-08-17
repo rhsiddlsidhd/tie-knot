@@ -6,7 +6,7 @@ import { Card, Tabs, TabsList, TabsTrigger, TypographyLarge, TypographyMuted, Ba
 import { ClipboardButton } from "@/client/components/molecules";
 import { useCopy } from "@/client/hooks";
 
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils";
 import { useBanks } from "@/client/hooks";
 
 import type {

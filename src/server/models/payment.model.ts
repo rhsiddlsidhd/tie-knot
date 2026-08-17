@@ -1,5 +1,5 @@
 import "server-only";
-import type { PAY_METHOD } from "@/shared/constants";
+import type { PAY_METHOD } from "@/core/domain";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 

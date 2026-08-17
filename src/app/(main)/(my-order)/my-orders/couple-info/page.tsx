@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 import { CoupleInfoForm } from "./_components";
 import { verifySession } from "@/server/services";
 import React from "react";

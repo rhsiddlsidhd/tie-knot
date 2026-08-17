@@ -4,8 +4,8 @@ import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
 import { requestPasswordReset } from "@/server/actions";
-import { hasFieldErrors } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
+import { hasFieldErrors } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
 import { ForgotPasswordForm as PureForgotPasswordForm } from "@/client/components/organisms";
 export function ForgotPasswordForm() {
   const [state, action, pending] = useActionState<

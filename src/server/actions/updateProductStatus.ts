@@ -1,10 +1,10 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import type { Status } from "@/server/models";
 import { requireAuth, updateProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";
 

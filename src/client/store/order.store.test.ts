@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useOrderStore } from "./order.store";
-import type { CheckoutItem } from "@/shared/types";
+import type { CheckoutItem } from "@/core/domain";
 
 const mockOrder: CheckoutItem = {
   productId: "product-1",

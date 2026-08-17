@@ -1,7 +1,7 @@
 import { SearchX } from "lucide-react";
 import Link from "next/link";
 import { TypographyP, TypographyMuted } from "@/client/components/atoms";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export function SearchEmptyState({ query }: { query: string }) {
   return (

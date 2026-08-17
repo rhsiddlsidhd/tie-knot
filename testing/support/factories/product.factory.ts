@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { ProductDto } from "@/shared/schemas";
+import type { ProductDto } from "@/core/schemas";
 
 type CreateProductServiceInput = Omit<ProductDto, "thumbnail" | "images"> & {
   thumbnail: string;

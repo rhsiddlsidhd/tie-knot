@@ -1,5 +1,5 @@
 import { ComingSoonTemplate } from "@/client/components/templates";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 // mock UI만 구현 — navigation.ts가 참조하는 href를 채운 것, 실제 리뷰 목록/작성 기능은 별도 작업.
 export default function ReviewsPage() {

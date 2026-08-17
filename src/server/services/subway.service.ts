@@ -1,6 +1,6 @@
 import "server-only";
-import { AppError } from "@/shared/types";
-import { parseSeoulOpenApiResponse } from "@/shared/utils";
+import { AppError } from "@/core/domain";
+import { parseSeoulOpenApiResponse } from "@/core/utils";
 
 const SERVICE_NAME = "SearchSTNBySubwayLineInfo";
 // 역 목록은 거의 안 바뀐다 — 저장 시점 검증/드롭다운 둘 다 매 요청마다 799건 외부 API를 다시 안 부르도록 하루 캐시.

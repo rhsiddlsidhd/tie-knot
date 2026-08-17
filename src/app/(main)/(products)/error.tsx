@@ -6,7 +6,7 @@ import { Button, Card, TypographyH1, TypographyMuted } from "@/client/components
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 interface ErrorProps {
   error: Error & { digest?: string };

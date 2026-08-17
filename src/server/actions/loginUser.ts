@@ -1,9 +1,9 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 
-import { validateAndFlatten } from "@/shared/utils";
-import { LoginSchema } from "@/shared/schemas";
+import { validateAndFlatten } from "@/core/utils";
+import { LoginSchema } from "@/core/schemas";
 import { encrypt } from "@/server/lib/jose";
 import { setCookie } from "@/server/lib/cookies";
 import { getUser } from "@/server/services";

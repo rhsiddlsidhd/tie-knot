@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TypographyH4, TypographySmall } from "@/client/components/atoms";
-import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/shared/constants";
+import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain";
 
 export function Footer() {
   return (

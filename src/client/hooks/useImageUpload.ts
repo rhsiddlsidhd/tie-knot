@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { validateAndFlatten } from "@/shared/utils";
-import { coupleInfoClientSchema } from "@/shared/schemas";
-import { processImages } from "@/shared/utils";
+import { validateAndFlatten } from "@/core/utils";
+import { coupleInfoClientSchema } from "@/core/schemas";
+import { processImages } from "@/core/utils";
 import { uploadMainThumbnail, uploadGalleryImages } from "@/client/lib/cloudinary";
-import type { ImagePayload } from "@/shared/types";
+import type { ImagePayload } from "@/core/domain";
 
 export function useImageUpload() {
   const [uploadProgress, setUploadProgress] = useState(0);

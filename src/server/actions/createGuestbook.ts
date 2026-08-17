@@ -1,13 +1,13 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { hashPassword } from "@/server/lib/bcrypt";
 
-import { GuestbookSchema } from "@/shared/schemas";
+import { GuestbookSchema } from "@/core/schemas";
 import { createGuestbookService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { validateAndFlatten } from "@/shared/utils";
-import { routes } from "@/shared/constants";
+import { validateAndFlatten } from "@/core/utils";
+import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";
 
 export const createGuestbook = async (

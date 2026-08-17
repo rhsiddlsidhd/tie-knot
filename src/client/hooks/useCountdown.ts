@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { calculateCountdown, updateCountdownMessage } from "@/shared/utils";
+import { calculateCountdown, updateCountdownMessage } from "@/core/utils";
 
 /**
  * 특정 날짜까지의 카운트다운 정보와 상태 메시지를 관리하는 커스텀 훅

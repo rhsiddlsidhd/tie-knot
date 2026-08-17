@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/client/components/atoms";
-import { PRODUCT_CATEGORIES, SUB_CATEGORY_MAP, type ProductCategory } from "@/shared/constants";
+import { PRODUCT_CATEGORIES, SUB_CATEGORY_MAP, type ProductCategory } from "@/core/domain";
 import { SubCategoryNavItem } from "./SubCategoryNavItem";
 
 const categorizedSubCategories = PRODUCT_CATEGORIES.flatMap((category: ProductCategory) =>

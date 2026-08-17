@@ -1,11 +1,11 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
-import { validateAndFlatten } from "@/shared/utils";
-import { premiumFeatureSchema } from "@/shared/schemas";
+import type { APIResponse } from "@/core/domain";
+import { validateAndFlatten } from "@/core/utils";
+import { premiumFeatureSchema } from "@/core/schemas";
 import { updatePremiumFeatureService, requireAuth } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";
 
 export const updatePremiumFeature = async (

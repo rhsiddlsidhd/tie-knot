@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import ctaData from "@/data/cta.json";
+import ctaData from "@/core/content/cta.json";
 import {
   Button,
   TypographyH2,

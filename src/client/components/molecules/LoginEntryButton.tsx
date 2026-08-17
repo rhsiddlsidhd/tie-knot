@@ -1,6 +1,6 @@
 import { Button } from "@/client/components/atoms";
 import Link from "next/link";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 const LoginEntryButton = () => {
   return (

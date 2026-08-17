@@ -3,7 +3,7 @@
 import type { SelectOption } from "@/client/components/molecules";
 import { FormField, BaseSelect } from "@/client/components/molecules";
 import { useState } from "react";
-import type { FieldBase } from "@/shared/types";
+import type { FieldBase } from "@/core/domain";
 
 type SelectFieldProps = FieldBase & {
   placeholder: string;

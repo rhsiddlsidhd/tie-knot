@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path: string) => {

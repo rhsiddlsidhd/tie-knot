@@ -1,5 +1,5 @@
 "use client";
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils";
 import type { ImageLoaderProps, StaticImageData } from "next/image";
 import Image from "next/image";
 import React from "react";

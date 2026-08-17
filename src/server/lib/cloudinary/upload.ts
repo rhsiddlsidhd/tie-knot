@@ -1,5 +1,5 @@
 import "server-only";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 import type { CloudinaryResource, UploadedCloudinaryAsset } from "./type";
 
 const CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME;

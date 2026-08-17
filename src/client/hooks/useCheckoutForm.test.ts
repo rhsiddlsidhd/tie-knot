@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import type { CheckoutItem } from "@/shared/types";
+import type { CheckoutItem } from "@/core/domain";
 import { useCheckoutForm } from "./useCheckoutForm";
 
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));

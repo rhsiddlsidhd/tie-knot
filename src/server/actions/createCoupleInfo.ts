@@ -1,6 +1,6 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import {
   requireAuth,
   createCoupleInfoService,
@@ -8,8 +8,8 @@ import {
   attachCoupleInfoToOrder,
 } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { validateAndFlatten } from "@/shared/utils";
-import { coupleInfoSchema } from "@/shared/schemas";
+import { validateAndFlatten } from "@/core/utils";
+import { coupleInfoSchema } from "@/core/schemas";
 
 export const createCoupleInfo = async (
   _prev: null,

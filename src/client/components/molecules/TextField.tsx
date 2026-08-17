@@ -2,7 +2,7 @@
 
 import { Input } from "@/client/components/atoms";
 import { FormField } from "@/client/components/molecules";
-import type { FieldBase } from "@/shared/types";
+import type { FieldBase } from "@/core/domain";
 import type { HTMLInputTypeAttribute} from "react";
 import { useState } from "react";
 

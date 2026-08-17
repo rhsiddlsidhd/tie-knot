@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { TypographyMuted } from "@/client/components/atoms";
 import { Hammer } from "lucide-react";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 interface ComingSoonTemplateProps {
   title: React.ReactNode;

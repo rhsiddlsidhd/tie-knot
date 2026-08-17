@@ -1,14 +1,14 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { deleteProductAsset, uploadProductImage } from "@/server/lib/cloudinary";
 import { requireAuth, createProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { productSchema } from "@/shared/schemas";
-import { routes } from "@/shared/constants";
+import { productSchema } from "@/core/schemas";
+import { routes } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";
-import { validateAndFlatten } from "@/shared/utils";
+import { validateAndFlatten } from "@/core/utils";
 
 // 빈 문자열/null이면 undefined를 넘겨 zod .default()가 동작하게 한다 —
 // Number(null)===0 / Number("")===0으로 파싱되면 min(1) 검증에 걸린다.

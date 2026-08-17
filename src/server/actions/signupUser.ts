@@ -1,11 +1,11 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 
 import { hashPassword } from "@/server/lib/bcrypt";
 
-import { validateAndFlatten } from "@/shared/utils";
-import { RegisterSchema } from "@/shared/schemas";
+import { validateAndFlatten } from "@/core/utils";
+import { RegisterSchema } from "@/core/schemas";
 import { checkEmailDuplicate, createUser } from "@/server/services";
 import { actionError } from "@/server/boundary";
 export async function signupUser(

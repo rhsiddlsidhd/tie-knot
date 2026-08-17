@@ -4,8 +4,8 @@ import { Button, Input, Label, Textarea, TypographyMuted } from "@/client/compon
 
 
 
-import { getFieldError } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
+import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
 
 interface PremiumFeatureRegistrationFormProps {
   action: (formData: FormData) => void;

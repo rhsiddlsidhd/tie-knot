@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Gem } from "lucide-react";
-import { MAIN_NAV_ITEMS } from "@/shared/constants";
+import { MAIN_NAV_ITEMS } from "@/core/domain";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, Button } from "@/client/components/atoms";
 
 export function MobileNav() {

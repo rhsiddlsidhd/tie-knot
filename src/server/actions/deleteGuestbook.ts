@@ -1,12 +1,12 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { comparePasswords } from "@/server/lib/bcrypt";
-import { validateAndFlatten } from "@/shared/utils";
-import { GuestbookSchema } from "@/shared/schemas";
+import { validateAndFlatten } from "@/core/utils";
+import { GuestbookSchema } from "@/core/schemas";
 import { getPrivateGuestbookService, deleteGuestbookService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 import * as z from "zod";
 import { revalidatePath } from "next/cache";
 

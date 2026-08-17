@@ -5,11 +5,11 @@ import { dbConnect } from "@/server/lib/mongodb";
 import { getCookie, deleteCookie } from "@/server/lib/cookies";
 import { decrypt } from "@/server/lib/jose";
 import mongoose from "mongoose";
-import { AppError } from "@/shared/types";
-import type { AuthSession } from "@/shared/schemas";
+import { AppError } from "@/core/domain";
+import type { AuthSession } from "@/core/schemas";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export type LeanUser = {
   email: string;

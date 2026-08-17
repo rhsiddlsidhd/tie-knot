@@ -21,7 +21,7 @@ import type * as ServicesModule from "@/server/services";
 import { dbConnect } from "@/server/lib/mongodb";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
-import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 
 // getPopularProductsService만 vi.fn으로 감싸 개별 테스트에서 override할 수
 // 있게 하고, 기본 동작은 실제 구현(actual)을 그대로 위임한다 — 그 외

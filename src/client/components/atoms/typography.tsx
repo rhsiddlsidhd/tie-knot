@@ -1,4 +1,4 @@
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils";
 
 interface TypographyProps {
   children: React.ReactNode;

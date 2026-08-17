@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { useOrderStore } from "@/client/store";
 import type { Product, PremiumFeature } from "@/server/services";
 
-import type { CheckoutItem } from "@/shared/types";
+import type { CheckoutItem } from "@/core/domain";
 import { ProductSummary as PureProductSummary } from "@/client/components/organisms";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 export function ProductSummary({
   product,
   options,

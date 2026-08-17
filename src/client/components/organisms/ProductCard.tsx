@@ -1,13 +1,13 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import type { Product } from "@/server/services";
-import { calculatePrice } from "@/shared/utils";
-import type { SubCategory} from "@/shared/constants";
-import { subCategoryLabels } from "@/shared/constants";
+import { calculatePrice } from "@/core/utils";
+import type { SubCategory} from "@/core/domain";
+import { subCategoryLabels } from "@/core/domain";
 import { Badge } from "../atoms/badge";
 import { TypographyMuted } from "../atoms/typography";
 import { CloudImage } from "../molecules/CloudImage";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export function ProductCard({ product, rank }: { product: Product; rank?: number }) {
   const finalPrice =

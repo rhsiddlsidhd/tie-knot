@@ -3,12 +3,12 @@
 import { useState, startTransition } from "react";
 import type React from "react";
 import { toast } from "sonner";
-import { validateAndFlatten } from "@/shared/utils";
-import type { BuyerInfo} from "@/shared/schemas";
-import { BuyerInfoSchema } from "@/shared/schemas";
-import type { CheckoutItem } from "@/shared/types";
+import { validateAndFlatten } from "@/core/utils";
+import type { BuyerInfo} from "@/core/schemas";
+import { BuyerInfoSchema } from "@/core/schemas";
+import type { CheckoutItem } from "@/core/domain";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 interface UseCheckoutFormOptions {
   order: CheckoutItem | null;

@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import type { AuthSessionResponse } from "@/shared/schemas";
+import type { AuthSessionResponse } from "@/core/schemas";
 import { fetcher } from "@/client/fetcher";
 export function useAuth() {
   const { data: session, isLoading } = useSWR<AuthSessionResponse>(

@@ -1,12 +1,12 @@
 import "server-only";
 import type { ProductJSON, ProductDB, IProduct } from "@/server/models";
 import { ProductModel, InvitationProductModel } from "@/server/models";
-import type { ProductDto } from "@/shared/schemas";
+import type { ProductDto } from "@/core/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
-import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/shared/utils";
-import { AppError } from "@/shared/types";
-import type { InvitationTheme} from "@/shared/constants";
-import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
+import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils";
+import { AppError } from "@/core/domain";
+import type { InvitationTheme} from "@/core/domain";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 

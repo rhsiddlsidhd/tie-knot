@@ -1,9 +1,9 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 import { getGuestbookService } from "@/server/services";
 import type { IGuestbook } from "@/server/models";
-import type { GuestbookListResponse } from "@/shared/schemas";
+import type { GuestbookListResponse } from "@/core/schemas";
 import type { NextRequest } from "next/server";
 
 // getGuestbookService가 이미 password/__v/updatedAt은 select에서 제외한다 —

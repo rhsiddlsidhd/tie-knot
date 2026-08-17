@@ -1,7 +1,7 @@
 import { CheckCircle2, AlertCircle, Home, FileText } from "lucide-react";
 import { Button, Card, CardContent, CardHeader, CardTitle, TypographyH1, TypographyMuted, TypographySmall } from "@/client/components/atoms";
 import Link from "next/link";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 interface PaymentSuccessTemplateProps {
   orderId: string;

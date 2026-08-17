@@ -1,9 +1,9 @@
 import "server-only";
 import type { IGuestbook } from "@/server/models";
 import { GuestbookModel } from "@/server/models";
-import type { GuestbookType } from "@/shared/schemas";
+import type { GuestbookType } from "@/core/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 
 import mongoose from "mongoose";
 

@@ -18,9 +18,9 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "@typescript-eslint/consistent-type-exports": "error",
     "import/no-restricted-paths": ["error", {
       zones: [
-        { target: "./src/shared", from: "./src/server", message: "shared는 순수해야 한다" },
-        { target: "./src/shared", from: "./src/client", message: "shared는 순수해야 한다" },
-        { target: "./src/shared", from: "./src/app", message: "shared는 순수해야 한다" },
+        { target: "./src/core", from: "./src/server", message: "core는 순수해야 한다" },
+        { target: "./src/core", from: "./src/client", message: "core는 순수해야 한다" },
+        { target: "./src/core", from: "./src/app", message: "core는 순수해야 한다" },
         { target: "./src/server", from: "./src/client", message: "서버는 클라이언트를 모른다" },
         { target: "./src/client", from: "./src/server/lib", message: "UI는 서버 lib을 직접 못 만진다" },
       ],

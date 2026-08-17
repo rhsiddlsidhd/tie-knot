@@ -1,4 +1,4 @@
-import type { APIResponse, ErrorResponse } from "@/shared/types";
+import type { APIResponse, ErrorResponse } from "@/core/domain";
 
 /**
  * API 응답에서 특정 필드의 에러 메시지를 안전하게 추출합니다.

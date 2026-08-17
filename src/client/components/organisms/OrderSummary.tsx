@@ -1,11 +1,11 @@
 "use client";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, TypographyH3, TypographyMuted, TypographyP, TypographySmall } from "@/client/components/atoms";
-import { formatPriceWithComma } from "@/shared/utils";
+import { formatPriceWithComma } from "@/core/utils";
 import { CloudImage } from "@/client/components/molecules";
-import { DELIVERY_FEE } from "@/shared/constants";
+import { DELIVERY_FEE } from "@/core/domain";
 
 import { useCheckoutData } from "@/client/hooks";
-import type { SelectFeatureDto } from "@/shared/schemas";
+import type { SelectFeatureDto } from "@/core/schemas";
 
 export const OrderSummary = () => {
   const { data, loading } = useCheckoutData();

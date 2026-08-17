@@ -9,11 +9,11 @@ const { validateAndFlattenMock, processImagesMock, uploadMainThumbnailMock, uplo
     uploadGalleryImagesMock: vi.fn(),
   }));
 
-vi.mock("@/shared/utils", () => ({
+vi.mock("@/core/utils", () => ({
   validateAndFlatten: validateAndFlattenMock,
   processImages: processImagesMock,
 }));
-vi.mock("@/shared/schemas", () => ({ coupleInfoClientSchema: {} }));
+vi.mock("@/core/schemas", () => ({ coupleInfoClientSchema: {} }));
 vi.mock("@/client/lib/cloudinary", () => ({
   uploadMainThumbnail: uploadMainThumbnailMock,
   uploadGalleryImages: uploadGalleryImagesMock,

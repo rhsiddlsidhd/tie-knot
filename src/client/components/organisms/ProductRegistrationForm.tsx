@@ -11,11 +11,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Butto
 import { useImageList, type ImageItem } from "@/client/hooks";
 
 
-import { getCategoryOptions, getSubCategoryOptions } from "@/shared/utils";
-import { getFieldError } from "@/shared/utils";
-import type { ProductCategory } from "@/shared/constants";
-import { getInvitationThemeOptions } from "@/shared/constants";
-import type { APIResponse } from "@/shared/types";
+import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils";
+import { getFieldError } from "@/core/utils";
+import type { ProductCategory } from "@/core/domain";
+import { getInvitationThemeOptions } from "@/core/domain";
+import type { APIResponse } from "@/core/domain";
 
 interface ProductRegistrationFormProps {
   premiumFeatures: PremiumFeature[];
