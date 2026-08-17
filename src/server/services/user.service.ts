@@ -1,3 +1,4 @@
+import "server-only";
 import { AppError } from "@/shared/types";
 import type { BaseUser, IUser } from "@/server/models";
 import { UserModel } from "@/server/models";

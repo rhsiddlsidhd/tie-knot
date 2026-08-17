@@ -1,3 +1,4 @@
+import "server-only";
 import type { JWTPayload, JWTVerifyResult } from "jose";
 import { jwtVerify } from "jose";
 import type { DecryptProps, EncryptProps } from "./type";

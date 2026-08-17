@@ -1,3 +1,4 @@
+import "server-only";
 import { AppError } from "@/shared/types";
 import type { CloudinaryResource, UploadedCloudinaryAsset } from "./type";
 

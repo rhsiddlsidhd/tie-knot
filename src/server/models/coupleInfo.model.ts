@@ -1,3 +1,4 @@
+import "server-only";
 import type { Model, Types } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 

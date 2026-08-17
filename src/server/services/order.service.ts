@@ -1,3 +1,4 @@
+import "server-only";
 import mongoose from "mongoose";
 import type { IOrder, OrderJSON} from "@/server/models";
 import { OrderModel } from "@/server/models";

@@ -1,3 +1,4 @@
+import "server-only";
 export * from "./coupleInfo.model";
 export * from "./feature.model";
 export * from "./guestbook.model";

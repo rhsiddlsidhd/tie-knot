@@ -1,3 +1,4 @@
+import "server-only";
 import type { ICoupleInfo } from "@/server/models";
 import { CoupleInfoModel } from "@/server/models";
 import type { CoupleInfoSchemaDto } from "@/shared/schemas";

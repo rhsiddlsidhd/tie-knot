@@ -1,3 +1,4 @@
+import "server-only";
 import type { UserRole } from "@/server/models";
 import { UserModel } from "@/server/models";
 import { dbConnect } from "@/server/lib/mongodb";

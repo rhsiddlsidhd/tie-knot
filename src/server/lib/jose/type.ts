@@ -1,3 +1,4 @@
+import "server-only";
 import type { UserRole } from "@/server/models";
 type JWTType = "REFRESH" | "ENTRY";
 

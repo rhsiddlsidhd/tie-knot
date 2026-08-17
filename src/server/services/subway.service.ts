@@ -1,3 +1,4 @@
+import "server-only";
 import { AppError } from "@/shared/types";
 import { parseSeoulOpenApiResponse } from "@/shared/utils";
 

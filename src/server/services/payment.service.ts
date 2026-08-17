@@ -1,3 +1,4 @@
+import "server-only";
 import mongoose from "mongoose";
 import * as PortOne from "@portone/server-sdk";
 import type {
