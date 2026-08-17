@@ -437,8 +437,8 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 | 3. 서버층 평탄화 | 완료 | `server/{models,services,lib/mongodb}`→`models/`, `services/`, `db/` | 진입점 import가 새 경로를 사용하고 서비스 파일의 `.service` 접미사가 없다 |
 | 4. Actions 평탄화·경계 강화 | 완료 | `server/actions`→`actions/`, `server/boundary.ts`→`boundary.ts` | action이 models/db를 직접 import하지 않고 services를 통해 접근한다 |
 | 5. UI층 통합 | 완료 | `client/**`와 `app/**/_hooks`→`ui/` | components/hooks/stores 경계가 적용되고 UI가 models/services/db를 직접 import하지 않는다 |
-| 6. 문서·규칙 동기화 | 진행 중 | AGENTS.md와 architecture/convention/validation 문서 경로 갱신 | 삭제된 경로 참조가 없고 실제 디렉토리와 일치한다 |
-| 7. 최종 통합 검증 | 예정 | 정적 검증·잔여 import 조사 | lint·tsc·build가 통과하고 기존 최상위 구조의 import가 0건이다 |
+| 6. 문서·규칙 동기화 | 완료 | AGENTS.md와 architecture/convention/validation 문서 경로 갱신 | 삭제된 경로 참조가 없고 실제 디렉토리와 일치한다 |
+| 7. 최종 통합 검증 | 완료 | 정적 검증·잔여 import 조사 | lint·tsc·build가 통과하고 기존 최상위 구조의 import가 0건이다 |
 | 8. 테스트 체계 전면 개선 | 승인 대기 | 테스트 분류·배치·Vitest project·공용 인프라 재설계 | 별도 승인 후 범위와 완료 조건을 확정한다 |
 
 Phase 1~7은 각 Phase에서 `git diff --check`, 삭제 경로 import 검색, lint·tsc·build를 통과한 뒤에만 병합한다. 테스트 명령은 실행하지 않으며 Phase 8 승인 전까지 테스트 인프라를 변경하지 않는다.
