@@ -168,9 +168,20 @@ Express의 `route → controller → service → model → db`와 같다. Next�
 Next 16 공식 권장 (`node_modules/next/dist/docs/01-app/02-guides/data-security.md:245`).
 
 ```ts
-import "server-only";   // db/, models/, services/, actions/, 서버 adapters
+import "server-only";   // db/, models/, services/, 서버 adapters
 import "client-only";   // 브라우저 adapters
+// actions/ 는 대상이 아니다 — 아래 참고
 ```
+
+`actions/`에는 `server-only`를 넣지 않는다. Server Action은 Client Component가
+import하도록 설계된 것이고, `"use server"`가 컴파일 시 RPC 스텁을 만들어 서버 경계를
+이미 세운다. 두 지시자는 같은 파일에서 양립할 수 없어 빌드가 깨진다(실제로 겪음 —
+단계 1 시도 중 `'server-only' cannot be imported from a Client Component module`).
+`LoginForm.tsx`·`CheckoutForm.tsx` 같은 `"use client"` 컴포넌트가 `useActionState`로
+action을 부르는 것이 정상 용법이다.
+
+다만 이 때문에 `actions/`에는 구멍이 남는다 — `"use server"` 없는 헬퍼 파일을 두고
+클라이언트가 배럴로 가져가면 `server-only`가 못 막는다. `actions/`에는 action만 둔다.
 
 이게 켜지면 `adapters/cloudinary/`를 **한 폴더로 합칠 수 있다** — 지금 server/client 두 곳에 찢어져 있는 이유가 사라진다.
 
@@ -227,7 +238,7 @@ import "client-only";   // 브라우저 adapters
 | `server/lib/mongodb/connect.ts` | `db/connect.ts` | |
 | `server/models` | `models/` + `server-only` | |
 | `server/services/*.service.ts` | `services/*.ts` | `.service` 중복 제거 |
-| `server/actions/*` | `actions/*` | **얇게 만들기 — 아래 참고** |
+| `server/actions/*` | `actions/*` | **얇게 만들기 — 아래 참고**. server-only 넣지 않는다 (§4) |
 | `server/boundary.ts` | `boundary.ts` | |
 | `client/components/{atoms,molecules,organisms,templates}` | `ui/components/` | atomic 계층 유지 여부는 별건 |
 | `client/hooks` + `app/**/_hooks` | `ui/hooks/` | **한 곳으로** |
@@ -419,7 +430,7 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 
 한 번에 하지 마라. 각 단계가 독립적으로 이득을 내고, 중간에 멈춰도 지금보다 낫도록 짰다.
 
-1. `npm i server-only` → 서버 진입점에 `import "server-only"` 추가. **디렉토리 안 건드림.** 번들 사고가 컴파일 에러로 승격 — 작음
+1. `npm i server-only` → 서버 진입점에 `import "server-only"` 추가(**`actions/` 제외 — §4**). **디렉토리 안 건드림.** 번들 사고가 컴파일 에러로 승격 — 작음
 2. eslint `import/no-restricted-paths` (현재 경로 기준으로 먼저). 의존성 방향 자동 검증 — 작음
 3. `shared/` → `core/`, `client/lib` + `server/lib` → `adapters/`. 순수층 확정, cloudinary 폴더 합침. **원 문제 해결** — 중간
 4. `server/{models,services,mongodb}` → `models/` `services/` `db/`. 서버층 평탄화 — 중간
@@ -453,6 +464,9 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 - **`eslint-plugin-import`는 이미 등록됨** (`eslint-config-next/core-web-vitals`가 `import` 플러그인 등록 — 확인 완료). `import/no-restricted-paths` 신규 의존성 0
 - `dependency-cruiser` 미설치. 지금은 불필요 — 순환 참조가 실제 문제가 되면 그때
 - Next 16 공식 문서가 DAL + `server-only` 권장 — `node_modules/next/dist/docs/01-app/02-guides/data-security.md:56,245`
+- **`actions/`에 `server-only`를 넣으면 빌드가 깨진다** — `"use server"`와 양립 불가.
+  단계 1 시도에서 실증됨. `"use client"` 컴포넌트 다수가 `@/server/actions`를 import한다
+  (`LoginForm`, `SignupForm`, `CheckoutForm`, `ProductLikeBadge`, `ProductViewTracker` 등)
 - `src/server/actions`: `.test.ts` 24개 + `.integration.test.ts` 3개
 - `src/server/services/guestbook.service.ts`: 비즈니스 로직 0. 전부 쿼리 + 매핑
 - `src/server/services/payment.service.ts` (539줄): PortOne SDK 인스턴스 + DB 쿼리 + 상태 전이 규칙 공존. `mongoose.connection.transaction()` 3블록. `order.save({ session })` — **Active Record 스타일**
