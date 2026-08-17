@@ -7,19 +7,13 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "next typegen && tsc --noEmit",
+    "tsc": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:integration:client": "vitest run --project integration-client",
     "test:integration:server": "vitest run --project integration-server --project integration-app",
     "test:e2e": "playwright test --project=core",
-    "test:e2e:portone": "playwright test --config=playwright.portone.config.ts --headed",
-    "test:mutation": "node scripts/test-scope/changed-mutation.mjs",
-    "test:mutation:full": "node scripts/test-scope/full-mutation.mjs",
-    "test:red": "node scripts/tdd-guard/bin/guard.mjs prove-red",
-    "test:green": "node scripts/tdd-guard/bin/guard.mjs prove-green",
-    "tdd:status": "node scripts/tdd-guard/bin/guard.mjs status",
-    "tdd:verify": "node scripts/tdd-guard/bin/guard.mjs verify"
+    "test:e2e:portone": "playwright test --config=playwright.portone.config.ts --headed"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -76,8 +70,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
-    "@stryker-mutator/core": "^9.6.1",
-    "@stryker-mutator/vitest-runner": "^9.6.1",
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -90,7 +82,6 @@
     "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
-    "glob": "^13.0.6",
     "jsdom": "^29.1.1",
     "kakao.maps.d.ts": "^0.1.40",
     "mongodb-memory-server": "^11.2.0",

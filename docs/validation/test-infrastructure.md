@@ -4,7 +4,6 @@
 
 ## Vitest project
 
-- `guard`: `scripts/**/*.test.mjs`를 Node 환경에서 실행한다.
 - `unit`: integration 접미사가 없는 `src/**/*.test.ts(x)`를 실행한다. MongoDB global setup 없이 병렬 실행한다.
 - `integration-client`: client와 app hook의 integration을 jsdom에서 실행한다.
 - `integration-server`: server와 API integration을 Node 환경에서 실행하고 MongoDB를 공유한다.

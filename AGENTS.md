@@ -22,7 +22,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | 날짜 | 변경 내용 | 대상 | 사유 |
 |------|----------|------|------|
 | 2026-07-31 | 초기 구성 (agent 7개 + skill 2개) | 전체 | 풀스택 기능 구현 자동화 요청 |
-| 2026-07-31 | git 통합 — 브랜치 `{domain}/{name}` 재정의(git prefix/슬러그), Phase0 브랜치확정, Phase2+3 워크트리 격리+유닛단위 커밋+리더전용 병합, Phase5 PR자동생성(merge는 항상 사람), 스코프 `feat` 전용 명시 | feature-team-orchestrator/SKILL.md, backend-impl.md, frontend-impl.md | GIT 워크플로우 그릴링 세션 확정 반영. 선행조건: pre-commit coverage 기존 부채(9개 파일) 해소 별도 필요 |
+| 2026-07-31 | git 통합 — 브랜치 `{domain}/{name}` 재정의(git prefix/슬러그), Phase0 브랜치확정, Phase2+3 워크트리 격리+유닛단위 커밋+리더전용 병합, Phase5 PR자동생성(merge는 항상 사람), 스코프 `feat` 전용 명시 | feature-team-orchestrator/SKILL.md, backend-impl.md, frontend-impl.md | GIT 워크플로우 그릴링 세션 확정 반영 |
 
 ---
 
@@ -34,8 +34,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 새 라우트 세그먼트의 이름을 정하거나 기존 세그먼트 이름을 변경할 때는 먼저 `docs/conventions/route-naming.md`를 끝까지 읽는다.
 - 테스트를 추가·수정하거나 unit/integration/E2E를 분류할 때는 먼저 `docs/validation/testing-classification.md`와 `docs/validation/testing-practices.md`를 끝까지 읽는다.
 - Vitest·Playwright·MongoDB·jsdom·factory 등 테스트 인프라를 변경할 때는 먼저 `docs/validation/test-infrastructure.md`를 끝까지 읽는다.
-- TDD Guard의 정책·명령·구현을 변경할 때는 먼저 `docs/validation/tdd-guard.md`를 끝까지 읽는다.
-- mutation testing의 범위·정책·명령을 변경할 때는 먼저 `docs/validation/mutation-testing.md`를 끝까지 읽는다.
 - CI workflow나 브랜치 보호·필수 체크를 변경할 때는 먼저 `docs/validation/ci-gates.md`를 끝까지 읽는다.
 - import 구문을 추가·수정하거나 배럴(`index.ts`)의 재수출을 바꿀 때는 먼저 `docs/conventions/type-imports.md`를 끝까지 읽는다.
 

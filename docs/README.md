@@ -9,7 +9,7 @@
 | [아키텍처](architecture/README.md) | 레이어 경계, 데이터 접근 및 공통 처리 흐름 |
 | [보안](security/README.md) | 인증·인가와 접근 제어 경계 |
 | [컨벤션](conventions/README.md) | 프로젝트 전반의 명명 및 작성 규칙 |
-| [검증](validation/README.md) | 테스트 전략과 TDD Guard 검증 흐름 |
+| [검증](validation/README.md) | 정적 검증과 테스트 전략 |
 
 ## 문서 배치 원칙
 
