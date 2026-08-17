@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -27,6 +28,39 @@ describe("changed mutation plan", () => {
     execFileSync("git", ["add", "."], { cwd: root });
     execFileSync("git", ["commit", "-m", "change"], { cwd: root });
     expect(mutationPlan(root, "baseline")).toMatchObject({ targets: ["src/value.ts:1-2"], tests: ["src/value.test.ts"] });
+  });
+
+  it("sourceHash는 반환된 targets(정렬됨)와 같은 순서로 계산된다 — 한 자리/두 자리 줄번호가 섞여도 어긋나지 않는다", () => {
+    const root = fixture();
+    const lines = Array.from({ length: 25 }, (_, i) => `export const v${i} = ${i};`);
+    fs.writeFileSync(path.join(root, "src/value.ts"), `${lines.join("\n")}\n`);
+    execFileSync("git", ["add", "."], { cwd: root });
+    execFileSync("git", ["commit", "-m", "multiline baseline"], { cwd: root });
+    execFileSync("git", ["branch", "-f", "baseline", "HEAD"], { cwd: root });
+
+    // 7번째 줄과 21번째 줄을 각각 별도 hunk로 바꾼다 — 문자열 정렬("21-21" < "7-7")과
+    // 실제 diff 등장 순서(7번째 줄이 21번째 줄보다 먼저)가 어긋나는 상황을 재현한다.
+    lines[6] = "export const v6 = 999;";
+    lines[20] = "export const v20 = 999;";
+    fs.writeFileSync(path.join(root, "src/value.ts"), `${lines.join("\n")}\n`);
+    execFileSync("git", ["add", "."], { cwd: root });
+    execFileSync("git", ["commit", "-m", "change"], { cwd: root });
+
+    const plan = mutationPlan(root, "baseline");
+    const recomputed = crypto
+      .createHash("sha256")
+      .update(
+        plan.targets
+          .map((target) => {
+            const file = target.slice(0, target.lastIndexOf(":"));
+            return `${target}\0${fs.readFileSync(path.join(root, file))}`;
+          })
+          .join("\0"),
+      )
+      .digest("hex");
+
+    expect(plan.targets).toEqual(["src/value.ts:21-21", "src/value.ts:7-7"]);
+    expect(plan.sourceHash).toBe(recomputed);
   });
 
   it("mutant가 없으면 실패가 아니라 N/A다", () => {
