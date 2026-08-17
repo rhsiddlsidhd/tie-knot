@@ -6,6 +6,9 @@ import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
 
 import mongoose from "mongoose";
+import { requireAuth } from "./auth";
+import { isValidSubwayStationName } from "./subway";
+import { attachCoupleInfoToOrder } from "./order";
 
 export const createCoupleInfoService = async (
   data: CoupleInfoSchemaDto & { userId: string },
@@ -110,3 +113,36 @@ export const updateCoupleInfoService = async (
 
   return !!updated;
 };
+
+const validateSubwayStation = async (subwayStation?: string): Promise<void> => {
+  if (subwayStation && !(await isValidSubwayStationName(subwayStation))) {
+    throw new AppError("VALIDATION", "존재하지 않는 지하철역입니다.", {
+      subwayStation: ["존재하지 않는 지하철역입니다."],
+    });
+  }
+};
+
+export async function createCoupleInfoWorkflow(
+  data: CoupleInfoSchemaDto,
+  orderId?: string,
+): Promise<string> {
+  await validateSubwayStation(data.subwayStation);
+  const { userId } = await requireAuth();
+  const coupleInfo = await createCoupleInfoService({ ...data, userId });
+  const coupleInfoId = coupleInfo._id.toString();
+  if (orderId) {
+    await attachCoupleInfoToOrder(orderId, coupleInfoId, userId);
+  }
+  return coupleInfoId;
+}
+
+export async function updateCoupleInfoWorkflow(
+  coupleInfoId: string,
+  data: CoupleInfoSchemaDto,
+): Promise<void> {
+  await validateSubwayStation(data.subwayStation);
+  const { userId } = await requireAuth();
+  if (!(await updateCoupleInfoService(coupleInfoId, userId, data))) {
+    throw new AppError("INTERNAL", "커플 정보 업데이트에 실패하였습니다.");
+  }
+}

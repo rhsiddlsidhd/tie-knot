@@ -8,6 +8,7 @@ import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
 import { COUPLE_INFO_DEADLINE_DAYS } from "@/core/domain";
 import { getProductQuantityBoundsService } from "./product";
+import { requireAuth } from "./auth";
 
 const assertObjectIdLike = (id: string, label: string): void => {
   if (!mongoose.isObjectIdOrHexString(id)) {
@@ -88,6 +89,13 @@ export const createOrderService = async (
 
   return order.toObject();
 };
+
+export async function createOrderForCurrentUserService(
+  data: CreateOrderDto,
+): Promise<IOrder> {
+  const { userId } = await requireAuth();
+  return createOrderService({ ...data, userId });
+}
 
 /**
  * 결제 완료된 주문에 couple-info를 연결한다(TODO.md "couple-info를 payment

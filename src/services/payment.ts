@@ -19,6 +19,7 @@ import {
 } from "./order";
 import { AppError } from "@/core/domain";
 import { dbConnect } from "@/db";
+import { requireAuth } from "./auth";
 
 // 환경 변수 확인
 const PORTONE_API_SECRET = process.env.PORTONE_API_SECRET;
@@ -538,3 +539,15 @@ export const cancelExpiredAwaitingCoupleInfoOrders = async (
     ),
   );
 };
+
+export async function completePaymentService(paymentId: string): Promise<PayStatus> {
+  await requireAuth();
+  if (!paymentId) {
+    throw new AppError("VALIDATION", "올바르지 않은 요청입니다.");
+  }
+  const payment = await syncPayment(paymentId);
+  if (!payment) {
+    throw new AppError("INTERNAL", "결제 동기화에 실패했습니다.");
+  }
+  return payment.status;
+}

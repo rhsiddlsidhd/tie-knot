@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/services";
+import { updateCoupleInfoWorkflow } from "@/services";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoSchema } from "@/core/schemas";
@@ -75,31 +75,8 @@ export const updateCoupleInfo = async (
     };
   }
 
-  if (
-    parsed.data.subwayStation &&
-    !(await isValidSubwayStationName(parsed.data.subwayStation))
-  ) {
-    return {
-      success: false,
-      error: {
-        category: "VALIDATION",
-        message: "입력값을 확인해주세요",
-        fieldErrors: { subwayStation: ["존재하지 않는 지하철역입니다."] },
-      },
-    };
-  }
-
   try {
-    const { userId } = await requireAuth();
-
-    const updated = await updateCoupleInfoService(coupleInfoId, userId, parsed.data);
-
-    if (!updated) {
-      return {
-        success: false,
-        error: { category: "INTERNAL", message: "커플 정보 업데이트에 실패하였습니다." },
-      };
-    }
+    await updateCoupleInfoWorkflow(coupleInfoId, parsed.data);
 
     return {
       success: true,

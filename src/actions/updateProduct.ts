@@ -1,15 +1,12 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
-import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
-import { requireAuth, updateProductService } from "@/services";
+import { updateProductWorkflow } from "@/services";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 
 import { productSchema } from "@/core/schemas";
 import { routes } from "@/core/domain";
-import { AppError } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";
 
@@ -23,8 +20,6 @@ export const updateProduct = async (
   prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
-  const uploadedPublicIds: string[] = [];
-  const recordUpload = ({ publicId }: { publicId: string }) => uploadedPublicIds.push(publicId);
   const thumbnailFile = formData.get("thumbnail") as File;
   const previewFile = formData.get("previewUrl") as File;
 
@@ -63,46 +58,11 @@ export const updateProduct = async (
   }
 
   try {
-    const { role } = await requireAuth();
-    if (role !== "ADMIN") {
-      return {
-        success: false,
-        error: { category: "FORBIDDEN", message: "관리자 권한이 필요합니다." },
-      };
-    }
-
-    let thumbnailUrl = formData.get("currentThumbnail") as string;
-    if (thumbnailFile && thumbnailFile.size > 0) {
-      thumbnailUrl = await uploadProductImage(thumbnailFile, "thumbnail", recordUpload);
-    }
-
-    let previewUrl: string | undefined = formData.get(
-      "currentPreviewUrl",
-    ) as string;
-    if (previewFile && previewFile.size > 0) {
-      previewUrl = await uploadProductImage(previewFile, "preview", recordUpload);
-    }
-
-    const uploadedImageUrls = (
-      await Promise.all(
-        parsed.data.images.newFiles.map((file) => uploadProductImage(file, "images", recordUpload)),
-      )
-    ).filter((url): url is string => Boolean(url));
-    const images = [...parsed.data.images.existing, ...uploadedImageUrls];
-
-    const updated = await updateProductService(productId, {
+    await updateProductWorkflow(productId, {
       ...parsed.data,
-      images,
-      thumbnail: thumbnailUrl,
-      previewUrl,
+      previewFile,
+      currentPreviewUrl: formData.get("currentPreviewUrl") as string,
     });
-
-    // REQ-7: discriminatorKey가 "category"라 category를 바꿔 요청하면 mongoose가
-    // 바뀐 category 기준 모델로 원래 문서를 찾다가 매칭 실패 → null을 리턴한다.
-    // 검사 없이 넘어가면 실패인데 success:true가 나가는 무증상 실패가 된다.
-    if (!updated) {
-      throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
-    }
 
     revalidatePath(routes.admin.products.root);
     revalidatePath(routes.products.root);
@@ -113,7 +73,6 @@ export const updateProduct = async (
       data: { message: "상품이 성공적으로 수정되었습니다." },
     };
   } catch (e) {
-    await Promise.allSettled(uploadedPublicIds.map((publicId) => deleteProductAsset(publicId)));
     return actionError(e);
   }
 };

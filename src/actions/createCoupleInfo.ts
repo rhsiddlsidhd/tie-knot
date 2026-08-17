@@ -1,12 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import {
-  requireAuth,
-  createCoupleInfoService,
-  isValidSubwayStationName,
-  attachCoupleInfoToOrder,
-} from "@/services";
+import { createCoupleInfoWorkflow } from "@/services";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoSchema } from "@/core/schemas";
@@ -74,57 +69,15 @@ export const createCoupleInfo = async (
     };
   }
 
-  if (
-    parsed.data.subwayStation &&
-    !(await isValidSubwayStationName(parsed.data.subwayStation))
-  ) {
-    return {
-      success: false,
-      error: {
-        category: "VALIDATION",
-        message: "입력값을 확인해주세요",
-        fieldErrors: { subwayStation: ["존재하지 않는 지하철역입니다."] },
-      },
-    };
-  }
-
   try {
-    const { userId } = await requireAuth();
-
-    const coupleInfo = await createCoupleInfoService({
-      userId,
-      groom: parsed.data.groom,
-      bride: parsed.data.bride,
-      weddingDate: parsed.data.weddingDate,
-      weddingTime: parsed.data.weddingTime,
-      venue: parsed.data.venue,
-      address: parsed.data.address,
-      addressDetail: parsed.data.addressDetail,
-      subwayStation: parsed.data.subwayStation,
-      guestbookEnabled: parsed.data.guestbookEnabled,
-      thumbnailImages: parsed.data.thumbnailImages,
-      galleryImages: parsed.data.galleryImages,
-    });
-
-    if (!coupleInfo) {
-      return {
-        success: false,
-        error: { category: "INTERNAL", message: "커플 정보 등록에 실패하였습니다." },
-      };
-    }
-
-    // 결제 이후 my-orders 흐름(orderId 전달)에서는 생성한 커플 정보를 해당
-    // 주문에 연결한다 — orderId가 없으면(기존 흐름) 연결을 건너뛴다.
     const orderId = formData.get("orderId") as string | null;
-    if (orderId) {
-      await attachCoupleInfoToOrder(orderId, coupleInfo._id.toString(), userId);
-    }
+    const coupleInfoId = await createCoupleInfoWorkflow(parsed.data, orderId ?? undefined);
 
     return {
       success: true,
       data: {
         message: "커플 정보가 성공적으로 등록되었습니다.",
-        _id: coupleInfo._id.toString(),
+        _id: coupleInfoId,
       },
     };
   } catch (e) {

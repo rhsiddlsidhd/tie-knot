@@ -1,9 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
-import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
-import { requireAuth, createProductService } from "@/services";
+import { createProductWorkflow } from "@/services";
 import { actionError } from "@/boundary";
 import { productSchema } from "@/core/schemas";
 import { routes } from "@/core/domain";
@@ -20,8 +18,6 @@ export const createProduct = async (
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
-  const uploadedPublicIds: string[] = [];
-  const recordUpload = ({ publicId }: { publicId: string }) => uploadedPublicIds.push(publicId);
   const thumbnailFile = formData.get("thumbnail") as File;
   const previewFile = formData.get("previewUrl") as File;
 
@@ -60,34 +56,9 @@ export const createProduct = async (
   }
 
   try {
-    const { role, userId } = await requireAuth();
-    if (role !== "ADMIN") {
-      return {
-        success: false,
-        error: { category: "FORBIDDEN", message: "관리자 권한이 필요합니다." },
-      };
-    }
-
-    const thumbnailUrl = await uploadProductImage(thumbnailFile, "thumbnail", recordUpload);
-
-    let previewUrl: string | undefined;
-    if (previewFile && previewFile.size > 0) {
-      previewUrl = await uploadProductImage(previewFile, "preview", recordUpload);
-    }
-
-    const uploadedImageUrls = (
-      await Promise.all(
-        parsed.data.images.newFiles.map((file) => uploadProductImage(file, "images", recordUpload)),
-      )
-    ).filter((url): url is string => Boolean(url));
-    const images = [...parsed.data.images.existing, ...uploadedImageUrls];
-
-    await createProductService({
+    await createProductWorkflow({
       ...parsed.data,
-      images,
-      authorId: userId,
-      thumbnail: thumbnailUrl,
-      previewUrl,
+      previewFile,
     });
 
     revalidatePath(routes.admin.products.root);
@@ -98,7 +69,6 @@ export const createProduct = async (
       data: { message: "상품이 성공적으로 등록되었습니다." },
     };
   } catch (e) {
-    await Promise.allSettled(uploadedPublicIds.map((publicId) => deleteProductAsset(publicId)));
     return actionError(e);
   }
 };

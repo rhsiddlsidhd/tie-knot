@@ -439,6 +439,7 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 | 5. UI층 통합 | 완료 | `client/**`와 `app/**/_hooks`→`ui/` | components/hooks/stores 경계가 적용되고 UI가 models/services/db를 직접 import하지 않는다 |
 | 6. 문서·규칙 동기화 | 완료 | AGENTS.md와 architecture/convention/validation 문서 경로 갱신 | 삭제된 경로 참조가 없고 실제 디렉토리와 일치한다 |
 | 7. 최종 통합 검증 | 완료 | 정적 검증·잔여 import 조사 | lint·tsc·build가 통과하고 기존 최상위 구조의 import가 0건이다 |
+| 7.5. Actions 완전 슬림화 | 완료 | 인증·외부 Adapter·업무 흐름 조합을 services로 이동 | action은 파싱·응답·캐시 갱신만 담당하고 models/db/adapters 직접 import가 0건이다 |
 | 8. 테스트 체계 전면 개선 | 승인 대기 | 테스트 분류·배치·Vitest project·공용 인프라 재설계 | 별도 승인 후 범위와 완료 조건을 확정한다 |
 
 Phase 1~7은 각 Phase에서 `git diff --check`, 삭제 경로 import 검색, lint·tsc·build를 통과한 뒤에만 병합한다. 테스트 명령은 실행하지 않으며 Phase 8 승인 전까지 테스트 인프라를 변경하지 않는다.

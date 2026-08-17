@@ -4,6 +4,7 @@ import { GuestbookModel } from "@/models";
 import type { GuestbookType } from "@/core/schemas";
 import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
+import { comparePasswords, hashPassword } from "@/adapters/bcrypt";
 
 import mongoose from "mongoose";
 
@@ -80,3 +81,31 @@ export const deleteGuestbookService = async (
 
   return result;
 };
+
+export async function createGuestbookWithPasswordService(
+  data: GuestbookType,
+): Promise<void> {
+  await createGuestbookService({
+    data: { ...data, password: await hashPassword(data.password) },
+  });
+}
+
+export async function deleteGuestbookWithPasswordService({
+  guestbookId,
+  password,
+}: {
+  guestbookId: string;
+  password: string;
+}): Promise<void> {
+  const guestbook = await getPrivateGuestbookService(guestbookId);
+  if (!guestbook) {
+    throw new AppError("NOT_FOUND", "해당 게시글을 찾을 수 없습니다.");
+  }
+  if (!(await comparePasswords(password, guestbook.password))) {
+    throw new AppError("UNAUTHENTICATED", "비밀번호가 일치하지 않습니다.");
+  }
+  const result = await deleteGuestbookService(guestbookId);
+  if (!result.acknowledged || result.deletedCount === 0) {
+    throw new AppError("INTERNAL", "게시글 삭제에 실패했습니다.");
+  }
+}

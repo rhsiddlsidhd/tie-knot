@@ -2,8 +2,9 @@ import "server-only";
 import type { UserRole } from "@/core/domain";
 import { UserModel } from "@/models";
 import { dbConnect } from "@/db";
-import { getCookie, deleteCookie } from "@/adapters/cookies";
-import { decrypt } from "@/adapters/jose";
+import { getCookie, deleteCookie, setCookie } from "@/adapters/cookies";
+import { decrypt, encrypt } from "@/adapters/jose";
+import { comparePasswords } from "@/adapters/bcrypt";
 import mongoose from "mongoose";
 import { AppError } from "@/core/domain";
 import type { AuthSession } from "@/core/schemas";
@@ -87,11 +88,50 @@ export async function requireAuth(): Promise<AuthSession> {
   return session;
 }
 
+export async function requireAdmin(): Promise<AuthSession> {
+  const session = await requireAuth();
+  if (session.role !== "ADMIN") {
+    throw new AppError("FORBIDDEN", "관리자 권한이 필요합니다.");
+  }
+  return session;
+}
+
 /**
  * 로그아웃 처리를 위해 서버의 인증 토큰 쿠키를 삭제합니다.
  */
 export async function logoutService() {
   await deleteCookie("token");
+}
+
+export async function clearUserEmailCookieService() {
+  await deleteCookie("userEmail");
+}
+
+export async function loginUserService({
+  email,
+  password,
+  remember,
+}: {
+  email: string;
+  password: string;
+  remember: boolean;
+}): Promise<AuthSession> {
+  const user = await getUser({ email });
+  if (!user || !(await comparePasswords(password, user.password))) {
+    throw new AppError(
+      "UNAUTHENTICATED",
+      "이메일 또는 비밀번호가 일치하지 않습니다.",
+    );
+  }
+
+  const refreshJWT = await encrypt({
+    id: user._id.toString(),
+    role: user.role,
+    type: "REFRESH",
+  });
+  await setCookie({ name: "token", value: refreshJWT, remember });
+
+  return { role: user.role, email: user.email, userId: user._id.toString() };
 }
 
 // page.tsx(Server Component render) 전용 라우팅 게이트 — requireAuth()(throw)와 달리

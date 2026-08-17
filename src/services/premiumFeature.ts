@@ -3,10 +3,12 @@ import type { IFeature } from "@/models";
 import { FeatureModel } from "@/models";
 import type { PremiumFeatureDto } from "@/core/schemas";
 import type { PremiumFeature } from "@/core/domain";
+import { AppError } from "@/core/domain";
 export type { PremiumFeature } from "@/core/domain";
 import { dbConnect } from "@/db";
 
 import mongoose from "mongoose";
+import { requireAdmin } from "./auth";
 // FeatureJSON을 재사용
 // Mapper 함수: DB 결과를 PremiumFeature로 변환
 const mapToPremiumFeature = (doc: IFeature): PremiumFeature => ({
@@ -61,3 +63,23 @@ export const updatePremiumFeatureService = async (
 
   return updatedFeature;
 };
+
+export async function createPremiumFeatureAsAdminService(
+  data: PremiumFeatureDto,
+): Promise<void> {
+  await requireAdmin();
+  await createPremiumFeatureService(data);
+}
+
+export async function updatePremiumFeatureAsAdminService(
+  id: string,
+  data: PremiumFeatureDto,
+): Promise<void> {
+  await requireAdmin();
+  if (!(await updatePremiumFeatureService(id, data))) {
+    throw new AppError(
+      "NOT_FOUND",
+      "프리미엄 기능을 찾을 수 없습니다.",
+    );
+  }
+}

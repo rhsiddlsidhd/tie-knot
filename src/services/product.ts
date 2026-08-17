@@ -9,9 +9,42 @@ import type { InvitationTheme} from "@/core/domain";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
+import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
+import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
+import { requireAdmin, requireAuth } from "./auth";
 
 // Product 타입을 export (다른 파일에서 사용)
 export type Product = ProductJSON;
+
+type ProductUploadInput = ProductDto & {
+  previewFile?: File;
+  currentPreviewUrl?: string;
+};
+
+const uploadProductAssets = async (
+  data: ProductUploadInput,
+  onUploaded: ({ publicId }: { publicId: string }) => void,
+) => {
+  const thumbnail =
+    data.thumbnail instanceof File
+      ? await uploadProductImage(data.thumbnail, "thumbnail", onUploaded)
+      : data.thumbnail;
+  const previewUrl =
+    data.previewFile && data.previewFile.size > 0
+      ? await uploadProductImage(data.previewFile, "preview", onUploaded)
+      : data.currentPreviewUrl;
+  const uploadedImages = (
+    await Promise.all(
+      data.images.newFiles.map((file) => uploadProductImage(file, "images", onUploaded)),
+    )
+  ).filter((url): url is string => Boolean(url));
+
+  return {
+    thumbnail,
+    previewUrl,
+    images: [...data.images.existing, ...uploadedImages],
+  };
+};
 
 type LeanProduct = ProductDB & {
   _id: Types.ObjectId;
@@ -363,3 +396,73 @@ export const updateProductLikeService = async (
 
   return !!updated;
 };
+
+export async function createProductWorkflow(data: ProductUploadInput): Promise<void> {
+  const { userId } = await requireAdmin();
+  const uploadedPublicIds: string[] = [];
+  try {
+    const assets = await uploadProductAssets(data, ({ publicId }) => {
+      uploadedPublicIds.push(publicId);
+    });
+    await createProductService({
+      ...data,
+      ...assets,
+      authorId: userId,
+    });
+  } catch (error) {
+    await Promise.allSettled(uploadedPublicIds.map(deleteProductAsset));
+    throw error;
+  }
+}
+
+export async function updateProductWorkflow(
+  productId: string,
+  data: ProductUploadInput,
+): Promise<ProductJSON> {
+  await requireAdmin();
+  const uploadedPublicIds: string[] = [];
+  try {
+    const assets = await uploadProductAssets(data, ({ publicId }) => {
+      uploadedPublicIds.push(publicId);
+    });
+    const updated = await updateProductService(productId, {
+      ...data,
+      ...assets,
+    });
+    if (!updated) {
+      throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+    }
+    return updated;
+  } catch (error) {
+    await Promise.allSettled(uploadedPublicIds.map(deleteProductAsset));
+    throw error;
+  }
+}
+
+export async function deleteProductAsAdminService(productId: string): Promise<void> {
+  await requireAdmin();
+  if (!(await deleteProductService(productId))) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+}
+
+export async function updateProductStatusAsAdminService(
+  productId: string,
+  status: ProductDto["status"],
+): Promise<ProductJSON> {
+  await requireAdmin();
+  const updated = await updateProductService(productId, { status });
+  if (!updated) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+  return updated;
+}
+
+export async function toggleProductLikeForCurrentUserService(
+  productId: string,
+): Promise<void> {
+  const { userId } = await requireAuth();
+  if (!(await updateProductLikeService(productId, userId))) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없거나 좋아요 업데이트에 실패했습니다.");
+  }
+}
