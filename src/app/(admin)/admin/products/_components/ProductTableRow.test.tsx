@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product } from "@/server/services";
+import type { Product } from "@/shared/types";
 
 vi.mock("./ProductTableRowAction", () => ({
   ProductTableRowAction: (): null => null,

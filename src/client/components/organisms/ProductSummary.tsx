@@ -3,7 +3,7 @@
 import { Share2 } from "lucide-react";
 import { useMemo } from "react";
 import { Badge, TypographyH1, TypographyMuted } from "@/client/components/atoms";
-import type { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/shared/types";
 import { isProductCategory, calculatePrice } from "@/shared/utils";
 import type { SubCategory } from "@/shared/constants";
 import { productCategoryLabels, subCategoryLabels } from "@/shared/constants";

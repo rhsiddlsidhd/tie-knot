@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/client/fetcher";
-import type { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/shared/types";
 import { useEffect } from "react";
 import { toast } from "sonner";
 

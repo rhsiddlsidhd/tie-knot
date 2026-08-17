@@ -4,7 +4,7 @@ import type React from "react";
 import { useActionState, useEffect, useState } from "react";
 import { UploadCloud, X } from "lucide-react";
 import { updateProduct } from "@/server/actions";
-import type { Product } from "@/server/services";
+import type { Product } from "@/shared/types";
 import { Alert, ImageField, SelectField, Spinner, CloudImage } from "@/client/components/molecules";
 import { Input, Button, Textarea, Switch, Checkbox, Label, TypographyH4, TypographyMuted } from "@/client/components/atoms";
 

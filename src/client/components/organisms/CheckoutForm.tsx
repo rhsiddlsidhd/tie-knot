@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react";
 
-import type { PayStatus } from "@/server/models";
+import type { PayStatus } from "@/shared/types";
 import type { BuyerInfo } from "@/shared/schemas";
 
 import { Spinner } from "@/client/components/molecules";

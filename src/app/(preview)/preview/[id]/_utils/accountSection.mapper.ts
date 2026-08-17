@@ -1,4 +1,4 @@
-import type { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/shared/types";
 // AccountSection 컴포넌트가 받을 props 타입 정의
 export interface AccountInfo {
   relation: string;

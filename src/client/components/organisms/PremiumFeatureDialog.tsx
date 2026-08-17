@@ -3,7 +3,7 @@ import { Button, DialogFooter, Input, TypographyMuted, Textarea, Label } from "@
 
 
 
-import type { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/shared/types";
 import { Alert, TextField } from "@/client/components/molecules";
 import type { APIResponse } from "@/shared/types";
 import { getFieldError } from "@/shared/utils";

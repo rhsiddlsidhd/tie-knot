@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { ProductJSON } from "@/server/models";
+import type { ProductJSON } from "@/shared/types";
 
 vi.mock("./ProductTableRow", () => ({
   ProductTableRow: ({ product }: { product: { title: string } }) => (

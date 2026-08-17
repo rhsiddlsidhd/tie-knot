@@ -1,4 +1,4 @@
-import type { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/shared/types";
 export interface WeddingMonthCalendarProps {
   date: Date;
 }

@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { Product } from "@/server/services";
+import type { Product } from "@/shared/types";
 import type { ProductFilterState } from "@/client/context/productFilter";
 import { getChosung } from "@/shared/utils";
 

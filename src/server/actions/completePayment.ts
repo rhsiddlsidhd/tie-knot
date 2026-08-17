@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { APIResponse} from "@/shared/types";
 import { AppError } from "@/shared/types";
 import { syncPayment, requireAuth } from "@/server/services";
-import type { PayStatus } from "@/server/models";
+import type { PayStatus } from "@/shared/types";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/shared/constants";
 

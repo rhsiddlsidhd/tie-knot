@@ -2,7 +2,7 @@ import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/shared/types";
 import { requireAuth, getCoupleInfoById } from "@/server/services";
-import type { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/shared/types";
 import type { CoupleInfoResponse } from "@/shared/schemas";
 
 import type { NextRequest } from "next/server";

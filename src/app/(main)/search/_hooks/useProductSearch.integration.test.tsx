@@ -4,7 +4,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { SWRConfig } from "swr";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import type { Product } from "@/server/services/product.service";
+import type { Product } from "@/shared/types";
 import { useProductSearch } from "./useProductSearch";
 
 const product: Product = {

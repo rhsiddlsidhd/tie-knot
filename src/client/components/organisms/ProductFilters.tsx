@@ -11,7 +11,7 @@ import type { Dispatch} from "react";
 import { useState } from "react";
 
 import type { ProductFilterState, ProductFilterAction } from "@/client/context/productFilter";
-import type { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/shared/types";
 
 import { getSubCategoryOptions } from "@/shared/utils";
 

@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import type { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/shared/types";
 import { updatePremiumFeature } from "@/server/actions";
 import type { APIResponse } from "@/shared/types";
 import { hasFieldErrors } from "@/shared/utils";

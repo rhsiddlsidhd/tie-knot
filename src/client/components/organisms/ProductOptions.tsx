@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Badge, Button } from "@/client/components/atoms";
 
 import { QuantityStepper, StatusSelect } from "@/client/components/molecules";
-import type { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/shared/types";
 
 import type { CheckoutItem } from "@/shared/types";
 import type { SelectFeatureDto } from "@/shared/schemas";

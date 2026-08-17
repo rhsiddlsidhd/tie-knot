@@ -2,20 +2,10 @@ import "server-only";
 import type { IFeature } from "@/server/models";
 import { FeatureModel } from "@/server/models";
 import type { PremiumFeatureDto } from "@/shared/schemas";
+import type { PremiumFeature } from "@/shared/types";
 import { dbConnect } from "@/server/lib/mongodb";
 
 import mongoose from "mongoose";
-// FeatureJSON을 재사용
-export type PremiumFeature = {
-  _id: string;
-  code: string;
-  label: string;
-  description: string;
-  additionalPrice: number;
-  isActive: boolean;
-  createdAt: string;
-};
-
 // Mapper 함수: DB 결과를 PremiumFeature로 변환
 const mapToPremiumFeature = (doc: IFeature): PremiumFeature => ({
   _id: String(doc._id),

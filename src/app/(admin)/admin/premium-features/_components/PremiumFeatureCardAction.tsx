@@ -3,7 +3,7 @@ import React from "react";
 
 import { Button } from "@/client/components/atoms";
 import { Edit, Trash2 } from "lucide-react";
-import type { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/shared/types";
 import { useAdminModalStore } from "@/client/store";
 const PremiumFeatureCardAction = ({
   premiumFeature,

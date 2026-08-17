@@ -1,4 +1,4 @@
-import type { PayMethod } from "@/server/models";
+import type { PayMethod } from "@/shared/types";
 import type { OrderStatus } from "../_types";
 
 export const PAYMENT_STATUS: Record<OrderStatus, string> = {

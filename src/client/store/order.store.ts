@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { CheckoutItem } from "@/shared/types";
-import type { PayStatus } from "@/server/models";
+import type { PayStatus } from "@/shared/types";
 
 interface OrderState {
   order: CheckoutItem | null;

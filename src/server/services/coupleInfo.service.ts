@@ -1,11 +1,18 @@
 import "server-only";
-import type { ICoupleInfo } from "@/server/models";
+import type { CoupleInfoDB } from "@/server/models";
 import { CoupleInfoModel } from "@/server/models";
 import type { CoupleInfoSchemaDto } from "@/shared/schemas";
 import { dbConnect } from "@/server/lib/mongodb";
+import type { ICoupleInfo } from "@/shared/types";
 import { AppError } from "@/shared/types";
 
 import mongoose from "mongoose";
+
+const toCoupleInfo = (coupleInfo: CoupleInfoDB): ICoupleInfo => ({
+  ...coupleInfo,
+  _id: coupleInfo._id.toString(),
+  userId: coupleInfo.userId.toString(),
+});
 
 export const createCoupleInfoService = async (
   data: CoupleInfoSchemaDto & { userId: string },
@@ -37,7 +44,7 @@ export const createCoupleInfoService = async (
     },
   );
 
-  return newCoupleInfo.toJSON();
+  return toCoupleInfo(newCoupleInfo.toJSON());
 };
 
 export const getCoupleInfoById = async (
@@ -53,7 +60,7 @@ export const getCoupleInfoById = async (
     new mongoose.Types.ObjectId(coupleInfoId),
   ).lean();
 
-  return coupleInfo;
+  return coupleInfo ? toCoupleInfo(coupleInfo) : null;
 };
 
 export const updateCoupleInfoService = async (

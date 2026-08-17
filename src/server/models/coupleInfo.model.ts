@@ -1,6 +1,7 @@
 import "server-only";
 import type { Model, Types } from "mongoose";
 import mongoose, { Schema } from "mongoose";
+import type { ICoupleInfo } from "@/shared/types";
 
 // 공통 타입 정의
 interface Person {
@@ -20,21 +21,9 @@ interface CoupleSide extends Person {
   mother?: Parent;
 }
 
-export interface ICoupleInfo {
-  _id: string | Types.ObjectId;
-  userId: string | Types.ObjectId;
-  groom: CoupleSide;
-  bride: CoupleSide;
-  weddingDate: Date;
-  venue: string;
-  address: string;
-  addressDetail: string;
-  subwayStation?: string;
-  guestbookEnabled: boolean;
-  thumbnailImages: string[];
-  galleryImages: string[];
-  createdAt: Date;
-  updatedAt: Date;
+export interface CoupleInfoDB extends Omit<ICoupleInfo, "_id" | "userId"> {
+  _id: Types.ObjectId;
+  userId: Types.ObjectId;
 }
 
 const ParentSchema = new Schema<Parent>(
@@ -60,7 +49,7 @@ const CoupleSideSchema = new Schema<CoupleSide>(
 );
 
 
-const coupleInfoSchema = new Schema<ICoupleInfo>(
+const coupleInfoSchema = new Schema<CoupleInfoDB>(
   {
     userId: {
       type: Schema.Types.ObjectId,
@@ -99,5 +88,5 @@ const coupleInfoSchema = new Schema<ICoupleInfo>(
 );
 
 export const CoupleInfoModel =
-  (mongoose.models.CoupleInfo as Model<ICoupleInfo>) ||
-  mongoose.model<ICoupleInfo>("CoupleInfo", coupleInfoSchema);
+  (mongoose.models.CoupleInfo as Model<CoupleInfoDB>) ||
+  mongoose.model<CoupleInfoDB>("CoupleInfo", coupleInfoSchema);

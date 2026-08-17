@@ -4,7 +4,7 @@ import { ProductCard } from "@/client/components/organisms";
 
 import { useVisibleProducts } from "@/client/hooks";
 import type { ProductFilterState } from "@/client/context/productFilter";
-import type { Product } from "@/server/services";
+import type { Product } from "@/shared/types";
 import { TypographyMuted, TypographyP } from "../atoms/typography";
 import { PackageOpen } from "lucide-react";
 

@@ -9,6 +9,7 @@ import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES
 } from "@/shared/constants";
+import type { ProductJSON } from "@/shared/types";
 
 export type { ProductCategory, SubCategory };
 export { SUB_CATEGORY_MAP };
@@ -37,31 +38,24 @@ const discountSchema = new Schema(
   { _id: false },
 );
 
-export interface ProductDB {
-  authorId: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  price: number;
-  category: ProductCategory;
-  subCategory: SubCategory;
-  isPremium: boolean;
+export interface ProductDB
+  extends Omit<
+    ProductJSON,
+    | "_id"
+    | "likes"
+    | "featureIds"
+    | "previewUrl"
+    | "theme"
+    | "isLiked"
+    | "discountedPrice"
+    | "createdAt"
+    | "updatedAt"
+    | "deletedAt"
+  > {
   featureIds?: mongoose.Types.ObjectId[];
-  isFeatured: boolean;
-  priority: number;
   likes: mongoose.Types.ObjectId[];
-  views: number;
-  salesCount: number;
-  discount: {
-    discountType: "rate" | "amount";
-    value: number;
-  };
-  status: Status;
   // 스키마가 default: null이라 모든 문서에 항상 존재한다 — optional이 아니라 nullable.
   deletedAt: Date | null;
-  images: string[];
-  minQuantity: number;
-  maxQuantity: number;
 }
 
 export interface IProduct extends ProductDB {
@@ -74,19 +68,6 @@ export interface IProduct extends ProductDB {
 export interface IInvitationProduct extends IProduct {
   previewUrl?: string;
   theme?: InvitationTheme;
-}
-
-export interface ProductJSON extends Omit<ProductDB, "likes" | "featureIds" | "deletedAt"> {
-  _id: string;
-  likes: string[];
-  featureIds: string[];
-  previewUrl?: string;
-  theme?: InvitationTheme;
-  isLiked: boolean;
-  discountedPrice: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
 }
 
 const productSchema = new Schema<IProduct>(

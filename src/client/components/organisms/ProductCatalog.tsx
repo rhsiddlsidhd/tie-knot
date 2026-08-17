@@ -7,7 +7,7 @@ import {
 } from "@/client/context/productFilter";
 import React from "react";
 import { ProductFilters, ProductGrid } from "@/client/components/organisms";
-import type { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/shared/types";
 
 import type { ProductCategory, SubCategory } from "@/shared/constants";
 

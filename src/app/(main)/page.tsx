@@ -1,8 +1,7 @@
 export const revalidate = 3600;
 
 import { HomeTemplate } from "./_components";
-import type {
-  Product} from "@/server/services";
+import type { Product } from "@/shared/types";
 import {
   getFeaturedTemplatesService,
   getPopularProductsService,

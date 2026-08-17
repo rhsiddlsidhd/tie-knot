@@ -9,7 +9,7 @@ import { actionError } from "@/server/boundary";
 
 import { validateAndFlatten } from "@/shared/utils";
 import { createOrderSchema } from "@/shared/schemas";
-import type { PayMethod } from "@/server/models";
+import type { PayMethod } from "@/shared/types";
 import { routes } from "@/shared/constants";
 export type CreateOrderResult = {
   merchantUid: string;

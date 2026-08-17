@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/shared/types";
 import { ProductOptions } from "./ProductOptions";
 
 const buildOption = (overrides?: Partial<PremiumFeature>): PremiumFeature => ({

@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/client/fetcher";
-import type { Product } from "@/server/services";
+import type { Product } from "@/shared/types";
 import type { ErrorPayload } from "@/shared/types";
 
 // 런타임 shape은 응답 계약(ProductResponse[])과 동일하다 — Product 타입을 쓰는 이유는

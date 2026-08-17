@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/client/components/at
 import { format } from "date-fns";
 import { TextField, AddressField, SwitchField, ComboboxField, DateField } from "@/client/components/molecules";
 
-import type { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/shared/types";
 import type { SubwayStationsResponse } from "@/shared/schemas";
 
 type BasicInfoSectionProps = {

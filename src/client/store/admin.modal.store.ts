@@ -1,4 +1,4 @@
-import type { PremiumFeature, Product } from "@/server/services";
+import type { PremiumFeature, Product } from "@/shared/types";
 
 import { create } from "zustand";
 
