@@ -1,4 +1,4 @@
-# AGENTS.md — src/client/components/atoms/
+# AGENTS.md — src/ui/components/atoms/
 
 > Last updated: 2026-07-18
 
@@ -6,12 +6,12 @@
 
 `atoms/`는 더 이상 쪼갤 수 없는 개별 UI 요소를 모아두는 곳이다 — 두 갈래로 구성된다: shadcn/Radix CLI 산출물(파일 하나가 여러 하위 요소를 묶은 복합 시스템, 예: `sidebar.tsx`)과, 다른 컴포넌트를 조합하지 않고 그 자체로 완결되는 커스텀 프리미티브(Typography류). 다른 컴포넌트를 import해서 조합하지 않으며, 도메인 로직·데이터 페칭도 없다.
 
-molecule과의 경계는 "누가 조합했는가"다(`src/client/components/AGENTS.md` 핵심 원칙 2) — shadcn/Radix 산출물은 조합 주체가 외부 라이브러리라 "물리적으로 더 못 쪼갠다"가 기준이 아니어도 atom 자격이 있고, 커스텀 프리미티브는 조합이 하나라도 있으면 atom 자격이 없다(molecules 소관).
+molecule과의 경계는 "누가 조합했는가"다(`src/ui/components/AGENTS.md` 핵심 원칙 2) — shadcn/Radix 산출물은 조합 주체가 외부 라이브러리라 "물리적으로 더 못 쪼갠다"가 기준이 아니어도 atom 자격이 있고, 커스텀 프리미티브는 조합이 하나라도 있으면 atom 자격이 없다(molecules 소관).
 
 ## Structure
 
 ```
-src/client/components/atoms/
+src/ui/components/atoms/
 ├── index.ts               # 배럴 — export *
 ├── button.tsx
 ├── dialog.tsx        # 복합 시스템(Root/Trigger/Content 등)이어도 통째로 atom
@@ -32,4 +32,4 @@ src/client/components/atoms/
 
 ## 관련 문서
 
-- 조합이 시작되는 다음 단계: `src/client/components/molecules/AGENTS.md`
+- 조합이 시작되는 다음 단계: `src/ui/components/molecules/AGENTS.md`

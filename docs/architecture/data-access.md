@@ -9,7 +9,7 @@
 
 | #   | 필요                                                                       | 경로                                                                                                                                                                                              |
 | --- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 서버 렌더 시점 데이터(Server Component 렌더링용)                           | `src/server/services/*` 직접 import + 함수 호출 — route.ts 안 거침(같은 프로세스 안에서 굳이 HTTP 왕복 안 만듦)                                                                                   |
+| 1   | 서버 렌더 시점 데이터(Server Component 렌더링용)                           | `src/services/*` 직접 import + 함수 호출 — route.ts 안 거침(같은 프로세스 안에서 굳이 HTTP 왕복 안 만듦)                                                                                   |
 | 2   | 브라우저 트리거 mutation(create/update/delete) — 폼이든 이벤트 핸들러든    | Server Action — 폼 밖이면 이벤트 핸들러/`useEffect`를 `startTransition`으로 감싸 호출. route.ts/raw `fetch` 안 거침(Server Action은 브라우저에 함수 참조만 내려가는 RPC라 route.ts 자체가 불필요) |
 | 3   | 브라우저가 캐싱/재검증(dedupe, focus·interval revalidate) 필요한 조회(GET) | route.ts + `fetcher`(`useSWR`) — raw `fetch` 안 거침(envelope 파싱/구조화된 에러 정규화가 `fetcher`에 집중)                                                                                       |
 

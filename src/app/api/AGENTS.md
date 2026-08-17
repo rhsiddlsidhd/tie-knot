@@ -23,11 +23,11 @@ src/app/api/
 - `next/headers`의 `cookies()`/`headers()`를 동기 함수처럼 호출하지 않는다 — 두 함수 모두 비동기이므로 `await cookies()`/`await headers()`로 사용한다.
 - GET 이외의 메서드(POST/PUT/PATCH/DELETE)에 캐싱 옵트인(`export const dynamic = 'force-static'`)을 적용하지 않는다 — 공식 문서: GET을 제외한 나머지 메서드는 같은 파일에 캐시되는 GET과 나란히 있어도 캐시되지 않는다.
 - Route Handler 안에서 `updateTag()`를 호출하지 않는다 — 공식 문서: `updateTag`는 Server Action 전용이며 Route Handler에서 호출하면 에러가 던져진다. Route Handler에서 캐시를 무효화해야 하면 `revalidateTag`/`revalidatePath`를 쓴다.
-- 응답은 `src/server/boundary.ts`의 `routeSuccess`(성공)/`routeError`(에러)로만 만든다 — `NextResponse.json(...)`/`Response.json(...)`을 route.ts 안에서 직접 호출하지 않는다. Server Action은 이 계약 대상이 아니다(예상된 실패를 이 envelope 없이 plain 객체로 직접 리턴, `actionError` 사용 — `src/server/actions/AGENTS.md` 참고). `routeSuccess`/`routeError`가 뭘 하는지는 `src/server/AGENTS.md`(Key Files), 왜 두 채널이 갈라지는지는 `docs/architecture/error-handling.md` §채널 분리 규칙 참고.
+- 응답은 `src/boundary.ts`의 `routeSuccess`(성공)/`routeError`(에러)로만 만든다 — `NextResponse.json(...)`/`Response.json(...)`을 route.ts 안에서 직접 호출하지 않는다. Server Action은 이 계약 대상이 아니다(예상된 실패를 이 envelope 없이 plain 객체로 직접 리턴, `actionError` 사용 — `src/actions/AGENTS.md` 참고). `routeSuccess`/`routeError`가 뭘 하는지는 `src/AGENTS.md`(Key Files), 왜 두 채널이 갈라지는지는 `docs/architecture/error-handling.md` §채널 분리 규칙 참고.
 
 ## Gotchas
 
-- 인증이 필요한 Route Handler는 Bearer 헤더를 직접 파싱하지 않고 `services/auth.service.ts`의 `requireAuth()`를 호출한다(세션 없으면 401 throw) — `couple-info`/`order/create`가 이 패턴을 따른다. `kakaomap`의 `Authorization` 헤더는 별개(외부 Kakao API 인증용)라 해당 없음.
+- 인증이 필요한 Route Handler는 Bearer 헤더를 직접 파싱하지 않고 `services/auth.ts`의 `requireAuth()`를 호출한다(세션 없으면 401 throw) — `couple-info`/`order/create`가 이 패턴을 따른다. `kakaomap`의 `Authorization` 헤더는 별개(외부 Kakao API 인증용)라 해당 없음.
 
 ## References
 
@@ -35,6 +35,6 @@ src/app/api/
 
 | 문서                   | 위치                  | 트리거                          | 요약                     |
 | ---------------------- | ---------------------- | --------------------------------- | ------------------------ |
-| `AGENTS.md`            | `src/server/`          | 응답/에러 계약 확인 시            | 성공/에러 응답 빌더 계약 |
-| `AGENTS.md`            | `src/server/services/` | 이 라우트가 호출하는 비즈니스 로직 확인 시 | 서비스 레이어 컨벤션 |
-| `AGENTS.md`            | `src/server/actions/`  | Server Actions(자매 컨텍스트) 확인 시 | Server Action 컨벤션 |
+| `AGENTS.md`            | `src/`          | 응답/에러 계약 확인 시            | 성공/에러 응답 빌더 계약 |
+| `AGENTS.md`            | `src/services/` | 이 라우트가 호출하는 비즈니스 로직 확인 시 | 서비스 레이어 컨벤션 |
+| `AGENTS.md`            | `src/actions/`  | Server Actions(자매 컨텍스트) 확인 시 | Server Action 컨벤션 |

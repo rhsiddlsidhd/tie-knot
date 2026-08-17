@@ -1,11 +1,11 @@
-# AGENTS.md — src/client/components/templates/
+# AGENTS.md — src/ui/components/templates/
 
 > Last updated: 2026-07-21
 > 신규 도입된 티어 — 아직 이 폴더에 실사례 없음(Gotchas 참고, 강제 소급 적용 안 함).
 
 ## Overview
 
-`templates/`는 페이지 하나의 전체 배치(organism/molecule/atom을 모아 완성한 화면 전체 구조)를 모아두는 곳이다 — 진짜 데이터 없이 순수해야 한다(`src/client/components/AGENTS.md` 핵심 원칙 1). organism과의 경계는 "범위"다 — organism은 페이지 안 한 구획(section), template은 그 구획들을 모은 페이지 전체. Brad Frost 원본은 이 레벨에서 실제 콘텐츠 대신 placeholder를 쓴다고 정의하는데, 이 프로젝트는 그걸 "진짜 fetch된 데이터 없이, 완성된 콘텐츠를 props로만 받는다"로 구현한다 — 데이터가 어디서 왔는지(fetch냐 하드코딩이냐)는 template이 몰라야 한다.
+`templates/`는 페이지 하나의 전체 배치(organism/molecule/atom을 모아 완성한 화면 전체 구조)를 모아두는 곳이다 — 진짜 데이터 없이 순수해야 한다(`src/ui/components/AGENTS.md` 핵심 원칙 1). organism과의 경계는 "범위"다 — organism은 페이지 안 한 구획(section), template은 그 구획들을 모은 페이지 전체. Brad Frost 원본은 이 레벨에서 실제 콘텐츠 대신 placeholder를 쓴다고 정의하는데, 이 프로젝트는 그걸 "진짜 fetch된 데이터 없이, 완성된 콘텐츠를 props로만 받는다"로 구현한다 — 데이터가 어디서 왔는지(fetch냐 하드코딩이냐)는 template이 몰라야 한다.
 
 조합 대상 organism/molecule 중 단 하나라도 내부에서 자체 데이터 페칭(예: `useSWR`)을 한다면, 그 페칭 결과가 template 관점에선 "진짜 데이터"라서 순수성이 깨져 애초에 template으로 만들 수 없다 — 이런 경우 도입을 강제하지 않고 지금처럼 라우트 로컬 구성(`_components/`)을 그대로 유지한다(예: `(preview)/preview/[id]`의 `GuestbookSection`류 — `organisms/AGENTS.md` Gotchas 참고).
 
@@ -14,7 +14,7 @@
 - **완전 flat 구조 — 하위 폴더를 만들지 않는다**(atoms/molecules/organisms와 동일 이유).
 
 ```
-src/client/components/templates/
+src/ui/components/templates/
 └── {Name}Template.tsx   # PascalCase + Template 접미사, 페이지 전체 배치
 ```
 
@@ -27,9 +27,9 @@ src/client/components/templates/
 ## Gotchas
 
 - 신규 도입(2026-07-21) — 기존 라우트의 `page.tsx` 얇은 래퍼(organism을 배치 코드와 함께 바로 렌더하던 것들)를 지금 일괄 리팩토링하지 않는다. 새 라우트, 또는 컨테이너/순수 분리 리팩토링 대상이 되는 라우트부터 순차 적용한다(`src/app/AGENTS.md`의 private 폴더 도입 때와 동일 정책).
-- 구 `atoms/grid.tsx`는 이 티어 후보로도 검토됐으나 탈락했다 — template은 "페이지 전체" 배치인데 Grid는 페이지 안 한 섹션(구획)만 다뤄서 범위가 안 맞았다. 결국 컴포넌트 자체를 해체하고 소비처마다 배치 클래스를 인라인하는 걸로 정리됨(`src/client/components/atoms/AGENTS.md` Gotchas 참고).
+- 구 `atoms/grid.tsx`는 이 티어 후보로도 검토됐으나 탈락했다 — template은 "페이지 전체" 배치인데 Grid는 페이지 안 한 섹션(구획)만 다뤄서 범위가 안 맞았다. 결국 컴포넌트 자체를 해체하고 소비처마다 배치 클래스를 인라인하는 걸로 정리됨(`src/ui/components/atoms/AGENTS.md` Gotchas 참고).
 
 ## 관련 문서
 
-- 한 단계 아래(organism): `src/client/components/organisms/AGENTS.md`
+- 한 단계 아래(organism): `src/ui/components/organisms/AGENTS.md`
 - Pages(`page.tsx`) 역할, private 폴더, layout.tsx 경계: `src/app/AGENTS.md`

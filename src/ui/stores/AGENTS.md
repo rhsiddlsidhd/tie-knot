@@ -1,4 +1,4 @@
-# AGENTS.md — src/client/store/
+# AGENTS.md — src/ui/store/
 
 > Last updated: 2026-07-29
 > 이 폴더는 프로젝트 고유 선택 — 전역 클라이언트 상태(Zustand) 레이어.
@@ -6,12 +6,12 @@
 
 ## Overview
 
-Zustand(`node_modules/zustand`, v5) 기반 앱 전체 범위 클라이언트 상태 레이어. 목표 아키텍처는 **결합된 store 하나**(slices 패턴, 공식 가이드 `flux-inspired-practice.md` "Single store")를 **요청/마운트당 인스턴스화**(`zustand/vanilla` `createStore` + Context, 공식 가이드 `nextjs.md` "No global stores")하는 형태다. 특정 UI 트리에만 한정된 상태는 여기가 아니라 `src/client/context/`(`src/client/context/AGENTS.md` 참고).
+Zustand(`node_modules/zustand`, v5) 기반 앱 전체 범위 클라이언트 상태 레이어. 목표 아키텍처는 **결합된 store 하나**(slices 패턴, 공식 가이드 `flux-inspired-practice.md` "Single store")를 **요청/마운트당 인스턴스화**(`zustand/vanilla` `createStore` + Context, 공식 가이드 `nextjs.md` "No global stores")하는 형태다. 특정 UI 트리에만 한정된 상태는 여기가 아니라 `src/ui/context/`(`src/ui/context/AGENTS.md` 참고).
 
 ## Structure (목표)
 
 ```
-src/client/store/
+src/ui/store/
 ├── index.ts                    # 배럴 — export *
 ├── app.store.ts                 # createAppStore — 아래 슬라이스 전부 spread해 결합, persist는 여기 한 곳에서만(order 슬라이스만 partialize)
 ├── provider.tsx                 # "use client" — useState(() => createAppStore())로 요청/마운트당 1개 생성, Context.Provider
@@ -42,4 +42,4 @@ src/client/store/
 
 ## 관련 문서
 
-- 특정 UI 트리 한정 상태와의 경계: `src/client/context/AGENTS.md`
+- 특정 UI 트리 한정 상태와의 경계: `src/ui/context/AGENTS.md`
