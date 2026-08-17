@@ -6,8 +6,8 @@ import { Button } from "@/client/components/atoms";
 import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/client/store";
 import type { OrderJSON } from "@/server/models";
-import type { CheckoutItem } from "@/shared/types";
-import { routes } from "@/shared/constants";
+import type { CheckoutItem } from "@/core/domain";
+import { routes } from "@/core/domain";
 
 const PaymentButton = ({ order }: { order: OrderJSON }) => {
   const router = useRouter();

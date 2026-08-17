@@ -7,7 +7,7 @@ import { useAuth } from "@/client/hooks";
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/client/components/atoms";
 
 import { UserIcon, LogOut } from "lucide-react";
-import { userNavItems, routes } from "@/shared/constants";
+import { userNavItems, routes } from "@/core/domain";
 import { logoutUser } from "@/server/actions";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

@@ -11,7 +11,7 @@ import {
 } from "@/client/components/atoms";
 import { ProductCard } from "@/client/components/organisms";
 import type { Product } from "@/server/services";
-import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/shared/constants";
+import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain";
 
 interface PopularProductsSectionProps {
   products: Product[];

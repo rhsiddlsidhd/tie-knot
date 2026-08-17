@@ -5,7 +5,7 @@ import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import type { ProductJSON } from "@/server/models";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 interface LiveDemoSectionProps {
   product: ProductJSON;
   infoId: string;

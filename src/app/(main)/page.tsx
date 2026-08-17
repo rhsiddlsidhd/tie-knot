@@ -8,7 +8,7 @@ import {
   getPopularProductsService,
   getProductService
 } from "@/server/services";
-import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 
 const page = async () => {
   const previewProductId = process.env.MAIN_PREVIEW_PRODUCT_ID;

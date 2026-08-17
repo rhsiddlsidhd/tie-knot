@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import ctaData from "@/data/cta.json";
+import ctaData from "@/core/content/cta.json";
 import { StartActionCTA } from "./StartActionCTA";
 
 describe("StartActionCTA", () => {

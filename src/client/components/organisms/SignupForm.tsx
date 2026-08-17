@@ -10,9 +10,9 @@ import { Checkbox, Button, Label, TypographyH1, TypographyMuted } from "@/client
 
 
 import { TextField } from "@/client/components/molecules";
-import { getFieldError } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
-import { routes } from "@/shared/constants";
+import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
+import { routes } from "@/core/domain";
 
 interface SignupFormProps {
   action: (formData: FormData) => void;

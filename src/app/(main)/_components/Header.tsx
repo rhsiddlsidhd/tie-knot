@@ -3,7 +3,7 @@ import { MobileNav } from "@/client/components/organisms";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
-import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/shared/constants";
+import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain";
 import { Button, TypographyH4 } from "@/client/components/atoms";
 const Header = () => {
   return (

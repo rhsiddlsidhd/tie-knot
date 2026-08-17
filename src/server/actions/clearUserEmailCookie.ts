@@ -2,7 +2,7 @@
 
 import { deleteCookie } from "@/server/lib/cookies";
 import { actionError } from "@/server/boundary";
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 
 export const clearUserEmailCookie = async (): Promise<APIResponse<null>> => {
   try {

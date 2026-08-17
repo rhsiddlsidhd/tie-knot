@@ -5,8 +5,8 @@ import { toast } from "sonner";
 
 import type { PremiumFeature } from "@/server/services";
 import { updatePremiumFeature } from "@/server/actions";
-import type { APIResponse } from "@/shared/types";
-import { hasFieldErrors } from "@/shared/utils";
+import type { APIResponse } from "@/core/domain";
+import { hasFieldErrors } from "@/core/utils";
 import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "@/client/components/organisms";
 export function PremiumFeatureDialog({
   premiumFeature,

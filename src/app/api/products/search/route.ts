@@ -2,10 +2,10 @@ import type { NextRequest } from "next/server";
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
 import { searchProductsService } from "@/server/services";
-import type { ProductResponse} from "@/shared/schemas";
-import { productSearchRequestSchema } from "@/shared/schemas";
-import { validateAndFlatten } from "@/shared/utils";
-import { AppError } from "@/shared/types";
+import type { ProductResponse} from "@/core/schemas";
+import { productSearchRequestSchema } from "@/core/schemas";
+import { validateAndFlatten } from "@/core/utils";
+import { AppError } from "@/core/domain";
 
 export const GET = async (
   request: NextRequest,

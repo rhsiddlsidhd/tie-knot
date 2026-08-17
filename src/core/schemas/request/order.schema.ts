@@ -1,4 +1,4 @@
-import { PAY_METHOD } from "@/shared/constants";
+import { PAY_METHOD } from "@/core/domain";
 import * as z from "zod";
 
 export const BuyerInfoSchema = z.object({

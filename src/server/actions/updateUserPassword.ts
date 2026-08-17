@@ -1,8 +1,8 @@
 "use server";
 
-import { validateAndFlatten } from "@/shared/utils";
-import { PWConfirmSchema } from "@/shared/schemas";
-import type { APIResponse } from "@/shared/types";
+import { validateAndFlatten } from "@/core/utils";
+import { PWConfirmSchema } from "@/core/schemas";
+import type { APIResponse } from "@/core/domain";
 import { changePassword } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { decrypt } from "@/server/lib/jose";

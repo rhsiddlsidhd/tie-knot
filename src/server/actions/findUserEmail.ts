@@ -4,13 +4,13 @@
  * DB에서 아이디 가져오기
  */
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 
-import { UserEmailSchema } from "@/shared/schemas";
+import { UserEmailSchema } from "@/core/schemas";
 
 import { getUserEmail } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { validateAndFlatten } from "@/shared/utils";
+import { validateAndFlatten } from "@/core/utils";
 
 export const findUserEmail = async (
   _prev: unknown,

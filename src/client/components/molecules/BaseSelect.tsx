@@ -1,7 +1,7 @@
 "use client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/client/components/atoms";
 import React from "react";
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils";
 
 export interface SelectOption {
   value: string;

@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/client/fetcher";
-import type { SubwayStationsResponse } from "@/shared/schemas";
+import type { SubwayStationsResponse } from "@/core/schemas";
 
 export function useSubwayStations() {
   const { data, error, isLoading } = useSWR<SubwayStationsResponse>(

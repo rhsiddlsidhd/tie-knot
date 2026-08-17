@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 
 vi.mock("@/server/services", () => ({
   checkEmailDuplicate: vi.fn(),

@@ -1,5 +1,3 @@
-import type { NextResponse } from "next/server";
-
 /**
  * Success response structure.
  */
@@ -20,11 +18,6 @@ export type ErrorResponse = {
  * Generic API response (success or error).
  */
 export type APIResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
-
-/**
- * API Route response type (NextResponse wrapper).
- */
-export type APIRouteResponse<T = unknown> = NextResponse<APIResponse<T>>;
 
 export const ERROR_CATEGORIES = [
   "VALIDATION",

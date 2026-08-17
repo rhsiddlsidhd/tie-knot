@@ -1,16 +1,16 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { redirect } from "next/navigation";
 
 import { getCookie } from "@/server/lib/cookies";
 import { requireAuth, createOrderService } from "@/server/services";
 import { actionError } from "@/server/boundary";
 
-import { validateAndFlatten } from "@/shared/utils";
-import { createOrderSchema } from "@/shared/schemas";
+import { validateAndFlatten } from "@/core/utils";
+import { createOrderSchema } from "@/core/schemas";
 import type { PayMethod } from "@/server/models";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 export type CreateOrderResult = {
   merchantUid: string;
   finalPrice: number;

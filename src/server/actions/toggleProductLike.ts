@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { APIResponse} from "@/shared/types";
-import { AppError } from "@/shared/types";
+import type { APIResponse} from "@/core/domain";
+import { AppError } from "@/core/domain";
 import { requireAuth, updateProductLikeService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export const toggleProductLike = async (
   productId: string,

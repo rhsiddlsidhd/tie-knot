@@ -6,7 +6,7 @@ import { Button, TypographyH1, TypographyMuted, Checkbox, Label } from "@/client
 
 
 import { TextField } from "@/client/components/molecules";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 interface LoginFormProps {
   action: (formData: FormData) => void;
   pending: boolean;

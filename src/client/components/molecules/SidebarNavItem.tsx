@@ -1,8 +1,8 @@
 "use client";
-import type { SubmenuParentTitle } from "@/shared/constants";
-import { allNavigateItems } from "@/shared/constants";
-import { cn } from "@/client/lib/cn";
-import { isSubmenuParentTitle } from "@/shared/utils";
+import type { SubmenuParentTitle } from "@/core/domain";
+import { allNavigateItems } from "@/core/domain";
+import { cn } from "@/core/utils";
+import { isSubmenuParentTitle } from "@/core/utils";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

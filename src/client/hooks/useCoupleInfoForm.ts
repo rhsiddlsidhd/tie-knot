@@ -6,13 +6,13 @@ import { toast } from "sonner";
 
 import { createCoupleInfo, updateCoupleInfo } from "@/server/actions";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { useImageUpload } from "./useImageUpload";
 import { useImageList } from "./useImageList";
 import { useFetchCoupleInfo } from "./useFetchCoupleInfo";
 import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export function useCoupleInfoForm({ type }: { type: "create" | "edit" }) {
   const router = useRouter();

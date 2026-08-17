@@ -4,11 +4,11 @@ import mongoose, { model, Schema } from "mongoose";
 import type {
   ProductCategory,
   SubCategory,
-  InvitationTheme} from "@/shared/constants";
+  InvitationTheme} from "@/core/domain";
 import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES
-} from "@/shared/constants";
+} from "@/core/domain";
 
 export type { ProductCategory, SubCategory };
 export { SUB_CATEGORY_MAP };

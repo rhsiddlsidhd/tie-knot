@@ -2,11 +2,11 @@ import "server-only";
 import mongoose from "mongoose";
 import type { IOrder, OrderJSON} from "@/server/models";
 import { OrderModel } from "@/server/models";
-import type { CreateOrderDto } from "@/shared/schemas";
-import { generateUid } from "@/shared/utils";
+import type { CreateOrderDto } from "@/core/schemas";
+import { generateUid } from "@/core/utils";
 import { dbConnect } from "@/server/lib/mongodb";
-import { AppError } from "@/shared/types";
-import { COUPLE_INFO_DEADLINE_DAYS } from "@/shared/constants";
+import { AppError } from "@/core/domain";
+import { COUPLE_INFO_DEADLINE_DAYS } from "@/core/domain";
 import { getProductQuantityBoundsService } from "./product.service";
 
 const assertObjectIdLike = (id: string, label: string): void => {

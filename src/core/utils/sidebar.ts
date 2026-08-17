@@ -1,5 +1,5 @@
-import type { SubmenuParentTitle } from "@/shared/constants";
-import { SUBMENU_PARENT_TITLES } from "@/shared/constants";
+import type { SubmenuParentTitle } from "@/core/domain";
+import { SUBMENU_PARENT_TITLES } from "@/core/domain";
 
 export const isSubmenuParentTitle = (
   title: string,

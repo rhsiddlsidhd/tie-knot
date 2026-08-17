@@ -5,9 +5,9 @@ import { Card, Button, TypographyH1, TypographyLarge, TypographyMuted } from "@/
 
 
 import { TextField } from "@/client/components/molecules";
-import { getFieldError } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
-import { routes } from "@/shared/constants";
+import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
+import { routes } from "@/core/domain";
 
 interface FindIdFormProps {
   action: (formData: FormData) => void;

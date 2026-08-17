@@ -5,14 +5,14 @@ import type {
   SuccessResponse,
   ErrorResponse,
   APIResponse,
-  APIRouteResponse} from "@/shared/types";
-import {
-  AppError
-} from "@/shared/types";
-import { ERROR_SAFE_MESSAGES } from "@/shared/constants";
+} from "@/core/domain";
+import { AppError } from "@/core/domain";
+import { ERROR_SAFE_MESSAGES } from "@/core/domain";
 
 // Re-export types for convenience
-export type { SuccessResponse, ErrorResponse, APIResponse, APIRouteResponse };
+export type APIRouteResponse<T = unknown> = NextResponse<APIResponse<T>>;
+
+export type { SuccessResponse, ErrorResponse, APIResponse };
 
 // 분류→HTTP status 매핑 — services/AppError는 HTTP를 모르므로 이 경계에서만 번역한다(src/AGENTS.md 참고).
 export const ERROR_STATUS_MAP: Record<ErrorCategory, number> = {

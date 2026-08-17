@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/shared/constants";
+import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain";
 
 export const productSchema = z
   .object({

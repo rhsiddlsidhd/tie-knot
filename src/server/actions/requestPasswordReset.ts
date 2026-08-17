@@ -1,13 +1,13 @@
 "use server";
 
 import { encrypt } from "@/server/lib/jose";
-import { validateAndFlatten } from "@/shared/utils";
+import { validateAndFlatten } from "@/core/utils";
 import { sendEmail } from "@/server/lib/nodemailer";
-import { emailSchema } from "@/shared/schemas";
-import type { APIResponse } from "@/shared/types";
+import { emailSchema } from "@/core/schemas";
+import type { APIResponse } from "@/core/domain";
 import { checkEmailDuplicate } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 const createChangePWDomain = (token: string): string => {
   return process.env.NODE_ENV === "development"
     ? `http://localhost:3000${routes.changePw}?t=${encodeURIComponent(token)}`

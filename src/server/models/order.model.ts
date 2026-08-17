@@ -2,7 +2,7 @@ import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 import type { PayMethod } from "./payment.model";
-import { PAY_METHOD } from "@/shared/constants";
+import { PAY_METHOD } from "@/core/domain";
 interface ProductPricing {
   originalPrice: number;
   discountedPrice: number;

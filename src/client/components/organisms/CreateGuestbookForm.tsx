@@ -2,9 +2,9 @@ import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, Dia
 
 import { TextField, SwitchField } from "@/client/components/molecules";
 
-import { cn } from "@/client/lib/cn";
-import type { APIResponse } from "@/shared/types";
-import { getFieldError } from "@/shared/utils";
+import { cn } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
+import { getFieldError } from "@/core/utils";
 
 interface CreateGuestbookFormProps {
   coupleInfoId: string;

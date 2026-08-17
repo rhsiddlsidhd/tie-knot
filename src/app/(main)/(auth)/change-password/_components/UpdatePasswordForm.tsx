@@ -5,10 +5,10 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { updateUserPassword, clearUserEmailCookie } from "@/server/actions";
-import { hasFieldErrors } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
+import { hasFieldErrors } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
 import { UpdatePasswordForm as PureUpdatePasswordForm } from "@/client/components/organisms";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export function UpdatePasswordForm() {
   const router = useRouter();

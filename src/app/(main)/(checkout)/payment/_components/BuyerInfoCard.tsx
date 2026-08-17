@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/client/components/atoms";
 import { TextField } from "@/client/components/molecules";
-import type { BuyerInfo } from "@/shared/schemas";
+import type { BuyerInfo } from "@/core/schemas";
 
 interface BuyerInfoCardProps {
   errors: Partial<Record<keyof BuyerInfo, string[]>>;

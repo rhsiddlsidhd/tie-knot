@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createOrder, type CreateOrderResult } from "@/server/actions";
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { useOrderStore } from "@/client/store";
 import { usePortOnePayment } from "@/client/hooks";
 import { useCheckoutData } from "@/client/hooks";
 import { useCheckoutForm } from "@/client/hooks";
 import { CheckoutForm as PureCheckoutForm } from "@/client/components/organisms";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 export function CheckoutForm() {
   const router = useRouter();
   const clearOrder = useOrderStore((state) => state.clearOrder);

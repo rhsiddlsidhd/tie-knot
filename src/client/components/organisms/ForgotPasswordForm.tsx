@@ -4,9 +4,9 @@ import { CheckCircle2 } from "lucide-react";
 import { Card, Button, TypographyH1, TypographyLarge, TypographyMuted, TypographySmall } from "@/client/components/atoms";
 
 import { TextField } from "@/client/components/molecules";
-import { getFieldError } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
-import { routes } from "@/shared/constants";
+import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
+import { routes } from "@/core/domain";
 
 interface ForgotPasswordFormProps {
   action: (formData: FormData) => void;

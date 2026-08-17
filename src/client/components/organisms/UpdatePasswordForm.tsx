@@ -2,9 +2,9 @@ import { Button, TypographyH1, TypographyMuted } from "@/client/components/atoms
 
 import { TextField } from "@/client/components/molecules";
 import Link from "next/link";
-import { getFieldError } from "@/shared/utils";
-import type { APIResponse } from "@/shared/types";
-import { routes } from "@/shared/constants";
+import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain";
+import { routes } from "@/core/domain";
 
 interface UpdatePasswordFormProps {
   action: (formData: FormData) => void;

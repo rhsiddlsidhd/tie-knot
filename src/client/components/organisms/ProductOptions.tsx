@@ -8,9 +8,9 @@ import { Badge, Button } from "@/client/components/atoms";
 import { QuantityStepper, StatusSelect } from "@/client/components/molecules";
 import type { Product, PremiumFeature } from "@/server/services";
 
-import type { CheckoutItem } from "@/shared/types";
-import type { SelectFeatureDto } from "@/shared/schemas";
-import { calculatePrice, formatPriceWithComma } from "@/shared/utils";
+import type { CheckoutItem } from "@/core/domain";
+import type { SelectFeatureDto } from "@/core/schemas";
+import { calculatePrice, formatPriceWithComma } from "@/core/utils";
 
 // 무제한(maxQuantity===0) 모드의 stepper 상한 — DB/서버 제약이 아니라 순수 UI 편의 상한이다.
 // 서버(createOrder)는 maxQuantity===0이면 상한 검증 자체를 스킵한다(진짜 무제한).

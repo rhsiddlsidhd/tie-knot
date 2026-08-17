@@ -9,7 +9,7 @@ import React from "react";
 import { ProductFilters, ProductGrid } from "@/client/components/organisms";
 import type { Product, PremiumFeature } from "@/server/services";
 
-import type { ProductCategory, SubCategory } from "@/shared/constants";
+import type { ProductCategory, SubCategory } from "@/core/domain";
 
 interface ProductCatalogProps {
   products: Product[];

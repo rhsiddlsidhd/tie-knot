@@ -3,7 +3,7 @@ import { Button, TypographyH1, TypographyMuted } from "@/client/components/atoms
 import { ProductRegistrationForm } from "./_components";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 export default async function NewProductPage() {
   await verifySession("ADMIN");

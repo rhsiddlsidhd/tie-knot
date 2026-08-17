@@ -1,9 +1,9 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
-import { AppError } from "@/shared/types";
-import { parseSeoulOpenApiResponse } from "@/shared/utils";
-import { SUBWAY_LINE_COLORS, DEFAULT_SUBWAY_LINE_COLOR } from "@/shared/constants";
-import type { SubwayStationLineInfoResponse } from "@/shared/schemas";
+import { AppError } from "@/core/domain";
+import { parseSeoulOpenApiResponse } from "@/core/utils";
+import { SUBWAY_LINE_COLORS, DEFAULT_SUBWAY_LINE_COLOR } from "@/core/domain";
+import type { SubwayStationLineInfoResponse } from "@/core/schemas";
 import type { NextRequest } from "next/server";
 
 const SERVICE_NAME = "SearchInfoBySubwayNameService";

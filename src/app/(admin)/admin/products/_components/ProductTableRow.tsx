@@ -4,8 +4,8 @@ import type { Product } from "@/server/services";
 import { CloudImage } from "@/client/components/molecules";
 import { ProductTableRowAction } from "./ProductTableRowAction";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
-import type { ProductCategory, SubCategory } from "@/shared/constants";
-import { productCategoryLabels, subCategoryLabels } from "@/shared/constants";
+import type { ProductCategory, SubCategory } from "@/core/domain";
+import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
 
 export interface ProductTableRowProps {
   product: Product;

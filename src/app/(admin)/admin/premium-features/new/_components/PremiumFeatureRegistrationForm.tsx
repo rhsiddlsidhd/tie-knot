@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 
 import { createPremiumFeature } from "@/server/actions";
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { PremiumFeatureRegistrationForm as PurePremiumFeatureRegistrationForm } from "@/client/components/organisms";
 export function PremiumFeatureRegistrationForm() {
   const [state, action, pending] = useActionState<

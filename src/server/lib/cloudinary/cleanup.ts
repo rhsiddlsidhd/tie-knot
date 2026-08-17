@@ -1,6 +1,6 @@
 import "server-only";
 import { v2 as cloudinary } from "cloudinary";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 
 export async function deleteProductAsset(publicId: string): Promise<void> {
   if (!publicId) return;

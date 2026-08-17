@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createGuestbook } from "@/server/actions";
-import type { APIResponse } from "@/shared/types";
-import { hasFieldErrors } from "@/shared/utils";
+import type { APIResponse } from "@/core/domain";
+import { hasFieldErrors } from "@/core/utils";
 import { useGuestbookModalStore } from "@/client/store";
 import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/client/components/organisms";
 interface Payload {

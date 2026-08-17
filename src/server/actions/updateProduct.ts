@@ -1,14 +1,14 @@
 "use server";
 
-import type { APIResponse } from "@/shared/types";
+import type { APIResponse } from "@/core/domain";
 import { deleteProductAsset, uploadProductImage } from "@/server/lib/cloudinary";
 import { requireAuth, updateProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";
-import { validateAndFlatten } from "@/shared/utils";
+import { validateAndFlatten } from "@/core/utils";
 
-import { productSchema } from "@/shared/schemas";
-import { routes } from "@/shared/constants";
-import { AppError } from "@/shared/types";
+import { productSchema } from "@/core/schemas";
+import { routes } from "@/core/domain";
+import { AppError } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";
 

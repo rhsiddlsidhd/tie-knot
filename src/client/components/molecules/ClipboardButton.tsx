@@ -4,7 +4,7 @@ import { type ComponentProps } from "react";
 import { Copy, CheckCircle } from "lucide-react";
 import type { buttonVariants } from "@/client/components/atoms";
 import { Button } from "@/client/components/atoms";
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils";
 import { type VariantProps } from "class-variance-authority";
 
 /**

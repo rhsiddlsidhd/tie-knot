@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 
 vi.mock("@/server/services", () => ({
   searchProductsService: vi.fn(),

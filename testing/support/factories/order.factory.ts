@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { CreateOrderDto } from "@/shared/schemas";
+import type { CreateOrderDto } from "@/core/schemas";
 
 export const buildOrderInput = (
   overrides?: Partial<CreateOrderDto & { userId: string }>,

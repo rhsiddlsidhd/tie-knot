@@ -17,7 +17,7 @@ import {
   getOrderSeviceByMerchantUid,
   findExpiredAwaitingCoupleInfoOrders,
 } from "./order.service";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 import { dbConnect } from "@/server/lib/mongodb";
 
 // 환경 변수 확인

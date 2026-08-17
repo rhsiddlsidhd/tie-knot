@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/server/lib/mongodb";
 import { buildGuestbookInput, clearCollections } from "@testing/support";
-import { AppError } from "@/shared/types";
+import { AppError } from "@/core/domain";
 import {
   createGuestbookService,
   getGuestbookService,

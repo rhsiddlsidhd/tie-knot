@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { TypographyMuted } from "@/client/components/atoms";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 export default function NotFound() {
   return (
     <main

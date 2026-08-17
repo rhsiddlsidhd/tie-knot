@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { TextField, AddressField, SwitchField, ComboboxField, DateField } from "@/client/components/molecules";
 
 import type { ICoupleInfo } from "@/server/models";
-import type { SubwayStationsResponse } from "@/shared/schemas";
+import type { SubwayStationsResponse } from "@/core/schemas";
 
 type BasicInfoSectionProps = {
   data?: Pick<ICoupleInfo, "weddingDate" | "venue" | "address" | "addressDetail" | "subwayStation" | "guestbookEnabled">;

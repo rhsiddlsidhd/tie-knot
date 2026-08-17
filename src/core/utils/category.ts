@@ -1,11 +1,11 @@
 import type {
   ProductCategory,
-  SubCategory} from "@/shared/constants";
+  SubCategory} from "@/core/domain";
 import {
   SUB_CATEGORY_MAP,
   productCategoryLabels,
   subCategoryLabels,
-} from "@/shared/constants";
+} from "@/core/domain";
 
 export const isProductCategory = (value: string): value is ProductCategory => {
   return Object.keys(productCategoryLabels).includes(value);

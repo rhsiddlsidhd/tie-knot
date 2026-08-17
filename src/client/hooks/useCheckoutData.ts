@@ -4,7 +4,7 @@ import { useOrderStore } from "@/client/store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { routes } from "@/shared/constants";
+import { routes } from "@/core/domain";
 
 // 결제 진행/실패/완료 중엔 order가 곧 클리어되므로(성공 시 clearOrder) "주문 없음"
 // 오탐 리다이렉트를 막아야 한다 — paymentStatus를 store에서 직접 읽어 CheckoutForm/

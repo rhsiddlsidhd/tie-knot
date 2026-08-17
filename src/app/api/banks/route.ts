@@ -1,6 +1,6 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
-import type { BanksResponse } from "@/shared/schemas";
+import type { BanksResponse } from "@/core/schemas";
 
 export const GET = async (): Promise<APIRouteResponse<BanksResponse>> => {
   try {

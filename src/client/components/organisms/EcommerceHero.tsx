@@ -10,8 +10,8 @@ import {
 } from "lucide-react";
 import { Button, TypographyH2, TypographySmall } from "@/client/components/atoms";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "@/client/lib/cn";
-import promotions from "@/data/promotions.json";
+import { cn } from "@/core/utils";
+import promotions from "@/core/content/promotions.json";
 import { useIntervalIndex } from "@/client/hooks";
 
 // 아이콘 매핑 객체

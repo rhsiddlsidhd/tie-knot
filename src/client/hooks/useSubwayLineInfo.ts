@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/client/fetcher";
-import type { SubwayStationLineInfoResponse } from "@/shared/schemas";
+import type { SubwayStationLineInfoResponse } from "@/core/schemas";
 
 export function useSubwayLineInfo(station?: string) {
   const swrKey = station ? `/api/subway/${encodeURIComponent(station)}` : null;
