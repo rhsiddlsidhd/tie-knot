@@ -65,7 +65,7 @@
 
 ## 2. 배경 — 왜 지금 구조가 못 답하나
 
-### 증거 1 — `src/server/lib/` 한 폴더에 3종
+### 증거 1 — `src/adapters/` 한 폴더에 3종
 
 | 파일 | 테스트 준비물 |
 |---|---|
@@ -76,7 +76,7 @@
 
 같은 `cloudinary/` 폴더 안에서도 `sign.ts`는 mock 0, `upload.ts`는 mock 필요.
 
-### 증거 2 — `src/client/lib/`도 3종
+### 증거 2 — `src/ui/lib/`도 3종
 
 네트워크(`cloudinary`·`portone`) / React 훅(`kakao`·`daum`) / 순수 함수(`cn`).
 
@@ -94,7 +94,7 @@
 
 **문서 모순 1건.** `client/lib/cn/merge.ts`는 side-effect가 없는데 `lib/`에 있다. `shared/utils/AGENTS.md`가 금지한 케이스다.
 
-**타입 누수.** UI 컴포넌트가 `@/server/models`에서 타입을 가져온다 (`OrderJSON`, `PayStatus`, `PayMethod`). `import type`이라 런타임 의존은 없지만 화살표 방향이 반대다.
+**타입 누수.** UI 컴포넌트가 `@/models`에서 타입을 가져온다 (`OrderJSON`, `PayStatus`, `PayMethod`). `import type`이라 런타임 의존은 없지만 화살표 방향이 반대다.
 
 ---
 
@@ -237,7 +237,7 @@ action을 부르는 것이 정상 용법이다.
 | `client/utils/open-app.ts` | `adapters/deeplink/` + `client-only` | `client/utils/` 층 소멸 |
 | `server/lib/mongodb/connect.ts` | `db/connect.ts` | |
 | `server/models` | `models/` + `server-only` | |
-| `server/services/*.service.ts` | `services/*.ts` | `.service` 중복 제거 |
+| `server/services/*.ts` | `services/*.ts` | `.service` 중복 제거 |
 | `server/actions/*` | `actions/*` | **얇게 만들기 — 아래 참고**. server-only 넣지 않는다 (§4) |
 | `server/boundary.ts` | `boundary.ts` | |
 | `client/components/{atoms,molecules,organisms,templates}` | `ui/components/` | atomic 계층 유지 여부는 별건 |
@@ -248,7 +248,7 @@ action을 부르는 것이 정상 용법이다.
 
 ### `actions/` 얇게 만들기 — 가장 큰 실작업
 
-지금 `src/server/actions`에 `.test.ts` 24개 + `.integration.test.ts` 3개다. **unit 테스트 24개는 actions에 로직이 있다는 신호** (fat controller).
+지금 `src/actions`에 `.test.ts` 24개 + `.integration.test.ts` 3개다. **unit 테스트 24개는 actions에 로직이 있다는 신호** (fat controller).
 
 목표 형태:
 
@@ -409,7 +409,7 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 
 ### 8.5 빈 섹션
 
-**내용이 없으면 섹션 자체를 생략한다.** "Gotchas: 없음"처럼 쓰지 않는다 — 현재 `src/client/utils/AGENTS.md`가 그렇게 돼 있다.
+**내용이 없으면 섹션 자체를 생략한다.** "Gotchas: 없음"처럼 쓰지 않는다 — 현재 `src/ui/utils/AGENTS.md`가 그렇게 돼 있다.
 
 섹션의 **존재 자체가 신호**가 되게 한다.
 
@@ -428,23 +428,20 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 
 ## 9. Phase별 실행 계획
 
-한 번에 하지 않는다. 각 Phase는 전용 브랜치와 PR 하나로 끝내고, 이전 Phase가 병합된 뒤 다음 Phase를 시작한다. 공통 필수 검증은 `npm run lint`, `npm run tsc`, `npm run build`다. 테스트는 CI 필수 체크가 아니라 로컬 검증이며, Phase 1에서 전면 개선한 뒤 각 이동 Phase의 관련 범위를 실행한다.
+한 번에 하지 않는다. 각 Phase는 전용 브랜치와 PR 하나로 끝내고, 이전 Phase가 병합된 뒤 다음 Phase를 시작한다. 각 Phase의 검증은 `npm run lint`, `npm run tsc`, `npm run build`만 실행한다. 테스트 체계 전면 개선은 디렉토리 아키텍처 완료 뒤 별도 승인으로 시작한다.
 
 | Phase | 상태 | 범위 | 완료 조건 |
 |---|---|---|---|
-| 0-A. 검증 체계 정리 | 진행 중 | TDD Guard·mutation·관련 훅 제거, CI를 `static` 단일 체크로 축소 | `static`이 lint→tsc→build만 실행하고 `dev`·`main` 필수 체크가 `static` 하나다 |
-| 0-B. 경계 기준선 확정 | 완료 | `server-only` 설치·서버 진입점 적용, 현재 경로 기준 `import/no-restricted-paths` 적용 | lint·tsc·build가 통과하고 `actions/`에는 `server-only`가 없다 |
-| 1. 테스트 체계 개선 | 예정 | 테스트 분류·배치·Vitest project·공용 인프라를 새 구조에 맞게 재설계 | 전체 테스트 명령과 계층별 선택 명령이 안정적으로 통과하며 구조 이동의 회귀 기준이 고정된다 |
-| 2. 순수층·어댑터 이동 | 예정 | `shared/`→`core/`, `client/lib`+`server/lib`→`adapters/`, cloudinary 통합 | `core/`가 src 내부 층과 I/O 패키지에 의존하지 않고 adapter의 server/client 경계가 빌드로 검증된다 |
-| 3. 서버층 평탄화 | 예정 | `server/{models,services,lib/mongodb}`→`models/`, `services/`, `db/` | Route Handler와 page/action 진입점의 import가 새 경로를 사용하고 DB integration 범위가 통과한다 |
-| 4. Actions 슬림화 | 예정 | action의 비즈니스 로직을 services로 이동 | action은 파싱·응답 변환·service 위임만 담당하고 관련 service/action 테스트가 통과한다 |
-| 5. UI층 통합 | 예정 | `client/**`와 `app/**/_hooks`→`ui/`, route 전용 component 재배치 | hooks/components/stores 경계가 적용되고 Vitest 경로 예외가 제거된다 |
-| 6. 문서·규칙 동기화 | 예정 | AGENTS.md 전면 재작성, architecture/convention/validation 문서 경로 갱신 | 삭제된 경로 참조가 없고 §8 템플릿과 실제 디렉토리가 일치한다 |
-| 7. 최종 통합 검증 | 예정 | 전체 정적 검증·전체 테스트·프로덕션 빌드·잔여 import 조사 | lint·tsc·build와 전체 테스트가 통과하고 기존 최상위 구조의 import가 0건이다 |
+| 1. 순수층 이동 | 완료 | `shared/`→`core/` | core가 I/O와 상위 계층에 의존하지 않는다 |
+| 2. 어댑터 이동 | 완료 | 브라우저·서버 SDK wrapper→`adapters/` | server/client 경계가 명시되고 cloudinary 배럴이 없다 |
+| 3. 서버층 평탄화 | 완료 | `server/{models,services,lib/mongodb}`→`models/`, `services/`, `db/` | 진입점 import가 새 경로를 사용하고 서비스 파일의 `.service` 접미사가 없다 |
+| 4. Actions 평탄화·경계 강화 | 완료 | `server/actions`→`actions/`, `server/boundary.ts`→`boundary.ts` | action이 models/db를 직접 import하지 않고 services를 통해 접근한다 |
+| 5. UI층 통합 | 완료 | `client/**`와 `app/**/_hooks`→`ui/` | components/hooks/stores 경계가 적용되고 UI가 models/services/db를 직접 import하지 않는다 |
+| 6. 문서·규칙 동기화 | 진행 중 | AGENTS.md와 architecture/convention/validation 문서 경로 갱신 | 삭제된 경로 참조가 없고 실제 디렉토리와 일치한다 |
+| 7. 최종 통합 검증 | 예정 | 정적 검증·잔여 import 조사 | lint·tsc·build가 통과하고 기존 최상위 구조의 import가 0건이다 |
+| 8. 테스트 체계 전면 개선 | 승인 대기 | 테스트 분류·배치·Vitest project·공용 인프라 재설계 | 별도 승인 후 범위와 완료 조건을 확정한다 |
 
-Phase 1은 Phase 2 이전의 필수 선행 작업이다. 테스트 체계가 고정되지 않은 상태에서 대규모 이동을 시작하면 경로 수정 실패와 실제 회귀를 구분할 수 없다.
-
-Phase 2 이후는 되돌리기 어려우므로 각 Phase에서 `git diff --check`, 삭제 경로 import 검색, 관련 테스트를 통과한 뒤에만 병합한다. 다음 Phase와 섞인 정리나 리팩터링은 하지 않는다.
+Phase 1~7은 각 Phase에서 `git diff --check`, 삭제 경로 import 검색, lint·tsc·build를 통과한 뒤에만 병합한다. 테스트 명령은 실행하지 않으며 Phase 8 승인 전까지 테스트 인프라를 변경하지 않는다.
 
 ---
 
@@ -469,14 +466,14 @@ Phase 2 이후는 되돌리기 어려우므로 각 Phase에서 `git diff --check
 - `dependency-cruiser` 미설치. 지금은 불필요 — 순환 참조가 실제 문제가 되면 그때
 - Next 16 공식 문서가 DAL + `server-only` 권장 — `node_modules/next/dist/docs/01-app/02-guides/data-security.md:56,245`
 - **`actions/`에 `server-only`를 넣으면 빌드가 깨진다** — `"use server"`와 양립 불가.
-  단계 1 시도에서 실증됨. `"use client"` 컴포넌트 다수가 `@/server/actions`를 import한다
+  단계 1 시도에서 실증됨. `"use client"` 컴포넌트 다수가 `@/actions`를 import한다
   (`LoginForm`, `SignupForm`, `CheckoutForm`, `ProductLikeBadge`, `ProductViewTracker` 등)
-- `src/server/actions`: `.test.ts` 24개 + `.integration.test.ts` 3개
-- `src/server/services/guestbook.service.ts`: 비즈니스 로직 0. 전부 쿼리 + 매핑
-- `src/server/services/payment.service.ts` (539줄): PortOne SDK 인스턴스 + DB 쿼리 + 상태 전이 규칙 공존. `mongoose.connection.transaction()` 3블록. `order.save({ session })` — **Active Record 스타일**
+- `src/actions`: `.test.ts` 24개 + `.integration.test.ts` 3개
+- `src/services/guestbook.ts`: 비즈니스 로직 0. 전부 쿼리 + 매핑
+- `src/services/payment.ts` (539줄): PortOne SDK 인스턴스 + DB 쿼리 + 상태 전이 규칙 공존. `mongoose.connection.transaction()` 3블록. `order.save({ session })` — **Active Record 스타일**
 - `route.ts`가 service를 건너뛰고 Model을 직접 쓰는 곳 **없음** (층 위반 없음)
-- `shared/utils/seoul-open-api.ts`는 fetch 안 함. 순수 파서 (위반 아님)
-- `shared/utils/image-processor.ts`는 `uploadFn` 주입받는 순수 함수 (위반 아님)
+- `core/utils/seoul-open-api.ts`는 fetch 안 함. 순수 파서 (위반 아님)
+- `core/utils/image-processor.ts`는 `uploadFn` 주입받는 순수 함수 (위반 아님)
 - 에러 처리 규약은 이미 정립됨 — `docs/architecture/error-handling.md`. services는 `AppError` throw + HTTP 모름, `boundary.ts`가 번역. **재구조화가 이 규약을 바꾸면 안 된다**
 
 ## 12. 갱신 대상 문서

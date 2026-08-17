@@ -17,7 +17,7 @@
 
 ## Page-level DAL 게이트
 
-- 로그인 필요 페이지는 `auth.service.ts`의 page 전용 DAL 함수 `verifySession()`을 최상단에서 호출한다 — page.tsx 안에 쿠키 decrypt/조회 로직을 인라인으로 다시 쓰지 않는다. 이유: 과거 3곳(order/page.tsx, order/edit/page.tsx, profile/page.tsx)이 이 로직을 손으로 복붙해 갖고 있었고, 복붙본은 서로 동기화가 깨지기 쉬웠다.
+- 로그인 필요 페이지는 `auth.ts`의 page 전용 DAL 함수 `verifySession()`을 최상단에서 호출한다 — page.tsx 안에 쿠키 decrypt/조회 로직을 인라인으로 다시 쓰지 않는다. 이유: 과거 3곳(order/page.tsx, order/edit/page.tsx, profile/page.tsx)이 이 로직을 손으로 복붙해 갖고 있었고, 복붙본은 서로 동기화가 깨지기 쉬웠다.
 - 이 함수는 `requireAuth()`(throw 시맨틱, Server Action/Route Handler 전용)를 재사용하지 않고 별도로 둔다 — 실패 시 throw가 아니라 redirect한다. 이유: page.tsx는 에러를 캐치해 `ErrorPayload`로 번역하는 채널이 아니라, 실패를 곧바로 라우팅 결과로 처리해야 하는 채널이다.
 - 이 함수는 인증 필요 여부와 관리자 role 필요 여부를 하나의 함수로 처리하고, role 유무에 따라 별도 함수를 만들지 않는다 — 이유: 두 검사 모두 같은 세션 조회(`getAuth()`) 결과 위에서 갈리는 조건일 뿐이라, 별도 함수로 쪼개면 세션 조회 로직이 두 곳에 중복된다.
 - 이 함수는 React `cache()`로 감싼다 — 세션 조회를 페이지 렌더링 요청당 1회로 제한한다. 이유: page 게이트와 아래 service 데이터 게이트가 같은 렌더 패스 안에서 각자 세션을 다시 조회하면 `cache()` 없이는 DB 왕복이 중복된다.
@@ -34,9 +34,9 @@
 
 ## Service 레이어 방어(defense-in-depth)
 
-- 관리자 전용 데이터 또는 특정 사용자 소유 데이터를 다루는 service 함수는, 그 데이터를 호출하는 page.tsx가 이미 게이트를 통과했더라도 내부에서 인가를 다시 확인한다 — page 게이트 하나만 믿고 생략하지 않는다. 이유: `src/server/services/AGENTS.md`가 이미 services를 "DAL(비즈니스 로직 + DB 접근 + 인가)"로 정의하고 있고, service 함수는 향후 다른 page/action에서 재사용될 수 있어 그 시점의 page 게이트 존재를 전제할 수 없다.
+- 관리자 전용 데이터 또는 특정 사용자 소유 데이터를 다루는 service 함수는, 그 데이터를 호출하는 page.tsx가 이미 게이트를 통과했더라도 내부에서 인가를 다시 확인한다 — page 게이트 하나만 믿고 생략하지 않는다. 이유: `src/services/AGENTS.md`가 이미 services를 "DAL(비즈니스 로직 + DB 접근 + 인가)"로 정의하고 있고, service 함수는 향후 다른 page/action에서 재사용될 수 있어 그 시점의 page 게이트 존재를 전제할 수 없다.
 - 이 인가 재확인은 page 게이트와 별도의 세션 조회를 새로 만들지 않는다 — 같은 렌더 패스 안이면 위 `cache()` 덕분에 추가 DB 비용 없이 재확인이 가능하다.
-- 관리자 전용 데이터와 특정 유저 소유 데이터를 같은 service 함수가 같이 다뤄야 하는 경우(예: admin은 전체 조회, 유저는 자기 소유만)의 파라미터 형태는 지금 정하지 않는다 — 현재 코드에 그런 인스턴스가 없다(`admin/orders/page.tsx`가 아직 빈 스텁). 실제로 그 필요가 생기는 시점에 그 자리에서 재검토한다(가정만으로 미리 만들지 않는다, `src/server/services/AGENTS.md` 트랜잭션 섹션과 같은 원칙).
+- 관리자 전용 데이터와 특정 유저 소유 데이터를 같은 service 함수가 같이 다뤄야 하는 경우(예: admin은 전체 조회, 유저는 자기 소유만)의 파라미터 형태는 지금 정하지 않는다 — 현재 코드에 그런 인스턴스가 없다(`admin/orders/page.tsx`가 아직 빈 스텁). 실제로 그 필요가 생기는 시점에 그 자리에서 재검토한다(가정만으로 미리 만들지 않는다, `src/services/AGENTS.md` 트랜잭션 섹션과 같은 원칙).
 
 ## Gotchas
 
@@ -55,4 +55,4 @@
 ## 관련 문서
 
 - Proxy/Server Action 원칙: `src/AGENTS.md` (Critical Convention, "Proxy에 위임하지 않는다")
-- 기존 세션 조회 함수(`getUser`/`getAuth`/`requireAuth`) 계약: `src/server/services/AGENTS.md`
+- 기존 세션 조회 함수(`getUser`/`getAuth`/`requireAuth`) 계약: `src/services/AGENTS.md`

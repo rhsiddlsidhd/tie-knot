@@ -38,7 +38,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
   ├── _constants/           # 라우트 전용 상수
   └── _hooks/               # 라우트 전용 훅
   ```
-- 2개 이상 라우트가 공유하는 순수함수/UI/훅/타입/상수를 라우트 폴더 안에 남겨두지 않는다 — 순수함수는 `src/shared/utils/`, UI는 `src/client/components/`, 훅은 `src/client/hooks/`, 타입은 `src/shared/types/`, 상수는 `src/shared/constants/`로 승격한다(각 폴더 AGENTS.md 참고).
+- 2개 이상 라우트가 공유하는 순수함수/UI/훅/타입/상수를 라우트 폴더 안에 남겨두지 않는다 — 순수함수는 `src/core/utils/`, UI는 `src/ui/components/`, 훅은 `src/ui/hooks/`, 타입은 `src/core/types/`, 상수는 `src/core/constants/`로 승격한다(각 폴더 AGENTS.md 참고).
 
 ## Critical Conventions
 
@@ -49,7 +49,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 - 루트 `app/layout.tsx`만 metadata(SEO/OG/Twitter)·전역 CSS import·환경변수 검증을 담당한다 — 하위 `layout.tsx`에서 이걸 중복 정의하지 않는다.
 - `error.tsx`와 `not-found.tsx`를 혼용하지 않는다 — `error.tsx`는 fetch 실패/예외 경계, `not-found.tsx`는 존재하지 않는 리소스 전용이다. 현재는 라우트 개별이 아니라 **라우트 그룹 단위**로 배치돼있다(`(main)/error.tsx`, `(main)/(products)/error.tsx`, `(admin)/error.tsx`, 루트 `not-found.tsx`) — 그룹 내 여러 라우트가 에러 경계를 공유해도 되면 그룹 레벨, 특정 라우트만 다른 처리가 필요하면 그 라우트에 개별 배치한다.
 - `page.tsx`에 interface/순수함수/상수/서브 UI 컴포넌트/훅을 인라인으로 쌓지 않는다 — `_components`/`_types`/`_utils`/`_constants`/`_hooks`로 분리한다(새 라우트부터 적용, Gotchas 참고).
-- **`page.tsx`는 Pages 단계만 담당한다** — 실제 데이터를 fetch/조립해서 Template(`src/client/components/templates/{Name}Template.tsx` 또는 그 라우트 `_components/{Name}Template.tsx`)에 props로 넘기는 것까지만 한다. organism을 배치(grid/flex/spacing 등)하는 코드가 하나라도 있으면 Template 추출이 필수다 — organism 딱 1개를 배치 코드 없이 그대로 렌더하는 경우에 한해서만 `page.tsx`가 직접 렌더할 수 있다. Template은 `layout.tsx`(라우트 그룹 셸)와 다른 층위다 — Template은 항상 그 layout.tsx 안에 중첩된다. (Template 자격 조건 자체 — 순수성, self-fetching 자식 있을 때 opt-out 등 — 은 `src/client/components/templates/AGENTS.md` 소관.)
+- **`page.tsx`는 Pages 단계만 담당한다** — 실제 데이터를 fetch/조립해서 Template(`src/ui/components/templates/{Name}Template.tsx` 또는 그 라우트 `_components/{Name}Template.tsx`)에 props로 넘기는 것까지만 한다. organism을 배치(grid/flex/spacing 등)하는 코드가 하나라도 있으면 Template 추출이 필수다 — organism 딱 1개를 배치 코드 없이 그대로 렌더하는 경우에 한해서만 `page.tsx`가 직접 렌더할 수 있다. Template은 `layout.tsx`(라우트 그룹 셸)와 다른 층위다 — Template은 항상 그 layout.tsx 안에 중첩된다. (Template 자격 조건 자체 — 순수성, self-fetching 자식 있을 때 opt-out 등 — 은 `src/ui/components/templates/AGENTS.md` 소관.)
 - `_components`/`_types`/`_utils`/`_constants`/`_hooks`를 폴더 + `index.ts`(컴포넌트는 `index.tsx`) 배럴 형태 외의 방식으로 만들지 않는다 — 폴더 안 파일이 1개뿐이어도 예외 없이 이 형태를 유지한다. **배럴은 `page.tsx`/`layout.tsx`가 직접 소비하는 파일만 재export하면 된다** — 같은 폴더 안 다른 파일에서만 내부적으로 쓰이고 `page.tsx`/`layout.tsx`가 직접 import 안 하는 파일(예: `_components/Navigation.tsx`가 `_components/LocationSection.tsx` 내부에서만 쓰이는 경우)은 배럴에 안 올려도 된다 — 배럴 목적이 "그 라우트 밖에서 이 폴더에 뭐가 있는지 알려주는 것"이지 폴더 안 모든 파일을 강제로 노출하는 게 아니다.
 - **`page.tsx`/`layout.tsx`/`error.tsx`/`not-found.tsx`/`proxy.ts`는 `export default`를 쓴다** — Next.js가 강제하는 파일 컨벤션이다.
 
@@ -59,12 +59,12 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 
 | 문서        | 위치                              | 트리거                                  | 요약                     |
 | ----------- | ---------------------------------- | ----------------------------------------- | ------------------------ |
-| `AGENTS.md` | `src/shared/constants/`            | 라우트 경로 문자열(`routes.ts`) 상수화, 승격된 상수 확인 시 | 상수 컨벤션  |
-| `AGENTS.md` | `src/shared/utils/`                | 승격된 순수함수 확인 시                   | 순수함수 컨벤션          |
-| `AGENTS.md` | `src/client/hooks/`                | 승격된 훅 확인 시                         | 훅 컨벤션                |
-| `AGENTS.md` | `src/shared/types/`                | 승격된 타입 확인 시                       | 타입 컨벤션              |
-| `AGENTS.md` | `src/client/components/`           | 컴포넌트 조직 구조 확인 시                | Atomic Design 조직 구조  |
-| `AGENTS.md` | `src/client/components/templates/` | Templates(페이지 전체 배치) 세부 규칙 확인 시 | template 컨벤션      |
-| `AGENTS.md` | `src/server/actions/`              | Server Actions 확인 시                    | Server Action 컨벤션     |
-| `AGENTS.md` | `src/server/`                      | 응답/에러 계약(Route Handler) 확인 시     | 성공/에러 응답 빌더 계약 |
-| `AGENTS.md` | `src/client/`                      | 응답/에러 계약(Client fetch) 확인 시      | fetcher 계약             |
+| `AGENTS.md` | `src/core/constants/`            | 라우트 경로 문자열(`routes.ts`) 상수화, 승격된 상수 확인 시 | 상수 컨벤션  |
+| `AGENTS.md` | `src/core/utils/`                | 승격된 순수함수 확인 시                   | 순수함수 컨벤션          |
+| `AGENTS.md` | `src/ui/hooks/`                | 승격된 훅 확인 시                         | 훅 컨벤션                |
+| `AGENTS.md` | `src/core/types/`                | 승격된 타입 확인 시                       | 타입 컨벤션              |
+| `AGENTS.md` | `src/ui/components/`           | 컴포넌트 조직 구조 확인 시                | Atomic Design 조직 구조  |
+| `AGENTS.md` | `src/ui/components/templates/` | Templates(페이지 전체 배치) 세부 규칙 확인 시 | template 컨벤션      |
+| `AGENTS.md` | `src/actions/`              | Server Actions 확인 시                    | Server Action 컨벤션     |
+| `AGENTS.md` | `src/`                      | 응답/에러 계약(Route Handler) 확인 시     | 성공/에러 응답 빌더 계약 |
+| `AGENTS.md` | `src/ui/`                      | 응답/에러 계약(Client fetch) 확인 시      | fetcher 계약             |
