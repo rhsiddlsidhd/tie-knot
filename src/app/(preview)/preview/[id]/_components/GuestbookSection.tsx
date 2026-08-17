@@ -7,7 +7,7 @@ import { EyebrowSection } from "./EyebrowSection";
 import { PenLine, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import type { IGuestbook } from "@/server/models";
+import type { IGuestbook } from "@/models";
 import { useGuestbookModalStore } from "@/client/store";
 import { mapDataToGuestbookProps } from "../_utils/guestbookSection.mapper";
 

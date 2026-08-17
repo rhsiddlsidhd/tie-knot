@@ -1,6 +1,6 @@
 "use server";
 
-import { incrementProductViewsService } from "@/server/services";
+import { incrementProductViewsService } from "@/services";
 import { actionError } from "@/server/boundary";
 import type { APIResponse } from "@/core/domain";
 

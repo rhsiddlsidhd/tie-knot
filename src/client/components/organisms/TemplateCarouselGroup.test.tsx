@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import type * as AtomsModule from "@/client/components/atoms";
 
 vi.mock("@/client/components/atoms", async (importOriginal) => {

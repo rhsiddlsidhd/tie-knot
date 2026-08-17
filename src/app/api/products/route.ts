@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
-import { getAllProductsService } from "@/server/services";
+import { getAllProductsService } from "@/services";
 import type { ProductResponse } from "@/core/schemas";
 export const GET = async (
   request: NextRequest,

@@ -1,8 +1,8 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/core/domain";
-import { requireAuth, getCoupleInfoById } from "@/server/services";
-import type { ICoupleInfo } from "@/server/models";
+import { requireAuth, getCoupleInfoById } from "@/services";
+import type { ICoupleInfo } from "@/models";
 import type { CoupleInfoResponse } from "@/core/schemas";
 
 import type { NextRequest } from "next/server";

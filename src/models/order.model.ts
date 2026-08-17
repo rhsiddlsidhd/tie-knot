@@ -1,8 +1,9 @@
 import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
-import type { PayMethod } from "./payment.model";
+import type { PayMethod } from "@/core/domain";
 import { PAY_METHOD } from "@/core/domain";
+export type { OrderJSON } from "@/core/domain";
 interface ProductPricing {
   originalPrice: number;
   discountedPrice: number;
@@ -97,10 +98,6 @@ export interface IOrder {
   createdAt: Date;
   updatedAt: Date;
 }
-
-// Client Component에 넘기기 전 ObjectId 필드를 전부 문자열화한 형태
-// (getOrdersByUserId 등 API 응답 경로) — DB raw shape(IOrder)과 이름으로 구분한다.
-export type OrderJSON = Omit<IOrder, "_id"> & { _id: string };
 
 const orderSchema = new Schema<IOrder>(
   {

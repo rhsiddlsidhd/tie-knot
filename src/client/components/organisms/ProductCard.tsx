@@ -1,6 +1,6 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import { calculatePrice } from "@/core/utils";
 import type { SubCategory} from "@/core/domain";
 import { subCategoryLabels } from "@/core/domain";

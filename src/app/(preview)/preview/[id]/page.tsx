@@ -1,6 +1,6 @@
 export const revalidate = 300;
 
-import { getCoupleInfoById, getActiveOrderInfoByCoupleInfoId, getProductService } from "@/server/services";
+import { getCoupleInfoById, getActiveOrderInfoByCoupleInfoId, getProductService } from "@/services";
 
 import React from "react";
 import {

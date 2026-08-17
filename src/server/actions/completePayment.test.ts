@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   syncPayment: vi.fn(),
 }));
@@ -10,7 +10,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-import { requireAuth, syncPayment } from "@/server/services";
+import { requireAuth, syncPayment } from "@/services";
 import { revalidatePath } from "next/cache";
 import { completePayment } from "./completePayment";
 

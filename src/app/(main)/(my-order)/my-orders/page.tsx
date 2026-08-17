@@ -4,7 +4,7 @@ import {
   verifySession,
   getOrdersByUserId,
   cancelExpiredAwaitingCoupleInfoOrders,
-} from "@/server/services";
+} from "@/services";
 import { groupOrdersByDate } from "./_utils";
 import { MyOrdersTemplate } from "./_components";
 

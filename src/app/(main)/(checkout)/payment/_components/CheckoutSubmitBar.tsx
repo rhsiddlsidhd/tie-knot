@@ -3,7 +3,7 @@
 import { BottomActionBar } from "@/client/components/organisms";
 import { Spinner } from "@/client/components/molecules";
 import { Save } from "lucide-react";
-import type { PayStatus } from "@/server/models";
+import type { PayStatus } from "@/core/domain";
 interface CheckoutSubmitBarProps {
   disabled: boolean;
   pending: boolean;

@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { requestPayment } from "@/adapters/portone/request-payment";
-import type { PayStatus } from "@/server/models";
+import type { PayStatus } from "@/core/domain";
 import type { CreateOrderResult } from "@/server/actions";
 import { completePayment } from "@/server/actions";
 import { useOrderStore } from "@/client/store";

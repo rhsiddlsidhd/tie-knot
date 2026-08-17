@@ -10,10 +10,10 @@
 // "Phase4에 반드시 넘길 회귀 픽스처 2건" 중 1번을 action 레이어까지 닫는다).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import type * as ServicesModule from "@/server/services";
-import { dbConnect } from "@/server/lib/mongodb";
+import type * as ServicesModule from "@/services";
+import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
-import { OrderModel, ProductModel } from "@/server/models";
+import { OrderModel, ProductModel } from "@/models";
 
 vi.mock("next/navigation", () => ({
   redirect: vi.fn((path: string) => {
@@ -25,7 +25,7 @@ vi.mock("@/adapters/cookies", () => ({
   getCookie: vi.fn(),
 }));
 
-vi.mock("@/server/services", async (importOriginal) => {
+vi.mock("@/services", async (importOriginal) => {
   const actual = await importOriginal<typeof ServicesModule>();
   return {
     ...actual,
@@ -34,7 +34,7 @@ vi.mock("@/server/services", async (importOriginal) => {
 });
 
 import { getCookie } from "@/adapters/cookies";
-import { requireAuth, createProductService } from "@/server/services";
+import { requireAuth, createProductService } from "@/services";
 import { createOrder } from "./createOrder";
 
 const USER_SESSION = {

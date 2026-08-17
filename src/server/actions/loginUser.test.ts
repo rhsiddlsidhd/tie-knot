@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   getUser: vi.fn(),
 }));
 
@@ -13,7 +13,7 @@ vi.mock("@/adapters/cookies", () => ({
   setCookie: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { getUser } from "@/server/services";
+import { getUser } from "@/services";
 import { comparePasswords } from "@/adapters/bcrypt";
 import { setCookie } from "@/adapters/cookies";
 import { loginUser } from "./loginUser";

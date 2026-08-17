@@ -4,7 +4,7 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { useOrderStore } from "@/client/store";
-import type { Product, PremiumFeature } from "@/server/services";
+import type { Product, PremiumFeature } from "@/services";
 
 import type { CheckoutItem } from "@/core/domain";
 import { ProductSummary as PureProductSummary } from "@/client/components/organisms";

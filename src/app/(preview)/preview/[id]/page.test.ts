@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   getCoupleInfoById: vi.fn(),
   getActiveOrderInfoByCoupleInfoId: vi.fn(),
   getProductService: vi.fn(),

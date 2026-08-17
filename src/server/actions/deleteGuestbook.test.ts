@@ -5,7 +5,7 @@ vi.mock("@/adapters/bcrypt", () => ({
   comparePasswords: vi.fn(),
 }));
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   getPrivateGuestbookService: vi.fn(),
   deleteGuestbookService: vi.fn(),
 }));
@@ -15,7 +15,7 @@ vi.mock("next/cache", () => ({
 }));
 
 import { comparePasswords } from "@/adapters/bcrypt";
-import { getPrivateGuestbookService, deleteGuestbookService } from "@/server/services";
+import { getPrivateGuestbookService, deleteGuestbookService } from "@/services";
 import { deleteGuestbook } from "./deleteGuestbook";
 
 const COUPLE_INFO_ID = "couple-1";

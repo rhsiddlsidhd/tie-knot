@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import { PopularProductsSection } from "./PopularProductsSection";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>

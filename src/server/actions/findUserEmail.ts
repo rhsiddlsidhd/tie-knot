@@ -8,7 +8,7 @@ import type { APIResponse } from "@/core/domain";
 
 import { UserEmailSchema } from "@/core/schemas";
 
-import { getUserEmail } from "@/server/services";
+import { getUserEmail } from "@/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/core/utils";
 

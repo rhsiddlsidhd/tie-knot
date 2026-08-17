@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, TypographyH3 } from "@/client
 
 import { BankField, TextField } from "@/client/components/molecules";
 
-import type { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/models";
 import type { BanksResponse } from "@/core/schemas";
 
 type CoupleInfoSectionProps = {

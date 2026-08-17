@@ -3,7 +3,7 @@
 import type { APIResponse } from "@/core/domain";
 import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
 import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
-import { requireAuth, createProductService } from "@/server/services";
+import { requireAuth, createProductService } from "@/services";
 import { actionError } from "@/server/boundary";
 import { productSchema } from "@/core/schemas";
 import { routes } from "@/core/domain";

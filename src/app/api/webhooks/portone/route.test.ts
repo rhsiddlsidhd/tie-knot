@@ -7,7 +7,7 @@ const { verify, isUnrecognizedWebhook, syncPayment } = vi.hoisted(() => ({
 }));
 
 vi.mock("@portone/server-sdk", () => ({ Webhook: { verify, isUnrecognizedWebhook } }));
-vi.mock("@/server/services/payment.service", () => ({ syncPayment }));
+vi.mock("@/services/payment", () => ({ syncPayment }));
 
 import { POST } from "./route";
 

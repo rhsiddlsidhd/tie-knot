@@ -4,7 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import Image from "next/image";
 import { UploadCloud, X } from "lucide-react";
-import type { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/services";
 import { Alert, ImageField, SelectField } from "@/client/components/molecules";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Textarea, Switch, Checkbox, Label, TypographyMuted, TypographyH4 } from "@/client/components/atoms";
 

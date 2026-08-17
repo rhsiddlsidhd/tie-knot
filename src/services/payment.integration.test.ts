@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildOrderInput, buildProductInput, clearCollections } from "@testing/support";
-import { ProductModel, OrderModel, PaymentModel } from "@/server/models";
-import { createProductService } from "./product.service";
-import { createOrderService } from "./order.service";
+import { ProductModel, OrderModel, PaymentModel } from "@/models";
+import { createProductService } from "./product";
+import { createOrderService } from "./order";
 
 const { getPaymentMock, cancelPaymentMock } = vi.hoisted(() => ({
   getPaymentMock: vi.fn(),
@@ -22,9 +22,9 @@ vi.mock("@portone/server-sdk", () => {
 });
 
 import { PortOneError } from "@portone/server-sdk";
-import { syncPayment, cancelPayment, cancelExpiredAwaitingCoupleInfoOrders } from "./payment.service";
+import { syncPayment, cancelPayment, cancelExpiredAwaitingCoupleInfoOrders } from "./payment";
 
-describe("payment.service", () => {
+describe("payment", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();

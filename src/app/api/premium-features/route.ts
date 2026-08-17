@@ -1,6 +1,6 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
-import { getAllPremiumFeatureService } from "@/server/services";
+import { getAllPremiumFeatureService } from "@/services";
 import type { PremiumFeaturesResponse } from "@/core/schemas";
 
 export const GET = async (): Promise<

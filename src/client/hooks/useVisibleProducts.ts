@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import type { ProductFilterState } from "@/client/context/productFilter";
 import { getChosung } from "@/core/utils";
 

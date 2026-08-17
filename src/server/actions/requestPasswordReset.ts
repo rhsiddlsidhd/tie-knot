@@ -5,7 +5,7 @@ import { validateAndFlatten } from "@/core/utils";
 import { sendEmail } from "@/adapters/nodemailer";
 import { emailSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
-import { checkEmailDuplicate } from "@/server/services";
+import { checkEmailDuplicate } from "@/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/core/domain";
 const createChangePWDomain = (token: string): string => {

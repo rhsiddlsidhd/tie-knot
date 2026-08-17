@@ -4,12 +4,12 @@ import type { APIResponse } from "@/core/domain";
 import { redirect } from "next/navigation";
 
 import { getCookie } from "@/adapters/cookies";
-import { requireAuth, createOrderService } from "@/server/services";
+import { requireAuth, createOrderService } from "@/services";
 import { actionError } from "@/server/boundary";
 
 import { validateAndFlatten } from "@/core/utils";
 import { createOrderSchema } from "@/core/schemas";
-import type { PayMethod } from "@/server/models";
+import type { PayMethod } from "@/models";
 import { routes } from "@/core/domain";
 export type CreateOrderResult = {
   merchantUid: string;

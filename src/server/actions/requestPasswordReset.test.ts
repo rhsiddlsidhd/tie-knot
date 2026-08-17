@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   checkEmailDuplicate: vi.fn(),
 }));
 
@@ -13,7 +13,7 @@ vi.mock("@/adapters/nodemailer", () => ({
   sendEmail: vi.fn(),
 }));
 
-import { checkEmailDuplicate } from "@/server/services";
+import { checkEmailDuplicate } from "@/services";
 import { encrypt } from "@/adapters/jose";
 import { sendEmail } from "@/adapters/nodemailer";
 import { requestPasswordReset } from "./requestPasswordReset";

@@ -4,7 +4,7 @@ import { AppError } from "@/core/domain";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { validateAndFlatten } from "@/core/utils";
-import { requireAuth } from "@/server/services";
+import { requireAuth } from "@/services";
 const createOrderRequestSchema = z.object({
   productId: z.string().min(1, { message: "상품 ID가 필요합니다." }),
   originalPrice: z.number().positive({ message: "가격은 양수여야 합니다." }),

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { OrderJSON } from "@/server/models";
+import type { OrderJSON } from "@/core/domain";
 import { groupOrdersByDate } from "./groupOrdersByDate";
 
 const buildOrder = (overrides?: Partial<OrderJSON>): OrderJSON =>

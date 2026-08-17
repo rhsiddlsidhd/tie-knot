@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/server/services";
+import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoSchema } from "@/core/schemas";

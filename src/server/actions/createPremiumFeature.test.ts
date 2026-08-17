@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   createPremiumFeatureService: vi.fn(),
 }));
@@ -10,7 +10,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-import { requireAuth, createPremiumFeatureService } from "@/server/services";
+import { requireAuth, createPremiumFeatureService } from "@/services";
 import { createPremiumFeature } from "./createPremiumFeature";
 
 const buildFormData = (overrides?: Record<string, string>) => {

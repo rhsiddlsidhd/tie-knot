@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   updateProductService: vi.fn(),
 }));
@@ -10,7 +10,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-import { requireAuth, updateProductService } from "@/server/services";
+import { requireAuth, updateProductService } from "@/services";
 import { updateProductStatus } from "./updateProductStatus";
 
 const PRODUCT_ID = "product-1";

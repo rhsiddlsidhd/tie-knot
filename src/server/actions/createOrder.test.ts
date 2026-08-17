@@ -11,14 +11,14 @@ vi.mock("@/adapters/cookies", () => ({
   getCookie: vi.fn(),
 }));
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   createOrderService: vi.fn(),
 }));
 
 import { redirect } from "next/navigation";
 import { getCookie } from "@/adapters/cookies";
-import { requireAuth, createOrderService } from "@/server/services";
+import { requireAuth, createOrderService } from "@/services";
 import { createOrder } from "./createOrder";
 
 const buildFormData = (overrides?: Record<string, string>) => {

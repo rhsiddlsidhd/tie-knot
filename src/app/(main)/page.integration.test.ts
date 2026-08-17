@@ -17,17 +17,17 @@
 //    (01_api_contract.md §3, §4의 계약을 실행으로 확인).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import type * as ServicesModule from "@/server/services";
-import { dbConnect } from "@/server/lib/mongodb";
+import type * as ServicesModule from "@/services";
+import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
-import { ProductModel } from "@/server/models";
+import { ProductModel } from "@/models";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 
 // getPopularProductsService만 vi.fn으로 감싸 개별 테스트에서 override할 수
 // 있게 하고, 기본 동작은 실제 구현(actual)을 그대로 위임한다 — 그 외
 // createProductService/updateProductLikeService/getFeaturedTemplatesService/
 // getProductService는 실제 구현 그대로(spread) 둔다.
-vi.mock("@/server/services", async (importOriginal) => {
+vi.mock("@/services", async (importOriginal) => {
   const actual = await importOriginal<typeof ServicesModule>();
   return {
     ...actual,
@@ -39,7 +39,7 @@ import {
   createProductService,
   updateProductLikeService,
   getPopularProductsService,
-} from "@/server/services";
+} from "@/services";
 import page from "./page";
 
 // product.service.test.ts / PopularProductsSection.integration.test.tsx와 동일한 헬퍼.

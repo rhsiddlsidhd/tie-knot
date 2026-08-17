@@ -5,7 +5,7 @@ vi.mock("@/adapters/jose", () => ({
   decrypt: vi.fn(),
 }));
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   changePassword: vi.fn(),
 }));
 
@@ -14,7 +14,7 @@ vi.mock("@/adapters/cookies", () => ({
 }));
 
 import { decrypt } from "@/adapters/jose";
-import { changePassword } from "@/server/services";
+import { changePassword } from "@/services";
 import { deleteCookie } from "@/adapters/cookies";
 import { updateUserPassword } from "./updateUserPassword";
 

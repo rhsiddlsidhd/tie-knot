@@ -5,20 +5,20 @@ import type {
   PayStatus,
   PayMethod,
   PaymentMethodDetail,
-  IPayment} from "@/server/models";
+  IPayment} from "@/models";
 import {
   PaymentModel,
   OrderModel,
   ProductModel,
-} from "@/server/models";
+} from "@/models";
 
-import { getProductService } from "./product.service";
+import { getProductService } from "./product";
 import {
   getOrderSeviceByMerchantUid,
   findExpiredAwaitingCoupleInfoOrders,
-} from "./order.service";
+} from "./order";
 import { AppError } from "@/core/domain";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 
 // 환경 변수 확인
 const PORTONE_API_SECRET = process.env.PORTONE_API_SECRET;

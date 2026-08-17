@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildFeatureInput, clearCollections } from "@testing/support";
-import { FeatureModel } from "@/server/models";
+import { FeatureModel } from "@/models";
 import {
   createPremiumFeatureService,
   getAllPremiumFeatureService,
   getPremiumFeatureService,
   updatePremiumFeatureService,
-} from "./premiumFeature.service";
+} from "./premiumFeature";
 
-describe("premiumFeature.service", () => {
+describe("premiumFeature", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();

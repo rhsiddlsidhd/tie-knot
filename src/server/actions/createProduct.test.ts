@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   createProductService: vi.fn(),
 }));
@@ -18,7 +18,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-import { requireAuth, createProductService } from "@/server/services";
+import { requireAuth, createProductService } from "@/services";
 import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
 import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { createProduct } from "./createProduct";

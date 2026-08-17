@@ -1,16 +1,16 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildCoupleInfoInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
-import { CoupleInfoModel } from "@/server/models";
+import { CoupleInfoModel } from "@/models";
 import {
   createCoupleInfoService,
   getCoupleInfoById,
   updateCoupleInfoService,
-} from "./coupleInfo.service";
+} from "./coupleInfo";
 
-describe("coupleInfo.service", () => {
+describe("coupleInfo", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();

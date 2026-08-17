@@ -1,8 +1,8 @@
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/core/domain";
-import { getGuestbookService } from "@/server/services";
-import type { IGuestbook } from "@/server/models";
+import { getGuestbookService } from "@/services";
+import type { IGuestbook } from "@/models";
 import type { GuestbookListResponse } from "@/core/schemas";
 import type { NextRequest } from "next/server";
 

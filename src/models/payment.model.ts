@@ -1,22 +1,14 @@
 import "server-only";
-import type { PAY_METHOD } from "@/core/domain";
+import type { PayMethod, PayStatus } from "@/core/domain";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
 // --- Enums --- TRANS 실시간 계좌이체 VBANK 가상 계좌
 
-export type PayMethod = (typeof PAY_METHOD)[number]; // 카드 , 계좌이체, 가상계좌, 휴대폰 소액결제
+export type { PayMethod, PayStatus } from "@/core/domain";
 
 // PortOne이 반환하는 PG사 식별자는 동적이므로 string으로 처리
 type PgProvider = string;
-export type PayStatus =
-  | "PENDING"
-  | "PAID"
-  | "FAILED"
-  | "CANCELLED"
-  | "PARTIAL_CANCELLED"
-  | "REFUNDED";
-
 // PortOne 결제수단 판별값(@portone/server-sdk PaymentMethod.type) + 미인식 폴백.
 export type PaymentMethodDetailType =
   | "PaymentMethodCard"

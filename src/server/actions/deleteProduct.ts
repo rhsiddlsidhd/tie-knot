@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { requireAuth, deleteProductService } from "@/server/services";
+import { requireAuth, deleteProductService } from "@/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/core/domain";
 

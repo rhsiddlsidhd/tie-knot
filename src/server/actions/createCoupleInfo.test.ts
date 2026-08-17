@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   createCoupleInfoService: vi.fn(),
   isValidSubwayStationName: vi.fn(),
@@ -13,7 +13,7 @@ import {
   createCoupleInfoService,
   isValidSubwayStationName,
   attachCoupleInfoToOrder,
-} from "@/server/services";
+} from "@/services";
 import { createCoupleInfo } from "./createCoupleInfo";
 
 const USER_ID = "user-1";

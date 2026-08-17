@@ -4,7 +4,7 @@ import { Eye, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
-import type { ProductJSON } from "@/server/models";
+import type { ProductJSON } from "@/core/domain";
 import { routes } from "@/core/domain";
 interface LiveDemoSectionProps {
   product: ProductJSON;

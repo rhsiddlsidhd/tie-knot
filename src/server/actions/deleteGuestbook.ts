@@ -4,7 +4,7 @@ import type { APIResponse } from "@/core/domain";
 import { comparePasswords } from "@/adapters/bcrypt";
 import { validateAndFlatten } from "@/core/utils";
 import { GuestbookSchema } from "@/core/schemas";
-import { getPrivateGuestbookService, deleteGuestbookService } from "@/server/services";
+import { getPrivateGuestbookService, deleteGuestbookService } from "@/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/core/domain";
 import * as z from "zod";
