@@ -20,7 +20,7 @@
 ## 계층별 원칙
 
 - service는 입력·출력, DB 효과, 도메인 오류 분류를 검증한다.
-- action은 service 결과가 action 반환 계약으로 변환되고 필요한 부수효과가 호출되는지 검증한다.
+- action은 입력 검증, 유스케이스 service 위임, 반환 계약과 캐시 갱신만 검증한다. bcrypt·Cloudinary·DB 같은 service 내부 구현을 action 테스트에서 중복 검증하지 않는다.
 - route는 HTTP status와 응답 envelope 같은 HTTP 경계 고유 계약을 검증한다.
 - molecule은 props→출력과 단일 상호작용을, organism은 여러 상호작용이 로컬 UI 상태를 거치는 흐름까지 검증한다. 도메인 로직은 해당 컨테이너나 service의 책임이다.
 - 컴포넌트 하위 트리를 mock하지 않고 렌더링한다. 접근 가능한 쿼리를 우선하고 `data-testid`는 다른 방법이 없을 때만 쓴다.

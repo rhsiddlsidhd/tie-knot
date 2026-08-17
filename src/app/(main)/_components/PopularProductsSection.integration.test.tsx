@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 // PopularProductsSection.test.tsx(같은 디렉토리)는 손으로 만든 Product 객체로
 // 렌더링 로직만 검증하는 컴포넌트 단위 테스트다. product.service.test.ts는
 // getPopularProductsService의 정렬/tie-break/제외 조건을 서비스 레벨에서
