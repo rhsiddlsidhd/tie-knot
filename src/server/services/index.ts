@@ -1,3 +1,4 @@
+import "server-only";
 export * from "./auth.service";
 export * from "./coupleInfo.service";
 export * from "./guestbook.service";

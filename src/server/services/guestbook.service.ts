@@ -1,3 +1,4 @@
+import "server-only";
 import type { IGuestbook } from "@/server/models";
 import { GuestbookModel } from "@/server/models";
 import type { GuestbookType } from "@/shared/schemas";

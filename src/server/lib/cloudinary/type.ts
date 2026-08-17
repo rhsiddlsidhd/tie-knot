@@ -1,3 +1,4 @@
+import "server-only";
 export type CloudinaryResource = {
   asset_folder: string;
   asset_id: string;

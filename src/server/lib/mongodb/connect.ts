@@ -1,3 +1,4 @@
+import "server-only";
 import mongoose from "mongoose";
 
 // 1. 캐시 객체의 타입을 정의합니다.

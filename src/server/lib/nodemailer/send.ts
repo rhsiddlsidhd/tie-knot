@@ -1,4 +1,5 @@
 "use server";
+import "server-only";
 
 import * as nodemailer from "nodemailer";
 

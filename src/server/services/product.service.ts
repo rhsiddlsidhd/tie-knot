@@ -1,3 +1,4 @@
+import "server-only";
 import type { ProductJSON, ProductDB, IProduct } from "@/server/models";
 import { ProductModel, InvitationProductModel } from "@/server/models";
 import type { ProductDto } from "@/shared/schemas";

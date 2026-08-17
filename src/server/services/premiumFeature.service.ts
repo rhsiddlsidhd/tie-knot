@@ -1,3 +1,4 @@
+import "server-only";
 import type { IFeature } from "@/server/models";
 import { FeatureModel } from "@/server/models";
 import type { PremiumFeatureDto } from "@/shared/schemas";

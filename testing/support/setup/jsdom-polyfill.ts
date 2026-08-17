@@ -1,4 +1,6 @@
-import { afterEach } from "vitest";
+import { afterEach, vi } from "vitest";
+
+vi.mock("server-only", () => ({}));
 
 // services/actions 등 DOM 없는 파일(`// @vitest-environment node`)은 이 아래
 // jsdom 전용 폴리필을 전부 건너뛴다 — jsdom 환경에서만 Element/window가 존재한다.
