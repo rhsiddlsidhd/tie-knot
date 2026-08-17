@@ -6,7 +6,7 @@ import {
   createCoupleInfoService,
   isValidSubwayStationName,
   attachCoupleInfoToOrder,
-} from "@/server/services";
+} from "@/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoSchema } from "@/core/schemas";

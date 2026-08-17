@@ -2,7 +2,7 @@ export const revalidate = 300;
 
 import { Card, CardContent, CardHeader, CardTitle, TypographyMuted, TypographySmall } from "@/client/components/atoms";
 import { Package, DollarSign, ShoppingCart, Users } from "lucide-react";
-import { verifySession } from "@/server/services";
+import { verifySession } from "@/services";
 
 export default async function AdminDashboard() {
   await verifySession("ADMIN");

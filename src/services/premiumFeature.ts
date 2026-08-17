@@ -1,8 +1,8 @@
 import "server-only";
-import type { IFeature } from "@/server/models";
-import { FeatureModel } from "@/server/models";
+import type { IFeature } from "@/models";
+import { FeatureModel } from "@/models";
 import type { PremiumFeatureDto } from "@/core/schemas";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 
 import mongoose from "mongoose";
 // FeatureJSON을 재사용

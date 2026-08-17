@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { OrderJSON } from "@/server/models";
+import type { OrderJSON } from "@/core/domain";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),

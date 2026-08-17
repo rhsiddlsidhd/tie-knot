@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildOrderInput, buildProductInput, clearCollections } from "@testing/support";
-import { OrderModel, ProductModel } from "@/server/models";
+import { OrderModel, ProductModel } from "@/models";
 import {
   createOrderService,
   getOrderSeviceByMerchantUid,
@@ -10,10 +10,10 @@ import {
   getOrdersByUserId,
   attachCoupleInfoToOrder,
   findExpiredAwaitingCoupleInfoOrders,
-} from "./order.service";
-import { createProductService } from "./product.service";
+} from "./order";
+import { createProductService } from "./product";
 
-describe("order.service", () => {
+describe("order", () => {
   // REQ-5가 주문 생성 시 Product를 실제로 재조회해 수량을 검증하므로, 이 파일의
   // 기존 테스트(REQ-5와 무관하게 order 자체 로직만 보는 테스트)들도 이제 실존하는
   // Product가 있어야 통과한다 — minQuantity:1/maxQuantity:0(무제한)으로 만들어

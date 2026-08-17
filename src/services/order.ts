@@ -1,13 +1,13 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IOrder, OrderJSON} from "@/server/models";
-import { OrderModel } from "@/server/models";
+import type { IOrder, OrderJSON} from "@/models";
+import { OrderModel } from "@/models";
 import type { CreateOrderDto } from "@/core/schemas";
 import { generateUid } from "@/core/utils";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
 import { COUPLE_INFO_DEADLINE_DAYS } from "@/core/domain";
-import { getProductQuantityBoundsService } from "./product.service";
+import { getProductQuantityBoundsService } from "./product";
 
 const assertObjectIdLike = (id: string, label: string): void => {
   if (!mongoose.isObjectIdOrHexString(id)) {

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/client/components/atoms";
-import type { PayMethod } from "@/server/models";
+import type { PayMethod } from "@/core/domain";
 import { ArrowRightLeft, CreditCard, Landmark, Phone, Gift, Wallet } from "lucide-react";
 import React from "react";
 import type { RadioFieldOption} from "@/client/components/molecules";

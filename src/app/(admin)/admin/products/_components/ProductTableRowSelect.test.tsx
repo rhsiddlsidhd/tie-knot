@@ -13,7 +13,7 @@ vi.mock("@/server/actions", () => ({
 }));
 
 import { updateProductStatus } from "@/server/actions";
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({

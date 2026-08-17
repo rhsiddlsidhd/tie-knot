@@ -1,4 +1,4 @@
-import type { ICoupleInfo } from "@/server/models";
+import type { ICoupleInfo } from "@/models";
 export interface ThumbnailsProps {
   divider: string;
   footer: string;

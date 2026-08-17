@@ -18,11 +18,17 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "@typescript-eslint/consistent-type-exports": "error",
     "import/no-restricted-paths": ["error", {
       zones: [
+        { target: "./src/core", from: "./src/models", message: "core는 순수해야 한다" },
+        { target: "./src/core", from: "./src/services", message: "core는 순수해야 한다" },
+        { target: "./src/core", from: "./src/db", message: "core는 순수해야 한다" },
+        { target: "./src/core", from: "./src/adapters", message: "core는 순수해야 한다" },
         { target: "./src/core", from: "./src/server", message: "core는 순수해야 한다" },
         { target: "./src/core", from: "./src/client", message: "core는 순수해야 한다" },
         { target: "./src/core", from: "./src/app", message: "core는 순수해야 한다" },
+        { target: "./src/models", from: "./src/client", message: "모델은 클라이언트를 모른다" },
+        { target: "./src/services", from: "./src/client", message: "서비스는 클라이언트를 모른다" },
+        { target: "./src/db", from: "./src/client", message: "DB는 클라이언트를 모른다" },
         { target: "./src/server", from: "./src/client", message: "서버는 클라이언트를 모른다" },
-        { target: "./src/client", from: "./src/server/lib", message: "UI는 서버 lib을 직접 못 만진다" },
       ],
     }],
   },

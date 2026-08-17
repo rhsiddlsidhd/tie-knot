@@ -1,6 +1,6 @@
 import { TypographyH1, TypographyMuted } from "@/client/components/atoms";
 import { ProductCatalog } from "../_components";
-import { getAllProductsService } from "@/server/services";
+import { getAllProductsService } from "@/services";
 import { isProductCategory, isSubCategory } from "@/core/utils";
 import type { SubCategory } from "@/core/domain";
 import { productCategoryLabels } from "@/core/domain";

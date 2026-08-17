@@ -4,7 +4,7 @@ import type { APIResponse } from "@/core/domain";
 import { hashPassword } from "@/adapters/bcrypt";
 
 import { GuestbookSchema } from "@/core/schemas";
-import { createGuestbookService } from "@/server/services";
+import { createGuestbookService } from "@/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";

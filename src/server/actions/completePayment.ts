@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 import type { APIResponse} from "@/core/domain";
 import { AppError } from "@/core/domain";
-import { syncPayment, requireAuth } from "@/server/services";
-import type { PayStatus } from "@/server/models";
+import { syncPayment, requireAuth } from "@/services";
+import type { PayStatus } from "@/models";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/core/domain";
 

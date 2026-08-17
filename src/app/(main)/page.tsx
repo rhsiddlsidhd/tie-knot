@@ -2,12 +2,12 @@ export const revalidate = 3600;
 
 import { HomeTemplate } from "./_components";
 import type {
-  Product} from "@/server/services";
+  Product} from "@/services";
 import {
   getFeaturedTemplatesService,
   getPopularProductsService,
   getProductService
-} from "@/server/services";
+} from "@/services";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 
 const page = async () => {

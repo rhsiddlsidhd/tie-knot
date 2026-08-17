@@ -3,7 +3,7 @@ import Link from "next/link";
 import { routes } from "@/core/domain";
 import { PremiumFeatureRegistrationForm } from "./_components";
 import { Button, TypographyH1, TypographyMuted, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/client/components/atoms";
-import { verifySession } from "@/server/services";
+import { verifySession } from "@/services";
 
 export default async function NewPremiumFeaturePage() {
   await verifySession("ADMIN");

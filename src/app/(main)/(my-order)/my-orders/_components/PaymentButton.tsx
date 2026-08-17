@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/client/components/atoms";
 import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/client/store";
-import type { OrderJSON } from "@/server/models";
+import type { OrderJSON } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { routes } from "@/core/domain";
 

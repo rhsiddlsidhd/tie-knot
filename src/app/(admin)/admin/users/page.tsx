@@ -1,7 +1,7 @@
 export const revalidate = 600;
 
 import React from "react";
-import { verifySession } from "@/server/services";
+import { verifySession } from "@/services";
 
 const page = async () => {
   await verifySession("ADMIN");

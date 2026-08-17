@@ -11,15 +11,15 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
-import { ProductModel } from "@/server/models";
+import { ProductModel } from "@/models";
 import {
   createProductService,
   deleteProductService,
   getPopularProductsService,
   updateProductLikeService,
-} from "@/server/services";
+} from "@/services";
 import { PopularProductsSection } from "./PopularProductsSection";
 
 // 좋아요 N개를 만들기 위해 서로 다른 userId N명으로 각각 1회씩 toggle한다

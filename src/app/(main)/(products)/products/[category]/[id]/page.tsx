@@ -1,7 +1,7 @@
 export const revalidate = 3600;
 
 import { ProductDetailTemplate } from "./_components";
-import { getPremiumFeatureService, getAllProductsService, getProductService } from "@/server/services";
+import { getPremiumFeatureService, getAllProductsService, getProductService } from "@/services";
 
 import { notFound } from "next/navigation";
 

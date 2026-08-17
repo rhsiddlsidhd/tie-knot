@@ -6,7 +6,7 @@ const { useSWRMock } = vi.hoisted(() => ({ useSWRMock: vi.fn() }));
 vi.mock("swr", () => ({ default: useSWRMock }));
 vi.mock("@/client/fetcher", () => ({ fetcher: vi.fn() }));
 
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import { useProducts } from "./useProducts";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>

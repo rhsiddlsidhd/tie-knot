@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { initialFilterState } from "@/client/context/productFilter";
-import type { Product } from "@/server/services";
+import type { Product } from "@/services";
 import { ProductGrid } from "./ProductGrid";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>

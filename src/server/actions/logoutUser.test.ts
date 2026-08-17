@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   logoutService: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { logoutService } from "@/server/services";
+import { logoutService } from "@/services";
 import { logoutUser } from "./logoutUser";
 
 describe("logoutUser", () => {

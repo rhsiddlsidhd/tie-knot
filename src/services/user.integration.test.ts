@@ -1,19 +1,19 @@
 // @vitest-environment node
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildUserInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
-import { UserModel } from "@/server/models";
+import { UserModel } from "@/models";
 import {
   createUser,
   checkEmailDuplicate,
   getUserEmail,
   getUserById,
   changePassword,
-} from "./user.service";
+} from "./user";
 
-describe("user.service", () => {
+describe("user", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();

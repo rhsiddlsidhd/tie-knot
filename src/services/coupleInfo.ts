@@ -1,8 +1,8 @@
 import "server-only";
-import type { ICoupleInfo } from "@/server/models";
-import { CoupleInfoModel } from "@/server/models";
+import type { ICoupleInfo } from "@/models";
+import { CoupleInfoModel } from "@/models";
 import type { CoupleInfoSchemaDto } from "@/core/schemas";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
 
 import mongoose from "mongoose";

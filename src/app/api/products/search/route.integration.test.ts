@@ -11,9 +11,9 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
-import { createProductService } from "@/server/services";
+import { createProductService } from "@/services";
 import { GET } from "./route";
 
 const buildRequest = (query: string) =>

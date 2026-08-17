@@ -4,16 +4,19 @@ import mongoose, { model, Schema } from "mongoose";
 import type {
   ProductCategory,
   SubCategory,
-  InvitationTheme} from "@/core/domain";
+  InvitationTheme,
+  ProductJSON,
+  ProductStatus,
+} from "@/core/domain";
 import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES
 } from "@/core/domain";
 
-export type { ProductCategory, SubCategory };
+export type { ProductCategory, ProductJSON, SubCategory };
 export { SUB_CATEGORY_MAP };
 
-export type Status = "active" | "inactive" | "soldOut" | "deleted";
+export type Status = ProductStatus;
 
 const discountSchema = new Schema(
   {
@@ -74,19 +77,6 @@ export interface IProduct extends ProductDB {
 export interface IInvitationProduct extends IProduct {
   previewUrl?: string;
   theme?: InvitationTheme;
-}
-
-export interface ProductJSON extends Omit<ProductDB, "likes" | "featureIds" | "deletedAt"> {
-  _id: string;
-  likes: string[];
-  featureIds: string[];
-  previewUrl?: string;
-  theme?: InvitationTheme;
-  isLiked: boolean;
-  discountedPrice: number;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -158,7 +148,7 @@ const productSchema = new Schema<IProduct>(
   {
     timestamps: true,
     // 이미 존재하는 category 필드를 판별키로 재사용한다 — 카테고리별 discriminator를
-    // 추가할 때 새 필드를 만들지 않는다(src/server/models/AGENTS.md 참고).
+    // 추가할 때 새 필드를 만들지 않는다(src/models/AGENTS.md 참고).
     discriminatorKey: "category",
   },
 );

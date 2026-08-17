@@ -10,13 +10,13 @@
 //
 // 외부 연동(Cloudinary)만 mock한다(docs/validation/testing-practices.md 목킹 정책) —
 // requireAuth는 실제 세션 쿠키 체계를 타지 않고 결과만 override한다(다른
-// 통합 테스트 선례와 동일하게 "@/server/services" 부분 mock).
+// 통합 테스트 선례와 동일하게 "@/services" 부분 mock).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import type * as ServicesModule from "@/server/services";
-import { dbConnect } from "@/server/lib/mongodb";
+import type * as ServicesModule from "@/services";
+import { dbConnect } from "@/db";
 import { clearCollections } from "@testing/support";
-import { ProductModel } from "@/server/models";
+import { ProductModel } from "@/models";
 import { GET as getProductsRoute } from "@/app/api/products/route";
 import { NextRequest } from "next/server";
 
@@ -32,7 +32,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-vi.mock("@/server/services", async (importOriginal) => {
+vi.mock("@/services", async (importOriginal) => {
   const actual = await importOriginal<typeof ServicesModule>();
   return {
     ...actual,
@@ -40,7 +40,7 @@ vi.mock("@/server/services", async (importOriginal) => {
   };
 });
 
-import { requireAuth } from "@/server/services";
+import { requireAuth } from "@/services";
 import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { createProduct } from "./createProduct";
 

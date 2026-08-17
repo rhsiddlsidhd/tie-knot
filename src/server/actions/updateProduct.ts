@@ -3,7 +3,7 @@
 import type { APIResponse } from "@/core/domain";
 import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
 import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
-import { requireAuth, updateProductService } from "@/server/services";
+import { requireAuth, updateProductService } from "@/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/core/utils";
 

@@ -1,7 +1,7 @@
 "use server";
 import type { APIResponse } from "@/core/domain";
 import { premiumFeatureSchema } from "@/core/schemas";
-import { createPremiumFeatureService, requireAuth } from "@/server/services";
+import { createPremiumFeatureService, requireAuth } from "@/services";
 import { actionError } from "@/server/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";

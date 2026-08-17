@@ -1,9 +1,9 @@
 import "server-only";
 import { AppError } from "@/core/domain";
-import type { BaseUser, IUser } from "@/server/models";
-import { UserModel } from "@/server/models";
+import type { BaseUser, IUser } from "@/models";
+import { UserModel } from "@/models";
 import bcrypt from "bcryptjs";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 // 유저 생성
 export const createUser = async (user: BaseUser): Promise<IUser> => {
   await dbConnect();

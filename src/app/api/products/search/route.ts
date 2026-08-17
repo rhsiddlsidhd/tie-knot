@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
-import { searchProductsService } from "@/server/services";
+import { searchProductsService } from "@/services";
 import type { ProductResponse} from "@/core/schemas";
 import { productSearchRequestSchema } from "@/core/schemas";
 import { validateAndFlatten } from "@/core/utils";

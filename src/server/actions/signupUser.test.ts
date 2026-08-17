@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   checkEmailDuplicate: vi.fn(),
   createUser: vi.fn(),
 }));
@@ -10,7 +10,7 @@ vi.mock("@/adapters/bcrypt", () => ({
   hashPassword: vi.fn(),
 }));
 
-import { checkEmailDuplicate, createUser } from "@/server/services";
+import { checkEmailDuplicate, createUser } from "@/services";
 import { hashPassword } from "@/adapters/bcrypt";
 import { signupUser } from "./signupUser";
 

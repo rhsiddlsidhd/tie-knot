@@ -1,8 +1,8 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import type { Status } from "@/server/models";
-import { requireAuth, updateProductService } from "@/server/services";
+import type { Status } from "@/models";
+import { requireAuth, updateProductService } from "@/services";
 import { actionError } from "@/server/boundary";
 import { routes } from "@/core/domain";
 

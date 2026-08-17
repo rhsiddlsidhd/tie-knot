@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
-import { ProductModel, InvitationProductModel } from "@/server/models";
+import { ProductModel, InvitationProductModel } from "@/models";
 import {
   createProductService,
   getProductService,
@@ -16,7 +16,7 @@ import {
   updateProductLikeService,
   searchProductsService,
   getProductQuantityBoundsService,
-} from "./product.service";
+} from "./product";
 
 // images/minQuantity/maxQuantity 필드 자체가 없는 레거시 문서 — mongoose 경로를
 // 우회해 직접 삽입한다(§8 #12 test-suite 요청사항: 정상 케이스만으론 .lean() +
@@ -47,7 +47,7 @@ const insertLegacyProductWithoutQuantityFields = async (title: string) => {
   return result.insertedId.toString();
 };
 
-describe("product.service", () => {
+describe("product", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();

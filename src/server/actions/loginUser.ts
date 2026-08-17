@@ -6,7 +6,7 @@ import { validateAndFlatten } from "@/core/utils";
 import { LoginSchema } from "@/core/schemas";
 import { encrypt } from "@/adapters/jose";
 import { setCookie } from "@/adapters/cookies";
-import { getUser } from "@/server/services";
+import { getUser } from "@/services";
 import type { UserRole } from "@/core/domain";
 import { comparePasswords } from "@/adapters/bcrypt";
 import { actionError } from "@/server/boundary";

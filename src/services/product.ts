@@ -1,8 +1,8 @@
 import "server-only";
-import type { ProductJSON, ProductDB, IProduct } from "@/server/models";
-import { ProductModel, InvitationProductModel } from "@/server/models";
+import type { ProductJSON, ProductDB, IProduct } from "@/models";
+import { ProductModel, InvitationProductModel } from "@/models";
 import type { ProductDto } from "@/core/schemas";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils";
 import { AppError } from "@/core/domain";
 import type { InvitationTheme} from "@/core/domain";

@@ -1,6 +1,41 @@
+import type { InvitationTheme } from "./theme";
+import type { ProductCategory, SubCategory } from "./product-category";
+
 // 0. Home 인기 상품 섹션(좋아요순 Top N) 관련 상수 — service 기본값과 UI 노출 게이트가 같은 값을 본다.
 export const POPULAR_PRODUCTS_LIMIT = 8;
 export const POPULAR_PRODUCTS_MIN_ITEMS = 3;
+
+export type ProductStatus = "active" | "inactive" | "soldOut" | "deleted";
+
+export interface ProductJSON {
+  _id: string;
+  authorId: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  price: number;
+  category: ProductCategory;
+  subCategory: SubCategory;
+  isPremium: boolean;
+  featureIds: string[];
+  isFeatured: boolean;
+  priority: number;
+  likes: string[];
+  views: number;
+  salesCount: number;
+  discount: { discountType: "rate" | "amount"; value: number };
+  status: ProductStatus;
+  images: string[];
+  minQuantity: number;
+  maxQuantity: number;
+  previewUrl?: string;
+  theme?: InvitationTheme;
+  isLiked: boolean;
+  discountedPrice: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
 
 // 1. 필터 키 배열 정의 (UI 노출 순서 보장 및 타입 추출용)
 export const PRODUCT_SORT_KEYS = [

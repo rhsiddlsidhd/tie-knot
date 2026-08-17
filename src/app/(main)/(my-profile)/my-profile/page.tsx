@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { BasicInfoForm, ChangePasswordForm } from "@/client/components/organisms";
 
 import { TypographyH1, TypographyMuted } from "@/client/components/atoms";
-import { verifySession, getUser } from "@/server/services";
+import { verifySession, getUser } from "@/services";
 import { redirect } from "next/navigation";
 import React from "react";
 import { routes } from "@/core/domain";

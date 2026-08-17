@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { AppError } from "@/core/domain";
 import { CoupleInfoForm } from "./_components";
-import { verifySession } from "@/server/services";
+import { verifySession } from "@/services";
 import React from "react";
 
 const Page = async ({

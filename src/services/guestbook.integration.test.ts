@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/server/lib/mongodb";
+import { dbConnect } from "@/db";
 import { buildGuestbookInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
 import {
@@ -8,9 +8,9 @@ import {
   getGuestbookService,
   getPrivateGuestbookService,
   deleteGuestbookService,
-} from "./guestbook.service";
+} from "./guestbook";
 
-describe("guestbook.service", () => {
+describe("guestbook", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();

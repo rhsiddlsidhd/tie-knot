@@ -6,7 +6,7 @@ import { hashPassword } from "@/adapters/bcrypt";
 
 import { validateAndFlatten } from "@/core/utils";
 import { RegisterSchema } from "@/core/schemas";
-import { checkEmailDuplicate, createUser } from "@/server/services";
+import { checkEmailDuplicate, createUser } from "@/services";
 import { actionError } from "@/server/boundary";
 export async function signupUser(
   prev: unknown,

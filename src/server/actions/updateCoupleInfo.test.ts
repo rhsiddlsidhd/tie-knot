@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/services", () => ({
+vi.mock("@/services", () => ({
   requireAuth: vi.fn(),
   updateCoupleInfoService: vi.fn(),
   isValidSubwayStationName: vi.fn(),
 }));
 
-import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/server/services";
+import { requireAuth, updateCoupleInfoService, isValidSubwayStationName } from "@/services";
 import { updateCoupleInfo } from "./updateCoupleInfo";
 
 const USER_ID = "user-1";

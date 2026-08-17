@@ -17,10 +17,10 @@
 // NOT_FOUND로 명시하는 것"까지다.
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import type * as ServicesModule from "@/server/services";
-import { dbConnect } from "@/server/lib/mongodb";
+import type * as ServicesModule from "@/services";
+import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
-import { ProductModel } from "@/server/models";
+import { ProductModel } from "@/models";
 
 vi.mock("@/adapters/cloudinary/upload-from-url", () => ({
   uploadProductImage: vi.fn(),
@@ -34,7 +34,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-vi.mock("@/server/services", async (importOriginal) => {
+vi.mock("@/services", async (importOriginal) => {
   const actual = await importOriginal<typeof ServicesModule>();
   return {
     ...actual,
@@ -42,7 +42,7 @@ vi.mock("@/server/services", async (importOriginal) => {
   };
 });
 
-import { requireAuth, createProductService } from "@/server/services";
+import { requireAuth, createProductService } from "@/services";
 import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { updateProduct } from "./updateProduct";
 

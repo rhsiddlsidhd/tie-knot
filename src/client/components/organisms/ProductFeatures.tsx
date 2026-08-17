@@ -1,5 +1,5 @@
 import { Card, TypographyH2, TypographyH3, TypographyMuted } from "@/client/components/atoms";
-import type { PremiumFeature } from "@/server/services";
+import type { PremiumFeature } from "@/services";
 import clsx from "clsx";
 import { Check, Palette, Type, Settings, FileText } from "lucide-react";
 
