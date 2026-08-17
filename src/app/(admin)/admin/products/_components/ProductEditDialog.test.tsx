@@ -19,7 +19,7 @@ vi.mock("@/ui/hooks", () => ({
   }),
 }));
 
-import type { Product } from "@/services";
+import type { Product } from "@/core/domain";
 import { ProductEditDialog } from "./ProductEditDialog";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({

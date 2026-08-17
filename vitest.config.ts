@@ -1,74 +1,93 @@
 import { defineConfig } from "vitest/config";
+import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { loadEnvConfig } from "@next/env";
 
 loadEnvConfig(process.cwd());
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
+  plugins: [react()],
+  resolve: {
+    tsconfigPaths: true,
+    alias: {
+      "server-only": fileURLToPath(
+        new URL("./testing/support/setup/server-only.ts", import.meta.url),
+      ),
+    },
+  },
   test: {
-    environment: "jsdom",
-    setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
-    // 실행 조건이 다른 두 묶음으로 나눈다 — mongodb-memory-server 인스턴스는 스위트
-    // 전체가 1개를 공유하므로 DB 테스트는 순차로 돌려야 한다. 그 제약이 DB를 안 쓰는
-    // 나머지 테스트까지 직렬로 묶이지 않도록 실행 경계를 분리한다.
-    // 파일명 접미사가 두 묶음을 가르는 셀렉터다.
     projects: [
       {
         extends: true,
         test: {
           name: "unit",
-          include: ["src/**/*.test.{ts,tsx}"],
-          exclude: ["src/**/*.integration.test.{ts,tsx}"],
-          // globalSetup 없음 — mongod를 띄우지 않고, fileParallelism 기본값(병렬)을 쓴다.
-          // 워커 수는 CPU 개수가 아니라 메모리가 정한다. jsdom worker 하나가 수백 MB를
-          // 쓸 수 있어 8코어·4GB 로컬에서도 안정적으로 실행되는 상한을 둔다.
+          environment: "node",
+          include: [
+            "src/actions/**/*.test.ts",
+            "src/adapters/**/*.test.ts",
+            "src/core/**/*.test.ts",
+            "src/app/api/**/*.test.ts",
+            "src/boundary.test.ts",
+            "src/proxy.test.ts",
+          ],
+          exclude: [
+            "src/**/*.integration.test.{ts,tsx}",
+            "src/adapters/deeplink/**/*.test.ts",
+            "src/adapters/portone/request-payment.test.ts",
+          ],
+          setupFiles: ["./testing/support/setup/node-polyfill.ts"],
           maxWorkers: 2,
         },
       },
       {
         extends: true,
         test: {
-          name: "integration-client",
+          name: "component",
           environment: "jsdom",
           include: [
-            "src/client/**/*.integration.test.{ts,tsx}",
-            "src/app/**/_hooks/**/*.integration.test.{ts,tsx}",
+            "src/ui/**/*.test.{ts,tsx}",
+            "src/app/**/*.test.{ts,tsx}",
+            "src/adapters/deeplink/**/*.test.ts",
+            "src/adapters/portone/request-payment.test.ts",
           ],
+          exclude: ["src/**/*.integration.test.{ts,tsx}", "src/app/api/**/*.test.{ts,tsx}"],
           setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
+          maxWorkers: 2,
         },
       },
       {
         extends: true,
         test: {
-          name: "integration-server",
+          name: "integration",
           environment: "node",
           include: [
-            "src/server/**/*.integration.test.{ts,tsx}",
+            "src/actions/**/*.integration.test.{ts,tsx}",
+            "src/db/**/*.integration.test.{ts,tsx}",
+            "src/services/**/*.integration.test.{ts,tsx}",
             "src/app/api/**/*.integration.test.{ts,tsx}",
+            "src/app/(main)/page.integration.test.ts",
+            "src/app/(main)/_components/PopularProductsSection.integration.test.tsx",
           ],
           globalSetup: ["./testing/support/setup/mongo-server.ts"],
-          // 파일을 병렬로 돌리면 한 파일의 beforeEach(clearCollections)가 다른 파일이
-          // 막 써넣은 데이터를 지워버리는 크로스파일 오염이 생긴다.
           fileParallelism: false,
           maxWorkers: 1,
-          setupFiles: ["./testing/support/setup/node-polyfill.ts"],
+          setupFiles: [
+            "./testing/support/setup/node-polyfill.ts",
+            "./testing/support/setup/jsdom-polyfill.ts",
+          ],
         },
       },
       {
         extends: true,
         test: {
-          name: "integration-app",
+          name: "integration-component",
           environment: "jsdom",
-          include: ["src/app/**/*.integration.test.{ts,tsx}"],
-          exclude: [
-            "src/app/api/**/*.integration.test.{ts,tsx}",
-            "src/app/**/_hooks/**/*.integration.test.{ts,tsx}",
+          include: [
+            "src/app/(admin)/admin/layout.integration.test.tsx",
+            "src/ui/**/*.integration.test.{ts,tsx}",
           ],
-          globalSetup: ["./testing/support/setup/mongo-server.ts"],
-          fileParallelism: false,
-          maxWorkers: 1,
+          setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
+          maxWorkers: 2,
         },
       },
     ],

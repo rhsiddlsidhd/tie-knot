@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product } from "@/services";
+import type { Product } from "@/core/domain";
 
 const { useProductsMock, usePremiumFeatureMock } = vi.hoisted(() => ({
   useProductsMock: vi.fn(),

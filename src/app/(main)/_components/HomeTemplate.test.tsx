@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product } from "@/services";
+import type { Product } from "@/core/domain";
 
 vi.mock("@/ui/components/organisms", () => ({
   EcommerceHero: () => <div>hero</div>,

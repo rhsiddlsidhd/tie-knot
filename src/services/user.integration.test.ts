@@ -11,6 +11,7 @@ import {
   getUserEmail,
   getUserById,
   changePassword,
+  signupUserService,
 } from "./user";
 
 describe("user", () => {
@@ -32,6 +33,27 @@ describe("user", () => {
       expect(created.email).toBe(input.email);
       const saved = await UserModel.findOne({ email: input.email });
       expect(saved).not.toBeNull();
+    });
+  });
+
+  describe("signupUserService", () => {
+    it("비밀번호를 해싱해 신규 유저를 생성한다", async () => {
+      const input = buildUserInput();
+
+      await signupUserService({ ...input, password: "pw1234!" });
+
+      const saved = await UserModel.findOne({ email: input.email });
+      expect(saved).not.toBeNull();
+      expect(saved?.password).not.toBe("pw1234!");
+    });
+
+    it("중복 이메일이면 VALIDATION을 던진다", async () => {
+      const input = buildUserInput();
+      await UserModel.create(input);
+
+      await expect(
+        signupUserService({ ...input, password: "pw1234!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
     });
   });
 

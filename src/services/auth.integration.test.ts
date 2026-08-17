@@ -10,6 +10,7 @@ import { encrypt } from "@/adapters/jose";
 vi.mock("@/adapters/cookies", () => ({
   getCookie: vi.fn(),
   deleteCookie: vi.fn().mockResolvedValue(undefined),
+  setCookie: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -18,9 +19,10 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-import { getCookie, deleteCookie } from "@/adapters/cookies";
+import { getCookie, deleteCookie, setCookie } from "@/adapters/cookies";
+import { hashPassword } from "@/adapters/bcrypt";
 import { redirect } from "next/navigation";
-import { getUser, getAuth, requireAuth, logoutService, verifySession } from "./auth";
+import { getUser, getAuth, requireAuth, logoutService, verifySession, loginUserService } from "./auth";
 
 describe("auth", () => {
   beforeEach(async () => {
@@ -73,6 +75,39 @@ describe("auth", () => {
       const result = await getUser({ email: input.email });
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("loginUserService", () => {
+    it("비밀번호를 검증하고 refresh token 쿠키를 저장한다", async () => {
+      const input = buildUserInput({ password: await hashPassword("pw1234!") });
+      const saved = await UserModel.create(input);
+
+      const result = await loginUserService({
+        email: input.email,
+        password: "pw1234!",
+        remember: true,
+      });
+
+      expect(result).toEqual({
+        role: input.role,
+        email: input.email,
+        userId: saved._id.toString(),
+      });
+      expect(setCookie).toHaveBeenCalledWith({
+        name: "token",
+        value: expect.any(String),
+        remember: true,
+      });
+    });
+
+    it("비밀번호가 다르면 UNAUTHENTICATED를 던진다", async () => {
+      const input = buildUserInput({ password: await hashPassword("pw1234!") });
+      await UserModel.create(input);
+
+      await expect(
+        loginUserService({ email: input.email, password: "wrong", remember: false }),
+      ).rejects.toMatchObject({ category: "UNAUTHENTICATED" });
     });
   });
 
