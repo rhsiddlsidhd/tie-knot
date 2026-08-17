@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
-import { updateUserPassword, clearUserEmailCookie } from "@/server/actions";
+import { updateUserPassword, clearUserEmailCookie } from "@/actions";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 import { UpdatePasswordForm as PureUpdatePasswordForm } from "@/client/components/organisms";

@@ -23,7 +23,7 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 
-vi.mock("@/server/actions", () => ({
+vi.mock("@/actions", () => ({
   createCoupleInfo: vi.fn(),
   updateCoupleInfo: vi.fn(),
 }));

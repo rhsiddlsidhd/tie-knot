@@ -3,24 +3,21 @@
 import type { APIResponse } from "@/core/domain";
 import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
 import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
-import { requireAuth, updateProductService } from "@/services";
-import { actionError } from "@/server/boundary";
-import { validateAndFlatten } from "@/core/utils";
-
+import { requireAuth, createProductService } from "@/services";
+import { actionError } from "@/boundary";
 import { productSchema } from "@/core/schemas";
 import { routes } from "@/core/domain";
-import { AppError } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";
+import { validateAndFlatten } from "@/core/utils";
 
 // 빈 문자열/null이면 undefined를 넘겨 zod .default()가 동작하게 한다 —
 // Number(null)===0 / Number("")===0으로 파싱되면 min(1) 검증에 걸린다.
 const parseOptionalNumber = (raw: FormDataEntryValue | null): number | undefined =>
   raw ? Number(raw) : undefined;
 
-export const updateProduct = async (
-  productId: string,
-  prev: unknown,
+export const createProduct = async (
+  _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
   const uploadedPublicIds: string[] = [];
@@ -29,23 +26,23 @@ export const updateProduct = async (
   const previewFile = formData.get("previewUrl") as File;
 
   const data = {
-    title: formData.get("title"),
-    category: formData.get("category"),
-    subCategory: formData.get("subCategory"),
+    title: formData.get("title") as string,
+    description: formData.get("description") as string,
+    category: formData.get("category") as string,
+    subCategory: formData.get("subCategory") as string,
     theme: (formData.get("theme") as string) || undefined,
-    status: formData.get("status"),
-    description: formData.get("description"),
-    isFeatured: formData.get("isFeatured") === "true",
     price: Number(formData.get("price")),
     isPremium: formData.get("isPremium") === "true",
     featureIds: formData.getAll("featureIds") as string[],
+    isFeatured: formData.get("isFeatured") === "true",
     priority: Number(formData.get("priority")),
-    thumbnail:
-      thumbnailFile && thumbnailFile.size > 0
-        ? thumbnailFile
-        : (formData.get("currentThumbnail") as string),
+    discount: {
+      discountType: formData.get("discount.discountType") as string,
+      value: Number(formData.get("discount.value")),
+    },
+    thumbnail: thumbnailFile,
     images: {
-      // 유지할 기존 URL — 폼이 hidden input으로 반복 전송한다.
+      // create 흐름에선 currentImages가 항상 빈 배열이다(유지할 기존 이미지가 없음).
       existing: formData.getAll("currentImages") as string[],
       newFiles: (formData.getAll("images") as File[]).filter((f) => f.size > 0),
     },
@@ -63,7 +60,7 @@ export const updateProduct = async (
   }
 
   try {
-    const { role } = await requireAuth();
+    const { role, userId } = await requireAuth();
     if (role !== "ADMIN") {
       return {
         success: false,
@@ -71,14 +68,9 @@ export const updateProduct = async (
       };
     }
 
-    let thumbnailUrl = formData.get("currentThumbnail") as string;
-    if (thumbnailFile && thumbnailFile.size > 0) {
-      thumbnailUrl = await uploadProductImage(thumbnailFile, "thumbnail", recordUpload);
-    }
+    const thumbnailUrl = await uploadProductImage(thumbnailFile, "thumbnail", recordUpload);
 
-    let previewUrl: string | undefined = formData.get(
-      "currentPreviewUrl",
-    ) as string;
+    let previewUrl: string | undefined;
     if (previewFile && previewFile.size > 0) {
       previewUrl = await uploadProductImage(previewFile, "preview", recordUpload);
     }
@@ -90,27 +82,20 @@ export const updateProduct = async (
     ).filter((url): url is string => Boolean(url));
     const images = [...parsed.data.images.existing, ...uploadedImageUrls];
 
-    const updated = await updateProductService(productId, {
+    await createProductService({
       ...parsed.data,
       images,
+      authorId: userId,
       thumbnail: thumbnailUrl,
       previewUrl,
     });
 
-    // REQ-7: discriminatorKey가 "category"라 category를 바꿔 요청하면 mongoose가
-    // 바뀐 category 기준 모델로 원래 문서를 찾다가 매칭 실패 → null을 리턴한다.
-    // 검사 없이 넘어가면 실패인데 success:true가 나가는 무증상 실패가 된다.
-    if (!updated) {
-      throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
-    }
-
     revalidatePath(routes.admin.products.root);
     revalidatePath(routes.products.root);
-    revalidatePath(routes.products.detail(parsed.data.category, productId));
 
     return {
       success: true,
-      data: { message: "상품이 성공적으로 수정되었습니다." },
+      data: { message: "상품이 성공적으로 등록되었습니다." },
     };
   } catch (e) {
     await Promise.allSettled(uploadedPublicIds.map((publicId) => deleteProductAsset(publicId)));

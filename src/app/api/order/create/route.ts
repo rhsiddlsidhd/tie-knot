@@ -1,5 +1,5 @@
-import type { APIRouteResponse} from "@/server/boundary";
-import { routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/boundary";
+import { routeError } from "@/boundary";
 import { AppError } from "@/core/domain";
 import type { NextRequest } from "next/server";
 import { z } from "zod";

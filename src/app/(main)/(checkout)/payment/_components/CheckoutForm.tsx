@@ -4,7 +4,7 @@ import { useActionState, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { createOrder, type CreateOrderResult } from "@/server/actions";
+import { createOrder, type CreateOrderResult } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { useOrderStore } from "@/client/store";
 import { usePortOnePayment } from "@/client/hooks";

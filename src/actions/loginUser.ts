@@ -9,7 +9,7 @@ import { setCookie } from "@/adapters/cookies";
 import { getUser } from "@/services";
 import type { UserRole } from "@/core/domain";
 import { comparePasswords } from "@/adapters/bcrypt";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 
 export const loginUser = async (
   _prev: null,

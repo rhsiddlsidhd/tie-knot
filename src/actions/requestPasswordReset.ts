@@ -6,7 +6,7 @@ import { sendEmail } from "@/adapters/nodemailer";
 import { emailSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
 import { checkEmailDuplicate } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 const createChangePWDomain = (token: string): string => {
   return process.env.NODE_ENV === "development"

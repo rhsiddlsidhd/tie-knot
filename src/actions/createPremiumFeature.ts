@@ -2,7 +2,7 @@
 import type { APIResponse } from "@/core/domain";
 import { premiumFeatureSchema } from "@/core/schemas";
 import { createPremiumFeatureService, requireAuth } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";

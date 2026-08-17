@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { mutate } from "swr";
 import { toast } from "sonner";
 
-import { loginUser } from "@/server/actions";
+import { loginUser } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import type { UserRole } from "@/core/domain";
 import { getFieldError, hasFieldErrors } from "@/core/utils";

@@ -1,5 +1,5 @@
 "use client";
-import { deleteProduct } from "@/server/actions";
+import { deleteProduct } from "@/actions";
 import type { ProductTableRowProps } from "./ProductTableRow";
 import { Button } from "@/client/components/atoms";
 import { useAdminModalStore } from "@/client/store";

@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 import { requireAuth, deleteProductService } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 
 import { revalidatePath } from "next/cache";

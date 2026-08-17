@@ -1,5 +1,5 @@
-import type { APIRouteResponse} from "@/server/boundary";
-import { routeSuccess, routeError } from "@/server/boundary";
+import type { APIRouteResponse} from "@/boundary";
+import { routeSuccess, routeError } from "@/boundary";
 import { AppError } from "@/core/domain";
 import { parseSeoulOpenApiResponse } from "@/core/utils";
 import { SUBWAY_LINE_COLORS, DEFAULT_SUBWAY_LINE_COLOR } from "@/core/domain";

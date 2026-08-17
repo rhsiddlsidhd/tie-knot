@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type * as UtilsModule from "@/core/utils";
 
-vi.mock("@/server/actions", () => ({
+vi.mock("@/actions", () => ({
   updateProduct: () => async (): Promise<null> => null,
 }));
 

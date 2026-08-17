@@ -5,7 +5,7 @@ import { Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/client/components/atoms";
 import { cn } from "@/core/utils";
-import { toggleProductLike } from "@/server/actions";
+import { toggleProductLike } from "@/actions";
 import { useAuth } from "@/client/hooks";
 interface ProductLikeBadgeProps {
   productId: string;

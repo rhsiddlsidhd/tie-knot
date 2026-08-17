@@ -9,7 +9,7 @@ import type { APIResponse } from "@/core/domain";
 import { UserEmailSchema } from "@/core/schemas";
 
 import { getUserEmail } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 
 export const findUserEmail = async (

@@ -5,7 +5,7 @@ import { comparePasswords } from "@/adapters/bcrypt";
 import { validateAndFlatten } from "@/core/utils";
 import { GuestbookSchema } from "@/core/schemas";
 import { getPrivateGuestbookService, deleteGuestbookService } from "@/services";
-import { actionError } from "@/server/boundary";
+import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 import * as z from "zod";
 import { revalidatePath } from "next/cache";

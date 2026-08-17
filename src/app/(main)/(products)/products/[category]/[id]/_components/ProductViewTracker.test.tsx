@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, waitFor } from "@testing-library/react";
 
-vi.mock("@/server/actions", () => ({
+vi.mock("@/actions", () => ({
   incrementProductViews: vi.fn(),
 }));
 
-import { incrementProductViews } from "@/server/actions";
+import { incrementProductViews } from "@/actions";
 import { ProductViewTracker } from "./ProductViewTracker";
 
 describe("ProductViewTracker", () => {

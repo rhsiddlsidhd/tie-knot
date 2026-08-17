@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
 import type { PremiumFeature } from "@/services";
-import { updatePremiumFeature } from "@/server/actions";
+import { updatePremiumFeature } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { hasFieldErrors } from "@/core/utils";
 import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "@/client/components/organisms";
