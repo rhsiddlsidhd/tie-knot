@@ -2,9 +2,9 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/client/components/atoms";
+import { Button } from "@/ui/components/atoms";
 import { CreditCard } from "lucide-react";
-import { useOrderStore } from "@/client/store";
+import { useOrderStore } from "@/ui/stores";
 import type { OrderJSON } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { routes } from "@/core/domain";

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TypographyH4, TypographySmall } from "@/client/components/atoms";
+import { TypographyH4, TypographySmall } from "@/ui/components/atoms";
 import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain";
 
 export function Footer() {

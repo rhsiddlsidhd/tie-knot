@@ -1,6 +1,7 @@
 export type * from "./alert";
 export type * from "./announcement";
 export type * from "./checkout";
+export type * from "./couple-info";
 export * from "./error";
 export * from "./error-messages";
 export type * from "./field";
@@ -10,6 +11,7 @@ export * from "./order";
 export * from "./page";
 export * from "./payment";
 export * from "./price";
+export type * from "./premium-feature";
 export * from "./product";
 export * from "./product-category";
 export * from "./routes";

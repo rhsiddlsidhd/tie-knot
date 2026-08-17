@@ -1,5 +1,5 @@
-import { Spinner } from "@/client/components/molecules";
-import { TypographyLarge, TypographyMuted } from "@/client/components/atoms";
+import { Spinner } from "@/ui/components/molecules";
+import { TypographyLarge, TypographyMuted } from "@/ui/components/atoms";
 interface PaymentPendingOverlayProps {
   visible: boolean;
 }

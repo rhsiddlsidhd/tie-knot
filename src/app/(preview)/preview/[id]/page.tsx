@@ -22,7 +22,7 @@ import {
   mapCoupleInfoToLocationProps,
   mapCoupleInfoToThumbnails,
 } from "./_utils";
-import { CloudImage } from "@/client/components/molecules";
+import { CloudImage } from "@/ui/components/molecules";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {

@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/services";
 
-vi.mock("@/client/components/organisms", () => ({
+vi.mock("@/ui/components/organisms", () => ({
   EcommerceHero: () => <div>hero</div>,
   TemplateCarouselGroup: ({ title }: { title: string }) => <div>{title}</div>,
   LiveDemoSection: ({ infoId }: { infoId: string }) => <div>live-demo-{infoId}</div>,

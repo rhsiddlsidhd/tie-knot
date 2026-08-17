@@ -1,7 +1,7 @@
 "use client";
 
 import { Search } from "lucide-react";
-import { Input } from "@/client/components/atoms";
+import { Input } from "@/ui/components/atoms";
 
 export function SearchBar({
   value,

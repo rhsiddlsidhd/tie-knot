@@ -8,8 +8,8 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-} from "@/client/components/atoms";
-import { ProductCard } from "@/client/components/organisms";
+} from "@/ui/components/atoms";
+import { ProductCard } from "@/ui/components/organisms";
 import type { Product } from "@/services";
 import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain";
 

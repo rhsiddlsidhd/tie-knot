@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { createProduct } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import type { PremiumFeature } from "@/services";
-import { ProductRegistrationForm as PureProductRegistrationForm } from "@/client/components/organisms";
+import { ProductRegistrationForm as PureProductRegistrationForm } from "@/ui/components/organisms";
 import { routes } from "@/core/domain";
 export function ProductRegistrationForm({
   premiumFeatures,

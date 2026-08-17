@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { findUserEmail } from "@/actions";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
-import { FindIdForm as PureFindIdForm } from "@/client/components/organisms";
+import { FindIdForm as PureFindIdForm } from "@/ui/components/organisms";
 export function FindIdForm() {
   const [state, action, pending] = useActionState<
     APIResponse<{ email: string }>,

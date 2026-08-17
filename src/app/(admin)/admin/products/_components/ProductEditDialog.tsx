@@ -5,19 +5,19 @@ import { useActionState, useEffect, useState } from "react";
 import { UploadCloud, X } from "lucide-react";
 import { updateProduct } from "@/actions";
 import type { Product } from "@/services";
-import { Alert, ImageField, SelectField, Spinner, CloudImage } from "@/client/components/molecules";
-import { Input, Button, Textarea, Switch, Checkbox, Label, TypographyH4, TypographyMuted } from "@/client/components/atoms";
+import { Alert, ImageField, SelectField, Spinner, CloudImage } from "@/ui/components/molecules";
+import { Input, Button, Textarea, Switch, Checkbox, Label, TypographyH4, TypographyMuted } from "@/ui/components/atoms";
 
 
 
-import { usePremiumFeature, useImageList, type ImageItem } from "@/client/hooks";
+import { usePremiumFeature, useImageList, type ImageItem } from "@/ui/hooks";
 
 
 import { getCategoryOptions, getFieldError, getSubCategoryOptions } from "@/core/utils";
 import type { InvitationTheme, ProductCategory, SubCategory } from "@/core/domain";
 import { getInvitationThemeOptions } from "@/core/domain";
 import { toast } from "sonner";
-import { useAdminModalStore } from "@/client/store";
+import { useAdminModalStore } from "@/ui/stores";
 interface ProductEditDialogProps {
   product: Product;
 }

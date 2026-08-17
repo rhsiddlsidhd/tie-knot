@@ -1,6 +1,6 @@
-import { StartActionCTA, EcommerceHero, LiveDemoSection, TemplateCarouselGroup } from "@/client/components/organisms";
+import { StartActionCTA, EcommerceHero, LiveDemoSection, TemplateCarouselGroup } from "@/ui/components/organisms";
 import type { Product } from "@/services";
-import { TypographyH2, TypographyP } from "@/client/components/atoms";
+import { TypographyH2, TypographyP } from "@/ui/components/atoms";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 import { PopularProductsSection } from "./PopularProductsSection";
 

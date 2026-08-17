@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Edit } from "lucide-react";
-import { Button } from "@/client/components/atoms";
-import { Alert } from "@/client/components/molecules";
+import { Button } from "@/ui/components/atoms";
+import { Alert } from "@/ui/components/molecules";
 import { routes } from "@/core/domain";
 
 const PendingCoupleInfoBanner = ({ orderId }: { orderId: string }) => {

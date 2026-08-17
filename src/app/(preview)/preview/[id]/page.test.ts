@@ -8,7 +8,7 @@ vi.mock("@/services", () => ({
 
 vi.mock("./_components", () => ({}));
 vi.mock("./_utils", () => ({}));
-vi.mock("@/client/components/molecules", () => ({}));
+vi.mock("@/ui/components/molecules", () => ({}));
 
 import { generateStaticParams } from "./page";
 

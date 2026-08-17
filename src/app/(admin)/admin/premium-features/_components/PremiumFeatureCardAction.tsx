@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 
-import { Button } from "@/client/components/atoms";
+import { Button } from "@/ui/components/atoms";
 import { Edit, Trash2 } from "lucide-react";
 import type { PremiumFeature } from "@/services";
-import { useAdminModalStore } from "@/client/store";
+import { useAdminModalStore } from "@/ui/stores";
 const PremiumFeatureCardAction = ({
   premiumFeature,
 }: {

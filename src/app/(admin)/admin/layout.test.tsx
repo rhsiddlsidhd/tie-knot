@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type * as AtomsModule from "@/client/components/atoms";
+import type * as AtomsModule from "@/ui/components/atoms";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
-vi.mock("@/client/hooks", () => ({ useAuth: useAuthMock }));
-vi.mock("@/client/components/atoms", async (importOriginal) => {
+vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
+vi.mock("@/ui/components/atoms", async (importOriginal) => {
   const actual = await importOriginal<typeof AtomsModule>();
   const Passthrough = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -18,10 +18,10 @@ vi.mock("@/client/components/atoms", async (importOriginal) => {
     SidebarFooter: Passthrough,
   };
 });
-vi.mock("@/client/components/organisms", () => ({
+vi.mock("@/ui/components/organisms", () => ({
   SidebarToggle: (): null => null,
 }));
-vi.mock("@/client/components/molecules", () => ({
+vi.mock("@/ui/components/molecules", () => ({
   SidebarNavItem: (): null => null,
 }));
 vi.mock("./_components", () => ({ AdminModal: (): null => null }));

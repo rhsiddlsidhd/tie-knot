@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { CloudImage } from "@/client/components/molecules";
-import { Button, Dialog, DialogContent, DialogTitle } from "@/client/components/atoms";
+import { CloudImage } from "@/ui/components/molecules";
+import { Button, Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";

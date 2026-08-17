@@ -1,4 +1,4 @@
-import { TypographyH1, TypographyMuted } from "@/client/components/atoms";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { ProductCatalog } from "../_components";
 import { getAllProductsService } from "@/services";
 import { isProductCategory, isSubCategory } from "@/core/utils";

@@ -7,7 +7,7 @@ import type { PremiumFeature } from "@/services";
 import { updatePremiumFeature } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { hasFieldErrors } from "@/core/utils";
-import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "@/client/components/organisms";
+import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "@/ui/components/organisms";
 export function PremiumFeatureDialog({
   premiumFeature,
 }: {

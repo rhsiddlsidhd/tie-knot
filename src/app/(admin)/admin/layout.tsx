@@ -1,13 +1,13 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/client/components/atoms";
-import { SidebarToggle as SidebarHeader } from "@/client/components/organisms";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/ui/components/atoms";
+import { SidebarToggle as SidebarHeader } from "@/ui/components/organisms";
 import type React from "react";
 import { Toaster } from "sonner";
-import { SidebarNavItem } from "@/client/components/molecules";
+import { SidebarNavItem } from "@/ui/components/molecules";
 import { AdminModal } from "./_components";
-import { useAuth } from "@/client/hooks";
-import { Skeleton } from "@/client/components/atoms";
+import { useAuth } from "@/ui/hooks";
+import { Skeleton } from "@/ui/components/atoms";
 export default function AdminLayout({
   children,
 }: {

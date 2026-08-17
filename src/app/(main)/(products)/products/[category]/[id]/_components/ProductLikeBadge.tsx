@@ -3,10 +3,10 @@
 import React, { useState, useTransition } from "react";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/client/components/atoms";
+import { Badge } from "@/ui/components/atoms";
 import { cn } from "@/core/utils";
 import { toggleProductLike } from "@/actions";
-import { useAuth } from "@/client/hooks";
+import { useAuth } from "@/ui/hooks";
 interface ProductLikeBadgeProps {
   productId: string;
   productLikes: string[];

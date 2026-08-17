@@ -1,10 +1,10 @@
 "use client";
 
-import { DialogDescription, DialogHeader, DialogTitle, Card, TypographyLarge, TypographyMuted, TypographySmall, Badge } from "@/client/components/atoms";
+import { DialogDescription, DialogHeader, DialogTitle, Card, TypographyLarge, TypographyMuted, TypographySmall, Badge } from "@/ui/components/atoms";
 import React from "react";
 
-import { ClipboardButton } from "@/client/components/molecules";
-import { useCopy } from "@/client/hooks";
+import { ClipboardButton } from "@/ui/components/molecules";
+import { useCopy } from "@/ui/hooks";
 import { PhoneIcon } from "lucide-react";
 
 
