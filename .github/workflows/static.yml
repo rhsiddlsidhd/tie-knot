@@ -1,0 +1,35 @@
+name: Static Validation
+
+on:
+  pull_request:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: static-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JWT_SECRET: static-ci-jwt-secret-at-least-thirty-two-characters
+  ENTRY_JWT_SECRET: static-ci-entry-secret-at-least-thirty-two-characters
+  PORTONE_API_SECRET: test-secret
+  NEXT_PUBLIC_PORTONE_STORE_ID: store-ci
+  NEXT_PUBLIC_PORTONE_CHANNEL_KEY: channel-ci
+  BASE_URL: http://127.0.0.1:3100
+  DEPLOYMENT_BASE_URL: http://127.0.0.1:3100
+
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run tsc
+      - run: npm run build

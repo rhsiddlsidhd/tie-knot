@@ -41,5 +41,3 @@
 - DB 쿼리, 인증·인가, 결제 금액·소유권처럼 경계를 관통하는 동작은 해당 경계를 실제로 연결한 integration으로 검증한다.
 - 선언적 Mongoose schema만을 위한 별도 모델 테스트는 만들지 않는다. 실제 DB를 쓰는 service integration이 스키마 계약을 함께 검증한다. 커스텀 validator 같은 제품 로직은 그 로직을 사용하는 service에서 검증한다.
 - 얇은 Route Handler가 이미 검증된 service 계약을 그대로 전달한다면 중복 테스트를 피한다. HTTP status나 응답 envelope처럼 route 고유 계약이 있으면 route 경계에서 검증한다.
-
-관련 테스트 탐색과 mutation 범위는 파일명 역산이 아니라 `scripts/test-scope/test-graph.mjs`의 런타임 import 전이 그래프를 공유한다.

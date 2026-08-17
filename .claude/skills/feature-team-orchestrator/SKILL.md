@@ -11,7 +11,7 @@ description: "이 프로젝트(tie-knot)에서 TODO.md '새 피처' 섹션급 �
 
 **진행 방식:** 기본은 순차 — 한 번의 실행은 피처 하나(`{domain}/{name}`)를 Phase 0부터 Phase 5(또는 사람 개입이 필요한 블로킹 지점)까지 완주하고 종료한다. 완료 후 다음 피처로 자동 이어가지 않는다.
 
-**선행 조건:** 제품 코드 편집 전에 공통 TDD Guard로 Red proof를 만들고, 구현 뒤 필요한 scope의 Green proof와 changed mutation을 확인한다. 과거 coverage pre-commit gate는 제거됐으며 현재 계약으로 취급하지 않는다.
+**선행 조건:** 구현 뒤 `lint`, `tsc`, `build` 정적 검증과 관련 테스트를 실행한다.
 
 ## 실행 모드: 하이브리드
 
@@ -90,7 +90,7 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
    - 종료조건: 모든 유닛이 PASS(또는 강제 PASS) 되면 각자 리더에게 완료 알림
 4. **로컬 merge는 리더만 수행한다.** 구현자로부터 "유닛 X PASS, 병합 요청" SendMessage를 받으면, 리더가 표준 브랜치에서 `git merge feat/{name}--backend`(또는 `--frontend`)를 그 즉시 실행 — 몰아두지 않는다.
    - 병합 충돌 시 강제 해결 금지. 리더가 양쪽 diff 확인 후 자명하면 직접 resolve+재검증 요청, 애매하면 사용자 에스컬레이션
-   - **TDD Guard와 boundary-verifier 판정은 별개 축이다.** FIX/REDO 반영도 필요한 Red/Green proof와 관련 테스트를 다시 확인한다. 동일 실패가 반복되면 구현자가 리더에게 원인과 증거를 에스컬레이션한다.
+   - FIX/REDO 반영 뒤 관련 테스트와 정적 검증을 다시 확인한다. 동일 실패가 반복되면 구현자가 리더에게 원인과 증거를 에스컬레이션한다.
    - `[MANUAL_INTERVENTION_REQUIRED]`로 강제 PASS된 유닛도 CI required checks는 그대로 통과해야 한다 — 커밋 메시지에 표기를 남겨 이력에서 식별되게 한다.
 5. 진행 중 리더 역할:
    - `[MANUAL_INTERVENTION_REQUIRED]` 에스컬레이션(2회 REDO 초과) 수신 시, 설계 재검토가 필요하면 api-designer를 단독 재스폰해 해당 부분만 재설계. **재설계 결과는 리더가 backend-impl/frontend-impl 양쪽에 직접 SendMessage로 재전달한다**(재스폰된 api-designer는 이미 종료된 frontend-impl의 id를 모르므로 직접 통신 불가 — 반드시 리더 경유)
@@ -137,7 +137,7 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 | Phase1 팀원 1명 실패/중지 | SendMessage 상태 확인 → 재시작. 재실패 시 해당 역할만 재스폰(산출물은 파일로 존재, 새 스폰이 Read해서 이어감) |
 | Phase1 3회 검토 후 미승인 | Phase 전환 차단, 쟁점 요약해 사용자에게 보고 후 대기 |
 | Phase2+3 팀원 1명 실패/중지 | SendMessage 상태 확인 → 재시작. 실제 코드가 워크트리에 파일로 존재하므로 새 스폰이 같은 워크트리 경로를 이어받기 쉬움 |
-| pre-commit 훅이 lint/coverage/typecheck로 커밋 차단 | boundary-verifier PASS와 별개의 기계적 게이트 — 구현자가 원인 해결 후 재커밋. 같은 유닛에서 연속 3회 실패하면 리더에게 에스컬레이션 |
+| lint·tsc·build 정적 검증 실패 | boundary-verifier PASS와 별개로 원인을 해결한다. 같은 유닛에서 연속 3회 실패하면 리더에게 에스컬레이션 |
 | 표준 브랜치 로컬 merge 충돌 | 강제 해결 금지. 리더가 양쪽 diff 확인 후 자명하면 직접 resolve+재검증 요청, 애매하면 사용자 에스컬레이션 |
 | boundary-verifier가 같은 경계면 2회 REDO | 강제 PASS + `MANUAL_INTERVENTION_REQUIRED` 플래그(커밋 메시지에도 표기), 리더에게 즉시 에스컬레이션. 최종 보고서에 반드시 명시 |
 | Phase2+3 응답 없음 장기화 | SendMessage 상태 확인 시도 → 무응답 지속 시 현재까지 파일 산출물로 부분 진행, 미완료 항목은 보고서에 명시 |

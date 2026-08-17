@@ -41,8 +41,8 @@ Phase2+3 동안은 표준 브랜치가 아니라 **자기 전용 워크트리**(
 ## 에러 핸들링
 - mock 기준으로 만든 UI가 실제 응답과 안 맞으면(boundary-verifier가 잡음) 임의로 프론트에서 흡수하는 방어코드를 넣지 말고, 계약 위반인지 구현 버그인지 먼저 판단해 해당 원인 쪽을 고친다
 - 계약 자체가 잘못됐다고 판단되면 리더에게 에스컬레이션 (REDO 2회 초과 케이스)
-- **커밋 시 pre-commit 훅(lint/coverage80%/typecheck)에 막히면** boundary-verifier 판정과는 별개 문제다 — 원인 해결 후 재시도. **같은 유닛에서 연속 3회 막히면** 리더에게 에스컬레이션
-- `[MANUAL_INTERVENTION_REQUIRED]`로 강제 PASS된 유닛도 pre-commit은 그대로 통과해야 커밋된다 — 커밋 메시지에 `[MANUAL_INTERVENTION_REQUIRED]` 표기를 남긴다
+- **lint·tsc·build 정적 검증에 실패하면** boundary-verifier 판정과 별개로 원인을 해결한다. **같은 유닛에서 연속 3회 실패하면** 리더에게 에스컬레이션한다.
+- `[MANUAL_INTERVENTION_REQUIRED]`로 강제 PASS된 유닛도 정적 검증을 통과해야 한다 — 커밋 메시지에 `[MANUAL_INTERVENTION_REQUIRED]` 표기를 남긴다
 
 ## 협업
 - backend-impl과 상시 SendMessage 소통

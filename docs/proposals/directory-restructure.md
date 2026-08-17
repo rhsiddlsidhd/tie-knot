@@ -426,21 +426,25 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 
 ---
 
-## 9. 단계
+## 9. Phase별 실행 계획
 
-한 번에 하지 마라. 각 단계가 독립적으로 이득을 내고, 중간에 멈춰도 지금보다 낫도록 짰다.
+한 번에 하지 않는다. 각 Phase는 전용 브랜치와 PR 하나로 끝내고, 이전 Phase가 병합된 뒤 다음 Phase를 시작한다. 공통 필수 검증은 `npm run lint`, `npm run tsc`, `npm run build`다. 테스트는 CI 필수 체크가 아니라 로컬 검증이며, Phase 1에서 전면 개선한 뒤 각 이동 Phase의 관련 범위를 실행한다.
 
-1. `npm i server-only` → 서버 진입점에 `import "server-only"` 추가(**`actions/` 제외 — §4**). **디렉토리 안 건드림.** 번들 사고가 컴파일 에러로 승격 — 작음
-2. eslint `import/no-restricted-paths` (현재 경로 기준으로 먼저). 의존성 방향 자동 검증 — 작음
-3. `shared/` → `core/`, `client/lib` + `server/lib` → `adapters/`. 순수층 확정, cloudinary 폴더 합침. **원 문제 해결** — 중간
-4. `server/{models,services,mongodb}` → `models/` `services/` `db/`. 서버층 평탄화 — 중간
-5. `actions` 얇게 → 로직을 services로. **층당 세탁법 1개 완성** — 큼
-6. `client/**` + `app/**/_hooks` → `ui/`. 훅 집결, vitest 설정 단순화 — 중간
-7. AGENTS.md 전면 재작성 (§8 템플릿 적용) — 중간
+| Phase | 상태 | 범위 | 완료 조건 |
+|---|---|---|---|
+| 0-A. 검증 체계 정리 | 진행 중 | TDD Guard·mutation·관련 훅 제거, CI를 `static` 단일 체크로 축소 | `static`이 lint→tsc→build만 실행하고 `dev`·`main` 필수 체크가 `static` 하나다 |
+| 0-B. 경계 기준선 확정 | 완료 | `server-only` 설치·서버 진입점 적용, 현재 경로 기준 `import/no-restricted-paths` 적용 | lint·tsc·build가 통과하고 `actions/`에는 `server-only`가 없다 |
+| 1. 테스트 체계 개선 | 예정 | 테스트 분류·배치·Vitest project·공용 인프라를 새 구조에 맞게 재설계 | 전체 테스트 명령과 계층별 선택 명령이 안정적으로 통과하며 구조 이동의 회귀 기준이 고정된다 |
+| 2. 순수층·어댑터 이동 | 예정 | `shared/`→`core/`, `client/lib`+`server/lib`→`adapters/`, cloudinary 통합 | `core/`가 src 내부 층과 I/O 패키지에 의존하지 않고 adapter의 server/client 경계가 빌드로 검증된다 |
+| 3. 서버층 평탄화 | 예정 | `server/{models,services,lib/mongodb}`→`models/`, `services/`, `db/` | Route Handler와 page/action 진입점의 import가 새 경로를 사용하고 DB integration 범위가 통과한다 |
+| 4. Actions 슬림화 | 예정 | action의 비즈니스 로직을 services로 이동 | action은 파싱·응답 변환·service 위임만 담당하고 관련 service/action 테스트가 통과한다 |
+| 5. UI층 통합 | 예정 | `client/**`와 `app/**/_hooks`→`ui/`, route 전용 component 재배치 | hooks/components/stores 경계가 적용되고 Vitest 경로 예외가 제거된다 |
+| 6. 문서·규칙 동기화 | 예정 | AGENTS.md 전면 재작성, architecture/convention/validation 문서 경로 갱신 | 삭제된 경로 참조가 없고 §8 템플릿과 실제 디렉토리가 일치한다 |
+| 7. 최종 통합 검증 | 예정 | 전체 정적 검증·전체 테스트·프로덕션 빌드·잔여 import 조사 | lint·tsc·build와 전체 테스트가 통과하고 기존 최상위 구조의 import가 0건이다 |
 
-**1~2단계만 해도 문제의 절반이 사라진다.** 번들 경계가 문서에서 컴파일러로 옮겨가고, AGENTS.md의 예외 조항 문단들을 지울 수 있다.
+Phase 1은 Phase 2 이전의 필수 선행 작업이다. 테스트 체계가 고정되지 않은 상태에서 대규모 이동을 시작하면 경로 수정 실패와 실제 회귀를 구분할 수 없다.
 
-3단계 이후는 되돌리기 어렵다. 1~2 하고 한 사이클 살아본 뒤 결정 권장.
+Phase 2 이후는 되돌리기 어려우므로 각 Phase에서 `git diff --check`, 삭제 경로 import 검색, 관련 테스트를 통과한 뒤에만 병합한다. 다음 Phase와 섞인 정리나 리팩터링은 하지 않는다.
 
 ---
 
@@ -459,8 +463,8 @@ HTTP status·응답 형태를 여기서 정하지 않는다 — `AppError`를 th
 ## 11. 확인된 사실 (재조사 불필요)
 
 - Next.js **16.2.10**, ESLint 9 flat config (`eslint.config.mjs`)
-- `client-only` 설치됨(transitive). **`server-only`는 미설치** → `npm i server-only` 필요
-- `src` 어디에도 `server-only`/`client-only` import 없음
+- `server-only`는 직접 의존성으로 설치됐고 서버 models/services/lib 진입점에 적용됨. `actions/`에는 적용하지 않음
+- `client-only`는 transitive dependency로 설치됐지만 브라우저 adapter 적용은 Phase 2에서 수행
 - **`eslint-plugin-import`는 이미 등록됨** (`eslint-config-next/core-web-vitals`가 `import` 플러그인 등록 — 확인 완료). `import/no-restricted-paths` 신규 의존성 0
 - `dependency-cruiser` 미설치. 지금은 불필요 — 순환 참조가 실제 문제가 되면 그때
 - Next 16 공식 문서가 DAL + `server-only` 권장 — `node_modules/next/dist/docs/01-app/02-guides/data-security.md:56,245`

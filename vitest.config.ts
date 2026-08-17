@@ -18,16 +18,6 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "guard",
-          environment: "node",
-          include: ["scripts/**/*.test.mjs"],
-          setupFiles: [],
-          maxWorkers: 2,
-        },
-      },
-      {
-        extends: true,
-        test: {
           name: "unit",
           include: ["src/**/*.test.{ts,tsx}"],
           exclude: ["src/**/*.integration.test.{ts,tsx}"],
