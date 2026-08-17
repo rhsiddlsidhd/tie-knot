@@ -1,7 +1,9 @@
 import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
-export type UserRole = "USER" | "ADMIN";
+import type { UserRole } from "@/core/domain";
+
+export type { UserRole } from "@/core/domain";
 export interface BaseUser {
   email: string;
   name: string;

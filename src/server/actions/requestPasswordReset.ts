@@ -1,8 +1,8 @@
 "use server";
 
-import { encrypt } from "@/server/lib/jose";
+import { encrypt } from "@/adapters/jose";
 import { validateAndFlatten } from "@/core/utils";
-import { sendEmail } from "@/server/lib/nodemailer";
+import { sendEmail } from "@/adapters/nodemailer";
 import { emailSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
 import { checkEmailDuplicate } from "@/server/services";

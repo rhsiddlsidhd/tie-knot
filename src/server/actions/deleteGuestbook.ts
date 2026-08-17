@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { comparePasswords } from "@/server/lib/bcrypt";
+import { comparePasswords } from "@/adapters/bcrypt";
 import { validateAndFlatten } from "@/core/utils";
 import { GuestbookSchema } from "@/core/schemas";
 import { getPrivateGuestbookService, deleteGuestbookService } from "@/server/services";

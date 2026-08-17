@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { loginUser } from "@/server/actions";
 import type { APIResponse } from "@/core/domain";
-import type { UserRole } from "@/server/models";
+import type { UserRole } from "@/core/domain";
 import { getFieldError, hasFieldErrors } from "@/core/utils";
 import { LoginForm as PureLoginForm } from "@/client/components/organisms";
 import { routes } from "@/core/domain";

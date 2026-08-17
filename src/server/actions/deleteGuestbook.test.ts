@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/lib/bcrypt", () => ({
+vi.mock("@/adapters/bcrypt", () => ({
   comparePasswords: vi.fn(),
 }));
 
@@ -14,7 +14,7 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }));
 
-import { comparePasswords } from "@/server/lib/bcrypt";
+import { comparePasswords } from "@/adapters/bcrypt";
 import { getPrivateGuestbookService, deleteGuestbookService } from "@/server/services";
 import { deleteGuestbook } from "./deleteGuestbook";
 

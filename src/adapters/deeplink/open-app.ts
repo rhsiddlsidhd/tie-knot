@@ -1,3 +1,5 @@
+import "client-only";
+
 export interface GeoState {
   lng: number | null;
   lat: number | null;

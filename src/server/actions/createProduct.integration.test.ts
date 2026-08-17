@@ -20,8 +20,11 @@ import { ProductModel } from "@/server/models";
 import { GET as getProductsRoute } from "@/app/api/products/route";
 import { NextRequest } from "next/server";
 
-vi.mock("@/server/lib/cloudinary", () => ({
+vi.mock("@/adapters/cloudinary/upload-from-url", () => ({
   uploadProductImage: vi.fn(),
+}));
+
+vi.mock("@/adapters/cloudinary/cleanup", () => ({
   deleteProductAsset: vi.fn(),
 }));
 
@@ -38,7 +41,7 @@ vi.mock("@/server/services", async (importOriginal) => {
 });
 
 import { requireAuth } from "@/server/services";
-import { uploadProductImage } from "@/server/lib/cloudinary";
+import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { createProduct } from "./createProduct";
 
 const ADMIN_SESSION = { role: "ADMIN" as const, email: "admin@test.com", userId: "admin-1" };

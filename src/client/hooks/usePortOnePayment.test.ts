@@ -6,7 +6,7 @@ const { requestPaymentMock } = vi.hoisted(() => ({
   requestPaymentMock: vi.fn(),
 }));
 
-vi.mock("@/client/lib/portone/request-payment", () => ({
+vi.mock("@/adapters/portone/request-payment", () => ({
   requestPayment: requestPaymentMock,
 }));
 

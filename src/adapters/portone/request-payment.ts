@@ -1,3 +1,5 @@
+import "client-only";
+
 import PortOne from "@portone/browser-sdk/v2";
 
 type RequestPayment = typeof PortOne.requestPayment;

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { uploadProductImage } from "./upload";
+import { uploadProductImage } from "./upload-from-url";
 
 describe("uploadProductImage", () => {
   beforeEach(() => {

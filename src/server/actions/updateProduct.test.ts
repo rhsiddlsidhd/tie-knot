@@ -6,8 +6,11 @@ vi.mock("@/server/services", () => ({
   updateProductService: vi.fn(),
 }));
 
-vi.mock("@/server/lib/cloudinary", () => ({
+vi.mock("@/adapters/cloudinary/upload-from-url", () => ({
   uploadProductImage: vi.fn(),
+}));
+
+vi.mock("@/adapters/cloudinary/cleanup", () => ({
   deleteProductAsset: vi.fn(),
 }));
 
@@ -16,7 +19,8 @@ vi.mock("next/cache", () => ({
 }));
 
 import { requireAuth, updateProductService } from "@/server/services";
-import { deleteProductAsset, uploadProductImage } from "@/server/lib/cloudinary";
+import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
+import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { updateProduct } from "./updateProduct";
 
 const PRODUCT_ID = "product-1";

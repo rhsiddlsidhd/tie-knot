@@ -16,3 +16,4 @@ export * from "./routes";
 export * from "./sidebar";
 export * from "./subway";
 export * from "./theme";
+export type * from "./user";

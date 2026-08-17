@@ -1,6 +1,6 @@
 "use client";
 
-import { useKakaoLoader } from "@/client/lib/kakao";
+import { useKakaoLoader } from "@/adapters/kakao";
 import { useKakaomapGeocode } from "@/client/hooks";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { MapPin } from "lucide-react";

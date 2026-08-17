@@ -1,9 +1,9 @@
 import "server-only";
-import type { UserRole } from "@/server/models";
+import type { UserRole } from "@/core/domain";
 import { UserModel } from "@/server/models";
 import { dbConnect } from "@/server/lib/mongodb";
-import { getCookie, deleteCookie } from "@/server/lib/cookies";
-import { decrypt } from "@/server/lib/jose";
+import { getCookie, deleteCookie } from "@/adapters/cookies";
+import { decrypt } from "@/adapters/jose";
 import mongoose from "mongoose";
 import { AppError } from "@/core/domain";
 import type { AuthSession } from "@/core/schemas";

@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 
-import { hashPassword } from "@/server/lib/bcrypt";
+import { hashPassword } from "@/adapters/bcrypt";
 
 import { validateAndFlatten } from "@/core/utils";
 import { RegisterSchema } from "@/core/schemas";

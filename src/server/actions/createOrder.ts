@@ -3,7 +3,7 @@
 import type { APIResponse } from "@/core/domain";
 import { redirect } from "next/navigation";
 
-import { getCookie } from "@/server/lib/cookies";
+import { getCookie } from "@/adapters/cookies";
 import { requireAuth, createOrderService } from "@/server/services";
 import { actionError } from "@/server/boundary";
 
