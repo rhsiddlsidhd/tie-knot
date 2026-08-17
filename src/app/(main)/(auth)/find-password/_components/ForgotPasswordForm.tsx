@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { requestPasswordReset } from "@/actions";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
-import { ForgotPasswordForm as PureForgotPasswordForm } from "@/client/components/organisms";
+import { ForgotPasswordForm as PureForgotPasswordForm } from "@/ui/components/organisms";
 export function ForgotPasswordForm() {
   const [state, action, pending] = useActionState<
     APIResponse<{ message: string; email: string }>,

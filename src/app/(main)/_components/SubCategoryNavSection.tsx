@@ -8,7 +8,7 @@ import {
   CarouselItem,
   CarouselPrevious,
   CarouselNext,
-} from "@/client/components/atoms";
+} from "@/ui/components/atoms";
 import { PRODUCT_CATEGORIES, SUB_CATEGORY_MAP, type ProductCategory } from "@/core/domain";
 import { SubCategoryNavItem } from "./SubCategoryNavItem";
 

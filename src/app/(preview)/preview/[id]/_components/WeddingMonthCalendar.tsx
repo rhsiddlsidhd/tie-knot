@@ -5,8 +5,8 @@ import { formatInTimeZone } from "date-fns-tz";
 import { EyebrowSection } from "./EyebrowSection";
 import { ko } from "date-fns/locale";
 import clsx from "clsx";
-import { DigitalWatch } from "@/client/components/molecules";
-import { useCountdown } from "@/client/hooks";
+import { DigitalWatch } from "@/ui/components/molecules";
+import { useCountdown } from "@/ui/hooks";
 
 import type { WeddingMonthCalendarProps } from "../_utils/weddingMonthCalendar.mapper";
 

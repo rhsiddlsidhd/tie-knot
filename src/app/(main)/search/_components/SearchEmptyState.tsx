@@ -1,6 +1,6 @@
 import { SearchX } from "lucide-react";
 import Link from "next/link";
-import { TypographyP, TypographyMuted } from "@/client/components/atoms";
+import { TypographyP, TypographyMuted } from "@/ui/components/atoms";
 import { routes } from "@/core/domain";
 
 export function SearchEmptyState({ query }: { query: string }) {

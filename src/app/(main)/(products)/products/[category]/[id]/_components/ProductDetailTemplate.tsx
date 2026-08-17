@@ -1,4 +1,4 @@
-import { ProductFeatures } from "@/client/components/organisms";
+import { ProductFeatures } from "@/ui/components/organisms";
 import type { Product, PremiumFeature } from "@/services";
 import { ProductSummary } from "./ProductSummary";
 import { ProductViewTracker } from "./ProductViewTracker";

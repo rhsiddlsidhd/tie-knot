@@ -1,10 +1,10 @@
 "use client";
 
-import type { GuestbookModalType} from "@/client/store";
-import { useGuestbookModalStore } from "@/client/store";
+import type { GuestbookModalType} from "@/ui/stores";
+import { useGuestbookModalStore } from "@/ui/stores";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { Dialog, DialogContent } from "@/client/components/atoms";
+import { Dialog, DialogContent } from "@/ui/components/atoms";
 import { ViewContact } from "./ViewContact";
 import { cn } from "@/core/utils";
 import clsx from "clsx";

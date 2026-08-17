@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-vi.mock("@/client/hooks", () => ({ useAuth: () => ({ session: null as unknown, isLoading: false }) }));
+vi.mock("@/ui/hooks", () => ({ useAuth: () => ({ session: null as unknown, isLoading: false }) }));
 
 import { Header } from "./Header";
 

@@ -1,8 +1,8 @@
 "use client";
 import { deleteProduct } from "@/actions";
 import type { ProductTableRowProps } from "./ProductTableRow";
-import { Button } from "@/client/components/atoms";
-import { useAdminModalStore } from "@/client/store";
+import { Button } from "@/ui/components/atoms";
+import { useAdminModalStore } from "@/ui/stores";
 import { Edit, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";

@@ -6,7 +6,7 @@ vi.mock("@/actions", () => ({
   updateProduct: () => async (): Promise<null> => null,
 }));
 
-vi.mock("@/client/hooks", () => ({
+vi.mock("@/ui/hooks", () => ({
   usePremiumFeature: (): { premiumFeatures: never[]; loading: boolean } => ({
     premiumFeatures: [],
     loading: false,

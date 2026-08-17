@@ -1,5 +1,5 @@
-import { Button, Card, CardContent, CardHeader, CardTitle, TypographyH1, TypographyH3, TypographyMuted } from "@/client/components/atoms";
-import { CloudImage } from "@/client/components/molecules";
+import { Button, Card, CardContent, CardHeader, CardTitle, TypographyH1, TypographyH3, TypographyMuted } from "@/ui/components/atoms";
+import { CloudImage } from "@/ui/components/molecules";
 import {
   Edit,
   RefreshCw,

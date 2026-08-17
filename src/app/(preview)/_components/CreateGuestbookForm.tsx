@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { createGuestbook } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { hasFieldErrors } from "@/core/utils";
-import { useGuestbookModalStore } from "@/client/store";
-import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/client/components/organisms";
+import { useGuestbookModalStore } from "@/ui/stores";
+import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/ui/components/organisms";
 interface Payload {
   id: string;
 }

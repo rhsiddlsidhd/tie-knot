@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type * as HooksModule from "../_hooks";
+import type * as HooksModule from "@/ui/hooks";
 
 const { useProductSearchMock } = vi.hoisted(() => ({
   useProductSearchMock: vi.fn(),
 }));
 
-vi.mock("../_hooks", async (importOriginal) => {
+vi.mock("@/ui/hooks", async (importOriginal) => {
   const actual = await importOriginal<typeof HooksModule>();
   return {
     ...actual,
@@ -15,7 +15,7 @@ vi.mock("../_hooks", async (importOriginal) => {
   };
 });
 
-vi.mock("@/client/components/organisms", () => ({
+vi.mock("@/ui/components/organisms", () => ({
   ProductGrid: ({ data }: { data: unknown[] }) => (
     <div data-testid="product-grid">{data.length}건</div>
   ),

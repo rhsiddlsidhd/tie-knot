@@ -13,12 +13,12 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/actions", () => ({ createOrder: vi.fn() }));
 
-vi.mock("@/client/store", () => ({
+vi.mock("@/ui/stores", () => ({
   useOrderStore: (selector: (s: { clearOrder: () => void }) => unknown) =>
     selector({ clearOrder: clearOrderMock }),
 }));
 
-vi.mock("@/client/hooks", () => ({
+vi.mock("@/ui/hooks", () => ({
   usePortOnePayment: usePortOnePaymentMock,
   useCheckoutData: () => ({ data: null as unknown, loading: false }),
   useCheckoutForm: () => ({ errors: {}, handleSubmit: vi.fn() }),

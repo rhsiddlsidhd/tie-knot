@@ -1,5 +1,5 @@
-import { PageTitle } from "@/client/components/molecules";
-import { OrderSummary } from "@/client/components/organisms";
+import { PageTitle } from "@/ui/components/molecules";
+import { OrderSummary } from "@/ui/components/organisms";
 import React from "react";
 
 const CheckoutLayout = async ({ children }: { children: React.ReactNode }) => {

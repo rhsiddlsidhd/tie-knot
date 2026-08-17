@@ -12,7 +12,7 @@ vi.mock("./ProductSummary", () => ({
   ),
 }));
 
-vi.mock("@/client/components/organisms", () => ({
+vi.mock("@/ui/components/organisms", () => ({
   ProductFeatures: ({ options }: { options: { label: string }[] }) => (
     <div>{options.map((o) => o.label).join(",")}</div>
   ),

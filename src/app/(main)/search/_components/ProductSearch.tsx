@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { SearchEmptyState } from "./SearchEmptyState";
-import { useDebouncedValue, useProductSearch } from "../_hooks";
-import { TypographyMuted } from "@/client/components/atoms";
-import { Spinner, Alert } from "@/client/components/molecules";
-import { ProductGrid } from "@/client/components/organisms";
-import { initialFilterState } from "@/client/context/productFilter";
+import { useDebouncedValue, useProductSearch } from "@/ui/hooks";
+import { TypographyMuted } from "@/ui/components/atoms";
+import { Spinner, Alert } from "@/ui/components/molecules";
+import { ProductGrid } from "@/ui/components/organisms";
+import { initialFilterState } from "@/ui/stores/context/productFilter";
 
 // 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/AGENTS.md)
 const SEARCH_DEBOUNCE_MS = 300;

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { signupUser } from "@/actions";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
-import { SignupForm as PureSignupForm } from "@/client/components/organisms";
+import { SignupForm as PureSignupForm } from "@/ui/components/organisms";
 import { routes } from "@/core/domain";
 export function SignupForm() {
   const router = useRouter();

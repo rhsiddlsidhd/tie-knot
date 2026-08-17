@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { routes } from "@/core/domain";
 import { PremiumFeatureRegistrationForm } from "./_components";
-import { Button, TypographyH1, TypographyMuted, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/client/components/atoms";
+import { Button, TypographyH1, TypographyMuted, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms";
 import { verifySession } from "@/services";
 
 export default async function NewPremiumFeaturePage() {

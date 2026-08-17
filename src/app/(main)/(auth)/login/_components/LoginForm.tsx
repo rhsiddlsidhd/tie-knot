@@ -9,7 +9,7 @@ import { loginUser } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import type { UserRole } from "@/core/domain";
 import { getFieldError, hasFieldErrors } from "@/core/utils";
-import { LoginForm as PureLoginForm } from "@/client/components/organisms";
+import { LoginForm as PureLoginForm } from "@/ui/components/organisms";
 import { routes } from "@/core/domain";
 export function LoginForm() {
   const router = useRouter();

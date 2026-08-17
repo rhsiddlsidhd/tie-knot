@@ -1,10 +1,10 @@
 import { AuthButtons } from "./AuthButtons";
-import { MobileNav } from "@/client/components/organisms";
+import { MobileNav } from "@/ui/components/organisms";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
 import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain";
-import { Button, TypographyH4 } from "@/client/components/atoms";
+import { Button, TypographyH4 } from "@/ui/components/atoms";
 const Header = () => {
   return (
     <header className="bg-background/80 border-border sticky top-0 right-0 left-0 z-50 w-full border-b backdrop-blur-md">

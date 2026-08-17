@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { updateUserPassword, clearUserEmailCookie } from "@/actions";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
-import { UpdatePasswordForm as PureUpdatePasswordForm } from "@/client/components/organisms";
+import { UpdatePasswordForm as PureUpdatePasswordForm } from "@/ui/components/organisms";
 import { routes } from "@/core/domain";
 
 export function UpdatePasswordForm() {

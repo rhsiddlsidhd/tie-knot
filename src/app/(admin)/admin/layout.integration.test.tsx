@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { SWRConfig } from "swr";
 import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
-import type * as AtomsModule from "@/client/components/atoms";
+import type * as AtomsModule from "@/ui/components/atoms";
 
 const adminSession = { role: "ADMIN" as const, email: "admin@b.com", userId: "user-1" };
 
@@ -29,7 +29,7 @@ beforeAll(() => {
 afterEach(() => server.resetHandlers());
 afterAll(() => { server.close(); globalThis.fetch = nativeFetch; });
 
-vi.mock("@/client/components/atoms", async (importOriginal) => {
+vi.mock("@/ui/components/atoms", async (importOriginal) => {
   const actual = await importOriginal<typeof AtomsModule>();
   const Passthrough = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -42,10 +42,10 @@ vi.mock("@/client/components/atoms", async (importOriginal) => {
     SidebarFooter: Passthrough,
   };
 });
-vi.mock("@/client/components/organisms", () => ({
+vi.mock("@/ui/components/organisms", () => ({
   SidebarToggle: (): null => null,
 }));
-vi.mock("@/client/components/molecules", () => ({
+vi.mock("@/ui/components/molecules", () => ({
   SidebarNavItem: (): null => null,
 }));
 vi.mock("./_components", () => ({ AdminModal: (): null => null }));

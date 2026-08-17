@@ -37,6 +37,8 @@ export interface ProductJSON {
   deletedAt: string | null;
 }
 
+export type Product = ProductJSON;
+
 // 1. 필터 키 배열 정의 (UI 노출 순서 보장 및 타입 추출용)
 export const PRODUCT_SORT_KEYS = [
   "ALL",

@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { deleteGuestbook } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { hasFieldErrors } from "@/core/utils";
-import { useGuestbookModalStore } from "@/client/store";
-import { DeleteGuestbookForm as PureDeleteGuestbookForm } from "@/client/components/organisms";
+import { useGuestbookModalStore } from "@/ui/stores";
+import { DeleteGuestbookForm as PureDeleteGuestbookForm } from "@/ui/components/organisms";
 export function DeleteGuestbookForm({ payload }: { payload: string }) {
   const params = useParams();
   const query = useSearchParams();
