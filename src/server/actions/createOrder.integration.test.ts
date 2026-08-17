@@ -21,7 +21,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-vi.mock("@/server/lib/cookies", () => ({
+vi.mock("@/adapters/cookies", () => ({
   getCookie: vi.fn(),
 }));
 
@@ -33,7 +33,7 @@ vi.mock("@/server/services", async (importOriginal) => {
   };
 });
 
-import { getCookie } from "@/server/lib/cookies";
+import { getCookie } from "@/adapters/cookies";
 import { requireAuth, createProductService } from "@/server/services";
 import { createOrder } from "./createOrder";
 

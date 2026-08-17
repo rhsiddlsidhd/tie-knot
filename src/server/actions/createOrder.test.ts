@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-vi.mock("@/server/lib/cookies", () => ({
+vi.mock("@/adapters/cookies", () => ({
   getCookie: vi.fn(),
 }));
 
@@ -17,7 +17,7 @@ vi.mock("@/server/services", () => ({
 }));
 
 import { redirect } from "next/navigation";
-import { getCookie } from "@/server/lib/cookies";
+import { getCookie } from "@/adapters/cookies";
 import { requireAuth, createOrderService } from "@/server/services";
 import { createOrder } from "./createOrder";
 

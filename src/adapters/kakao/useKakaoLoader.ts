@@ -1,3 +1,5 @@
+import "client-only";
+
 import { useKakaoLoader as useKakaoLoaderOrigin } from "react-kakao-maps-sdk";
 
 const useKakaoLoader = () => {

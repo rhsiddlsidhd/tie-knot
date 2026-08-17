@@ -3,8 +3,8 @@ import type { APIRouteResponse} from "@/server/boundary";
 import { routeSuccess, routeError } from "@/server/boundary";
 import { AppError } from "@/core/domain";
 import { requireAuth } from "@/server/services";
-import type { UploadSignature } from "@/server/lib/cloudinary";
-import { signUploadRequest } from "@/server/lib/cloudinary";
+import { signUploadRequest } from "@/adapters/cloudinary/sign";
+import type { UploadSignature } from "@/adapters/cloudinary/sign";
 
 export const POST = async (
   request: NextRequest,

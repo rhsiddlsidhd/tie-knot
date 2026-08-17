@@ -5,17 +5,17 @@ vi.mock("@/server/services", () => ({
   getUser: vi.fn(),
 }));
 
-vi.mock("@/server/lib/bcrypt", () => ({
+vi.mock("@/adapters/bcrypt", () => ({
   comparePasswords: vi.fn(),
 }));
 
-vi.mock("@/server/lib/cookies", () => ({
+vi.mock("@/adapters/cookies", () => ({
   setCookie: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { getUser } from "@/server/services";
-import { comparePasswords } from "@/server/lib/bcrypt";
-import { setCookie } from "@/server/lib/cookies";
+import { comparePasswords } from "@/adapters/bcrypt";
+import { setCookie } from "@/adapters/cookies";
 import { loginUser } from "./loginUser";
 
 const buildFormData = (overrides?: Record<string, string>) => {

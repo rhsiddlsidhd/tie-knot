@@ -6,12 +6,12 @@ vi.mock("@/server/services", () => ({
   createUser: vi.fn(),
 }));
 
-vi.mock("@/server/lib/bcrypt", () => ({
+vi.mock("@/adapters/bcrypt", () => ({
   hashPassword: vi.fn(),
 }));
 
 import { checkEmailDuplicate, createUser } from "@/server/services";
-import { hashPassword } from "@/server/lib/bcrypt";
+import { hashPassword } from "@/adapters/bcrypt";
 import { signupUser } from "./signupUser";
 
 const buildFormData = (overrides?: Record<string, string>) => {

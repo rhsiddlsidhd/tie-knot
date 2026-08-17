@@ -1,7 +1,8 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { deleteProductAsset, uploadProductImage } from "@/server/lib/cloudinary";
+import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
+import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { requireAuth, createProductService } from "@/server/services";
 import { actionError } from "@/server/boundary";
 import { productSchema } from "@/core/schemas";

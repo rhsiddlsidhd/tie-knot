@@ -1,3 +1,5 @@
+import "client-only";
+
 import { AppError } from "@/core/domain";
 
 const BASE_URL = process.env.NEXT_PUBLIC_CLOUDINARY_BASE_URL;

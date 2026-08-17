@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { decrypt } from "@/server/lib/jose";
+import { decrypt } from "@/adapters/jose";
 import { routes } from "@/core/domain";
 
 /**

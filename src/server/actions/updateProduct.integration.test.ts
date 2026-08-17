@@ -22,8 +22,11 @@ import { dbConnect } from "@/server/lib/mongodb";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { ProductModel } from "@/server/models";
 
-vi.mock("@/server/lib/cloudinary", () => ({
+vi.mock("@/adapters/cloudinary/upload-from-url", () => ({
   uploadProductImage: vi.fn(),
+}));
+
+vi.mock("@/adapters/cloudinary/cleanup", () => ({
   deleteProductAsset: vi.fn(),
 }));
 
@@ -40,7 +43,7 @@ vi.mock("@/server/services", async (importOriginal) => {
 });
 
 import { requireAuth, createProductService } from "@/server/services";
-import { uploadProductImage } from "@/server/lib/cloudinary";
+import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { updateProduct } from "./updateProduct";
 
 const ADMIN_SESSION = { role: "ADMIN" as const, email: "admin@test.com", userId: "admin-1" };

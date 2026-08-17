@@ -5,9 +5,9 @@ import { dbConnect } from "@/server/lib/mongodb";
 import { buildUserInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
 import { UserModel } from "@/server/models";
-import { encrypt } from "@/server/lib/jose";
+import { encrypt } from "@/adapters/jose";
 
-vi.mock("@/server/lib/cookies", () => ({
+vi.mock("@/adapters/cookies", () => ({
   getCookie: vi.fn(),
   deleteCookie: vi.fn().mockResolvedValue(undefined),
 }));
@@ -18,7 +18,7 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-import { getCookie, deleteCookie } from "@/server/lib/cookies";
+import { getCookie, deleteCookie } from "@/adapters/cookies";
 import { redirect } from "next/navigation";
 import { getUser, getAuth, requireAuth, logoutService, verifySession } from "./auth.service";
 

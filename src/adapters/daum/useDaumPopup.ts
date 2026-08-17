@@ -1,5 +1,7 @@
 "use client";
 
+import "client-only";
+
 import { useState } from "react";
 import type { Address} from "react-daum-postcode";
 import { useDaumPostcodePopup } from "react-daum-postcode";

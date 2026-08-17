@@ -5,17 +5,17 @@ vi.mock("@/server/services", () => ({
   checkEmailDuplicate: vi.fn(),
 }));
 
-vi.mock("@/server/lib/jose", () => ({
+vi.mock("@/adapters/jose", () => ({
   encrypt: vi.fn(),
 }));
 
-vi.mock("@/server/lib/nodemailer", () => ({
+vi.mock("@/adapters/nodemailer", () => ({
   sendEmail: vi.fn(),
 }));
 
 import { checkEmailDuplicate } from "@/server/services";
-import { encrypt } from "@/server/lib/jose";
-import { sendEmail } from "@/server/lib/nodemailer";
+import { encrypt } from "@/adapters/jose";
+import { sendEmail } from "@/adapters/nodemailer";
 import { requestPasswordReset } from "./requestPasswordReset";
 
 const buildFormData = (overrides?: Record<string, string>) => {

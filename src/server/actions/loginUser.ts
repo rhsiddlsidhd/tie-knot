@@ -4,11 +4,11 @@ import type { APIResponse } from "@/core/domain";
 
 import { validateAndFlatten } from "@/core/utils";
 import { LoginSchema } from "@/core/schemas";
-import { encrypt } from "@/server/lib/jose";
-import { setCookie } from "@/server/lib/cookies";
+import { encrypt } from "@/adapters/jose";
+import { setCookie } from "@/adapters/cookies";
 import { getUser } from "@/server/services";
-import type { UserRole } from "@/server/models";
-import { comparePasswords } from "@/server/lib/bcrypt";
+import type { UserRole } from "@/core/domain";
+import { comparePasswords } from "@/adapters/bcrypt";
 import { actionError } from "@/server/boundary";
 
 export const loginUser = async (

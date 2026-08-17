@@ -6,8 +6,11 @@ vi.mock("@/server/services", () => ({
   createProductService: vi.fn(),
 }));
 
-vi.mock("@/server/lib/cloudinary", () => ({
+vi.mock("@/adapters/cloudinary/upload-from-url", () => ({
   uploadProductImage: vi.fn(),
+}));
+
+vi.mock("@/adapters/cloudinary/cleanup", () => ({
   deleteProductAsset: vi.fn(),
 }));
 
@@ -16,7 +19,8 @@ vi.mock("next/cache", () => ({
 }));
 
 import { requireAuth, createProductService } from "@/server/services";
-import { deleteProductAsset, uploadProductImage } from "@/server/lib/cloudinary";
+import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
+import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
 import { createProduct } from "./createProduct";
 
 const buildValidFormData = (overrides?: Record<string, string>) => {

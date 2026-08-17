@@ -7,7 +7,7 @@ vi.mock("@/server/services", () => ({
   requireAuth: vi.fn(),
 }));
 
-vi.mock("@/server/lib/cloudinary", () => ({
+vi.mock("@/adapters/cloudinary/sign", () => ({
   signUploadRequest: vi.fn().mockReturnValue({
     signature: "mock-signature",
     timestamp: 1234567890,
@@ -19,7 +19,7 @@ vi.mock("@/server/lib/cloudinary", () => ({
 }));
 
 import { requireAuth } from "@/server/services";
-import { signUploadRequest } from "@/server/lib/cloudinary";
+import { signUploadRequest } from "@/adapters/cloudinary/sign";
 import { POST } from "./route";
 
 const buildRequest = (body: unknown) =>

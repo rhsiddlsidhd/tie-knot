@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/server/lib/jose", () => ({
+vi.mock("@/adapters/jose", () => ({
   decrypt: vi.fn(),
 }));
 
@@ -9,13 +9,13 @@ vi.mock("@/server/services", () => ({
   changePassword: vi.fn(),
 }));
 
-vi.mock("@/server/lib/cookies", () => ({
+vi.mock("@/adapters/cookies", () => ({
   deleteCookie: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { decrypt } from "@/server/lib/jose";
+import { decrypt } from "@/adapters/jose";
 import { changePassword } from "@/server/services";
-import { deleteCookie } from "@/server/lib/cookies";
+import { deleteCookie } from "@/adapters/cookies";
 import { updateUserPassword } from "./updateUserPassword";
 
 const buildFormData = (overrides?: Record<string, string>) => {

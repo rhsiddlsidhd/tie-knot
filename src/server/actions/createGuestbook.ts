@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { hashPassword } from "@/server/lib/bcrypt";
+import { hashPassword } from "@/adapters/bcrypt";
 
 import { GuestbookSchema } from "@/core/schemas";
 import { createGuestbookService } from "@/server/services";

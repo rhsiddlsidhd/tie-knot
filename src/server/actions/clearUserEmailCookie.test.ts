@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/server/lib/cookies", () => ({
+vi.mock("@/adapters/cookies", () => ({
   deleteCookie: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { deleteCookie } from "@/server/lib/cookies";
+import { deleteCookie } from "@/adapters/cookies";
 import { clearUserEmailCookie } from "./clearUserEmailCookie";
 
 describe("clearUserEmailCookie", () => {

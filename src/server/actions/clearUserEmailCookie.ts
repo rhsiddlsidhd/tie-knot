@@ -1,6 +1,6 @@
 "use server";
 
-import { deleteCookie } from "@/server/lib/cookies";
+import { deleteCookie } from "@/adapters/cookies";
 import { actionError } from "@/server/boundary";
 import type { APIResponse } from "@/core/domain";
 
