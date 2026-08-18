@@ -99,6 +99,7 @@ export async function requireAdmin(): Promise<AuthSession> {
 /**
  * 로그아웃 처리를 위해 서버의 인증 토큰 쿠키를 삭제합니다.
  */
+
 export async function logoutService() {
   await deleteCookie("token");
 }
