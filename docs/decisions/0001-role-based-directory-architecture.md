@@ -72,6 +72,8 @@ Mongoose Model이 persistence 접근을 이미 제공하며, 추가 추상화는
 
 현재 운영 규칙의 단일 원본은 각 계층의 `AGENTS.md`와 `docs/architecture/`, `docs/conventions/`, `docs/validation/`이다. 이 ADR은 그 규칙을 복제하지 않고 선택의 이유를 보존한다.
 
+`server-only`와 `client-only` 경계는 marker가 선언된 모듈이 실제 소비 그래프에 연결된 production build에서 검증된다. marker가 누락된 파일과 아직 소비되지 않은 혼합 배럴은 작성 시점에 발견되지 않을 수 있다. 서로 다른 런타임이 실제로 연결되면 필수 production build가 이를 차단한다. 반복적인 누락 사례가 없고 필수 build가 배포를 차단하므로 현재는 별도 구조 검사기를 도입하지 않는다.
+
 ## 관련 이력
 
 - 1차 런타임 중심 이동: `2499913`

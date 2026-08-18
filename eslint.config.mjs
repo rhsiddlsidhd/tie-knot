@@ -41,6 +41,45 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     }],
   },
 }, {
+  files: ["src/core/**/*.{ts,tsx}"],
+  ignores: [
+    "src/core/**/*.test.ts",
+    "src/core/**/*.test.tsx",
+    "src/core/**/*.integration.test.ts",
+    "src/core/**/*.integration.test.tsx",
+  ],
+  rules: {
+    "import/no-nodejs-modules": "error",
+    "no-restricted-imports": ["error", {
+      paths: [
+        { name: "mongoose", message: "core는 Mongoose에 의존하지 않는다" },
+        { name: "next", message: "core는 Next.js에 의존하지 않는다" },
+        { name: "server-only", message: "core는 runtime marker에 의존하지 않는다" },
+        { name: "client-only", message: "core는 runtime marker에 의존하지 않는다" },
+      ],
+      patterns: [
+        { group: ["mongoose/*"], message: "core는 Mongoose에 의존하지 않는다" },
+        { group: ["next/*"], message: "core는 Next.js에 의존하지 않는다" },
+      ],
+    }],
+  },
+}, {
+  files: ["src/actions/**/*.{ts,tsx}"],
+  ignores: [
+    "src/actions/**/*.test.ts",
+    "src/actions/**/*.test.tsx",
+    "src/actions/**/*.integration.test.ts",
+    "src/actions/**/*.integration.test.tsx",
+  ],
+  rules: {
+    "no-restricted-imports": ["error", {
+      paths: [
+        { name: "server-only", message: "action은 server-only marker를 사용하지 않는다" },
+        { name: "client-only", message: "action은 client-only marker를 사용하지 않는다" },
+      ],
+    }],
+  },
+}, {
   files: ["src/actions/**/*.test.ts", "src/actions/**/*.integration.test.ts"],
   rules: {
     "import/no-restricted-paths": "off",
