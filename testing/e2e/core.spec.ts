@@ -105,9 +105,14 @@ test("기존 상세 이미지와 thumbnail을 유지한 채 상품명을 수정�
   await expect(page.getByText("E2E 기존 이미지 유지 완료")).toBeVisible();
 });
 
-test("실제 주문을 생성하고 mock PortOne 경계로 결제를 완료한다", async ({ page }) => {
+test("mock PG 리디렉션으로 복귀해 실제 주문의 결제를 완료한다", async ({ page }) => {
+  const navigatedPaths: string[] = [];
+  page.on("framenavigated", (frame) => {
+    if (frame === page.mainFrame())
+      navigatedPaths.push(new URL(frame.url()).pathname);
+  });
+
   await loginAsUser(page);
-  await page.goto("/payment");
   await page.evaluate(() => {
     sessionStorage.setItem("order-storage", JSON.stringify({
       state: {
@@ -127,7 +132,7 @@ test("실제 주문을 생성하고 mock PortOne 경계로 결제를 완료한�
       version: 0,
     }));
   });
-  await page.reload();
+  await page.goto("/payment");
 
   await page.getByLabel("이름").fill("테스트 구매자");
   await page.getByLabel("연락처").fill("010-1234-5678");
@@ -136,6 +141,7 @@ test("실제 주문을 생성하고 mock PortOne 경계로 결제를 완료한�
   await page.getByRole("button", { name: "결제하기" }).click();
 
   await expect(page).toHaveURL(/\/payment\/success\?orderId=ORDER-/, { timeout: 30_000 });
+  expect(navigatedPaths).toContain("/payment-result");
   await expect(page.getByRole("heading", { name: "결제가 완료되었습니다!" })).toBeVisible();
   await page.getByRole("link", { name: "주문 내역 확인" }).click();
   await expect(page.getByText("E2E 결제 상품")).toBeVisible();

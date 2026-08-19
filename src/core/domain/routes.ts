@@ -14,6 +14,7 @@ export const routes = {
   deliveryInfo: "/delivery-info",
   payment: {
     root: "/payment",
+    result: "/payment-result",
     success: "/payment/success",
   },
   myOrders: {
