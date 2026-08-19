@@ -77,10 +77,7 @@ export default defineConfig({
         test: {
           name: "integration-component",
           environment: "jsdom",
-          include: [
-            "src/app/(admin)/admin/layout.integration.test.tsx",
-            "src/ui/**/*.integration.test.{ts,tsx}",
-          ],
+          include: ["src/ui/**/*.integration.test.{ts,tsx}"],
           setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
           maxWorkers: 2,
         },
