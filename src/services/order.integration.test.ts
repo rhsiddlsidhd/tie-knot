@@ -681,6 +681,21 @@ describe("order", () => {
       ).rejects.toBeInstanceOf(AppError);
     });
 
+    it("가상계좌 결제수단 주문은 결제 동기화 전이어도 취소하지 않는다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      authState.userId = userId;
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId, payMethod: "VIRTUAL_ACCOUNT" }),
+      );
+
+      await expect(
+        cancelPendingOrderForCurrentUser(order._id.toString()),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
     it("가상계좌가 발급된 PENDING 주문은 이 경로로 취소하지 않는다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       authState.userId = userId;
@@ -718,6 +733,20 @@ describe("order", () => {
       await OrderModel.updateOne(
         { _id: order._id },
         { $set: { paymentId: new mongoose.Types.ObjectId() } },
+      );
+      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
+
+      await cancelExpiredPendingOrders(userId);
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
+    it("가상계좌 결제수단 주문은 결제 동기화 전이어도 만료 대상이 아니다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      // paymentId는 syncPayment가 발급을 확인한 뒤에야 붙는다 — 그 전 구간을 본다.
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId, payMethod: "VIRTUAL_ACCOUNT" }),
       );
       await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
 

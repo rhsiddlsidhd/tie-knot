@@ -388,7 +388,9 @@ export const cancelPendingOrderForCurrentUser = async (
   if (order.orderStatus !== "PENDING") {
     throw new AppError("VALIDATION", "결제 전 주문만 취소할 수 있습니다.");
   }
-  if (order.paymentId) {
+  // paymentId는 syncPayment가 가상계좌 발급을 확인한 뒤에 붙으므로, 그 확인 전
+  // 구간까지 덮으려면 주문의 결제수단 자체도 함께 본다.
+  if (order.paymentId || order.payMethod === "VIRTUAL_ACCOUNT") {
     throw new AppError(
       "VALIDATION",
       "가상계좌 입금 대기 주문은 입금기한이 지나면 자동으로 취소됩니다.",
@@ -433,6 +435,9 @@ export const cancelExpiredPendingOrders = async (
       userId,
       orderStatus: "PENDING",
       paymentId: null,
+      // paymentId는 syncPayment가 가상계좌 발급을 확인한 뒤에 붙는다 — 발급 직후
+      // 사용자가 창을 닫아 아직 동기화되지 않은 주문까지 덮으려면 결제수단도 본다.
+      payMethod: { $ne: "VIRTUAL_ACCOUNT" },
       createdAt: { $lt: deadline },
     },
     {
