@@ -1,5 +1,5 @@
 import "server-only";
-export * from "./coupleInfo.model";
+export * from "./invitation.model";
 export * from "./feature.model";
 export * from "./guestbook.model";
 export * from "./order.model";

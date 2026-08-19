@@ -13,15 +13,15 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/ui/stores", () => ({
-  useOrderStore: (selector: (s: { setOrder: (item: unknown) => void }) => unknown) =>
-    selector({ setOrder: setOrderMock }),
+  useOrderStore: (
+    selector: (s: { setOrder: (item: unknown) => void }) => unknown,
+  ) => selector({ setOrder: setOrderMock }),
 }));
 
 import { PaymentButton } from "./PaymentButton";
 
 const buildOrder = (): OrderJSON =>
   ({
-    coupleInfoId: "couple-1",
     finalPrice: 9000,
     product: {
       productId: "product-1",
@@ -45,7 +45,7 @@ describe("PaymentButton (컨테이너)", () => {
     await user.click(screen.getByRole("button", { name: /결제하기/ }));
 
     expect(setOrderMock).toHaveBeenCalledWith(
-      expect.objectContaining({ productId: "product-1", coupleInfoId: "couple-1" }),
+      expect.objectContaining({ productId: "product-1" }),
     );
     expect(pushMock).toHaveBeenCalledWith("/payment");
   });

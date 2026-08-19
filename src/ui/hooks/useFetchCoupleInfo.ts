@@ -1,18 +1,14 @@
 "use client";
 import { fetcher } from "@/ui/fetcher";
-import type { CoupleInfo } from "@/core/domain";
-import { useSearchParams } from "next/navigation";
+import type { InvitationEditor } from "@/core/domain";
 import useSWR from "swr";
 
-const useFetchCoupleInfo = () => {
-  const searchParams = useSearchParams();
-  const q = searchParams.get("q");
-
-  const swrKey = q ? `/api/couple-info?q=${q}` : null;
+const useFetchCoupleInfo = (orderId?: string) => {
+  const swrKey = orderId ? `/api/invitations/${orderId}` : null;
 
   const { data, error, isLoading, mutate } = useSWR(
     swrKey,
-    (url: string) => fetcher<CoupleInfo>(url),
+    (url: string) => fetcher<InvitationEditor | null>(url),
     {
       // 수정 페이지에 최적화된 옵션
       revalidateOnFocus: false, // 탭 전환 시 재검증 방지

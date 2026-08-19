@@ -18,9 +18,10 @@ export const routes = {
   },
   myOrders: {
     root: "/my-orders",
-    edit: "/my-orders/edit",
     refund: "/my-orders/refund",
-    coupleInfo: "/my-orders/couple-info",
+    invitation: (orderId: string) => `/my-orders/${orderId}/invitation`,
+    invitationPreview: (orderId: string) =>
+      `/my-orders/${orderId}/invitation/preview`,
   },
   products: {
     root: "/products",
@@ -32,7 +33,8 @@ export const routes = {
     detail: (category: string, id: string) => `/products/${category}/${id}`,
   },
   preview: {
-    detail: (id: string) => `/preview/${id}`,
+    detail: (publicKey: string) => `/preview/${publicKey}`,
+    sample: "/preview/sample",
   },
   admin: {
     dashboard: "/admin/dashboard",

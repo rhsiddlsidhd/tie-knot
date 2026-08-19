@@ -23,7 +23,6 @@ export function CoupleInfoFormView({
   isUploading,
   uploadProgress,
   handleSubmit,
-  coupleInfoId,
   orderId,
 }: CoupleInfoFormViewProps) {
   if (type === "edit" && isLoading)
@@ -44,10 +43,7 @@ export function CoupleInfoFormView({
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      {type === "edit" && coupleInfoId && (
-        <input type="hidden" name="couple_info_id" value={coupleInfoId} />
-      )}
-      {type === "create" && orderId && (
+      {orderId && (
         <input type="hidden" name="orderId" value={orderId} />
       )}
 

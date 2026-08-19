@@ -5,7 +5,7 @@ import mongoose, { Schema } from "mongoose";
 // Guestbook 문서 인터페이스
 export interface IGuestbook {
   _id: Types.ObjectId | string;
-  coupleInfoId: Types.ObjectId | string; // 어떤 청첩장의 방명록인지 식별 (CoupleInfo 모델 참조)
+  invitationId: Types.ObjectId | string;
   author: string; // 작성자 이름
   message: string; // 방명록 내용
   password: string; // 수정/삭제를 위한 비밀번호
@@ -17,9 +17,9 @@ export interface IGuestbook {
 // Mongoose 스키마 정의
 const guestbookSchema = new Schema<IGuestbook>(
   {
-    coupleInfoId: {
+    invitationId: {
       type: Schema.Types.ObjectId,
-      ref: "CoupleInfo",
+      ref: "Invitation",
       required: true,
       index: true, // 특정 청첩장의 방명록을 조회하는 경우가 많으므로 인덱스 추가
     },

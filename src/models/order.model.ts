@@ -77,8 +77,6 @@ type OrderStatusType = (typeof ORDER_STATUS)[number];
 export interface IOrder {
   _id: Types.ObjectId;
   merchantUid: string;
-  // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠라 결제 시점에는 없을 수 있다.
-  coupleInfoId?: Types.ObjectId | string;
   userId: Types.ObjectId | string;
   buyerName: string;
   buyerEmail: string;
@@ -102,12 +100,6 @@ const orderSchema = new Schema<IOrder>(
   {
     // 식별자
     merchantUid: { type: String, required: true, unique: true },
-    coupleInfoId: {
-      type: Schema.Types.ObjectId,
-      ref: "CoupleInfo",
-      index: true, // getActiveOrderInfoByCoupleInfoId가 이 필드로 조회한다
-    },
-
     // 구매자
     userId: {
       type: Schema.Types.ObjectId,

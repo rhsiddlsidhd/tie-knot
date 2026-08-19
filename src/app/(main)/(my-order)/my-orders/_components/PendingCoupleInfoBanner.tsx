@@ -11,7 +11,7 @@ const PendingCoupleInfoBanner = ({ orderId }: { orderId: string }) => {
         청첩장 정보가 아직 입력되지 않았어요. 정보를 입력하면 바로 확인할 수 있어요.
       </Alert>
       <Button size="lg" variant="outline" asChild>
-        <Link href={`${routes.myOrders.coupleInfo}?orderId=${orderId}`}>
+        <Link href={routes.myOrders.invitation(orderId)}>
           <Edit className="mr-1 h-4 w-4" />
           정보 입력하기
         </Link>

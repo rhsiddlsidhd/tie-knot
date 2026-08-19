@@ -1,14 +1,19 @@
 import { Alert, TextField } from "@/ui/components/molecules";
-import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms";
-
+import {
+  Button,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/atoms";
 
 import type { APIResponse } from "@/core/domain";
 import { getFieldError } from "@/core/utils";
 
 interface DeleteGuestbookFormProps {
   guestbookId: string;
-  coupleInfoId: string | string[] | undefined;
-  productId: string | null;
+  publicKey: string;
   action: (formData: FormData) => void;
   pending: boolean;
   state: APIResponse<{ message: string }> | null;
@@ -16,8 +21,7 @@ interface DeleteGuestbookFormProps {
 
 export function DeleteGuestbookForm({
   guestbookId,
-  coupleInfoId,
-  productId,
+  publicKey,
   action,
   pending,
   state,
@@ -28,8 +32,7 @@ export function DeleteGuestbookForm({
     <form action={action} className="space-y-4">
       <DialogHeader>
         <input name="guestbookId" defaultValue={guestbookId} hidden />
-        <input name="coupleInfoId" defaultValue={coupleInfoId} hidden />
-        <input name="productId" defaultValue={productId ?? undefined} hidden />
+        <input name="publicKey" defaultValue={publicKey} hidden />
         <DialogTitle>비밀번호 확인</DialogTitle>
 
         <DialogDescription>

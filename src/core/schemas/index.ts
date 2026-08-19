@@ -15,7 +15,6 @@ export * from "./request/userEmail.schema";
 
 export * from "./response/auth.schema";
 export * from "./response/banks.schema";
-export * from "./response/coupleInfo.schema";
 export * from "./response/guestbook.schema";
 export * from "./response/kakaomap.schema";
 export * from "./response/premiumFeature.schema";

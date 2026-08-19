@@ -21,7 +21,6 @@ const PaymentButton = ({ order }: { order: OrderJSON }) => {
 
     const checkoutItem: CheckoutItem = {
       productId: order.product.productId.toString(),
-      coupleInfoId: order.coupleInfoId?.toString(),
       title: order.product.title,
       thumbnail: order.product.thumbnail,
       originalPrice: order.product.pricing.originalPrice,

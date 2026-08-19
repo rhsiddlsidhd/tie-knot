@@ -9,7 +9,6 @@ const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
 // (.strict()는 Zod 4에서 deprecated, z.strictObject()가 공식 대체)
 export const guestbookEntryResponseSchema = z.strictObject({
   _id: z.string(),
-  coupleInfoId: z.string(),
   author: z.string(),
   message: z.string(),
   isPrivate: z.boolean(),

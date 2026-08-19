@@ -1,6 +1,7 @@
 export * from "./clearUserEmailCookie";
 export * from "./completePayment";
-export * from "./createCoupleInfo";
+export * from "./saveInvitation";
+export * from "./setInvitationStatus";
 export * from "./createGuestbook";
 export * from "./createOrder";
 export * from "./createPremiumFeature";
@@ -13,7 +14,6 @@ export * from "./loginUser";
 export * from "./logoutUser";
 export * from "./requestPasswordReset";
 export * from "./signupUser";
-export * from "./updateCoupleInfo";
 export * from "./updatePremiumFeature";
 export * from "./updateProduct";
 export * from "./updateProductStatus";

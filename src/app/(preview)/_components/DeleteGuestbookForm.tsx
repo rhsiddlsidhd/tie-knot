@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { deleteGuestbook } from "@/actions";
@@ -10,8 +10,7 @@ import { hasFieldErrors } from "@/core/utils";
 import { useGuestbookModalStore } from "@/ui/stores";
 import { DeleteGuestbookForm as PureDeleteGuestbookForm } from "@/ui/components/organisms";
 export function DeleteGuestbookForm({ payload }: { payload: string }) {
-  const params = useParams();
-  const query = useSearchParams();
+  const { publicKey } = useParams<{ publicKey: string }>();
   const closeModal = useGuestbookModalStore((state) => state.closeModal);
   const [state, action, pending] = useActionState<
     APIResponse<{ message: string }>,
@@ -33,8 +32,7 @@ export function DeleteGuestbookForm({ payload }: { payload: string }) {
   return (
     <PureDeleteGuestbookForm
       guestbookId={payload}
-      coupleInfoId={params.id}
-      productId={query.get("product")}
+      publicKey={publicKey}
       action={action}
       pending={pending}
       state={state}

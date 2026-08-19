@@ -4,7 +4,7 @@ import { useState, startTransition } from "react";
 import type React from "react";
 import { toast } from "sonner";
 import { validateAndFlatten } from "@/core/utils";
-import type { BuyerInfo} from "@/core/schemas";
+import type { BuyerInfo } from "@/core/schemas";
 import { BuyerInfoSchema } from "@/core/schemas";
 import type { CheckoutItem } from "@/core/domain";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
@@ -21,7 +21,9 @@ export function useCheckoutForm({
   action,
   router,
 }: UseCheckoutFormOptions) {
-  const [errors, setErrors] = useState<Partial<Record<keyof BuyerInfo, string[]>>>({});
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof BuyerInfo, string[]>>
+  >({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,15 @@ export function useCheckoutForm({
       return;
     }
 
-    const { productId, originalPrice, discountedPrice, quantity, selectedFeatures, thumbnail, title, coupleInfoId } = order;
+    const {
+      productId,
+      originalPrice,
+      discountedPrice,
+      quantity,
+      selectedFeatures,
+      thumbnail,
+      title,
+    } = order;
     formData.append("productId", productId);
     formData.append("productTitle", title);
     formData.append("productThumbnail", thumbnail);
@@ -55,9 +65,6 @@ export function useCheckoutForm({
     formData.append("originalPrice", String(originalPrice));
     formData.append("discountedPrice", String(discountedPrice));
     formData.append("selectedFeatures", JSON.stringify(selectedFeatures ?? []));
-    // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠라 결제 시점엔 없을 수 있다.
-    if (coupleInfoId) formData.append("coupleInfoId", coupleInfoId);
-
     startTransition(() => action(formData));
   };
 

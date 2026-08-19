@@ -1,10 +1,10 @@
 "use client";
 
 import { startTransition, useActionState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { createCoupleInfo, updateCoupleInfo } from "@/actions";
+import { saveInvitation } from "@/actions";
 
 import type { APIResponse } from "@/core/domain";
 import { useImageUpload } from "./useImageUpload";
@@ -14,20 +14,16 @@ import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
 import { routes } from "@/core/domain";
 
-export function useCoupleInfoForm({ type }: { type: "create" | "edit" }) {
+export function useCoupleInfoForm(_options?: { type: "create" | "edit" }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const coupleInfoId = searchParams.get("q");
-  const orderId = searchParams.get("orderId");
+  const { orderId } = useParams<{ orderId: string }>();
 
-  const currentAction =
-    type === "edit" ? updateCoupleInfo : createCoupleInfo;
   const [state, action] = useActionState<
     APIResponse<Record<string, string>>,
     FormData
-  >(currentAction, null);
+  >(saveInvitation, null);
 
-  const { data, isLoading } = useFetchCoupleInfo();
+  const { data, isLoading } = useFetchCoupleInfo(orderId);
   const { banks } = useBanks();
   const { subwayStations } = useSubwayStations();
   const thumbnail = useImageList(data?.thumbnailImages);
@@ -57,7 +53,7 @@ export function useCoupleInfoForm({ type }: { type: "create" | "edit" }) {
 
     // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠라, create/edit 모두 완료 후
     // my-orders로 돌아간다(payment로 다시 보내지 않는다).
-    if (state && state.success === true && state.data._id) {
+    if (state && state.success === true && state.data.publicKey) {
       toast.success(state.data.message);
       router.push(routes.myOrders.root);
     }
@@ -73,7 +69,6 @@ export function useCoupleInfoForm({ type }: { type: "create" | "edit" }) {
     isUploading,
     uploadProgress,
     handleSubmit,
-    coupleInfoId,
     orderId,
   };
 }

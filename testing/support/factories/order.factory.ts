@@ -5,7 +5,6 @@ export const buildOrderInput = (
   overrides?: Partial<CreateOrderDto & { userId: string }>,
 ): CreateOrderDto & { userId: string } => ({
   userId: new mongoose.Types.ObjectId().toString(),
-  coupleInfoId: new mongoose.Types.ObjectId().toString(),
   buyerName: "김철수",
   buyerEmail: "buyer@example.com",
   buyerPhone: "010-1234-5678",

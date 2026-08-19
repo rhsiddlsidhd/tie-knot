@@ -2,14 +2,19 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type * as ReactModule from "react";
 
-const { useActionStateMock, routerPushMock, uploadMock, getPayloadMock, searchParamsMock } =
-  vi.hoisted(() => ({
-    useActionStateMock: vi.fn(),
-    routerPushMock: vi.fn(),
-    uploadMock: vi.fn(),
-    getPayloadMock: vi.fn(),
-    searchParamsMock: vi.fn(() => new URLSearchParams()),
-  }));
+const {
+  useActionStateMock,
+  routerPushMock,
+  uploadMock,
+  getPayloadMock,
+  paramsMock,
+} = vi.hoisted(() => ({
+  useActionStateMock: vi.fn(),
+  routerPushMock: vi.fn(),
+  uploadMock: vi.fn(),
+  getPayloadMock: vi.fn(),
+  paramsMock: vi.fn(() => ({ orderId: "order-1" })),
+}));
 
 vi.mock("react", async (importOriginal) => {
   const actual = await importOriginal<typeof ReactModule>();
@@ -18,18 +23,21 @@ vi.mock("react", async (importOriginal) => {
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: routerPushMock }),
-  useSearchParams: searchParamsMock,
+  useParams: paramsMock,
 }));
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 
 vi.mock("@/actions", () => ({
-  createCoupleInfo: vi.fn(),
-  updateCoupleInfo: vi.fn(),
+  saveInvitation: vi.fn(),
 }));
 
 vi.mock("./useImageUpload", () => ({
-  useImageUpload: () => ({ upload: uploadMock, uploadProgress: 0, isUploading: false }),
+  useImageUpload: () => ({
+    upload: uploadMock,
+    uploadProgress: 0,
+    isUploading: false,
+  }),
 }));
 vi.mock("./useImageList", () => ({
   useImageList: () => ({ getPayload: getPayloadMock }),
@@ -53,13 +61,11 @@ const buildSubmitEvent = () =>
 describe("useCoupleInfoForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    searchParamsMock.mockReturnValue(new URLSearchParams());
+    paramsMock.mockReturnValue({ orderId: "order-1" });
   });
 
   it("URL의 orderId를 그대로 리턴한다(결제 완료 후 my-orders 진입 흐름)", () => {
     useActionStateMock.mockReturnValue([null, vi.fn()]);
-    searchParamsMock.mockReturnValue(new URLSearchParams({ orderId: "order-1" }));
-
     const { result } = renderHook(() => useCoupleInfoForm({ type: "create" }));
 
     expect(result.current.orderId).toBe("order-1");
@@ -67,7 +73,7 @@ describe("useCoupleInfoForm", () => {
 
   it("create 성공 시(결제 이후 my-orders 흐름) /my-orders로 이동한다", () => {
     useActionStateMock.mockReturnValue([
-      { success: true, data: { _id: "abc", message: "등록 완료" } },
+      { success: true, data: { publicKey: "abc", message: "등록 완료" } },
       vi.fn(),
     ]);
 
@@ -78,7 +84,7 @@ describe("useCoupleInfoForm", () => {
 
   it("edit 성공 시 /my-orders로 이동한다", () => {
     useActionStateMock.mockReturnValue([
-      { success: true, data: { _id: "abc", message: "수정 완료" } },
+      { success: true, data: { publicKey: "abc", message: "수정 완료" } },
       vi.fn(),
     ]);
 

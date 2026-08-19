@@ -16,13 +16,11 @@ export const deleteGuestbook = async (
   const data = {
     password: formData.get("password") as string,
     guestbookId: formData.get("guestbookId") as string,
-    coupleInfoId: formData.get("coupleInfoId") as string,
-    productId: formData.get("productId") as string,
+    publicKey: formData.get("publicKey") as string,
   };
   const passwordSchema = GuestbookSchema.pick({ password: true }).extend({
     guestbookId: z.string().min(1, "게시글 ID가 필요합니다."),
-    coupleInfoId: z.string().min(1, "부부 상세정보 ID가 필요합니다."),
-    productId: z.string().min(1, "상품 ID가 필요합니다."),
+    publicKey: z.string().min(1, "청첩장 공개 키가 필요합니다."),
   });
   const parsed = validateAndFlatten(passwordSchema, data);
 
@@ -40,7 +38,7 @@ export const deleteGuestbook = async (
   try {
     await deleteGuestbookWithPasswordService(parsed.data);
 
-    revalidatePath(routes.preview.detail(parsed.data.coupleInfoId));
+    revalidatePath(routes.preview.detail(parsed.data.publicKey));
 
     return {
       success: true,

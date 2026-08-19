@@ -7,14 +7,14 @@ import type { APIResponse } from "@/core/domain";
 import { getFieldError } from "@/core/utils";
 
 interface CreateGuestbookFormProps {
-  coupleInfoId: string;
+  publicKey: string;
   action: (formData: FormData) => void;
   pending: boolean;
   state: APIResponse<{ message: string }> | null;
 }
 
 export function CreateGuestbookForm({
-  coupleInfoId,
+  publicKey,
   action,
   pending,
   state,
@@ -29,7 +29,7 @@ export function CreateGuestbookForm({
         <DialogDescription>소중한 축하 메시지를 남겨주세요.</DialogDescription>
       </DialogHeader>
 
-      <input type="hidden" name="coupleInfoId" value={coupleInfoId} />
+      <input type="hidden" name="publicKey" value={publicKey} />
 
       <TextField
         name="author"

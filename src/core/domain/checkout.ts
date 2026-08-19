@@ -2,7 +2,6 @@ import type { SelectFeatureDto } from "@/core/schemas";
 
 export interface CheckoutItem {
   productId: string;
-  coupleInfoId?: string; // 재결제 시 IOrder에서 주입, 정상 흐름은 URL query 사용
 
   title: string;
   thumbnail: string;

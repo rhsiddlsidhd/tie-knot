@@ -10,15 +10,15 @@ import { hasFieldErrors } from "@/core/utils";
 import { useGuestbookModalStore } from "@/ui/stores";
 import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/ui/components/organisms";
 interface Payload {
-  id: string;
+  publicKey: string;
 }
 
 const isPayload = (payload: unknown): payload is Payload => {
   if (!payload) return false;
   if (
     typeof payload === "object" &&
-    "id" in payload &&
-    typeof payload.id === "string"
+    "publicKey" in payload &&
+    typeof payload.publicKey === "string"
   )
     return true;
   return false;
@@ -31,8 +31,8 @@ export function CreateGuestbookForm({ payload }: { payload: unknown }) {
     FormData
   >(createGuestbook, null);
   const router = useRouter();
-  const id = isPayload(payload) ? payload.id : null;
-  if (!id) throw new Error("CreateGuestbookForm payload is required");
+  const publicKey = isPayload(payload) ? payload.publicKey : null;
+  if (!publicKey) throw new Error("CreateGuestbookForm payload is required");
 
   useEffect(() => {
     if (!state) return;
@@ -49,7 +49,7 @@ export function CreateGuestbookForm({ payload }: { payload: unknown }) {
 
   return (
     <PureCreateGuestbookForm
-      coupleInfoId={id}
+      publicKey={publicKey}
       action={action}
       pending={pending}
       state={state}

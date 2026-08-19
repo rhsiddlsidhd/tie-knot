@@ -5,17 +5,14 @@ import type {
   PayStatus,
   PayMethod,
   PaymentMethodDetail,
-  IPayment} from "@/models";
-import {
-  PaymentModel,
-  OrderModel,
-  ProductModel,
+  IPayment,
 } from "@/models";
+import { PaymentModel, OrderModel, ProductModel } from "@/models";
 
 import { getProductService } from "./product";
 import {
   getOrderSeviceByMerchantUid,
-  findExpiredAwaitingCoupleInfoOrders,
+  findExpiredAwaitingInvitationOrders,
 } from "./order";
 import { AppError } from "@/core/domain";
 import { dbConnect } from "@/db";
@@ -82,9 +79,10 @@ type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
  * - 미인식 값은 Unrecognized로 폴백해 methodDetail에 흔적을 남긴다(silent
  *   failure 방지 — mapPortOneStatus와 같은 원칙).
  */
-function mapPortOnePaymentMethod(
-  method: SdkPaymentMethod | undefined,
-): { payMethod?: PayMethod; methodDetail?: PaymentMethodDetail } {
+function mapPortOnePaymentMethod(method: SdkPaymentMethod | undefined): {
+  payMethod?: PayMethod;
+  methodDetail?: PaymentMethodDetail;
+} {
   if (!method) return {};
 
   switch (method.type) {
@@ -112,7 +110,9 @@ function mapPortOnePaymentMethod(
             accountType: method.accountType,
             remitteeName: method.remitteeName,
             remitterName: method.remitterName,
-            expiredAt: method.expiredAt ? new Date(method.expiredAt) : undefined,
+            expiredAt: method.expiredAt
+              ? new Date(method.expiredAt)
+              : undefined,
             issuedAt: method.issuedAt ? new Date(method.issuedAt) : undefined,
             refundStatus: method.refundStatus,
           },
@@ -139,7 +139,10 @@ function mapPortOnePaymentMethod(
         payMethod: "EASY_PAY",
         methodDetail: {
           type: "PaymentMethodEasyPay",
-          easyPay: { provider: method.provider, easyPayMethod: method.easyPayMethod },
+          easyPay: {
+            provider: method.provider,
+            easyPayMethod: method.easyPayMethod,
+          },
         },
       };
     case "PaymentMethodGiftCertificate":
@@ -161,7 +164,9 @@ function mapPortOnePaymentMethod(
             convenienceStoreBrand: method.convenienceStoreBrand,
             confirmationNumber: method.confirmationNumber,
             receiptNumber: method.receiptNumber,
-            paymentDeadline: method.paymentDeadline ? new Date(method.paymentDeadline) : undefined,
+            paymentDeadline: method.paymentDeadline
+              ? new Date(method.paymentDeadline)
+              : undefined,
           },
         },
       };
@@ -270,10 +275,15 @@ export const syncPayment = async (paymentId: string) => {
       let payment!: mongoose.HydratedDocument<IPayment>;
 
       await mongoose.connection.transaction(async (session) => {
-        const existing = await PaymentModel.findOne({ merchantUid: paymentId }).session(session);
-        const alreadyApplied = existing?.status === "PAID" && order.orderStatus === "CONFIRMED";
+        const existing = await PaymentModel.findOne({
+          merchantUid: paymentId,
+        }).session(session);
+        const alreadyApplied =
+          existing?.status === "PAID" && order.orderStatus === "CONFIRMED";
 
-        const { payMethod, methodDetail } = mapPortOnePaymentMethod(actualPayment.method);
+        const { payMethod, methodDetail } = mapPortOnePaymentMethod(
+          actualPayment.method,
+        );
 
         const paymentData = {
           merchantUid: paymentId,
@@ -335,9 +345,13 @@ export const syncPayment = async (paymentId: string) => {
       let payment!: mongoose.HydratedDocument<IPayment>;
 
       await mongoose.connection.transaction(async (session) => {
-        const existing = await PaymentModel.findOne({ merchantUid: paymentId }).session(session);
+        const existing = await PaymentModel.findOne({
+          merchantUid: paymentId,
+        }).session(session);
 
-        const { payMethod, methodDetail } = mapPortOnePaymentMethod(failedPayment.method);
+        const { payMethod, methodDetail } = mapPortOnePaymentMethod(
+          failedPayment.method,
+        );
 
         const paymentData = {
           merchantUid: paymentId,
@@ -395,8 +409,11 @@ export const syncPayment = async (paymentId: string) => {
 
       let payment!: mongoose.HydratedDocument<IPayment>;
       await mongoose.connection.transaction(async (session) => {
-        const existing = await PaymentModel.findOne({ merchantUid: paymentId }).session(session);
-        const wasFullyApplied = existing?.status === "PAID" && order.orderStatus === "CONFIRMED";
+        const existing = await PaymentModel.findOne({
+          merchantUid: paymentId,
+        }).session(session);
+        const wasFullyApplied =
+          existing?.status === "PAID" && order.orderStatus === "CONFIRMED";
         const paymentData = {
           merchantUid: paymentId,
           impUid: cancelledPayment.transactionId,
@@ -434,7 +451,11 @@ export const syncPayment = async (paymentId: string) => {
         }
       });
 
-      return { success: false, status: payment.status, payment: payment.toObject() };
+      return {
+        success: false,
+        status: payment.status,
+        payment: payment.toObject(),
+      };
     }
 
     // 결제 대기 중
@@ -458,7 +479,7 @@ export const syncPayment = async (paymentId: string) => {
 /**
  * 결제 취소 — PortOne 환불 API 호출 후 Order/Payment 상태를 트랜잭션으로
  * 함께 전이한다(syncPayment의 FAILED 분기와 같은 이유). coupleInfo 미입력
- * 자동취소(order.service의 findExpiredAwaitingCoupleInfoOrders)에서 사용.
+ * 자동취소(order.service의 findExpiredAwaitingInvitationOrders)에서 사용.
  * @param merchantUid - 우리 서버에서 생성한 주문번호(PortOne paymentId)
  */
 export const cancelPayment = async (
@@ -481,7 +502,10 @@ export const cancelPayment = async (
     });
 
     if (result.cancellation.status === "FAILED") {
-      throw new AppError("EXTERNAL_SERVICE", "포트원 결제 취소에 실패했습니다.");
+      throw new AppError(
+        "EXTERNAL_SERVICE",
+        "포트원 결제 취소에 실패했습니다.",
+      );
     }
 
     const cancelledAt =
@@ -489,12 +513,19 @@ export const cancelPayment = async (
         ? new Date(result.cancellation.cancelledAt)
         : new Date();
     const cancelAmount =
-      "totalAmount" in result.cancellation ? result.cancellation.totalAmount : undefined;
+      "totalAmount" in result.cancellation
+        ? result.cancellation.totalAmount
+        : undefined;
 
     await mongoose.connection.transaction(async (session) => {
       await PaymentModel.updateOne(
         { merchantUid },
-        { status: "CANCELLED", cancelledAt, cancelAmount, cancelReason: reason },
+        {
+          status: "CANCELLED",
+          cancelledAt,
+          cancelAmount,
+          cancelReason: reason,
+        },
         { session, runValidators: true },
       );
 
@@ -522,24 +553,28 @@ export const cancelPayment = async (
  * 목록 조회 직전에 호출하는 lazy-check 방식을 쓴다. 개별 주문 취소 실패가 다른 주문 처리를
  * 막지 않도록 서로 격리한다(로깅 후 계속 진행 — silent swallow 아님).
  */
-export const cancelExpiredAwaitingCoupleInfoOrders = async (
+export const cancelExpiredAwaitingInvitationOrders = async (
   userId: string,
 ): Promise<void> => {
-  const expiredOrders = await findExpiredAwaitingCoupleInfoOrders(userId);
+  const expiredOrders = await findExpiredAwaitingInvitationOrders(userId);
 
   await Promise.all(
     expiredOrders.map((order) =>
-      cancelPayment(order.merchantUid, "정보 미입력으로 인한 자동 취소").catch((e) => {
-        console.error(
-          `[cancelExpiredAwaitingCoupleInfoOrders] ${order.merchantUid} 취소 실패:`,
-          e,
-        );
-      }),
+      cancelPayment(order.merchantUid, "정보 미입력으로 인한 자동 취소").catch(
+        (e) => {
+          console.error(
+            `[cancelExpiredAwaitingInvitationOrders] ${order.merchantUid} 취소 실패:`,
+            e,
+          );
+        },
+      ),
     ),
   );
 };
 
-export async function completePaymentService(paymentId: string): Promise<PayStatus> {
+export async function completePaymentService(
+  paymentId: string,
+): Promise<PayStatus> {
   await requireAuth();
   if (!paymentId) {
     throw new AppError("VALIDATION", "올바르지 않은 요청입니다.");
