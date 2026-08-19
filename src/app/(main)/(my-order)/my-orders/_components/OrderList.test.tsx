@@ -18,7 +18,10 @@ vi.mock("@/actions", () => ({
 
 // 더보기 네트워크 왕복이 아니라 "첫 페이지를 그대로 그리는가"가 이 테스트의 대상이라
 // SWR은 fallbackData를 그대로 돌려주도록 대체한다.
-const { setSizeMock } = vi.hoisted(() => ({ setSizeMock: vi.fn() }));
+const { setSizeMock, mutateMock } = vi.hoisted(() => ({
+  setSizeMock: vi.fn(),
+  mutateMock: vi.fn(),
+}));
 
 vi.mock("swr/infinite", () => ({
   default: (
@@ -31,6 +34,7 @@ vi.mock("swr/infinite", () => ({
     size: 1,
     setSize: setSizeMock,
     isValidating: false,
+    mutate: mutateMock,
   }),
 }));
 

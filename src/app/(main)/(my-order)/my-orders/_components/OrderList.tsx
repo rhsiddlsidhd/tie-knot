@@ -48,7 +48,7 @@ const buildKey = ({
  * 자동으로 리셋된다.
  */
 const OrderList = ({ firstPage, status, category }: OrderListProps) => {
-  const { data, error, size, setSize, isValidating } =
+  const { data, error, size, setSize, isValidating, mutate } =
     useSWRInfinite<OrderListPage>(
       (pageIndex, previousPage: OrderListPage | null) => {
         if (pageIndex === 0) return buildKey({ status, category });
@@ -56,7 +56,14 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
         return buildKey({ status, category, cursor: previousPage.nextCursor });
       },
       fetcher,
-      { fallbackData: [firstPage], revalidateFirstPage: false },
+      {
+        fallbackData: [firstPage],
+        revalidateFirstPage: false,
+        // 첫 페이지는 방금 Server Component가 조회해 넘겨준 값이다 — 마운트 시
+        // 같은 쿼리를 한 번 더 돌리지 않는다. 갱신이 필요한 시점(취소 등)에는
+        // mutate로 명시적으로 다시 받아온다.
+        revalidateOnMount: false,
+      },
     );
 
   const pages = data ?? [firstPage];
@@ -104,7 +111,11 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
   return (
     <div className="space-y-4">
       {orders.map((order) => (
-        <OrderCard key={order._id} order={order} />
+        <OrderCard
+          key={order._id}
+          order={order}
+          onOrderChanged={() => mutate()}
+        />
       ))}
 
       {error && (

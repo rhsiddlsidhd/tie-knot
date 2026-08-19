@@ -39,7 +39,13 @@ const STATUS_BADGE_VARIANTS: Record<
   CANCELLED: "destructive",
 };
 
-const OrderCard = ({ order }: { order: OrderListItem }) => {
+interface OrderCardProps {
+  order: OrderListItem;
+  // 취소가 성공하면 목록 캐시를 다시 받아와야 한다 — 목록을 소유한 쪽이 그 방법을 안다.
+  onOrderChanged?: () => void;
+}
+
+const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
   const router = useRouter();
   const [isCancelling, startCancelling] = useTransition();
   const { copyToClipboard } = useCopy();
@@ -55,12 +61,15 @@ const OrderCard = ({ order }: { order: OrderListItem }) => {
     !order.invitationStatus &&
     customerInputRoute;
 
-  // 같은 PENDING이라도 성격이 정반대다 — paymentId가 있으면 가상계좌가 발급돼 입금을
-  // 기다리는 정상 주문이고, 없으면 결제창을 벗어난 채 방치된 주문이다.
+  // 같은 PENDING이라도 성격이 정반대다 — 가상계좌 주문은 입금을 기다리는 정상 주문이고,
+  // 나머지는 결제창을 벗어난 채 방치된 주문이다. paymentId는 syncPayment가 발급을
+  // 확인한 뒤에 붙으므로 그 전 구간은 결제수단으로 판별한다.
+  const isVirtualAccount =
+    Boolean(order.paymentId) || order.payMethod === "VIRTUAL_ACCOUNT";
   const isAwaitingDeposit =
-    order.orderStatus === "PENDING" && Boolean(order.paymentId);
+    order.orderStatus === "PENDING" && isVirtualAccount;
   const isAbandonedPending =
-    order.orderStatus === "PENDING" && !order.paymentId;
+    order.orderStatus === "PENDING" && !isVirtualAccount;
 
   const statusLabel = isAwaitingDeposit
     ? "입금대기"
@@ -78,6 +87,8 @@ const OrderCard = ({ order }: { order: OrderListItem }) => {
         return;
       }
       toast.success("주문이 취소되었습니다.");
+      // 화면에 그려지는 건 SWR 캐시라 RSC만 새로 그려서는 반영되지 않는다.
+      onOrderChanged?.();
       router.refresh();
     });
   };
@@ -184,26 +195,28 @@ const OrderCard = ({ order }: { order: OrderListItem }) => {
         </div>
 
         {isAwaitingDeposit && order.virtualAccount && (
+          // Alert는 children을 <p>로 감싸므로 블록 요소를 중첩하지 않는다 —
+          // <p> 안의 <div>는 SSR 하이드레이션 불일치를 만든다.
           <Alert type="warning">
-            <div className="space-y-1">
-              <p className="font-semibold">입금 대기 중입니다.</p>
-              <p>
-                {order.virtualAccount.bank ?? "가상계좌"}{" "}
-                {order.virtualAccount.accountNumber}
-                {order.virtualAccount.remitteeName &&
-                  ` (예금주 ${order.virtualAccount.remitteeName})`}
-              </p>
-              <p>입금액 {order.finalPrice.toLocaleString()}원</p>
-              {order.virtualAccount.expiredAt && (
-                <p>
-                  입금기한{" "}
-                  {format(
-                    new Date(order.virtualAccount.expiredAt),
-                    "yyyy.MM.dd HH:mm",
-                  )}
-                </p>
-              )}
-            </div>
+            <span className="block font-semibold">입금 대기 중입니다.</span>
+            <span className="block">
+              {order.virtualAccount.bank ?? "가상계좌"}{" "}
+              {order.virtualAccount.accountNumber}
+              {order.virtualAccount.remitteeName &&
+                ` (예금주 ${order.virtualAccount.remitteeName})`}
+            </span>
+            <span className="block">
+              입금액 {order.finalPrice.toLocaleString()}원
+            </span>
+            {order.virtualAccount.expiredAt && (
+              <span className="block">
+                입금기한{" "}
+                {format(
+                  new Date(order.virtualAccount.expiredAt),
+                  "yyyy.MM.dd HH:mm",
+                )}
+              </span>
+            )}
           </Alert>
         )}
 

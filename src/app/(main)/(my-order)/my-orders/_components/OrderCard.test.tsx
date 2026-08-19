@@ -76,6 +76,15 @@ describe("OrderCard", () => {
     expect(screen.getByText(/입금액 9,000원/)).toBeInTheDocument();
   });
 
+  it("가상계좌 주문은 결제 동기화 전(paymentId 없음)에도 결제하기를 숨긴다", () => {
+    render(
+      <OrderCard order={buildOrder({ payMethod: "VIRTUAL_ACCOUNT" })} />,
+    );
+
+    expect(screen.queryByRole("button", { name: "결제하기" })).toBeNull();
+    expect(screen.getByText("입금대기")).toBeInTheDocument();
+  });
+
   it("취소된 주문은 취소 사유와 시각을 보여준다", () => {
     render(
       <OrderCard
