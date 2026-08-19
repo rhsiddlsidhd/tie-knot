@@ -196,7 +196,7 @@ export const setInvitationStatusForCurrentUser = async (
 ): Promise<{ publicKey: string; status: "draft" | "published" }> => {
   await dbConnect();
   const { userId } = await requireAuth();
-  await requireOwnedEligibleOrder(orderId, userId);
+  const order = await requireOwnedEligibleOrder(orderId, userId);
   const invitation = await InvitationModel.findOneAndUpdate(
     {
       orderId: new mongoose.Types.ObjectId(orderId),
@@ -209,5 +209,20 @@ export const setInvitationStatusForCurrentUser = async (
   });
   if (!invitation)
     throw new AppError("NOT_FOUND", "청첩장을 찾을 수 없습니다.");
+
+  // 청첩장 발행이 곧 이 주문의 이행 완료다 — 발행 시점에 주문을 COMPLETED로 전이시켜
+  // 목록 배지가 "발행완료"를 그릴 수 있게 한다. 다시 비공개(draft)로 되돌리면 이행
+  // 상태도 결제완료(CONFIRMED)로 함께 되돌린다.
+  const nextOrderStatus = status === "published" ? "COMPLETED" : "CONFIRMED";
+  const previousOrderStatus =
+    status === "published" ? "CONFIRMED" : "COMPLETED";
+  await OrderModel.updateOne(
+    { _id: order._id, orderStatus: previousOrderStatus },
+    { $set: { orderStatus: nextOrderStatus } },
+    { runValidators: true },
+  ).catch((error) => {
+    throw toInternalError(error, "주문 상태 변경에 실패했습니다.");
+  });
+
   return { publicKey: invitation.publicKey, status: invitation.status };
 };
