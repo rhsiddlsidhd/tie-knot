@@ -3,10 +3,10 @@ import { AppError } from "@/core/domain";
 import type { BaseUser, IUser } from "@/models";
 import { UserModel } from "@/models";
 import { dbConnect } from "@/db";
-import { hashPassword } from "@/adapters/bcrypt";
-import { decrypt, encrypt } from "@/adapters/jose";
-import { deleteCookie } from "@/adapters/cookies";
-import { sendEmail } from "@/adapters/nodemailer";
+import { hashPassword } from "@/adapters/server/bcrypt";
+import { decrypt, encrypt } from "@/adapters/server/jose";
+import { deleteCookie } from "@/adapters/server/cookies";
+import { sendEmail } from "@/adapters/server/nodemailer";
 import { routes } from "@/core/domain";
 // 유저 생성
 export const createUser = async (user: BaseUser): Promise<IUser> => {

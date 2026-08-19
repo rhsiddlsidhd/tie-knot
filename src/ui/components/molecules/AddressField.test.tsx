@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 const useDaumPopupMock = vi.fn();
 
-vi.mock("@/adapters/daum", () => ({
+vi.mock("@/adapters/browser/daum", () => ({
   useDaumPopup: () => useDaumPopupMock(),
 }));
 

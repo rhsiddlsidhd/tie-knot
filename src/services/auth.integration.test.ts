@@ -5,9 +5,9 @@ import { dbConnect } from "@/db";
 import { buildUserInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
 import { UserModel } from "@/models";
-import { encrypt } from "@/adapters/jose";
+import { encrypt } from "@/adapters/server/jose";
 
-vi.mock("@/adapters/cookies", () => ({
+vi.mock("@/adapters/server/cookies", () => ({
   getCookie: vi.fn(),
   deleteCookie: vi.fn().mockResolvedValue(undefined),
   setCookie: vi.fn().mockResolvedValue(undefined),
@@ -19,8 +19,8 @@ vi.mock("next/navigation", () => ({
   }),
 }));
 
-import { getCookie, deleteCookie, setCookie } from "@/adapters/cookies";
-import { hashPassword } from "@/adapters/bcrypt";
+import { getCookie, deleteCookie, setCookie } from "@/adapters/server/cookies";
+import { hashPassword } from "@/adapters/server/bcrypt";
 import { redirect } from "next/navigation";
 import { getUser, getAuth, requireAuth, logoutService, verifySession, loginUserService } from "./auth";
 

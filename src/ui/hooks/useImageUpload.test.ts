@@ -14,7 +14,7 @@ vi.mock("@/core/utils", () => ({
   processImages: processImagesMock,
 }));
 vi.mock("@/core/schemas", () => ({ coupleInfoClientSchema: {} }));
-vi.mock("@/adapters/cloudinary/upload", () => ({
+vi.mock("@/adapters/browser/cloudinary/upload", () => ({
   uploadMainThumbnail: uploadMainThumbnailMock,
   uploadGalleryImages: uploadGalleryImagesMock,
 }));

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
-import type { GeoState } from "@/adapters/deeplink";
+import type { GeoState } from "@/adapters/browser/deeplink";
 import type { KakaomapResponse } from "@/core/schemas";
 
 export function useKakaomapGeocode(address: string): GeoState {

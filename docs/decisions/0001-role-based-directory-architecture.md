@@ -1,6 +1,6 @@
 # ADR-0001: 역할 기반 디렉터리 아키텍처
 
-- 상태: Accepted
+- 상태: Superseded by [ADR-0002](0002-adapter-runtime-segments.md)
 - 결정일: 2026-08-17
 - 적용 범위: `src/`
 
