@@ -9,8 +9,8 @@ import type { InvitationTheme} from "@/core/domain";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
-import { deleteProductAsset } from "@/adapters/cloudinary/cleanup";
-import { uploadProductImage } from "@/adapters/cloudinary/upload-from-url";
+import { deleteProductAsset } from "@/adapters/server/cloudinary/cleanup";
+import { uploadProductImage } from "@/adapters/server/cloudinary/upload-from-url";
 import { requireAdmin, requireAuth } from "./auth";
 
 // Product 타입을 export (다른 파일에서 사용)

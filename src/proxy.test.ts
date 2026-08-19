@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, it, expect } from "vitest";
 import { NextRequest } from "next/server";
-import { encrypt } from "@/adapters/jose";
+import { encrypt } from "@/adapters/server/jose";
 import proxy from "./proxy";
 
 const buildRequest = (path: string, token?: string) => {

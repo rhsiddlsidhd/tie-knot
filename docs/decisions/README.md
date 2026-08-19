@@ -15,4 +15,5 @@ ADR(Architecture Decision Record)은 프로젝트에 장기간 영향을 주는 
 
 | ADR | 상태 | 결정일 | 결정 |
 |---|---|---|---|
-| [0001](0001-role-based-directory-architecture.md) | Accepted | 2026-08-17 | 역할 기반 디렉터리 아키텍처 |
+| [0001](0001-role-based-directory-architecture.md) | Superseded | 2026-08-17 | 역할 기반 디렉터리 아키텍처 |
+| [0002](0002-adapter-runtime-segments.md) | Accepted | 2026-08-19 | Adapter 런타임 세그먼트 |

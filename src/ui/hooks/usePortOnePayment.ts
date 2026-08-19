@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { requestPayment } from "@/adapters/portone/request-payment";
+import { requestPayment } from "@/adapters/browser/portone/request-payment";
 import type { PayStatus } from "@/core/domain";
 import type { CreateOrderResult } from "@/actions";
 import { completePayment } from "@/actions";

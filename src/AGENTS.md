@@ -1,6 +1,6 @@
 # src/
 
-> Last updated: 2026-07-28
+> Last updated: 2026-08-19
 
 ## Overview
 
@@ -19,7 +19,7 @@
 - matcher 없이 Proxy를 배포하지 않는다 — 공식 문서: matcher가 없으면 정적 파일(`_next/static`)·이.미지 최적화(`_next/image`)·`public/` 자산까지 모든 요청에서 실행돼, 의도치 않게 CSS/JS/이미지 로딩을 막을 수 있다
 - Proxy 안에서 느린 데이터 페칭(외부 API 호출 등)을 하지 않는다 — 공식 문서: Proxy는 느린 데이터 페칭 용도가 아니며, 세션 관리·인가의 전체 솔루션으로 쓰여서도 안 된다(낙관적 체크 용도로만).
 - 프로젝트당 두 번째 proxy 파일을 만들지 않는다 — 공식 문서: 프로젝트당 `proxy.ts` 단 하나만 지원한다. 로직을 나누고 싶으면 별도 모듈로 쪼갠 뒤 그 안에서 import해서 조립한다.
-- **`src/` 하위 폴더 안 파일은 개별 경로로 직접 import하지 않는다 — `index.ts` 배럴을 기본으로 두고 그 배럴을 통해서만 import한다. 배럴은 예외 없이 전부 `export * from "./x"`로만 구성한다. `src/` 안 파일도 `export default`를 쓰지 않는다 — 전부 named export로 짓는다.** 단, `src/app/`은 Next.js 공식 규약상 예외(라우트 파일 `export default` 강제, 배럴 구조 불가) — 상세는 `src/app/AGENTS.md` 참고.
+- **`src/` 하위 폴더 안 파일은 개별 경로로 직접 import하지 않는다 — `index.ts` 배럴을 기본으로 두고 그 배럴을 통해서만 import한다. 배럴은 예외 없이 전부 `export * from "./x"`로만 구성한다. `src/` 안 파일도 `export default`를 쓰지 않는다 — 전부 named export로 짓는다.** 단, `src/app/`은 Next.js 공식 규약상 예외(라우트 파일 `export default` 강제, 배럴 구조 불가)이며 `src/adapters/`의 외부 경계별 공개 경로는 해당 폴더의 `AGENTS.md`를 따른다.
 - 로컬 상태로 충분한 걸 곧바로 Context나 Zustand로 확장하지 않는다 — 클라이언트 상태 범위는 로컬 → Context API(`src/ui/context/`) → Zustand(`src/ui/store/`) 순으로만 넓힌다.
 - 서버에서 온 데이터를 Context/Zustand로 직접 옮기지 않는다 — 캐싱·중복 호출 방지는 `useSWR`(주로 `src/ui/hooks/`의 훅 안에서 Zustand 구독과 함께 조합)이 전담한다.
 - **구현체 하나가 2곳 이상의 구체적 소비처에서 쓰이면, 이름에 그 소비처 중 하나를 특정하지 않는다** — 특정하면 그 이름이 다른 소비처 입장에선 의미가 맞지 않게 된다.

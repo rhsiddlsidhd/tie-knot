@@ -4,7 +4,7 @@ import { GuestbookModel } from "@/models";
 import type { GuestbookType } from "@/core/schemas";
 import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
-import { comparePasswords, hashPassword } from "@/adapters/bcrypt";
+import { comparePasswords, hashPassword } from "@/adapters/server/bcrypt";
 
 import mongoose from "mongoose";
 
