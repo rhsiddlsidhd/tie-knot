@@ -149,6 +149,31 @@ describe("payment", () => {
       ).toBe(1);
     });
 
+    it("청첩장 발행으로 COMPLETED가 된 주문은 webhook 재전송에도 되돌아가지 않는다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
+      );
+      await syncPayment(order.merchantUid);
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { orderStatus: "COMPLETED" } },
+      );
+
+      await syncPayment(order.merchantUid);
+
+      const updatedOrder = await OrderModel.findById(order._id).lean();
+      expect(updatedOrder?.orderStatus).toBe("COMPLETED");
+      const updatedProduct = await ProductModel.findById(
+        savedProduct._id,
+      ).lean();
+      expect(updatedProduct?.salesCount).toBe(1);
+    });
+
     it("금액이 불일치하면 AppError(VALIDATION)를 던지고 salesCount를 증가시키지 않는다", async () => {
       const { savedProduct, order } = await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
@@ -587,6 +612,48 @@ describe("payment", () => {
       ).toBe(0);
     });
 
+    it("발행완료(COMPLETED)된 주문을 환불해도 salesCount가 차감된다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
+      );
+      await syncPayment(order.merchantUid);
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { orderStatus: "COMPLETED" } },
+      );
+
+      const cancelledAt = new Date().toISOString();
+      getPaymentMock.mockResolvedValue({
+        status: "CANCELLED",
+        id: order.merchantUid,
+        transactionId: "txn_1",
+        cancelledAt,
+        amount: { paid: order.finalPrice, cancelled: order.finalPrice },
+        cancellations: [
+          {
+            status: "SUCCEEDED",
+            totalAmount: order.finalPrice,
+            reason: "고객 요청",
+            cancelledAt,
+          },
+        ],
+      });
+
+      await syncPayment(order.merchantUid);
+
+      expect(
+        (await ProductModel.findById(savedProduct._id).lean())?.salesCount,
+      ).toBe(0);
+      expect(
+        (await OrderModel.findById(order._id).lean())?.orderStatus,
+      ).toBe("CANCELLED");
+    });
+
     it("PARTIAL_CANCELLED는 Payment에 취소 합계를 기록하고 Order는 CONFIRMED로 유지한다", async () => {
       const { savedProduct, order } = await setupProductAndOrder(2);
       getPaymentMock.mockResolvedValue(
@@ -630,6 +697,59 @@ describe("payment", () => {
       expect(
         (await ProductModel.findById(savedProduct._id).lean())?.salesCount,
       ).toBe(2);
+    });
+  });
+
+  describe("VIRTUAL_ACCOUNT_ISSUED 상태 처리", () => {
+    const virtualAccountPayload = (merchantUid: string) => ({
+      status: "VIRTUAL_ACCOUNT_ISSUED" as const,
+      id: merchantUid,
+      transactionId: "txn_va_1",
+      channel: { pgProvider: "TOSSPAYMENTS" },
+      pgTxId: "pgtid_va_1",
+      method: {
+        type: "PaymentMethodVirtualAccount" as const,
+        bank: "SHINHAN",
+        accountNumber: "110-123-456789",
+        accountType: "FIXED",
+        remitteeName: "타이노트",
+        expiredAt: "2026-08-25T14:59:59.000Z",
+        issuedAt: "2026-08-19T05:00:00.000Z",
+      },
+    });
+
+    it("가상계좌 발급을 PENDING Payment로 저장하고 주문에 연결한다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(virtualAccountPayload(order.merchantUid));
+
+      const result = await syncPayment(order.merchantUid);
+
+      expect(result.status).toBe("PENDING");
+      const payment = await PaymentModel.findOne({
+        merchantUid: order.merchantUid,
+      }).lean();
+      expect(payment?.status).toBe("PENDING");
+      expect(payment?.payMethod).toBe("VIRTUAL_ACCOUNT");
+      expect(payment?.methodDetail?.virtualAccount?.accountNumber).toBe(
+        "110-123-456789",
+      );
+
+      // 주문은 아직 입금 전이라 PENDING 그대로지만, 결제를 참조해 방치 주문과 구분된다.
+      const updatedOrder = await OrderModel.findById(order._id).lean();
+      expect(updatedOrder?.orderStatus).toBe("PENDING");
+      expect(updatedOrder?.paymentId?.toString()).toBe(payment!._id.toString());
+    });
+
+    it("같은 발급 webhook이 재전송돼도 Payment는 하나만 유지된다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(virtualAccountPayload(order.merchantUid));
+
+      await syncPayment(order.merchantUid);
+      await syncPayment(order.merchantUid);
+
+      expect(
+        await PaymentModel.countDocuments({ merchantUid: order.merchantUid }),
+      ).toBe(1);
     });
   });
 

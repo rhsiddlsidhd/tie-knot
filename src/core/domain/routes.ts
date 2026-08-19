@@ -19,6 +19,7 @@ export const routes = {
   myOrders: {
     root: "/my-orders",
     refund: "/my-orders/refund",
+    detail: (orderId: string) => `/my-orders/${orderId}`,
     invitation: (orderId: string) => `/my-orders/${orderId}/invitation`,
     invitationPreview: (orderId: string) =>
       `/my-orders/${orderId}/invitation/preview`,

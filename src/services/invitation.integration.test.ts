@@ -1,4 +1,4 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import mongoose from "mongoose";
 import { AppError } from "@/core/domain";
 import { dbConnect } from "@/db";
@@ -8,7 +8,26 @@ import {
   buildOrderInput,
   clearCollections,
 } from "@testing/support";
-import { saveInvitationForOrder } from "./invitation";
+import type * as AuthModule from "./auth";
+import {
+  saveInvitationForOrder,
+  setInvitationStatusForCurrentUser,
+} from "./invitation";
+
+// 세션 조회만 대체한다(partial mock) — 쿠키/JWT는 이 파일의 검증 대상이 아니다.
+const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
+
+vi.mock("./auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof AuthModule>();
+  return {
+    ...actual,
+    requireAuth: async () => ({
+      userId: authState.userId,
+      email: "buyer@example.com",
+      role: "USER",
+    }),
+  };
+});
 
 describe("invitation", () => {
   beforeEach(async () => {
@@ -133,5 +152,46 @@ describe("invitation", () => {
     await expect(
       saveInvitationForOrder(order._id.toString(), userId, buildContent()),
     ).rejects.toMatchObject({ category: "VALIDATION" });
+  });
+
+  describe("setInvitationStatusForCurrentUser", () => {
+    it("발행하면 주문을 COMPLETED로 전이한다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      authState.userId = userId;
+      const order = await createEligibleOrder(userId);
+      await saveInvitationForOrder(
+        order._id.toString(),
+        userId,
+        buildContent(),
+      );
+
+      await setInvitationStatusForCurrentUser(
+        order._id.toString(),
+        "published",
+      );
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("COMPLETED");
+    });
+
+    it("다시 비공개로 되돌리면 주문도 CONFIRMED로 되돌린다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      authState.userId = userId;
+      const order = await createEligibleOrder(userId);
+      await saveInvitationForOrder(
+        order._id.toString(),
+        userId,
+        buildContent(),
+      );
+      await setInvitationStatusForCurrentUser(
+        order._id.toString(),
+        "published",
+      );
+
+      await setInvitationStatusForCurrentUser(order._id.toString(), "draft");
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CONFIRMED");
+    });
   });
 });

@@ -35,10 +35,22 @@ const portone = PortOne.PortOneClient({
 type GetPaymentResult = Awaited<ReturnType<typeof portone.payment.getPayment>>;
 type PaidPayment = Extract<GetPaymentResult, { status: "PAID" }>;
 type FailedPayment = Extract<GetPaymentResult, { status: "FAILED" }>;
+type VirtualAccountIssuedPayment = Extract<
+  GetPaymentResult,
+  { status: "VIRTUAL_ACCOUNT_ISSUED" }
+>;
 type CancelledPayment = Extract<
   GetPaymentResult,
   { status: "CANCELLED" | "PARTIAL_CANCELLED" }
 >;
+
+/**
+ * 결제 반영이 이미 끝난 주문 상태 — CONFIRMED에서 청첩장 발행으로 COMPLETED까지
+ * 나아간 주문도 "결제는 이미 반영됨"이다. 여기서 COMPLETED를 빠뜨리면 webhook
+ * 재전송이 발행된 주문을 CONFIRMED로 되돌리고 salesCount를 중복 증가시킨다.
+ */
+const isPaymentAppliedStatus = (orderStatus: string): boolean =>
+  orderStatus === "CONFIRMED" || orderStatus === "COMPLETED";
 
 /**
  * PortOne 결제 상태를 시스템 상태로 매핑
@@ -279,7 +291,7 @@ export const syncPayment = async (paymentId: string) => {
           merchantUid: paymentId,
         }).session(session);
         const alreadyApplied =
-          existing?.status === "PAID" && order.orderStatus === "CONFIRMED";
+          existing?.status === "PAID" && isPaymentAppliedStatus(order.orderStatus);
 
         const { payMethod, methodDetail } = mapPortOnePaymentMethod(
           actualPayment.method,
@@ -413,7 +425,7 @@ export const syncPayment = async (paymentId: string) => {
           merchantUid: paymentId,
         }).session(session);
         const wasFullyApplied =
-          existing?.status === "PAID" && order.orderStatus === "CONFIRMED";
+          existing?.status === "PAID" && isPaymentAppliedStatus(order.orderStatus);
         const paymentData = {
           merchantUid: paymentId,
           impUid: cancelledPayment.transactionId,
@@ -448,6 +460,61 @@ export const syncPayment = async (paymentId: string) => {
               { session, runValidators: true },
             );
           }
+        }
+      });
+
+      return {
+        success: false,
+        status: payment.status,
+        payment: payment.toObject(),
+      };
+    }
+
+    // 가상계좌 발급 — 아직 입금 전이지만 계좌번호·입금기한을 사용자에게 안내해야 하고,
+    // 주문이 결제를 참조해야 "결제창을 벗어난 방치 주문"과 구분돼 자동취소 대상에서
+    // 빠진다(order.service의 cancelExpiredPendingOrders). Payment 저장 + Order 참조
+    // 연결은 하나의 논리적 단위라 트랜잭션으로 묶는다(PAID 분기와 같은 이유).
+    if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
+      const issuedPayment = actualPayment as VirtualAccountIssuedPayment;
+
+      let payment!: mongoose.HydratedDocument<IPayment>;
+
+      await mongoose.connection.transaction(async (session) => {
+        const existing = await PaymentModel.findOne({
+          merchantUid: paymentId,
+        }).session(session);
+
+        const { payMethod, methodDetail } = mapPortOnePaymentMethod(
+          issuedPayment.method,
+        );
+
+        const paymentData = {
+          merchantUid: paymentId,
+          impUid: issuedPayment.transactionId,
+          orderId: order._id,
+          buyerName: order.buyerName,
+          buyerEmail: order.buyerEmail,
+          buyerTel: order.buyerPhone,
+          requestAmount: order.finalPrice,
+          status: mapPortOneStatus(issuedPayment.status),
+          payMethod,
+          methodDetail,
+          pgProvider: issuedPayment.channel?.pgProvider,
+          pgTid: issuedPayment.pgTxId,
+        };
+
+        if (!existing) {
+          [payment] = await PaymentModel.create([paymentData], { session });
+        } else {
+          Object.assign(existing, paymentData);
+          payment = await existing.save({ session });
+        }
+
+        // 이 분기는 webhook 재전송으로 여러 번 들어올 수 있다 — 주문 상태는 건드리지
+        // 않고(입금 전이라 PENDING 그대로다) 결제 참조만 한 번 연결한다.
+        if (!order.paymentId) {
+          order.paymentId = payment._id;
+          await order.save({ session });
         }
       });
 
