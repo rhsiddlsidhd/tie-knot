@@ -36,7 +36,6 @@ export async function createOrder(
   const selectedOptionsRaw = formData.get("selectedFeatures") as string;
 
   const data = {
-    coupleInfoId: (formData.get("coupleInfoId") as string | null) || undefined,
     buyerName: formData.get("buyerName") as string,
     buyerEmail: formData.get("buyerEmail") as string,
     buyerPhone: formData.get("buyerPhone") as string,

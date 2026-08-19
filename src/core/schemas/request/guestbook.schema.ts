@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const GuestbookSchema = z.object({
-  coupleInfoId: z.string().min(1, "청첩장 ID가 필요합니다"),
+  publicKey: z.string().min(1, "청첩장 공개 키가 필요합니다"),
   author: z
     .string()
     .min(1, "작성자 이름을 입력해주세요")

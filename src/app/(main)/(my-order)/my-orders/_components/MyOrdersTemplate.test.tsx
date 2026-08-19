@@ -7,8 +7,9 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/ui/stores", () => ({
-  useOrderStore: (selector: (s: { setOrder: (item: unknown) => void }) => unknown) =>
-    selector({ setOrder: vi.fn() }),
+  useOrderStore: (
+    selector: (s: { setOrder: (item: unknown) => void }) => unknown,
+  ) => selector({ setOrder: vi.fn() }),
 }));
 
 import { MyOrdersTemplate } from "./MyOrdersTemplate";
@@ -17,7 +18,6 @@ const buildOrder = (overrides?: Partial<OrderJSON>): OrderJSON =>
   ({
     _id: "order-1",
     merchantUid: "merchant-1",
-    coupleInfoId: "couple-1",
     finalPrice: 9000,
     discountRate: 0,
     discountAmount: 0,
@@ -43,9 +43,7 @@ describe("MyOrdersTemplate", () => {
 
   it("날짜별로 그룹핑된 주문을 렌더링한다", () => {
     render(
-      <MyOrdersTemplate
-        groupedOrders={[["2026-01-01", [buildOrder()]]]}
-      />,
+      <MyOrdersTemplate groupedOrders={[["2026-01-01", [buildOrder()]]]} />,
     );
 
     expect(screen.getByText("2026년 01월 01일")).toBeInTheDocument();
@@ -56,27 +54,37 @@ describe("MyOrdersTemplate", () => {
   it("PENDING 상태면 결제하기 버튼을 보여준다", () => {
     render(
       <MyOrdersTemplate
-        groupedOrders={[["2026-01-01", [buildOrder({ orderStatus: "PENDING" })]]]}
+        groupedOrders={[
+          ["2026-01-01", [buildOrder({ orderStatus: "PENDING" })]],
+        ]}
       />,
     );
 
-    expect(screen.getByRole("button", { name: /결제하기/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /결제하기/ }),
+    ).toBeInTheDocument();
   });
 
   it("CONFIRMED 상태면 환불신청 버튼을 보여준다", () => {
     render(
       <MyOrdersTemplate
-        groupedOrders={[["2026-01-01", [buildOrder({ orderStatus: "CONFIRMED" })]]]}
+        groupedOrders={[
+          ["2026-01-01", [buildOrder({ orderStatus: "CONFIRMED" })]],
+        ]}
       />,
     );
 
-    expect(screen.getByRole("button", { name: /환불신청/ })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /환불신청/ }),
+    ).toBeInTheDocument();
   });
 
   it("COMPLETED 상태면 리뷰 버튼을 보여준다", () => {
     render(
       <MyOrdersTemplate
-        groupedOrders={[["2026-01-01", [buildOrder({ orderStatus: "COMPLETED" })]]]}
+        groupedOrders={[
+          ["2026-01-01", [buildOrder({ orderStatus: "COMPLETED" })]],
+        ]}
       />,
     );
 
@@ -86,18 +94,30 @@ describe("MyOrdersTemplate", () => {
   it("CANCELLED 상태면 수정하기 링크를 보여주지 않는다", () => {
     render(
       <MyOrdersTemplate
-        groupedOrders={[["2026-01-01", [buildOrder({ orderStatus: "CANCELLED" })]]]}
+        groupedOrders={[
+          ["2026-01-01", [buildOrder({ orderStatus: "CANCELLED" })]],
+        ]}
       />,
     );
 
-    expect(screen.queryByRole("link", { name: /수정하기/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /수정하기/ }),
+    ).not.toBeInTheDocument();
   });
 
-  it("결제완료(CONFIRMED)인데 coupleInfoId가 없으면 정보입력 대기 배너를 보여주고 수정하기는 숨긴다", () => {
+  it("결제완료(CONFIRMED)인데 청첩장이 없으면 정보입력 배너를 보여주고 수정하기는 숨긴다", () => {
     render(
       <MyOrdersTemplate
         groupedOrders={[
-          ["2026-01-01", [buildOrder({ orderStatus: "CONFIRMED", coupleInfoId: undefined })]],
+          [
+            "2026-01-01",
+            [
+              buildOrder({
+                orderStatus: "CONFIRMED",
+                invitationStatus: undefined,
+              }),
+            ],
+          ],
         ]}
       />,
     );
@@ -107,15 +127,27 @@ describe("MyOrdersTemplate", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /정보 입력하기/ })).toHaveAttribute(
       "href",
-      "/my-orders/couple-info?orderId=order-1",
+      "/my-orders/order-1/invitation",
     );
-    expect(screen.queryByRole("link", { name: /수정하기/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: /수정하기/ }),
+    ).not.toBeInTheDocument();
   });
 
-  it("coupleInfoId가 있으면 정보입력 대기 배너 없이 수정하기 링크를 보여준다", () => {
+  it("청첩장이 있으면 정보입력 배너 없이 수정하기 링크를 보여준다", () => {
     render(
       <MyOrdersTemplate
-        groupedOrders={[["2026-01-01", [buildOrder({ orderStatus: "CONFIRMED" })]]]}
+        groupedOrders={[
+          [
+            "2026-01-01",
+            [
+              buildOrder({
+                orderStatus: "CONFIRMED",
+                invitationStatus: "draft",
+              }),
+            ],
+          ],
+        ]}
       />,
     );
 
@@ -124,7 +156,7 @@ describe("MyOrdersTemplate", () => {
     ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /수정하기/ })).toHaveAttribute(
       "href",
-      "/my-orders/edit?q=couple-1",
+      "/my-orders/order-1/invitation",
     );
   });
 });

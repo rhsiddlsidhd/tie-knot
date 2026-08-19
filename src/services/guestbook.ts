@@ -1,6 +1,6 @@
 import "server-only";
 import type { IGuestbook } from "@/models";
-import { GuestbookModel } from "@/models";
+import { GuestbookModel, InvitationModel } from "@/models";
 import type { GuestbookType } from "@/core/schemas";
 import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
@@ -15,7 +15,22 @@ export const createGuestbookService = async ({
 }) => {
   await dbConnect();
 
-  return GuestbookModel.create(data).catch((err) => {
+  const invitation = await InvitationModel.findOne({
+    publicKey: data.publicKey,
+    status: "published",
+  }).lean();
+  if (!invitation)
+    throw new AppError("NOT_FOUND", "청첩장을 찾을 수 없습니다.");
+  const entry = {
+    author: data.author,
+    password: data.password,
+    message: data.message,
+    isPrivate: data.isPrivate,
+  };
+  return GuestbookModel.create({
+    ...entry,
+    invitationId: invitation._id,
+  }).catch((err) => {
     throw new AppError(
       "INTERNAL",
       err instanceof Error ? err.message : "방명록 등록에 실패했습니다.",
@@ -24,16 +39,21 @@ export const createGuestbookService = async ({
 };
 
 export const getGuestbookService = async (
-  id: string,
+  publicKey: string,
+  viewerUserId?: string,
 ): Promise<IGuestbook[]> => {
   await dbConnect();
 
-  if (!mongoose.isObjectIdOrHexString(id)) {
-    return [];
-  }
-
-  const coupleInfoId = new mongoose.Types.ObjectId(id);
-  const guestbooks = await GuestbookModel.find({ coupleInfoId })
+  const invitation = await InvitationModel.findOne({ publicKey })
+    .select("_id userId status")
+    .lean();
+  if (!invitation) return [];
+  const isOwner = viewerUserId === invitation.userId.toString();
+  if (!isOwner && invitation.status !== "published") return [];
+  const guestbooks = await GuestbookModel.find({
+    invitationId: invitation._id,
+    ...(isOwner ? {} : { isPrivate: false }),
+  })
     .select("-__v -password -updatedAt")
     .sort({
       createdAt: -1,
@@ -42,7 +62,7 @@ export const getGuestbookService = async (
   return guestbooks.map((guestbook) => ({
     ...guestbook,
     _id: guestbook._id.toString(),
-    coupleInfoId: guestbook.coupleInfoId.toString(),
+    invitationId: guestbook.invitationId.toString(),
   }));
 };
 
@@ -63,7 +83,7 @@ export const getPrivateGuestbookService = async (
   return {
     ...guestbook,
     _id: guestbook._id.toString(),
-    coupleInfoId: guestbook.coupleInfoId.toString(),
+    invitationId: guestbook.invitationId.toString(),
   };
 };
 

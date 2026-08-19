@@ -1,13 +1,14 @@
-import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
-import { buildGuestbookInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
+import { dbConnect } from "@/db";
+import { GuestbookModel, InvitationModel } from "@/models";
+import { buildGuestbookInput, clearCollections } from "@testing/support";
 import {
   createGuestbookService,
+  deleteGuestbookService,
   getGuestbookService,
   getPrivateGuestbookService,
-  deleteGuestbookService,
 } from "./guestbook";
 
 describe("guestbook", () => {
@@ -20,88 +21,145 @@ describe("guestbook", () => {
     await mongoose.disconnect();
   });
 
-  describe("createGuestbookService", () => {
-    it("정상 데이터로 방명록을 생성한다", async () => {
-      const input = buildGuestbookInput();
-
-      const result = await createGuestbookService({ data: input });
-
-      expect(result.author).toBe(input.author);
+  const createInvitation = async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const invitation = await InvitationModel.create({
+      publicKey: "published-invitation-key",
+      userId,
+      orderId: new mongoose.Types.ObjectId(),
+      productId: new mongoose.Types.ObjectId(),
+      status: "published",
+      groom: { name: "신랑", phone: "010-1111-2222" },
+      bride: { name: "신부", phone: "010-3333-4444" },
+      weddingDate: new Date("2026-12-25T13:00:00"),
+      venue: "예식장",
+      address: "서울시 강남구",
+      addressDetail: "3층",
+      guestbookEnabled: true,
+      thumbnailImages: [],
+      galleryImages: [],
     });
+    return { invitation, userId: userId.toString() };
+  };
 
-    it("필수 필드 누락으로 mongoose 검증 실패 시 AppError(INTERNAL)를 던진다", async () => {
-      const input = buildGuestbookInput({
-        author: undefined as unknown as string,
-      });
+  it("publicKey로 게시된 청첩장에 방명록을 생성한다", async () => {
+    const { invitation } = await createInvitation();
+    const input = buildGuestbookInput({ publicKey: invitation.publicKey });
 
-      await expect(
-        createGuestbookService({ data: input }),
-      ).rejects.toBeInstanceOf(AppError);
-      await expect(
-        createGuestbookService({ data: input }),
-      ).rejects.toMatchObject({ category: "INTERNAL" });
-    });
+    const result = await createGuestbookService({ data: input });
+
+    expect(result.author).toBe(input.author);
+    expect(result.invitationId.toString()).toBe(invitation._id.toString());
   });
 
-  describe("getGuestbookService", () => {
-    it("coupleInfoId로 방명록 목록을 조회한다", async () => {
-      const input = buildGuestbookInput();
-      await createGuestbookService({ data: input });
+  it("draft 청첩장에는 방명록을 생성하지 않는다", async () => {
+    const { invitation } = await createInvitation();
+    await InvitationModel.updateOne(
+      { _id: invitation._id },
+      { status: "draft" },
+    );
 
-      const result = await getGuestbookService(input.coupleInfoId);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].author).toBe(input.author);
-    });
-
-    it("id 형식이 잘못되면 빈 배열을 리턴한다", async () => {
-      const result = await getGuestbookService("not-a-valid-id");
-
-      expect(result).toEqual([]);
-    });
+    await expect(
+      createGuestbookService({
+        data: buildGuestbookInput({ publicKey: invitation.publicKey }),
+      }),
+    ).rejects.toMatchObject({ category: "NOT_FOUND" });
   });
 
-  describe("getPrivateGuestbookService", () => {
-    it("존재하는 id면 방명록을 리턴한다", async () => {
-      const input = buildGuestbookInput();
-      const created = await createGuestbookService({ data: input });
+  it("비인증 요청에는 공개 글만 반환한다", async () => {
+    const { invitation } = await createInvitation();
+    await GuestbookModel.create([
+      {
+        invitationId: invitation._id,
+        author: "공개 작성자",
+        message: "공개 글",
+        password: "hashed-password",
+        isPrivate: false,
+      },
+      {
+        invitationId: invitation._id,
+        author: "비공개 작성자",
+        message: "비공개 글",
+        password: "hashed-password",
+        isPrivate: true,
+      },
+    ]);
 
-      const result = await getPrivateGuestbookService(
-        created._id.toString(),
-      );
+    const result = await getGuestbookService(invitation.publicKey);
 
-      expect(result?.author).toBe(input.author);
-    });
-
-    it("존재하지 않는 id면 null을 리턴한다", async () => {
-      const missingId = new mongoose.Types.ObjectId().toString();
-
-      const result = await getPrivateGuestbookService(missingId);
-
-      expect(result).toBeNull();
-    });
-
-    it("id 형식이 잘못되면 null을 리턴한다", async () => {
-      const result = await getPrivateGuestbookService("not-a-valid-id");
-
-      expect(result).toBeNull();
-    });
+    expect(result.map((entry) => entry.message)).toEqual(["공개 글"]);
   });
 
-  describe("deleteGuestbookService", () => {
-    it("정상 삭제하면 deletedCount 1을 리턴한다", async () => {
-      const input = buildGuestbookInput();
-      const created = await createGuestbookService({ data: input });
-
-      const result = await deleteGuestbookService(created._id.toString());
-
-      expect(result.deletedCount).toBe(1);
+  it("비소유자는 draft 청첩장의 방명록을 조회할 수 없다", async () => {
+    const { invitation } = await createInvitation();
+    await InvitationModel.updateOne(
+      { _id: invitation._id },
+      { status: "draft" },
+    );
+    await GuestbookModel.create({
+      invitationId: invitation._id,
+      author: "공개 작성자",
+      message: "공개 글",
+      password: "hashed-password",
+      isPrivate: false,
     });
 
-    it("id 형식이 잘못되면 deletedCount 0을 리턴한다", async () => {
-      const result = await deleteGuestbookService("not-a-valid-id");
+    expect(await getGuestbookService(invitation.publicKey)).toEqual([]);
+  });
 
-      expect(result).toEqual({ acknowledged: false, deletedCount: 0 });
+  it("소유자 요청에는 공개 글과 비공개 글을 모두 반환한다", async () => {
+    const { invitation, userId } = await createInvitation();
+    await GuestbookModel.create([
+      {
+        invitationId: invitation._id,
+        author: "공개 작성자",
+        message: "공개 글",
+        password: "hashed-password",
+        isPrivate: false,
+      },
+      {
+        invitationId: invitation._id,
+        author: "비공개 작성자",
+        message: "비공개 글",
+        password: "hashed-password",
+        isPrivate: true,
+      },
+    ]);
+
+    const result = await getGuestbookService(invitation.publicKey, userId);
+
+    expect(result.map((entry) => entry.message).sort()).toEqual([
+      "공개 글",
+      "비공개 글",
+    ]);
+  });
+
+  it("알 수 없는 publicKey면 빈 배열을 반환한다", async () => {
+    expect(await getGuestbookService("missing-public-key")).toEqual([]);
+  });
+
+  it("필수 필드 누락으로 저장에 실패하면 INTERNAL을 던진다", async () => {
+    const { invitation } = await createInvitation();
+    const input = buildGuestbookInput({
+      publicKey: invitation.publicKey,
+      author: undefined as unknown as string,
+    });
+
+    await expect(
+      createGuestbookService({ data: input }),
+    ).rejects.toBeInstanceOf(AppError);
+    await expect(createGuestbookService({ data: input })).rejects.toMatchObject(
+      {
+        category: "INTERNAL",
+      },
+    );
+  });
+
+  it("내부 조회와 삭제는 유효하지 않은 id를 정상적인 미존재로 처리한다", async () => {
+    expect(await getPrivateGuestbookService("not-a-valid-id")).toBeNull();
+    expect(await deleteGuestbookService("not-a-valid-id")).toEqual({
+      acknowledged: false,
+      deletedCount: 0,
     });
   });
 });

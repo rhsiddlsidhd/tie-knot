@@ -1,15 +1,17 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
-import { buildOrderInput, buildProductInput, clearCollections } from "@testing/support";
-import { OrderModel, ProductModel } from "@/models";
+import {
+  buildOrderInput,
+  buildProductInput,
+  clearCollections,
+} from "@testing/support";
+import { InvitationModel, OrderModel, ProductModel } from "@/models";
 import {
   createOrderService,
   getOrderSeviceByMerchantUid,
-  getActiveOrderInfoByCoupleInfoId,
   getOrdersByUserId,
-  attachCoupleInfoToOrder,
-  findExpiredAwaitingCoupleInfoOrders,
+  findExpiredAwaitingInvitationOrders,
 } from "./order";
 import { createProductService } from "./product";
 
@@ -30,7 +32,9 @@ describe("order", () => {
       maxQuantity: 0,
     });
     await createProductService(productInput);
-    const savedProduct = await ProductModel.findOne({ title: productInput.title }).lean();
+    const savedProduct = await ProductModel.findOne({
+      title: productInput.title,
+    }).lean();
     defaultProductId = savedProduct!._id.toString();
   });
 
@@ -54,30 +58,26 @@ describe("order", () => {
   };
 
   describe("createOrderService", () => {
-    it("생성한 주문에 coupleInfoId가 실제로 저장된다", async () => {
+    it("청첩장 참조 없이 주문을 생성한다", async () => {
       const input = buildOrderInputForTest();
 
       const result = await createOrderService(input);
 
       const saved = await OrderModel.findById(result._id).lean();
-      expect(saved?.coupleInfoId?.toString()).toBe(input.coupleInfoId);
-    });
-
-    it("coupleInfoId 없이도(결제 이후 my-orders에서 채우는 흐름) 주문이 생성된다", async () => {
-      const input = buildOrderInputForTest({ coupleInfoId: undefined });
-
-      const result = await createOrderService(input);
-
-      const saved = await OrderModel.findById(result._id).lean();
-      expect(saved?.coupleInfoId).toBeUndefined();
+      expect(saved?._id.toString()).toBe(result._id.toString());
     });
 
     // ── REQ-5: 클라이언트가 보낸 quantity를 신뢰하지 않고 Product를 재조회해 범위를 검증한다 ──
     describe("REQ-5 수량 범위 검증", () => {
       it("minQuantity 미만이면 VALIDATION을 던지고 주문이 생성되지 않는다", async () => {
-        const productInput = buildProductInput({ minQuantity: 3, maxQuantity: 10 });
+        const productInput = buildProductInput({
+          minQuantity: 3,
+          maxQuantity: 10,
+        });
         await createProductService(productInput);
-        const product = await ProductModel.findOne({ title: productInput.title }).lean();
+        const product = await ProductModel.findOne({
+          title: productInput.title,
+        }).lean();
 
         const input = buildOrderInput({
           product: {
@@ -98,9 +98,14 @@ describe("order", () => {
       });
 
       it("maxQuantity 초과면 VALIDATION을 던진다", async () => {
-        const productInput = buildProductInput({ minQuantity: 1, maxQuantity: 5 });
+        const productInput = buildProductInput({
+          minQuantity: 1,
+          maxQuantity: 5,
+        });
         await createProductService(productInput);
-        const product = await ProductModel.findOne({ title: productInput.title }).lean();
+        const product = await ProductModel.findOne({
+          title: productInput.title,
+        }).lean();
 
         const input = buildOrderInput({
           product: {
@@ -120,9 +125,14 @@ describe("order", () => {
       });
 
       it("maxQuantity===0(무제한)이면 상한 검증을 스킵한다", async () => {
-        const productInput = buildProductInput({ minQuantity: 1, maxQuantity: 0 });
+        const productInput = buildProductInput({
+          minQuantity: 1,
+          maxQuantity: 0,
+        });
         await createProductService(productInput);
-        const product = await ProductModel.findOne({ title: productInput.title }).lean();
+        const product = await ProductModel.findOne({
+          title: productInput.title,
+        }).lean();
 
         const input = buildOrderInput({
           product: {
@@ -141,9 +151,14 @@ describe("order", () => {
       });
 
       it("범위 안 quantity면 정상 생성된다", async () => {
-        const productInput = buildProductInput({ minQuantity: 2, maxQuantity: 10 });
+        const productInput = buildProductInput({
+          minQuantity: 2,
+          maxQuantity: 10,
+        });
         await createProductService(productInput);
-        const product = await ProductModel.findOne({ title: productInput.title }).lean();
+        const product = await ProductModel.findOne({
+          title: productInput.title,
+        }).lean();
 
         const input = buildOrderInput({
           product: {
@@ -244,7 +259,12 @@ describe("order", () => {
             pricing: { originalPrice: 10000, discountedPrice: 10000 },
             quantity: 2,
             selectedFeatures: [
-              { featureId: new mongoose.Types.ObjectId().toString(), code: "f1", label: "옵션1", price: 500 },
+              {
+                featureId: new mongoose.Types.ObjectId().toString(),
+                code: "f1",
+                label: "옵션1",
+                price: 500,
+              },
             ],
           },
         });
@@ -332,70 +352,11 @@ describe("order", () => {
     });
   });
 
-  describe("attachCoupleInfoToOrder", () => {
-    it("결제완료(CONFIRMED)된 본인 주문에 커플 정보를 연결한다", async () => {
+  describe("findExpiredAwaitingInvitationOrders", () => {
+    it("CONFIRMED + Invitation 없음 + 7일 초과면 조회된다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       const created = await createOrderService(
-        buildOrderInputForTest({ userId, coupleInfoId: undefined }),
-      );
-      await OrderModel.updateOne({ _id: created._id }, { orderStatus: "CONFIRMED" });
-      const coupleInfoId = new mongoose.Types.ObjectId().toString();
-
-      const result = await attachCoupleInfoToOrder(created._id.toString(), coupleInfoId, userId);
-
-      expect(result.coupleInfoId?.toString()).toBe(coupleInfoId);
-    });
-
-    it("존재하지 않는 주문이면 NOT_FOUND를 던진다", async () => {
-      const missingOrderId = new mongoose.Types.ObjectId().toString();
-
-      await expect(
-        attachCoupleInfoToOrder(
-          missingOrderId,
-          new mongoose.Types.ObjectId().toString(),
-          new mongoose.Types.ObjectId().toString(),
-        ),
-      ).rejects.toMatchObject({ category: "NOT_FOUND" });
-    });
-
-    it("본인 주문이 아니면 FORBIDDEN을 던진다", async () => {
-      const ownerId = new mongoose.Types.ObjectId().toString();
-      const created = await createOrderService(
-        buildOrderInputForTest({ userId: ownerId, coupleInfoId: undefined }),
-      );
-      await OrderModel.updateOne({ _id: created._id }, { orderStatus: "CONFIRMED" });
-      const otherUserId = new mongoose.Types.ObjectId().toString();
-
-      await expect(
-        attachCoupleInfoToOrder(
-          created._id.toString(),
-          new mongoose.Types.ObjectId().toString(),
-          otherUserId,
-        ),
-      ).rejects.toMatchObject({ category: "FORBIDDEN" });
-    });
-
-    it("결제 완료(CONFIRMED) 상태가 아니면 VALIDATION을 던진다", async () => {
-      const userId = new mongoose.Types.ObjectId().toString();
-      const created = await createOrderService(
-        buildOrderInputForTest({ userId, coupleInfoId: undefined }),
-      );
-
-      await expect(
-        attachCoupleInfoToOrder(
-          created._id.toString(),
-          new mongoose.Types.ObjectId().toString(),
-          userId,
-        ),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
-    });
-  });
-
-  describe("findExpiredAwaitingCoupleInfoOrders", () => {
-    it("CONFIRMED + coupleInfoId 없음 + 7일 초과면 조회된다", async () => {
-      const userId = new mongoose.Types.ObjectId().toString();
-      const created = await createOrderService(
-        buildOrderInputForTest({ userId, coupleInfoId: undefined }),
+        buildOrderInputForTest({ userId }),
       );
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
@@ -404,15 +365,17 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingCoupleInfoOrders(userId);
+      const result = await findExpiredAwaitingInvitationOrders(userId);
 
-      expect(result.map((o) => o._id.toString())).toEqual([created._id.toString()]);
+      expect(result.map((o) => o._id.toString())).toEqual([
+        created._id.toString(),
+      ]);
     });
 
     it("7일이 안 지났으면 조회되지 않는다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       const created = await createOrderService(
-        buildOrderInputForTest({ userId, coupleInfoId: undefined }),
+        buildOrderInputForTest({ userId }),
       );
       const oneDayAgo = new Date();
       oneDayAgo.setDate(oneDayAgo.getDate() - 1);
@@ -421,22 +384,40 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: oneDayAgo },
       );
 
-      const result = await findExpiredAwaitingCoupleInfoOrders(userId);
+      const result = await findExpiredAwaitingInvitationOrders(userId);
 
       expect(result).toEqual([]);
     });
 
-    it("coupleInfoId가 이미 있으면 조회되지 않는다", async () => {
+    it("Invitation이 이미 있으면 조회되지 않는다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
-      const created = await createOrderService(buildOrderInputForTest({ userId }));
+      const created = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
       await OrderModel.updateOne(
         { _id: created._id },
         { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
       );
+      await InvitationModel.create({
+        publicKey: "existing-invitation-key",
+        userId: new mongoose.Types.ObjectId(userId),
+        orderId: created._id,
+        productId: created.product.productId,
+        status: "draft",
+        groom: { name: "신랑", phone: "010-1111-2222" },
+        bride: { name: "신부", phone: "010-3333-4444" },
+        weddingDate: new Date("2026-12-25T13:00:00"),
+        venue: "예식장",
+        address: "서울시 강남구",
+        addressDetail: "3층",
+        guestbookEnabled: true,
+        thumbnailImages: [],
+        galleryImages: [],
+      });
 
-      const result = await findExpiredAwaitingCoupleInfoOrders(userId);
+      const result = await findExpiredAwaitingInvitationOrders(userId);
 
       expect(result).toEqual([]);
     });
@@ -444,13 +425,16 @@ describe("order", () => {
     it("CONFIRMED가 아니면(PENDING/CANCELLED 등) 조회되지 않는다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       const created = await createOrderService(
-        buildOrderInputForTest({ userId, coupleInfoId: undefined }),
+        buildOrderInputForTest({ userId }),
       );
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
-      await OrderModel.updateOne({ _id: created._id }, { confirmedAt: eightDaysAgo });
+      await OrderModel.updateOne(
+        { _id: created._id },
+        { confirmedAt: eightDaysAgo },
+      );
 
-      const result = await findExpiredAwaitingCoupleInfoOrders(userId);
+      const result = await findExpiredAwaitingInvitationOrders(userId);
 
       expect(result).toEqual([]);
     });
@@ -470,35 +454,6 @@ describe("order", () => {
       const result = await getOrderSeviceByMerchantUid("NOT-EXIST");
 
       expect(result).toBeNull();
-    });
-  });
-
-  describe("getActiveOrderInfoByCoupleInfoId", () => {
-    it("CONFIRMED/COMPLETED 상태 주문이 없으면 빈 값을 리턴한다", async () => {
-      const input = buildOrderInputForTest();
-      await createOrderService(input);
-
-      const result = await getActiveOrderInfoByCoupleInfoId(
-        input.coupleInfoId,
-      );
-
-      expect(result).toEqual({ features: [], productId: null });
-    });
-
-    it("CONFIRMED 상태 주문이 있으면 feature/productId를 리턴한다", async () => {
-      const input = buildOrderInputForTest();
-      const created = await createOrderService(input);
-      await OrderModel.updateOne(
-        { _id: created._id },
-        { orderStatus: "CONFIRMED" },
-      );
-
-      const result = await getActiveOrderInfoByCoupleInfoId(
-        input.coupleInfoId,
-      );
-
-      expect(result.productId).toBe(input.product.productId);
-      expect(result.features).toEqual([]);
     });
   });
 

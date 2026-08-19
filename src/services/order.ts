@@ -1,12 +1,12 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IOrder, OrderJSON} from "@/models";
-import { OrderModel } from "@/models";
+import type { IOrder, OrderJSON } from "@/models";
+import { InvitationModel, OrderModel, ProductModel } from "@/models";
 import type { CreateOrderDto } from "@/core/schemas";
 import { generateUid } from "@/core/utils";
 import { dbConnect } from "@/db";
 import { AppError } from "@/core/domain";
-import { COUPLE_INFO_DEADLINE_DAYS } from "@/core/domain";
+import { INVITATION_INPUT_DEADLINE_DAYS } from "@/core/domain";
 import { getProductQuantityBoundsService } from "./product";
 import { requireAuth } from "./auth";
 
@@ -21,10 +21,11 @@ export const createOrderService = async (
 ): Promise<IOrder> => {
   await dbConnect();
 
-  if (data.coupleInfoId) assertObjectIdLike(data.coupleInfoId, "커플 정보 ID");
   assertObjectIdLike(data.userId, "사용자 ID");
   assertObjectIdLike(data.product.productId, "상품 ID");
-  data.product.selectedFeatures.forEach((f) => assertObjectIdLike(f.featureId, "옵션 ID"));
+  data.product.selectedFeatures.forEach((f) =>
+    assertObjectIdLike(f.featureId, "옵션 ID"),
+  );
 
   // REQ-5: 클라이언트가 보낸 수량을 신뢰하지 않고 DB에서 minQuantity/maxQuantity를
   // 다시 읽어 범위를 검증한다(요청 본문에는 이 두 값이 애초에 실리지 않는다).
@@ -64,9 +65,6 @@ export const createOrderService = async (
   // DB 저장을 위한 최종 데이터 가공(Trans)
   const orderData = {
     ...data,
-    coupleInfoId: data.coupleInfoId
-      ? new mongoose.Types.ObjectId(data.coupleInfoId)
-      : undefined,
     userId: new mongoose.Types.ObjectId(data.userId),
     merchantUid,
     finalPrice,
@@ -98,61 +96,31 @@ export async function createOrderForCurrentUserService(
 }
 
 /**
- * 결제 완료된 주문에 couple-info를 연결한다. 소유권과 결제 상태를 재검증한
- * 뒤에만 연결한다.
- */
-export const attachCoupleInfoToOrder = async (
-  orderId: string,
-  coupleInfoId: string,
-  userId: string,
-): Promise<IOrder> => {
-  await dbConnect();
-
-  assertObjectIdLike(orderId, "주문 ID");
-  assertObjectIdLike(coupleInfoId, "커플 정보 ID");
-
-  const order = await OrderModel.findById(orderId);
-
-  if (!order) {
-    throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
-  }
-
-  if (order.userId.toString() !== userId) {
-    throw new AppError("FORBIDDEN", "본인 주문만 연결할 수 있습니다.");
-  }
-
-  if (order.orderStatus !== "CONFIRMED") {
-    throw new AppError(
-      "VALIDATION",
-      "결제 완료된 주문에만 커플 정보를 연결할 수 있습니다.",
-    );
-  }
-
-  order.coupleInfoId = new mongoose.Types.ObjectId(coupleInfoId);
-  await order.save();
-
-  return order.toObject();
-};
-
-/**
- * 결제완료(CONFIRMED)됐지만 coupleInfoId를 채우지 않은 채 기한을 넘긴
+ * 결제완료(CONFIRMED)됐지만 Invitation을 만들지 않은 채 기한을 넘긴
  * 주문을 조회한다(자동취소 대상). 순수 조회만 담당하고 실제 취소(PortOne 환불)는
  * payment.service의 cancelPayment가 맡는다(order.service가 payment.service를
  * import하면 순환 의존이 생기므로, 오케스트레이션은 호출부에서 두 함수를
  * 조합한다).
  */
-export const findExpiredAwaitingCoupleInfoOrders = async (
+export const findExpiredAwaitingInvitationOrders = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<IOrder[]> => {
   await dbConnect();
 
   const deadline = new Date();
-  deadline.setDate(deadline.getDate() - COUPLE_INFO_DEADLINE_DAYS);
+  deadline.setDate(deadline.getDate() - INVITATION_INPUT_DEADLINE_DAYS);
+
+  const invitations = await InvitationModel.find({ userId })
+    .select("orderId")
+    .lean();
+  const invitationOrderIds = invitations.map(
+    (invitation) => invitation.orderId,
+  );
 
   return OrderModel.find({
     userId,
     orderStatus: "CONFIRMED",
-    coupleInfoId: { $exists: false },
+    _id: { $nin: invitationOrderIds },
     confirmedAt: { $lt: deadline },
   }).lean<IOrder[]>();
 };
@@ -167,26 +135,6 @@ export const getOrderSeviceByMerchantUid = async (
   return order;
 };
 
-export const getActiveOrderInfoByCoupleInfoId = async (
-  coupleInfoId: string,
-): Promise<{ features: string[]; productId: string | null }> => {
-  await dbConnect();
-
-  const order = await OrderModel.findOne({
-    coupleInfoId: new mongoose.Types.ObjectId(coupleInfoId),
-    orderStatus: { $in: ["CONFIRMED", "COMPLETED"] },
-  })
-    .select("product.productId product.selectedFeatures")
-    .lean();
-
-  if (!order) return { features: [], productId: null };
-
-  return {
-    features: order.product.selectedFeatures.map((f) => f.code),
-    productId: order.product.productId?.toString() ?? null,
-  };
-};
-
 export const getOrdersByUserId = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<OrderJSON[]> => {
@@ -199,14 +147,34 @@ export const getOrdersByUserId = async (
   // .lean() 결과의 ObjectId 필드를 명시적으로 문자열화한다(services/AGENTS.md
   // 컨벤션) — Server Component(my-orders/page.tsx)가 Client Component로 그대로
   // 넘기므로, ObjectId 인스턴스가 하나라도 남으면 "Only plain objects..." 에러가 난다.
+  const productIds = [
+    ...new Set(orders.map((order) => order.product.productId.toString())),
+  ];
+  const [products, invitations] = await Promise.all([
+    ProductModel.find({ _id: { $in: productIds } })
+      .select("category")
+      .lean(),
+    InvitationModel.find({ userId }).select("orderId status").lean(),
+  ]);
+  const categories = new Map(
+    products.map((product) => [product._id.toString(), product.category]),
+  );
+  const invitationStatuses = new Map(
+    invitations.map((invitation) => [
+      invitation.orderId.toString(),
+      invitation.status,
+    ]),
+  );
+
   return orders.map((order) => ({
     ...order,
     _id: order._id.toString(),
-    coupleInfoId: order.coupleInfoId?.toString(),
+    invitationStatus: invitationStatuses.get(order._id.toString()),
     userId: order.userId.toString(),
     paymentId: order.paymentId?.toString(),
     product: {
       ...order.product,
+      category: categories.get(order.product.productId.toString()),
       productId: order.product.productId.toString(),
       selectedFeatures: order.product.selectedFeatures.map((f) => ({
         ...f,

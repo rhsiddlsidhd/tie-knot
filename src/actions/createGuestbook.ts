@@ -13,7 +13,7 @@ export const createGuestbook = async (
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
   const data = {
-    coupleInfoId: formData.get("coupleInfoId") as string,
+    publicKey: formData.get("publicKey") as string,
     author: formData.get("author") as string,
     password: formData.get("password") as string,
     message: formData.get("message") as string,
@@ -31,7 +31,7 @@ export const createGuestbook = async (
   try {
     await createGuestbookWithPasswordService(parsed.data);
 
-    revalidatePath(routes.preview.detail(parsed.data.coupleInfoId));
+    revalidatePath(routes.preview.detail(parsed.data.publicKey));
 
     return {
       success: true,

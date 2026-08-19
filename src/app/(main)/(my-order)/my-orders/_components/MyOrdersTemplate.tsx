@@ -1,4 +1,13 @@
-import { Button, Card, CardContent, CardHeader, CardTitle, TypographyH1, TypographyH3, TypographyMuted } from "@/ui/components/atoms";
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  TypographyH1,
+  TypographyH3,
+  TypographyMuted,
+} from "@/ui/components/atoms";
 import { CloudImage } from "@/ui/components/molecules";
 import {
   Edit,
@@ -11,7 +20,7 @@ import {
 import { format } from "date-fns";
 import Link from "next/link";
 import type { OrderJSON } from "@/core/domain";
-import { routes } from "@/core/domain";
+import { CUSTOMER_INPUT_ROUTES, routes } from "@/core/domain";
 import { PAYMENT_STATUS, PAY_METHOD_LABEL } from "../_constants";
 import { PaymentButton } from "./PaymentButton";
 import { PendingCoupleInfoBanner } from "./PendingCoupleInfoBanner";
@@ -24,7 +33,9 @@ const MyOrdersTemplate = ({ groupedOrders }: MyOrdersTemplateProps) => {
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <TypographyH1 className="text-left mb-2 text-3xl font-bold">주문 목록</TypographyH1>
+        <TypographyH1 className="text-left mb-2 text-3xl font-bold">
+          주문 목록
+        </TypographyH1>
         <TypographyMuted>
           구매한 템플릿과 주문 상태를 확인합니다.
         </TypographyMuted>
@@ -44,10 +55,14 @@ const MyOrdersTemplate = ({ groupedOrders }: MyOrdersTemplateProps) => {
                   const product = order.product;
                   const hasDiscount =
                     order.discountRate > 0 || order.discountAmount > 0;
-                  // 결제는 완료됐지만 청첩장 콘텐츠(couple-info)를 아직 안 채운
-                  // 주문.
-                  const needsCoupleInfo =
-                    order.orderStatus === "CONFIRMED" && !order.coupleInfoId;
+                  // 결제는 완료됐지만 청첩장 콘텐츠를 아직 입력하지 않은 주문.
+                  const customerInputRoute = product.category
+                    ? CUSTOMER_INPUT_ROUTES[product.category]?.(order._id)
+                    : undefined;
+                  const needsCustomerInput =
+                    order.orderStatus === "CONFIRMED" &&
+                    !order.invitationStatus &&
+                    customerInputRoute;
 
                   return (
                     <div
@@ -102,8 +117,10 @@ const MyOrdersTemplate = ({ groupedOrders }: MyOrdersTemplateProps) => {
                           </div>
                         </div>
 
-                        {needsCoupleInfo && (
-                          <PendingCoupleInfoBanner orderId={order._id.toString()} />
+                        {needsCustomerInput && (
+                          <PendingCoupleInfoBanner
+                            orderId={order._id.toString()}
+                          />
                         )}
                       </div>
 
@@ -111,16 +128,16 @@ const MyOrdersTemplate = ({ groupedOrders }: MyOrdersTemplateProps) => {
                         {order.orderStatus === "PENDING" && (
                           <PaymentButton order={order} />
                         )}
-                        {order.coupleInfoId && order.orderStatus !== "CANCELLED" && (
-                          <Button size="lg" variant="outline" asChild>
-                            <Link
-                              href={`${routes.myOrders.edit}?q=${order.coupleInfoId.toString()}`}
-                            >
-                              <Edit className="mr-1 h-4 w-4" />
-                              수정하기
-                            </Link>
-                          </Button>
-                        )}
+                        {order.invitationStatus &&
+                          order.orderStatus !== "CANCELLED" &&
+                          customerInputRoute && (
+                            <Button size="lg" variant="outline" asChild>
+                              <Link href={customerInputRoute}>
+                                <Edit className="mr-1 h-4 w-4" />
+                                수정하기
+                              </Link>
+                            </Button>
+                          )}
                         {order.orderStatus === "CONFIRMED" && (
                           <Button size="lg" variant="outline">
                             <RefreshCw className="mr-1 h-4 w-4" />
@@ -152,7 +169,9 @@ const MyOrdersTemplate = ({ groupedOrders }: MyOrdersTemplateProps) => {
               아직 주문한 상품이 없어요. 상품을 구경하고 첫 주문을 해보세요.
             </TypographyMuted>
             <Button asChild className="mt-6">
-              <Link href={routes.products.byCategory("invitation")}>청첩장 보러가기</Link>
+              <Link href={routes.products.byCategory("invitation")}>
+                청첩장 보러가기
+              </Link>
             </Button>
           </div>
         )}

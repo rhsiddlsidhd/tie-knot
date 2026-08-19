@@ -51,14 +51,20 @@ describe("useCheckoutForm", () => {
     const routerReplace = vi.fn();
     const action = vi.fn();
     const { result } = renderHook(() =>
-      useCheckoutForm({ order: null, action, router: { replace: routerReplace } as never }),
+      useCheckoutForm({
+        order: null,
+        action,
+        router: { replace: routerReplace } as never,
+      }),
     );
 
     act(() => {
       result.current.handleSubmit(buildSubmitEvent());
     });
 
-    expect(toast.error).toHaveBeenCalledWith("주문 정보를 찾을 수 없습니다. 다시 시도해주세요.");
+    expect(toast.error).toHaveBeenCalledWith(
+      "주문 정보를 찾을 수 없습니다. 다시 시도해주세요.",
+    );
     expect(routerReplace).toHaveBeenCalledWith("/products");
     expect(action).not.toHaveBeenCalled();
   });
@@ -90,9 +96,13 @@ describe("useCheckoutForm", () => {
   it("정상 입력이면 주문 정보를 formData에 담아 action을 호출한다", () => {
     const routerReplace = vi.fn();
     const action = vi.fn();
-    const order = buildOrder({ coupleInfoId: "couple-1" });
+    const order = buildOrder();
     const { result } = renderHook(() =>
-      useCheckoutForm({ order, action, router: { replace: routerReplace } as never }),
+      useCheckoutForm({
+        order,
+        action,
+        router: { replace: routerReplace } as never,
+      }),
     );
 
     act(() => {
@@ -102,23 +112,6 @@ describe("useCheckoutForm", () => {
     expect(action).toHaveBeenCalledTimes(1);
     const formData = action.mock.calls[0][0] as FormData;
     expect(formData.get("productId")).toBe("product-1");
-    expect(formData.get("coupleInfoId")).toBe("couple-1");
     expect(result.current.errors).toEqual({});
-  });
-
-  it("order에 coupleInfoId가 없으면(결제 이후 my-orders에서 채우는 흐름) formData에 담지 않는다", () => {
-    const routerReplace = vi.fn();
-    const action = vi.fn();
-    const order = buildOrder();
-    const { result } = renderHook(() =>
-      useCheckoutForm({ order, action, router: { replace: routerReplace } as never }),
-    );
-
-    act(() => {
-      result.current.handleSubmit(buildSubmitEvent());
-    });
-
-    const formData = action.mock.calls[0][0] as FormData;
-    expect(formData.get("coupleInfoId")).toBeNull();
   });
 });
