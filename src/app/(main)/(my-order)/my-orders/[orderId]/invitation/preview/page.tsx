@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
 import { getOwnedInvitationPreviewByOrder, getProductService, verifySession } from "@/services";
-import { InvitationTemplate } from "../../../../../(preview)/preview/[publicKey]/_components";
+import { InvitationTemplate } from "../../../../../../(preview)/preview/[publicKey]/_components";
 
 export default async function Page({ params }: { params: Promise<{ orderId: string }> }) {
   const { orderId } = await params;

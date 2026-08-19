@@ -46,6 +46,8 @@ export const subCategoryLabels: Record<SubCategory, string> = {
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
 export type SubCategory = (typeof SUB_CATEGORY_MAP)[ProductCategory][number];
 
-export const CUSTOMER_INPUT_ROUTES = {
+export const CUSTOMER_INPUT_ROUTES: Partial<
+  Record<ProductCategory, (orderId: string) => string>
+> = {
   invitation: (orderId: string) => `/my-orders/${orderId}/invitation`,
-} satisfies Partial<Record<ProductCategory, (orderId: string) => string>>;
+};
