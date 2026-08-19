@@ -21,7 +21,12 @@ export const createGuestbookService = async ({
   }).lean();
   if (!invitation)
     throw new AppError("NOT_FOUND", "청첩장을 찾을 수 없습니다.");
-  const { publicKey: _publicKey, ...entry } = data;
+  const entry = {
+    author: data.author,
+    password: data.password,
+    message: data.message,
+    isPrivate: data.isPrivate,
+  };
   return GuestbookModel.create({
     ...entry,
     invitationId: invitation._id,

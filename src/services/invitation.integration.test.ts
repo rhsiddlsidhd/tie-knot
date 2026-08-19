@@ -31,8 +31,20 @@ describe("invitation", () => {
   };
 
   const buildContent = () => {
-    const { userId: _userId, ...content } = buildCoupleInfoInput();
-    return content;
+    const input = buildCoupleInfoInput();
+    return {
+      groom: input.groom,
+      bride: input.bride,
+      weddingDate: input.weddingDate,
+      weddingTime: input.weddingTime,
+      venue: input.venue,
+      address: input.address,
+      addressDetail: input.addressDetail,
+      subwayStation: input.subwayStation,
+      guestbookEnabled: input.guestbookEnabled,
+      thumbnailImages: input.thumbnailImages,
+      galleryImages: input.galleryImages,
+    };
   };
 
   it("22자 base64url 공개 키를 발급한다", async () => {

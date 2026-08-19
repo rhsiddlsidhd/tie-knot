@@ -1,18 +1,17 @@
-import type { IInvitation } from "@/models";
+import type { CoupleSide } from "./couple-info";
 
-export type InvitationContent = Pick<
-  IInvitation,
-  | "groom"
-  | "bride"
-  | "weddingDate"
-  | "venue"
-  | "address"
-  | "addressDetail"
-  | "subwayStation"
-  | "guestbookEnabled"
-  | "thumbnailImages"
-  | "galleryImages"
->;
+export interface InvitationContent {
+  groom: CoupleSide;
+  bride: CoupleSide;
+  weddingDate: Date;
+  venue: string;
+  address: string;
+  addressDetail: string;
+  subwayStation?: string;
+  guestbookEnabled: boolean;
+  thumbnailImages: string[];
+  galleryImages: string[];
+}
 
 export type InvitationEditor = InvitationContent & {
   publicKey: string;

@@ -42,15 +42,15 @@ vi.mock("./useImageUpload", () => ({
 vi.mock("./useImageList", () => ({
   useImageList: () => ({ getPayload: getPayloadMock }),
 }));
-vi.mock("./useFetchCoupleInfo", () => ({
-  useFetchCoupleInfo: () => ({ data: undefined as unknown, isLoading: false }),
+vi.mock("./useFetchInvitation", () => ({
+  useFetchInvitation: () => ({ data: undefined as unknown, isLoading: false }),
 }));
 vi.mock("./useBanks", () => ({ useBanks: () => ({ banks: [] as unknown[] }) }));
 vi.mock("./useSubwayStations", () => ({
   useSubwayStations: () => ({ subwayStations: [] as unknown[] }),
 }));
 
-import { useCoupleInfoForm } from "./useCoupleInfoForm";
+import { useInvitationForm } from "./useInvitationForm";
 
 const buildSubmitEvent = () =>
   ({
@@ -58,7 +58,7 @@ const buildSubmitEvent = () =>
     currentTarget: document.createElement("form"),
   }) as unknown as React.FormEvent<HTMLFormElement>;
 
-describe("useCoupleInfoForm", () => {
+describe("useInvitationForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     paramsMock.mockReturnValue({ orderId: "order-1" });
@@ -66,7 +66,7 @@ describe("useCoupleInfoForm", () => {
 
   it("URL의 orderId를 그대로 리턴한다(결제 완료 후 my-orders 진입 흐름)", () => {
     useActionStateMock.mockReturnValue([null, vi.fn()]);
-    const { result } = renderHook(() => useCoupleInfoForm({ type: "create" }));
+    const { result } = renderHook(() => useInvitationForm());
 
     expect(result.current.orderId).toBe("order-1");
   });
@@ -77,7 +77,7 @@ describe("useCoupleInfoForm", () => {
       vi.fn(),
     ]);
 
-    renderHook(() => useCoupleInfoForm({ type: "create" }));
+    renderHook(() => useInvitationForm());
 
     expect(routerPushMock).toHaveBeenCalledWith("/my-orders");
   });
@@ -88,7 +88,7 @@ describe("useCoupleInfoForm", () => {
       vi.fn(),
     ]);
 
-    renderHook(() => useCoupleInfoForm({ type: "edit" }));
+    renderHook(() => useInvitationForm());
 
     expect(routerPushMock).toHaveBeenCalledWith("/my-orders");
   });
@@ -96,7 +96,7 @@ describe("useCoupleInfoForm", () => {
   it("state가 없으면 이동하지 않는다", () => {
     useActionStateMock.mockReturnValue([null, vi.fn()]);
 
-    renderHook(() => useCoupleInfoForm({ type: "create" }));
+    renderHook(() => useInvitationForm());
 
     expect(routerPushMock).not.toHaveBeenCalled();
   });
@@ -106,7 +106,7 @@ describe("useCoupleInfoForm", () => {
     useActionStateMock.mockReturnValue([null, actionMock]);
     uploadMock.mockResolvedValue(null);
 
-    const { result } = renderHook(() => useCoupleInfoForm({ type: "create" }));
+    const { result } = renderHook(() => useInvitationForm());
 
     await act(async () => {
       await result.current.handleSubmit(buildSubmitEvent());
@@ -120,7 +120,7 @@ describe("useCoupleInfoForm", () => {
     useActionStateMock.mockReturnValue([null, actionMock]);
     uploadMock.mockResolvedValue({ thumbnailUrls: ["a"], galleryUrls: ["b"] });
 
-    const { result } = renderHook(() => useCoupleInfoForm({ type: "create" }));
+    const { result } = renderHook(() => useInvitationForm());
 
     await act(async () => {
       await result.current.handleSubmit(buildSubmitEvent());

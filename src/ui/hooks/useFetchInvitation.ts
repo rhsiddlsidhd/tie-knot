@@ -3,7 +3,7 @@ import { fetcher } from "@/ui/fetcher";
 import type { InvitationEditor } from "@/core/domain";
 import useSWR from "swr";
 
-const useFetchCoupleInfo = (orderId?: string) => {
+const useFetchInvitation = (orderId?: string) => {
   const swrKey = orderId ? `/api/invitations/${orderId}` : null;
 
   const { data, error, isLoading, mutate } = useSWR(
@@ -22,4 +22,4 @@ const useFetchCoupleInfo = (orderId?: string) => {
   return { data, error, isLoading, mutate };
 };
 
-export { useFetchCoupleInfo };
+export { useFetchInvitation };

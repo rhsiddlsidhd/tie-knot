@@ -24,7 +24,7 @@ src/ui/components/organisms/
 
 ## Gotchas
 
-- `CoupleInfoForm`은 라우트 2곳(`couple-info/`, `order/edit/`)이 공유한다 — 오케스트레이션 로직은 `src/ui/hooks/useCoupleInfoForm.ts`({type}로 분기), 순수 UI는 `organisms/CoupleInfoFormView.tsx`(2곳 이상 공유라 추상 접미사 `View`), 각 라우트는 자기 `_components/CoupleInfoForm.tsx`(얇은 컨테이너, 훅 호출+View 렌더만)를 따로 둔다 — "라우트당 컨테이너 1개" 원칙 예외 없음.
+- `InvitationFormView`는 청첩장 전체 편집 UI이고 `CoupleInfoSection`은 그 안의 신랑·신부 정보 섹션이다 — 엔티티·편집 흐름에는 `Invitation`, 실제 커플 정보 구획에만 `CoupleInfo`를 사용한다.
 
 ## References
 

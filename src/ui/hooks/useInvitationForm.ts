@@ -9,12 +9,12 @@ import { saveInvitation } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { useImageUpload } from "./useImageUpload";
 import { useImageList } from "./useImageList";
-import { useFetchCoupleInfo } from "./useFetchCoupleInfo";
+import { useFetchInvitation } from "./useFetchInvitation";
 import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
 import { routes } from "@/core/domain";
 
-export function useCoupleInfoForm(_options?: { type: "create" | "edit" }) {
+export function useInvitationForm() {
   const router = useRouter();
   const { orderId } = useParams<{ orderId: string }>();
 
@@ -23,7 +23,7 @@ export function useCoupleInfoForm(_options?: { type: "create" | "edit" }) {
     FormData
   >(saveInvitation, null);
 
-  const { data, isLoading } = useFetchCoupleInfo(orderId);
+  const { data, isLoading } = useFetchInvitation(orderId);
   const { banks } = useBanks();
   const { subwayStations } = useSubwayStations();
   const thumbnail = useImageList(data?.thumbnailImages);

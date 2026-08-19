@@ -6,13 +6,13 @@ import { BottomActionBar } from "./BottomActionBar";
 import { Progress } from "../atoms/progress";
 import { Skeleton } from "../atoms/skeleton";
 import { Save } from "lucide-react";
-import type { useCoupleInfoForm } from "@/ui/hooks";
+import type { useInvitationForm } from "@/ui/hooks";
 
-type CoupleInfoFormViewProps = ReturnType<typeof useCoupleInfoForm> & {
+type InvitationFormViewProps = ReturnType<typeof useInvitationForm> & {
   type: "create" | "edit";
 };
 
-export function CoupleInfoFormView({
+export function InvitationFormView({
   type,
   data,
   isLoading,
@@ -24,7 +24,7 @@ export function CoupleInfoFormView({
   uploadProgress,
   handleSubmit,
   orderId,
-}: CoupleInfoFormViewProps) {
+}: InvitationFormViewProps) {
   if (type === "edit" && isLoading)
     return (
       <div className="space-y-6">

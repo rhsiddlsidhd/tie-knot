@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms"
 import { format } from "date-fns";
 import { TextField, AddressField, SwitchField, ComboboxField, DateField } from "@/ui/components/molecules";
 
-import type { CoupleInfo } from "@/core/domain";
+import type { InvitationContent } from "@/core/domain";
 import type { SubwayStationsResponse } from "@/core/schemas";
 
 type BasicInfoSectionProps = {
-  data?: Pick<CoupleInfo, "weddingDate" | "venue" | "address" | "addressDetail" | "subwayStation" | "guestbookEnabled">;
+  data?: Pick<InvitationContent, "weddingDate" | "venue" | "address" | "addressDetail" | "subwayStation" | "guestbookEnabled">;
   subwayStations?: SubwayStationsResponse;
 };
 

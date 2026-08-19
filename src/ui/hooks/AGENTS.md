@@ -12,7 +12,7 @@
 src/ui/hooks/
 ├── index.ts               # 배럴
 ├── useAuth.ts             # SWR fetch 전담(`/api/auth/me`) — 서버 세션은 Zustand로 옮기지 않는다, `src/AGENTS.md` Critical Convention 참고
-├── useCoupleInfoForm.ts     # 라우트 2곳(couple-info/, order/edit/)이 공유하는 오케스트레이션 — 각 라우트 컨테이너가 이 훅만 호출
+├── useInvitationForm.ts     # 주문별 청첩장 편집 오케스트레이션
 └── ...                       # 훅 1개당 파일 1개
 ```
 
