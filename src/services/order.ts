@@ -98,8 +98,8 @@ export async function createOrderForCurrentUserService(
 }
 
 /**
- * 결제 완료된 주문에 couple-info를 연결한다(TODO.md "couple-info를 payment
- * 이후로 분리" 참고) — 소유권과 결제 상태를 재검증한 뒤에만 연결한다.
+ * 결제 완료된 주문에 couple-info를 연결한다. 소유권과 결제 상태를 재검증한
+ * 뒤에만 연결한다.
  */
 export const attachCoupleInfoToOrder = async (
   orderId: string,
@@ -136,8 +136,7 @@ export const attachCoupleInfoToOrder = async (
 
 /**
  * 결제완료(CONFIRMED)됐지만 coupleInfoId를 채우지 않은 채 기한을 넘긴
- * 주문을 조회한다(자동취소 대상, TODO.md "couple-info를 payment 이후로
- * 분리" 참고) — 순수 조회만 담당. 실제 취소(PortOne 환불)는
+ * 주문을 조회한다(자동취소 대상). 순수 조회만 담당하고 실제 취소(PortOne 환불)는
  * payment.service의 cancelPayment가 맡는다(order.service가 payment.service를
  * import하면 순환 의존이 생기므로, 오케스트레이션은 호출부에서 두 함수를
  * 조합한다).

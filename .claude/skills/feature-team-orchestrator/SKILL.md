@@ -1,6 +1,6 @@
 ---
 name: feature-team-orchestrator
-description: "이 프로젝트(tie-knot)에서 TODO.md '새 피처' 섹션급 풀스택 신규 기능을 처음부터 끝까지(API 설계→UI 설계→DB 설계→구현→경계면 검증→통합 테스트→PR) 구현할 때 반드시 사용. '~기능 만들어줘/추가해줘/구현해줘' 같은 신규 기능 요청뿐 아니라, 이미 이 스킬로 진행 중이던 기능의 재실행·부분 수정·보완·설계 변경·다시 시작·이전 결과 개선 요청에도 사용한다. 새 엔드포인트·새 화면·새 데이터모델이 동시에 얽리는 `feat` 성격 작업 전용이다 — 단순 버그 수정(`fix`), 성능 개선, 프레젠테이션만 바꾸는 UI 수정에는 쓰지 않는다(설계 팬아웃 자체가 무의미해서 오버킬)."
+description: "이 프로젝트(tie-knot)에서 새 엔드포인트·새 화면·새 데이터모델이 동시에 얽히는 풀스택 신규 기능을 처음부터 끝까지(API 설계→UI 설계→DB 설계→구현→경계면 검증→통합 테스트→PR) 구현할 때 반드시 사용. '~기능 만들어줘/추가해줘/구현해줘' 같은 신규 기능 요청뿐 아니라, 이미 이 스킬로 진행 중이던 기능의 재실행·부분 수정·보완·설계 변경·다시 시작·이전 결과 개선 요청에도 사용한다. `feat` 성격 작업 전용이다 — 단순 버그 수정(`fix`), 성능 개선, 프레젠테이션만 바꾸는 UI 수정에는 쓰지 않는다(설계 팬아웃 자체가 무의미해서 오버킬)."
 ---
 
 # Feature Team Orchestrator
@@ -71,7 +71,7 @@ description: "이 프로젝트(tie-knot)에서 TODO.md '새 피처' 섹션급 �
 
 Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하나의 연속 세션**으로 운영한다.
 
-**표준 브랜치 `feat/{name}`은 TODO.md와 `~/.codex/docs/GIT.md`가 말하는 "작업 1개 = 브랜치 1개"의 그 브랜치다.** 아래 backend/frontend 서브 워크트리는 그 안에서 두 에이전트의 동시 쓰기(git 레이스)를 막는 **내부 임시 메커니즘**일 뿐이고, Phase 종료 시 표준 브랜치로 전부 합쳐진 뒤 제거된다 — PR/dev 시점에서 보면 여전히 "1 작업 = 1 브랜치 = 1 PR" 그대로다.
+**표준 브랜치 `feat/{name}`은 `~/.codex/docs/GIT.md`가 말하는 "작업 1개 = 브랜치 1개"의 그 브랜치다.** 아래 backend/frontend 서브 워크트리는 그 안에서 두 에이전트의 동시 쓰기(git 레이스)를 막는 **내부 임시 메커니즘**일 뿐이고, Phase 종료 시 표준 브랜치로 전부 합쳐진 뒤 제거된다 — PR/dev 시점에서 보면 여전히 "1 작업 = 1 브랜치 = 1 PR" 그대로다.
 
 1. 워크트리 생성 (리더가 표준 브랜치 위에서):
    ```
@@ -83,7 +83,7 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 3. kickoff SendMessage 공통:
    - 동료 2명의 id
    - `01_api_contract.md`/`01_ui_flow.md`/`01_db_schema.md` 경로(표준 브랜치 쪽 `_workspace/`, 워크트리 안이 아님)
-   - "표준 브랜치는 TODO.md와 `~/.codex/docs/GIT.md`의 '작업 1개=브랜치 1개' 그 자체다. 지금 워크트리는 병렬 쓰기 충돌을 막는 내부 메커니즘이고 이 Phase 끝나면 사라진다"
+   - "표준 브랜치는 `~/.codex/docs/GIT.md`의 '작업 1개=브랜치 1개' 그 자체다. 지금 워크트리는 병렬 쓰기 충돌을 막는 내부 메커니즘이고 이 Phase 끝나면 사라진다"
    - frontend-impl에게: "backend 완성 기다리지 말고 계약 shape 그대로 mock부터 만들어 전부 연결하라(mock-first)"
    - backend-impl/frontend-impl에게: "유닛(엔드포인트/화면) 하나 끝나면 자기 워크트리 브랜치에 `~/.codex/docs/GIT.md` 포맷(`feat: ...`)으로 커밋 → boundary-verifier에게 검증 요청 → PASS 받으면 그 즉시 리더에게 병합 요청 SendMessage(브랜치명+커밋 확인 포함) — 다 끝날 때까지 몰아두지 말 것"
    - boundary-verifier에게: "완성 알림마다 즉시 판정, 두 워크트리 절대경로를 동시에 Read해서 교차비교, REDO 카운터는 `_workspace/feat/{name}/03_boundary/{endpoint-slug}.json`에 기록"
@@ -110,8 +110,8 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 
 1. `_workspace/feat/{name}/` 보존(삭제하지 않음 — 브랜치는 나중에 머지되면 삭제돼도 이 디렉토리는 남는다. 재실행 시 Phase0 3번 분기가 처리)
 2. **모든 REQ의 acceptance가 충족됐다면(Phase4 통과), 확인질문 없이 `gh pr create --base dev`로 PR을 생성한다.** PR 본문에 `04_integration_report.md` 요약과 `MANUAL_INTERVENTION_REQUIRED` 항목(있다면 반드시)을 포함시킨다. **Merge는 항상 사람이 직접 한다** — 하네스는 merge를 실행하지 않고, auto-merge 설정도 걸지 않는다.
-3. TODO.md 체크박스는 건드리지 않는다(TODO.md 자체가 "체크리스트 갱신은 dev 브랜치에서 진행"이라고 명시 — 아직 머지 전이라 시점이 안 맞음). 대신 최종 보고에 "머지 후 TODO.md 체크박스 갱신 필요"를 리마인드로 남긴다.
-4. 사용자에게 요약 보고: 완료된 REQ 항목, 남은 `MANUAL_INTERVENTION_REQUIRED` 항목(있다면 강조), PR 링크, TODO.md 리마인드, 생성/수정된 주요 파일 목록
+3. 시작점이 된 GitHub Issue 번호가 있으면 PR 본문에 `Closes #번호`를 남긴다. 직접 해결하지 않고 관련만 있으면 `Related to #번호`를 사용한다.
+4. 사용자에게 요약 보고: 완료된 REQ 항목, 남은 `MANUAL_INTERVENTION_REQUIRED` 항목(있다면 강조), PR 링크와 Issue 연결 상태, 생성/수정된 주요 파일 목록
 
 ## 데이터 흐름
 
@@ -150,7 +150,7 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 3. Phase1: 3명 팀 구성 → 3개 설계 산출물 → 리더 1회 검토 후 승인
 4. Phase2+3: 워크트리 2개 분기 → backend가 필드 추가+API 반영 → PASS → 커밋 → 리더에게 병합요청 → 리더가 표준 브랜치로 merge → frontend가 폼에 입력란 추가+연동 → PASS → 커밋 → 병합요청 → merge → 전체 PASS → 워크트리 제거
 5. Phase4: test-suite가 주문 생성 골든패스 테스트 작성, 통과, 표준 브랜치에 커밋
-6. Phase5: `00_requirements.json` REQ 전부 `passes:true` → `gh pr create --base dev` 자동 생성 → 사용자에게 PR 링크+TODO.md 리마인드와 함께 보고
+6. Phase5: `00_requirements.json` REQ 전부 `passes:true` → `gh pr create --base dev` 자동 생성 → 사용자에게 PR 링크와 Issue 연결 상태를 함께 보고
 
 ### 에러 흐름
 1. Phase2+3에서 `/api/order/create` 응답 shape을 boundary-verifier가 REDO 판정 (설계상 memo 필드 위치가 요청 스키마와 실제 필요가 어긋남)

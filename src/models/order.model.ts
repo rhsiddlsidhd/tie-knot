@@ -77,8 +77,7 @@ type OrderStatusType = (typeof ORDER_STATUS)[number];
 export interface IOrder {
   _id: Types.ObjectId;
   merchantUid: string;
-  // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠 — 결제 시점엔 없을 수 있다(TODO.md
-  // "couple-info를 payment 이후로 분리" 참고).
+  // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠라 결제 시점에는 없을 수 있다.
   coupleInfoId?: Types.ObjectId | string;
   userId: Types.ObjectId | string;
   buyerName: string;

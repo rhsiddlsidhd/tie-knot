@@ -21,7 +21,7 @@ export type PaymentMethodDetailType =
   | "Unrecognized";
 
 // 필드명은 PortOne 원문 그대로 쓴다(한글 의미 기반 재명명 안 함) — API 응답과
-// 1:1 매핑을 유지해 번역 없이 그대로 소비하기 위함(TODO.md #10 확정 사항).
+// 1:1 매핑을 유지해 번역 없이 그대로 소비하기 위함이다.
 export interface PaymentMethodDetail {
   type?: PaymentMethodDetailType;
   card?: {

@@ -45,7 +45,7 @@ const MyOrdersTemplate = ({ groupedOrders }: MyOrdersTemplateProps) => {
                   const hasDiscount =
                     order.discountRate > 0 || order.discountAmount > 0;
                   // 결제는 완료됐지만 청첩장 콘텐츠(couple-info)를 아직 안 채운
-                  // 주문 — TODO.md "couple-info를 payment 이후로 분리" 참고.
+                  // 주문.
                   const needsCoupleInfo =
                     order.orderStatus === "CONFIRMED" && !order.coupleInfoId;
 
