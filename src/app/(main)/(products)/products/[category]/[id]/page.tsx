@@ -1,14 +1,9 @@
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 import { ProductDetailTemplate } from "./_components";
-import { getPremiumFeatureService, getAllProductsService, getProductService } from "@/services";
+import { getPremiumFeatureService, getProductService } from "@/services";
 
 import { notFound } from "next/navigation";
-
-export async function generateStaticParams() {
-  const products = await getAllProductsService();
-  return products.map((p) => ({ category: p.category, id: p._id.toString() }));
-}
 
 export default async function ProductDetailPage({
   params,

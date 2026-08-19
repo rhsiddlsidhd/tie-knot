@@ -1,4 +1,4 @@
-export const revalidate = 300;
+export const dynamic = "force-dynamic";
 
 import { Card, CardContent, CardHeader, CardTitle, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
 import { Package, DollarSign, ShoppingCart, Users } from "lucide-react";

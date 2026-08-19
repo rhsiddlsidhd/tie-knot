@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getAllPremiumFeatureService, verifySession } from "@/services";
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { ProductRegistrationForm } from "./_components";
