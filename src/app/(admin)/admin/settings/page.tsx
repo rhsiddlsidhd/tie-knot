@@ -1,4 +1,4 @@
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
 import React from "react";
 import { verifySession } from "@/services";

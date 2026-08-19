@@ -1,4 +1,4 @@
-export const revalidate = 600;
+export const dynamic = "force-dynamic";
 
 import { getAllProductsService, verifySession } from "@/services";
 import { AdminProductsTemplate } from "./_components";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { ProductCatalog } from "../_components";
 import { getAllProductsService } from "@/services";

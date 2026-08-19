@@ -1,4 +1,4 @@
-export const revalidate = 600;
+export const dynamic = "force-dynamic";
 
 import { Badge, Card, CardContent, TypographyH1, TypographyH3, TypographyLarge, TypographyMuted } from "@/ui/components/atoms";
 
