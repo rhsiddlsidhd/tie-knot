@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { requestPayment } from "@/adapters/browser/portone/request-payment";
-import type { PayStatus } from "@/core/domain";
+import { routes, type PayStatus } from "@/core/domain";
 import type { CreateOrderResult } from "@/actions";
 import { completePayment } from "@/actions";
 import { useOrderStore } from "@/ui/stores";
@@ -53,6 +53,7 @@ export function usePortOnePayment({ onSuccess, onError }: UsePortOnePaymentOptio
           storeId,
           channelKey,
           paymentId: merchantUid,
+          redirectUrl: `${location.origin}${routes.payment.result}`,
           orderName: `${title} 모바일 청첩장`,
           totalAmount: finalPrice,
           currency: "CURRENCY_KRW",

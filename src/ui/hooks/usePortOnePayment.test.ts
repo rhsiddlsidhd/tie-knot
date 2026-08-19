@@ -72,6 +72,11 @@ describe("usePortOnePayment", () => {
     });
 
     expect(completePayment).toHaveBeenCalledWith("merchant-1");
+    expect(requestPaymentMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        redirectUrl: `${location.origin}/payment-result`,
+      }),
+    );
     await waitFor(() => {
       expect(result.current.paymentStatus).toBe("PAID");
     });
