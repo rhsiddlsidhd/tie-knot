@@ -5,6 +5,7 @@ export * from "./request/email.schema";
 export * from "./request/guestbook.schema";
 export * from "./request/login.schema";
 export * from "./request/order.schema";
+export * from "./request/orderList.schema";
 export * from "./request/premiumFeature.schema";
 export * from "./request/product.schema";
 export * from "./request/productSearch.schema";

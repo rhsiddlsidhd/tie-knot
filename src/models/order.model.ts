@@ -150,6 +150,10 @@ const orderSchema = new Schema<IOrder>(
   },
 );
 
+// my-orders 목록은 (유저 + 상태 필터) 조건에 createdAt 내림차순 커서 페이징을 얹는다 —
+// 상태 필터가 걸린 조회가 정렬까지 인덱스로 처리되도록 복합 인덱스를 둔다.
+orderSchema.index({ userId: 1, orderStatus: 1, createdAt: -1 });
+
 export const OrderModel =
   (mongoose.models.Order as Model<IOrder>) ||
   mongoose.model<IOrder>("Order", orderSchema);

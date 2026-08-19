@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
 import {
@@ -6,14 +6,39 @@ import {
   buildProductInput,
   clearCollections,
 } from "@testing/support";
-import { InvitationModel, OrderModel, ProductModel } from "@/models";
+import { AppError } from "@/core/domain";
+import {
+  InvitationModel,
+  OrderModel,
+  PaymentModel,
+  ProductModel,
+} from "@/models";
+import type * as AuthModule from "./auth";
 import {
   createOrderService,
   getOrderSeviceByMerchantUid,
-  getOrdersByUserId,
+  getOrdersPageForUser,
+  cancelPendingOrderForCurrentUser,
+  cancelExpiredPendingOrders,
   findExpiredAwaitingInvitationOrders,
 } from "./order";
 import { createProductService } from "./product";
+
+// 세션 조회만 대체한다 — 쿠키/JWT는 이 파일의 검증 대상이 아니고, 나머지 auth 구현은
+// 그대로 둔다(partial mock).
+const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
+
+vi.mock("./auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof AuthModule>();
+  return {
+    ...actual,
+    requireAuth: async () => ({
+      userId: authState.userId,
+      email: "buyer@example.com",
+      role: "USER",
+    }),
+  };
+});
 
 describe("order", () => {
   // REQ-5가 주문 생성 시 Product를 실제로 재조회해 수량을 검증하므로, 이 파일의
@@ -457,24 +482,260 @@ describe("order", () => {
     });
   });
 
-  describe("getOrdersByUserId", () => {
-    it("해당 유저의 주문 목록을 리턴한다", async () => {
-      const input = buildOrderInputForTest();
-      await createOrderService(input);
+  // createdAt은 timestamps가 자동으로 채우고 mongoose가 immutable로 잠그므로,
+  // 순서·만료 검증을 위해 덮어쓰려면 두 보호를 모두 풀어야 한다.
+  const setCreatedAt = async (
+    orderId: mongoose.Types.ObjectId,
+    createdAt: Date,
+  ) => {
+    await OrderModel.updateOne(
+      { _id: orderId },
+      { $set: { createdAt } },
+      { timestamps: false, overwriteImmutable: true },
+    );
+  };
 
-      const result = await getOrdersByUserId(input.userId);
-
-      expect(result).toHaveLength(1);
-    });
-
-    it("_id를 문자열로 직렬화한다", async () => {
+  describe("getOrdersPageForUser", () => {
+    it("해당 유저의 주문만 리턴하고 _id를 문자열로 직렬화한다", async () => {
       const input = buildOrderInputForTest();
       const created = await createOrderService(input);
+      await createOrderService(buildOrderInputForTest());
 
-      const result = await getOrdersByUserId(input.userId);
+      const result = await getOrdersPageForUser({ userId: input.userId });
 
-      expect(typeof result[0]._id).toBe("string");
-      expect(result[0]._id).toBe(created._id.toString());
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0]._id).toBe(created._id.toString());
+      expect(result.nextCursor).toBe(null);
+    });
+
+    it("상태 필터를 적용한다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const pending = await createOrderService(buildOrderInputForTest({ userId }));
+      const confirmed = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
+      await OrderModel.updateOne(
+        { _id: confirmed._id },
+        { $set: { orderStatus: "CONFIRMED" } },
+      );
+
+      const result = await getOrdersPageForUser({ userId, status: "PENDING" });
+
+      expect(result.items.map((item) => item._id)).toEqual([
+        pending._id.toString(),
+      ]);
+    });
+
+    it("카테고리 필터는 해당 카테고리 상품의 주문만 남긴다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const favorProductInput = buildProductInput({
+        title: "답례품 캔들",
+        category: "favor",
+        subCategory: "candle",
+        minQuantity: 1,
+        maxQuantity: 0,
+      });
+      await createProductService(favorProductInput);
+      const favorProduct = await ProductModel.findOne({
+        title: favorProductInput.title,
+      }).lean();
+
+      const invitationOrder = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
+      await createOrderService(
+        buildOrderInputForTest({
+          userId,
+          product: {
+            ...buildOrderInput().product,
+            productId: favorProduct!._id.toString(),
+          },
+        }),
+      );
+
+      const result = await getOrdersPageForUser({
+        userId,
+        category: "invitation",
+      });
+
+      expect(result.items.map((item) => item._id)).toEqual([
+        invitationOrder._id.toString(),
+      ]);
+      expect(result.items[0].product.category).toBe("invitation");
+    });
+
+    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복되지 않는다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      // createdAt이 완전히 같아도 _id tie-breaker로 순서가 갈리는지까지 본다.
+      const sameCreatedAt = new Date("2026-08-01T00:00:00.000Z");
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const order = await createOrderService(buildOrderInputForTest({ userId }));
+        await setCreatedAt(order._id, sameCreatedAt);
+        created.push(order._id.toString());
+      }
+
+      const firstPage = await getOrdersPageForUser({ userId, limit: 2 });
+      expect(firstPage.items).toHaveLength(2);
+      expect(firstPage.nextCursor).not.toBe(null);
+
+      const secondPage = await getOrdersPageForUser({
+        userId,
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.nextCursor).toBe(null);
+
+      const paged = [...firstPage.items, ...secondPage.items].map(
+        (item) => item._id,
+      );
+      expect(new Set(paged).size).toBe(3);
+      expect(paged.sort()).toEqual([...created].sort());
+    });
+
+    it("형식이 깨진 커서는 VALIDATION AppError를 던진다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+
+      await expect(
+        getOrdersPageForUser({ userId, cursor: "!!broken!!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("가상계좌가 발급된 PENDING 주문에는 입금 계좌를 붙인다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      const payment = await PaymentModel.create({
+        merchantUid: order.merchantUid,
+        orderId: order._id,
+        buyerName: order.buyerName,
+        buyerEmail: order.buyerEmail,
+        buyerTel: order.buyerPhone,
+        requestAmount: order.finalPrice,
+        payMethod: "VIRTUAL_ACCOUNT",
+        status: "PENDING",
+        methodDetail: {
+          type: "PaymentMethodVirtualAccount",
+          virtualAccount: {
+            bank: "SHINHAN",
+            accountNumber: "110-123-456789",
+            expiredAt: new Date("2026-08-20T00:00:00.000Z"),
+          },
+        },
+      });
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { paymentId: payment._id } },
+      );
+
+      const result = await getOrdersPageForUser({ userId });
+
+      expect(result.items[0].virtualAccount).toMatchObject({
+        bank: "SHINHAN",
+        accountNumber: "110-123-456789",
+      });
+    });
+  });
+
+  describe("cancelPendingOrderForCurrentUser", () => {
+    it("본인의 결제 전 주문을 CANCELLED로 전이한다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      authState.userId = userId;
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+
+      await cancelPendingOrderForCurrentUser(order._id.toString());
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CANCELLED");
+      expect(updated?.cancelReason).toBe("주문자 취소");
+      expect(updated?.cancelledAt).toBeInstanceOf(Date);
+    });
+
+    it("다른 유저의 주문이면 FORBIDDEN을 던지고 상태를 바꾸지 않는다", async () => {
+      const ownerId = new mongoose.Types.ObjectId().toString();
+      authState.userId = new mongoose.Types.ObjectId().toString();
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId: ownerId }),
+      );
+
+      await expect(
+        cancelPendingOrderForCurrentUser(order._id.toString()),
+      ).rejects.toMatchObject({ category: "FORBIDDEN" });
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
+    it("결제가 끝난 주문은 VALIDATION을 던진다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      authState.userId = userId;
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { orderStatus: "CONFIRMED" } },
+      );
+
+      await expect(
+        cancelPendingOrderForCurrentUser(order._id.toString()),
+      ).rejects.toBeInstanceOf(AppError);
+    });
+
+    it("가상계좌가 발급된 PENDING 주문은 이 경로로 취소하지 않는다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      authState.userId = userId;
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { paymentId: new mongoose.Types.ObjectId() } },
+      );
+
+      await expect(
+        cancelPendingOrderForCurrentUser(order._id.toString()),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+  });
+
+  describe("cancelExpiredPendingOrders", () => {
+    it("24시간이 지난 결제 전 주문을 자동취소한다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+
+      await cancelExpiredPendingOrders(userId);
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CANCELLED");
+      expect(updated?.cancelReason).toBe("결제 미완료로 인한 자동 취소");
+    });
+
+    it("가상계좌가 발급된 주문은 기한이 지나도 만료 대상이 아니다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { paymentId: new mongoose.Types.ObjectId() } },
+      );
+      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
+
+      await cancelExpiredPendingOrders(userId);
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
+    it("아직 24시간이 안 지난 주문은 그대로 둔다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      await setCreatedAt(order._id, new Date(Date.now() - 23 * 60 * 60 * 1000));
+
+      await cancelExpiredPendingOrders(userId);
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
     });
   });
 });
