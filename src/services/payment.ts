@@ -77,8 +77,8 @@ type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
 /**
  * PortOne 결제수단(discriminated union)을 시스템 payMethod/methodDetail로 매핑
  * - 우리 PAY_METHOD 6종에 없는 편의점(PaymentMethodConvenienceStore)은 payMethod
- *   없이 methodDetail만 기록한다(TODO.md 확정 사항 — 채널 미지원으로 판매수단
- *   자체는 제외했지만, 응답 원문 보존은 계속한다).
+ *   없이 methodDetail만 기록한다. 채널 미지원으로 판매수단 자체는 제외했지만,
+ *   응답 원문 보존은 계속한다.
  * - 미인식 값은 Unrecognized로 폴백해 methodDetail에 흔적을 남긴다(silent
  *   failure 방지 — mapPortOneStatus와 같은 원칙).
  */
@@ -518,9 +518,8 @@ export const cancelPayment = async (
 };
 
 /**
- * coupleInfo 미입력 자동취소 오케스트레이션 — cron 인프라가 없어(TODO.md
- * "couple-info를 payment 이후로 분리" 참고) my-orders 목록 조회 직전에
- * 호출하는 lazy-check 방식을 쓴다. 개별 주문 취소 실패가 다른 주문 처리를
+ * coupleInfo 미입력 자동취소 오케스트레이션 — cron 인프라가 없어 my-orders
+ * 목록 조회 직전에 호출하는 lazy-check 방식을 쓴다. 개별 주문 취소 실패가 다른 주문 처리를
  * 막지 않도록 서로 격리한다(로깅 후 계속 진행 — silent swallow 아님).
  */
 export const cancelExpiredAwaitingCoupleInfoOrders = async (

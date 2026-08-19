@@ -51,6 +51,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - PR 제목은 72자를 넘지 않으며, squash merge 결과로 사용해도 의미가 완전해야 한다.
 - Issue 제목에는 prefix를 강제하지 않고 작업 목적이 드러나는 자연스러운 한국어를 사용한다.
 
-- TODO.md 정리·갱신은 `docs/todo-section-taxonomy` 브랜치에서 한다. 매 사이클 `git switch -C docs/todo-section-taxonomy origin/dev`로 새로 따고, 머지 후에는 다른 브랜치와 동일하게 삭제한다 — 재사용하는 건 이름뿐이다. 브랜치를 살려두면 squash merge 탓에 매 사이클 dev와 갈라진 상태에서 출발하게 된다.
-
-- 목적 밖 발견의 배출구는 TODO.md의 "미분류 인박스"다 — 작업 브랜치는 여기에만 append한다. 정식 섹션의 재분류·이동·완료 체크는 TODO 브랜치에서만 한다. 이동과 수정이 겹치면 머지가 못 푼다.
+- 작업 상태와 후속 과제는 GitHub Issues에서 관리한다.
+- 작업 중 목적 밖의 과제를 발견하면 현재 브랜치에서 함께 수정하지 않고 별도 Issue로 등록한다.
+- 현재 변경이 특정 Issue를 직접 해결하면 PR 본문에 `Closes #번호`를, 관련만 있으면 `Related to #번호`를 남긴다.

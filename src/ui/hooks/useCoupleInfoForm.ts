@@ -56,8 +56,7 @@ export function useCoupleInfoForm({ type }: { type: "create" | "edit" }) {
     if (!state) return;
 
     // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠라, create/edit 모두 완료 후
-    // my-orders로 돌아간다(payment로 다시 보내지 않는다 — TODO.md "couple-info를
-    // payment 이후로 분리" 참고).
+    // my-orders로 돌아간다(payment로 다시 보내지 않는다).
     if (state && state.success === true && state.data._id) {
       toast.success(state.data.message);
       router.push(routes.myOrders.root);
