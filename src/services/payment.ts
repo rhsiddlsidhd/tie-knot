@@ -253,6 +253,28 @@ async function verifyPayment(payment: PaidPayment): Promise<boolean> {
 }
 
 /**
+ * PortOne 에러의 로그용 컨텍스트 문자열 — AppError.message에 실려 boundary.ts의
+ * toErrorPayload가 서버 로그에만 찍고, 클라이언트로는 EXTERNAL_SERVICE 안전문구로
+ * 치환돼 나간다(docs/architecture/error-handling.md 민감분류 규칙).
+ *
+ * SDK 제약: RestError에는 HTTP status 필드가 없다(constructor가 data만 wrap).
+ * data.type("UNAUTHORIZED"/"PAYMENT_NOT_FOUND" 등)이 사실상 그 식별자 역할을 한다.
+ * data.type의 타입은 string | unique symbol(Unrecognized)이라 typeof 가드가 필수다.
+ */
+const portOneErrorContext = (
+  e: PortOne.PortOneError,
+  merchantUid: string,
+): string => {
+  const type =
+    e instanceof PortOne.RestError && typeof e.data.type === "string"
+      ? e.data.type
+      : "UNKNOWN";
+  // RestError는 응답에 message가 없으면 Error("")가 돼 빈 문자열이 된다 — 폴백 필수.
+  const detail = e.message || "(SDK 메시지 없음)";
+  return `type=${type} merchantUid=${merchantUid} message=${detail}`;
+};
+
+/**
  * PortOne 결제 정보 동기화 및 검증
  * @param paymentId - merchantUid (주문번호)
  */
@@ -531,7 +553,10 @@ export const syncPayment = async (paymentId: string) => {
     return { success: false, status: mapPortOneStatus(actualPayment.status) };
   } catch (e) {
     if (e instanceof PortOne.PortOneError) {
-      throw new AppError("EXTERNAL_SERVICE", `포트원 오류: ${e.message}`);
+      throw new AppError(
+        "EXTERNAL_SERVICE",
+        `포트원 오류: ${portOneErrorContext(e, paymentId)}`,
+      );
     }
     if (e instanceof AppError) {
       throw e;
@@ -540,7 +565,9 @@ export const syncPayment = async (paymentId: string) => {
     // — services는 AppError 하나로 통일한다(docs/architecture/error-handling.md 에러 표현 규칙).
     throw new AppError(
       "INTERNAL",
-      e instanceof Error ? e.message : "결제 동기화에 실패했습니다.",
+      `결제 동기화 실패: merchantUid=${paymentId} message=${
+        e instanceof Error ? e.message || "(메시지 없음)" : String(e)
+      }`,
     );
   }
 };
@@ -605,14 +632,19 @@ export const cancelPayment = async (
     });
   } catch (e) {
     if (e instanceof PortOne.PortOneError) {
-      throw new AppError("EXTERNAL_SERVICE", `포트원 취소 오류: ${e.message}`);
+      throw new AppError(
+        "EXTERNAL_SERVICE",
+        `포트원 취소 오류: ${portOneErrorContext(e, merchantUid)}`,
+      );
     }
     if (e instanceof AppError) {
       throw e;
     }
     throw new AppError(
       "INTERNAL",
-      e instanceof Error ? e.message : "결제 취소에 실패했습니다.",
+      `결제 취소 실패: merchantUid=${merchantUid} message=${
+        e instanceof Error ? e.message || "(메시지 없음)" : String(e)
+      }`,
     );
   }
 };
