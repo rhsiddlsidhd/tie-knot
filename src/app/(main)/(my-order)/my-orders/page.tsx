@@ -1,11 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import {
-  verifySession,
-  getOrdersPageForUser,
-  cancelExpiredAwaitingInvitationOrders,
-  cancelExpiredPendingOrders,
-} from "@/services";
+import { verifySession, getOrdersPageForUser } from "@/services";
 import { orderListRequestSchema } from "@/core/schemas";
 import { validateAndFlatten } from "@/core/utils";
 import { MyOrdersTemplate } from "./_components";
@@ -29,11 +24,6 @@ const Page = async ({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) => {
   const session = await verifySession();
-
-  // 자동취소 lazy-check는 첫 진입(RSC)에서만 돈다 — 청첩장 미입력 취소는 PortOne 환불
-  // API를 실제로 호출하므로 더보기·필터 전환마다 반복되면 안 된다.
-  await cancelExpiredAwaitingInvitationOrders(session.userId);
-  await cancelExpiredPendingOrders(session.userId);
 
   const { status, category } = resolveFilters(await searchParams);
   const firstPage = await getOrdersPageForUser({
