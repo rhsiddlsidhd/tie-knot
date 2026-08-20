@@ -6,6 +6,7 @@ import type {
   PayMethod,
   PaymentMethodDetail,
   IPayment,
+  IOrder,
 } from "@/models";
 import { PaymentModel, OrderModel, ProductModel } from "@/models";
 
@@ -13,10 +14,16 @@ import { getProductService } from "./product";
 import {
   getOrderSeviceByMerchantUid,
   findExpiredAwaitingInvitationOrders,
+  findExpiredAwaitingInvitationOrdersForAllUsers,
   findExpiredPendingOrders,
+  findExpiredPendingOrdersForAllUsers,
   PENDING_ORDER_CANCEL_REASONS,
 } from "./order";
 import { AppError } from "@/core/domain";
+import type {
+  ExpiredPendingOrderBatchResult,
+  ExpiredAwaitingInvitationBatchResult,
+} from "@/core/domain";
 import { dbConnect } from "@/db";
 import { requireAuth } from "./auth";
 
@@ -575,7 +582,7 @@ export const syncPayment = async (paymentId: string) => {
 /**
  * 결제 취소 — PortOne 환불 API 호출 후 Order/Payment 상태를 트랜잭션으로
  * 함께 전이한다(syncPayment의 FAILED 분기와 같은 이유). coupleInfo 미입력
- * 자동취소(order.service의 findExpiredAwaitingInvitationOrders)에서 사용.
+ * 자동취소(/api/cron/expired-orders 스케줄러 배치, cancelOrdersAwaitingInvitation)에서 사용.
  * @param merchantUid - 우리 서버에서 생성한 주문번호(PortOne paymentId)
  */
 export const cancelPayment = async (
@@ -650,34 +657,62 @@ export const cancelPayment = async (
 };
 
 /**
- * coupleInfo 미입력 자동취소 오케스트레이션 — cron 인프라가 없어 my-orders
- * 목록 조회 직전에 호출하는 lazy-check 방식을 쓴다. 개별 주문 취소 실패가 다른 주문 처리를
- * 막지 않도록 서로 격리한다(로깅 후 계속 진행 — silent swallow 아님).
+ * coupleInfo 미입력 자동취소의 공통 실행부 — 개별 주문 취소 실패가 다른 주문 처리를
+ * 막지 않도록 서로 격리한다(로깅 후 계속 진행 — silent swallow 아님). 실패분은 다음
+ * 배치 실행(/api/cron/expired-orders)에서 다시 후보로 잡혀 재시도된다(주문이
+ * CONFIRMED로 남아 있기 때문).
+ */
+const cancelOrdersAwaitingInvitation = async (
+  expiredOrders: IOrder[],
+): Promise<ExpiredAwaitingInvitationBatchResult> => {
+  const outcomes = await Promise.allSettled(
+    expiredOrders.map((order) =>
+      cancelPayment(order.merchantUid, "정보 미입력으로 인한 자동 취소").catch(
+        (e) => {
+          console.error(
+            `[cancelOrdersAwaitingInvitation] ${order.merchantUid} 취소 실패:`,
+            e,
+          );
+          throw e;
+        },
+      ),
+    ),
+  );
+
+  const cancelled = outcomes.filter((o) => o.status === "fulfilled").length;
+
+  return {
+    scanned: expiredOrders.length,
+    cancelled,
+    failed: outcomes.length - cancelled,
+  };
+};
+
+/**
+ * coupleInfo 미입력 자동취소(단일 유저) — 스케줄러 이전(GH #82) 이후 제품 코드에서
+ * 호출하는 곳은 없다. 관리자 단위 수동 취소 같은 후속 용도를 위해 진입점만 남긴다.
  */
 export const cancelExpiredAwaitingInvitationOrders = async (
   userId: string,
 ): Promise<void> => {
   const expiredOrders = await findExpiredAwaitingInvitationOrders(userId);
-
-  await Promise.all(
-    expiredOrders.map((order) =>
-      cancelPayment(order.merchantUid, "정보 미입력으로 인한 자동 취소").catch(
-        (e) => {
-          console.error(
-            `[cancelExpiredAwaitingInvitationOrders] ${order.merchantUid} 취소 실패:`,
-            e,
-          );
-        },
-      ),
-    ),
-  );
+  await cancelOrdersAwaitingInvitation(expiredOrders);
 };
 
 /**
- * 결제창을 벗어난 채 방치된 주문의 자동취소 — 취소 전 PG 실제 상태를 먼저
- * 확인한다(PAID인데 DB 동기화만 실패한 주문을 시간만 보고 잘못 취소하는 회귀
- * 방지, GH #78). order.service의 findExpiredPendingOrders(순수 조회)와 결합하는
- * 오케스트레이션 — cancelExpiredAwaitingInvitationOrders와 같은 이유로 여기 위치.
+ * coupleInfo 미입력 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점.
+ * PortOne 실환불을 호출하므로 만료 PENDING 배치(DB-only)와 실행·실패를 분리한다.
+ */
+export const cancelExpiredAwaitingInvitationOrdersForAllUsers =
+  async (): Promise<ExpiredAwaitingInvitationBatchResult> => {
+    const expiredOrders =
+      await findExpiredAwaitingInvitationOrdersForAllUsers();
+    return cancelOrdersAwaitingInvitation(expiredOrders);
+  };
+
+/**
+ * 방치 PENDING 주문 취소의 공통 실행부 — 취소 전 PG 실제 상태를 먼저 확인한다(PAID인데
+ * DB 동기화만 실패한 주문을 시간만 보고 잘못 취소하는 회귀 방지, GH #78).
  *
  * syncPayment가 실패해도 이유에 따라 취소 여부를 가른다 — PG 쪽 조회 자체가 안
  * 되는 경우(AppError EXTERNAL_SERVICE, "한 번도 PortOne에 제출 안 된 merchantUid"의
@@ -685,25 +720,36 @@ export const cancelExpiredAwaitingInvitationOrders = async (
  * verifyPayment 검증(VALIDATION)이나 트랜잭션(INTERNAL)만 실패한 경우까지 취소해
  * 버리면 이슈의 원래 버그(PAID 주문 오취소)를 그대로 재현하게 되므로, 이 경우는
  * 취소하지 않고 PENDING으로 남겨 수동 검토 대상으로 뺀다. 개별 주문 동기화 실패가
- * 다른 주문 처리를 막지 않도록 격리한다(cancelExpiredAwaitingInvitationOrders와 동일).
+ * 다른 주문 처리를 막지 않도록 격리한다.
  */
-export const cancelExpiredPendingOrders = async (
-  userId: string | mongoose.Types.ObjectId,
-): Promise<void> => {
-  const { orders: candidates, deadline } =
-    await findExpiredPendingOrders(userId);
-  if (candidates.length === 0) return;
+const cancelPendingOrderCandidates = async (
+  candidates: IOrder[],
+  deadline: Date,
+): Promise<ExpiredPendingOrderBatchResult> => {
+  const empty: ExpiredPendingOrderBatchResult = {
+    scanned: candidates.length,
+    cancelled: 0,
+    syncedToConfirmed: 0,
+    heldForReview: 0,
+  };
+  if (candidates.length === 0) return empty;
 
   const outcomes = await Promise.allSettled(
     candidates.map((order) => syncPayment(order.merchantUid)),
   );
+
+  let heldForReview = 0;
+  let syncedToConfirmed = 0;
 
   const cancelableIds = candidates
     .filter((order, i) => {
       const outcome = outcomes[i];
       // PAID였다면 syncPayment가 이미 CONFIRMED로 전이시켰다 — 아래 updateMany의
       // orderStatus:"PENDING" 조건에서 자연히 제외된다.
-      if (outcome.status === "fulfilled") return true;
+      if (outcome.status === "fulfilled") {
+        if (outcome.value.success) syncedToConfirmed += 1;
+        return true;
+      }
 
       const reason = outcome.reason;
       if (reason instanceof AppError && reason.category === "EXTERNAL_SERVICE") {
@@ -711,16 +757,19 @@ export const cancelExpiredPendingOrders = async (
       }
 
       console.error(
-        `[cancelExpiredPendingOrders] ${order.merchantUid} 동기화 실패(취소 보류, 수동 검토 필요):`,
+        `[cancelPendingOrderCandidates] ${order.merchantUid} 동기화 실패(취소 보류, 수동 검토 필요):`,
         reason,
       );
+      heldForReview += 1;
       return false;
     })
     .map((order) => order._id);
 
-  if (cancelableIds.length === 0) return;
+  if (cancelableIds.length === 0) {
+    return { ...empty, syncedToConfirmed, heldForReview };
+  }
 
-  await OrderModel.updateMany(
+  const result = await OrderModel.updateMany(
     {
       _id: { $in: cancelableIds },
       orderStatus: "PENDING",
@@ -742,7 +791,29 @@ export const cancelExpiredPendingOrders = async (
       err instanceof Error ? err.message : "만료 주문 취소에 실패했습니다.",
     );
   });
+
+  return {
+    scanned: candidates.length,
+    cancelled: result.modifiedCount,
+    syncedToConfirmed,
+    heldForReview,
+  };
 };
+
+/** 방치 PENDING 주문 자동취소(단일 유저) — 위 청첩장 미입력 함수와 같은 이유로 진입점만 남긴다. */
+export const cancelExpiredPendingOrders = async (
+  userId: string | mongoose.Types.ObjectId,
+): Promise<void> => {
+  const { orders, deadline } = await findExpiredPendingOrders(userId);
+  await cancelPendingOrderCandidates(orders, deadline);
+};
+
+/** 방치 PENDING 주문 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점. */
+export const cancelExpiredPendingOrdersForAllUsers =
+  async (): Promise<ExpiredPendingOrderBatchResult> => {
+    const { orders, deadline } = await findExpiredPendingOrdersForAllUsers();
+    return cancelPendingOrderCandidates(orders, deadline);
+  };
 
 export async function completePaymentService(
   paymentId: string,
@@ -756,7 +827,8 @@ export async function completePaymentService(
   // PaymentButton(다른 세션에서 만들어진 주문 목록)에서 넘어온 merchantUid로도
   // 호출된다 — 소유권을 세션에서 다시 조회해 대조한다(src/actions/AGENTS.md).
   // syncPayment 자체에는 이 체크를 넣지 않는다 — webhook(세션 없음)과
-  // cancelExpiredPendingOrders(이미 userId로 스코프됨)가 세션 없이 직접 호출한다.
+  // cancelPendingOrderCandidates(/api/cron/expired-orders 스케줄러 배치, 스케줄러
+  // 시크릿으로 인증된 서버 내부 호출이라 사용자 소유권 개념이 없다)가 세션 없이 직접 호출한다.
   const order = await getOrderSeviceByMerchantUid(paymentId);
   if (!order) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
