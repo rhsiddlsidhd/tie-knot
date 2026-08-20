@@ -6,7 +6,7 @@ import {
   buildProductInput,
   clearCollections,
 } from "@testing/support";
-import { AppError } from "@/core/domain";
+import { AppError, EXPIRED_ORDER_BATCH_LIMIT } from "@/core/domain";
 import {
   InvitationModel,
   OrderModel,
@@ -20,6 +20,8 @@ import {
   getOrdersPageForUser,
   cancelPendingOrderForCurrentUser,
   findExpiredAwaitingInvitationOrders,
+  findExpiredAwaitingInvitationOrdersForAllUsers,
+  findExpiredPendingOrdersForAllUsers,
 } from "./order";
 import { createProductService } from "./product";
 
@@ -461,6 +463,264 @@ describe("order", () => {
       const result = await findExpiredAwaitingInvitationOrders(userId);
 
       expect(result).toEqual([]);
+    });
+  });
+
+  // EXPIRED_ORDER_BATCH_LIMIT(상수 리터럴) 자체를 검증하는 케이스는 두 describe 다
+  // 만들지 않는다 — 51건 생성 비용이 크고(integration은 파일 순차 실행), 아래 정렬
+  // 케이스가 "상한이 걸렸을 때 어떤 게 남는지"라는 실질 계약을 이미 지킨다.
+  describe("findExpiredAwaitingInvitationOrdersForAllUsers", () => {
+    const confirmExpired = async (orderId: mongoose.Types.ObjectId) => {
+      const eightDaysAgo = new Date();
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+      await OrderModel.updateOne(
+        { _id: orderId },
+        { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
+      );
+    };
+
+    it("서로 다른 두 유저의 만료 주문이 한 번의 조회로 함께 반환된다", async () => {
+      const orderA = await createOrderService(buildOrderInputForTest());
+      const orderB = await createOrderService(buildOrderInputForTest());
+      await confirmExpired(orderA._id);
+      await confirmExpired(orderB._id);
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result.map((o) => o._id.toString()).sort()).toEqual(
+        [orderA._id.toString(), orderB._id.toString()].sort(),
+      );
+    });
+
+    it("Invitation이 있는 주문은 소유자와 무관하게 제외된다", async () => {
+      const order = await createOrderService(buildOrderInputForTest());
+      await confirmExpired(order._id);
+      await InvitationModel.create({
+        publicKey: "existing-invitation-key",
+        userId: new mongoose.Types.ObjectId(order.userId),
+        orderId: order._id,
+        productId: order.product.productId,
+        status: "draft",
+        groom: { name: "신랑", phone: "010-1111-2222" },
+        bride: { name: "신부", phone: "010-3333-4444" },
+        weddingDate: new Date("2026-12-25T13:00:00"),
+        venue: "예식장",
+        address: "서울시 강남구",
+        addressDetail: "3층",
+        guestbookEnabled: true,
+        thumbnailImages: [],
+        galleryImages: [],
+      });
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual([]);
+    });
+
+    it("유저 A의 Invitation이 유저 B의 만료 주문 조회를 방해하지 않는다", async () => {
+      const orderWithInvitation = await createOrderService(
+        buildOrderInputForTest(),
+      );
+      const orderWithoutInvitation = await createOrderService(
+        buildOrderInputForTest(),
+      );
+      await confirmExpired(orderWithInvitation._id);
+      await confirmExpired(orderWithoutInvitation._id);
+      await InvitationModel.create({
+        publicKey: "other-user-invitation-key",
+        userId: new mongoose.Types.ObjectId(orderWithInvitation.userId),
+        orderId: orderWithInvitation._id,
+        productId: orderWithInvitation.product.productId,
+        status: "draft",
+        groom: { name: "신랑", phone: "010-1111-2222" },
+        bride: { name: "신부", phone: "010-3333-4444" },
+        weddingDate: new Date("2026-12-25T13:00:00"),
+        venue: "예식장",
+        address: "서울시 강남구",
+        addressDetail: "3층",
+        guestbookEnabled: true,
+        thumbnailImages: [],
+        galleryImages: [],
+      });
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result.map((o) => o._id.toString())).toEqual([
+        orderWithoutInvitation._id.toString(),
+      ]);
+    });
+
+    it("confirmedAt이 7일 이내면 제외된다", async () => {
+      const order = await createOrderService(buildOrderInputForTest());
+      const oneDayAgo = new Date();
+      oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { orderStatus: "CONFIRMED", confirmedAt: oneDayAgo },
+      );
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual([]);
+    });
+
+    it("CONFIRMED가 아니면 제외된다", async () => {
+      const order = await createOrderService(buildOrderInputForTest());
+      const eightDaysAgo = new Date();
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { confirmedAt: eightDaysAgo },
+      );
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual([]);
+    });
+
+    it("후보가 없으면 Invitation 조회 없이 빈 배열을 반환한다", async () => {
+      const findSpy = vi.spyOn(InvitationModel, "find");
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual([]);
+      expect(findSpy).not.toHaveBeenCalled();
+
+      findSpy.mockRestore();
+    });
+
+    // 회귀 테스트 — LIMIT을 Invitation 제외 필터보다 먼저 적용하면, draft 초대장이
+    // 있어(제외 대상) 정렬 순서상 상위를 차지하는 오래된 주문들이 매번 같은 window를
+    // 채워 새로 들어온 진짜 미입력 주문을 영원히 못 보는 기아 상태가 된다.
+    it("오래된 주문들이 상한을 넘겨 Invitation을 갖고 있어도, 더 최근의 미입력 주문을 놓치지 않는다", async () => {
+      const oldestFirst = new Date();
+      oldestFirst.setDate(oldestFirst.getDate() - 30);
+
+      for (let i = 0; i < EXPIRED_ORDER_BATCH_LIMIT; i += 1) {
+        const order = await createOrderService(buildOrderInputForTest());
+        const confirmedAt = new Date(oldestFirst.getTime() + i * 1000);
+        await OrderModel.updateOne(
+          { _id: order._id },
+          { orderStatus: "CONFIRMED", confirmedAt },
+        );
+        await InvitationModel.create({
+          publicKey: `starvation-guard-${i}`,
+          userId: new mongoose.Types.ObjectId(order.userId),
+          orderId: order._id,
+          productId: order.product.productId,
+          status: "draft",
+          groom: { name: "신랑", phone: "010-1111-2222" },
+          bride: { name: "신부", phone: "010-3333-4444" },
+          weddingDate: new Date("2026-12-25T13:00:00"),
+          venue: "예식장",
+          address: "서울시 강남구",
+          addressDetail: "3층",
+          guestbookEnabled: true,
+          thumbnailImages: [],
+          galleryImages: [],
+        });
+      }
+
+      // 위 EXPIRED_ORDER_BATCH_LIMIT건보다는 최근이지만 여전히 7일 기한은 넘겼고,
+      // Invitation이 없는 진짜 취소 후보.
+      const trueCandidate = await createOrderService(buildOrderInputForTest());
+      const eightDaysAgo = new Date();
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+      await OrderModel.updateOne(
+        { _id: trueCandidate._id },
+        { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
+      );
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result.map((o) => o._id.toString())).toEqual([
+        trueCandidate._id.toString(),
+      ]);
+    });
+  });
+
+  describe("findExpiredPendingOrdersForAllUsers", () => {
+    const setCreatedAt = async (
+      orderId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
+      await OrderModel.updateOne(
+        { _id: orderId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    it("서로 다른 두 유저의 만료 PENDING 주문이 함께 반환된다", async () => {
+      const orderA = await createOrderService(buildOrderInputForTest());
+      const orderB = await createOrderService(buildOrderInputForTest());
+      await setCreatedAt(orderA._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(orderB._id, new Date(Date.now() - 30 * 60 * 60 * 1000));
+
+      const { orders } = await findExpiredPendingOrdersForAllUsers();
+
+      expect(orders.map((o) => o._id.toString()).sort()).toEqual(
+        [orderA._id.toString(), orderB._id.toString()].sort(),
+      );
+    });
+
+    it("paymentId가 있는 주문은 유저와 무관하게 제외된다", async () => {
+      const order = await createOrderService(buildOrderInputForTest());
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { paymentId: new mongoose.Types.ObjectId() } },
+      );
+      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
+
+      const { orders } = await findExpiredPendingOrdersForAllUsers();
+
+      expect(orders).toEqual([]);
+    });
+
+    it("payMethod가 VIRTUAL_ACCOUNT면 제외된다", async () => {
+      const order = await createOrderService(
+        buildOrderInputForTest({ payMethod: "VIRTUAL_ACCOUNT" }),
+      );
+      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
+
+      const { orders } = await findExpiredPendingOrdersForAllUsers();
+
+      expect(orders).toEqual([]);
+    });
+
+    it("createdAt이 24시간 이내면 제외된다", async () => {
+      const order = await createOrderService(buildOrderInputForTest());
+      await setCreatedAt(order._id, new Date(Date.now() - 23 * 60 * 60 * 1000));
+
+      const { orders } = await findExpiredPendingOrdersForAllUsers();
+
+      expect(orders).toEqual([]);
+    });
+
+    it("반환된 deadline이 24시간 전 시각이고, 반환된 주문이 전부 그보다 오래됐다", async () => {
+      const order = await createOrderService(buildOrderInputForTest());
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+
+      const { orders, deadline } = await findExpiredPendingOrdersForAllUsers();
+
+      expect(deadline.getTime()).toBeCloseTo(Date.now() - 24 * 60 * 60 * 1000, -3);
+      orders.forEach((o) => {
+        expect(new Date(o.createdAt).getTime()).toBeLessThan(deadline.getTime());
+      });
+    });
+
+    it("오래된 주문부터 반환된다", async () => {
+      const newer = await createOrderService(buildOrderInputForTest());
+      const older = await createOrderService(buildOrderInputForTest());
+      await setCreatedAt(newer._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(older._id, new Date(Date.now() - 48 * 60 * 60 * 1000));
+
+      const { orders } = await findExpiredPendingOrdersForAllUsers();
+
+      expect(orders.map((o) => o._id.toString())).toEqual([
+        older._id.toString(),
+        newer._id.toString(),
+      ]);
     });
   });
 

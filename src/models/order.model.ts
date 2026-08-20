@@ -154,6 +154,13 @@ const orderSchema = new Schema<IOrder>(
 // 상태 필터가 걸린 조회가 정렬까지 인덱스로 처리되도록 복합 인덱스를 둔다.
 orderSchema.index({ userId: 1, orderStatus: 1, createdAt: -1 });
 
+// 스케줄러 배치(/api/cron/expired-orders) 전용 — 배치 쿼리는 userId 필터가 없어
+// 위 인덱스의 선두 필드를 못 쓴다(안 붙이면 COLLSCAN). sparse는 붙이지 않는다 —
+// paymentId: null 쿼리가 필드 누락 문서와도 매칭돼야 하는데 sparse면 그 문서들이
+// 인덱스에서 빠진다.
+orderSchema.index({ orderStatus: 1, paymentId: 1, createdAt: 1 }); // findExpiredPendingOrdersForAllUsers
+orderSchema.index({ orderStatus: 1, confirmedAt: 1 }); // findExpiredAwaitingInvitationOrdersForAllUsers
+
 export const OrderModel =
   (mongoose.models.Order as Model<IOrder>) ||
   mongoose.model<IOrder>("Order", orderSchema);

@@ -19,6 +19,7 @@ import type {
 } from "@/core/domain";
 import { AppError } from "@/core/domain";
 import {
+  EXPIRED_ORDER_BATCH_LIMIT,
   INVITATION_INPUT_DEADLINE_DAYS,
   ORDER_PAGE_SIZE,
   PENDING_ORDER_EXPIRE_HOURS,
@@ -139,6 +140,55 @@ export const findExpiredAwaitingInvitationOrders = async (
     _id: { $nin: invitationOrderIds },
     confirmedAt: { $lt: deadline },
   }).lean<IOrder[]>();
+};
+
+/**
+ * findExpiredAwaitingInvitationOrders의 전체 유저 스캔 버전 — 스케줄러 배치
+ * (/api/cron/expired-orders)가 쓴다. 판정 조건(CONFIRMED + Invitation 미생성 +
+ * confirmedAt 기한 초과)은 동일하고 userId 스코프만 없다.
+ *
+ * per-user 버전처럼 "유저의 Invitation 전체 → $nin" 순서로 짜면 전역에선 Invitation
+ * 컬렉션 전체를 메모리로 올리게 된다. 대신 주문 후보를 먼저 조회하고 그 _id로만
+ * Invitation을 역조회한다(orderId는 unique 인덱스라 $in 조회가 색인된다).
+ *
+ * EXPIRED_ORDER_BATCH_LIMIT은 주문 후보 조회가 아니라 Invitation 제외 필터를
+ * 통과한 "실제 반환 대상"에만 적용한다 — 조회 단계에서 먼저 자르면, draft
+ * 초대장이 있어(제외 대상) 정렬 순서상 상위를 차지하는 오래된 주문들이 매
+ * 실행마다 같은 window를 채워 새로 들어온 진짜 미입력 주문을 영원히 못 보게
+ * 만드는 기아(starvation) 상태가 될 수 있다. 후보 조회 자체는 이 컬렉션의
+ * 실제 CONFIRMED+기한초과 규모에 비례하므로(Invitation 전체 컬렉션과 달리)
+ * 상한 없이 조회해도 무제한 증가하지 않는다.
+ */
+export const findExpiredAwaitingInvitationOrdersForAllUsers = async (): Promise<
+  IOrder[]
+> => {
+  await dbConnect();
+
+  const deadline = new Date();
+  deadline.setDate(deadline.getDate() - INVITATION_INPUT_DEADLINE_DAYS);
+
+  const candidates = await OrderModel.find({
+    orderStatus: "CONFIRMED",
+    confirmedAt: { $lt: deadline },
+  })
+    .sort({ confirmedAt: 1 })
+    .lean<IOrder[]>();
+
+  if (candidates.length === 0) return [];
+
+  const invitations = await InvitationModel.find({
+    orderId: { $in: candidates.map((order) => order._id) },
+  })
+    .select("orderId")
+    .lean();
+
+  const orderIdsWithInvitation = new Set(
+    invitations.map((invitation) => invitation.orderId.toString()),
+  );
+
+  return candidates
+    .filter((order) => !orderIdsWithInvitation.has(order._id.toString()))
+    .slice(0, EXPIRED_ORDER_BATCH_LIMIT);
 };
 
 export const getOrderSeviceByMerchantUid = async (
@@ -442,6 +492,35 @@ export const findExpiredPendingOrders = async (
     payMethod: { $ne: "VIRTUAL_ACCOUNT" },
     createdAt: { $lt: deadline },
   }).lean<IOrder[]>();
+
+  return { orders, deadline };
+};
+
+/**
+ * findExpiredPendingOrders의 전체 유저 스캔 버전 — 스케줄러 배치
+ * (/api/cron/expired-orders)가 쓴다. 판정 조건은 동일하고 userId 스코프만 없다.
+ * 반환 shape을 per-user와 맞춰(orders + deadline) payment.ts의 공통 취소
+ * 실행부가 두 진입점을 그대로 공유한다.
+ */
+export const findExpiredPendingOrdersForAllUsers = async (): Promise<{
+  orders: IOrder[];
+  deadline: Date;
+}> => {
+  await dbConnect();
+
+  const deadline = new Date(
+    Date.now() - PENDING_ORDER_EXPIRE_HOURS * 60 * 60 * 1000,
+  );
+
+  const orders = await OrderModel.find({
+    orderStatus: "PENDING",
+    paymentId: null,
+    payMethod: { $ne: "VIRTUAL_ACCOUNT" },
+    createdAt: { $lt: deadline },
+  })
+    .sort({ createdAt: 1 })
+    .limit(EXPIRED_ORDER_BATCH_LIMIT)
+    .lean<IOrder[]>();
 
   return { orders, deadline };
 };

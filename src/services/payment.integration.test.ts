@@ -6,7 +6,7 @@ import {
   buildProductInput,
   clearCollections,
 } from "@testing/support";
-import { ProductModel, OrderModel, PaymentModel } from "@/models";
+import { ProductModel, OrderModel, PaymentModel, InvitationModel } from "@/models";
 import { createProductService } from "./product";
 import { createOrderService } from "./order";
 import type * as AuthModule from "./auth";
@@ -56,7 +56,9 @@ import {
   syncPayment,
   cancelPayment,
   cancelExpiredAwaitingInvitationOrders,
+  cancelExpiredAwaitingInvitationOrdersForAllUsers,
   cancelExpiredPendingOrders,
+  cancelExpiredPendingOrdersForAllUsers,
   completePaymentService,
 } from "./payment";
 
@@ -1094,6 +1096,147 @@ describe("payment", () => {
     });
   });
 
+  describe("cancelExpiredAwaitingInvitationOrdersForAllUsers", () => {
+    const expireConfirmedAt = async (orderId: mongoose.Types.ObjectId) => {
+      const eightDaysAgo = new Date();
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+      await OrderModel.updateOne(
+        { _id: orderId },
+        { confirmedAt: eightDaysAgo },
+      );
+    };
+
+    // setupProductAndOrder를 조작 없이 두 번 호출하면 buildOrderInput 기본값이 매번
+    // 새 ObjectId를 발급하므로 이미 서로 다른 유저다 — per-user 테스트처럼 userId를
+    // 맞춰줄 필요가 없다.
+    it("서로 다른 유저의 만료건을 모두 환불취소하고 집계를 반환한다", async () => {
+      const { savedProduct: product1, order: order1 } =
+        await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(order1.merchantUid, product1._id.toString(), order1.finalPrice),
+      );
+      await syncPayment(order1.merchantUid);
+      await expireConfirmedAt(order1._id);
+
+      const { savedProduct: product2, order: order2 } =
+        await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue({
+        ...paidPayload(order2.merchantUid, product2._id.toString(), order2.finalPrice),
+        transactionId: "txn_2",
+      });
+      await syncPayment(order2.merchantUid);
+      await expireConfirmedAt(order2._id);
+
+      cancelPaymentMock.mockResolvedValue({
+        cancellation: {
+          status: "SUCCEEDED",
+          totalAmount: order1.finalPrice,
+          cancelledAt: new Date().toISOString(),
+        },
+      });
+
+      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual({ scanned: 2, cancelled: 2, failed: 0 });
+      const updated1 = await OrderModel.findById(order1._id).lean();
+      const updated2 = await OrderModel.findById(order2._id).lean();
+      expect(updated1?.orderStatus).toBe("CANCELLED");
+      expect(updated2?.orderStatus).toBe("CANCELLED");
+    });
+
+    it("Invitation이 있는 주문은 cancelPayment를 호출하지 않는다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
+      );
+      await syncPayment(order.merchantUid);
+      await expireConfirmedAt(order._id);
+      await InvitationModel.create({
+        publicKey: "batch-test-invitation-key",
+        userId: new mongoose.Types.ObjectId(order.userId),
+        orderId: order._id,
+        productId: order.product.productId,
+        status: "draft",
+        groom: { name: "신랑", phone: "010-1111-2222" },
+        bride: { name: "신부", phone: "010-3333-4444" },
+        weddingDate: new Date("2026-12-25T13:00:00"),
+        venue: "예식장",
+        address: "서울시 강남구",
+        addressDetail: "3층",
+        guestbookEnabled: true,
+        thumbnailImages: [],
+        galleryImages: [],
+      });
+
+      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
+      expect(cancelPaymentMock).not.toHaveBeenCalled();
+    });
+
+    it("기한이 안 지난 주문은 건드리지 않는다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
+      );
+      await syncPayment(order.merchantUid);
+
+      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
+      expect(cancelPaymentMock).not.toHaveBeenCalled();
+    });
+
+    it("한 주문의 PortOne 취소 실패가 다른 유저 주문 처리를 막지 않는다", async () => {
+      const { savedProduct: product1, order: order1 } =
+        await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(order1.merchantUid, product1._id.toString(), order1.finalPrice),
+      );
+      await syncPayment(order1.merchantUid);
+      await expireConfirmedAt(order1._id);
+
+      const { savedProduct: product2, order: order2 } =
+        await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue({
+        ...paidPayload(order2.merchantUid, product2._id.toString(), order2.finalPrice),
+        transactionId: "txn_2",
+      });
+      await syncPayment(order2.merchantUid);
+      await expireConfirmedAt(order2._id);
+
+      cancelPaymentMock.mockImplementation(
+        ({ paymentId }: { paymentId: string }) => {
+          if (paymentId === order1.merchantUid) {
+            return Promise.reject(new Error("PG 일시 오류"));
+          }
+          return Promise.resolve({
+            cancellation: {
+              status: "SUCCEEDED",
+              totalAmount: order2.finalPrice,
+              cancelledAt: new Date().toISOString(),
+            },
+          });
+        },
+      );
+
+      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual({ scanned: 2, cancelled: 1, failed: 1 });
+      const updated1 = await OrderModel.findById(order1._id).lean();
+      const updated2 = await OrderModel.findById(order2._id).lean();
+      expect(updated1?.orderStatus).toBe("CONFIRMED");
+      expect(updated2?.orderStatus).toBe("CANCELLED");
+    });
+
+    it("후보가 없으면 cancelPaymentMock을 호출하지 않는다", async () => {
+      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
+      expect(cancelPaymentMock).not.toHaveBeenCalled();
+    });
+  });
+
   describe("cancelExpiredPendingOrders", () => {
     // order.ts에서 payment.ts로 이관되면서(GH #78, 취소 전 PG 확인 추가) 여기로
     // 옮겨온 기존 테스트들 — 이관 전엔 PortOne을 아예 호출하지 않았지만, 이제는
@@ -1240,6 +1383,137 @@ describe("payment", () => {
       const updatedOrder2 = await OrderModel.findById(order2._id).lean();
       expect(updatedOrder1?.orderStatus).toBe("PENDING");
       expect(updatedOrder2?.orderStatus).toBe("CANCELLED");
+    });
+  });
+
+  describe("cancelExpiredPendingOrdersForAllUsers", () => {
+    const setCreatedAt = async (
+      orderId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
+      await OrderModel.updateOne(
+        { _id: orderId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    it("서로 다른 유저의 만료건을 모두 취소하고 집계를 반환한다", async () => {
+      const { order: order1 } = await setupProductAndOrder(1);
+      await setCreatedAt(order1._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      const { order: order2 } = await setupProductAndOrder(1);
+      await setCreatedAt(order2._id, new Date(Date.now() - 30 * 60 * 60 * 1000));
+      getPaymentMock.mockResolvedValue({ status: "READY", id: "irrelevant" });
+
+      const result = await cancelExpiredPendingOrdersForAllUsers();
+
+      expect(result).toEqual({
+        scanned: 2,
+        cancelled: 2,
+        syncedToConfirmed: 0,
+        heldForReview: 0,
+      });
+      const updated1 = await OrderModel.findById(order1._id).lean();
+      const updated2 = await OrderModel.findById(order2._id).lean();
+      expect(updated1?.orderStatus).toBe("CANCELLED");
+      expect(updated2?.orderStatus).toBe("CANCELLED");
+    });
+
+    it("24시간이 안 지난 다른 유저 주문은 PG 조회 없이 그대로 둔다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 23 * 60 * 60 * 1000));
+
+      const result = await cancelExpiredPendingOrdersForAllUsers();
+
+      expect(result).toEqual({
+        scanned: 0,
+        cancelled: 0,
+        syncedToConfirmed: 0,
+        heldForReview: 0,
+      });
+      expect(getPaymentMock).not.toHaveBeenCalled();
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
+    it("가상계좌 발급 주문은 유저와 무관하게 제외된다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { paymentId: new mongoose.Types.ObjectId() } },
+      );
+      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
+
+      const result = await cancelExpiredPendingOrdersForAllUsers();
+
+      expect(result).toEqual({
+        scanned: 0,
+        cancelled: 0,
+        syncedToConfirmed: 0,
+        heldForReview: 0,
+      });
+      expect(getPaymentMock).not.toHaveBeenCalled();
+    });
+
+    it("PG상 PAID였던 주문은 취소 대신 동기화되고 syncedToConfirmed로 집계된다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      getPaymentMock.mockResolvedValue(
+        paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
+      );
+
+      const result = await cancelExpiredPendingOrdersForAllUsers();
+
+      expect(result).toEqual({
+        scanned: 1,
+        cancelled: 0,
+        syncedToConfirmed: 1,
+        heldForReview: 0,
+      });
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CONFIRMED");
+    });
+
+    it("한 유저의 동기화 실패가 다른 유저 주문 취소를 막지 않는다", async () => {
+      const { savedProduct, order: order1 } = await setupProductAndOrder(1);
+      await setCreatedAt(order1._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      const { order: order2 } = await setupProductAndOrder(1);
+      await setCreatedAt(order2._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+
+      getPaymentMock.mockImplementation(({ paymentId }: { paymentId: string }) => {
+        if (paymentId === order1.merchantUid) {
+          // PG상 PAID인데 검증 실패 — 취소 보류 대상(취소되면 안 됨)
+          return Promise.resolve(
+            paidPayload(order1.merchantUid, savedProduct._id.toString(), order1.finalPrice + 1000),
+          );
+        }
+        return Promise.resolve({ status: "READY", id: order2.merchantUid });
+      });
+
+      const result = await cancelExpiredPendingOrdersForAllUsers();
+
+      expect(result).toEqual({
+        scanned: 2,
+        cancelled: 1,
+        syncedToConfirmed: 0,
+        heldForReview: 1,
+      });
+      const updatedOrder1 = await OrderModel.findById(order1._id).lean();
+      const updatedOrder2 = await OrderModel.findById(order2._id).lean();
+      expect(updatedOrder1?.orderStatus).toBe("PENDING");
+      expect(updatedOrder2?.orderStatus).toBe("CANCELLED");
+    });
+
+    it("후보가 없으면 PortOne을 호출하지 않는다", async () => {
+      const result = await cancelExpiredPendingOrdersForAllUsers();
+
+      expect(result).toEqual({
+        scanned: 0,
+        cancelled: 0,
+        syncedToConfirmed: 0,
+        heldForReview: 0,
+      });
+      expect(getPaymentMock).not.toHaveBeenCalled();
     });
   });
 
