@@ -8,6 +8,7 @@ export function useSubwayStations() {
   const { data, error, isLoading } = useSWR<SubwayStationsResponse>(
     "/api/subway",
     fetcher,
+    { shouldRetryOnError: false },
   );
 
   return {

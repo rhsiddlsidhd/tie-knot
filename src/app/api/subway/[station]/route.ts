@@ -1,7 +1,7 @@
 import type { APIRouteResponse} from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { AppError } from "@/core/domain";
-import { parseSeoulOpenApiResponse } from "@/core/utils";
+import { fetchSeoulOpenApi } from "@/adapters/server/seoul-open-api/request";
 import { SUBWAY_LINE_COLORS, DEFAULT_SUBWAY_LINE_COLOR } from "@/core/domain";
 import type { SubwayStationLineInfoResponse } from "@/core/schemas";
 import type { NextRequest } from "next/server";
@@ -20,21 +20,13 @@ export const GET = async (
   try {
     const { station } = await params;
 
-    const res = await fetch(
-      `${process.env.SUBWAY_SEOUL_BASE_URL}/${process.env.SEOUL_PUBLIC_API_KEY}/json/${SERVICE_NAME}/1/50/${encodeURIComponent(station)}/`,
-    );
-    const json = await res.json();
+    const rows = await fetchSeoulOpenApi<SubwayNameSearchRow>(SERVICE_NAME, [1, 50, station]);
 
-    const result = parseSeoulOpenApiResponse<SubwayNameSearchRow>(SERVICE_NAME, json);
-    if (result.kind === "failure") {
-      throw new AppError("EXTERNAL_SERVICE", result.message);
-    }
-
-    if (result.rows.length === 0) {
+    if (rows.length === 0) {
       throw new AppError("NOT_FOUND", "해당 역을 찾을 수 없습니다.");
     }
 
-    const uniqueLineNames = [...new Set(result.rows.map((row) => row.LINE_NUM))];
+    const uniqueLineNames = [...new Set(rows.map((row) => row.LINE_NUM))];
 
     const lines = uniqueLineNames.map((name) => ({
       name,

@@ -1,7 +1,7 @@
 # AGENTS.md — src/adapters/
 
 > 외부 SDK와 브라우저·프레임워크 API 경계를 감싸는 계층.
-> Last updated: 2026-08-19
+> Last updated: 2026-08-20
 
 ## 공통 디렉토리 컨벤션
 
@@ -16,6 +16,7 @@
 | `server/cookies/` | Next.js 쿠키 API | server-only |
 | `server/jose/` | JWT 암복호화 | server-only |
 | `server/nodemailer/` | 이메일 전송 | server-only |
+| `server/seoul-open-api/` | 서울 열린데이터광장 API 호출·가드·에러분류 | server-only |
 | `browser/cloudinary/` | 브라우저 업로드 | client-only |
 | `browser/daum/` | 주소 팝업 | client-only |
 | `browser/deeplink/` | 지도 앱 딥링크 | client-only |
