@@ -13,6 +13,8 @@ import { getProductService } from "./product";
 import {
   getOrderSeviceByMerchantUid,
   findExpiredAwaitingInvitationOrders,
+  findExpiredPendingOrders,
+  PENDING_ORDER_CANCEL_REASONS,
 } from "./order";
 import { AppError } from "@/core/domain";
 import { dbConnect } from "@/db";
@@ -472,7 +474,7 @@ export const syncPayment = async (paymentId: string) => {
 
     // 가상계좌 발급 — 아직 입금 전이지만 계좌번호·입금기한을 사용자에게 안내해야 하고,
     // 주문이 결제를 참조해야 "결제창을 벗어난 방치 주문"과 구분돼 자동취소 대상에서
-    // 빠진다(order.service의 cancelExpiredPendingOrders). Payment 저장 + Order 참조
+    // 빠진다(findExpiredPendingOrders의 쿼리 필터, order.service). Payment 저장 + Order 참조
     // 연결은 하나의 논리적 단위라 트랜잭션으로 묶는다(PAID 분기와 같은 이유).
     if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
       const issuedPayment = actualPayment as VirtualAccountIssuedPayment;
@@ -639,13 +641,98 @@ export const cancelExpiredAwaitingInvitationOrders = async (
   );
 };
 
+/**
+ * 결제창을 벗어난 채 방치된 주문의 자동취소 — 취소 전 PG 실제 상태를 먼저
+ * 확인한다(PAID인데 DB 동기화만 실패한 주문을 시간만 보고 잘못 취소하는 회귀
+ * 방지, GH #78). order.service의 findExpiredPendingOrders(순수 조회)와 결합하는
+ * 오케스트레이션 — cancelExpiredAwaitingInvitationOrders와 같은 이유로 여기 위치.
+ *
+ * syncPayment가 실패해도 이유에 따라 취소 여부를 가른다 — PG 쪽 조회 자체가 안
+ * 되는 경우(AppError EXTERNAL_SERVICE, "한 번도 PortOne에 제출 안 된 merchantUid"의
+ * 실제 시그널)만 "확인 결과 미결제"로 취급해 취소 후보에 남긴다. PG는 PAID인데
+ * verifyPayment 검증(VALIDATION)이나 트랜잭션(INTERNAL)만 실패한 경우까지 취소해
+ * 버리면 이슈의 원래 버그(PAID 주문 오취소)를 그대로 재현하게 되므로, 이 경우는
+ * 취소하지 않고 PENDING으로 남겨 수동 검토 대상으로 뺀다. 개별 주문 동기화 실패가
+ * 다른 주문 처리를 막지 않도록 격리한다(cancelExpiredAwaitingInvitationOrders와 동일).
+ */
+export const cancelExpiredPendingOrders = async (
+  userId: string | mongoose.Types.ObjectId,
+): Promise<void> => {
+  const { orders: candidates, deadline } =
+    await findExpiredPendingOrders(userId);
+  if (candidates.length === 0) return;
+
+  const outcomes = await Promise.allSettled(
+    candidates.map((order) => syncPayment(order.merchantUid)),
+  );
+
+  const cancelableIds = candidates
+    .filter((order, i) => {
+      const outcome = outcomes[i];
+      // PAID였다면 syncPayment가 이미 CONFIRMED로 전이시켰다 — 아래 updateMany의
+      // orderStatus:"PENDING" 조건에서 자연히 제외된다.
+      if (outcome.status === "fulfilled") return true;
+
+      const reason = outcome.reason;
+      if (reason instanceof AppError && reason.category === "EXTERNAL_SERVICE") {
+        return true;
+      }
+
+      console.error(
+        `[cancelExpiredPendingOrders] ${order.merchantUid} 동기화 실패(취소 보류, 수동 검토 필요):`,
+        reason,
+      );
+      return false;
+    })
+    .map((order) => order._id);
+
+  if (cancelableIds.length === 0) return;
+
+  await OrderModel.updateMany(
+    {
+      _id: { $in: cancelableIds },
+      orderStatus: "PENDING",
+      paymentId: null,
+      payMethod: { $ne: "VIRTUAL_ACCOUNT" },
+      createdAt: { $lt: deadline },
+    },
+    {
+      $set: {
+        orderStatus: "CANCELLED",
+        cancelledAt: new Date(),
+        cancelReason: PENDING_ORDER_CANCEL_REASONS.expired,
+      },
+    },
+    { runValidators: true },
+  ).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "만료 주문 취소에 실패했습니다.",
+    );
+  });
+};
+
 export async function completePaymentService(
   paymentId: string,
 ): Promise<PayStatus> {
-  await requireAuth();
+  const { userId } = await requireAuth();
   if (!paymentId) {
     throw new AppError("VALIDATION", "올바르지 않은 요청입니다.");
   }
+
+  // completePayment 액션은 이제 방금 자신이 만든 merchantUid뿐 아니라
+  // PaymentButton(다른 세션에서 만들어진 주문 목록)에서 넘어온 merchantUid로도
+  // 호출된다 — 소유권을 세션에서 다시 조회해 대조한다(src/actions/AGENTS.md).
+  // syncPayment 자체에는 이 체크를 넣지 않는다 — webhook(세션 없음)과
+  // cancelExpiredPendingOrders(이미 userId로 스코프됨)가 세션 없이 직접 호출한다.
+  const order = await getOrderSeviceByMerchantUid(paymentId);
+  if (!order) {
+    throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
+  }
+  if (order.userId.toString() !== userId) {
+    throw new AppError("FORBIDDEN", "본인 주문만 결제 확인할 수 있습니다.");
+  }
+
   const payment = await syncPayment(paymentId);
   if (!payment) {
     throw new AppError("INTERNAL", "결제 동기화에 실패했습니다.");

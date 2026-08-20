@@ -12,6 +12,7 @@ import { useCheckoutData } from "@/ui/hooks";
 import { useCheckoutForm } from "@/ui/hooks";
 import { CheckoutForm as PureCheckoutForm } from "@/ui/components/organisms";
 import { routes } from "@/core/domain";
+import { RetryPaymentCard } from "./RetryPaymentCard";
 export function CheckoutForm() {
   const router = useRouter();
   const clearOrder = useOrderStore((state) => state.clearOrder);
@@ -65,6 +66,21 @@ export function CheckoutForm() {
     }
     handleSubmit(e);
   };
+
+  // PaymentButton이 PG 조회 결과 진짜 미결제로 판정한 기존 주문 — 새 주문(createOrder)
+  // 대신 같은 merchantUid로 재결제한다(GH #78). 훅 전부(위)를 거친 뒤 마지막에
+  // 분기해야 훅 호출 순서가 매 렌더 동일하게 유지된다.
+  const resumePayment = useOrderStore((s) => s.resumePayment);
+  if (resumePayment) {
+    return (
+      <RetryPaymentCard
+        order={resumePayment}
+        paymentStatus={paymentStatus}
+        errorMessage={errorMessage}
+        onConfirm={() => triggerPayment(resumePayment)}
+      />
+    );
+  }
 
   return (
     <PureCheckoutForm
