@@ -18,11 +18,20 @@ const { getPaymentMock, cancelPaymentMock } = vi.hoisted(() => ({
 
 vi.mock("@portone/server-sdk", () => {
   class PortOneError extends Error {}
+  // 실제 SDK와 동일: RestError extends PortOneError, data를 들고 message는 data.message에서 뽑는다
+  class RestError extends PortOneError {
+    data: { type: string; message?: string };
+    constructor(data: { type: string; message?: string }) {
+      super(data.message);
+      this.data = data;
+    }
+  }
   return {
     PortOneClient: () => ({
       payment: { getPayment: getPaymentMock, cancelPayment: cancelPaymentMock },
     }),
     PortOneError,
+    RestError,
   };
 });
 
@@ -42,7 +51,7 @@ vi.mock("./auth", async (importOriginal) => {
   };
 });
 
-import { PortOneError } from "@portone/server-sdk";
+import { PortOneError, RestError } from "@portone/server-sdk";
 import {
   syncPayment,
   cancelPayment,
@@ -831,9 +840,51 @@ describe("payment", () => {
         new PortOneErrorCtor("포트원 서버 오류"),
       );
 
-      await expect(syncPayment(order.merchantUid)).rejects.toMatchObject({
-        category: "EXTERNAL_SERVICE",
-      });
+      const error = await syncPayment(order.merchantUid).catch((e) => e);
+
+      expect(error).toMatchObject({ category: "EXTERNAL_SERVICE" });
+      // RestError가 아닌 PortOneError는 type을 알 수 없다 — UNKNOWN 폴백.
+      expect(error.message).toContain("type=UNKNOWN");
+      expect(error.message).toContain(order.merchantUid);
+    });
+
+    it("RestError(UNAUTHORIZED, message 없음)면 type과 merchantUid가 로그에 남고 빈 message는 폴백 문구로 대체된다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      const RestErrorCtor = RestError as unknown as new (data: {
+        type: string;
+        message?: string;
+      }) => Error;
+      getPaymentMock.mockRejectedValue(
+        new RestErrorCtor({ type: "UNAUTHORIZED" }),
+      );
+
+      const error = await syncPayment(order.merchantUid).catch((e) => e);
+
+      expect(error).toMatchObject({ category: "EXTERNAL_SERVICE" });
+      expect(error.message).toContain("type=UNAUTHORIZED");
+      expect(error.message).toContain(order.merchantUid);
+      expect(error.message).toContain("(SDK 메시지 없음)");
+    });
+
+    it("RestError(PAYMENT_NOT_FOUND, message 있음)면 SDK 원문 메시지가 그대로 남는다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      const RestErrorCtor = RestError as unknown as new (data: {
+        type: string;
+        message?: string;
+      }) => Error;
+      getPaymentMock.mockRejectedValue(
+        new RestErrorCtor({
+          type: "PAYMENT_NOT_FOUND",
+          message: "결제 건을 찾을 수 없습니다",
+        }),
+      );
+
+      const error = await syncPayment(order.merchantUid).catch((e) => e);
+
+      expect(error).toMatchObject({ category: "EXTERNAL_SERVICE" });
+      expect(error.message).toContain("type=PAYMENT_NOT_FOUND");
+      expect(error.message).toContain("결제 건을 찾을 수 없습니다");
+      expect(error.message).not.toContain("(SDK 메시지 없음)");
     });
   });
 
@@ -898,6 +949,37 @@ describe("payment", () => {
       ).rejects.toMatchObject({
         category: "EXTERNAL_SERVICE",
       });
+
+      const updatedOrder = await OrderModel.findById(order._id).lean();
+      expect(updatedOrder?.orderStatus).toBe("CONFIRMED");
+    });
+
+    it("PortOne 취소 API가 RestError(UNAUTHORIZED)를 던지면 type과 merchantUid가 로그에 남고 상태를 바꾸지 않는다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      getPaymentMock.mockResolvedValue(
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
+      );
+      await syncPayment(order.merchantUid);
+
+      const RestErrorCtor = RestError as unknown as new (data: {
+        type: string;
+        message?: string;
+      }) => Error;
+      cancelPaymentMock.mockRejectedValue(
+        new RestErrorCtor({ type: "UNAUTHORIZED" }),
+      );
+
+      const error = await cancelPayment(order.merchantUid, "사유").catch(
+        (e) => e,
+      );
+
+      expect(error).toMatchObject({ category: "EXTERNAL_SERVICE" });
+      expect(error.message).toContain("type=UNAUTHORIZED");
+      expect(error.message).toContain(order.merchantUid);
 
       const updatedOrder = await OrderModel.findById(order._id).lean();
       expect(updatedOrder?.orderStatus).toBe("CONFIRMED");
