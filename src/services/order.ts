@@ -19,6 +19,7 @@ import type {
 } from "@/core/domain";
 import { AppError } from "@/core/domain";
 import {
+  EXPIRED_ORDER_BATCH_LIMIT,
   INVITATION_INPUT_DEADLINE_DAYS,
   ORDER_PAGE_SIZE,
   PENDING_ORDER_EXPIRE_HOURS,
@@ -139,6 +140,48 @@ export const findExpiredAwaitingInvitationOrders = async (
     _id: { $nin: invitationOrderIds },
     confirmedAt: { $lt: deadline },
   }).lean<IOrder[]>();
+};
+
+/**
+ * findExpiredAwaitingInvitationOrders의 전체 유저 스캔 버전 — 스케줄러 배치
+ * (/api/cron/expired-orders)가 쓴다. 판정 조건(CONFIRMED + Invitation 미생성 +
+ * confirmedAt 기한 초과)은 동일하고 userId 스코프만 없다.
+ *
+ * per-user 버전처럼 "유저의 Invitation 전체 → $nin" 순서로 짜면 전역에선 Invitation
+ * 컬렉션 전체를 메모리로 올리게 된다. 대신 주문 후보를 먼저 상한까지 좁힌 뒤 그 _id로만
+ * Invitation을 역조회한다(orderId는 unique 인덱스라 $in 조회가 색인된다).
+ */
+export const findExpiredAwaitingInvitationOrdersForAllUsers = async (): Promise<
+  IOrder[]
+> => {
+  await dbConnect();
+
+  const deadline = new Date();
+  deadline.setDate(deadline.getDate() - INVITATION_INPUT_DEADLINE_DAYS);
+
+  const candidates = await OrderModel.find({
+    orderStatus: "CONFIRMED",
+    confirmedAt: { $lt: deadline },
+  })
+    .sort({ confirmedAt: 1 })
+    .limit(EXPIRED_ORDER_BATCH_LIMIT)
+    .lean<IOrder[]>();
+
+  if (candidates.length === 0) return [];
+
+  const invitations = await InvitationModel.find({
+    orderId: { $in: candidates.map((order) => order._id) },
+  })
+    .select("orderId")
+    .lean();
+
+  const orderIdsWithInvitation = new Set(
+    invitations.map((invitation) => invitation.orderId.toString()),
+  );
+
+  return candidates.filter(
+    (order) => !orderIdsWithInvitation.has(order._id.toString()),
+  );
 };
 
 export const getOrderSeviceByMerchantUid = async (
@@ -442,6 +485,35 @@ export const findExpiredPendingOrders = async (
     payMethod: { $ne: "VIRTUAL_ACCOUNT" },
     createdAt: { $lt: deadline },
   }).lean<IOrder[]>();
+
+  return { orders, deadline };
+};
+
+/**
+ * findExpiredPendingOrders의 전체 유저 스캔 버전 — 스케줄러 배치
+ * (/api/cron/expired-orders)가 쓴다. 판정 조건은 동일하고 userId 스코프만 없다.
+ * 반환 shape을 per-user와 맞춰(orders + deadline) payment.ts의 공통 취소
+ * 실행부가 두 진입점을 그대로 공유한다.
+ */
+export const findExpiredPendingOrdersForAllUsers = async (): Promise<{
+  orders: IOrder[];
+  deadline: Date;
+}> => {
+  await dbConnect();
+
+  const deadline = new Date(
+    Date.now() - PENDING_ORDER_EXPIRE_HOURS * 60 * 60 * 1000,
+  );
+
+  const orders = await OrderModel.find({
+    orderStatus: "PENDING",
+    paymentId: null,
+    payMethod: { $ne: "VIRTUAL_ACCOUNT" },
+    createdAt: { $lt: deadline },
+  })
+    .sort({ createdAt: 1 })
+    .limit(EXPIRED_ORDER_BATCH_LIMIT)
+    .lean<IOrder[]>();
 
   return { orders, deadline };
 };

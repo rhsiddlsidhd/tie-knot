@@ -10,6 +10,26 @@ export const INVITATION_INPUT_DEADLINE_DAYS = 7;
 // 개별 입금기한을 따르므로 이 만료 대상이 아니다.
 export const PENDING_ORDER_EXPIRE_HOURS = 24;
 
+// 만료 배치 한 번이 처리하는 주문 수 상한 — PortOne 동시 호출 수를 묶는다. 두 배치 다
+// "아직 처리 안 된 것만" 걸러내는 멱등 구조라 상한을 넘긴 잔여분은 다음 실행이 이어받는다.
+export const EXPIRED_ORDER_BATCH_LIMIT = 50;
+
+export type ExpiredPendingOrderBatchResult = {
+  scanned: number;
+  cancelled: number;
+  // PG상 PAID로 확인돼 취소 대신 CONFIRMED로 동기화된 건.
+  syncedToConfirmed: number;
+  // EXTERNAL_SERVICE 외 사유로 동기화가 실패해 취소를 보류한 건(수동 검토 대상).
+  heldForReview: number;
+};
+
+export type ExpiredAwaitingInvitationBatchResult = {
+  scanned: number;
+  cancelled: number;
+  // PortOne 환불 호출이 실패한 건 — 다음 실행에서 다시 후보로 잡혀 재시도된다.
+  failed: number;
+};
+
 export const ORDER_STATUSES = [
   "PENDING",
   "CONFIRMED",
