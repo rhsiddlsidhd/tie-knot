@@ -6,7 +6,7 @@ import {
   buildProductInput,
   clearCollections,
 } from "@testing/support";
-import { AppError } from "@/core/domain";
+import { AppError, EXPIRED_ORDER_BATCH_LIMIT } from "@/core/domain";
 import {
   InvitationModel,
   OrderModel,
@@ -587,6 +587,55 @@ describe("order", () => {
       expect(findSpy).not.toHaveBeenCalled();
 
       findSpy.mockRestore();
+    });
+
+    // 회귀 테스트 — LIMIT을 Invitation 제외 필터보다 먼저 적용하면, draft 초대장이
+    // 있어(제외 대상) 정렬 순서상 상위를 차지하는 오래된 주문들이 매번 같은 window를
+    // 채워 새로 들어온 진짜 미입력 주문을 영원히 못 보는 기아 상태가 된다.
+    it("오래된 주문들이 상한을 넘겨 Invitation을 갖고 있어도, 더 최근의 미입력 주문을 놓치지 않는다", async () => {
+      const oldestFirst = new Date();
+      oldestFirst.setDate(oldestFirst.getDate() - 30);
+
+      for (let i = 0; i < EXPIRED_ORDER_BATCH_LIMIT; i += 1) {
+        const order = await createOrderService(buildOrderInputForTest());
+        const confirmedAt = new Date(oldestFirst.getTime() + i * 1000);
+        await OrderModel.updateOne(
+          { _id: order._id },
+          { orderStatus: "CONFIRMED", confirmedAt },
+        );
+        await InvitationModel.create({
+          publicKey: `starvation-guard-${i}`,
+          userId: new mongoose.Types.ObjectId(order.userId),
+          orderId: order._id,
+          productId: order.product.productId,
+          status: "draft",
+          groom: { name: "신랑", phone: "010-1111-2222" },
+          bride: { name: "신부", phone: "010-3333-4444" },
+          weddingDate: new Date("2026-12-25T13:00:00"),
+          venue: "예식장",
+          address: "서울시 강남구",
+          addressDetail: "3층",
+          guestbookEnabled: true,
+          thumbnailImages: [],
+          galleryImages: [],
+        });
+      }
+
+      // 위 EXPIRED_ORDER_BATCH_LIMIT건보다는 최근이지만 여전히 7일 기한은 넘겼고,
+      // Invitation이 없는 진짜 취소 후보.
+      const trueCandidate = await createOrderService(buildOrderInputForTest());
+      const eightDaysAgo = new Date();
+      eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
+      await OrderModel.updateOne(
+        { _id: trueCandidate._id },
+        { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
+      );
+
+      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+
+      expect(result.map((o) => o._id.toString())).toEqual([
+        trueCandidate._id.toString(),
+      ]);
     });
   });
 
