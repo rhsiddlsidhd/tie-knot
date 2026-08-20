@@ -37,14 +37,13 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const pending = await runBatch(
-    "expired-pending",
-    cancelExpiredPendingOrdersForAllUsers,
-  );
-  const awaitingInvitation = await runBatch(
-    "awaiting-invitation",
-    cancelExpiredAwaitingInvitationOrdersForAllUsers,
-  );
+  // 두 배치는 서로 다른 주문 집합(PENDING vs CONFIRMED)을 다뤄 순서 의존이 없으므로
+  // 병렬로 돌린다 — runBatch가 실패를 흡수해 절대 reject하지 않으므로 Promise.all로
+  // 충분하다. 순차 실행은 maxDuration(60초) 예산을 불필요하게 두 배로 소모한다.
+  const [pending, awaitingInvitation] = await Promise.all([
+    runBatch("expired-pending", cancelExpiredPendingOrdersForAllUsers),
+    runBatch("awaiting-invitation", cancelExpiredAwaitingInvitationOrdersForAllUsers),
+  ]);
 
   const ok = pending !== null && awaitingInvitation !== null;
 
