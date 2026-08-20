@@ -416,42 +416,32 @@ export const cancelPendingOrderForCurrentUser = async (
 };
 
 /**
- * 결제창을 벗어난 채 방치된 주문의 자동취소 — paymentId가 없는 PENDING만 대상이다.
- * 가상계좌 발급 주문(paymentId 있음)은 입금 대기 중인 정상 주문이므로 제외한다,
- * 여기 끌어들이면 입금받고 주문을 죽이는 결과가 된다. 결제 전 주문이라 PortOne
- * 환불이 필요 없어 DB 상태 전이만 한다.
+ * 결제창을 벗어난 채 방치된 주문(자동취소 후보)을 조회한다 — paymentId가 없는
+ * PENDING만 대상이다. 가상계좌 발급 주문(paymentId 있음)은 입금 대기 중인 정상
+ * 주문이므로 제외한다, 여기 끌어들이면 입금받고 주문을 죽이는 결과가 된다.
+ * 순수 조회만 담당하고 취소 전 PG 실제 상태 확인은 payment.service의
+ * 오케스트레이션이 맡는다(findExpiredAwaitingInvitationOrders와 대칭 — order.service가
+ * payment.service를 import하면 순환 의존이 생긴다). 오케스트레이션 쪽이 같은
+ * `deadline`으로 취소 대상을 다시 걸러야 하므로 함께 리턴한다.
  */
-export const cancelExpiredPendingOrders = async (
+export const findExpiredPendingOrders = async (
   userId: string | mongoose.Types.ObjectId,
-): Promise<void> => {
+): Promise<{ orders: IOrder[]; deadline: Date }> => {
   await dbConnect();
 
   const deadline = new Date(
     Date.now() - PENDING_ORDER_EXPIRE_HOURS * 60 * 60 * 1000,
   );
 
-  await OrderModel.updateMany(
-    {
-      userId,
-      orderStatus: "PENDING",
-      paymentId: null,
-      // paymentId는 syncPayment가 가상계좌 발급을 확인한 뒤에 붙는다 — 발급 직후
-      // 사용자가 창을 닫아 아직 동기화되지 않은 주문까지 덮으려면 결제수단도 본다.
-      payMethod: { $ne: "VIRTUAL_ACCOUNT" },
-      createdAt: { $lt: deadline },
-    },
-    {
-      $set: {
-        orderStatus: "CANCELLED",
-        cancelledAt: new Date(),
-        cancelReason: PENDING_ORDER_CANCEL_REASONS.expired,
-      },
-    },
-    { runValidators: true },
-  ).catch((err) => {
-    throw new AppError(
-      "INTERNAL",
-      err instanceof Error ? err.message : "만료 주문 취소에 실패했습니다.",
-    );
-  });
+  const orders = await OrderModel.find({
+    userId,
+    orderStatus: "PENDING",
+    paymentId: null,
+    // paymentId는 syncPayment가 가상계좌 발급을 확인한 뒤에 붙는다 — 발급 직후
+    // 사용자가 창을 닫아 아직 동기화되지 않은 주문까지 덮으려면 결제수단도 본다.
+    payMethod: { $ne: "VIRTUAL_ACCOUNT" },
+    createdAt: { $lt: deadline },
+  }).lean<IOrder[]>();
+
+  return { orders, deadline };
 };

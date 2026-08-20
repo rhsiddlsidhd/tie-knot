@@ -14,8 +14,9 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/actions", () => ({ createOrder: vi.fn() }));
 
 vi.mock("@/ui/stores", () => ({
-  useOrderStore: (selector: (s: { clearOrder: () => void }) => unknown) =>
-    selector({ clearOrder: clearOrderMock }),
+  useOrderStore: (
+    selector: (s: { clearOrder: () => void; resumePayment: null }) => unknown,
+  ) => selector({ clearOrder: clearOrderMock, resumePayment: null }),
 }));
 
 vi.mock("@/ui/hooks", () => ({

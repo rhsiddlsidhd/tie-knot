@@ -9,6 +9,7 @@ import {
 import { ProductModel, OrderModel, PaymentModel } from "@/models";
 import { createProductService } from "./product";
 import { createOrderService } from "./order";
+import type * as AuthModule from "./auth";
 
 const { getPaymentMock, cancelPaymentMock } = vi.hoisted(() => ({
   getPaymentMock: vi.fn(),
@@ -25,11 +26,29 @@ vi.mock("@portone/server-sdk", () => {
   };
 });
 
+// 세션 조회만 대체한다 — 쿠키/JWT는 이 파일의 검증 대상이 아니고, 나머지 auth 구현은
+// 그대로 둔다(partial mock, order.integration.test.ts와 동일 패턴).
+const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
+
+vi.mock("./auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof AuthModule>();
+  return {
+    ...actual,
+    requireAuth: async () => ({
+      userId: authState.userId,
+      email: "buyer@example.com",
+      role: "USER",
+    }),
+  };
+});
+
 import { PortOneError } from "@portone/server-sdk";
 import {
   syncPayment,
   cancelPayment,
   cancelExpiredAwaitingInvitationOrders,
+  cancelExpiredPendingOrders,
+  completePaymentService,
 } from "./payment";
 
 describe("payment", () => {
@@ -990,6 +1009,192 @@ describe("payment", () => {
       const updatedOrder2 = await OrderModel.findById(order2._id).lean();
       expect(updatedOrder1?.orderStatus).toBe("CONFIRMED");
       expect(updatedOrder2?.orderStatus).toBe("CANCELLED");
+    });
+  });
+
+  describe("cancelExpiredPendingOrders", () => {
+    // order.ts에서 payment.ts로 이관되면서(GH #78, 취소 전 PG 확인 추가) 여기로
+    // 옮겨온 기존 테스트들 — 이관 전엔 PortOne을 아예 호출하지 않았지만, 이제는
+    // 후보로 걸리는 케이스마다 getPaymentMock을 명시적으로 세팅해야 한다.
+    const setCreatedAt = async (
+      orderId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
+      await OrderModel.updateOne(
+        { _id: orderId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    it("24시간이 지났고 PortOne에 한 번도 제출 안 된(조회 자체가 실패하는) 주문은 자동취소한다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      // 실제 PortOneError는 abstract class라 직접 new할 수 없다(위 "PortOne SDK 자체
+      // 오류" 테스트와 동일한 이유로 캐스팅).
+      const PortOneErrorCtor = PortOneError as unknown as new (
+        message: string,
+      ) => Error;
+      getPaymentMock.mockRejectedValue(new PortOneErrorCtor("no such payment"));
+
+      await cancelExpiredPendingOrders(order.userId.toString());
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CANCELLED");
+      expect(updated?.cancelReason).toBe("결제 미완료로 인한 자동 취소");
+    });
+
+    it("가상계좌가 발급된 주문(paymentId 있음)은 기한이 지나도 만료 대상이 아니다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      await OrderModel.updateOne(
+        { _id: order._id },
+        { $set: { paymentId: new mongoose.Types.ObjectId() } },
+      );
+      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
+
+      await cancelExpiredPendingOrders(order.userId.toString());
+
+      expect(getPaymentMock).not.toHaveBeenCalled();
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
+    it("아직 24시간이 안 지난 주문은 PG 조회 없이 그대로 둔다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 23 * 60 * 60 * 1000));
+
+      await cancelExpiredPendingOrders(order.userId.toString());
+
+      expect(getPaymentMock).not.toHaveBeenCalled();
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+    });
+
+    // ── GH #78 Part B 결함 수정 검증 — "동기화 후에도 PENDING이면 무조건 취소"였던
+    // 최초 설계는 PG상 PAID인데 검증/트랜잭션만 실패한 주문까지 취소해버려 이슈
+    // 원래 버그(PAID 주문 오취소)를 재현했다. outcome 기반 필터링으로 고정한다.
+    it("만료됐지만 PG상 PAID였던 주문은 취소하지 않고 CONFIRMED로 동기화한다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      getPaymentMock.mockResolvedValue(
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
+      );
+
+      await cancelExpiredPendingOrders(order.userId.toString());
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CONFIRMED");
+      expect(updated?.cancelReason).toBeUndefined();
+    });
+
+    it("만료됐고 실제로 미결제(READY)인 주문은 그대로 취소된다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      getPaymentMock.mockResolvedValue({ status: "READY", id: order.merchantUid });
+
+      await cancelExpiredPendingOrders(order.userId.toString());
+
+      const updated = await OrderModel.findById(order._id).lean();
+      expect(updated?.orderStatus).toBe("CANCELLED");
+      expect(updated?.cancelReason).toBe("결제 미완료로 인한 자동 취소");
+    });
+
+    it("PG상 PAID인데 검증 실패(VALIDATION)로 동기화가 실패하면 취소하지 않고 PENDING을 유지한다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      // 금액 불일치 → syncPayment가 AppError(VALIDATION)를 던진다(위 "PAID 상태
+      // 처리" 스위트의 동일 케이스 참고) — EXTERNAL_SERVICE가 아니므로 취소
+      // 후보에서 빠져야 한다.
+      getPaymentMock.mockResolvedValue(
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice + 1000,
+        ),
+      );
+
+      await cancelExpiredPendingOrders(order.userId.toString());
+
+      const untouched = await OrderModel.findById(order._id).lean();
+      expect(untouched?.orderStatus).toBe("PENDING");
+      expect(untouched?.cancelReason).toBeUndefined();
+    });
+
+    it("한 후보의 동기화 실패가 같은 유저의 다른 만료 후보 처리를 막지 않는다", async () => {
+      const { savedProduct, order: order1 } = await setupProductAndOrder(1);
+      await setCreatedAt(order1._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+
+      const { order: order2 } = await setupProductAndOrder(1);
+      await OrderModel.updateOne(
+        { _id: order2._id },
+        { userId: order1.userId },
+      );
+      await setCreatedAt(order2._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+
+      getPaymentMock.mockImplementation(({ paymentId }: { paymentId: string }) => {
+        if (paymentId === order1.merchantUid) {
+          // PG상 PAID인데 검증 실패 — 취소 보류 대상(취소되면 안 됨)
+          return Promise.resolve(
+            paidPayload(
+              order1.merchantUid,
+              savedProduct._id.toString(),
+              order1.finalPrice + 1000,
+            ),
+          );
+        }
+        // 진짜 미결제 — 취소 대상
+        return Promise.resolve({ status: "READY", id: order2.merchantUid });
+      });
+
+      await expect(
+        cancelExpiredPendingOrders(order1.userId.toString()),
+      ).resolves.toBeUndefined();
+
+      const updatedOrder1 = await OrderModel.findById(order1._id).lean();
+      const updatedOrder2 = await OrderModel.findById(order2._id).lean();
+      expect(updatedOrder1?.orderStatus).toBe("PENDING");
+      expect(updatedOrder2?.orderStatus).toBe("CANCELLED");
+    });
+  });
+
+  describe("completePaymentService", () => {
+    it("본인 소유 주문이면 PG 상태를 동기화하고 결과를 리턴한다", async () => {
+      const { savedProduct, order } = await setupProductAndOrder(1);
+      authState.userId = order.userId.toString();
+      getPaymentMock.mockResolvedValue(
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
+      );
+
+      const status = await completePaymentService(order.merchantUid);
+
+      expect(status).toBe("PAID");
+    });
+
+    it("다른 유저의 merchantUid로 호출하면 FORBIDDEN을 던지고 PortOne을 조회하지 않는다", async () => {
+      const { order } = await setupProductAndOrder(1);
+      authState.userId = new mongoose.Types.ObjectId().toString();
+
+      await expect(
+        completePaymentService(order.merchantUid),
+      ).rejects.toMatchObject({ category: "FORBIDDEN" });
+      expect(getPaymentMock).not.toHaveBeenCalled();
+    });
+
+    it("존재하지 않는 merchantUid면 NOT_FOUND를 던진다", async () => {
+      authState.userId = new mongoose.Types.ObjectId().toString();
+
+      await expect(
+        completePaymentService("no-such-merchant-uid"),
+      ).rejects.toMatchObject({ category: "NOT_FOUND" });
+      expect(getPaymentMock).not.toHaveBeenCalled();
     });
   });
 });

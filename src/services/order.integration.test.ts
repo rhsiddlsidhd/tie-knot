@@ -19,7 +19,6 @@ import {
   getOrderSeviceByMerchantUid,
   getOrdersPageForUser,
   cancelPendingOrderForCurrentUser,
-  cancelExpiredPendingOrders,
   findExpiredAwaitingInvitationOrders,
 } from "./order";
 import { createProductService } from "./product";
@@ -714,57 +713,7 @@ describe("order", () => {
     });
   });
 
-  describe("cancelExpiredPendingOrders", () => {
-    it("24시간이 지난 결제 전 주문을 자동취소한다", async () => {
-      const userId = new mongoose.Types.ObjectId().toString();
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
-      await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
-
-      await cancelExpiredPendingOrders(userId);
-
-      const updated = await OrderModel.findById(order._id).lean();
-      expect(updated?.orderStatus).toBe("CANCELLED");
-      expect(updated?.cancelReason).toBe("결제 미완료로 인한 자동 취소");
-    });
-
-    it("가상계좌가 발급된 주문은 기한이 지나도 만료 대상이 아니다", async () => {
-      const userId = new mongoose.Types.ObjectId().toString();
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
-      await OrderModel.updateOne(
-        { _id: order._id },
-        { $set: { paymentId: new mongoose.Types.ObjectId() } },
-      );
-      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
-
-      await cancelExpiredPendingOrders(userId);
-
-      const untouched = await OrderModel.findById(order._id).lean();
-      expect(untouched?.orderStatus).toBe("PENDING");
-    });
-
-    it("가상계좌 결제수단 주문은 결제 동기화 전이어도 만료 대상이 아니다", async () => {
-      const userId = new mongoose.Types.ObjectId().toString();
-      // paymentId는 syncPayment가 발급을 확인한 뒤에야 붙는다 — 그 전 구간을 본다.
-      const order = await createOrderService(
-        buildOrderInputForTest({ userId, payMethod: "VIRTUAL_ACCOUNT" }),
-      );
-      await setCreatedAt(order._id, new Date(Date.now() - 72 * 60 * 60 * 1000));
-
-      await cancelExpiredPendingOrders(userId);
-
-      const untouched = await OrderModel.findById(order._id).lean();
-      expect(untouched?.orderStatus).toBe("PENDING");
-    });
-
-    it("아직 24시간이 안 지난 주문은 그대로 둔다", async () => {
-      const userId = new mongoose.Types.ObjectId().toString();
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
-      await setCreatedAt(order._id, new Date(Date.now() - 23 * 60 * 60 * 1000));
-
-      await cancelExpiredPendingOrders(userId);
-
-      const untouched = await OrderModel.findById(order._id).lean();
-      expect(untouched?.orderStatus).toBe("PENDING");
-    });
-  });
+  // cancelExpiredPendingOrders는 취소 전 PG 실제 상태를 확인하도록 payment.ts로
+  // 이관됐다(GH #78) — 관련 테스트는 src/services/payment.integration.test.ts의
+  // describe("cancelExpiredPendingOrders", ...)로 옮겼다.
 });
