@@ -8,6 +8,7 @@ import { decrypt, encrypt } from "@/adapters/server/jose";
 import { deleteCookie } from "@/adapters/server/cookies";
 import { sendEmail } from "@/adapters/server/nodemailer";
 import { routes } from "@/core/domain";
+import { getAppBaseUrl } from "@/core/utils";
 // 유저 생성
 export const createUser = async (user: BaseUser): Promise<IUser> => {
   await dbConnect();
@@ -91,10 +92,10 @@ export async function requestPasswordResetService(email: string): Promise<void> 
     throw new AppError("VALIDATION", "등록되지 않은 이메일입니다.");
   }
   const token = await encrypt({ id: email, type: "ENTRY" });
-  const path =
-    process.env.NODE_ENV === "development"
-      ? `http://localhost:3000${routes.changePw}?t=${encodeURIComponent(token)}`
-      : "";
+  const path = new URL(
+    `${routes.changePw}?t=${encodeURIComponent(token)}`,
+    getAppBaseUrl(),
+  ).toString();
   await sendEmail({ email, path });
 }
 
