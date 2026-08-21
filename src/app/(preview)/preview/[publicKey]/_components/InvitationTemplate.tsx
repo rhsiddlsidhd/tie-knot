@@ -1,5 +1,6 @@
 import type { InvitationContent } from "@/core/domain";
 import { CloudImage } from "@/ui/components/molecules";
+import { ThemeSync } from "./ThemeSync";
 import {
   mapCoupleInfoToAccountProps,
   mapCoupleInfoToCalendarProps,
@@ -36,6 +37,7 @@ export function InvitationTemplate({
   const thumbnails = mapCoupleInfoToThumbnails(content);
   return (
     <div className="relative" data-theme={theme}>
+      <ThemeSync theme={theme} />
       <HeroSection {...mapCoupleInfoToHeroProps(content)} />
       <InvitationMessage {...mapCoupleInfoToInvitationProps(content)} />
       <WeddingMonthCalendar {...mapCoupleInfoToCalendarProps(content)} />

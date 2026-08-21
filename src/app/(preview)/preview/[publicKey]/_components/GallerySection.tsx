@@ -63,7 +63,7 @@ export function GallerySection({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-1/2 left-2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
+                className="bg-primary/70 text-primary-foreground hover:bg-primary absolute top-1/2 left-2 -translate-y-1/2"
                 onClick={prev}
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -71,7 +71,7 @@ export function GallerySection({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-1/2 right-2 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70"
+                className="bg-primary/70 text-primary-foreground hover:bg-primary absolute top-1/2 right-2 -translate-y-1/2"
                 onClick={next}
               >
                 <ChevronRight className="h-6 w-6" />
@@ -80,13 +80,13 @@ export function GallerySection({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 right-2 bg-black/50 text-white hover:bg-black/70"
+                className="bg-primary/70 text-primary-foreground hover:bg-primary absolute top-2 right-2"
                 onClick={() => setLightboxOpen(false)}
               >
                 <X className="h-6 w-6" />
               </Button>
 
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-black/50 px-4 py-2 text-sm text-white">
+              <div className="bg-primary/70 text-primary-foreground absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full px-4 py-2 text-sm">
                 {currentIndex + 1} / {images.length}
               </div>
             </div>

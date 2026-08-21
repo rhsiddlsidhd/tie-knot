@@ -32,10 +32,10 @@ export function GuestbookSection({ publicKey }: { publicKey: string }) {
   return (
     <EyebrowSection eyebrow="GUESTBOOK" heading="방명록">
       <div className="flex flex-col items-center gap-4">
-        <div className="h-full text-gray-300">
+        <div className="h-full">
           <ul className="space-y-4 py-2">
             {rawData && data.length === 0 && (
-              <li className="py-6 text-center text-gray-400">
+              <li className="text-muted-foreground py-6 text-center">
                 등록된 방명록이 없습니다.
               </li>
             )}
@@ -43,7 +43,7 @@ export function GuestbookSection({ publicKey }: { publicKey: string }) {
             {rawData &&
               data.map((item) => (
                 <li
-                  className="relative flex items-start gap-3 rounded-md p-3 shadow-sm"
+                  className="border-border bg-card relative flex items-start gap-3 rounded-lg border p-3 shadow-sm"
                   key={item.id}
                 >
                   <motion.div
@@ -82,7 +82,7 @@ export function GuestbookSection({ publicKey }: { publicKey: string }) {
               ))}
 
             {!rawData && (
-              <li className="py-6 text-center text-gray-400">
+              <li className="text-muted-foreground py-6 text-center">
                 방명록을 불러오는 중입니다.
               </li>
             )}
