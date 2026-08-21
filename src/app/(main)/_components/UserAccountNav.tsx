@@ -17,18 +17,18 @@ const UserAccountNav = () => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    try {
-      await logoutUser();
+    const result = await logoutUser();
 
-      mutate("/api/auth/me", null, false);
-      toast.success("로그아웃되었습니다.");
-
-      router.push(routes.home);
-      router.refresh();
-    } catch (error) {
-      console.error("Logout Error:", error);
-      toast.error("로그아웃 처리 중 오류가 발생했습니다.");
+    if (result.success === false) {
+      toast.error(result.error.message || "로그아웃 처리 중 오류가 발생했습니다.");
+      return;
     }
+
+    mutate("/api/auth/me", null, false);
+    toast.success("로그아웃되었습니다.");
+
+    router.push(routes.home);
+    router.refresh();
   };
 
   return (
