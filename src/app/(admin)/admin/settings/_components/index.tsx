@@ -1,0 +1,1 @@
+export { AdminSettingsTemplate } from "./AdminSettingsTemplate";
