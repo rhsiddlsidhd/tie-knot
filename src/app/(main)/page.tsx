@@ -5,28 +5,18 @@ import type {
   Product} from "@/services";
 import {
   getFeaturedTemplatesService,
-  getPopularProductsService,
-  getProductService
+  getPopularProductsService
 } from "@/services";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 
 const page = async () => {
-  const previewProductId = process.env.MAIN_PREVIEW_PRODUCT_ID;
-  const infoId = process.env.MAIN_PREVIEW_INFO_ID;
-
-  const [product, invitation, popularProducts] = await Promise.all([
-    previewProductId ? getProductService(previewProductId) : null,
+  const [invitation, popularProducts] = await Promise.all([
     getFeaturedTemplatesService("invitation").catch(() => [] as Product[]),
     getPopularProductsService(POPULAR_PRODUCTS_LIMIT).catch(() => [] as Product[]),
   ]);
 
   return (
-    <HomeTemplate
-      invitation={invitation}
-      product={product}
-      infoId={infoId}
-      popularProducts={popularProducts}
-    />
+    <HomeTemplate invitation={invitation} popularProducts={popularProducts} />
   );
 };
 

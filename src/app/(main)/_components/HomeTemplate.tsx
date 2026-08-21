@@ -1,4 +1,4 @@
-import { StartActionCTA, EcommerceHero, LiveDemoSection, TemplateCarouselGroup } from "@/ui/components/organisms";
+import { EcommerceHero, LiveDemoSection, TemplateCarouselGroup } from "@/ui/components/organisms";
 import type { Product } from "@/services";
 import { TypographyH2, TypographyP } from "@/ui/components/atoms";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
@@ -6,12 +6,10 @@ import { PopularProductsSection } from "./PopularProductsSection";
 
 interface HomeTemplateProps {
   invitation: Product[];
-  product: Product | null;
-  infoId: string | undefined;
   popularProducts: Product[];
 }
 
-const HomeTemplate = ({ invitation, product, infoId, popularProducts }: HomeTemplateProps) => {
+const HomeTemplate = ({ invitation, popularProducts }: HomeTemplateProps) => {
   return (
     <div className="flex flex-col ">
       <EcommerceHero />
@@ -44,12 +42,7 @@ const HomeTemplate = ({ invitation, product, infoId, popularProducts }: HomeTemp
         </section>
       )}
 
-      {/* 실제 샘플 미리보기 섹션 */}
-      {product && infoId && (
-        <LiveDemoSection product={product} infoId={infoId} />
-      )}
-
-      <StartActionCTA />
+      <LiveDemoSection />
     </div>
   );
 };
