@@ -11,7 +11,8 @@ import { routes } from "@/core/domain";
  */
 export const LiveDemoSection = () => {
   return (
-    <section className="bg-muted/30 py-20 ">
+    <section className="bg-muted/30 py-20">
+      <div className="container mx-auto px-4">
         <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-stretch">
           {/* 설명 영역 */}
           <div className="flex flex-1 flex-col justify-center text-center lg:text-left">
@@ -64,7 +65,7 @@ export const LiveDemoSection = () => {
             </Card>
           </div>
         </div>
-   
+      </div>
     </section>
   );
 };
