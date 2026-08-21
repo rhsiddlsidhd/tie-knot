@@ -1,26 +1,16 @@
 "use client";
 
+import { Fragment, useState } from "react";
 import Image from "next/image";
-import React, { useState } from "react";
-import {
-  Sparkles,
-  Image as ImageIcon,
-  MessageSquare,
-  History,
-} from "lucide-react";
-import { Button, TypographyH2, TypographySmall } from "@/ui/components/atoms";
-import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
+import { Button, TypographyH1 } from "@/ui/components/atoms";
 import { cn } from "@/core/utils";
-import promotions from "@/core/content/promotions.json";
+import promotionsData from "@/core/content/promotions.json";
+import type { Promotion } from "@/core/domain";
 import { useIntervalIndex } from "@/ui/hooks";
 
-// 아이콘 매핑 객체
-const ICON_MAP: Record<string, React.ElementType> = {
-  Sparkles,
-  Image: ImageIcon,
-  MessageSquare,
-  History,
-};
+const promotions = (promotionsData as Promotion[]).filter((p) => p.isActive);
 
 export const EcommerceHero = () => {
   const [isPaused, setIsPaused] = useState(false);
@@ -31,184 +21,90 @@ export const EcommerceHero = () => {
     isPaused,
   });
 
-  const activePromotion = promotions[currentIndex];
+  if (promotions.length === 0) return null;
+
+  const active = promotions[currentIndex];
 
   return (
     <section
-      className="relative overflow-hidden bg-white pt-20 md:pt-28"
+      className="bg-background relative overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className="container mx-auto px-4">
-        {/* Layout: Mobile (Banner Top, Tabs Bottom) / Desktop (Tabs Left, Banner Right) */}
-        <div className="flex flex-col-reverse gap-8 py-8 md:flex-row md:items-stretch md:py-12">
-          {/* Tabs Section (Left on Desktop, Bottom on Mobile) - 비즈니스 프로모션 선택 영역 */}
-          <div className="flex w-full flex-col justify-center gap-2 md:w-1/3 lg:w-1/4">
-            <div className="mb-6 hidden md:block">
-              <TypographyH2 className="border-none text-2xl font-bold text-slate-900">
-                당신의 특별한 날을 위한
-                <br />
-                프리미엄 솔루션
-              </TypographyH2>
-            </div>
-            <div className="grid grid-cols-2 gap-2 md:flex md:flex-col md:gap-3">
-              {promotions.map((promo, index) => {
-                const isActive = activePromotion.id === promo.id;
-                const Icon = ICON_MAP[promo.iconName] || Sparkles;
-
-                return (
-                  <Button
-                    key={promo.id}
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      setIndex(index);
-                      setIsPaused(true);
-                    }}
-                    className={cn(
-                      "group relative flex h-auto items-center gap-3 rounded-2xl p-4 text-left transition-all duration-300",
-                      isActive
-                        ? "bg-white shadow-xl ring-1 shadow-slate-200/50 ring-slate-100"
-                        : "hover:bg-slate-50",
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-xl transition-colors",
-                        isActive
-                          ? promo.bgColor
-                          : "bg-slate-100 group-hover:bg-white",
-                      )}
-                    >
-                      <Icon
-                        className={cn(
-                          "h-5 w-5",
-                          isActive ? promo.accentColor : "text-slate-400",
-                        )}
-                      />
-                    </div>
-                    <div className="flex flex-col">
-                      <TypographySmall
-                        className={cn(
-                          "font-bold transition-colors",
-                          isActive ? "text-slate-900" : "text-slate-500",
-                        )}
-                      >
-                        {promo.label}
-                      </TypographySmall>
-                    </div>
-                    {isActive && (
-                      <motion.div
-                        layoutId="active-pill"
-                        className="absolute inset-0 z-[-1] rounded-2xl bg-white shadow-lg"
-                        transition={{
-                          type: "spring",
-                          bounce: 0.2,
-                          duration: 0.6,
-                        }}
-                      />
-                    )}
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Banner Showcase Area */}
-          <div className="relative flex-1">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activePromotion.id}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+      <div className="md:flex">
+        {/* 탭 열 — 모바일: 상단 가로 언더라인 / 데스크톱: 좌측 세로 38.2% */}
+        <div className="border-border scrollbar-hide bg-background flex gap-1 overflow-x-auto border-b px-3 md:w-[38.2%] md:flex-shrink-0 md:flex-col md:justify-center md:gap-1.5 md:border-r md:border-b-0 md:px-8 md:py-10">
+          {promotions.map((promo, index) => {
+            const isActive = active.id === promo.id;
+            return (
+              <button
+                key={promo.id}
+                type="button"
+                onClick={() => {
+                  setIndex(index);
+                  setIsPaused(true);
+                }}
                 className={cn(
-                  "relative flex h-full min-h-[450px] flex-col overflow-hidden rounded-[2.5rem] p-8 md:flex-row md:items-center md:p-12",
-                  activePromotion.bgColor,
+                  "shrink-0 border-b-2 px-2 py-3.5 text-sm font-bold whitespace-nowrap transition-colors md:rounded-r-lg md:border-b-0 md:border-l-2 md:px-4 md:py-3",
+                  isActive
+                    ? "text-primary border-primary md:bg-secondary"
+                    : "text-muted-foreground hover:text-foreground border-transparent",
                 )}
               >
-                {/* Content Side */}
-                <div className="relative z-10 flex flex-1 flex-col justify-center text-center md:text-left">
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="mb-4 inline-flex w-fit items-center gap-2 self-center rounded-full bg-white/80 px-4 py-2 backdrop-blur-sm md:self-start"
-                  >
-                    <Sparkles
-                      className={cn("h-4 w-4", activePromotion.accentColor)}
-                    />
-                    <TypographySmall className="font-bold tracking-widest text-slate-600 uppercase">
-                      {activePromotion.badge}
-                    </TypographySmall>
-                  </motion.div>
+                {promo.label}
+              </button>
+            );
+          })}
+        </div>
 
-                  <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="mb-6 text-3xl leading-tight font-extrabold text-slate-900 md:text-5xl lg:text-6xl"
-                  >
-                    {activePromotion.title.split("\n").map((line, i) => (
-                      <React.Fragment key={i}>
-                        {line}
-                        <br />
-                      </React.Fragment>
-                    ))}
-                  </motion.h1>
+        {/* 배너 — 이미지 전체 배경 + 텍스트 좌하단 오버레이(모바일/데스크톱 동일 개념) */}
+        <div className="relative min-h-[420px] overflow-hidden md:min-h-[560px] md:w-[61.8%]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={active.image}
+                alt={active.label}
+                fill
+                sizes="(max-width: 768px) 100vw, 62vw"
+                className="object-cover"
+                priority
+              />
+              {/* 텍스트 가독성용 하단 스크림 — ProductCard 사진 오버레이와 동일 관례 */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-                  <motion.p
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="mb-8 text-base leading-relaxed whitespace-pre-line text-slate-600 md:text-lg"
-                  >
-                    {activePromotion.description}
-                  </motion.p>
+              <div className="absolute inset-x-0 bottom-0 flex flex-col items-start gap-3 p-6 md:p-10">
+                {active.badge && (
+                  <span className="bg-foreground/85 text-background w-fit rounded-full px-3 py-1.5 text-xs font-bold tracking-wide backdrop-blur-sm">
+                    {active.badge}
+                  </span>
+                )}
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    className="flex flex-col justify-center gap-4 sm:flex-row md:justify-start"
-                  >
-                  </motion.div>
-                </div>
+                <TypographyH1 className="font-[var(--font-NotoSerif)] text-left text-2xl leading-tight font-bold text-white md:text-3xl">
+                  {active.title.split("\n").map((line, i) => (
+                    <Fragment key={i}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
+                </TypographyH1>
 
-                {/* Image Side */}
-                <div className="relative mt-8 flex flex-1 items-center justify-center md:mt-0">
-                  <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    className="relative aspect-[3/4] w-full max-w-[320px] rotate-3 overflow-hidden rounded-3xl shadow-2xl transition-transform hover:rotate-0"
-                  >
-                    <Image
-                      src={activePromotion.image}
-                      alt={activePromotion.label}
-                      fill
-                      className="object-cover"
-                      priority
-                    />
-                  </motion.div>
-                  {/* Decorative blobs based on active promotion color */}
-                  <div
-                    className={cn(
-                      "absolute -top-8 -right-8 h-48 w-48 rounded-full opacity-40 blur-3xl",
-                      activePromotion.accentColor.replace("text", "bg"),
-                    )}
-                  />
-                  <div
-                    className={cn(
-                      "absolute -bottom-8 -left-8 h-48 w-48 rounded-full opacity-20 blur-3xl",
-                      activePromotion.accentColor.replace("text", "bg"),
-                    )}
-                  />
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                <p className="text-sm leading-relaxed whitespace-pre-line text-white/80 md:text-base">
+                  {active.description}
+                </p>
+
+                <Button asChild size="lg" className="w-fit">
+                  <Link href={active.cta.href}>{active.cta.label}</Link>
+                </Button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </section>
