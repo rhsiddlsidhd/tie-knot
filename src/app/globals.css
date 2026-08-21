@@ -4,8 +4,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-NotoSansKR: "NotoSansKR";
-  --font-NotoSerif: "NotoSerif";
   --breakpoint-xs: 400px;
 }
 
@@ -58,34 +56,35 @@
 }
 
 :root {
-  font-family: var(--font-NotoSerif), var(--font-NotoSansKR);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
+  font-family: var(--font-NotoSansKR), var(--font-NotoSerif), sans-serif;
+  --card: #ffffff;
+  --card-foreground: #3a342e;
+  --popover: #ffffff;
+  --popover-foreground: #3a342e;
+  --primary: #aa6147;
+  --primary-foreground: #ffffff;
+  --secondary: #f0e6da;
+  --secondary-foreground: #3a342e;
+  --muted: #efe7dc;
+  --muted-foreground: #8a7f72;
+  --accent: #e8ddd0;
+  --accent-foreground: #3a342e;
+  --border: #e3d8c9;
+  --input: #e3d8c9;
+  --ring: #c68868;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #3a342e;
+  --sidebar-primary: #aa6147;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0e6da;
+  --sidebar-accent-foreground: #3a342e;
+  --sidebar-border: #e3d8c9;
+  --sidebar-ring: #c68868;
+  --background: #faf6f1;
+  --foreground: #3a342e;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -125,6 +124,31 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
   --destructive: oklch(0.704 0.191 22.216);
+}
+
+/* ── Default Theme (웜베이지) ──
+   청첩장(invitation 상품)의 "default" 테마 값을 여기 고정한다. 청첩장은 발행되고
+   나면 그 자체로 하객에게 전달되는 완성 상품이라, 이후 쇼핑몰 :root가 다시
+   리브랜딩되더라도 이미 발행된 청첩장 외관은 흔들리면 안 된다 — 그래서 :root를
+   그냥 상속받게 두지 않고 이 시점의 값을 명시적으로 박아넣는다(blossom과 동일 패턴). */
+[data-theme="default"] {
+  --background:           #faf6f1;
+  --foreground:           #3a342e;
+  --card:                 #ffffff;
+  --card-foreground:      #3a342e;
+  --popover:              #ffffff;
+  --popover-foreground:   #3a342e;
+  --muted:                #efe7dc;
+  --muted-foreground:     #8a7f72;
+  --primary:              #aa6147;
+  --primary-foreground:   #ffffff;
+  --secondary:            #f0e6da;
+  --secondary-foreground: #3a342e;
+  --accent:               #e8ddd0;
+  --accent-foreground:    #3a342e;
+  --border:               #e3d8c9;
+  --input:                #e3d8c9;
+  --ring:                 #c68868;
 }
 
 /* ── Blossom Theme (벚꽃) ── */
