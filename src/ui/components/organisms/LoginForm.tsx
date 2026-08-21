@@ -52,23 +52,14 @@ export function LoginForm({
           비밀번호
         </TextField>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Checkbox id="remember" name="remember" />
-            <Label
-              htmlFor="remember"
-              className="cursor-pointer text-sm font-normal"
-            >
-              로그인 상태 유지
-            </Label>
-          </div>
-
-          <Link
-            href={routes.findPw}
-            className="text-primary text-sm hover:underline"
+        <div className="flex items-center gap-2">
+          <Checkbox id="remember" name="remember" />
+          <Label
+            htmlFor="remember"
+            className="cursor-pointer text-sm font-normal"
           >
-            비밀번호 찾기
-          </Link>
+            로그인 상태 유지
+          </Label>
         </div>
 
         <Button type="submit" className="w-full" size="lg" disabled={pending}>
@@ -105,12 +96,21 @@ export function LoginForm({
             회원가입
           </Link>
         </TypographyMuted>
-        <Link
-          href={routes.findId}
-          className="text-muted-foreground hover:text-foreground inline-block text-sm transition-colors"
-        >
-          아이디 찾기
-        </Link>
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <Link
+            href={routes.findId}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            아이디 찾기
+          </Link>
+          <span className="text-muted-foreground">·</span>
+          <Link
+            href={routes.findPw}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            비밀번호 찾기
+          </Link>
+        </div>
       </div>
     </div>
   );
