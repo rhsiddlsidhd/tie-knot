@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, vi, afterEach } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
 import { buildUserInput, clearCollections } from "@testing/support";
@@ -12,7 +12,11 @@ import {
   getUserById,
   changePassword,
   signupUserService,
+  requestPasswordResetService,
 } from "./user";
+
+const sendEmailMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
+vi.mock("@/adapters/server/nodemailer", () => ({ sendEmail: sendEmailMock }));
 
 describe("user", () => {
   beforeEach(async () => {
@@ -53,6 +57,33 @@ describe("user", () => {
 
       await expect(
         signupUserService({ ...input, password: "pw1234!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+  });
+
+  describe("requestPasswordResetService", () => {
+    afterEach(() => {
+      vi.unstubAllEnvs();
+      sendEmailMock.mockClear();
+    });
+
+    it("등록된 이메일이면 배포 환경 origin으로 시작하는 절대 링크를 메일로 보낸다", async () => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("DEPLOYMENT_BASE_URL", "https://tie-knot-pi.vercel.app");
+      const input = buildUserInput();
+      await UserModel.create(input);
+
+      await requestPasswordResetService(input.email);
+
+      expect(sendEmailMock).toHaveBeenCalledOnce();
+      const { path } = sendEmailMock.mock.calls[0][0];
+      expect(path).not.toBe("");
+      expect(path.startsWith("https://tie-knot-pi.vercel.app/change-password?t=")).toBe(true);
+    });
+
+    it("등록되지 않은 이메일이면 VALIDATION을 던진다", async () => {
+      await expect(
+        requestPasswordResetService("no-such-user@example.com"),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
   });
