@@ -47,4 +47,22 @@ describe("SignupForm", () => {
     expect(screen.getByRole("button", { name: /Google/ })).toBeDisabled();
     expect(screen.getByText("소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.")).toBeInTheDocument();
   });
+
+  it("이용약관/개인정보 처리방침 링크가 실제 문서 경로로 연결된다", () => {
+    render(<SignupForm action={vi.fn()} pending={false} state={null} />);
+
+    expect(screen.getByRole("link", { name: "이용약관" })).toHaveAttribute("href", "/terms");
+    expect(screen.getByRole("link", { name: "개인정보 처리방침" })).toHaveAttribute(
+      "href",
+      "/privacy",
+    );
+  });
+
+  it("빈 앵커(href=\"#\") 링크가 더 이상 남아있지 않다", () => {
+    const { container } = render(
+      <SignupForm action={vi.fn()} pending={false} state={null} />,
+    );
+
+    expect(container.querySelectorAll('a[href="#"]')).toHaveLength(0);
+  });
 });

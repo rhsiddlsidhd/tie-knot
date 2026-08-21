@@ -71,7 +71,12 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
               htmlFor="terms"
               className="cursor-pointer text-sm font-normal"
             >
-              <Link href="#" className="text-primary hover:underline">
+              <Link
+                href={routes.terms}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
                 이용약관
               </Link>
               에 동의합니다 (필수)
@@ -90,7 +95,12 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
               htmlFor="privacy"
               className="cursor-pointer text-sm font-normal"
             >
-              <Link href="#" className="text-primary hover:underline">
+              <Link
+                href={routes.privacy}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
                 개인정보 처리방침
               </Link>
               에 동의합니다 (필수)
