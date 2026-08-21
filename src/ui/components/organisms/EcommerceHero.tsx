@@ -31,7 +31,7 @@ export const EcommerceHero = () => {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-    
+      <div className="container mx-auto px-4">
         <div className="md:flex">
           {/* 탭 열 — 모바일: 상단 가로 언더라인 / 데스크톱: 좌측 세로 38.2% */}
           <div className="border-border scrollbar-hide bg-background flex gap-1 overflow-x-auto border-b px-3 md:w-[38.2%] md:flex-shrink-0 md:flex-col md:justify-center md:gap-1.5 md:border-r md:border-b-0 md:px-8 md:py-10">
@@ -108,7 +108,7 @@ export const EcommerceHero = () => {
             </AnimatePresence>
           </div>
         </div>
- 
+      </div>
     </section>
   );
 };

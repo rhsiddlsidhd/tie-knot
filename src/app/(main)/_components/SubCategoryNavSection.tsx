@@ -19,7 +19,7 @@ const categorizedSubCategories = PRODUCT_CATEGORIES.flatMap((category: ProductCa
 export function SubCategoryNavSection() {
   return (
     <section className="py-8">
-   
+      <div className="container mx-auto px-4">
         <TypographyH2 className="mb-4 border-none text-xl font-bold">
           카테고리 둘러보기
         </TypographyH2>
@@ -40,7 +40,7 @@ export function SubCategoryNavSection() {
             <CarouselNext className="-right-12" />
           </div>
         </Carousel>
-  
+      </div>
     </section>
   );
 }
