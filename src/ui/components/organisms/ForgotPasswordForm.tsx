@@ -30,7 +30,7 @@ export function ForgotPasswordForm({
               <CheckCircle2 className="text-primary h-12 w-12" />
             </div>
           </div>
-          <TypographyH1 className="text-3xl font-bold">
+          <TypographyH1 className="text-3xl font-bold font-[var(--font-NotoSerif)]">
             이메일을 확인하세요
           </TypographyH1>
           <TypographyMuted>
@@ -80,7 +80,7 @@ export function ForgotPasswordForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold">비밀번호 찾기</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">비밀번호 찾기</TypographyH1>
         <TypographyMuted>
           가입한 이메일 주소를 입력해주세요
         </TypographyMuted>

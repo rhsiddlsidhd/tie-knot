@@ -23,7 +23,7 @@ export function FindIdForm({ action, pending, state }: FindIdFormProps) {
     return (
       <div className="space-y-6">
         <div className="space-y-2 text-center">
-          <TypographyH1 className="text-3xl font-bold">
+          <TypographyH1 className="text-3xl font-bold font-[var(--font-NotoSerif)]">
             아이디 찾기 완료
           </TypographyH1>
           <TypographyMuted>
@@ -65,7 +65,7 @@ export function FindIdForm({ action, pending, state }: FindIdFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold">아이디 찾기</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">아이디 찾기</TypographyH1>
         <TypographyMuted>
           가입 시 등록한 정보를 입력해주세요
         </TypographyMuted>

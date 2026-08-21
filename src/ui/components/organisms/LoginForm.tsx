@@ -23,7 +23,7 @@ export function LoginForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold">로그인</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">로그인</TypographyH1>
         <TypographyMuted className="text-sm">
           계정에 로그인하여 청첩장을 만들어보세요
         </TypographyMuted>
