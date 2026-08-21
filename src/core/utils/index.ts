@@ -11,4 +11,5 @@ export * from "./page";
 export * from "./price";
 export * from "./seoul-open-api-parser";
 export * from "./sidebar";
+export * from "./url";
 export * from "./validate-and-flatten";
