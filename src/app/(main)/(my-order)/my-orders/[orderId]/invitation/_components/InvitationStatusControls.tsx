@@ -28,7 +28,7 @@ export function InvitationStatusControls({ orderId, status }: { orderId: string;
         {currentStatus === "published" ? "발행 취소" : "발행하기"}
       </Button>
       <Button variant="outline" asChild><Link href={routes.myOrders.invitationPreview(orderId)}>미리보기</Link></Button>
-      {currentStatus !== "published" && <p className="text-sm text-amber-600">이미지나 계좌 정보가 비어 있어도 발행할 수 있습니다. 공개 전 내용을 확인해 주세요.</p>}
+      {currentStatus !== "published" && <p className="text-warning text-sm">이미지나 계좌 정보가 비어 있어도 발행할 수 있습니다. 공개 전 내용을 확인해 주세요.</p>}
     </div>
   );
 }

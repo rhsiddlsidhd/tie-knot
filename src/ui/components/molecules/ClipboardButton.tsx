@@ -32,7 +32,7 @@ export function ClipboardButton({
       {...props}
     >
       {isCopied ? (
-        <CheckCircle className="h-4 w-4 text-green-500" />
+        <CheckCircle className="text-success h-4 w-4" />
       ) : (
         <Copy className="h-4 w-4" />
       )}

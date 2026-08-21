@@ -4,7 +4,7 @@ import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain
 
 export function Footer() {
   return (
-    <footer className="border-border border-t bg-slate-50 py-12">
+    <footer className="border-border bg-muted border-t py-12">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-4 md:text-left">
           <div>

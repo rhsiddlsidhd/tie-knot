@@ -25,8 +25,8 @@ export default function ProductError({ error, unstable_retry }: ErrorProps) {
       <Card className="w-full max-w-lg">
         <div className="space-y-6 p-8">
           <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="rounded-full bg-red-100 p-4">
-              <AlertCircle className="h-10 w-10 text-red-600" />
+            <div className="bg-destructive/10 rounded-full p-4">
+              <AlertCircle className="text-destructive h-10 w-10" />
             </div>
 
             <div className="space-y-2">
@@ -41,15 +41,15 @@ export default function ProductError({ error, unstable_retry }: ErrorProps) {
 
           {process.env.NODE_ENV === "development" && (
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-red-600">
+              <p className="text-destructive text-xs font-semibold">
                 Development Error Details:
               </p>
-              <div className="rounded-md bg-red-50 p-4">
-                <p className="font-mono text-xs break-all whitespace-pre-wrap text-red-800">
+              <div className="bg-destructive/10 rounded-md p-4">
+                <p className="text-destructive font-mono text-xs break-all whitespace-pre-wrap">
                   {error.message}
                 </p>
                 {error.digest && (
-                  <p className="mt-2 text-xs text-red-600">
+                  <p className="text-destructive mt-2 text-xs">
                     Error ID: {error.digest}
                   </p>
                 )}
