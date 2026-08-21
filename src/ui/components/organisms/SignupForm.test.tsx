@@ -40,4 +40,11 @@ describe("SignupForm", () => {
 
     expect(screen.getByRole("link", { name: "로그인" })).toHaveAttribute("href", "/login");
   });
+
+  it("Google 버튼은 준비 중 상태로 비활성화되고 안내 문구를 보여준다", () => {
+    render(<SignupForm action={vi.fn()} pending={false} state={null} />);
+
+    expect(screen.getByRole("button", { name: /Google/ })).toBeDisabled();
+    expect(screen.getByText("소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.")).toBeInTheDocument();
+  });
 });
