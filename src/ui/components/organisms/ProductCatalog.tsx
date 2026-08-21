@@ -36,7 +36,7 @@ function ProductCatalogBody({
         dispatch={dispatch}
       />
       {/* Product Grid */}
-      <ProductGrid data={products} state={state} />
+      <ProductGrid data={products} state={state} dispatch={dispatch} />
     </>
   );
 }

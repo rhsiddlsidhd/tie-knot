@@ -64,6 +64,10 @@ function filterReducer(
         price: "ALL",
         premiumFeat: [],
       };
+
+    case "RESET_ALL":
+      return { ...initialFilterState };
+
     default:
       return state;
   }

@@ -76,7 +76,8 @@ const QuantityStepper = ({
         min={min}
         max={unlimited ? undefined : max}
         step={1}
-        className="w-16 text-center"
+        // 커스텀 -/+ 버튼이 이미 있으니, 브라우저 기본 number input 스피너(중복 증감 버튼)는 숨긴다.
+        className="[appearance:textfield] w-16 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         aria-label="수량"
       />
       <Button

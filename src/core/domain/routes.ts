@@ -11,7 +11,6 @@ export const routes = {
   support: "/support",
   search: "/search",
   reviews: "/reviews",
-  deliveryInfo: "/delivery-info",
   payment: {
     root: "/payment",
     result: "/payment-result",

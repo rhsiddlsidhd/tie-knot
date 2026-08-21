@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { initialFilterState } from "@/ui/stores/context/productFilter";
 import type { Product } from "@/core/domain";
@@ -31,26 +31,34 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
 
 describe("ProductGrid", () => {
   it("상품이 있으면 카드를 렌더링한다", () => {
-    render(<ProductGrid data={[buildProduct()]} state={initialFilterState} />);
+    render(
+      <ProductGrid data={[buildProduct()]} state={initialFilterState} dispatch={vi.fn()} />,
+    );
 
     expect(screen.getByText("봄맞이 청첩장")).toBeInTheDocument();
   });
 
-  it("상품이 없으면 빈 상태 메시지를 렌더링한다", () => {
-    render(<ProductGrid data={[]} state={initialFilterState} />);
+  it("카테고리에 상품 자체가 없으면 '준비 중' 빈 상태를 렌더링한다(필터 초기화 버튼 없음)", () => {
+    render(<ProductGrid data={[]} state={initialFilterState} dispatch={vi.fn()} />);
 
     expect(screen.getByText("상품을 준비 중에 있습니다")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "필터 초기화" })).not.toBeInTheDocument();
   });
 
-  it("state로 넘어온 필터 조건에 안 맞으면 빈 상태 메시지를 렌더링한다", () => {
+  it("상품은 있지만 필터 조건에 안 맞으면 '조건에 맞는 상품 없음' 빈 상태 + 필터 초기화 버튼을 렌더링한다", () => {
+    const dispatch = vi.fn();
     render(
       <ProductGrid
         data={[buildProduct()]}
         state={{ ...initialFilterState, keyword: "존재하지-않는-상품" }}
+        dispatch={dispatch}
       />,
     );
 
-    expect(screen.getByText("상품을 준비 중에 있습니다")).toBeInTheDocument();
+    expect(screen.getByText("조건에 맞는 상품이 없어요")).toBeInTheDocument();
+    const resetButton = screen.getByRole("button", { name: "필터 초기화" });
+    resetButton.click();
+    expect(dispatch).toHaveBeenCalledWith({ type: "RESET_ALL" });
   });
 
   // feat/popular-products-section 회귀: ProductGrid는 ProductCard에 rank를
@@ -62,6 +70,7 @@ describe("ProductGrid", () => {
       <ProductGrid
         data={[buildProduct(), buildProduct({ _id: "product-2", title: "두 번째 상품" })]}
         state={initialFilterState}
+        dispatch={vi.fn()}
       />,
     );
 

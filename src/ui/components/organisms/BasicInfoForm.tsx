@@ -21,7 +21,7 @@ const BasicInfoForm = ({
     <form className="space-y-6">
       {/* 기본 정보 섹션 */}
       <Card>
-        <CardHeader className="flex flex-row items-start justify-between">
+        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>기본 정보</CardTitle>
             <CardDescription>

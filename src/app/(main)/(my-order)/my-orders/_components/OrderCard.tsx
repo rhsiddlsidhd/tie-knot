@@ -148,7 +148,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
                 {product.title}
               </TypographyH3>
               {hasDiscount && (
-                <div className="text-xs text-red-500">
+                <div className="text-destructive text-xs">
                   {order.discountRate > 0 &&
                     `${Math.round(order.discountRate * 100)}% 할인`}
                   {order.discountAmount > 0 &&

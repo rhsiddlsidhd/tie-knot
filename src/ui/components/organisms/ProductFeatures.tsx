@@ -1,14 +1,35 @@
-import { Card, TypographyH2, TypographyH3, TypographyMuted } from "@/ui/components/atoms";
+"use client";
+
+import { useState } from "react";
+import {
+  Button,
+  Card,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  TypographyH2,
+  TypographyH3,
+  TypographyMuted,
+} from "@/ui/components/atoms";
+import { CloudImage } from "@/ui/components/molecules";
 import type { PremiumFeature } from "@/core/domain";
 import clsx from "clsx";
-import { Check, Palette, Type, Settings, FileText } from "lucide-react";
+import { Check, ChevronDown, Palette, Type, Settings, FileText } from "lucide-react";
+
+// 상세 이미지가 이 개수를 넘으면 나머지는 "더보기" 뒤로 접는다 — 청첩장 상세페이지가
+// 원래 세로로 긴 이미지 여러 장이라, 다 펼쳐두면 스크롤이 지나치게 길어진다.
+const VISIBLE_IMAGE_COUNT = 1;
 
 interface ProductFeaturesProps {
   options: PremiumFeature[];
+  images: string[];
 }
 
-export function ProductFeatures({ options }: ProductFeaturesProps) {
+export function ProductFeatures({ options, images }: ProductFeaturesProps) {
   const icons = [Check, Palette, Type, Settings];
+  const [isExpanded, setIsExpanded] = useState(false);
+  const visibleImages = images.slice(0, VISIBLE_IMAGE_COUNT);
+  const restImages = images.slice(VISIBLE_IMAGE_COUNT);
 
   return (
     <div className="mb-16 space-y-12">
@@ -45,6 +66,56 @@ export function ProductFeatures({ options }: ProductFeaturesProps) {
       {/* Detailed Features */}
       <div>
         <TypographyH2 className="text-foreground mb-6 border-none text-3xl font-bold">상세 정보</TypographyH2>
+        {images.length === 0 ? (
+          <TypographyMuted>상세 이미지가 아직 등록되지 않았습니다.</TypographyMuted>
+        ) : (
+          <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+            <div className="flex flex-col gap-4">
+              {visibleImages.map((src, index) => (
+                <div
+                  key={src}
+                  className="bg-muted border-border relative aspect-[3/4] w-full overflow-hidden rounded-2xl border"
+                >
+                  <CloudImage
+                    src={src}
+                    alt={`상세 이미지 ${index + 1}`}
+                    className="object-contain"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {restImages.length > 0 && (
+              <>
+                <CollapsibleContent className="mt-4 flex flex-col gap-4">
+                  {restImages.map((src, index) => (
+                    <div
+                      key={src}
+                      className="bg-muted border-border relative aspect-[3/4] w-full overflow-hidden rounded-2xl border"
+                    >
+                      <CloudImage
+                        src={src}
+                        alt={`상세 이미지 ${VISIBLE_IMAGE_COUNT + index + 1}`}
+                        className="object-contain"
+                      />
+                    </div>
+                  ))}
+                </CollapsibleContent>
+                <CollapsibleTrigger asChild>
+                  <Button variant="outline" className="mt-4 w-full">
+                    {isExpanded ? "접기" : `더보기 (${restImages.length}장 더 보기)`}
+                    <ChevronDown
+                      className={clsx(
+                        "ml-1 h-4 w-4 transition-transform",
+                        isExpanded && "rotate-180",
+                      )}
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+              </>
+            )}
+          </Collapsible>
+        )}
       </div>
     </div>
   );

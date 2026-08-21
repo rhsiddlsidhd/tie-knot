@@ -73,16 +73,16 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
 
   if (orders.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-          <Inbox className="h-8 w-8 text-gray-500" />
+      <div className="border-border flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 text-center">
+        <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-full">
+          <Inbox className="text-muted-foreground h-8 w-8" />
         </div>
         {isFiltered ? (
           <>
             <TypographyH3 className="mt-4 text-xl font-semibold">
               조건에 맞는 주문이 없습니다.
             </TypographyH3>
-            <TypographyMuted className="mt-2 text-gray-500">
+            <TypographyMuted className="mt-2">
               다른 상태나 카테고리를 선택해보세요.
             </TypographyMuted>
             <Button asChild className="mt-6" variant="outline">
@@ -94,7 +94,7 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
             <TypographyH3 className="mt-4 text-xl font-semibold">
               주문 내역이 없습니다.
             </TypographyH3>
-            <TypographyMuted className="mt-2 text-gray-500">
+            <TypographyMuted className="mt-2">
               아직 주문한 상품이 없어요. 상품을 구경하고 첫 주문을 해보세요.
             </TypographyMuted>
             <Button asChild className="mt-6">

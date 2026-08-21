@@ -102,7 +102,7 @@ export const OrderSummary = () => {
             {discountAmount > 0 && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">할인</span>
-                <span className="text-red-500">
+                <span className="text-destructive">
                   -{formatPriceWithComma(discountAmount)}원
                 </span>
               </div>

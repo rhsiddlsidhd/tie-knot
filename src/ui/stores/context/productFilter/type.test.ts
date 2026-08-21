@@ -25,6 +25,7 @@ describe("ProductFilterState/ProductFilterAction 타입 계약", () => {
       { type: "SELECT_PRICE", payload: "FREE" },
       { type: "SELECT_PREMIUM_FEAT", payload: "VIDEO" },
       { type: "CLEAR_DETAIL_FILTER", payload: null },
+      { type: "RESET_ALL" },
     ];
 
     expect(actions.map((a) => a.type)).toEqual([
@@ -36,6 +37,7 @@ describe("ProductFilterState/ProductFilterAction 타입 계약", () => {
       "SELECT_PRICE",
       "SELECT_PREMIUM_FEAT",
       "CLEAR_DETAIL_FILTER",
+      "RESET_ALL",
     ]);
   });
 });

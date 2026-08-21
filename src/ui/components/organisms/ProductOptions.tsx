@@ -10,7 +10,7 @@ import type { Product, PremiumFeature } from "@/core/domain";
 
 import type { CheckoutItem } from "@/core/domain";
 import type { SelectFeatureDto } from "@/core/schemas";
-import { calculatePrice, formatPriceWithComma } from "@/core/utils";
+import { calculatePrice, cn, formatPriceWithComma } from "@/core/utils";
 
 // 무제한(maxQuantity===0) 모드의 stepper 상한 — DB/서버 제약이 아니라 순수 UI 편의 상한이다.
 // 서버(createOrder)는 maxQuantity===0이면 상한 검증 자체를 스킵한다(진짜 무제한).
@@ -169,8 +169,15 @@ const ProductOptions = ({
         </div>
       )}
 
-      {/* Quantity */}
-      <div className="flex items-center justify-between border-t py-4">
+      {/* Quantity — 위 옵션 선택 블록이 없으면(options.length===0) 바로 위 가격 블록이
+          이미 자기 border-y로 구분선을 그려놨어서, 여기서 또 border-t를 그리면
+          같은 자리에 선 두 개가 space-y-6 간격을 사이에 두고 겹쳐 보인다. */}
+      <div
+        className={cn(
+          "flex items-center justify-between py-4",
+          options.length > 0 && "border-t",
+        )}
+      >
         <span className="text-md font-medium">수량</span>
         {mode === "fixed" ? (
           <span
@@ -198,9 +205,18 @@ const ProductOptions = ({
           {formatPriceWithComma(totalPrice)}원
         </span>
       </div>
-      <div>
-        <Button size="lg" className="w-full" onClick={handlePurchase}>
+      <div className="flex gap-2">
+        {/* 장바구니 기능 자체가 아직 없다 — 준비중 안내만(feat/brand-design-tokens plan 참고) */}
+        <Button
+          size="lg"
+          variant="outline"
+          className="flex-1"
+          onClick={() => alert("장바구니 기능은 준비 중입니다")}
+        >
           <ShoppingCart className="mr-2 h-5 w-5" />
+          장바구니에 담기
+        </Button>
+        <Button size="lg" className="flex-1" onClick={handlePurchase}>
           구매하기
         </Button>
       </div>

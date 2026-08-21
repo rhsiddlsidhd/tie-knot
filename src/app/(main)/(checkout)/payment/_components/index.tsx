@@ -1,4 +1,5 @@
 export { BuyerInfoCard } from "./BuyerInfoCard";
+export { ShippingInfoCard } from "./ShippingInfoCard";
 export { CheckoutSubmitBar } from "./CheckoutSubmitBar";
 export { TermsAgreementCard } from "./TermsAgreementCard";
 export { PaymentPendingOverlay } from "./PaymentPendingOverlay";

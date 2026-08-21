@@ -37,6 +37,19 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
     0,
   );
 
+  // 실제로 도달한 이벤트만 넣는다 — 아직 안 일어난 단계는 아예 표시하지 않으므로
+  // (미래 예정 단계를 회색 점으로 미리 보여주는 UI가 아니다), 여기 들어온 항목은
+  // 전부 "완료됨" 취급해 점을 항상 primary로 채운다.
+  const timelineEvents = [
+    { label: "주문 생성", value: formatDateTime(order.createdAt) },
+    order.confirmedAt && { label: "결제 완료", value: formatDateTime(order.confirmedAt) },
+    order.invitationStatus === "published" && { label: "청첩장 발행", value: "완료" },
+    order.cancelledAt && {
+      label: "주문 취소",
+      value: `${formatDateTime(order.cancelledAt)}${order.cancelReason ? ` · ${order.cancelReason}` : ""}`,
+    },
+  ].filter((event): event is { label: string; value: string } => Boolean(event));
+
   return (
     <div className="max-w-3xl space-y-6">
       <div className="space-y-2">
@@ -184,32 +197,25 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
         <CardHeader>
           <CardTitle className="text-lg">상태 이력</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-2">
-          <div className="flex justify-between">
-            <span>주문 생성</span>
-            <span>{formatDateTime(order.createdAt)}</span>
-          </div>
-          {order.confirmedAt && (
-            <div className="flex justify-between">
-              <span>결제 완료</span>
-              <span>{formatDateTime(order.confirmedAt)}</span>
+        <CardContent>
+          {timelineEvents.map((event, index) => (
+            <div key={event.label} className="flex gap-3">
+              <div className="flex flex-col items-center">
+                <span className="bg-primary mt-1 h-2.5 w-2.5 shrink-0 rounded-full" />
+                {index < timelineEvents.length - 1 && (
+                  <span className="bg-border my-1 w-px flex-1" />
+                )}
+              </div>
+              <div
+                className={`flex flex-1 justify-between ${
+                  index < timelineEvents.length - 1 ? "pb-4" : ""
+                }`}
+              >
+                <span>{event.label}</span>
+                <span className="text-muted-foreground text-sm">{event.value}</span>
+              </div>
             </div>
-          )}
-          {order.invitationStatus === "published" && (
-            <div className="flex justify-between">
-              <span>청첩장 발행</span>
-              <span>완료</span>
-            </div>
-          )}
-          {order.cancelledAt && (
-            <div className="flex justify-between">
-              <span>주문 취소</span>
-              <span>
-                {formatDateTime(order.cancelledAt)}
-                {order.cancelReason && ` · ${order.cancelReason}`}
-              </span>
-            </div>
-          )}
+          ))}
         </CardContent>
       </Card>
     </div>
