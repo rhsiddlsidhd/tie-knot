@@ -14,10 +14,13 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, refresh: refreshMock }),
 }));
 vi.mock("@/client/hooks", () => ({ useAuth: useAuthMock }));
-vi.mock("@/server/actions", () => ({ logoutUser: vi.fn().mockResolvedValue(undefined) }));
+vi.mock("@/server/actions", () => ({
+  logoutUser: vi.fn().mockResolvedValue({ success: true, data: null }),
+}));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 import { logoutUser } from "@/server/actions";
+import { toast } from "sonner";
 import { UserAccountNav } from "./UserAccountNav";
 
 describe("UserAccountNav", () => {
@@ -30,6 +33,8 @@ describe("UserAccountNav", () => {
   });
 
   it("로그아웃 클릭 시 logoutUser 액션 호출 후 세션 캐시를 비운다", async () => {
+    vi.mocked(logoutUser).mockResolvedValue({ success: true, data: null });
+
     const user = userEvent.setup();
     render(<UserAccountNav />);
 
@@ -38,6 +43,29 @@ describe("UserAccountNav", () => {
 
     expect(logoutUser).toHaveBeenCalledOnce();
     expect(mutateMock).toHaveBeenCalledWith("/api/auth/me", null, false);
+    expect(toast.success).toHaveBeenCalledWith("로그아웃되었습니다.");
     expect(pushMock).toHaveBeenCalledWith("/");
+    expect(refreshMock).toHaveBeenCalledOnce();
+  });
+
+  it("로그아웃 실패 시 에러 토스트를 띄우고 홈으로 이동하지 않는다", async () => {
+    vi.mocked(logoutUser).mockResolvedValue({
+      success: false,
+      error: { category: "INTERNAL", message: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요." },
+    });
+
+    const user = userEvent.setup();
+    render(<UserAccountNav />);
+
+    await user.click(screen.getByRole("button"));
+    await user.click(screen.getByText("로그아웃"));
+
+    expect(toast.error).toHaveBeenCalledWith(
+      "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+    );
+    expect(toast.success).not.toHaveBeenCalled();
+    expect(mutateMock).not.toHaveBeenCalled();
+    expect(pushMock).not.toHaveBeenCalled();
+    expect(refreshMock).not.toHaveBeenCalled();
   });
 });
