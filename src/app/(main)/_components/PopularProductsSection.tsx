@@ -22,7 +22,6 @@ export function PopularProductsSection({ products }: PopularProductsSectionProps
 
   return (
     <section className="py-8">
-      <div className="container mx-auto px-4">
         <TypographyH2 id="popular-products-heading" className="mb-4 border-none text-xl font-bold">
           인기 상품
         </TypographyH2>
@@ -46,7 +45,7 @@ export function PopularProductsSection({ products }: PopularProductsSectionProps
             <CarouselNext className="-right-12" />
           </div>
         </Carousel>
-      </div>
+ 
     </section>
   );
 }

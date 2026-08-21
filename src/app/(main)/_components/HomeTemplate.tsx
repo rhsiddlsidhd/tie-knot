@@ -11,7 +11,7 @@ interface HomeTemplateProps {
 
 const HomeTemplate = ({ invitation, popularProducts }: HomeTemplateProps) => {
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col container mx-auto px-4">
       <EcommerceHero />
 
       <SubCategoryNavSection />
@@ -20,8 +20,7 @@ const HomeTemplate = ({ invitation, popularProducts }: HomeTemplateProps) => {
 
       {/* 추천 템플릿 섹션: 데이터가 있을 경우에만 렌더링 */}
       {invitation.length > 0 && (
-        <section className="bg-background py-24">
-          <div className="container mx-auto px-4">
+        <section className="bg-background py-24">   
             <div className="mb-16 text-center">
               <TypographyH2 className="text-foreground mb-4 border-none text-3xl font-bold tracking-tight md:text-4xl">
                 베스트 디자인 템플릿
@@ -38,7 +37,6 @@ const HomeTemplate = ({ invitation, popularProducts }: HomeTemplateProps) => {
                 description="소중한 순간을 함께할 분들께 마음을 전하는 초대장"
               />
             </div>
-          </div>
         </section>
       )}
 
