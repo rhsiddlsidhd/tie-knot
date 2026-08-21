@@ -35,7 +35,7 @@ export function PopularProductsSection({ products }: PopularProductsSectionProps
             {products.map((product, index) => (
               <CarouselItem
                 key={product._id}
-                className="xs:w-[40%] w-[45%] basis-auto sm:w-56 md:w-60 lg:w-64"
+                className="w-[61.8%] basis-auto sm:w-[38.2%] md:w-[23.6%]"
               >
                 <ProductCard product={product} rank={index + 1} />
               </CarouselItem>
