@@ -9,6 +9,8 @@ export const routes = {
   changePw: "/change-password",
   profile: "/my-profile",
   support: "/support",
+  terms: "/terms",
+  privacy: "/privacy",
   search: "/search",
   reviews: "/reviews",
   payment: {
