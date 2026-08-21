@@ -44,7 +44,7 @@ const ChangePasswordForm = () => {
   return (
     <form className="space-y-6">
       <Card>
-        <CardHeader className="flex items-start justify-between">
+        <CardHeader className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>비밀번호 변경</CardTitle>
             <CardDescription>새로운 비밀번호를 설정합니다</CardDescription>

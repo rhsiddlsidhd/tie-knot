@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertCircle, Home, FileText } from "lucide-react";
+import { Check, AlertCircle, Home, FileText } from "lucide-react";
 import { Button, Card, CardContent, CardHeader, CardTitle, TypographyH1, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
 import Link from "next/link";
 import { routes } from "@/core/domain";
@@ -13,8 +13,8 @@ const PaymentSuccessTemplate = ({ orderId }: PaymentSuccessTemplateProps) => {
       <div className="mx-auto max-w-2xl">
         {/* Success Icon */}
         <div className="mb-8 text-center">
-          <div className="bg-primary/10 mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
-            <CheckCircle2 className="text-primary h-12 w-12" />
+          <div className="bg-primary mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full">
+            <Check className="text-primary-foreground h-10 w-10" strokeWidth={3} />
           </div>
           <TypographyH1 className="mb-2 text-3xl font-bold">결제가 완료되었습니다!</TypographyH1>
           <TypographyMuted>

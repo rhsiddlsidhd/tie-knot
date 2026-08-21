@@ -42,7 +42,11 @@ export function ProductSearch() {
               <SearchEmptyState query={debouncedQuery} />
             ) : (
               <div className={isValidating ? "opacity-60" : undefined}>
-                <ProductGrid data={products ?? []} state={initialFilterState} />
+                <ProductGrid
+                  data={products ?? []}
+                  state={initialFilterState}
+                  dispatch={() => {}}
+                />
               </div>
             )}
           </div>

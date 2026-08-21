@@ -25,7 +25,7 @@ export function UpdatePasswordForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold">비밀번호 변경</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">비밀번호 변경</TypographyH1>
         <TypographyMuted>변경할 비밀번호를 입력해주세요.</TypographyMuted>
       </div>
 

@@ -33,9 +33,9 @@ export function HeroSection({
           <TypographyMuted className="mb-4 text-xs font-light tracking-[0.4em] text-white/80 uppercase">
             Wedding Invitation
           </TypographyMuted>
-          <TypographyH1 className="mb-6 font-serif text-5xl leading-tight text-white md:text-7xl">
+          <TypographyH1 className="mb-6 font-[var(--font-NotoSerif)] text-5xl leading-tight text-white md:text-7xl">
             {groomName}{" "}
-            <span className="mx-2 font-sans text-2xl font-light opacity-70 md:text-4xl">
+            <span className="mx-2 font-[var(--font-NotoSansKR)] text-2xl font-light opacity-70 md:text-4xl">
               &
             </span>{" "}
             {brideName}

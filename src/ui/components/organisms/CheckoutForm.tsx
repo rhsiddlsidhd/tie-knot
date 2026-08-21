@@ -7,6 +7,7 @@ import { Spinner } from "@/ui/components/molecules";
 import { PaymentPendingOverlay } from "@/app/(main)/(checkout)/payment/_components/PaymentPendingOverlay";
 import { TypographySmall, TypographyMuted } from "@/ui/components/atoms";
 import { BuyerInfoCard } from "@/app/(main)/(checkout)/payment/_components/BuyerInfoCard";
+import { ShippingInfoCard } from "@/app/(main)/(checkout)/payment/_components/ShippingInfoCard";
 import { TermsAgreementCard } from "@/app/(main)/(checkout)/payment/_components/TermsAgreementCard";
 import { CheckoutSubmitBar } from "@/app/(main)/(checkout)/payment/_components/CheckoutSubmitBar";
 import { PaymentMethodSelector } from "./PaymentMethodSelector";
@@ -45,8 +46,9 @@ export function CheckoutForm({
       <PaymentPendingOverlay visible={paymentStatus === "PENDING"} />
       <form onSubmit={onSubmit} className="space-y-6 pb-24">
         <BuyerInfoCard errors={errors} />
-        <PaymentMethodSelector error={errors.payMethod?.[0]} />
+        <ShippingInfoCard />
         <TermsAgreementCard agreed={agreed} onAgreedChange={onAgreedChange} />
+        <PaymentMethodSelector error={errors.payMethod?.[0]} />
 
         {errorMessage && (
           <div className="border-destructive/50 bg-destructive/10 text-destructive flex items-start gap-3 rounded-lg border p-4 text-sm">

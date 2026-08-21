@@ -2,8 +2,8 @@
 
 import { EyebrowSection } from "./EyebrowSection";
 import React, { useMemo, useState } from "react";
-import { Card, Tabs, TabsList, TabsTrigger, TypographyLarge, TypographyMuted, Badge } from "@/ui/components/atoms";
-import { ClipboardButton } from "@/ui/components/molecules";
+import { Tabs, TabsList, TabsTrigger, TypographyMuted } from "@/ui/components/atoms";
+import { PersonValueCard } from "@/ui/components/molecules";
 import { useCopy } from "@/ui/hooks";
 
 import { cn } from "@/core/utils";
@@ -44,35 +44,16 @@ const AccountSection = ({
     }
 
     return accounts.map((account) => (
-      <Card
+      <PersonValueCard
         key={account.relation}
-        className="p-5 shadow-sm transition-all hover:shadow-md"
-        role="article"
-        aria-label={`${account.relation} ${account.name}의 계좌 정보`}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="font-normal opacity-80">
-                {account.relation}
-              </Badge>
-              <TypographyLarge className="font-bold">{account.name}</TypographyLarge>
-            </div>
-            <TypographyMuted className="text-sm">
-              {bankNameMap[account.bankName] || account.bankName}
-            </TypographyMuted>
-          </div>
-          <div className="flex items-center gap-2">
-            <TypographyLarge className="font-mono text-base tracking-tighter">
-              {account.accountNumber}
-            </TypographyLarge>
-            <ClipboardButton
-              isCopied={isCopied}
-              onCopy={() => copyToClipboard(account.accountNumber)}
-            />
-          </div>
-        </div>
-      </Card>
+        relation={account.relation}
+        name={account.name}
+        subLabel={bankNameMap[account.bankName] || account.bankName}
+        value={account.accountNumber}
+        isCopied={isCopied}
+        onCopy={() => copyToClipboard(account.accountNumber)}
+        ariaLabel={`${account.relation} ${account.name}의 계좌 정보`}
+      />
     ));
   };
 

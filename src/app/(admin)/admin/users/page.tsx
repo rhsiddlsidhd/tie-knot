@@ -1,12 +1,12 @@
 export const dynamic = "force-dynamic";
 
-import React from "react";
 import { verifySession } from "@/services";
+import { AdminUsersTemplate } from "./_components";
 
-const page = async () => {
+const UsersPage = async () => {
   await verifySession("ADMIN");
 
-  return <div></div>;
+  return <AdminUsersTemplate />;
 };
 
-export default page;
+export default UsersPage;

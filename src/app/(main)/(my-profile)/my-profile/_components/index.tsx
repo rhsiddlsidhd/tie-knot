@@ -1,0 +1,1 @@
+export { MyProfileTemplate } from "./MyProfileTemplate";

@@ -8,7 +8,7 @@ export function PaymentPendingOverlay({ visible }: PaymentPendingOverlayProps) {
   if (!visible) return null;
 
   return (
-    <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg bg-white/80 backdrop-blur-sm">
+    <div className="bg-background/80 absolute inset-0 z-10 flex flex-col items-center justify-center gap-2 rounded-lg backdrop-blur-sm">
       <Spinner />
       <TypographyLarge>결제 진행 중...</TypographyLarge>
       <TypographyMuted>잠시만 기다려주세요.</TypographyMuted>

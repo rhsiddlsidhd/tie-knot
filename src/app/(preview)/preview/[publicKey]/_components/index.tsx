@@ -6,4 +6,5 @@ export { HeroSection } from "./HeroSection";
 export { InvitationMessage } from "./InvitationMessage";
 export { LocationSection } from "./LocationSection";
 export { WeddingMonthCalendar } from "./WeddingMonthCalendar";
+export { ThemeSync } from "./ThemeSync";
 export { InvitationTemplate } from "./InvitationTemplate";

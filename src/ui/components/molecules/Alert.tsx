@@ -3,10 +3,10 @@ import type { AlertProps, AlertType } from "@/core/domain";
 import { TypographyP } from "../atoms/typography";
 const Alert = ({ type = "info", children }: AlertProps) => {
   const config: { [key in AlertType]: string } = {
-    error: "bg-[#fee] text-red-700 ",
-    success: "bg-[#f0fff4] text-green-700 ",
-    info: "bg-[#ebf8ff] text-blue-700 ",
-    warning: "bg-[#fffaf0] text-yellow-700 ",
+    error: "bg-destructive/10 text-destructive",
+    success: "bg-success/10 text-success",
+    info: "bg-info/10 text-info",
+    warning: "bg-warning/10 text-warning",
   };
 
   return (

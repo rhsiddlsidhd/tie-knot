@@ -33,7 +33,7 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold">회원가입</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">회원가입</TypographyH1>
         <TypographyMuted>새 계정을 만들어 시작하세요</TypographyMuted>
       </div>
 

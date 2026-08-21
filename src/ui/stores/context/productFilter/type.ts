@@ -20,4 +20,5 @@ export type ProductFilterAction =
       type: "SELECT_PREMIUM_FEAT";
       payload: ProductFilterState["premiumFeat"][number];
     }
-  | { type: "CLEAR_DETAIL_FILTER"; payload: null };
+  | { type: "CLEAR_DETAIL_FILTER"; payload: null }
+  | { type: "RESET_ALL" };

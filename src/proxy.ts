@@ -16,7 +16,6 @@ export default async function proxy(request: NextRequest) {
     routes.myOrders.root,
     routes.profile,
     routes.payment.root,
-    routes.deliveryInfo,
   ];
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
   const isAdmin = pathname.startsWith("/admin");
@@ -67,6 +66,5 @@ export const config = {
     "/my-orders",
     "/my-profile",
     "/payment/:path*",
-    "/delivery-info",
   ],
 };

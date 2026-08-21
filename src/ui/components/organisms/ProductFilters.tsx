@@ -76,7 +76,7 @@ export function ProductFilters({
         />
       </Command>
 
-      <TypographyMuted className="mt-1 text-gray-500">
+      <TypographyMuted className="mt-1">
         원하는 스타일과 기준을 선택해보세요
       </TypographyMuted>
 

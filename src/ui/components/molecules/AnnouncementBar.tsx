@@ -29,7 +29,7 @@ export const AnnouncementBar = ({
   const currentAnnouncement = items[activeIndex ?? currentIndex];
 
   return (
-    <div className="relative flex min-h-9 items-center justify-center overflow-hidden bg-slate-900 text-xs font-medium tracking-tight text-white">
+    <div className="bg-foreground text-background relative flex min-h-9 items-center justify-center overflow-hidden text-xs font-medium tracking-tight">
       <div className="container mx-auto flex items-center justify-center px-4">
         <AnimatePresence mode="wait">
           <motion.div
@@ -44,7 +44,7 @@ export const AnnouncementBar = ({
             {currentAnnouncement.link && (
               <Link
                 href={currentAnnouncement.link}
-                className="group inline-flex items-center gap-1 underline underline-offset-2 transition-colors hover:text-slate-300"
+                className="hover:text-background/70 group inline-flex items-center gap-1 underline underline-offset-2 transition-colors"
               >
                 지금 확인
                 <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />

@@ -15,7 +15,7 @@ const ProductDetailTemplate = ({ product, options }: ProductDetailTemplateProps)
       <div className="container mx-auto px-4 pt-24 pb-16">
         <div className="mx-auto max-w-4xl">
           <ProductSummary product={product} options={options} />
-          <ProductFeatures options={options} />
+          <ProductFeatures options={options} images={product.images} />
         </div>
       </div>
     </main>

@@ -31,6 +31,5 @@ export * from "./ProductRegistrationForm";
 export * from "./ProductSummary";
 export * from "./SidebarToggle";
 export * from "./SignupForm";
-export * from "./StartActionCTA";
 export * from "./TemplateCarouselGroup";
 export * from "./UpdatePasswordForm";

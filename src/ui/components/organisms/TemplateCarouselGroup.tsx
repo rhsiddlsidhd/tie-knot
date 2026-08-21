@@ -22,10 +22,10 @@ export const TemplateCarouselGroup = async ({
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-2">
-        <TypographyH2 className="border-none text-2xl font-bold tracking-tight text-slate-900">
+        <TypographyH2 className="text-foreground border-none text-2xl font-bold tracking-tight">
           {title}
         </TypographyH2>
-        <TypographyP className="text-slate-500">{description}</TypographyP>
+        <TypographyP className="text-muted-foreground">{description}</TypographyP>
       </div>
 
       <Carousel

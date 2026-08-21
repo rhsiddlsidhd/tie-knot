@@ -85,7 +85,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     "import/no-restricted-paths": "off",
   },
 }, {
-  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", "coverage/**"]
+  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", "coverage/**", "docs/design/**"]
 }];
 
 export default eslintConfig;
