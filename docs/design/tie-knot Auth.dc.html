@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #F3EDE4; }
+  a { color: #AA6147; }
+  a:hover { color: #8A4C36; }
+  input, textarea, button { box-sizing: border-box; }
+</style>
+</helmet>
+
+<div style="font-family: 'Noto Sans KR', sans-serif; background: #F3EDE4; color: #3A342E; padding: 48px; min-height: 100vh;">
+
+  <div style="margin-bottom: 40px;">
+    <div style="font-size: 13px; font-weight: 500; color: #AA6147; letter-spacing: 0.05em; margin-bottom: 8px;">TIE-KNOT · 화면설계 — 그룹④</div>
+    <h1 style="font-family: 'Gowun Batang', serif; font-size: 26px; font-weight: 700; margin: 0 0 8px;">인증 화면</h1>
+    <p style="font-size: 13px; color: #8A7F72; margin: 0;">모바일 우선 · 데스크톱은 동일 카드를 중앙 정렬만 확장</p>
+  </div>
+
+  <!-- 1. 로그인 -->
+  <div style="margin-bottom: 48px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700; margin: 0 0 16px;">1. 로그인 <span style="font-family: monospace; font-size: 12px; color: #8A7F72; font-weight: 400;">/login</span></h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">모바일</div>
+        <div style="width: 360px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 32px 28px; display: flex; flex-direction: column; gap: 16px;">
+          <div style="text-align: center; margin-bottom: 4px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">tie-knot</div>
+            <div style="font-size: 13px; color: #8A7F72; margin-top: 4px;">로그인하고 청첩장을 만들어보세요</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">이메일</label>
+            <input type="text" placeholder="you@example.com" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">비밀번호</label>
+            <input type="password" placeholder="••••••••" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; cursor: pointer;">
+            <span style="width: 18px; height: 18px; border: 1px solid #AA6147; border-radius: 0.375rem; background: #AA6147; display: inline-flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 12px; font-weight: 700; flex-shrink: 0;">✓</span>
+            로그인 상태 유지
+          </label>
+          <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">로그인</button>
+          <div style="display: flex; justify-content: center; gap: 8px; font-size: 13px; color: #8A7F72;">
+            <a href="#" style="text-decoration: none;">회원가입</a><span>·</span><a href="#" style="text-decoration: none;">비밀번호를 잊으셨나요?</a>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">데스크톱 (동일 카드, 중앙 정렬)</div>
+        <div style="width: 560px; height: 340px; background: #F3EDE4; border: 1px dashed #E3D8C9; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+          <div style="width: 340px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.08); padding: 28px 24px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="text-align: center; font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">tie-knot 로그인</div>
+            <input type="text" placeholder="이메일" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;"/>
+            <input type="password" placeholder="비밀번호" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;"/>
+            <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 10px; font-size: 13px; font-weight: 700; cursor: pointer;">로그인</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. 회원가입 -->
+  <div style="margin-bottom: 48px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700; margin: 0 0 16px;">2. 회원가입 <span style="font-family: monospace; font-size: 12px; color: #8A7F72; font-weight: 400;">/signup</span></h2>
+    <div style="width: 360px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 32px 28px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="text-align: center; margin-bottom: 4px;">
+        <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">회원가입</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">이름</label>
+        <input type="text" placeholder="이름을 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">이메일</label>
+        <input type="text" value="minjun.kim@" style="background: #FFFFFF; border: 1px solid #DC2626; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;"/>
+        <span style="font-size: 12px; color: #DC2626;">이메일 형식이 올바르지 않습니다</span>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">비밀번호</label>
+        <input type="password" placeholder="8자 이상 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">비밀번호 확인</label>
+        <input type="password" placeholder="비밀번호를 다시 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+      </div>
+      <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 13px; cursor: pointer;">
+        <span style="width: 18px; height: 18px; border: 1px solid #E3D8C9; border-radius: 0.375rem; background: #FFFFFF; display: inline-flex; flex-shrink: 0; margin-top: 1px;"></span>
+        <span>이용약관 및 개인정보 처리방침에 동의합니다</span>
+      </label>
+      <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">가입하기</button>
+    </div>
+  </div>
+
+  <!-- 3. 아이디/비밀번호 찾기 -->
+  <div style="margin-bottom: 48px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700; margin: 0 0 16px;">3. 아이디 찾기 · 비밀번호 찾기 <span style="font-family: monospace; font-size: 12px; color: #8A7F72; font-weight: 400;">/find-id, /find-password</span></h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">아이디 찾기 — 입력</div>
+        <div style="width: 320px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 28px 24px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="font-family: 'Gowun Batang', serif; font-size: 17px; font-weight: 700;">아이디 찾기</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">이름</label>
+            <input type="text" placeholder="이름을 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">연락처</label>
+            <input type="text" placeholder="010-0000-0000" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">아이디 찾기</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">아이디 찾기 — 결과</div>
+        <div style="width: 320px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #AA6147; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 20px; font-weight: 700;">✓</div>
+          <div style="font-family: 'Gowun Batang', serif; font-size: 16px; font-weight: 700;">아이디를 찾았어요</div>
+          <div style="width: 100%; background: #F0E6DA; border-radius: 0.75rem; padding: 14px; font-size: 15px; font-weight: 700;">min***@email.com</div>
+          <button style="width: 100%; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">로그인하기</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">비밀번호 찾기 — 입력</div>
+        <div style="width: 320px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 28px 24px; display: flex; flex-direction: column; gap: 14px;">
+          <div style="font-family: 'Gowun Batang', serif; font-size: 17px; font-weight: 700;">비밀번호 찾기</div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">가입한 이메일</label>
+            <input type="text" placeholder="you@example.com" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 11px; font-size: 13px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">재설정 링크 보내기</button>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">비밀번호 찾기 — 발송 완료</div>
+        <div style="width: 320px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 28px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: #E8DDD0; display: flex; align-items: center; justify-content: center; color: #3A342E; font-size: 20px;">✉</div>
+          <div style="font-family: 'Gowun Batang', serif; font-size: 16px; font-weight: 700;">이메일을 확인해주세요</div>
+          <div style="font-size: 13px; color: #8A7F72; line-height: 1.5;">min***@email.com 으로<br/>비밀번호 재설정 링크를 보냈습니다.</div>
+          <button style="width: 100%; background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 11px; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">로그인으로 돌아가기</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 4. 비밀번호 변경 -->
+  <div>
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700; margin: 0 0 16px;">4. 비밀번호 변경 <span style="font-family: monospace; font-size: 12px; color: #8A7F72; font-weight: 400;">/change-password</span></h2>
+    <div style="width: 360px; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; box-shadow: 0 8px 24px rgba(58,52,46,0.06); padding: 32px 28px; display: flex; flex-direction: column; gap: 16px;">
+      <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">비밀번호 변경</div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">현재 비밀번호</label>
+        <input type="password" placeholder="현재 비밀번호를 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">새 비밀번호</label>
+        <input type="password" placeholder="8자 이상 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <label style="font-size: 13px; font-weight: 500;">새 비밀번호 확인</label>
+        <input type="password" placeholder="새 비밀번호를 다시 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+      </div>
+      <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">변경하기</button>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

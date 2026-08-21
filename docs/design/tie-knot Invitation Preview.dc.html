@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { margin: 0; background: #F3EDE4; }
+  input, textarea, button { box-sizing: border-box; }
+  a { color: #AA6147; }
+  a:hover { color: #8A4C36; }
+</style>
+</helmet>
+
+<div style="font-family: 'Noto Sans KR', sans-serif; background: #F3EDE4; color: #3A342E; padding: 48px; min-height: 100vh; display: flex; flex-direction: column; align-items: center;">
+
+  <div style="width: 390px; margin-bottom: 16px;">
+    <div style="font-size: 13px; font-weight: 500; color: #AA6147; letter-spacing: 0.05em; margin-bottom: 8px;">TIE-KNOT · 화면설계 — 그룹③</div>
+    <h1 style="font-family: 'Gowun Batang', serif; font-size: 24px; font-weight: 700; margin: 0 0 4px;">청첩장 미리보기</h1>
+    <p style="font-size: 13px; color: #8A7F72; margin: 0;">모바일 전용 (390px) · 하객이 실제로 보는 롱스크롤 원페이지</p>
+  </div>
+
+  <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+
+    <!-- 1. 커버 -->
+    <div style="position: relative; height: 640px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 12px, #E8DDD0 12px, #E8DDD0 24px); display: flex; flex-direction: column; justify-content: flex-end; align-items: center; padding: 32px 24px; text-align: center;">
+      <span style="position: absolute; top: 24px; left: 50%; transform: translateX(-50%); font-family: monospace; font-size: 10px; color: #8A7F72;">main photo placeholder</span>
+      <div style="background: rgba(250,246,241,0.9); border-radius: 0.75rem; padding: 24px 28px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+        <div style="font-size: 12px; color: #8A7F72; letter-spacing: 0.1em;">WE ARE GETTING MARRIED</div>
+        <div style="font-family: 'Gowun Batang', serif; font-size: 26px; font-weight: 700;">김민준 · 이서연</div>
+        <div style="font-size: 13px; color: #8A7F72;">2026년 10월 3일 토요일 오후 1시</div>
+        <div style="display: flex; gap: 8px; margin-top: 8px;">
+          <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 8px 12px; min-width: 48px;"><div style="font-size: 16px; font-weight: 700;">{{ dday.d }}</div><div style="font-size: 10px; color: #8A7F72;">DAYS</div></div>
+          <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 8px 12px; min-width: 48px;"><div style="font-size: 16px; font-weight: 700;">{{ dday.h }}</div><div style="font-size: 10px; color: #8A7F72;">HOUR</div></div>
+          <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 8px 12px; min-width: 48px;"><div style="font-size: 16px; font-weight: 700;">{{ dday.m }}</div><div style="font-size: 10px; color: #8A7F72;">MIN</div></div>
+          <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 8px 12px; min-width: 48px;"><div style="font-size: 16px; font-weight: 700;">{{ dday.s }}</div><div style="font-size: 10px; color: #8A7F72;">SEC</div></div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; font-size: 20px; color: #8A7F72;">⌄</div>
+    </div>
+
+    <!-- 2. 예식 안내 -->
+    <div style="padding: 40px 24px; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; border-top: 1px solid #E3D8C9;">
+      <div style="font-size: 12px; color: #AA6147; letter-spacing: 0.1em;">WEDDING DAY</div>
+      <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">예식 안내</div>
+      <div style="font-size: 14px; line-height: 1.7;">2026년 10월 3일 토요일 오후 1시<br/>더 그랜드 웨딩홀 3층 그랜드볼룸</div>
+      <div style="font-size: 13px; color: #8A7F72;">서울특별시 강남구 테헤란로 123</div>
+      <div style="width: 100%; height: 160px; background: #EFE7DC; border: 1px solid #E3D8C9; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; margin-top: 4px;">
+        <span style="font-family: monospace; font-size: 11px; color: #8A7F72;">지도 영역</span>
+      </div>
+      <button style="width: 100%; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 4px;" style-hover="background: #8F4F39;">길찾기</button>
+    </div>
+
+    <!-- 3. 갤러리 -->
+    <div style="padding: 40px 24px; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; border-top: 1px solid #E3D8C9;">
+      <div style="font-size: 12px; color: #AA6147; letter-spacing: 0.1em;">GALLERY</div>
+      <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">우리의 순간들</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%;">
+        <sc-for list="{{ galleryPhotos }}" as="photo" hint-placeholder-count="4">
+          <div onClick="{{ openLightbox }}" data-idx="{{ photo.id }}" style="height: 130px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <span style="font-family: monospace; font-size: 10px; color: #8A7F72;">photo {{ photo.id }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- 4. 방명록 -->
+    <div style="padding: 40px 24px; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; border-top: 1px solid #E3D8C9;">
+      <div style="font-size: 12px; color: #AA6147; letter-spacing: 0.1em;">GUESTBOOK</div>
+      <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">방명록</div>
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; text-align: left;">
+        <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px;">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">박지훈</div>
+          <div style="font-size: 13px; color: #3A342E; line-height: 1.5;">두 분의 새로운 시작을 진심으로 축하합니다! 항상 행복하세요 :)</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px;">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">최유나</div>
+          <div style="font-size: 13px; color: #3A342E; line-height: 1.5;">결혼 진심으로 축하드려요! 예식날 뵐게요 :)</div>
+        </div>
+      </div>
+      <div style="width: 100%; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 16px; display: flex; flex-direction: column; gap: 10px; text-align: left; margin-top: 4px;">
+        <div style="font-size: 13px; font-weight: 700;">축하 메시지 남기기</div>
+        <div style="display: flex; gap: 8px;">
+          <input type="text" placeholder="이름" style="flex: 1; min-width: 0; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          <input type="password" placeholder="비밀번호" style="flex: 1; min-width: 0; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+        </div>
+        <textarea rows="3" placeholder="따뜻한 축하의 말씀을 남겨주세요." style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 12px; font-size: 13px; outline: none; resize: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"></textarea>
+        <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 11px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">메시지 남기기</button>
+      </div>
+    </div>
+
+    <!-- 5. 마음 전하실 곳 -->
+    <div style="padding: 40px 24px 48px; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; border-top: 1px solid #E3D8C9;">
+      <div style="font-size: 12px; color: #AA6147; letter-spacing: 0.1em;">GIFT</div>
+      <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">마음 전하실 곳</div>
+      <div style="font-size: 13px; color: #8A7F72; line-height: 1.5;">참석이 어려우신 분들을 위해<br/>계좌번호를 안내드립니다.</div>
+      <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+        <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 16px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+          <div>
+            <div style="font-size: 12px; color: #8A7F72;">신랑측 · 김민준</div>
+            <div style="font-size: 14px; font-weight: 700; margin-top: 2px;">국민은행 123456-78-901234</div>
+          </div>
+          <button onClick="{{ copyAccount }}" data-account="groom" style="background: #F0E6DA; color: #3A342E; border: none; border-radius: 0.75rem; padding: 8px 12px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0;" style-hover="background: #E8DDD0;">{{ copyLabelGroom }}</button>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 16px; display: flex; justify-content: space-between; align-items: center; text-align: left;">
+          <div>
+            <div style="font-size: 12px; color: #8A7F72;">신부측 · 이서연</div>
+            <div style="font-size: 14px; font-weight: 700; margin-top: 2px;">신한은행 987654-32-109876</div>
+          </div>
+          <button onClick="{{ copyAccountBride }}" style="background: #F0E6DA; color: #3A342E; border: none; border-radius: 0.75rem; padding: 8px 12px; font-size: 12px; font-weight: 500; cursor: pointer; flex-shrink: 0;" style-hover="background: #E8DDD0;">{{ copyLabelBride }}</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeLightbox }}" style="position: fixed; inset: 0; background: rgba(58,52,46,0.75); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; box-sizing: border-box;">
+      <div onClick="{{ stopPropagation }}" style="width: 100%; max-width: 340px; background: #FFFFFF; border-radius: 0.75rem; box-shadow: 0 8px 30px rgba(58,52,46,0.3); position: relative; padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+        <button onClick="{{ closeLightbox }}" style="position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 0.375rem; border: none; background: transparent; color: #8A7F72; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;" style-hover="background: #EFE7DC;">✕</button>
+        <div style="font-family: 'Gowun Batang', serif; font-size: 15px; font-weight: 700;">사진 {{ lightboxIndex }}</div>
+        <div style="width: 100%; height: 280px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 12px, #E8DDD0 12px, #E8DDD0 24px); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center;">
+          <span style="font-family: monospace; font-size: 12px; color: #8A7F72;">photo {{ lightboxIndex }} 확대</span>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = {
+    dday: { d: '00', h: '00', m: '00', s: '00' },
+    lightboxOpen: false,
+    lightboxIndex: null,
+    copiedGroom: false,
+    copiedBride: false,
+  };
+
+  componentDidMount() {
+    this.target = new Date('2026-10-03T13:00:00+09:00').getTime();
+    this.tick();
+    this.timer = setInterval(this.tick, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
+  }
+
+  tick = () => {
+    const diff = Math.max(0, this.target - Date.now());
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    const pad = (n) => String(n).padStart(2, '0');
+    this.setState({ dday: { d: pad(d), h: pad(h), m: pad(m), s: pad(s) } });
+  };
+
+  openLightbox = (e) => {
+    const idx = e.currentTarget.getAttribute('data-idx');
+    this.setState({ lightboxOpen: true, lightboxIndex: idx });
+  };
+
+  closeLightbox = () => this.setState({ lightboxOpen: false });
+
+  stopPropagation = (e) => e.stopPropagation();
+
+  copyAccount = () => {
+    this.setState({ copiedGroom: true });
+    setTimeout(() => this.setState({ copiedGroom: false }), 1500);
+  };
+
+  copyAccountBride = () => {
+    this.setState({ copiedBride: true });
+    setTimeout(() => this.setState({ copiedBride: false }), 1500);
+  };
+
+  renderVals() {
+    return {
+      dday: this.state.dday,
+      lightboxOpen: this.state.lightboxOpen,
+      lightboxIndex: this.state.lightboxIndex,
+      galleryPhotos: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }],
+      openLightbox: this.openLightbox,
+      closeLightbox: this.closeLightbox,
+      stopPropagation: this.stopPropagation,
+      copyAccount: this.copyAccount,
+      copyAccountBride: this.copyAccountBride,
+      copyLabelGroom: this.state.copiedGroom ? '복사됨' : '계좌번호 복사',
+      copyLabelBride: this.state.copiedBride ? '복사됨' : '계좌번호 복사',
+    };
+  }
+}
+</script>
+</body>
+</html>

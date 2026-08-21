@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<meta name="design_doc_mode" content="canvas">
+<style>
+  body { margin: 0; background: #F3EDE4; }
+  a { color: #AA6147; }
+  a:hover { color: #8A4C36; }
+</style>
+</helmet>
+
+<div style="font-family: 'Noto Sans KR', sans-serif; background: #F3EDE4; color: #3A342E; padding: 48px; min-height: 100vh;">
+
+  <div style="margin-bottom: 40px;">
+    <div style="font-size: 13px; font-weight: 500; color: #AA6147; letter-spacing: 0.05em; margin-bottom: 8px;">TIE-KNOT · 화면설계 — 그룹②</div>
+    <h1 style="font-family: 'Gowun Batang', serif; font-size: 30px; font-weight: 700; margin: 0 0 8px;">구매 퍼널: 상품목록 · 상세 · 결제 · 완료</h1>
+    <p style="font-size: 14px; color: #8A7F72; margin: 0;">모바일 우선 (390px 기준) · 그룹①에서 확정한 컴포넌트만 사용</p>
+  </div>
+
+  <!-- ========== 1. 상품 목록 ========== -->
+  <div style="margin-bottom: 56px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">1. 상품 목록 <span style="font-family: monospace; font-size: 13px; color: #8A7F72; font-weight: 400;">/products</span></h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <!-- Normal -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">정상 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 12px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin-bottom: 12px;">청첩장 상품</div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px;">
+                <span>전체 카테고리</span><span style="color: #8A7F72; font-size: 10px;">▼</span>
+              </div>
+              <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px;">
+                <span>인기순</span><span style="color: #8A7F72; font-size: 10px;">▼</span>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 4px 20px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; overflow: hidden;">
+              <div style="height: 120px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 10px; color: #8A7F72;">product image</span></div>
+              <div style="padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <span style="background: #AA6147; color: #FFFFFF; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">인기</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">봄빛 청첩장 세트</div>
+                <div style="font-size: 13px; font-weight: 700;">28,000원</div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; overflow: hidden;">
+              <div style="height: 120px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 10px; color: #8A7F72;">product image</span></div>
+              <div style="padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <span style="background: #E8DDD0; color: #3A342E; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">NEW</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">클래식 리넨 청첩장</div>
+                <div style="font-size: 13px; font-weight: 700;">19,000원</div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; overflow: hidden; opacity: 0.7;">
+              <div style="height: 120px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 10px; color: #8A7F72;">product image</span></div>
+              <div style="padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <span style="background: #EFE7DC; color: #8A7F72; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">품절</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">가을 무드 청첩장</div>
+                <div style="font-size: 13px; font-weight: 700;">28,000원</div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; overflow: hidden;">
+              <div style="height: 120px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 10px; color: #8A7F72;">product image</span></div>
+              <div style="padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">가든웨딩 카드</div>
+                <div style="font-size: 13px; font-weight: 700;">22,000원</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">로딩 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 12px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin-bottom: 12px;">청첩장 상품</div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px;"><span>전체 카테고리</span><span style="color: #8A7F72; font-size: 10px;">▼</span></div>
+              <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px;"><span>인기순</span><span style="color: #8A7F72; font-size: 10px;">▼</span></div>
+            </div>
+          </div>
+          <div style="padding: 4px 20px 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <sc-for list="{{ skeletonCards }}" as="s" hint-placeholder-count="4">
+              <div style="border: 1px solid #E3D8C9; border-radius: 0.75rem; overflow: hidden;">
+                <div style="height: 120px; background: #EFE7DC;"></div>
+                <div style="padding: 12px; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="height: 11px; width: 40%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+                  <div style="height: 14px; width: 75%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+                  <div style="height: 11px; width: 35%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">빈 상태 — 필터 결과 없음</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 12px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin-bottom: 12px;">청첩장 상품</div>
+            <div style="display: flex; gap: 8px;">
+              <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; background: #F0E6DA; border: 1px solid #C68868; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px; font-weight: 500;"><span>리넨 소재</span><span style="color: #8A7F72; font-size: 10px;">▼</span></div>
+              <div style="flex: 1; display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px;"><span>낮은 가격순</span><span style="color: #8A7F72; font-size: 10px;">▼</span></div>
+            </div>
+          </div>
+          <div style="padding: 40px 32px 56px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: #EFE7DC; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #8A7F72;">?</div>
+            <div style="font-family: 'Gowun Batang', serif; font-size: 16px; font-weight: 700;">조건에 맞는 상품이 없어요</div>
+            <div style="font-size: 13px; color: #8A7F72; line-height: 1.5;">다른 카테고리나 정렬 조건으로<br/>다시 검색해보세요.</div>
+            <button style="margin-top: 8px; background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">필터 초기화</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== 2. 상품 상세 ========== -->
+  <div style="margin-bottom: 56px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">2. 상품 상세</h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <!-- Normal -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">정상 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="height: 300px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 10px, #E8DDD0 10px, #E8DDD0 20px); display: flex; align-items: center; justify-content: center; position: relative;">
+            <span style="font-family: monospace; font-size: 11px; color: #8A7F72;">product image</span>
+            <div style="position: absolute; bottom: 14px; left: 0; right: 0; display: flex; justify-content: center; gap: 6px;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #AA6147;"></span>
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #E3D8C9;"></span>
+              <span style="width: 6px; height: 6px; border-radius: 50%; background: #E3D8C9;"></span>
+            </div>
+          </div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+            <div>
+              <span style="background: #AA6147; color: #FFFFFF; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem;">인기</span>
+              <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin-top: 8px;">봄빛 청첩장 세트</div>
+              <div style="font-size: 13px; color: #8A7F72; margin-top: 4px;">모바일 청첩장 + 인쇄용 카드 5매</div>
+              <div style="font-size: 20px; font-weight: 700; margin-top: 10px;">28,000원</div>
+            </div>
+            <div style="border-top: 1px solid #E3D8C9;"></div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; font-weight: 500;">종이 재질</label>
+              <div style="display: flex; gap: 8px;">
+                <label style="flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #AA6147; background: #F0E6DA; border-radius: 0.75rem; padding: 10px 12px; font-size: 13px; cursor: pointer;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; border: 1px solid #AA6147; display: inline-flex; align-items: center; justify-content: center;"><span style="width: 8px; height: 8px; border-radius: 50%; background: #AA6147;"></span></span>
+                  랑데부 (기본)
+                </label>
+                <label style="flex: 1; display: flex; align-items: center; gap: 8px; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 12px; font-size: 13px; cursor: pointer;">
+                  <span style="width: 16px; height: 16px; border-radius: 50%; border: 1px solid #E3D8C9; display: inline-flex;"></span>
+                  러프 (+2,000원)
+                </label>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; font-weight: 500;">인쇄용 카드 매수</label>
+              <div style="display: flex; align-items: center; justify-content: space-between; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 9px 12px; font-size: 13px;">
+                <span>5매</span><span style="color: #8A7F72; font-size: 10px;">▼</span>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="font-size: 13px; font-weight: 500;">수량</label>
+              <div style="display: flex; align-items: center; gap: 12px; width: fit-content; border: 1px solid #E3D8C9; border-radius: 0.75rem;">
+                <button style="width: 36px; height: 36px; border: none; background: transparent; font-size: 16px; color: #3A342E; cursor: pointer;" style-hover="background: #F0E6DA;">−</button>
+                <span style="font-size: 14px; font-weight: 500; min-width: 20px; text-align: center;">1</span>
+                <button style="width: 36px; height: 36px; border: none; background: transparent; font-size: 16px; color: #3A342E; cursor: pointer;" style-hover="background: #F0E6DA;">+</button>
+              </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 4px;">
+              <button style="flex: 1; background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">장바구니에 담기</button>
+              <button style="flex: 1; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">구매하기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">로딩 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="height: 300px; background: #EFE7DC;"></div>
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="height: 11px; width: 30%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+            <div style="height: 20px; width: 65%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+            <div style="height: 11px; width: 50%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+            <div style="height: 22px; width: 25%; background: #EFE7DC; border-radius: 0.375rem; margin-top: 4px;"></div>
+            <div style="border-top: 1px solid #E3D8C9; margin: 8px 0;"></div>
+            <div style="height: 44px; width: 100%; background: #EFE7DC; border-radius: 0.75rem;"></div>
+            <div style="height: 44px; width: 100%; background: #EFE7DC; border-radius: 0.75rem;"></div>
+            <div style="display: flex; gap: 10px; margin-top: 4px;">
+              <div style="flex: 1; height: 44px; background: #EFE7DC; border-radius: 0.75rem;"></div>
+              <div style="flex: 1; height: 44px; background: #EFE7DC; border-radius: 0.75rem;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop expanded -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">데스크톱 확장 (정상 상태)</div>
+        <div style="width: 760px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden; display: flex;">
+          <div style="width: 340px; height: 340px; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 10px, #E8DDD0 10px, #E8DDD0 20px); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <span style="font-family: monospace; font-size: 11px; color: #8A7F72;">product image</span>
+          </div>
+          <div style="padding: 28px; display: flex; flex-direction: column; gap: 14px; flex: 1;">
+            <div>
+              <span style="background: #AA6147; color: #FFFFFF; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem;">인기</span>
+              <div style="font-family: 'Gowun Batang', serif; font-size: 22px; font-weight: 700; margin-top: 8px;">봄빛 청첩장 세트</div>
+              <div style="font-size: 13px; color: #8A7F72; margin-top: 4px;">모바일 청첩장 + 인쇄용 카드 5매</div>
+              <div style="font-size: 20px; font-weight: 700; margin-top: 10px;">28,000원</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px; width: fit-content; border: 1px solid #E3D8C9; border-radius: 0.75rem;">
+              <button style="width: 36px; height: 36px; border: none; background: transparent; font-size: 16px; cursor: pointer;" style-hover="background: #F0E6DA;">−</button>
+              <span style="font-size: 14px; font-weight: 500; min-width: 20px; text-align: center;">1</span>
+              <button style="width: 36px; height: 36px; border: none; background: transparent; font-size: 16px; cursor: pointer;" style-hover="background: #F0E6DA;">+</button>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 8px;">
+              <button style="flex: 1; background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">장바구니에 담기</button>
+              <button style="flex: 1; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">구매하기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== 3. 결제 ========== -->
+  <div style="margin-bottom: 56px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">3. 배송지 · 결제</h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <!-- Normal -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">정상 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">배송지 정보</div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 500;">받는 분</label>
+                <input type="text" value="김민준" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 500;">연락처</label>
+                <input type="text" value="010-1234-5678" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 500;">배송 주소</label>
+                <input type="text" placeholder="도로명 주소를 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid #E3D8C9;"></div>
+            <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">결제 수단</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <label style="display: flex; align-items: center; gap: 10px; border: 1px solid #AA6147; background: #F0E6DA; border-radius: 0.75rem; padding: 12px; font-size: 14px; cursor: pointer;">
+                <span style="width: 18px; height: 18px; border-radius: 50%; border: 1px solid #AA6147; display: inline-flex; align-items: center; justify-content: center;"><span style="width: 9px; height: 9px; border-radius: 50%; background: #AA6147;"></span></span>
+                카드 결제
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; cursor: pointer;">
+                <span style="width: 18px; height: 18px; border-radius: 50%; border: 1px solid #E3D8C9; display: inline-flex;"></span>
+                간편결제 (카카오페이/네이버페이)
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; cursor: pointer;">
+                <span style="width: 18px; height: 18px; border-radius: 50%; border: 1px solid #E3D8C9; display: inline-flex;"></span>
+                무통장 입금
+              </label>
+            </div>
+
+            <div style="border-top: 1px solid #E3D8C9;"></div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 16px; display: flex; flex-direction: column; gap: 10px;">
+              <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">결제 금액</div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: #8A7F72;"><span>상품 금액</span><span>28,000원</span></div>
+              <div style="display: flex; justify-content: space-between; font-size: 13px; color: #8A7F72;"><span>배송비</span><span>3,000원</span></div>
+              <div style="border-top: 1px solid #E3D8C9; padding-top: 10px; display: flex; justify-content: space-between; font-size: 16px; font-weight: 700;"><span>총 결제 금액</span><span>31,000원</span></div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; cursor: pointer;">
+                <span style="width: 18px; height: 18px; border: 1px solid #AA6147; border-radius: 0.375rem; background: #AA6147; display: inline-flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 12px; font-weight: 700; flex-shrink: 0;">✓</span>
+                주문 내용을 확인했으며, 결제에 동의합니다
+              </label>
+            </div>
+
+            <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer;" style-hover="background: #8F4F39;">31,000원 결제하기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">로딩 상태 — 결제 처리 중</div>
+        <div style="width: 390px; height: 640px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+          <div style="width: 40px; height: 40px; border-radius: 50%; border: 3px solid #E3D8C9; border-top-color: #AA6147;"></div>
+          <div style="font-size: 14px; font-weight: 500; color: #3A342E;">결제를 처리하고 있어요</div>
+          <div style="font-size: 12px; color: #8A7F72;">잠시만 기다려주세요...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== 4. 결제 완료 ========== -->
+  <div>
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">4. 결제 완료 <span style="font-family: monospace; font-size: 13px; color: #8A7F72; font-weight: 400;">/payment-result</span></h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <!-- Success -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">성공 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: #AA6147; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 28px; font-weight: 700;">✓</div>
+          <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin-top: 8px;">결제가 완료되었어요</div>
+          <div style="font-size: 13px; color: #8A7F72;">주문해주셔서 감사합니다</div>
+          <div style="width: 100%; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 16px; display: flex; flex-direction: column; gap: 10px; margin-top: 12px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #8A7F72;">주문번호</span><span style="font-weight: 500;">TK-20260821-0142</span></div>
+            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #8A7F72;">상품</span><span style="font-weight: 500;">봄빛 청첩장 세트</span></div>
+            <div style="border-top: 1px solid #E3D8C9; padding-top: 10px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700;"><span>결제 금액</span><span>31,000원</span></div>
+          </div>
+          <div style="display: flex; gap: 10px; width: 100%; margin-top: 16px;">
+            <button style="flex: 1; background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">주문 내역 보기</button>
+            <button style="flex: 1; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">청첩장 만들기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Failure -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">실패 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); padding: 32px 24px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background: #DC2626; display: flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 28px; font-weight: 700;">✕</div>
+          <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin-top: 8px;">결제에 실패했어요</div>
+          <div style="font-size: 13px; color: #8A7F72; line-height: 1.5;">카드사 승인이 거절되었습니다.<br/>카드 정보를 확인하거나 다른 결제 수단을 이용해주세요.</div>
+          <div style="width: 100%; background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; margin-top: 8px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;"><span style="color: #8A7F72;">오류 코드</span><span style="font-weight: 500; color: #DC2626;">CARD_DECLINED (5203)</span></div>
+          </div>
+          <div style="display: flex; gap: 10px; width: 100%; margin-top: 16px;">
+            <button style="flex: 1; background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">고객센터 문의</button>
+            <button style="flex: 1; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">다시 시도하기</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== 5. 주문 내역 ========== -->
+  <div style="margin-bottom: 56px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">5. 주문 내역 <span style="font-family: monospace; font-size: 13px; color: #8A7F72; font-weight: 400;">/my-orders</span></h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <!-- Normal -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">정상 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 8px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">주문 내역</div>
+          </div>
+          <div style="padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; gap: 12px;">
+              <div style="width: 64px; height: 64px; border-radius: 0.75rem; flex-shrink: 0; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 8px; color: #8A7F72;">image</span></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                <span style="background: #E8DDD0; color: #3A342E; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">배송중</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">봄빛 청첩장 세트</div>
+                <div style="font-size: 12px; color: #8A7F72;">2026.08.18 · 31,000원</div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; gap: 12px;">
+              <div style="width: 64px; height: 64px; border-radius: 0.75rem; flex-shrink: 0; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 8px; color: #8A7F72;">image</span></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                <span style="background: #AA6147; color: #FFFFFF; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">배송완료</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">클래식 리넨 청첩장</div>
+                <div style="font-size: 12px; color: #8A7F72;">2026.08.02 · 22,000원</div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; gap: 12px;">
+              <div style="width: 64px; height: 64px; border-radius: 0.75rem; flex-shrink: 0; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 8px; color: #8A7F72;">image</span></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                <span style="background: #F0E6DA; color: #3A342E; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">결제완료</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">가든웨딩 카드</div>
+                <div style="font-size: 12px; color: #8A7F72;">2026.08.21 · 22,000원</div>
+              </div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; gap: 12px; opacity: 0.6;">
+              <div style="width: 64px; height: 64px; border-radius: 0.75rem; flex-shrink: 0; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 8px; color: #8A7F72;">image</span></div>
+              <div style="flex: 1; display: flex; flex-direction: column; gap: 4px;">
+                <span style="background: #EFE7DC; color: #8A7F72; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 0.75rem; width: fit-content;">취소</span>
+                <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">가을 무드 청첩장</div>
+                <div style="font-size: 12px; color: #8A7F72;">2026.07.29 · 28,000원</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">로딩 상태</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 8px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">주문 내역</div>
+          </div>
+          <div style="padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 12px;">
+            <sc-for list="{{ skeletonOrders }}" as="s" hint-placeholder-count="3">
+              <div style="border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; gap: 12px;">
+                <div style="width: 64px; height: 64px; border-radius: 0.75rem; flex-shrink: 0; background: #EFE7DC;"></div>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center;">
+                  <div style="height: 11px; width: 30%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+                  <div style="height: 14px; width: 60%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+                  <div style="height: 11px; width: 40%; background: #EFE7DC; border-radius: 0.375rem;"></div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">빈 상태 — 주문 내역 없음</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 8px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700;">주문 내역</div>
+          </div>
+          <div style="padding: 48px 32px 64px; display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;">
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: #EFE7DC; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #8A7F72;">🛍</div>
+            <div style="font-family: 'Gowun Batang', serif; font-size: 16px; font-weight: 700;">아직 주문 내역이 없어요</div>
+            <div style="font-size: 13px; color: #8A7F72;">청첩장을 둘러보고 첫 주문을 시작해보세요.</div>
+            <button style="margin-top: 8px; background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">상품 둘러보기</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========== 6. 주문 상세 ========== -->
+  <div style="margin-bottom: 56px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">6. 주문 상세</h2>
+    <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+      <div style="padding: 20px; display: flex; flex-direction: column; gap: 18px;">
+        <div>
+          <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">주문 상세</div>
+          <div style="font-size: 12px; color: #8A7F72; margin-top: 4px;">주문번호 TK-20260818-0091</div>
+        </div>
+        <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; gap: 12px;">
+          <div style="width: 56px; height: 56px; border-radius: 0.75rem; flex-shrink: 0; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px);"></div>
+          <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 14px; font-weight: 700;">봄빛 청첩장 세트</div>
+            <div style="font-size: 12px; color: #8A7F72;">랑데부 · 인쇄용 카드 5매 · 1개</div>
+            <div style="font-size: 13px; font-weight: 700;">28,000원</div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid #E3D8C9;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 13px; font-weight: 700;">배송 정보</div>
+          <div style="font-size: 13px; color: #3A342E;">김민준 · 010-1234-5678</div>
+          <div style="font-size: 13px; color: #8A7F72;">서울특별시 강남구 테헤란로 123, 4층</div>
+        </div>
+
+        <div style="border-top: 1px solid #E3D8C9;"></div>
+        <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; flex-direction: column; gap: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: #8A7F72;"><span>상품 금액</span><span>28,000원</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 13px; color: #8A7F72;"><span>배송비</span><span>3,000원</span></div>
+          <div style="border-top: 1px solid #E3D8C9; padding-top: 8px; display: flex; justify-content: space-between; font-size: 15px; font-weight: 700;"><span>총 결제 금액</span><span>31,000원</span></div>
+        </div>
+
+        <div style="border-top: 1px solid #E3D8C9;"></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">주문 상태</div>
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="display: flex; flex-direction: column; align-items: center; padding-top: 3px;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #AA6147;"></span>
+              <span style="width: 1px; height: 24px; background: #E3D8C9;"></span>
+            </div>
+            <div style="font-size: 13px;">결제완료 <span style="color: #8A7F72; font-size: 12px;">· 08.18 10:20</span></div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <div style="display: flex; flex-direction: column; align-items: center; padding-top: 3px;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: #AA6147;"></span>
+              <span style="width: 1px; height: 24px; background: #E3D8C9;"></span>
+            </div>
+            <div style="font-size: 13px;">제작중 <span style="color: #8A7F72; font-size: 12px;">· 08.19 09:00</span></div>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: flex-start;">
+            <span style="width: 10px; height: 10px; border-radius: 50%; background: #AA6147; margin-top: 3px;"></span>
+            <div style="font-size: 13px; font-weight: 700;">배송중 <span style="color: #8A7F72; font-size: 12px; font-weight: 400;">· 08.20 14:32</span></div>
+          </div>
+        </div>
+
+        <button style="background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 4px;" style-hover="background: #F0E6DA;">고객센터 문의</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 7. 마이프로필 ========== -->
+  <div style="margin-bottom: 56px;">
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">7. 마이프로필 <span style="font-family: monospace; font-size: 13px; color: #8A7F72; font-weight: 400;">/my-profile</span></h2>
+    <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+      <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+        <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">마이프로필</div>
+        <div style="display: flex; align-items: center; gap: 14px;">
+          <div style="width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0; background: repeating-linear-gradient(45deg, #EFE7DC, #EFE7DC 8px, #E8DDD0 8px, #E8DDD0 16px); display: flex; align-items: center; justify-content: center;"><span style="font-family: monospace; font-size: 8px; color: #8A7F72;">photo</span></div>
+          <button style="background: transparent; color: #AA6147; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 8px 14px; font-size: 13px; font-weight: 500; cursor: pointer;" style-hover="background: #F0E6DA;">사진 변경</button>
+        </div>
+        <div style="border-top: 1px solid #E3D8C9;"></div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">이름</label>
+            <input type="text" value="김민준" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">연락처</label>
+            <input type="text" value="010-1234-5678" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 13px; font-weight: 500;">이메일</label>
+            <input type="text" value="minjun.kim@email.com" disabled="{{ true }}" style="background: #EFE7DC; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; color: #8A7F72; outline: none;"/>
+          </div>
+        </div>
+        <div style="border-top: 1px solid #E3D8C9;"></div>
+        <button style="background: transparent; color: #3A342E; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; text-align: left; display: flex; justify-content: space-between; align-items: center;" style-hover="background: #F0E6DA;">비밀번호 변경 <span style="color: #8A7F72;">›</span></button>
+        <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer;" style-hover="background: #8F4F39;">저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 8. 리뷰 + 고객센터 ========== -->
+  <div>
+    <h2 style="font-family: 'Gowun Batang', serif; font-size: 20px; font-weight: 700; margin: 0 0 16px;">8. 리뷰 <span style="font-family: monospace; font-size: 13px; color: #8A7F72; font-weight: 400;">/reviews</span> &amp; 고객센터 <span style="font-family: monospace; font-size: 13px; color: #8A7F72; font-weight: 400;">/support</span></h2>
+    <div style="display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+
+      <!-- Reviews -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">리뷰 목록</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px 20px 8px;">
+            <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">상품 리뷰</div>
+            <div style="font-size: 13px; color: #8A7F72; margin-top: 4px;">평균 <span style="color: #AA6147; font-weight: 700;">★★★★☆</span> 4.3 (128개)</div>
+          </div>
+          <div style="padding: 8px 20px 24px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #AA6147; font-size: 13px; letter-spacing: 1px;">★★★★★</span>
+                <span style="font-size: 12px; color: #8A7F72;">2026.08.05</span>
+              </div>
+              <div style="font-size: 13px; font-weight: 500;">이서연</div>
+              <div style="font-size: 13px; color: #3A342E; line-height: 1.5;">종이 질감이 정말 고급스럽고 인쇄 상태도 깔끔했어요. 하객분들 반응이 좋았습니다.</div>
+            </div>
+            <div style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 14px; display: flex; flex-direction: column; gap: 6px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: #AA6147; font-size: 13px; letter-spacing: 1px;">★★★★☆</span>
+                <span style="font-size: 12px; color: #8A7F72;">2026.07.29</span>
+              </div>
+              <div style="font-size: 13px; font-weight: 500;">박지훈</div>
+              <div style="font-size: 13px; color: #3A342E; line-height: 1.5;">디자인은 예쁜데 배송이 하루 지연됐어요. 그래도 전체적으로 만족합니다.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support -->
+      <div>
+        <div style="font-size: 12px; color: #8A7F72; margin-bottom: 8px;">고객센터 — FAQ + 문의 폼</div>
+        <div style="width: 390px; background: #FAF6F1; border: 1px solid #E3D8C9; border-radius: 20px; box-shadow: 0 8px 24px rgba(58,52,46,0.08); overflow: hidden;">
+          <div style="padding: 20px; display: flex; flex-direction: column; gap: 20px;">
+            <div>
+              <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700; margin-bottom: 12px;">자주 묻는 질문</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="border: 1px solid #C68868; background: #FFFFFF; border-radius: 0.75rem; overflow: hidden;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; font-size: 13px; font-weight: 500;">
+                    <span>주문 후 제작 기간은 얼마나 걸리나요?</span><span style="color: #8A7F72; font-size: 11px;">▲</span>
+                  </div>
+                  <div style="padding: 0 14px 14px; font-size: 13px; color: #8A7F72; line-height: 1.5; border-top: 1px solid #E3D8C9; padding-top: 10px;">주문 후 영업일 기준 1~2일 내 제작이 시작되며, 평균 3~5일 내 발송됩니다.</div>
+                </div>
+                <div style="border: 1px solid #E3D8C9; background: #FFFFFF; border-radius: 0.75rem; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500;">
+                  <span>주문 취소 및 환불은 어떻게 하나요?</span><span style="color: #8A7F72; font-size: 11px;">▼</span>
+                </div>
+                <div style="border: 1px solid #E3D8C9; background: #FFFFFF; border-radius: 0.75rem; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 500;">
+                  <span>모바일 청첩장은 언제까지 수정 가능한가요?</span><span style="color: #8A7F72; font-size: 11px;">▼</span>
+                </div>
+              </div>
+            </div>
+            <div style="border-top: 1px solid #E3D8C9;"></div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="font-family: 'Gowun Batang', serif; font-size: 18px; font-weight: 700;">1:1 문의하기</div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 500;">제목</label>
+                <input type="text" placeholder="문의 제목을 입력해주세요" style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"/>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 13px; font-weight: 500;">문의 내용</label>
+                <textarea rows="4" placeholder="문의하실 내용을 자세히 적어주세요." style="background: #FFFFFF; border: 1px solid #E3D8C9; border-radius: 0.75rem; padding: 10px 14px; font-size: 14px; outline: none; resize: none;" style-focus="border-color: #C68868; box-shadow: 0 0 0 3px rgba(198,136,104,0.25);"></textarea>
+              </div>
+              <button style="background: #AA6147; color: #FFFFFF; border: none; border-radius: 0.75rem; padding: 12px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 4px;" style-hover="background: #8F4F39;">문의 등록하기</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    return { skeletonCards: [1, 2, 3, 4], skeletonOrders: [1, 2, 3] };
+  }
+}
+</script>
+</body>
+</html>
