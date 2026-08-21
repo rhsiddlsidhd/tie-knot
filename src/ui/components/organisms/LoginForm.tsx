@@ -76,15 +76,20 @@ export function LoginForm({
         </div>
       </div>
 
+      {/* OAuth 미구현 — 연동 전까지 비활성 안내만 */}
       <Button
         type="button"
         variant="outline"
         className="w-full bg-transparent"
         size="lg"
+        disabled
       >
         <Globe className="mr-2 h-5 w-5" />
-        Google로 계속하기
+        Google로 계속하기 (준비 중)
       </Button>
+      <TypographyMuted className="text-center text-xs">
+        소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.
+      </TypographyMuted>
 
       <div className="space-y-2 text-center">
         <TypographyMuted>
