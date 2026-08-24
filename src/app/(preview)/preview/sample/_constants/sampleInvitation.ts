@@ -32,4 +32,4 @@ export const sampleInvitation = {
 } satisfies InvitationContent;
 
 export const SAMPLE_FEATURES = ["HORIZONTAL_SLIDE"] as const;
-export const SAMPLE_THEME = "default";
+export const SAMPLE_THEME = "blossom";
