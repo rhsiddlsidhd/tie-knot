@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain";
+import { INVITATION_THEMES, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain";
 
 export const productSchema = z
   .object({
@@ -7,7 +7,7 @@ export const productSchema = z
     description: z.string().min(10, "상품 설명은 최소 10자 이상이어야 합니다."),
     category: z.enum(PRODUCT_CATEGORIES),
     subCategory: z.string().min(1, "서브 카테고리를 선택해주세요."),
-    theme: z.enum(["blossom", "default"]).optional(),
+    theme: z.enum(INVITATION_THEMES).optional(),
     price: z.number().min(0, "가격은 0 이상이어야 합니다."),
     isPremium: z.boolean(),
     featureIds: z.array(z.string()).optional(),

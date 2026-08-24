@@ -10,7 +10,8 @@ import type {
 } from "@/core/domain";
 import {
   SUB_CATEGORY_MAP,
-  PRODUCT_CATEGORIES
+  PRODUCT_CATEGORIES,
+  INVITATION_THEMES
 } from "@/core/domain";
 
 export type { ProductCategory, ProductJSON, SubCategory };
@@ -159,7 +160,7 @@ export const ProductModel =
 
 const invitationProductSchema = new Schema<IInvitationProduct>({
   previewUrl: { type: String },
-  theme: { type: String, enum: ["blossom", "default"], default: "default" },
+  theme: { type: String, enum: INVITATION_THEMES, default: "default" },
 });
 
 // discriminator 이름("invitation")이 곧 category 필드에 저장되는 값이다 —
