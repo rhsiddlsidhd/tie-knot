@@ -63,7 +63,7 @@
 
 :root {
   font-family: var(--font-NotoSansKR), var(--font-NotoSerif), sans-serif;
-  --preview-background: #e8e3df;
+  --preview-background: #ffffff;
   --card: #ffffff;
   --card-foreground: #3a342e;
   --popover: #ffffff;
