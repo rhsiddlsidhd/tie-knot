@@ -21,7 +21,7 @@ export const sampleInvitation = {
   venue: "타이노트 웨딩홀",
   address: "서울특별시 중구 세종대로 110",
   addressDetail: "그랜드홀 2층",
-  subwayStation: "시청역",
+  subwayStation: "시청",
   guestbookEnabled: true,
   thumbnailImages: [
     "/assets/images/output.webp",

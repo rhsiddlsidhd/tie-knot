@@ -12,9 +12,9 @@ interface NavigationProps {
 
 const Navigation = ({ address, geoState }: NavigationProps) => {
   return (
-    <div className="space-y-2">
-      <p className="text-sm font-bold">네비게이션</p>
-      <p className="text-muted-foreground text-xs">
+    <div className="space-y-2 text-left">
+      <p className="text-sm font-bold sm:text-base">네비게이션</p>
+      <p className="text-muted-foreground text-xs sm:text-sm">
         원하시는 앱을 선택하시면 길안내가 시작됩니다.
       </p>
       <div className="flex flex-col gap-2">
