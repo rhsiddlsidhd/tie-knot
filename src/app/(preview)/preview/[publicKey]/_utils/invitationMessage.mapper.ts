@@ -6,8 +6,13 @@ interface Contact {
   phone: string;
 }
 
+interface ParentName {
+  label: string;
+  name: string;
+}
+
 interface Party {
-  parentNames: string;
+  parents: ParentName[];
   name: string;
   title: string;
   contacts: Contact[];
@@ -35,16 +40,16 @@ function createContact(
   };
 }
 
-// 헬퍼 함수 2: 부모님 이름 문자열 생성
-function getParentNamesString(parents: CoupleSide): string {
-  const parts = [];
+// 헬퍼 함수 2: 부모님 이름 목록 생성
+function getParentNames(parents: CoupleSide): ParentName[] {
+  const list: ParentName[] = [];
   if (parents.father?.name) {
-    parts.push(`아버지 ${parents.father.name}`);
+    list.push({ label: "아버지", name: parents.father.name });
   }
   if (parents.mother?.name) {
-    parts.push(`어머니 ${parents.mother.name}`);
+    list.push({ label: "어머니", name: parents.mother.name });
   }
-  return parts.join(" · ");
+  return list;
 }
 
 /**
@@ -72,13 +77,13 @@ export function mapCoupleInfoToInvitationProps(
   // 3. UI 표시에 필요한 최종 데이터 배열 조립
   const displayParties: Party[] = [
     {
-      parentNames: getParentNamesString(coupleInfoData.groom),
+      parents: getParentNames(coupleInfoData.groom),
       name: coupleInfoData.groom.name,
       title: "신랑",
       contacts: groomSideContacts,
     },
     {
-      parentNames: getParentNamesString(coupleInfoData.bride),
+      parents: getParentNames(coupleInfoData.bride),
       name: coupleInfoData.bride.name,
       title: "신부",
       contacts: brideSideContacts,

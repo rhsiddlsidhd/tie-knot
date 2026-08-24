@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/ui/components/atoms";
 import { ClipboardButton, KakaoMap } from "@/ui/components/molecules";
 import { useCopy, useNavigationGeo, useSubwayLineInfo } from "@/ui/hooks";
 import { EyebrowSection } from "./EyebrowSection";
@@ -21,9 +22,9 @@ export function LocationSection({
   return (
     <EyebrowSection eyebrow="LOCATION" heading="오시는 길">
       <div>
-        <p className="text-foreground text-md font-semibold">{venueName}</p>
+        <p className="text-foreground text-md font-semibold sm:text-lg">{venueName}</p>
         <div className="flex items-center justify-center gap-2">
-          <p className="text-muted-foreground text-sm">{fullAddress}</p>
+          <p className="text-muted-foreground text-sm sm:text-base">{fullAddress}</p>
           {/* 재사용 가능한 ClipboardButton으로 교체 */}
           <ClipboardButton
             isCopied={isCopied}
@@ -42,18 +43,21 @@ export function LocationSection({
 
       {/* Transportation Info */}
       {lineInfo && (
-        <div className="flex items-center justify-center gap-2 text-sm">
-          <span className="text-muted-foreground">{lineInfo.station}역</span>
-          <div className="flex gap-1.5">
-            {lineInfo.lines.map((line) => (
-              <span
-                key={line.name}
-                className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white"
-                style={{ backgroundColor: line.color }}
-              >
-                {line.name}
-              </span>
-            ))}
+        <div className="space-y-2 text-left">
+          <p className="text-sm font-bold sm:text-base">지하철</p>
+          <div className="flex items-center gap-2 text-sm sm:text-base">
+            <span className="text-muted-foreground">{lineInfo.station}역</span>
+            <div className="flex gap-1.5">
+              {lineInfo.lines.map((line) => (
+                <Badge
+                  key={line.name}
+                  className="text-white"
+                  style={{ backgroundColor: line.color }}
+                >
+                  {line.name}
+                </Badge>
+              ))}
+            </div>
           </div>
         </div>
       )}

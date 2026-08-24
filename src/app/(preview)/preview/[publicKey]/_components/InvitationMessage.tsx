@@ -28,13 +28,21 @@ export function InvitationMessage({ parties }: InvitationMessageMappedProps) {
 
       <div className="space-y-10">
         {parties.map((party, index) => (
-          <div key={party.title} className="flex flex-col items-center">
-            <div className="flex w-full max-w-xs items-center justify-center gap-4">
-              <TypographyMuted className="text-base">{party.parentNames}</TypographyMuted>
-              <div className="flex items-center gap-2">
-                <TypographyMuted className="text-xs opacity-60">{party.title}</TypographyMuted>
-                <TypographyLarge className="text-xl font-bold">{party.name}</TypographyLarge>
-              </div>
+          <div key={party.title} className="flex flex-col items-center gap-2">
+            <div className="flex items-center justify-center gap-6">
+              {party.parents.map((parent) => (
+                <div key={parent.label} className="flex items-center gap-2">
+                  <TypographyMuted className="text-xs opacity-60 sm:text-sm">
+                    {parent.label}
+                  </TypographyMuted>
+                  <TypographyMuted className="text-base sm:text-lg">{parent.name}</TypographyMuted>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <TypographyMuted className="text-xs opacity-60 sm:text-sm">{party.title}</TypographyMuted>
+              <TypographyLarge className="text-xl font-bold sm:text-2xl">{party.name}</TypographyLarge>
             </div>
 
             <Button
