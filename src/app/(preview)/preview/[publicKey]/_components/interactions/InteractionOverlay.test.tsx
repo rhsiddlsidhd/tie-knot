@@ -22,16 +22,16 @@ describe("InteractionOverlay", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("blossom 테마는 pointermove 이후 꽃잎을 렌더한다", () => {
+  it("blossom 테마는 고정 꽃잎 없이 default(spotlight)로 폴백한다", () => {
     const { container } = render(<InteractionOverlay theme="blossom" />);
     firePointerMove(200, 200);
-    expect(container.textContent).toContain("🌸");
+    expect(container.querySelector('[style*="radial-gradient"]')).not.toBeNull();
   });
 
-  it("botanical 테마는 pointermove 이후 잎사귀를 렌더한다", () => {
+  it("botanical 테마는 pointermove 이후 커서를 향해 뻗는 덩굴손을 렌더한다", () => {
     const { container } = render(<InteractionOverlay theme="botanical" />);
     firePointerMove(200, 200);
-    expect(container.textContent).toContain("🍃");
+    expect(container.querySelector("path")).not.toBeNull();
   });
 
   it("midnight 테마는 pointermove 이후 트레일 파티클을 렌더한다", () => {

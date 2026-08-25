@@ -243,6 +243,8 @@
   --midnight-gold:        #c9a96e;
   --midnight-navy:        #202534;
   --midnight-light:       #f5f0e8;
+  --midnight-deep:        #0a0d16;
+  --midnight-haze:        #4a5b95;
 }
 
 /* Calendar: D-day 하이라이트 + 주말 색상 */
@@ -257,6 +259,16 @@
 [data-theme="blossom"] section > div > div:first-child {
   color: var(--blossom-pink);
   letter-spacing: 0.35em;
+}
+
+/* midnight·botanical 테마는 배경 자체가 앰비언트 연출(ThemeAmbience, 콘텐츠보다
+   뒤에 깔림)인데, EyebrowSection이 거의 모든 본문 섹션에서 불투명한
+   bg-background로 그 위를 그대로 덮어버려 midnight은 별이, botanical은 좌우
+   매듭 덩굴이 하나도 안 보였다 — 이 두 테마에서만 투명하게 둬서 뒤에 깔린
+   연출이 문단 사이 여백/가장자리에 비쳐 보이게 한다. */
+[data-theme="midnight"] section.bg-background,
+[data-theme="botanical"] section.bg-background {
+  background-color: transparent;
 }
 
 .scrollbar-hide {
