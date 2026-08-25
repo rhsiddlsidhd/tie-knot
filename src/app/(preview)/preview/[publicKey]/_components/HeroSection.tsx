@@ -5,6 +5,7 @@ import { ko } from "date-fns/locale";
 import type { HeroSectionProps } from "../_utils/heroSection.mapper";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { CloudImage } from "@/ui/components/molecules";
+import { ScrollIndicator } from "./ScrollIndicator";
 export function HeroSection({
   groomName,
   brideName,
@@ -62,11 +63,7 @@ export function HeroSection({
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute -bottom-24 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="flex h-12 w-7 items-start justify-center rounded-full border border-white/30 p-2">
-            <div className="h-2 w-1 rounded-full bg-white/60" />
-          </div>
-        </div>
+        <ScrollIndicator />
       </div>
     </section>
   );

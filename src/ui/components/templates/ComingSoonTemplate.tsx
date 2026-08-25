@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { TypographyMuted } from "@/ui/components/atoms";
 import { Hammer } from "lucide-react";
 import { routes } from "@/core/domain";
@@ -9,6 +13,8 @@ interface ComingSoonTemplateProps {
   secondaryLink?: { href: string; label: string };
 }
 
+const FADE_DELAY = { 1: 0.1, 2: 0.25, 3: 0.4, 4: 0.6, 5: 0.75 } as const;
+
 export function ComingSoonTemplate({ title, description, secondaryLink }: ComingSoonTemplateProps) {
   return (
     <main
@@ -16,13 +22,16 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
       style={{ background: "oklch(0.985 0.006 75)" }}
     >
       {/* Dot grid texture - Consistent with NotFound */}
-      <div
-        className="not-found-dots pointer-events-none absolute inset-0"
+      <motion.div
+        className="pointer-events-none absolute inset-0"
         style={{
           backgroundImage:
             "radial-gradient(circle, oklch(0.5 0.02 60 / 0.18) 1px, transparent 1px)",
           backgroundSize: "28px 28px",
         }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
       />
 
       {/* Ambient glow */}
@@ -35,25 +44,35 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
       />
 
       {/* Background Text (Coming Soon instead of 404) */}
-      <div
-        className="not-found-ghost text-foreground pointer-events-none absolute leading-none font-[var(--font-NotoSerif)] font-black select-none"
+      <motion.div
+        className="text-foreground pointer-events-none absolute leading-none font-[var(--font-NotoSerif)] font-black select-none"
         style={{
           fontSize: "clamp(100px, 20vw, 280px)",
           letterSpacing: "-0.04em",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          opacity: 0.03,
           whiteSpace: "nowrap",
         }}
+        animate={{ opacity: [0.03, 0.06, 0.03] }}
+        transition={{ duration: 5, ease: "easeInOut", repeat: Infinity }}
       >
         COMING SOON
-      </div>
+      </motion.div>
 
       {/* Main card — floating */}
-      <div className="not-found-float relative z-10 flex flex-col items-center">
+      <motion.div
+        className="relative z-10 flex flex-col items-center"
+        animate={{ y: [0, -14, 0], rotate: [-1, 1, -1] }}
+        transition={{ duration: 6, ease: "easeInOut", repeat: Infinity }}
+      >
         {/* Top flourish */}
-        <div className="not-found-fade-1 mb-8 flex items-center gap-4">
+        <motion.div
+          className="mb-8 flex items-center gap-4"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[1] }}
+        >
           <div
             className="h-px w-20"
             style={{
@@ -74,11 +93,11 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
                 "linear-gradient(to left, transparent, oklch(0.5 0.02 60 / 0.4))",
             }}
           />
-        </div>
+        </motion.div>
 
         {/* Envelope card */}
-        <div
-          className="not-found-fade-2 relative flex flex-col items-center px-12 py-14"
+        <motion.div
+          className="relative flex flex-col items-center px-12 py-14"
           style={{
             minWidth: "min(90vw, 460px)",
             background: "oklch(1 0 0 / 0.85)",
@@ -87,6 +106,9 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
             boxShadow:
               "0 2px 0 oklch(0.75 0.03 60 / 0.15), 0 20px 60px -10px oklch(0.5 0.05 60 / 0.12)",
           }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[2] }}
         >
           {/* Corner marks */}
           <div
@@ -107,31 +129,53 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
           />
 
           {/* Construction Icon */}
-          <div className="not-found-fade-2 mb-6">
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[2] }}
+          >
             <div className="relative">
-              <div className="bg-primary/5 absolute inset-0 animate-pulse rounded-full" />
+              <motion.div
+                className="bg-primary/5 absolute inset-0 rounded-full"
+                animate={{ opacity: [1, 0.5, 1] }}
+                transition={{ duration: 2, ease: [0.4, 0, 0.6, 1], repeat: Infinity }}
+              />
               <Hammer
                 className="text-primary relative h-12 w-12 opacity-40"
                 strokeWidth={1.5}
               />
             </div>
-          </div>
+          </motion.div>
 
           {/* Status Text */}
-          <p
-            className="not-found-fade-3 mb-2 text-center text-sm font-[var(--font-NotoSerif)] font-medium tracking-[0.2em] uppercase"
+          <motion.p
+            className="mb-2 text-center text-sm font-[var(--font-NotoSerif)] font-medium tracking-[0.2em] uppercase"
             style={{ color: "oklch(0.65 0.03 60)" }}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[3] }}
           >
             Under Construction
-          </p>
+          </motion.p>
 
           {/* Title */}
-          <h1 className="not-found-fade-3 text-foreground text-center text-2xl font-[var(--font-NotoSerif)] font-semibold tracking-tight">
+          <motion.h1
+            className="text-foreground text-center text-2xl font-[var(--font-NotoSerif)] font-semibold tracking-tight"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[3] }}
+          >
             {title}
-          </h1>
+          </motion.h1>
 
           {/* Divider */}
-          <div className="not-found-fade-4 my-6 flex items-center gap-3">
+          <motion.div
+            className="my-6 flex items-center gap-3"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[4] }}
+          >
             <div
               className="h-px w-10"
               style={{ background: "oklch(0.7 0.03 60 / 0.3)" }}
@@ -146,21 +190,27 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
               className="h-px w-10"
               style={{ background: "oklch(0.7 0.03 60 / 0.3)" }}
             />
-          </div>
+          </motion.div>
 
           {/* Description */}
-          <TypographyMuted className="not-found-fade-4 max-w-[280px] text-center leading-relaxed">
-            {description}
-          </TypographyMuted>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[4] }}
+          >
+            <TypographyMuted className="max-w-[280px] text-center leading-relaxed">
+              {description}
+            </TypographyMuted>
+          </motion.div>
 
           {/* CTA buttons */}
-          <div className="not-found-fade-5 mt-10 flex flex-col gap-3">
-            <Link
-              href={routes.home}
-              className="not-found-btn border-foreground text-foreground inline-block border px-10 py-3 text-sm font-[var(--font-NotoSerif)] font-medium tracking-widest"
-            >
-              <span>홈으로 돌아가기</span>
-            </Link>
+          <motion.div
+            className="mt-10 flex flex-col gap-3"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[5] }}
+          >
+            <ComingSoonHomeLink />
             {secondaryLink && (
               <Link
                 href={secondaryLink.href}
@@ -169,11 +219,16 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
                 {secondaryLink.label}
               </Link>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
         {/* Bottom brand mark */}
-        <div className="not-found-fade-5 mt-8 flex items-center gap-3">
+        <motion.div
+          className="mt-8 flex items-center gap-3"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[5] }}
+        >
           <div
             className="h-px w-10"
             style={{
@@ -194,8 +249,29 @@ export function ComingSoonTemplate({ title, description, secondaryLink }: Coming
                 "linear-gradient(to left, transparent, oklch(0.5 0.02 60 / 0.3))",
             }}
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </main>
+  );
+}
+
+function ComingSoonHomeLink() {
+  const [isHovered, setIsHovered] = useState(false);
+
+  return (
+    <Link
+      href={routes.home}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="border-foreground text-foreground hover:text-background relative inline-block overflow-hidden border px-10 py-3 text-sm font-[var(--font-NotoSerif)] font-medium tracking-widest transition-colors duration-[350ms] ease-out"
+    >
+      <motion.span
+        className="bg-foreground absolute inset-0"
+        initial={{ y: "100%" }}
+        animate={{ y: isHovered ? "0%" : "100%" }}
+        transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
+      />
+      <span className="relative z-10">홈으로 돌아가기</span>
+    </Link>
   );
 }

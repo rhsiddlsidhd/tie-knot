@@ -1,7 +1,8 @@
 import type { InvitationContent } from "@/core/domain";
 import { CloudImage } from "@/ui/components/molecules";
-import { ThemeSync } from "./ThemeSync";
 import { InteractionOverlay } from "./interactions";
+import { ThemeAmbience } from "./ThemeAmbience";
+import { ThemeSync } from "./ThemeSync";
 import {
   mapCoupleInfoToAccountProps,
   mapCoupleInfoToCalendarProps,
@@ -39,6 +40,7 @@ export function InvitationTemplate({
   return (
     <div className="relative" data-theme={theme}>
       <ThemeSync theme={theme} />
+      <ThemeAmbience theme={theme} />
       <InteractionOverlay theme={theme} />
       <HeroSection {...mapCoupleInfoToHeroProps(content)} />
       <InvitationMessage {...mapCoupleInfoToInvitationProps(content)} />
