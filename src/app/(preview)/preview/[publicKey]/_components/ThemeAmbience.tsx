@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll } from "framer-motion";
+import { motion, useReducedMotion, useScroll } from "motion/react";
 
 const BLOSSOM_PETALS = [
   { left: "8%", duration: 7, delay: 0 },
@@ -15,7 +15,7 @@ const BLOSSOM_PETALS = [
 function BlossomAmbience() {
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-40 overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-30 overflow-hidden"
       aria-hidden
     >
       {BLOSSOM_PETALS.map((petal, i) => (
@@ -84,7 +84,7 @@ function ShootingStar() {
 function MidnightAmbience() {
   return (
     <div
-      className="pointer-events-none fixed inset-0 z-40 overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-30 overflow-hidden"
       aria-hidden
     >
       {MIDNIGHT_STARS.map((star, i) => (
@@ -168,7 +168,7 @@ function BotanicalAmbience() {
   return (
     <div
       ref={wrapperRef}
-      className="pointer-events-none absolute inset-0 z-40"
+      className="pointer-events-none absolute inset-0 z-30"
       style={{ mixBlendMode: "multiply" }}
       aria-hidden
     >
