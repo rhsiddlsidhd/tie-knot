@@ -29,26 +29,33 @@ export function PersonValueCard({
 }: PersonValueCardProps) {
   return (
     <Card
-      className="p-4 shadow-sm transition-all hover:shadow-md sm:p-5"
+      className="p-2 shadow-sm transition-all hover:shadow-md sm:p-5"
       role="article"
       aria-label={ariaLabel}
     >
-      <div className="grid grid-cols-[1fr_1.35fr] items-center gap-3">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-1 sm:grid-cols-[1fr_1.35fr] sm:gap-3">
         <div className="flex min-w-0 flex-col items-start gap-1 text-left">
-          <Badge variant="outline" className="font-normal opacity-80">
+          <Badge
+            variant="outline"
+            className="px-1.5 text-[10px] font-normal opacity-80 sm:px-2 sm:text-xs"
+          >
             {relation}
           </Badge>
-          <TypographyLarge className="[word-break:keep-all] font-bold">
+          <TypographyLarge className="text-sm [word-break:keep-all] font-bold sm:text-lg">
             {name}
           </TypographyLarge>
           {subLabel && <TypographyMuted className="text-sm">{subLabel}</TypographyMuted>}
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-2">
-          <TypographyLarge className="whitespace-nowrap text-right font-mono text-sm tracking-tighter sm:text-base">
+        <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2">
+          <TypographyLarge className="whitespace-nowrap text-right font-mono text-[11px] tracking-tighter sm:text-base">
             {value}
           </TypographyLarge>
-          <ClipboardButton isCopied={isCopied} onCopy={onCopy} />
+          <ClipboardButton
+            isCopied={isCopied}
+            onCopy={onCopy}
+            className="size-7 p-0 sm:size-8"
+          />
         </div>
       </div>
     </Card>

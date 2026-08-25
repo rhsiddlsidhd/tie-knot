@@ -33,14 +33,14 @@ const ViewContact = ({ payload }: { payload: Contact[] }) => {
 
   return (
     <div className="w-full">
-      <DialogHeader className="p-6">
+      <DialogHeader className="p-0">
         <DialogTitle className="text-xl">연락처</DialogTitle>
         <DialogDescription>
           아래 연락처를 통해 축하의 마음을 전해보세요.
         </DialogDescription>
       </DialogHeader>
 
-      <div className="mt-2 space-y-3 p-6 pt-0">
+      <div className="mt-2 space-y-3 p-0">
         {payload.map((contact) => (
           <PersonValueCard
             key={contact.relation}
