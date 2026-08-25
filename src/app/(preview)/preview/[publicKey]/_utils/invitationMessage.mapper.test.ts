@@ -4,14 +4,16 @@ import type { InvitationContent } from "@/core/domain";
 
 import { mapCoupleInfoToInvitationProps } from "./invitationMessage.mapper";
 
-const invitationContent = {
+const invitationContent: InvitationContent = {
   groom: {
     name: "신랑",
+    phone: "010-0000-0001",
     father: { name: "김철수", phone: "010-1111-1111" },
     mother: { name: "이영희", phone: "010-2222-2222" },
   },
   bride: {
     name: "신부",
+    phone: "010-0000-0002",
     father: { name: "박민수", phone: "010-3333-3333" },
     mother: { name: "최지은", phone: "010-4444-4444" },
   },
@@ -22,7 +24,7 @@ const invitationContent = {
   guestbookEnabled: true,
   thumbnailImages: [],
   galleryImages: [],
-} satisfies InvitationContent;
+};
 
 describe("초대 문구 매퍼", () => {
   it("부모 연락처 관계를 측과 존칭을 포함해 표시한다", () => {
