@@ -4,6 +4,7 @@ import { useKakaoLoader } from "@/adapters/browser/kakao";
 import { useKakaomapGeocode } from "@/ui/hooks";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { MapPin } from "lucide-react";
+import { motion } from "framer-motion";
 
 const KakaoMap = ({ address }: { address: string }) => {
   useKakaoLoader();
@@ -13,11 +14,15 @@ const KakaoMap = ({ address }: { address: string }) => {
   return (
     <div className="flex justify-center">
       {geoState.lat === null || geoState.lng === null ? (
-        <div className="bg-muted relative aspect-video w-full animate-pulse overflow-hidden rounded-xl">
+        <motion.div
+          className="bg-muted relative aspect-video w-full overflow-hidden rounded-xl"
+          animate={{ opacity: [1, 0.5, 1] }}
+          transition={{ duration: 2, ease: [0.4, 0, 0.6, 1], repeat: Infinity }}
+        >
           <div className="absolute inset-0 flex items-center justify-center">
             <MapPin className="text-muted-foreground/30 h-12 w-12" />
           </div>
-        </div>
+        </motion.div>
       ) : (
         <Map
           id="map"
