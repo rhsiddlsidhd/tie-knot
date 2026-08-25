@@ -2,6 +2,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
+import type { BanksResponse } from "@/core/schemas";
 import type * as HooksModule from "@/ui/hooks";
 
 vi.mock("@/ui/hooks", async (importOriginal) => {
@@ -9,7 +10,7 @@ vi.mock("@/ui/hooks", async (importOriginal) => {
 
   return {
     ...hooks,
-    useBanks: () => ({ banks: undefined, isLoading: false, isError: undefined }),
+    useBanks: () => ({ banks: [] as BanksResponse, isLoading: false, isError: false }),
   };
 });
 
