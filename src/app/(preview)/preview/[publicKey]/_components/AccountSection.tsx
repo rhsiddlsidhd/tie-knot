@@ -14,6 +14,26 @@ import type {
   AccountSectionMappedProps,
 } from "../_utils/accountSection.mapper";
 
+interface AccountCardProps {
+  account: AccountInfo;
+  bankName: string;
+}
+
+const AccountCard = ({ account, bankName }: AccountCardProps) => {
+  const { isCopied, copyToClipboard } = useCopy();
+
+  return (
+    <PersonValueCard
+      relation={account.relation}
+      name={account.name}
+      subLabel={bankName}
+      value={account.accountNumber}
+      isCopied={isCopied}
+      onCopy={() => copyToClipboard(account.accountNumber)}
+      ariaLabel={`${account.relation} ${account.name}의 계좌 정보`}
+    />
+  );
+};
 
 const AccountSection = ({
   groomAccounts,
@@ -21,7 +41,6 @@ const AccountSection = ({
 }: AccountSectionMappedProps) => {
   const [selectedSide, setSelectedSide] = useState<"groom" | "bride">("groom");
   const { banks } = useBanks();
-  const { isCopied, copyToClipboard } = useCopy();
 
   const bankNameMap = useMemo(() => {
     if (!banks) return {};
@@ -44,15 +63,10 @@ const AccountSection = ({
     }
 
     return accounts.map((account) => (
-      <PersonValueCard
+      <AccountCard
         key={account.relation}
-        relation={account.relation}
-        name={account.name}
-        subLabel={bankNameMap[account.bankName] || account.bankName}
-        value={account.accountNumber}
-        isCopied={isCopied}
-        onCopy={() => copyToClipboard(account.accountNumber)}
-        ariaLabel={`${account.relation} ${account.name}의 계좌 정보`}
+        account={account}
+        bankName={bankNameMap[account.bankName] || account.bankName}
       />
     ));
   };

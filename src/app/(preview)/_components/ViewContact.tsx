@@ -14,9 +14,22 @@ interface Contact {
   phone: string;
 }
 
-const ViewContact = ({ payload }: { payload: Contact[] }) => {
+const ContactCard = ({ contact }: { contact: Contact }) => {
   const { isCopied, copyToClipboard } = useCopy();
 
+  return (
+    <PersonValueCard
+      relation={contact.relation}
+      name={contact.name}
+      value={contact.phone}
+      isCopied={isCopied}
+      onCopy={() => copyToClipboard(contact.phone)}
+      ariaLabel={`${contact.relation} ${contact.name}의 연락처`}
+    />
+  );
+};
+
+const ViewContact = ({ payload }: { payload: Contact[] }) => {
   if (!payload || payload.length === 0) {
     return (
       <div className="p-6 text-center">
@@ -42,15 +55,7 @@ const ViewContact = ({ payload }: { payload: Contact[] }) => {
 
       <div className="mt-2 space-y-3 p-0">
         {payload.map((contact) => (
-          <PersonValueCard
-            key={contact.relation}
-            relation={contact.relation}
-            name={contact.name}
-            value={contact.phone}
-            isCopied={isCopied}
-            onCopy={() => copyToClipboard(contact.phone)}
-            ariaLabel={`${contact.relation} ${contact.name}의 연락처`}
-          />
+          <ContactCard key={contact.relation} contact={contact} />
         ))}
       </div>
     </div>
