@@ -44,10 +44,10 @@ function createContact(
 function getParentNames(parents: CoupleSide): ParentName[] {
   const list: ParentName[] = [];
   if (parents.father?.name) {
-    list.push({ label: "아버지", name: parents.father.name });
+    list.push({ label: "아버님", name: parents.father.name });
   }
   if (parents.mother?.name) {
-    list.push({ label: "어머니", name: parents.mother.name });
+    list.push({ label: "어머님", name: parents.mother.name });
   }
   return list;
 }
@@ -63,15 +63,15 @@ export function mapCoupleInfoToInvitationProps(
   // 1. 신랑측 연락처 배열 생성
   const groomSideContacts = [
     createContact(coupleInfoData.groom, "신랑"),
-    createContact(coupleInfoData.groom.father, "신랑 아버지"),
-    createContact(coupleInfoData.groom.mother, "신랑 어머니"),
+    createContact(coupleInfoData.groom.father, "신랑측 아버님"),
+    createContact(coupleInfoData.groom.mother, "신랑측 어머님"),
   ].filter((contact): contact is Contact => !!contact);
 
   // 2. 신부측 연락처 배열 생성
   const brideSideContacts = [
     createContact(coupleInfoData.bride, "신부"),
-    createContact(coupleInfoData.bride.father, "신부 아버지"),
-    createContact(coupleInfoData.bride.mother, "신부 어머니"),
+    createContact(coupleInfoData.bride.father, "신부측 아버님"),
+    createContact(coupleInfoData.bride.mother, "신부측 어머님"),
   ].filter((contact): contact is Contact => !!contact);
 
   // 3. UI 표시에 필요한 최종 데이터 배열 조립

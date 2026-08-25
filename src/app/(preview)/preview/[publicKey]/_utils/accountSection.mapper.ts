@@ -43,15 +43,15 @@ export function mapCoupleInfoToAccountProps(
   // 1. 신랑측 계좌 정보 배열 생성
   const groomAccounts = [
     createAccountInfo(coupleInfoData.groom, "신랑"),
-    createAccountInfo(coupleInfoData.groom.father, "신랑 아버지"),
-    createAccountInfo(coupleInfoData.groom.mother, "신랑 어머니"),
+    createAccountInfo(coupleInfoData.groom.father, "신랑측 아버님"),
+    createAccountInfo(coupleInfoData.groom.mother, "신랑측 어머님"),
   ].filter((account): account is AccountInfo => !!account);
 
   // 2. 신부측 계좌 정보 배열 생성
   const brideAccounts = [
     createAccountInfo(coupleInfoData.bride, "신부"),
-    createAccountInfo(coupleInfoData.bride.father, "신부 아버지"),
-    createAccountInfo(coupleInfoData.bride.mother, "신부 어머니"),
+    createAccountInfo(coupleInfoData.bride.father, "신부측 아버님"),
+    createAccountInfo(coupleInfoData.bride.mother, "신부측 어머님"),
   ].filter((account): account is AccountInfo => !!account);
 
   return { groomAccounts, brideAccounts };
