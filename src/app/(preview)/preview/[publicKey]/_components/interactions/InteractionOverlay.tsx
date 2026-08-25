@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import type { ComponentType } from "react";
 import { useMotionValue, useReducedMotion } from "motion/react";
 import type { MotionValue } from "motion/react";
-import { BlossomInteraction } from "./BlossomInteraction";
 import { BotanicalInteraction } from "./BotanicalInteraction";
 import { MidnightInteraction } from "./MidnightInteraction";
 import { DefaultInteraction } from "./DefaultInteraction";
@@ -14,8 +13,13 @@ export interface ThemeInteractionProps {
   y: MotionValue<number>;
 }
 
+// blossom은 커서 반응형 고정 위치 이모지 인터랙션을 두지 않는다 — 오버레이가
+// fixed inset-0(브라우저 뷰포트 전체) 기준이라 base 위치(%)가 카드 폭이 아니라
+// 창 전체 기준으로 계산돼, 카드보다 넓은 데스크톱 화면에서는 카드 밖 여백에
+// 렌더돼 사실상 안 보였다. ThemeAmbience의 낙하 애니메이션만으로 표현하고,
+// 여기선 default(spotlight)로 폴백한다. botanical은 같은 함정을 피해 고정 %
+// 위치 없이 실제 커서 좌표(x, y)만으로 그려지는 BotanicalInteraction을 쓴다.
 const themeInteractionMap: Record<string, ComponentType<ThemeInteractionProps>> = {
-  blossom: BlossomInteraction,
   botanical: BotanicalInteraction,
   midnight: MidnightInteraction,
   default: DefaultInteraction,
