@@ -1,6 +1,6 @@
-# AGENTS.md — src/ui/store/
+# AGENTS.md — src/ui/stores/
 
-> Last updated: 2026-07-29
+> Last updated: 2026-08-26
 > 이 폴더는 프로젝트 고유 선택 — 전역 클라이언트 상태(Zustand) 레이어.
 > **목표 설계, 마이그레이션 진행 전** — 아래 Critical Convention은 공식 가이드 기준 목표 아키텍처다. 현재 코드는 아직 이 형태가 아니다(Gotchas 참고). 문서를 먼저 확정하고 이 문서 기준으로 코드를 리팩토링한다.
 
@@ -11,7 +11,7 @@ Zustand(`node_modules/zustand`, v5) 기반 앱 전체 범위 클라이언트 상
 ## Structure (목표)
 
 ```
-src/ui/store/
+src/ui/stores/
 ├── index.ts                    # 배럴 — export *
 ├── app.store.ts                 # createAppStore — 아래 슬라이스 전부 spread해 결합, persist는 여기 한 곳에서만(order 슬라이스만 partialize)
 ├── provider.tsx                 # "use client" — useState(() => createAppStore())로 요청/마운트당 1개 생성, Context.Provider

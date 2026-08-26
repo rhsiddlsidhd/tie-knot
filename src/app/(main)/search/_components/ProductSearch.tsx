@@ -7,7 +7,7 @@ import { useDebouncedValue, useProductSearch } from "@/ui/hooks";
 import { TypographyMuted } from "@/ui/components/atoms";
 import { Spinner, Alert } from "@/ui/components/molecules";
 import { ProductGrid } from "@/ui/components/organisms";
-import { initialFilterState } from "@/ui/stores/context/productFilter";
+import { initialFilterState } from "@/ui/context/productFilter";
 
 // 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/AGENTS.md)
 const SEARCH_DEBOUNCE_MS = 300;

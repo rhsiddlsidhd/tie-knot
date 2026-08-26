@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { initialFilterState } from "@/ui/stores/context/productFilter";
+import { initialFilterState } from "@/ui/context/productFilter";
 import type { Product } from "@/core/domain";
 import { ProductGrid } from "./ProductGrid";
 

@@ -10,7 +10,7 @@ import { useSuggestProducts } from "@/ui/hooks";
 import type { Dispatch} from "react";
 import { useState } from "react";
 
-import type { ProductFilterState, ProductFilterAction } from "@/ui/stores/context/productFilter";
+import type { ProductFilterState, ProductFilterAction } from "@/ui/context/productFilter";
 import type { Product, PremiumFeature } from "@/core/domain";
 
 import { getSubCategoryOptions } from "@/core/utils";

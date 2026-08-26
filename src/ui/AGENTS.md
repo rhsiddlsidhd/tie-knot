@@ -1,10 +1,10 @@
 # AGENTS.md — src/ui/
 
-> Last updated: 2026-07-29
+> Last updated: 2026-08-26
 
 ## Overview
 
-`components`/`hooks`/`store`/`context`/`lib`/`utils`/`fetcher.ts` — "누가 import하는가" 기준으로 브라우저에서만 도는 코드를 모은 최상위 폴더.
+`components`/`hooks`/`stores`/`context`/`constants`/`utils`/`fetcher.ts` — "누가 import하는가" 기준으로 브라우저에서만 도는 코드를 모은 최상위 폴더. 외부 브라우저 SDK 연동은 `src/adapters/browser/{service}/`에 둔다.
 
 ## Key Files
 
@@ -18,10 +18,10 @@
 src/ui/
 ├── components/   # atoms/molecules/organisms/templates — src/ui/components/AGENTS.md
 ├── hooks/        # 프로젝트 자체 로직 커스텀 훅(외부 SDK 결합 훅 제외) — src/ui/hooks/AGENTS.md
-├── store/        # 전역 클라이언트 상태(Zustand) — src/ui/store/AGENTS.md
+├── stores/       # 전역 클라이언트 상태(Zustand) — src/ui/stores/AGENTS.md
 ├── context/      # 특정 도메인/UI 트리 한정 React Context 상태 — src/ui/context/AGENTS.md
-├── lib/          # 브라우저 전용 외부 연동(kakao/cloudinary) + cn — src/ui/lib/AGENTS.md
-├── utils/        # 브라우저 전용 side-effect 유틸, 특정 외부 SDK는 안 감쌈(감싸면 lib/) — src/ui/utils/AGENTS.md
+├── constants/    # 2개 이상 UI 소비처가 공유하는 브라우저 전용 상수(현재 코드 없음)
+├── utils/        # 브라우저 전용 side-effect 유틸 목표 위치(아직 코드 없음, 외부 SDK는 adapters/browser/ 소관)
 └── fetcher.ts    # Key Files 참고.
 ```
 

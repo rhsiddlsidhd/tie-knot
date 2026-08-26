@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 
 import type { Product } from "@/core/domain";
-import type { ProductFilterState } from "@/ui/stores/context/productFilter";
+import type { ProductFilterState } from "@/ui/context/productFilter";
 import { getChosung } from "@/core/utils";
 
 const useVisibleProducts = ({

@@ -4,7 +4,7 @@ import {
   initialFilterState,
   ProductFilterProvider,
   useProductFilter,
-} from "@/ui/stores/context/productFilter";
+} from "@/ui/context/productFilter";
 import React from "react";
 import { ProductFilters, ProductGrid } from "@/ui/components/organisms";
 import type { Product, PremiumFeature } from "@/core/domain";
