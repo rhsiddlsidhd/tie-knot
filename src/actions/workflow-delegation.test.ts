@@ -7,6 +7,7 @@ const services = vi.hoisted(() => ({
   completePaymentService: vi.fn(),
   deleteProductAsAdminService: vi.fn(),
   restoreProductAsAdminService: vi.fn(),
+  permanentlyDeleteProductAsAdminService: vi.fn(),
   toggleProductLikeForCurrentUserService: vi.fn(),
 }));
 const revalidatePath = vi.hoisted(() => vi.fn());
@@ -19,6 +20,7 @@ import { signupUser } from "./signupUser";
 import { completePayment } from "./completePayment";
 import { deleteProduct } from "./deleteProduct";
 import { restoreProduct } from "./restoreProduct";
+import { permanentlyDeleteProduct } from "./permanentlyDeleteProduct";
 import { toggleProductLike } from "./toggleProductLike";
 
 const formData = (data: Record<string, string>) => {
@@ -91,6 +93,18 @@ describe("Action 유스케이스 위임", () => {
 
     expect(services.restoreProductAsAdminService).toHaveBeenCalledWith("product-1");
     expect(revalidatePath).toHaveBeenCalledTimes(2);
+    expect(result.success).toBe(true);
+  });
+
+  it("상품 영구 삭제 성공 후 관련 캐시를 갱신한다", async () => {
+    services.permanentlyDeleteProductAsAdminService.mockResolvedValue(undefined);
+
+    const result = await permanentlyDeleteProduct("product-1");
+
+    expect(services.permanentlyDeleteProductAsAdminService).toHaveBeenCalledWith(
+      "product-1",
+    );
+    expect(revalidatePath).toHaveBeenCalledTimes(1);
     expect(result.success).toBe(true);
   });
 

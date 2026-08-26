@@ -1,5 +1,5 @@
 "use client";
-import { deleteProduct, restoreProduct } from "@/actions";
+import { deleteProduct, permanentlyDeleteProduct, restoreProduct } from "@/actions";
 import type { ProductTableRowProps } from "./ProductTableRow";
 import { Button } from "@/ui/components/atoms";
 import { useAdminModalStore } from "@/ui/stores";
@@ -13,6 +13,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
+  const [isPurging, setIsPurging] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm(`"${product.title}" 상품을 삭제하시겠습니까?`)) {
@@ -62,6 +63,34 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
     }
   };
 
+  const handlePurge = async () => {
+    if (
+      !confirm(
+        `"${product.title}" 상품을 영구 삭제하시겠습니까? 이미지 포함 모든 데이터가 사라지며 되돌릴 수 없습니다.`,
+      )
+    ) {
+      return;
+    }
+
+    setIsPurging(true);
+
+    try {
+      const result = await permanentlyDeleteProduct(product._id);
+
+      if (result.success === false) {
+        toast.error(result.error.message || "영구 삭제에 실패했습니다.");
+        return;
+      }
+
+      toast.success(result.data.message);
+      router.refresh();
+    } catch {
+      toast.error("영구 삭제 중 오류가 발생했습니다.");
+    } finally {
+      setIsPurging(false);
+    }
+  };
+
   if (view === "trash") {
     return (
       <div className="flex items-center justify-center gap-2">
@@ -69,10 +98,19 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
           size="sm"
           variant="outline"
           onClick={handleRestore}
-          disabled={isRestoring}
+          disabled={isRestoring || isPurging}
         >
           <RotateCcw className="h-4 w-4" />
           복구
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handlePurge}
+          disabled={isRestoring || isPurging}
+        >
+          <Trash2 className="h-4 w-4" />
+          영구 삭제
         </Button>
       </div>
     );

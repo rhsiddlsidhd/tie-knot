@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { destroy } = vi.hoisted(() => ({ destroy: vi.fn() }));
-vi.mock("cloudinary", () => ({ v2: { uploader: { destroy } } }));
+const { destroy, config } = vi.hoisted(() => ({ destroy: vi.fn(), config: vi.fn() }));
+vi.mock("cloudinary", () => ({ v2: { config, uploader: { destroy } } }));
 
 import { deleteProductAsset } from "./cleanup";
 

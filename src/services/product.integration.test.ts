@@ -1,9 +1,13 @@
-import { describe, it, expect, beforeEach, afterAll } from "vitest";
+import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { AppError } from "@/core/domain";
 import { ProductModel, InvitationProductModel } from "@/models";
+
+const { deleteProductAsset } = vi.hoisted(() => ({ deleteProductAsset: vi.fn() }));
+vi.mock("@/adapters/server/cloudinary/cleanup", () => ({ deleteProductAsset }));
+
 import {
   createProductService,
   getProductService,
@@ -14,6 +18,7 @@ import {
   updateProductService,
   deleteProductService,
   restoreProductService,
+  permanentlyDeleteProductService,
   updateProductLikeService,
   searchProductsService,
   getProductQuantityBoundsService,
@@ -52,6 +57,7 @@ describe("product", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();
+    deleteProductAsset.mockReset().mockResolvedValue(undefined);
   });
 
   afterAll(async () => {
@@ -634,6 +640,74 @@ describe("product", () => {
       const result = await restoreProductService("not-a-valid-id");
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe("permanentlyDeleteProductService", () => {
+    it("소프트 삭제된 상품을 영구 삭제하면 true를 리턴하고 문서를 지우고 Cloudinary 이미지를 정리한다", async () => {
+      const input = buildProductInput({
+        title: "영구삭제될상품",
+        thumbnail:
+          "https://res.cloudinary.com/demo/image/upload/v1690000000/products/thumbnails/thumb1.jpg",
+        images: [
+          "https://res.cloudinary.com/demo/image/upload/v1690000000/products/images/img1.jpg",
+        ],
+      });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      await deleteProductService(saved!._id.toString());
+
+      const result = await permanentlyDeleteProductService(saved!._id.toString());
+
+      expect(result).toBe(true);
+      expect(await ProductModel.findById(saved!._id).lean()).toBeNull();
+      expect(deleteProductAsset).toHaveBeenCalledWith("products/thumbnails/thumb1");
+      expect(deleteProductAsset).toHaveBeenCalledWith("products/images/img1");
+    });
+
+    it("삭제되지 않은(deletedAt이 null인) 상품이면 false를 리턴하고 문서/이미지를 건드리지 않는다", async () => {
+      const input = buildProductInput({ title: "정상상품" });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+
+      const result = await permanentlyDeleteProductService(saved!._id.toString());
+
+      expect(result).toBe(false);
+      expect(await ProductModel.findById(saved!._id).lean()).not.toBeNull();
+      expect(deleteProductAsset).not.toHaveBeenCalled();
+    });
+
+    it("존재하지 않는 id면 false를 리턴한다", async () => {
+      const missingId = new mongoose.Types.ObjectId().toString();
+
+      const result = await permanentlyDeleteProductService(missingId);
+
+      expect(result).toBe(false);
+    });
+
+    it("id 형식이 잘못되면 false를 리턴한다", async () => {
+      const result = await permanentlyDeleteProductService("not-a-valid-id");
+
+      expect(result).toBe(false);
+    });
+
+    it("Cloudinary 정리가 실패하면 AppError로 전파하고 문서를 지우지 않는다", async () => {
+      const input = buildProductInput({
+        title: "정리실패상품",
+        thumbnail:
+          "https://res.cloudinary.com/demo/image/upload/v1690000000/products/thumbnails/broken.jpg",
+      });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      await deleteProductService(saved!._id.toString());
+      deleteProductAsset.mockRejectedValue(
+        new AppError("EXTERNAL_SERVICE", "이미지 정리에 실패했습니다."),
+      );
+
+      await expect(
+        permanentlyDeleteProductService(saved!._id.toString()),
+      ).rejects.toMatchObject({ category: "EXTERNAL_SERVICE" });
+      expect(await ProductModel.findById(saved!._id).lean()).not.toBeNull();
     });
   });
 
