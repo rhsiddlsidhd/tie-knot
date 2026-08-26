@@ -1,6 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, TypographyMuted } from "@/ui/components/atoms";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  TypographyMuted,
+} from "@/ui/components/atoms";
 import { ImageField, FormField } from "@/ui/components/molecules";
 
 import type { useImageList } from "@/ui/hooks";
@@ -23,6 +29,7 @@ export function ImagesSection({ thumbnail, gallery }: ImagesSectionProps) {
           </TypographyMuted>
           <ImageField
             id="thumbnail-upload"
+            folder="thumbnailImg"
             items={thumbnail.items}
             onAdd={thumbnail.add}
             onRemove={thumbnail.remove}
@@ -36,6 +43,7 @@ export function ImagesSection({ thumbnail, gallery }: ImagesSectionProps) {
           </TypographyMuted>
           <ImageField
             id="gallery-upload"
+            folder="galleryImg"
             items={gallery.items}
             onAdd={gallery.add}
             onRemove={gallery.remove}

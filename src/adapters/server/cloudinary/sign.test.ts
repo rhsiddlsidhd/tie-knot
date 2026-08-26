@@ -27,4 +27,21 @@ describe("signUploadRequest", () => {
       process.env.CLOUDINARY_API_SECRET,
     );
   });
+
+  it("위젯이 전달한 크롭 파라미터와 timestamp를 그대로 서명한다", () => {
+    const paramsToSign = {
+      folder: "products/images",
+      timestamp: 1234567890,
+      source: "uw",
+      custom_coordinates: "1,2,3,4",
+    };
+
+    const result = signUploadRequest("products/images", paramsToSign);
+
+    expect(cloudinary.utils.api_sign_request).toHaveBeenCalledWith(
+      paramsToSign,
+      process.env.CLOUDINARY_API_SECRET,
+    );
+    expect(result.timestamp).toBe(1234567890);
+  });
 });

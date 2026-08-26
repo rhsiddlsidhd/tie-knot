@@ -1,8 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { productSchema } from "./product.schema";
 
-const buildValidThumbnail = () => new File(["x"], "thumb.png", { type: "image/png" });
-
 const buildValidInput = (overrides?: Record<string, unknown>) => ({
   title: "봄맞이 청첩장",
   description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
@@ -12,7 +10,7 @@ const buildValidInput = (overrides?: Record<string, unknown>) => ({
   isPremium: false,
   isFeatured: false,
   priority: 0,
-  thumbnail: buildValidThumbnail(),
+  thumbnail: "https://cdn.example.com/thumb.png",
   ...overrides,
 });
 
@@ -24,7 +22,9 @@ describe("productSchema", () => {
   });
 
   it("category가 invitation이 아니면 실패한다 (business-card는 더 이상 허용되지 않음)", () => {
-    const result = productSchema.safeParse(buildValidInput({ category: "business-card" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ category: "business-card" }),
+    );
 
     expect(result.success).toBe(false);
   });
@@ -39,13 +39,17 @@ describe("productSchema", () => {
   });
 
   it("theme이 blossom/default가 아니면 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ theme: "sunset" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ theme: "sunset" }),
+    );
 
     expect(result.success).toBe(false);
   });
 
   it("카테고리에 허용되지 않는 subCategory면 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ subCategory: "store" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ subCategory: "store" }),
+    );
 
     expect(result.success).toBe(false);
   });
@@ -76,7 +80,9 @@ describe("productSchema", () => {
   });
 
   it("description이 10자 미만이면 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ description: "짧음" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ description: "짧음" }),
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -87,16 +93,22 @@ describe("productSchema", () => {
   });
 
   it("subCategory가 비어있으면 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ subCategory: "" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ subCategory: "" }),
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe("서브 카테고리를 선택해주세요.");
+      expect(result.error.issues[0].message).toBe(
+        "서브 카테고리를 선택해주세요.",
+      );
     }
   });
 
   it("허용되지 않는 subCategory면 전용 안내 메시지를 반환한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ subCategory: "store" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ subCategory: "store" }),
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -112,7 +124,9 @@ describe("productSchema", () => {
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe("가격은 0 이상이어야 합니다.");
+      expect(result.error.issues[0].message).toBe(
+        "가격은 0 이상이어야 합니다.",
+      );
     }
   });
 
@@ -152,7 +166,9 @@ describe("productSchema", () => {
     );
     expect(overLimit.success).toBe(false);
     if (!overLimit.success) {
-      expect(overLimit.error.issues[0].message).toBe("할인율은 100% 이하여야 합니다.");
+      expect(overLimit.error.issues[0].message).toBe(
+        "할인율은 100% 이하여야 합니다.",
+      );
     }
   });
 
@@ -192,7 +208,9 @@ describe("productSchema", () => {
   });
 
   it("status가 허용된 값이 아니면 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ status: "unknown" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ status: "unknown" }),
+    );
 
     expect(result.success).toBe(false);
   });
@@ -204,27 +222,28 @@ describe("productSchema", () => {
   });
 
   it("thumbnail 문자열이 유효한 URL이 아니면 URL 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ thumbnail: "not-a-file" }));
+    const result = productSchema.safeParse(
+      buildValidInput({ thumbnail: "not-a-file" }),
+    );
 
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0].message).toBe("유효한 썸네일 URL이어야 합니다.");
-    }
-  });
-
-  it("thumbnail 파일 크기가 0이면 안내 메시지와 함께 실패한다", () => {
-    const emptyFile = new File([], "empty.png", { type: "image/png" });
-    const result = productSchema.safeParse(buildValidInput({ thumbnail: emptyFile }));
-
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0].message).toBe("썸네일 이미지를 등록해주세요.");
+      expect(result.error.issues[0].message).toBe(
+        "유효한 썸네일 URL이어야 합니다.",
+      );
     }
   });
 
   it("수정 흐름의 기존 thumbnail URL은 허용하고 잘못된 URL은 거부한다", () => {
-    expect(productSchema.safeParse(buildValidInput({ thumbnail: "https://cdn.example.com/thumb.png" })).success).toBe(true);
-    expect(productSchema.safeParse(buildValidInput({ thumbnail: "not-a-url" })).success).toBe(false);
+    expect(
+      productSchema.safeParse(
+        buildValidInput({ thumbnail: "https://cdn.example.com/thumb.png" }),
+      ).success,
+    ).toBe(true);
+    expect(
+      productSchema.safeParse(buildValidInput({ thumbnail: "not-a-url" }))
+        .success,
+    ).toBe(false);
   });
 
   it("isPremium이고 featureIds를 아예 생략하면 실패한다 (옵션을 선택해주세요)", () => {
@@ -241,12 +260,12 @@ describe("productSchema", () => {
 
   // ── REQ-2/REQ-3: images/minQuantity/maxQuantity ──────────────────────
   describe("images/minQuantity/maxQuantity", () => {
-    it("images/minQuantity/maxQuantity를 생략해도 통과한다 (default: {existing:[],newFiles:[]}/1/0, invitation)", () => {
+    it("images/minQuantity/maxQuantity를 생략해도 통과한다 (default: []/1/0, invitation)", () => {
       const result = productSchema.safeParse(buildValidInput());
 
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.images).toEqual({ existing: [], newFiles: [] });
+        expect(result.data.images).toEqual([]);
         expect(result.data.minQuantity).toBe(1);
         expect(result.data.maxQuantity).toBe(0);
       }
@@ -267,36 +286,35 @@ describe("productSchema", () => {
 
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("상세 이미지를 1장 이상 등록해주세요.");
+        expect(result.error.issues[0].message).toBe(
+          "상세 이미지를 1장 이상 등록해주세요.",
+        );
         expect(result.error.issues[0].path).toEqual(["images"]);
       }
     });
 
-    it("물리 상품은 existing URL만 있어도(수정 흐름, 신규 파일 없음) 통과한다", () => {
+    it("물리 상품은 업로드된 URL이 있으면 통과한다", () => {
       const result = productSchema.safeParse(
         buildValidInput({
           category: "favor",
           subCategory: "candle",
-          images: { existing: ["https://example.com/a.jpg"], newFiles: [] },
+          images: ["https://example.com/a.jpg"],
         }),
       );
 
       expect(result.success).toBe(true);
     });
 
-    it("물리 상품은 newFiles만 있어도(신규 등록) 통과한다", () => {
+    it("물리 상품은 유효하지 않은 이미지 URL이면 실패한다", () => {
       const result = productSchema.safeParse(
         buildValidInput({
           category: "accessory",
           subCategory: "ring-pillow",
-          images: {
-            existing: [],
-            newFiles: [new File(["x"], "a.jpg", { type: "image/jpeg" })],
-          },
+          images: ["not-a-url"],
         }),
       );
 
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
     });
 
     it("maxQuantity가 minQuantity보다 작으면 실패한다", () => {
@@ -330,19 +348,25 @@ describe("productSchema", () => {
     });
 
     it("minQuantity가 0이면 실패한다 (1 이상)", () => {
-      const result = productSchema.safeParse(buildValidInput({ minQuantity: 0 }));
+      const result = productSchema.safeParse(
+        buildValidInput({ minQuantity: 0 }),
+      );
 
       expect(result.success).toBe(false);
     });
 
     it("minQuantity가 정수가 아니면 실패한다", () => {
-      const result = productSchema.safeParse(buildValidInput({ minQuantity: 1.5 }));
+      const result = productSchema.safeParse(
+        buildValidInput({ minQuantity: 1.5 }),
+      );
 
       expect(result.success).toBe(false);
     });
 
     it("maxQuantity가 음수면 실패한다", () => {
-      const result = productSchema.safeParse(buildValidInput({ maxQuantity: -1 }));
+      const result = productSchema.safeParse(
+        buildValidInput({ maxQuantity: -1 }),
+      );
 
       expect(result.success).toBe(false);
     });

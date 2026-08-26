@@ -10,12 +10,15 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/actions", () => ({ createProduct: vi.fn() }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 vi.mock("@/ui/hooks", () => ({
-  usePremiumFeature: () => ({ premiumFeatures: [] as unknown[], loading: false }),
+  usePremiumFeature: () => ({
+    premiumFeatures: [] as unknown[],
+    loading: false,
+  }),
   useImageList: () => ({
     items: [] as unknown[],
     add: vi.fn(),
     remove: vi.fn(),
-    getPayload: () => ({ existing: [] as string[], newFiles: [] as File[] }),
+    getUrls: (): string[] => [],
   }),
 }));
 

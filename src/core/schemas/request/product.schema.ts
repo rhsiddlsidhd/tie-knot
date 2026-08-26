@@ -29,24 +29,10 @@ export const productSchema = z
       ])
       .optional(),
     status: z.enum(["active", "inactive", "soldOut", "deleted"]).optional(),
-    // 생성은 새 File, 수정은 유지할 기존 Cloudinary URL을 받는다. create/update
-    // action이 각각 FormData를 다시 구성하므로 client 값은 서버에서 재검증된다.
-    thumbnail: z.union([
-      z.instanceof(File).refine((file) => file.size > 0, {
-        message: "썸네일 이미지를 등록해주세요.",
-      }),
-      z.string().url("유효한 썸네일 URL이어야 합니다."),
-    ], { error: "썸네일 이미지를 등록해주세요." }),
+    thumbnail: z.string().url("유효한 썸네일 URL이어야 합니다."),
 
     // ── 신규 (REQ-2 / REQ-3) ─────────────────────────────
-    // 업로드 이전에 검증하므로 "유지할 기존 URL"과 "신규 파일"을 같이 받는다.
-    // 형태는 request/coupleInfo.schema.ts:53-70 (coupleInfoClientSchema) 선례 그대로.
-    images: z
-      .object({
-        existing: z.array(z.string().url("유효한 URL이어야 합니다.")).default([]),
-        newFiles: z.array(z.instanceof(File)).default([]),
-      })
-      .default({ existing: [], newFiles: [] }),
+    images: z.array(z.string().url("유효한 URL이어야 합니다.")).default([]),
     minQuantity: z
       .number()
       .int("최소 구매 수량은 정수여야 합니다.")
@@ -87,13 +73,10 @@ export const productSchema = z
   )
   // invitation은 previewUrl이 상세 확인을 대신하므로 images 없이도 판매 성립.
   // 물리 상품 4종(favor/accessory/guestbook/ceremony)은 최소 1장 필요.
-  // 수정 흐름(이미지 안 건드림)을 위해 "유지 URL + 신규 파일" 합계로 센다.
-  .refine(
-    (data) =>
-      data.category === "invitation" ||
-      data.images.existing.length + data.images.newFiles.length > 0,
-    { message: "상세 이미지를 1장 이상 등록해주세요.", path: ["images"] },
-  )
+  .refine((data) => data.category === "invitation" || data.images.length > 0, {
+    message: "상세 이미지를 1장 이상 등록해주세요.",
+    path: ["images"],
+  })
   // maxQuantity 0(무제한)은 하한 비교 대상이 아니다.
   .refine(
     (data) => data.maxQuantity === 0 || data.maxQuantity >= data.minQuantity,

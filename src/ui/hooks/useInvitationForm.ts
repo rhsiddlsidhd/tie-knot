@@ -35,8 +35,8 @@ export function useInvitationForm() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const imagePayload = {
-      thumbnailImages: thumbnail.getPayload(),
-      galleryImages: gallery.getPayload(),
+      thumbnailImages: thumbnail.getUrls(),
+      galleryImages: gallery.getUrls(),
     };
 
     const result = await upload(formData, imagePayload);

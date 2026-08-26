@@ -1,75 +1,32 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import type { ImageListPayload } from "@/core/domain";
+import { useState } from "react";
 
-export type ImageItem =
-  | { type: "existing"; id: string; preview: string; originalUrl: string }
-  | { type: "new"; id: string; preview: string; file: File };
+export type ImageItem = { id: string; preview: string; url: string };
 
-const toExistingItem = (url: string): ImageItem => ({
+const toImageItem = (url: string): ImageItem => ({
   id: crypto.randomUUID(),
-  type: "existing",
   preview: url,
-  originalUrl: url,
+  url,
 });
-
-const makeNewItem = (file: File): ImageItem => ({
-  id: crypto.randomUUID(),
-  type: "new",
-  preview: URL.createObjectURL(file),
-  file,
-});
-
-const revokeBlobUrl = (item: ImageItem) => {
-  if (item.type === "new" && item.preview.startsWith("blob:")) {
-    URL.revokeObjectURL(item.preview);
-  }
-};
 
 export function useImageList(defaultUrls?: string[]) {
   const [items, setItems] = useState<ImageItem[]>([]);
   const [initialized, setInitialized] = useState(false);
 
-  const itemsRef = useRef(items);
-  useEffect(() => {
-    itemsRef.current = items;
-  }, [items]);
-
   // defaultUrls가 준비되면 한 번만 초기화 (SWR 비동기 로드 대응)
   if (!initialized && defaultUrls?.length) {
     setInitialized(true);
-    setItems(defaultUrls.map(toExistingItem));
+    setItems(defaultUrls.map(toImageItem));
   }
 
-  // 언마운트 시 남아있는 blob URL 해제
-  useEffect(() => {
-    return () => {
-      itemsRef.current.forEach(revokeBlobUrl);
-    };
-  }, []);
-
-  const add = (files: File[]) =>
-    setItems((prev) => [...prev, ...files.map(makeNewItem)]);
+  const add = (urls: string[]) =>
+    setItems((prev) => [...prev, ...urls.map(toImageItem)]);
 
   const remove = (id: string) =>
-    setItems((prev) => {
-      const target = prev.find((item) => item.id === id);
-      if (target) revokeBlobUrl(target);
-      return prev.filter((item) => item.id !== id);
-    });
+    setItems((prev) => prev.filter((item) => item.id !== id));
 
-  const getPayload = (): ImageListPayload => ({
-    existing: items
-      .filter(
-        (i): i is Extract<ImageItem, { type: "existing" }> =>
-          i.type === "existing",
-      )
-      .map((i) => i.originalUrl),
-    newFiles: items
-      .filter((i): i is Extract<ImageItem, { type: "new" }> => i.type === "new")
-      .map((i) => i.file),
-  });
+  const getUrls = (): string[] => items.map((item) => item.url);
 
-  return { items, add, remove, getPayload };
+  return { items, add, remove, getUrls };
 }

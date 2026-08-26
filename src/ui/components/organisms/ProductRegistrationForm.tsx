@@ -2,14 +2,25 @@
 
 import type React from "react";
 import { useState } from "react";
-import Image from "next/image";
-import { UploadCloud, X } from "lucide-react";
 import type { PremiumFeature } from "@/core/domain";
 import { Alert, ImageField, SelectField } from "@/ui/components/molecules";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Input, Button, Textarea, Switch, Checkbox, Label, TypographyMuted, TypographyH4 } from "@/ui/components/atoms";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+  Button,
+  Textarea,
+  Switch,
+  Checkbox,
+  Label,
+  TypographyMuted,
+  TypographyH4,
+} from "@/ui/components/atoms";
 
-import { useImageList, type ImageItem } from "@/ui/hooks";
-
+import { useImageList } from "@/ui/hooks";
 
 import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils";
 import { getFieldError } from "@/core/utils";
@@ -33,54 +44,21 @@ export function ProductRegistrationForm({
   onCancel,
 }: ProductRegistrationFormProps) {
   const [isPremium, setIsPremium] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>("invitation");
+  const [selectedCategory, setSelectedCategory] =
+    useState<ProductCategory>("invitation");
   const [isFeature, setIsFeature] = useState(false);
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
-  const [previewFile, setPreviewFile] = useState<File | null>(null);
-  const [previewPreview, setPreviewPreview] = useState<string | null>(null);
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
   const [discountType, setDiscountType] = useState<"rate" | "amount">("rate");
   const [priceInputError, setPriceInputError] = useState<string | null>(null);
   const [discountInputError, setDiscountInputError] = useState<string | null>(null);
 
+  const thumbnail = useImageList();
+  const preview = useImageList();
   const images = useImageList();
   // 등록 폼 초기값 1 — 서버 defaultValue와 일치.
   const [minQuantity, setMinQuantity] = useState<number>(1);
   // 등록 폼 초기값 true — mongoose default(maxQuantity: 0)와 일치.
   const [isUnlimitedMax, setIsUnlimitedMax] = useState(true);
-
-  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setThumbnailFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setThumbnail(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handlePreviewUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPreviewFile(file);
-    const reader = new FileReader();
-    reader.onload = (e) => setPreviewPreview(e.target?.result as string);
-    reader.readAsDataURL(file);
-  };
-
-  const handleRemoveThumbnail = () => {
-    setThumbnail(null);
-    setThumbnailFile(null);
-    const input = document.getElementById("thumbnail-input") as HTMLInputElement;
-    if (input) input.value = "";
-  };
-
-  const handleRemovePreview = () => {
-    setPreviewFile(null);
-    setPreviewPreview(null);
-    const input = document.getElementById("preview-input") as HTMLInputElement;
-    if (input) input.value = "";
-  };
 
   const handleFeatureChange = (checked: boolean, id: string) => {
     setSelectedFeatureIds((prev) =>
@@ -363,92 +341,47 @@ export function ProductRegistrationForm({
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
-                {thumbnail ? (
-                  <div className="border-border relative aspect-video w-full overflow-hidden rounded-lg border">
-                    <Image src={thumbnail} alt="Thumbnail" fill className="object-cover" />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      onClick={handleRemoveThumbnail}
-                      className="absolute top-2 right-2 h-6 w-6"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <label
-                    htmlFor="thumbnail-input"
-                    className="border-border bg-accent/20 hover:bg-accent/40 flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors"
-                  >
-                    <UploadCloud className="text-muted-foreground mb-2 h-8 w-8" />
-                    <TypographyMuted className="mb-1">클릭하여 이미지 업로드</TypographyMuted>
-                    <TypographyMuted>PNG, JPG, WEBP (최대 5MB)</TypographyMuted>
-                  </label>
-                )}
-                <input id="thumbnail-input" type="file" className="hidden" accept="image/*" onChange={handleThumbnailUpload} />
+                <ImageField
+                  id="thumbnail-input"
+                  folder="products/thumbnails"
+                  items={thumbnail.items}
+                  onAdd={thumbnail.add}
+                  onRemove={thumbnail.remove}
+                  maxCount={1}
+                />
                 <input
-                  type="file"
+                  type="hidden"
                   name="thumbnail"
-                  className="hidden"
-                  ref={(input) => {
-                    if (input && thumbnailFile) {
-                      const dataTransfer = new DataTransfer();
-                      dataTransfer.items.add(thumbnailFile);
-                      input.files = dataTransfer.files;
-                    }
-                  }}
+                  value={thumbnail.getUrls()[0] ?? ""}
                 />
                 {thumbnailError && <Alert type="error">{thumbnailError}</Alert>}
               </div>
             </CardContent>
           </Card>
 
-          {/* 미리보기 URL — invitation 전용(REQ-6). hidden file input(DataTransfer ref)까지
-              통째로 조건부 렌더한다 — ref가 살아있으면 언마운트 후에도 파일이 전송될 수 있다. */}
+          {/* 미리보기 URL — invitation 전용(REQ-6). */}
           {selectedCategory === "invitation" && (
             <Card>
               <CardHeader>
                 <CardTitle>미리보기 이미지</CardTitle>
-                <CardDescription>상품 상세 페이지에 표시될 미리보기 이미지입니다.</CardDescription>
+                <CardDescription>
+                  상품 상세 페이지에 표시될 미리보기 이미지입니다.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
-                  {previewPreview ? (
-                    <div className="border-border relative aspect-video w-full overflow-hidden rounded-lg border">
-                      <Image src={previewPreview} alt="Preview" fill className="object-cover" />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        onClick={handleRemovePreview}
-                        className="absolute top-2 right-2 h-6 w-6"
-                      >
-                        <X className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <label
-                      htmlFor="preview-input"
-                      className="border-border bg-accent/20 hover:bg-accent/40 flex aspect-video w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors"
-                    >
-                      <UploadCloud className="text-muted-foreground mb-2 h-8 w-8" />
-                      <TypographyMuted className="mb-1">클릭하여 이미지 업로드</TypographyMuted>
-                      <TypographyMuted>선택사항</TypographyMuted>
-                    </label>
-                  )}
-                  <input id="preview-input" type="file" className="hidden" accept="image/*" onChange={handlePreviewUpload} />
+                  <ImageField
+                    id="preview-input"
+                    folder="products/previews"
+                    items={preview.items}
+                    onAdd={preview.add}
+                    onRemove={preview.remove}
+                    maxCount={1}
+                  />
                   <input
-                    type="file"
+                    type="hidden"
                     name="previewUrl"
-                    className="hidden"
-                    ref={(input) => {
-                      if (input && previewFile) {
-                        const dataTransfer = new DataTransfer();
-                        dataTransfer.items.add(previewFile);
-                        input.files = dataTransfer.files;
-                      }
-                    }}
+                    value={preview.getUrls()[0] ?? ""}
                   />
                 </div>
               </CardContent>
@@ -470,42 +403,24 @@ export function ProductRegistrationForm({
             <CardContent>
               <ImageField
                 id="images-upload"
+                folder="products/images"
                 items={images.items}
                 onAdd={images.add}
                 onRemove={images.remove}
               />
-              <input
-                type="file"
-                name="images"
-                multiple
-                className="hidden"
-                ref={(input) => {
-                  if (input) {
-                    const dataTransfer = new DataTransfer();
-                    images.items
-                      .filter(
-                        (item): item is Extract<ImageItem, { type: "new" }> =>
-                          item.type === "new",
-                      )
-                      .forEach((item) => dataTransfer.items.add(item.file));
-                    input.files = dataTransfer.files;
-                  }
-                }}
-              />
-              {images.items
-                .filter(
-                  (item): item is Extract<ImageItem, { type: "existing" }> =>
-                    item.type === "existing",
-                )
-                .map((item) => (
-                  <input
-                    key={item.id}
-                    type="hidden"
-                    name="currentImages"
-                    value={item.originalUrl}
-                  />
-                ))}
-              {imagesError && <Alert type="error" className="mt-2">{imagesError}</Alert>}
+              {images.items.map((item) => (
+                <input
+                  key={item.id}
+                  type="hidden"
+                  name="images"
+                  value={item.url}
+                />
+              ))}
+              {imagesError && (
+                <Alert type="error" className="mt-2">
+                  {imagesError}
+                </Alert>
+              )}
             </CardContent>
           </Card>
 

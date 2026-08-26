@@ -2,19 +2,37 @@
 
 import type React from "react";
 import { useActionState, useEffect, useState } from "react";
-import { UploadCloud, X } from "lucide-react";
 import { updateProduct } from "@/actions";
 import type { Product } from "@/services";
-import { Alert, ImageField, SelectField, Spinner, CloudImage } from "@/ui/components/molecules";
-import { Input, Button, Textarea, Switch, Checkbox, Label, TypographyH4, TypographyMuted } from "@/ui/components/atoms";
+import {
+  Alert,
+  ImageField,
+  SelectField,
+  Spinner,
+} from "@/ui/components/molecules";
+import {
+  Input,
+  Button,
+  Textarea,
+  Switch,
+  Checkbox,
+  Label,
+  TypographyH4,
+  TypographyMuted,
+} from "@/ui/components/atoms";
 
+import { usePremiumFeature, useImageList } from "@/ui/hooks";
 
-
-import { usePremiumFeature, useImageList, type ImageItem } from "@/ui/hooks";
-
-
-import { getCategoryOptions, getFieldError, getSubCategoryOptions } from "@/core/utils";
-import type { InvitationTheme, ProductCategory, SubCategory } from "@/core/domain";
+import {
+  getCategoryOptions,
+  getFieldError,
+  getSubCategoryOptions,
+} from "@/core/utils";
+import type {
+  InvitationTheme,
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain";
 import { getInvitationThemeOptions } from "@/core/domain";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/ui/stores";
@@ -31,19 +49,26 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
   const { premiumFeatures, loading } = usePremiumFeature();
   const [isPremium, setIsPremium] = useState(product.isPremium);
   const [isFeature, setIsFeature] = useState(product.isFeatured);
-  const [thumbnail, setThumbnail] = useState<string | null>(product.thumbnail);
-  const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>(
     product.featureIds || [],
   );
   const [status, setStatus] = useState(product.status);
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>(product.category as ProductCategory);
-  const [selectedSubCategory, setSelectedSubCategory] = useState<SubCategory | "">(product.subCategory as SubCategory);
-  const [selectedTheme, setSelectedTheme] = useState<InvitationTheme>(product.theme ?? "default");
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>(
+    product.category as ProductCategory,
+  );
+  const [selectedSubCategory, setSelectedSubCategory] = useState<
+    SubCategory | ""
+  >(product.subCategory as SubCategory);
+  const [selectedTheme, setSelectedTheme] = useState<InvitationTheme>(
+    product.theme ?? "default",
+  );
 
+  const thumbnail = useImageList([product.thumbnail]);
   const images = useImageList(product.images);
   const [minQuantity, setMinQuantity] = useState<number>(product.minQuantity);
-  const [isUnlimitedMax, setIsUnlimitedMax] = useState(product.maxQuantity === 0);
+  const [isUnlimitedMax, setIsUnlimitedMax] = useState(
+    product.maxQuantity === 0,
+  );
   // 무제한 Input이 마운트될 때 쓸 defaultValue — 최초엔 기존 상품 값(product.maxQuantity)을
   // 보존하고, 체크박스를 다시 해제할 때만 minQuantity 기반 제안값으로 갱신한다.
   const [maxQuantityDefault, setMaxQuantityDefault] = useState(
@@ -70,29 +95,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
     setIsPremium(checked);
     if (!checked) {
       setSelectedFeatures([]);
-    }
-  };
-
-  const handleThumbnailUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setThumbnailFile(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setThumbnail(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveThumbnail = () => {
-    setThumbnail(product.thumbnail);
-    setThumbnailFile(null);
-    const fileInput = document.getElementById(
-      "edit-thumbnail-input",
-    ) as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = "";
     }
   };
 
@@ -123,78 +125,43 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
   return (
     <form action={action} className="space-y-6">
       {selectedFeatures.map((featureId) => (
-        <input key={featureId} type="hidden" name="featureIds" value={featureId} />
+        <input
+          key={featureId}
+          type="hidden"
+          name="featureIds"
+          value={featureId}
+        />
       ))}
 
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-2">
-          <Label htmlFor="edit-thumbnail-input">
-            썸네일 이미지 *
-          </Label>
-          <div className="border-border group relative aspect-video w-full overflow-hidden rounded-lg border">
-            <CloudImage
-              src={thumbnail || "/placeholder.svg"}
-              sizes="490px"
-              alt={`${product.title} 이미지`}
-            />
-            <label
-              htmlFor="edit-thumbnail-input"
-              className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100"
-            >
-              <div className="text-center text-white">
-                <UploadCloud className="mx-auto mb-2 h-8 w-8" />
-                <p className="text-sm font-medium">
-                  {thumbnailFile ? "다른 이미지로 변경" : "이미지 변경"}
-                </p>
-              </div>
-            </label>
-            {thumbnailFile && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={handleRemoveThumbnail}
-                className="absolute top-2 right-2 z-10 h-8 w-8"
-                title="원래 이미지로 되돌리기"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-
-            <input
-              id="edit-thumbnail-input"
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleThumbnailUpload}
-            />
-            <input
-              type="file"
-              name="thumbnail"
-              className="hidden"
-              ref={(input) => {
-                if (input && thumbnailFile) {
-                  const dataTransfer = new DataTransfer();
-                  dataTransfer.items.add(thumbnailFile);
-                  input.files = dataTransfer.files;
-                }
-              }}
-            />
-            <input
-              type="hidden"
-              name="currentThumbnail"
-              value={product.thumbnail}
-            />
-          </div>
+          <Label htmlFor="edit-thumbnail-input">썸네일 이미지 *</Label>
+          <ImageField
+            id="edit-thumbnail-input"
+            folder="products/thumbnails"
+            items={thumbnail.items}
+            onAdd={(urls) => {
+              thumbnail.items.forEach((item) => thumbnail.remove(item.id));
+              thumbnail.add(urls);
+            }}
+            onRemove={thumbnail.remove}
+            maxCount={1}
+            sizes="490px"
+          />
+          <input
+            type="hidden"
+            name="thumbnail"
+            value={thumbnail.getUrls()[0] ?? ""}
+          />
           {error && error["thumbnail"] && (
-            <Alert type="error" className="mt-2">{error["thumbnail"][0]}</Alert>
+            <Alert type="error" className="mt-2">
+              {error["thumbnail"][0]}
+            </Alert>
           )}
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="edit-title">
-            상품명 *
-          </Label>
+          <Label htmlFor="edit-title">상품명 *</Label>
           <Input
             id="edit-title"
             name="title"
@@ -203,7 +170,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             required
           />
           {error && error["title"] && (
-            <Alert type="error" className="mt-2">{error["title"][0]}</Alert>
+            <Alert type="error" className="mt-2">
+              {error["title"][0]}
+            </Alert>
           )}
         </div>
 
@@ -230,7 +199,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             id="edit-subCategory"
             name="subCategory"
             defaultValue={selectedSubCategory}
-            onValueChange={(value) => setSelectedSubCategory(value as SubCategory)}
+            onValueChange={(value) =>
+              setSelectedSubCategory(value as SubCategory)
+            }
             placeholder="서브 카테고리를 선택하세요"
             data={getSubCategoryOptions(selectedCategory)}
             error={error?.subCategory?.[0]}
@@ -246,7 +217,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               id="edit-theme"
               name="theme"
               defaultValue={selectedTheme}
-              onValueChange={(value) => setSelectedTheme(value as InvitationTheme)}
+              onValueChange={(value) =>
+                setSelectedTheme(value as InvitationTheme)
+              }
               placeholder="테마를 선택하세요"
               data={getInvitationThemeOptions()}
             >
@@ -272,9 +245,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
         </div>
 
         <div className="col-span-2">
-          <Label htmlFor="edit-description">
-            상품 설명 *
-          </Label>
+          <Label htmlFor="edit-description">상품 설명 *</Label>
           <Textarea
             id="edit-description"
             name="description"
@@ -284,7 +255,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             required
           />
           {error && error["description"] && (
-            <Alert type="error" className="mt-2">{error["description"][0]}</Alert>
+            <Alert type="error" className="mt-2">
+              {error["description"][0]}
+            </Alert>
           )}
         </div>
 
@@ -294,42 +267,19 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
           </Label>
           <ImageField
             id="edit-images-upload"
+            folder="products/images"
             items={images.items}
             onAdd={images.add}
             onRemove={images.remove}
           />
-          <input
-            type="file"
-            name="images"
-            multiple
-            className="hidden"
-            ref={(input) => {
-              if (input) {
-                const dataTransfer = new DataTransfer();
-                images.items
-                  .filter(
-                    (item): item is Extract<ImageItem, { type: "new" }> =>
-                      item.type === "new",
-                  )
-                  .forEach((item) => dataTransfer.items.add(item.file));
-                input.files = dataTransfer.files;
-              }
-            }}
-          />
-          {images.items
-            .filter(
-              (item): item is Extract<ImageItem, { type: "existing" }> =>
-                item.type === "existing",
-            )
-            .map((item) => (
-              <input
-                key={item.id}
-                type="hidden"
-                name="currentImages"
-                value={item.originalUrl}
-              />
-            ))}
-          {imagesError && <Alert type="error" className="mt-2">{imagesError}</Alert>}
+          {images.items.map((item) => (
+            <input key={item.id} type="hidden" name="images" value={item.url} />
+          ))}
+          {imagesError && (
+            <Alert type="error" className="mt-2">
+              {imagesError}
+            </Alert>
+          )}
         </div>
 
         <div>
@@ -344,14 +294,23 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             value={Number.isNaN(minQuantity) ? "" : minQuantity}
             onChange={handleMinQuantityChange}
           />
-          {minQuantityError && <Alert type="error" className="mt-2">{minQuantityError}</Alert>}
+          {minQuantityError && (
+            <Alert type="error" className="mt-2">
+              {minQuantityError}
+            </Alert>
+          )}
         </div>
 
         <div>
           <Label htmlFor="edit-maxQuantity">최대 구매 수량 *</Label>
           {isUnlimitedMax ? (
             <>
-              <Input id="edit-maxQuantity-display" type="number" disabled placeholder="무제한" />
+              <Input
+                id="edit-maxQuantity-display"
+                type="number"
+                disabled
+                placeholder="무제한"
+              />
               <input type="hidden" name="maxQuantity" value="0" />
             </>
           ) : (
@@ -372,15 +331,24 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               onCheckedChange={(checked) => {
                 setIsUnlimitedMax(!!checked);
                 if (!checked) {
-                  setMaxQuantityDefault(Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity));
+                  setMaxQuantityDefault(
+                    Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity),
+                  );
                 }
               }}
             />
-            <Label htmlFor="edit-isUnlimitedMax" className="cursor-pointer text-sm font-normal">
+            <Label
+              htmlFor="edit-isUnlimitedMax"
+              className="cursor-pointer text-sm font-normal"
+            >
               무제한
             </Label>
           </div>
-          {maxQuantityError && <Alert type="error" className="mt-2">{maxQuantityError}</Alert>}
+          {maxQuantityError && (
+            <Alert type="error" className="mt-2">
+              {maxQuantityError}
+            </Alert>
+          )}
         </div>
 
         <div className="border-border flex items-center justify-between rounded-lg border p-4">
@@ -410,9 +378,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
         />
 
         <div>
-          <Label htmlFor="edit-price">
-            기본 가격 *
-          </Label>
+          <Label htmlFor="edit-price">기본 가격 *</Label>
           <div className="relative">
             <Input
               id="edit-price"
@@ -430,14 +396,14 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             </span>
           </div>
           {error && error["price"] && (
-            <Alert type="error" className="mt-2">{error["price"][0]}</Alert>
+            <Alert type="error" className="mt-2">
+              {error["price"][0]}
+            </Alert>
           )}
         </div>
 
         <div>
-          <Label htmlFor="edit-priority">
-            추천 우선순위
-          </Label>
+          <Label htmlFor="edit-priority">추천 우선순위</Label>
           <Input
             id="edit-priority"
             name="priority"
@@ -449,7 +415,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             step="1"
           />
           {error && error["priority"] && (
-            <Alert type="error" className="mt-2">{error["priority"][0]}</Alert>
+            <Alert type="error" className="mt-2">
+              {error["priority"][0]}
+            </Alert>
           )}
         </div>
 
@@ -498,11 +466,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
       </div>
 
       <div className="flex justify-end gap-4 border-t pt-4">
-        <Button 
-          type="button" 
-          variant="outline"
-          onClick={closeModal}
-        >
+        <Button type="button" variant="outline" onClick={closeModal}>
           취소
         </Button>
         <Button type="submit" className="min-w-30" disabled={pending}>

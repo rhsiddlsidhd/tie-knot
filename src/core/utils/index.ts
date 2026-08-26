@@ -6,7 +6,6 @@ export * from "./error";
 export * from "./escape-regexp";
 export * from "./hangul";
 export * from "./id";
-export * from "./image-processor";
 export * from "./page";
 export * from "./price";
 export * from "./seoul-open-api-parser";

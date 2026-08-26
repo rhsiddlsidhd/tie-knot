@@ -4,6 +4,25 @@ import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
 import type { PremiumFeature } from "@/core/domain";
 
+vi.mock("@/adapters/browser/cloudinary", () => ({
+  CloudinaryWidget: ({
+    children,
+    folder,
+    onUpload,
+  }: {
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
+    folder: string;
+    onUpload: (url: string) => void;
+  }) =>
+    children({
+      isLoading: false,
+      open: () => onUpload(`https://res.cloudinary.com/demo/${folder}.jpg`),
+    }),
+}));
+
 const buildFeature = (overrides?: Partial<PremiumFeature>): PremiumFeature => ({
   _id: "feature-1",
   code: "GUESTBOOK",
@@ -61,39 +80,37 @@ describe("ProductRegistrationForm", () => {
     expect(themeTrigger!.textContent).toContain("벚꽃");
   });
 
-  it("썸네일을 업로드하면 미리보기가 뜨고, 삭제하면 업로드 안내로 되돌아간다", async () => {
+  it("썸네일 위젯 업로드 후 미리보기를 표시하고 삭제할 수 있다", async () => {
     const user = userEvent.setup();
     renderForm();
 
-    const file = new File(["x"], "thumb.png", { type: "image/png" });
-    const input = document.getElementById("thumbnail-input") as HTMLInputElement;
-    await user.upload(input, file);
+    await user.click(document.getElementById("thumbnail-input")!);
 
-    const image = await screen.findByAltText("Thumbnail");
+    const image = await screen.findByAltText(/Preview/);
     expect(image).toBeInTheDocument();
 
     const removeButton = within(image.closest("div")!).getByRole("button");
     await user.click(removeButton);
 
-    expect(screen.queryByAltText("Thumbnail")).not.toBeInTheDocument();
-    expect(screen.getAllByText("클릭하여 이미지 업로드").length).toBeGreaterThan(0);
+    expect(screen.queryByAltText(/Preview/)).not.toBeInTheDocument();
+    expect(
+      screen.getAllByText("클릭하여 이미지 업로드").length,
+    ).toBeGreaterThan(0);
   });
 
   it("미리보기 이미지를 업로드하면 미리보기가 뜨고, 삭제하면 업로드 안내로 되돌아간다", async () => {
     const user = userEvent.setup();
     renderForm();
 
-    const file = new File(["x"], "preview.png", { type: "image/png" });
-    const input = document.getElementById("preview-input") as HTMLInputElement;
-    await user.upload(input, file);
+    await user.click(document.getElementById("preview-input")!);
 
-    const image = await screen.findByAltText("Preview");
+    const image = await screen.findByAltText(/Preview/);
     expect(image).toBeInTheDocument();
 
     const removeButton = within(image.closest("div")!).getByRole("button");
     await user.click(removeButton);
 
-    expect(screen.queryByAltText("Preview")).not.toBeInTheDocument();
+    expect(screen.queryByAltText(/Preview/)).not.toBeInTheDocument();
   });
 
   it("프리미엄 스위치를 켜면 옵션 체크박스가 나타나고, 체크하면 featureIds hidden input이 추가된다", async () => {
@@ -159,13 +176,17 @@ describe("ProductRegistrationForm", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("가격은 0 이상이어야 합니다.")).toBeInTheDocument();
     expect(screen.getByText("우선순위 오류")).toBeInTheDocument();
-    expect(screen.getByText("썸네일 이미지를 등록해주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText("썸네일 이미지를 등록해주세요."),
+    ).toBeInTheDocument();
   });
 
   it("에러가 없으면 에러 메시지를 렌더링하지 않는다", () => {
     renderForm();
 
-    expect(screen.queryByText("상품명을 입력해주세요.")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("상품명을 입력해주세요."),
+    ).not.toBeInTheDocument();
   });
 
   it("할인 방식을 금액으로 바꾸면 단위 표시가 '원'으로 바뀐다", async () => {
@@ -217,7 +238,9 @@ describe("ProductRegistrationForm", () => {
 
     await user.click(screen.getByRole("switch", { name: /추천 상품/ }));
 
-    const hidden = container.querySelector('input[name="isFeatured"]') as HTMLInputElement;
+    const hidden = container.querySelector(
+      'input[name="isFeatured"]',
+    ) as HTMLInputElement;
     expect(hidden.value).toBe("true");
   });
 

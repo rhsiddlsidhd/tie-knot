@@ -2,6 +2,17 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+vi.mock("@/adapters/browser/cloudinary", () => ({
+  CloudinaryWidget: ({
+    children,
+  }: {
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
+  }) => children({ isLoading: false, open: vi.fn() }),
+}));
+
 vi.mock("@/actions", () => ({
   updateProduct: () => async (): Promise<null> => null,
 }));
@@ -15,7 +26,7 @@ vi.mock("@/ui/hooks", () => ({
     items: [] as unknown[],
     add: vi.fn(),
     remove: vi.fn(),
-    getPayload: () => ({ existing: [] as string[], newFiles: [] as File[] }),
+    getUrls: (): string[] => [],
   }),
 }));
 

@@ -6,13 +6,13 @@ const {
   useActionStateMock,
   routerPushMock,
   uploadMock,
-  getPayloadMock,
+  getUrlsMock,
   paramsMock,
 } = vi.hoisted(() => ({
   useActionStateMock: vi.fn(),
   routerPushMock: vi.fn(),
   uploadMock: vi.fn(),
-  getPayloadMock: vi.fn(),
+  getUrlsMock: vi.fn(),
   paramsMock: vi.fn(() => ({ orderId: "order-1" })),
 }));
 
@@ -40,7 +40,7 @@ vi.mock("./useImageUpload", () => ({
   }),
 }));
 vi.mock("./useImageList", () => ({
-  useImageList: () => ({ getPayload: getPayloadMock }),
+  useImageList: () => ({ getUrls: getUrlsMock }),
 }));
 vi.mock("./useFetchInvitation", () => ({
   useFetchInvitation: () => ({ data: undefined as unknown, isLoading: false }),

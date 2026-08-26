@@ -10,9 +10,15 @@ export type UploadSignature = {
   apiKey: string | undefined;
 };
 
-export function signUploadRequest(folder: string): UploadSignature {
-  const timestamp = Math.round(new Date().getTime() / 1000);
-  const paramsToSign = {
+export function signUploadRequest(
+  folder: string,
+  widgetParams?: Record<string, unknown>,
+): UploadSignature {
+  const timestamp =
+    typeof widgetParams?.timestamp === "number"
+      ? widgetParams.timestamp
+      : Math.round(new Date().getTime() / 1000);
+  const paramsToSign = widgetParams ?? {
     timestamp,
     folder,
     allowed_formats: "jpg,png,webp,jpeg",
@@ -24,7 +30,9 @@ export function signUploadRequest(folder: string): UploadSignature {
 
   return {
     signature,
-    ...paramsToSign,
+    timestamp,
+    folder,
+    allowed_formats: "jpg,png,webp,jpeg",
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
   };

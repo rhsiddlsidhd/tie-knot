@@ -78,6 +78,24 @@ describe("POST /api/upload/signature", () => {
       }),
     });
     expect(requireAuth).toHaveBeenCalled();
-    expect(signUploadRequest).toHaveBeenCalledWith("products");
+    expect(signUploadRequest).toHaveBeenCalledWith("products", undefined);
+  });
+
+  it("위젯이 전달한 최종 파라미터를 그대로 서명한다", async () => {
+    vi.mocked(requireAuth).mockResolvedValue({
+      role: "USER",
+      email: "a@b.com",
+      userId: "u1",
+    });
+    const paramsToSign = {
+      folder: "products",
+      timestamp: 1234567890,
+      source: "uw",
+      custom_coordinates: "1,2,3,4",
+    };
+
+    await POST(buildRequest({ paramsToSign }));
+
+    expect(signUploadRequest).toHaveBeenCalledWith("products", paramsToSign);
   });
 });

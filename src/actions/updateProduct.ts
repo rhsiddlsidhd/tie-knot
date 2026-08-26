@@ -20,9 +20,6 @@ export const updateProduct = async (
   prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
-  const thumbnailFile = formData.get("thumbnail") as File;
-  const previewFile = formData.get("previewUrl") as File;
-
   const data = {
     title: formData.get("title"),
     category: formData.get("category"),
@@ -35,15 +32,8 @@ export const updateProduct = async (
     isPremium: formData.get("isPremium") === "true",
     featureIds: formData.getAll("featureIds") as string[],
     priority: Number(formData.get("priority")),
-    thumbnail:
-      thumbnailFile && thumbnailFile.size > 0
-        ? thumbnailFile
-        : (formData.get("currentThumbnail") as string),
-    images: {
-      // 유지할 기존 URL — 폼이 hidden input으로 반복 전송한다.
-      existing: formData.getAll("currentImages") as string[],
-      newFiles: (formData.getAll("images") as File[]).filter((f) => f.size > 0),
-    },
+    thumbnail: formData.get("thumbnail"),
+    images: formData.getAll("images"),
     minQuantity: parseOptionalNumber(formData.get("minQuantity")),
     maxQuantity: parseOptionalNumber(formData.get("maxQuantity")),
   };
@@ -60,7 +50,6 @@ export const updateProduct = async (
   try {
     await updateProductWorkflow(productId, {
       ...parsed.data,
-      previewFile,
       currentPreviewUrl: formData.get("currentPreviewUrl") as string,
     });
 
