@@ -115,11 +115,14 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
   const error =
     state && !state.success && "errors" in state.error && state.error.errors;
 
+  // "deleted"는 여기서 선택할 수 없다 — 삭제는 이 드롭다운이 아니라 삭제/복구
+  // 버튼(ProductTableRowAction) 전용 경로이며, deletedAt과 함께 세팅된다.
+  // 드롭다운으로 status만 "deleted"로 바꾸면 deletedAt이 안 바뀌어 목록 필터
+  // (deletedAt 기준)와 상태 표시가 어긋난다(#136).
   const statusOptions = [
     { value: "active", label: "판매중" },
     { value: "inactive", label: "비활성" },
     { value: "soldOut", label: "품절" },
-    { value: "deleted", label: "삭제" },
   ];
 
   return (
@@ -234,7 +237,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             name="status"
             defaultValue={status}
             onValueChange={(value) =>
-              setStatus(value as "active" | "inactive" | "soldOut" | "deleted")
+              setStatus(value as "active" | "inactive" | "soldOut")
             }
             placeholder="판매 상태를 선택하세요"
             data={statusOptions}

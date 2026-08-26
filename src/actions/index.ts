@@ -14,6 +14,7 @@ export * from "./incrementProductViews";
 export * from "./loginUser";
 export * from "./logoutUser";
 export * from "./requestPasswordReset";
+export * from "./restoreProduct";
 export * from "./signupUser";
 export * from "./updatePremiumFeature";
 export * from "./updateProduct";

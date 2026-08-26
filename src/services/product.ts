@@ -161,14 +161,16 @@ export const incrementProductViewsService = async (
   return !!updated;
 };
 
-// 모든 상품 조회
+// 모든 상품 조회 — view="trash"는 admin 휴지통 전용, 소프트 삭제된(deletedAt 존재) 상품만 리턴한다.
 export const getAllProductsService = async (
   category?: string,
   userId?: string,
+  view: "active" | "trash" = "active",
 ): Promise<ProductJSON[]> => {
   await dbConnect();
 
-  const query: Record<string, unknown> = { deletedAt: null };
+  const query: Record<string, unknown> =
+    view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
   if (category) {
     query.category = category;
   }
@@ -332,6 +334,32 @@ export const deleteProductService = async (
   return !!deletedProduct;
 };
 
+// 상품 복구(휴지통 → 복원) — 항상 status를 "active"로 되돌린다. 삭제 전 상태
+// (inactive/soldOut)는 보존하지 않는다 — 삭제와 복구를 대칭적인 명시 상태 전이로
+// 고정해 "복구했더니 무슨 상태인지" 추측할 필요가 없게 한다(관계 정의 참고).
+export const restoreProductService = async (
+  productId: string,
+): Promise<boolean> => {
+  await dbConnect();
+
+  if (!mongoose.isObjectIdOrHexString(productId)) {
+    return false;
+  }
+
+  const restoredProduct = await ProductModel.findOneAndUpdate(
+    { _id: productId, deletedAt: { $ne: null } },
+    { status: "active", deletedAt: null },
+    { new: true, runValidators: true },
+  ).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 복구에 실패했습니다.",
+    );
+  });
+
+  return !!restoredProduct;
+};
+
 // 상품 좋아요 토글
 export const updateProductLikeService = async (
   productId: string,
@@ -394,6 +422,13 @@ export async function deleteProductAsAdminService(productId: string): Promise<vo
   await requireAdmin();
   if (!(await deleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+}
+
+export async function restoreProductAsAdminService(productId: string): Promise<void> {
+  await requireAdmin();
+  if (!(await restoreProductService(productId))) {
+    throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
 }
 

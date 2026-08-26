@@ -1,17 +1,18 @@
 "use client";
-import { deleteProduct } from "@/actions";
+import { deleteProduct, restoreProduct } from "@/actions";
 import type { ProductTableRowProps } from "./ProductTableRow";
 import { Button } from "@/ui/components/atoms";
 import { useAdminModalStore } from "@/ui/stores";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, RotateCcw, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-const ProductTableRowAction = ({ product }: ProductTableRowProps) => {
+const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProps) => {
   const open = useAdminModalStore((state) => state.openModal);
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
 
   const handleDelete = async () => {
     if (!confirm(`"${product.title}" 상품을 삭제하시겠습니까?`)) {
@@ -36,6 +37,46 @@ const ProductTableRowAction = ({ product }: ProductTableRowProps) => {
       setIsDeleting(false);
     }
   };
+
+  const handleRestore = async () => {
+    if (!confirm(`"${product.title}" 상품을 복구하시겠습니까?`)) {
+      return;
+    }
+
+    setIsRestoring(true);
+
+    try {
+      const result = await restoreProduct(product._id);
+
+      if (result.success === false) {
+        toast.error(result.error.message || "복구에 실패했습니다.");
+        return;
+      }
+
+      toast.success(result.data.message);
+      router.refresh();
+    } catch {
+      toast.error("복구 중 오류가 발생했습니다.");
+    } finally {
+      setIsRestoring(false);
+    }
+  };
+
+  if (view === "trash") {
+    return (
+      <div className="flex items-center justify-center gap-2">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={handleRestore}
+          disabled={isRestoring}
+        >
+          <RotateCcw className="h-4 w-4" />
+          복구
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center gap-2">

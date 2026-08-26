@@ -85,4 +85,21 @@ describe("ProductEditDialog", () => {
 
     expect(themeTrigger!.textContent).toContain("벚꽃");
   });
+
+  it("판매 상태 드롭다운에 삭제 옵션을 제공하지 않는다 (#136 — 삭제는 삭제/복구 버튼 전용 경로)", async () => {
+    const user = userEvent.setup();
+    render(<ProductEditDialog product={buildProduct({ status: "active" })} />);
+
+    const statusTrigger = screen
+      .getAllByRole("combobox")
+      .find((el) => el.textContent?.includes("판매중"));
+    expect(statusTrigger).toBeDefined();
+
+    await user.click(statusTrigger!);
+
+    expect(screen.getByRole("option", { name: "판매중" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "비활성" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "품절" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "삭제" })).not.toBeInTheDocument();
+  });
 });
