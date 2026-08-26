@@ -13,6 +13,7 @@ import {
   getPopularProductsService,
   updateProductService,
   deleteProductService,
+  restoreProductService,
   updateProductLikeService,
   searchProductsService,
   getProductQuantityBoundsService,
@@ -312,6 +313,32 @@ describe("product", () => {
       expect(result).toHaveLength(2);
       expect(noMatch).toHaveLength(0);
     });
+
+    it("view를 지정하지 않으면 삭제되지 않은 상품만 리턴한다", async () => {
+      const input = buildProductInput({ title: "삭제될상품" });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      await deleteProductService(saved!._id.toString());
+      await createProductService(buildProductInput({ title: "정상상품" }));
+
+      const result = await getAllProductsService();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("정상상품");
+    });
+
+    it("view가 trash면 소프트 삭제된(deletedAt 존재) 상품만 리턴한다", async () => {
+      const input = buildProductInput({ title: "삭제될상품" });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      await deleteProductService(saved!._id.toString());
+      await createProductService(buildProductInput({ title: "정상상품" }));
+
+      const result = await getAllProductsService(undefined, undefined, "trash");
+
+      expect(result).toHaveLength(1);
+      expect(result[0].title).toBe("삭제될상품");
+    });
   });
 
   describe("getFeaturedTemplatesService", () => {
@@ -564,6 +591,47 @@ describe("product", () => {
 
     it("id 형식이 잘못되면 false를 리턴한다", async () => {
       const result = await deleteProductService("not-a-valid-id");
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe("restoreProductService", () => {
+    it("삭제된 상품을 복구하면 true를 리턴하고 status를 active로, deletedAt을 null로 되돌린다", async () => {
+      const input = buildProductInput({ title: "복구될상품", status: "soldOut" });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      await deleteProductService(saved!._id.toString());
+
+      const result = await restoreProductService(saved!._id.toString());
+
+      expect(result).toBe(true);
+
+      const restored = await ProductModel.findById(saved!._id).lean();
+      expect(restored?.status).toBe("active");
+      expect(restored?.deletedAt).toBeNull();
+    });
+
+    it("삭제되지 않은(deletedAt이 null인) 상품이면 false를 리턴한다", async () => {
+      const input = buildProductInput({ title: "정상상품" });
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+
+      const result = await restoreProductService(saved!._id.toString());
+
+      expect(result).toBe(false);
+    });
+
+    it("존재하지 않는 id면 false를 리턴한다", async () => {
+      const missingId = new mongoose.Types.ObjectId().toString();
+
+      const result = await restoreProductService(missingId);
+
+      expect(result).toBe(false);
+    });
+
+    it("id 형식이 잘못되면 false를 리턴한다", async () => {
+      const result = await restoreProductService("not-a-valid-id");
 
       expect(result).toBe(false);
     });

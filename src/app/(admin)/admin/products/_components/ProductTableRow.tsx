@@ -9,9 +9,10 @@ import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
 
 export interface ProductTableRowProps {
   product: Product;
+  view?: "active" | "trash";
 }
 
-export function ProductTableRow({ product }: ProductTableRowProps) {
+export function ProductTableRow({ product, view = "active" }: ProductTableRowProps) {
   return (
     <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-4 py-3">
@@ -61,7 +62,20 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
         </div>
       </td>
       <td className="px-4 py-3">
-        <ProductTableRowSelect product={product} />
+        {view === "trash" ? (
+          <div className="flex flex-col gap-1">
+            <Badge variant="outline" className="w-fit">
+              삭제됨
+            </Badge>
+            {product.deletedAt && (
+              <TypographyMuted>
+                {new Date(product.deletedAt).toLocaleDateString("ko-KR")}
+              </TypographyMuted>
+            )}
+          </div>
+        ) : (
+          <ProductTableRowSelect product={product} />
+        )}
       </td>
       <td className="px-4 py-3">
         <div className="text-muted-foreground flex flex-col gap-1 text-sm">
@@ -83,7 +97,7 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
         <span className="font-mono text-sm">{product.priority}</span>
       </td>
       <td className="px-4 py-3">
-        <ProductTableRowAction product={product} />
+        <ProductTableRowAction product={product} view={view} />
       </td>
     </tr>
   );

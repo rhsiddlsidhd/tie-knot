@@ -32,4 +32,19 @@ describe("AdminProductsTemplate", () => {
 
     expect(screen.getByText("등록된 상품이 없습니다.")).toBeInTheDocument();
   });
+
+  it("상품 목록/휴지통 탭 링크를 렌더링한다", () => {
+    render(<AdminProductsTemplate products={[buildProduct()]} />);
+
+    const trashLink = screen.getByRole("link", { name: "휴지통" });
+    expect(trashLink).toHaveAttribute("href", "/admin/products?view=trash");
+  });
+
+  it("view가 trash면 휴지통 제목과 빈 상태 문구를 렌더링하고 상품 등록 버튼을 숨긴다", () => {
+    render(<AdminProductsTemplate products={[]} view="trash" />);
+
+    expect(screen.getByRole("heading", { name: "휴지통" })).toBeInTheDocument();
+    expect(screen.getByText("삭제된 상품이 없습니다.")).toBeInTheDocument();
+    expect(screen.queryByText("상품 등록")).not.toBeInTheDocument();
+  });
 });
