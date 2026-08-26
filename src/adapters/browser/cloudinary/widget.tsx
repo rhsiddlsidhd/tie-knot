@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import type { CloudinaryUploadWidgetResults } from "next-cloudinary";
 
@@ -58,33 +58,55 @@ const CloudinaryWidget = ({
       .catch(() => onError?.());
   }, [folder, onError]);
 
-  if (!config) {
+  // CldUploadWidget이 매 렌더 새 options 객체 참조를 옵션 변경으로 오인해
+  // 위젯 인스턴스를 다시 만들면서 "이미지 추가"를 반복 클릭할 때 좀비 상태로
+  // 멈추는 문제가 있어 참조를 안정시킨다.
+  const cloudConfig = useMemo(
+    () => (config ? { cloud: config } : undefined),
+    [config],
+  );
+  const widgetOptions = useMemo(
+    () =>
+      config
+        ? {
+            apiKey: config.apiKey,
+            cloudName: config.cloudName,
+            // Crop 단계의 Skip 클릭이 Cloudinary 위젯 자체의 postMessage
+            // 버그(PointerEvent DataCloneError)를 트리거해 재오픈 시 위젯이
+            // 멈추는 원인이라 크롭 단계를 아예 없앤다.
+            cropping: false,
+            folder,
+            multiple: true,
+            resourceType: "image" as const,
+            sources: ["local", "url", "camera"] as (
+              | "local"
+              | "url"
+              | "camera"
+            )[],
+            uploadSignature: async (
+              callback: (signature: string) => void,
+              paramsToSign: Record<string, unknown>,
+            ) => {
+              try {
+                const result = await requestSignature({ paramsToSign });
+                callback(result.signature);
+              } catch {
+                onError?.();
+              }
+            },
+          }
+        : undefined,
+    [config, folder, onError],
+  );
+
+  if (!config || !cloudConfig || !widgetOptions) {
     return children({ isLoading: true, open: () => undefined });
   }
 
   return (
     <CldUploadWidget
-      config={{ cloud: config }}
-      options={{
-        apiKey: config.apiKey,
-        cloudName: config.cloudName,
-        cropping: true,
-        folder,
-        multiple: false,
-        resourceType: "image",
-        sources: ["local", "url", "camera"],
-        uploadSignature: async (
-          callback: (signature: string) => void,
-          paramsToSign: Record<string, unknown>,
-        ) => {
-          try {
-            const result = await requestSignature({ paramsToSign });
-            callback(result.signature);
-          } catch {
-            onError?.();
-          }
-        },
-      }}
+      config={cloudConfig}
+      options={widgetOptions}
       onError={onError}
       onSuccess={(result: CloudinaryUploadWidgetResults) => {
         if (
@@ -96,6 +118,9 @@ const CloudinaryWidget = ({
           onUpload(result.info.secure_url);
         }
       }}
+      // 파일 큐 처리가 끝나면 위젯을 명시적으로 닫는다 — 안 닫으면 iframe이
+      // 화면에 남아 그 아래 폼 버튼(예: "상품 등록") 클릭을 가로막는다.
+      onQueuesEnd={(_result, { close }) => close()}
     >
       {({ isLoading = false, open }) => children({ isLoading, open })}
     </CldUploadWidget>
