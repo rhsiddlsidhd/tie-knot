@@ -8,7 +8,10 @@ export const productSchema = z
     category: z.enum(PRODUCT_CATEGORIES),
     subCategory: z.string().min(1, "서브 카테고리를 선택해주세요."),
     theme: z.enum(INVITATION_THEMES).optional(),
-    price: z.number().min(0, "가격은 0 이상이어야 합니다."),
+    price: z
+      .number()
+      .int("가격은 원 단위 정수로 입력해주세요.")
+      .min(0, "가격은 0 이상이어야 합니다."),
     isPremium: z.boolean(),
     featureIds: z.array(z.string()).optional(),
     isFeatured: z.boolean(),
@@ -21,7 +24,7 @@ export const productSchema = z
         }),
         z.object({
           discountType: z.literal("amount"),
-          value: z.number().min(0),
+          value: z.number().int("할인액은 원 단위 정수로 입력해주세요.").min(0),
         }),
       ])
       .optional(),
