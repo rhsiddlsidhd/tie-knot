@@ -38,7 +38,7 @@ const ImageField = ({
               id={id}
               type="button"
               disabled={isLoading}
-              onClick={open}
+              onClick={() => open()}
               className="border-border hover:bg-accent/50 flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors disabled:cursor-wait disabled:opacity-60"
             >
               <Upload className="text-muted-foreground mb-2 h-8 w-8" />
@@ -67,7 +67,7 @@ const ImageField = ({
                   type="button"
                   variant="outline"
                   disabled={isLoading}
-                  onClick={open}
+                  onClick={() => open()}
                   className="aspect-square h-full w-full border-dashed"
                   aria-label="이미지 추가"
                 >
