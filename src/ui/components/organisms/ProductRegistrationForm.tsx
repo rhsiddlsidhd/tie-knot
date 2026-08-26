@@ -41,6 +41,8 @@ export function ProductRegistrationForm({
   const [previewPreview, setPreviewPreview] = useState<string | null>(null);
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
   const [discountType, setDiscountType] = useState<"rate" | "amount">("rate");
+  const [priceInputError, setPriceInputError] = useState<string | null>(null);
+  const [discountInputError, setDiscountInputError] = useState<string | null>(null);
 
   const images = useImageList();
   // 등록 폼 초기값 1 — 서버 defaultValue와 일치.
@@ -201,13 +203,23 @@ export function ProductRegistrationForm({
                       type="number"
                       placeholder="0"
                       min="0"
-                      step="1000"
+                      step="1"
                       required
                       className="pr-12"
+                      onChange={(event) => {
+                        const value = event.target.value;
+                        setPriceInputError(
+                          value !== "" && !Number.isInteger(Number(value))
+                            ? "가격은 원 단위 정수로 입력해주세요."
+                            : null,
+                        );
+                      }}
                     />
                     <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">원</span>
                   </div>
-                  {priceError && <Alert type="error">{priceError}</Alert>}
+                  {(priceInputError || priceError) && (
+                    <Alert type="error">{priceInputError || priceError}</Alert>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -217,7 +229,10 @@ export function ProductRegistrationForm({
                       id="discountType"
                       name="discount.discountType"
                       defaultValue={discountType}
-                      onValueChange={(v) => setDiscountType(v as "rate" | "amount")}
+                      onValueChange={(v) => {
+                        setDiscountType(v as "rate" | "amount");
+                        setDiscountInputError(null);
+                      }}
                       placeholder=""
                       data={[
                         { value: "rate", label: "비율 (%)" },
@@ -233,10 +248,20 @@ export function ProductRegistrationForm({
                         type="number"
                         placeholder="0"
                         min="0"
-                        step={discountType === "rate" ? "0.01" : "1000"}
+                        step={discountType === "rate" ? "0.01" : "1"}
                         max={discountType === "rate" ? "1" : undefined}
                         defaultValue="0"
                         className="pr-12"
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          setDiscountInputError(
+                            discountType === "amount" &&
+                              value !== "" &&
+                              !Number.isInteger(Number(value))
+                              ? "할인액은 원 단위 정수로 입력해주세요."
+                              : null,
+                          );
+                        }}
                       />
                       <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
                         {discountType === "rate" ? "율" : "원"}
@@ -246,6 +271,7 @@ export function ProductRegistrationForm({
                   <TypographyMuted>
                     {discountType === "rate" ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)" : "차감 금액 입력"}
                   </TypographyMuted>
+                  {discountInputError && <Alert type="error">{discountInputError}</Alert>}
                 </div>
               </div>
 

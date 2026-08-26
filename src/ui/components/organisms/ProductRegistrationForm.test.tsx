@@ -183,6 +183,34 @@ describe("ProductRegistrationForm", () => {
     expect(screen.getByText("차감 금액 입력")).toBeInTheDocument();
   });
 
+  it("가격과 금액 할인은 원 단위로 입력하고 소수 입력 오류를 표시한다", async () => {
+    const user = userEvent.setup();
+    renderForm();
+
+    const priceInput = screen.getByLabelText(/기본 가격/);
+    expect(priceInput).toHaveAttribute("step", "1");
+
+    await user.type(priceInput, "9900.5");
+    expect(
+      screen.getByText("가격은 원 단위 정수로 입력해주세요."),
+    ).toBeInTheDocument();
+
+    const discountTrigger = screen
+      .getAllByRole("combobox")
+      .find((el) => el.textContent?.includes("비율"));
+    await user.click(discountTrigger!);
+    await user.click(await screen.findByRole("option", { name: "금액 (원)" }));
+
+    const discountInput = screen.getByLabelText("할인");
+    expect(discountInput).toHaveAttribute("step", "1");
+
+    await user.clear(discountInput);
+    await user.type(discountInput, "1000.5");
+    expect(
+      screen.getByText("할인액은 원 단위 정수로 입력해주세요."),
+    ).toBeInTheDocument();
+  });
+
   it("추천 상품 스위치를 켜면 hidden input isFeatured가 true로 바뀐다", async () => {
     const user = userEvent.setup();
     const { container } = renderForm();

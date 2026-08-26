@@ -122,6 +122,17 @@ describe("productSchema", () => {
     expect(result.success).toBe(true);
   });
 
+  it("price가 소수면 원 단위 정수 안내와 함께 실패한다", () => {
+    const result = productSchema.safeParse(buildValidInput({ price: 9900.5 }));
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe(
+        "가격은 원 단위 정수로 입력해주세요.",
+      );
+    }
+  });
+
   it("discount.value가 음수면 실패한다", () => {
     const result = productSchema.safeParse(
       buildValidInput({ discount: { discountType: "rate", value: -1 } }),
@@ -151,6 +162,19 @@ describe("productSchema", () => {
     );
 
     expect(result.success).toBe(true);
+  });
+
+  it("amount 할인액이 소수면 원 단위 정수 안내와 함께 실패한다", () => {
+    const result = productSchema.safeParse(
+      buildValidInput({ discount: { discountType: "amount", value: 1000.5 } }),
+    );
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.issues[0].message).toBe(
+        "할인액은 원 단위 정수로 입력해주세요.",
+      );
+    }
   });
 
   it("discount.discountType이 rate/amount가 아니면 실패한다", () => {
