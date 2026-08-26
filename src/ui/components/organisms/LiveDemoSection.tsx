@@ -46,6 +46,7 @@ export const LiveDemoSection = () => {
                       src="/assets/images/output.webp"
                       alt="대표 청첩장 샘플 미리보기"
                       fill
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                       className="object-cover"
                     />
                   </div>

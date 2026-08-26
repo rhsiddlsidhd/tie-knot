@@ -19,6 +19,7 @@ interface CloudImageProps {
   sizes?: string;
   className?: string;
   priority?: boolean;
+  loading?: "eager" | "lazy";
 }
 
 const CloudImage = ({
@@ -27,6 +28,7 @@ const CloudImage = ({
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   className,
   priority = false,
+  loading,
 }: CloudImageProps) => {
   if (!src) return null;
 
@@ -39,6 +41,7 @@ const CloudImage = ({
       alt={alt}
       className={cn(`object-cover`, className)}
       priority={priority}
+      loading={loading}
     />
   );
 };
