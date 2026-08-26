@@ -74,7 +74,7 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
               {visibleImages.map((src, index) => (
                 <div
                   key={src}
-                  className="bg-muted border-border relative aspect-[3/4] w-full overflow-hidden rounded-2xl border"
+                  className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-transparent"
                 >
                   <CloudImage
                     src={src}
@@ -91,7 +91,7 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
                   {restImages.map((src, index) => (
                     <div
                       key={src}
-                      className="bg-muted border-border relative aspect-[3/4] w-full overflow-hidden rounded-2xl border"
+                      className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-transparent"
                     >
                       <CloudImage
                         src={src}
@@ -103,7 +103,7 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
                 </CollapsibleContent>
                 <CollapsibleTrigger asChild>
                   <Button variant="outline" className="mt-4 w-full">
-                    {isExpanded ? "접기" : `더보기 (${restImages.length}장 더 보기)`}
+                    {isExpanded ? "접기" : "더보기"}
                     <ChevronDown
                       className={clsx(
                         "ml-1 h-4 w-4 transition-transform",
