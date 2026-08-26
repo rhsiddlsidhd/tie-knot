@@ -15,6 +15,11 @@ import {
   Ticket,
   BookOpenText,
   Route,
+  Cookie,
+  Sparkles,
+  ShoppingBasket,
+  Mail,
+  BookHeart,
   type LucideIcon,
 } from "lucide-react";
 import type { SubCategory } from "@/core/domain";
@@ -38,4 +43,9 @@ export const subCategoryIcons: Record<SubCategory, LucideIcon> = {
   "escort-card": Ticket, // 예식 용품 — 에스코트 카드
   "program-book": BookOpenText, // 예식 용품 — 예식 순서지
   "aisle-runner": Route, // 예식 용품 — 아일 러너
+  cookie: Cookie, // 답례품 — 쿠키
+  hairpin: Sparkles, // 웨딩소품 — 헤어핀
+  "flower-basket": ShoppingBasket, // 예식 용품 — 플라워걸 바구니
+  "envelope-set": Mail, // 예식 용품 — 축의금 봉투 세트
+  "vow-book": BookHeart, // 예식 용품 — 혼인서약서 북
 };

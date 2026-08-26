@@ -9,10 +9,18 @@ export const PRODUCT_CATEGORIES = [
 
 export const SUB_CATEGORY_MAP = {
   invitation: ["wedding", "first-birthday"],
-  favor: ["candle", "diffuser", "soap", "magnet", "handkerchief"],
-  accessory: ["ring-pillow", "welcome-board", "polaroid-frame"],
+  favor: ["candle", "diffuser", "soap", "magnet", "handkerchief", "cookie"],
+  accessory: ["ring-pillow", "welcome-board", "polaroid-frame", "hairpin"],
   guestbook: ["book", "stamp"],
-  ceremony: ["candle-holder", "escort-card", "program-book", "aisle-runner"],
+  ceremony: [
+    "candle-holder",
+    "escort-card",
+    "program-book",
+    "aisle-runner",
+    "flower-basket",
+    "envelope-set",
+    "vow-book",
+  ],
 } as const satisfies Record<ProductCategory, readonly string[]>;
 
 export const productCategoryLabels: Record<ProductCategory, string> = {
@@ -40,6 +48,11 @@ export const subCategoryLabels: Record<SubCategory, string> = {
   "escort-card": "에스코트 카드",
   "program-book": "예식 순서지",
   "aisle-runner": "아일 러너",
+  cookie: "수제 쿠키 세트",
+  hairpin: "진주 헤어핀 세트",
+  "flower-basket": "화동 바구니",
+  "envelope-set": "축의금 봉투 세트",
+  "vow-book": "예식 문서 케이스 세트",
 };
 
 // ---- 타입은 파생 ----
