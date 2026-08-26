@@ -7,7 +7,7 @@ import { Button } from "@/ui/components/atoms";
 import type {
   ProductFilterAction,
   ProductFilterState,
-} from "@/ui/stores/context/productFilter";
+} from "@/ui/context/productFilter";
 import type { Product } from "@/core/domain";
 import { TypographyMuted, TypographyP } from "../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";

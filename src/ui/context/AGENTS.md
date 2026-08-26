@@ -1,6 +1,6 @@
 # AGENTS.md — src/ui/context/
 
-> Last updated: 2026-07-18
+> Last updated: 2026-08-26
 > 이 폴더는 프로젝트 고유 선택 — 전역 상태 관리 레이어.
 
 ## Overview
@@ -14,7 +14,7 @@ src/ui/context/
 ├── index.ts                  # 배럴 — export * from "./createStateContext"
 ├── createStateContext.tsx   # Provider+useContext 페어를 만드는 제네릭 팩토리(도메인 무관)
 └── productFilter/            # 팩토리를 실제로 쓰는 도메인 하나
-    ├── index.ts                # 배럴(이 도메인 전용, `lib/`의 서비스당 배럴 1개 패턴과 동일)
+    ├── index.ts                # 이 도메인 전용 배럴
     ├── type.ts                # State/Action 타입
     └── reducer.ts              # reducer + Provider/hook export(팩토리 호출)
 ```
@@ -31,4 +31,4 @@ src/ui/context/
 
 ## 관련 문서
 
-- 전역 상태(Zustand)와의 경계: `src/ui/store/AGENTS.md` — 앱 전체 범위면 Context가 아니라 Zustand(`src/ui/store/`)로 간다.
+- 전역 상태(Zustand)와의 경계: `src/ui/stores/AGENTS.md` — 앱 전체 범위면 Context가 아니라 Zustand(`src/ui/stores/`)로 간다.
