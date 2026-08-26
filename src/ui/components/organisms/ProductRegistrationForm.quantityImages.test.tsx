@@ -4,6 +4,25 @@ import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
 import type * as UtilsModule from "@/core/utils";
 
+vi.mock("@/adapters/browser/cloudinary", () => ({
+  CloudinaryWidget: ({
+    children,
+    folder,
+    onUpload,
+  }: {
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
+    folder: string;
+    onUpload: (url: string) => void;
+  }) =>
+    children({
+      isLoading: false,
+      open: () => onUpload(`https://res.cloudinary.com/demo/${folder}.jpg`),
+    }),
+}));
+
 // REQ-6 검증을 위해 이 파일에서만 카테고리 옵션에 invitation이 아닌 항목을 추가한다 —
 // 실제 category.ts(REQ-1, backend-impl 담당)와 무관하게 selectedCategory 조건부 렌더
 // 로직 자체(문자열 비교)를 검증하기 위한 격리된 목이다.
@@ -47,7 +66,11 @@ describe("ProductRegistrationForm — REQ-6 invitation 전용 필드 조건부 �
 
     const categoryTrigger = screen
       .getAllByRole("combobox")
-      .find((el) => el.textContent?.includes("카테고리를 선택하세요") || el.textContent?.includes("초대장"));
+      .find(
+        (el) =>
+          el.textContent?.includes("카테고리를 선택하세요") ||
+          el.textContent?.includes("초대장"),
+      );
     await user.click(categoryTrigger!);
     await user.click(await screen.findByRole("option", { name: "답례품" }));
 
@@ -63,7 +86,11 @@ describe("ProductRegistrationForm — REQ-6 invitation 전용 필드 조건부 �
 
     const categoryTrigger = screen
       .getAllByRole("combobox")
-      .find((el) => el.textContent?.includes("카테고리를 선택하세요") || el.textContent?.includes("초대장"));
+      .find(
+        (el) =>
+          el.textContent?.includes("카테고리를 선택하세요") ||
+          el.textContent?.includes("초대장"),
+      );
     await user.click(categoryTrigger!);
     await user.click(await screen.findByRole("option", { name: "답례품" }));
 
@@ -76,9 +103,7 @@ describe("ProductRegistrationForm — 상세 이미지 갤러리(REQ-2/3)", () =
     const user = userEvent.setup();
     renderForm();
 
-    const file = new File(["x"], "gallery.png", { type: "image/png" });
-    const input = document.getElementById("images-upload") as HTMLInputElement;
-    await user.upload(input, file);
+    await user.click(document.getElementById("images-upload")!);
 
     expect(await screen.findByAltText(/Preview/)).toBeInTheDocument();
   });
@@ -101,7 +126,9 @@ describe("ProductRegistrationForm — 상세 이미지 갤러리(REQ-2/3)", () =
       />,
     );
 
-    expect(screen.getByText("상세 이미지를 1장 이상 등록해주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText("상세 이미지를 1장 이상 등록해주세요."),
+    ).toBeInTheDocument();
   });
 });
 
@@ -126,11 +153,15 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
 
     await user.click(screen.getByLabelText("무제한"));
 
-    const active = screen.getByLabelText("최대 구매 수량 *") as HTMLInputElement;
+    const active = screen.getByLabelText(
+      "최대 구매 수량 *",
+    ) as HTMLInputElement;
     expect(active).not.toBeDisabled();
     expect(active.value).toBe("1");
     expect(container.querySelectorAll('[name="maxQuantity"]')).toHaveLength(1);
-    expect(container.querySelector('input[type="hidden"][name="maxQuantity"]')).toBeNull();
+    expect(
+      container.querySelector('input[type="hidden"][name="maxQuantity"]'),
+    ).toBeNull();
   });
 
   it("최소 구매 수량을 바꾼 뒤 무제한을 해제하면 최대 구매 수량 기본값이 그 값을 따라간다", async () => {
@@ -159,7 +190,9 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
             message: "입력값을 확인해주세요",
             fieldErrors: {
               minQuantity: ["최소 구매 수량은 1 이상이어야 합니다."],
-              maxQuantity: ["최대 구매 수량은 최소 구매 수량보다 크거나 같아야 합니다."],
+              maxQuantity: [
+                "최대 구매 수량은 최소 구매 수량보다 크거나 같아야 합니다.",
+              ],
             },
           },
         }}
@@ -167,9 +200,13 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
       />,
     );
 
-    expect(screen.getByText("최소 구매 수량은 1 이상이어야 합니다.")).toBeInTheDocument();
     expect(
-      screen.getByText("최대 구매 수량은 최소 구매 수량보다 크거나 같아야 합니다."),
+      screen.getByText("최소 구매 수량은 1 이상이어야 합니다."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "최대 구매 수량은 최소 구매 수량보다 크거나 같아야 합니다.",
+      ),
     ).toBeInTheDocument();
   });
 });

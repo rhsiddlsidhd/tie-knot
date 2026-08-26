@@ -3,6 +3,17 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type * as UtilsModule from "@/core/utils";
 
+vi.mock("@/adapters/browser/cloudinary", () => ({
+  CloudinaryWidget: ({
+    children,
+  }: {
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
+  }) => children({ isLoading: false, open: vi.fn() }),
+}));
+
 vi.mock("@/actions", () => ({
   updateProduct: () => async (): Promise<null> => null,
 }));
@@ -15,15 +26,14 @@ vi.mock("@/ui/hooks", () => ({
   useImageList: (defaultUrls?: string[]) => {
     const items = (defaultUrls ?? []).map((url) => ({
       id: url,
-      type: "existing" as const,
       preview: url,
-      originalUrl: url,
+      url,
     }));
     return {
       items,
       add: vi.fn(),
       remove: vi.fn(),
-      getPayload: () => ({ existing: defaultUrls ?? [], newFiles: [] as File[] }),
+      getUrls: () => defaultUrls ?? [],
     };
   },
 }));
@@ -87,7 +97,11 @@ describe("ProductEditDialog — REQ-6 invitation 전용 필드 조건부 렌더"
   it("invitation이 아닌 상품은 테마 필드가 보이지 않는다", () => {
     render(
       <ProductEditDialog
-        product={buildProduct({ category: "favor" as never, subCategory: "candle" as never, theme: undefined })}
+        product={buildProduct({
+          category: "favor" as never,
+          subCategory: "candle" as never,
+          theme: undefined,
+        })}
       />,
     );
 
@@ -111,30 +125,40 @@ describe("ProductEditDialog — REQ-6 invitation 전용 필드 조건부 렌더"
 });
 
 describe("ProductEditDialog — 상세 이미지 갤러리(REQ-2/3)", () => {
-  it("기존 이미지 URL이 갤러리에 표시되고 currentImages hidden input으로 전송된다", () => {
+  it("기존 이미지 URL이 갤러리에 표시되고 images hidden input으로 전송된다", () => {
     const { container } = render(
       <ProductEditDialog
-        product={buildProduct({ images: ["https://example.com/a.jpg", "https://example.com/b.jpg"] })}
+        product={buildProduct({
+          images: ["https://example.com/a.jpg", "https://example.com/b.jpg"],
+        })}
       />,
     );
 
-    const hiddenInputs = container.querySelectorAll('input[type="hidden"][name="currentImages"]');
+    const hiddenInputs = container.querySelectorAll(
+      'input[type="hidden"][name="images"]',
+    );
     expect(hiddenInputs).toHaveLength(2);
-    expect((hiddenInputs[0] as HTMLInputElement).value).toBe("https://example.com/a.jpg");
-    expect((hiddenInputs[1] as HTMLInputElement).value).toBe("https://example.com/b.jpg");
+    expect((hiddenInputs[0] as HTMLInputElement).value).toBe(
+      "https://example.com/a.jpg",
+    );
+    expect((hiddenInputs[1] as HTMLInputElement).value).toBe(
+      "https://example.com/b.jpg",
+    );
   });
 
   it("images 필드 에러가 렌더된다", () => {
     render(<ProductEditDialog product={buildProduct()} />);
     // fieldErrors는 useActionState의 state를 통해서만 오므로 초기 렌더에선 없음을 확인.
-    expect(screen.queryByText(/상세 이미지를 1장 이상/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/상세 이미지를 1장 이상/),
+    ).not.toBeInTheDocument();
   });
 
   // boundary-verifier 지적: 이미지 갤러리는 REQ-6(theme/previewUrl) 조건부 렌더 대상이
   // 아니다 — invitation이어도 항상 렌더돼야 한다. 렌더 안 되면 updateProduct가
   // images=[...existing, ...신규]로 통째 덮어써서 invitation 상품의 기존 이미지가
   // 에러 없이 조용히 사라진다(물리 상품은 required라 에러로라도 막히지만 invitation만 무증상).
-  it("invitation 상품이어도(REQ-6 대상 아님) 상세 이미지 갤러리와 currentImages hidden input이 항상 렌더된다", () => {
+  it("invitation 상품이어도 상세 이미지 갤러리와 images hidden input이 항상 렌더된다", () => {
     const { container } = render(
       <ProductEditDialog
         product={buildProduct({
@@ -144,22 +168,25 @@ describe("ProductEditDialog — 상세 이미지 갤러리(REQ-2/3)", () => {
       />,
     );
 
-    // 이미지 갤러리 자체(및 업로드용 file input)는 항상 존재 — REQ-6 조건부 대상이 아니다.
-    expect(document.getElementById("edit-images-upload")).not.toBeNull();
-    expect(container.querySelector('input[type="file"][name="images"]')).not.toBeNull();
+    expect(screen.getAllByAltText(/Preview/)).toHaveLength(2);
+    expect(container.querySelector('input[type="file"]')).toBeNull();
 
     const hidden = container.querySelectorAll(
-      'input[type="hidden"][name="currentImages"]',
+      'input[type="hidden"][name="images"]',
     );
     expect(hidden).toHaveLength(1);
-    expect((hidden[0] as HTMLInputElement).value).toBe("https://example.com/a.jpg");
+    expect((hidden[0] as HTMLInputElement).value).toBe(
+      "https://example.com/a.jpg",
+    );
   });
 });
 
 describe("ProductEditDialog — 구매 수량(REQ-2/3, §3-4)", () => {
   it("product.maxQuantity===0이면 무제한 체크됨 + 숫자 Input 비활성 + hidden 0 전송", () => {
     const { container } = render(
-      <ProductEditDialog product={buildProduct({ minQuantity: 2, maxQuantity: 0 })} />,
+      <ProductEditDialog
+        product={buildProduct({ minQuantity: 2, maxQuantity: 0 })}
+      />,
     );
 
     expect(screen.getByLabelText("최소 구매 수량 *")).toHaveValue(2);
@@ -173,10 +200,14 @@ describe("ProductEditDialog — 구매 수량(REQ-2/3, §3-4)", () => {
 
   it("product.maxQuantity>0이면 무제한 체크 해제 + 숫자 Input에 기존 값이 채워진다", () => {
     const { container } = render(
-      <ProductEditDialog product={buildProduct({ minQuantity: 2, maxQuantity: 8 })} />,
+      <ProductEditDialog
+        product={buildProduct({ minQuantity: 2, maxQuantity: 8 })}
+      />,
     );
 
-    const active = screen.getByLabelText("최대 구매 수량 *") as HTMLInputElement;
+    const active = screen.getByLabelText(
+      "최대 구매 수량 *",
+    ) as HTMLInputElement;
     expect(active).not.toBeDisabled();
     expect(active.value).toBe("8");
     expect(container.querySelectorAll('[name="maxQuantity"]')).toHaveLength(1);
@@ -185,7 +216,9 @@ describe("ProductEditDialog — 구매 수량(REQ-2/3, §3-4)", () => {
   it("무제한 체크를 다시 켜면 hidden 0으로 전환되고 활성 Input은 사라진다", async () => {
     const user = userEvent.setup();
     const { container } = render(
-      <ProductEditDialog product={buildProduct({ minQuantity: 1, maxQuantity: 8 })} />,
+      <ProductEditDialog
+        product={buildProduct({ minQuantity: 1, maxQuantity: 8 })}
+      />,
     );
 
     await user.click(screen.getByLabelText("무제한"));

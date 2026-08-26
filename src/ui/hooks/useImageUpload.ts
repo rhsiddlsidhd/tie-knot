@@ -4,8 +4,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoClientSchema } from "@/core/schemas";
-import { processImages } from "@/core/utils";
-import { uploadMainThumbnail, uploadGalleryImages } from "@/adapters/browser/cloudinary/upload";
 import type { ImagePayload } from "@/core/domain";
 
 export function useImageUpload() {
@@ -35,23 +33,11 @@ export function useImageUpload() {
         return null;
       }
 
-      // 2. 이미지 업로드
-      const thumbnailUrls = await processImages(
-        uploadMainThumbnail,
-        validated.data.thumbnailImages.existing,
-        validated.data.thumbnailImages.newFiles,
-        (progress) => setUploadProgress(progress * 0.5),
-      );
-
-      const galleryUrls = await processImages(
-        uploadGalleryImages,
-        validated.data.galleryImages.existing,
-        validated.data.galleryImages.newFiles,
-        (progress) => setUploadProgress(50 + progress * 0.5),
-      );
-
       setUploadProgress(100);
-      return { thumbnailUrls, galleryUrls };
+      return {
+        thumbnailUrls: validated.data.thumbnailImages,
+        galleryUrls: validated.data.galleryImages,
+      };
     } catch (error) {
       console.error("Image upload error:", error);
       toast.error("이미지 업로드에 실패했습니다");

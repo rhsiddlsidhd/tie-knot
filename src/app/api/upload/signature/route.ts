@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse} from "@/boundary";
+import type { APIRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { AppError } from "@/core/domain";
 import { requireAuth } from "@/services";
@@ -12,13 +12,14 @@ export const POST = async (
   try {
     await requireAuth();
 
-    const { folder } = await request.json();
+    const { folder: requestedFolder, paramsToSign } = await request.json();
+    const folder = requestedFolder ?? paramsToSign?.folder;
 
     if (!folder) {
       throw new AppError("VALIDATION", "folder 파라미터가 필요합니다.");
     }
 
-    return routeSuccess(signUploadRequest(folder));
+    return routeSuccess(signUploadRequest(folder, paramsToSign));
   } catch (error) {
     return routeError(error);
   }

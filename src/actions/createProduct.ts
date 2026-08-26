@@ -18,9 +18,6 @@ export const createProduct = async (
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
-  const thumbnailFile = formData.get("thumbnail") as File;
-  const previewFile = formData.get("previewUrl") as File;
-
   const data = {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
@@ -36,12 +33,8 @@ export const createProduct = async (
       discountType: formData.get("discount.discountType") as string,
       value: Number(formData.get("discount.value")),
     },
-    thumbnail: thumbnailFile,
-    images: {
-      // create 흐름에선 currentImages가 항상 빈 배열이다(유지할 기존 이미지가 없음).
-      existing: formData.getAll("currentImages") as string[],
-      newFiles: (formData.getAll("images") as File[]).filter((f) => f.size > 0),
-    },
+    thumbnail: formData.get("thumbnail"),
+    images: formData.getAll("images"),
     minQuantity: parseOptionalNumber(formData.get("minQuantity")),
     maxQuantity: parseOptionalNumber(formData.get("maxQuantity")),
   };
@@ -58,7 +51,7 @@ export const createProduct = async (
   try {
     await createProductWorkflow({
       ...parsed.data,
-      previewFile,
+      previewUrl: (formData.get("previewUrl") as string) || undefined,
     });
 
     revalidatePath(routes.admin.products.root);
