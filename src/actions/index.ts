@@ -13,6 +13,7 @@ export * from "./findUserEmail";
 export * from "./incrementProductViews";
 export * from "./loginUser";
 export * from "./logoutUser";
+export * from "./permanentlyDeleteProduct";
 export * from "./requestPasswordReset";
 export * from "./restoreProduct";
 export * from "./signupUser";

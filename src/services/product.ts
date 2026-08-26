@@ -10,6 +10,8 @@ import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 import { requireAdmin, requireAuth } from "./auth";
+import { deleteProductAsset } from "@/adapters/server/cloudinary/cleanup";
+import { extractPublicId } from "@/adapters/server/cloudinary/publicId";
 
 // Product 타입을 export (다른 파일에서 사용)
 export type Product = ProductJSON;
@@ -360,6 +362,50 @@ export const restoreProductService = async (
   return !!restoredProduct;
 };
 
+// 상품 영구 삭제(휴지통 전용) — 소프트 삭제(deletedAt 존재)된 상품만 대상이다.
+// 복구 가능한 활성 상품의 이미지를 실수로 지우면 안 되므로, 소프트 삭제 시점이
+// 아니라 이 시점에 Cloudinary 이미지 정리를 건다(#135, #136 관계 정의 참고).
+// Cloudinary 정리가 실패하면 DB 문서를 지우지 않는다 — 고아 에셋보다 고아 문서(다시
+// 삭제를 시도할 수 있음)가 낫다.
+export const permanentlyDeleteProductService = async (
+  productId: string,
+): Promise<boolean> => {
+  await dbConnect();
+
+  if (!mongoose.isObjectIdOrHexString(productId)) {
+    return false;
+  }
+
+  const product = await ProductModel.findOne({
+    _id: productId,
+    deletedAt: { $ne: null },
+  })
+    .select("thumbnail images")
+    .lean();
+
+  if (!product) return false;
+
+  const publicIds = [...new Set(
+    [product.thumbnail, ...product.images]
+      .map((url) => extractPublicId(url))
+      .filter((id): id is string => !!id),
+  )];
+
+  await Promise.all(publicIds.map((id) => deleteProductAsset(id)));
+
+  const { deletedCount } = await ProductModel.deleteOne({
+    _id: productId,
+    deletedAt: { $ne: null },
+  }).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 영구 삭제에 실패했습니다.",
+    );
+  });
+
+  return deletedCount === 1;
+};
+
 // 상품 좋아요 토글
 export const updateProductLikeService = async (
   productId: string,
@@ -428,6 +474,15 @@ export async function deleteProductAsAdminService(productId: string): Promise<vo
 export async function restoreProductAsAdminService(productId: string): Promise<void> {
   await requireAdmin();
   if (!(await restoreProductService(productId))) {
+    throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
+  }
+}
+
+export async function permanentlyDeleteProductAsAdminService(
+  productId: string,
+): Promise<void> {
+  await requireAdmin();
+  if (!(await permanentlyDeleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
 }

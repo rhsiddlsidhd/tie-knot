@@ -11,9 +11,10 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/actions", () => ({
   deleteProduct: vi.fn(),
   restoreProduct: vi.fn(),
+  permanentlyDeleteProduct: vi.fn(),
 }));
 
-import { deleteProduct, restoreProduct } from "@/actions";
+import { deleteProduct, restoreProduct, permanentlyDeleteProduct } from "@/actions";
 import type { Product } from "@/core/domain";
 import { ProductTableRowAction } from "./ProductTableRowAction";
 
@@ -53,16 +54,18 @@ describe("ProductTableRowAction", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true);
   });
 
-  it("view가 active(기본값)면 수정/삭제 버튼만 렌더링하고 복구 버튼은 없다", () => {
+  it("view가 active(기본값)면 복구/영구 삭제 버튼은 없다", () => {
     render(<ProductTableRowAction product={buildProduct()} />);
 
     expect(screen.queryByText("복구")).not.toBeInTheDocument();
+    expect(screen.queryByText("영구 삭제")).not.toBeInTheDocument();
   });
 
-  it("view가 trash면 복구 버튼만 렌더링하고 수정/삭제 버튼은 없다", () => {
+  it("view가 trash면 복구/영구 삭제 버튼을 렌더링한다", () => {
     render(<ProductTableRowAction product={buildProduct()} view="trash" />);
 
     expect(screen.getByText("복구")).toBeInTheDocument();
+    expect(screen.getByText("영구 삭제")).toBeInTheDocument();
   });
 
   it("복구 확인 후 restoreProduct를 호출하고 성공하면 라우터를 refresh한다", async () => {
@@ -93,6 +96,21 @@ describe("ProductTableRowAction", () => {
     await user.click(buttons[1]);
 
     expect(deleteProduct).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
+    expect(refreshMock).toHaveBeenCalledOnce();
+  });
+
+  it("영구 삭제 확인 후 permanentlyDeleteProduct를 호출하고 성공하면 라우터를 refresh한다", async () => {
+    const user = userEvent.setup();
+    vi.mocked(permanentlyDeleteProduct).mockResolvedValue({
+      success: true,
+      data: { message: "상품이 영구적으로 삭제되었습니다." },
+    });
+
+    render(<ProductTableRowAction product={buildProduct()} view="trash" />);
+
+    await user.click(screen.getByText("영구 삭제"));
+
+    expect(permanentlyDeleteProduct).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 });
