@@ -24,13 +24,13 @@
       "id": "REQ-1",
       "description": "대시보드 상단 통계 카드를 실제 DB 집계값으로 렌더링한다",
       "acceptance": "/admin/dashboard 접속 시 상품/매출/주문/회원(또는 설계 단계에서 재확정된 지표) 카드가 실제 DB 값을 표시하고, 상품/회원 등록·주문 발생 시 값이 갱신된다",
-      "passes": false
+      "passes": true
     },
     {
       "id": "REQ-2",
       "description": "'최근 활동' 카드를 실제 데이터로 렌더링한다",
       "acceptance": "placeholder 텍스트 대신 실제 최근 활동(주문 등, 설계 단계에서 확정) 목록이 표시되고 활동이 없을 때 빈 상태 문구가 표시된다",
-      "passes": false
+      "passes": true
     }
   ]
 }
