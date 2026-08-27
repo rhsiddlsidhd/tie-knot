@@ -33,6 +33,7 @@ export function ProductSummary({
           <CloudImage
             src={product.thumbnail}
             alt={`${product.title} 상품 썸네일`}
+            loading="eager"
           />
           <div className="absolute top-4 right-4 flex gap-2">
             {product.isFeatured && (

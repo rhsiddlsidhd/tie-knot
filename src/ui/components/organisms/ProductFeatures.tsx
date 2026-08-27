@@ -4,9 +4,6 @@ import { useState } from "react";
 import {
   Button,
   Card,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
   TypographyH2,
   TypographyH3,
   TypographyMuted,
@@ -69,12 +66,12 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
         {images.length === 0 ? (
           <TypographyMuted>상세 이미지가 아직 등록되지 않았습니다.</TypographyMuted>
         ) : (
-          <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+          <div>
             <div className="flex flex-col gap-4">
               {visibleImages.map((src, index) => (
                 <div
                   key={src}
-                  className="bg-muted border-border relative aspect-[3/4] w-full overflow-hidden rounded-2xl border"
+                  className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-transparent"
                 >
                   <CloudImage
                     src={src}
@@ -87,34 +84,43 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
 
             {restImages.length > 0 && (
               <>
-                <CollapsibleContent className="mt-4 flex flex-col gap-4">
-                  {restImages.map((src, index) => (
-                    <div
-                      key={src}
-                      className="bg-muted border-border relative aspect-[3/4] w-full overflow-hidden rounded-2xl border"
-                    >
-                      <CloudImage
-                        src={src}
-                        alt={`상세 이미지 ${VISIBLE_IMAGE_COUNT + index + 1}`}
-                        className="object-contain"
-                      />
-                    </div>
-                  ))}
-                </CollapsibleContent>
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="mt-4 w-full">
-                    {isExpanded ? "접기" : `더보기 (${restImages.length}장 더 보기)`}
-                    <ChevronDown
-                      className={clsx(
-                        "ml-1 h-4 w-4 transition-transform",
-                        isExpanded && "rotate-180",
-                      )}
-                    />
-                  </Button>
-                </CollapsibleTrigger>
+                {isExpanded && (
+                  <div
+                    id="additional-product-images"
+                    className="mt-4 flex flex-col gap-4"
+                  >
+                    {restImages.map((src, index) => (
+                      <div
+                        key={src}
+                        className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-transparent"
+                      >
+                        <CloudImage
+                          src={src}
+                          alt={`상세 이미지 ${VISIBLE_IMAGE_COUNT + index + 1}`}
+                          className="object-contain"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <Button
+                  variant="outline"
+                  className="mt-4 w-full"
+                  aria-expanded={isExpanded}
+                  aria-controls="additional-product-images"
+                  onClick={() => setIsExpanded((expanded) => !expanded)}
+                >
+                  {isExpanded ? "접기" : "더보기"}
+                  <ChevronDown
+                    className={clsx(
+                      "ml-1 h-4 w-4 transition-transform",
+                      isExpanded && "rotate-180",
+                    )}
+                  />
+                </Button>
               </>
             )}
-          </Collapsible>
+          </div>
         )}
       </div>
     </div>
