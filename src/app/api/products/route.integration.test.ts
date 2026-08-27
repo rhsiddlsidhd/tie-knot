@@ -63,4 +63,23 @@ describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후
     expect(res.status).toBe(200);
     expect(body.data).toEqual([]);
   });
+
+  it("active이면서 삭제되지 않은 공개 상품만 반환한다", async () => {
+    await createProductService(buildProductInput({ title: "공개상품" }));
+    await createProductService(
+      buildProductInput({ title: "비활성상품", status: "inactive" }),
+    );
+    await createProductService(
+      buildProductInput({ title: "품절상품", status: "soldOut" }),
+    );
+
+    const res = await GET(buildRequest(""));
+    const body = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(body.success).toBe(true);
+    expect(body.data.map((product: { title: string }) => product.title)).toEqual([
+      "공개상품",
+    ]);
+  });
 });
