@@ -7,6 +7,7 @@ export * from "./escape-regexp";
 export * from "./hangul";
 export * from "./id";
 export * from "./page";
+export * from "./percent";
 export * from "./price";
 export * from "./seoul-open-api-parser";
 export * from "./sidebar";

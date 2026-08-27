@@ -1,0 +1,1 @@
+export { AdminDashboardTemplate } from "./AdminDashboardTemplate";

@@ -1,5 +1,55 @@
 import { describe, it, expect } from "vitest";
-import { getKstMonthRange } from "./date";
+import { formatRelativeTime, getKstMonthRange } from "./date";
+
+const SECOND = 1000;
+const MINUTE = SECOND * 60;
+const HOUR = MINUTE * 60;
+const DAY = HOUR * 24;
+
+describe("formatRelativeTime", () => {
+  const now = new Date("2026-08-27T12:00:00.000Z");
+
+  it("1분 미만이면 방금 전을 반환한다", () => {
+    const date = new Date(now.getTime() - 30 * SECOND);
+    expect(formatRelativeTime(date, now)).toBe("방금 전");
+  });
+
+  it("60분 미만이면 N분 전을 반환한다", () => {
+    const date = new Date(now.getTime() - 45 * MINUTE);
+    expect(formatRelativeTime(date, now)).toBe("45분 전");
+  });
+
+  it("정확히 60분이면 1시간 전으로 넘어간다", () => {
+    const date = new Date(now.getTime() - 60 * MINUTE);
+    expect(formatRelativeTime(date, now)).toBe("1시간 전");
+  });
+
+  it("24시간 미만이면 N시간 전을 반환한다", () => {
+    const date = new Date(now.getTime() - 5 * HOUR);
+    expect(formatRelativeTime(date, now)).toBe("5시간 전");
+  });
+
+  it("정확히 24시간이면 1일 전으로 넘어간다", () => {
+    const date = new Date(now.getTime() - 24 * HOUR);
+    expect(formatRelativeTime(date, now)).toBe("1일 전");
+  });
+
+  it("7일 미만이면 N일 전을 반환한다", () => {
+    const date = new Date(now.getTime() - 6 * DAY);
+    expect(formatRelativeTime(date, now)).toBe("6일 전");
+  });
+
+  it("정확히 7일 이상이면 KST 기준 절대 날짜(dot 포맷)로 폴백한다", () => {
+    const date = new Date(now.getTime() - 7 * DAY);
+    expect(formatRelativeTime(date, now)).toBe("2026.8.20");
+  });
+
+  it("폴백은 서버 로컬(UTC)이 아니라 Asia/Seoul 기준으로 날짜가 밀리지 않는다", () => {
+    // UTC 기준 2026-08-19T15:30:00Z = KST 2026-08-20 00:30 — UTC로 포맷하면 8/19로 하루 밀린다.
+    const date = new Date("2026-08-19T15:30:00.000Z");
+    expect(formatRelativeTime(date, now)).toBe("2026.8.20");
+  });
+});
 
 describe("getKstMonthRange", () => {
   it("월초 KST 경계 — 8/1 00:00(KST) 입력이면 이번 달은 8월, 지난 달은 7월, 다음 달은 9월이다", () => {
