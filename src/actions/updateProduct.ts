@@ -32,6 +32,10 @@ export const updateProduct = async (
     isPremium: formData.get("isPremium") === "true",
     featureIds: formData.getAll("featureIds") as string[],
     priority: Number(formData.get("priority")),
+    discount: {
+      discountType: formData.get("discount.discountType") as string,
+      value: Number(formData.get("discount.value")),
+    },
     thumbnail: formData.get("thumbnail"),
     images: formData.getAll("images"),
     minQuantity: parseOptionalNumber(formData.get("minQuantity")),

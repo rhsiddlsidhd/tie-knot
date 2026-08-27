@@ -17,6 +17,10 @@ import {
   Switch,
   Checkbox,
   Label,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   TypographyH4,
   TypographyMuted,
 } from "@/ui/components/atoms";
@@ -61,6 +65,12 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
   >(product.subCategory as SubCategory);
   const [selectedTheme, setSelectedTheme] = useState<InvitationTheme>(
     product.theme ?? "default",
+  );
+  const [discountType, setDiscountType] = useState<"rate" | "amount">(
+    product.discount.discountType,
+  );
+  const [discountInputError, setDiscountInputError] = useState<string | null>(
+    null,
   );
 
   const thumbnail = useImageList([product.thumbnail]);
@@ -135,10 +145,13 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
           value={featureId}
         />
       ))}
+      <input type="hidden" name="discount.discountType" value={discountType} />
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-2">
-          <Label htmlFor="edit-thumbnail-input">썸네일 이미지 *</Label>
+      <Card>
+        <CardHeader>
+          <CardTitle>썸네일 이미지 *</CardTitle>
+        </CardHeader>
+        <CardContent>
           <ImageField
             id="edit-thumbnail-input"
             folder="products/thumbnails"
@@ -161,113 +174,307 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               {error["thumbnail"][0]}
             </Alert>
           )}
-        </div>
+        </CardContent>
+      </Card>
 
-        <div className="col-span-2">
-          <Label htmlFor="edit-title">상품명 *</Label>
-          <Input
-            id="edit-title"
-            name="title"
-            defaultValue={product.title}
-            placeholder="예: 엘레강트 로즈 청첩장"
-            required
-          />
-          {error && error["title"] && (
-            <Alert type="error" className="mt-2">
-              {error["title"][0]}
-            </Alert>
-          )}
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>기본 정보</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="edit-title">상품명 *</Label>
+            <Input
+              id="edit-title"
+              name="title"
+              defaultValue={product.title}
+              placeholder="예: 엘레강트 로즈 청첩장"
+              required
+            />
+            {error && error["title"] && (
+              <Alert type="error" className="mt-2">
+                {error["title"][0]}
+              </Alert>
+            )}
+          </div>
 
-        <div className="flex-1">
-          <SelectField
-            id="edit-category"
-            name="category"
-            defaultValue={selectedCategory}
-            onValueChange={(value) => {
-              setSelectedCategory(value as ProductCategory);
-              setSelectedSubCategory("");
-            }}
-            placeholder="카테고리를 선택하세요"
-            data={getCategoryOptions()}
-            error={error?.category?.[0]}
-            required
-          >
-            카테고리(대분류)
-          </SelectField>
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="edit-description">상품 설명 *</Label>
+            <Textarea
+              id="edit-description"
+              name="description"
+              defaultValue={product.description}
+              placeholder="상품에 대한 자세한 설명을 입력하세요."
+              rows={3}
+              required
+            />
+            {error && error["description"] && (
+              <Alert type="error" className="mt-2">
+                {error["description"][0]}
+              </Alert>
+            )}
+          </div>
 
-        <div className="flex-1">
-          <SelectField
-            id="edit-subCategory"
-            name="subCategory"
-            defaultValue={selectedSubCategory}
-            onValueChange={(value) =>
-              setSelectedSubCategory(value as SubCategory)
-            }
-            placeholder="서브 카테고리를 선택하세요"
-            data={getSubCategoryOptions(selectedCategory)}
-            error={error?.subCategory?.[0]}
-            required
-          >
-            서브 카테고리
-          </SelectField>
-        </div>
-
-        {selectedCategory === "invitation" && (
-          <div className="flex-1">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <SelectField
-              id="edit-theme"
-              name="theme"
-              defaultValue={selectedTheme}
-              onValueChange={(value) =>
-                setSelectedTheme(value as InvitationTheme)
-              }
-              placeholder="테마를 선택하세요"
-              data={getInvitationThemeOptions()}
+              id="edit-category"
+              name="category"
+              defaultValue={selectedCategory}
+              onValueChange={(value) => {
+                setSelectedCategory(value as ProductCategory);
+                setSelectedSubCategory("");
+              }}
+              placeholder="카테고리를 선택하세요"
+              data={getCategoryOptions()}
+              error={error?.category?.[0]}
+              required
             >
-              테마
+              카테고리(대분류)
+            </SelectField>
+
+            <SelectField
+              id="edit-subCategory"
+              name="subCategory"
+              defaultValue={selectedSubCategory}
+              onValueChange={(value) =>
+                setSelectedSubCategory(value as SubCategory)
+              }
+              placeholder="서브 카테고리를 선택하세요"
+              data={getSubCategoryOptions(selectedCategory)}
+              error={error?.subCategory?.[0]}
+              required
+            >
+              서브 카테고리
+            </SelectField>
+
+            {selectedCategory === "invitation" && (
+              <SelectField
+                id="edit-theme"
+                name="theme"
+                defaultValue={selectedTheme}
+                onValueChange={(value) =>
+                  setSelectedTheme(value as InvitationTheme)
+                }
+                placeholder="테마를 선택하세요"
+                data={getInvitationThemeOptions()}
+              >
+                테마
+              </SelectField>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <SelectField
+              id="edit-status"
+              name="status"
+              defaultValue={status}
+              onValueChange={(value) =>
+                setStatus(value as "active" | "inactive" | "soldOut")
+              }
+              placeholder="판매 상태를 선택하세요"
+              data={statusOptions}
+              required
+            >
+              판매 상태
             </SelectField>
           </div>
-        )}
+        </CardContent>
+      </Card>
 
-        <div className="col-span-2">
-          <SelectField
-            id="edit-status"
-            name="status"
-            defaultValue={status}
-            onValueChange={(value) =>
-              setStatus(value as "active" | "inactive" | "soldOut")
-            }
-            placeholder="판매 상태를 선택하세요"
-            data={statusOptions}
-            required
-          >
-            판매 상태
-          </SelectField>
-        </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>가격 정보</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="edit-price">기본 가격 *</Label>
+              <div className="relative">
+                <Input
+                  id="edit-price"
+                  name="price"
+                  type="number"
+                  defaultValue={product.price}
+                  placeholder="0"
+                  min="0"
+                  step="1"
+                  required
+                  className="pr-12"
+                />
+                <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+                  원
+                </span>
+              </div>
+              {error && error["price"] && (
+                <Alert type="error" className="mt-2">
+                  {error["price"][0]}
+                </Alert>
+              )}
+            </div>
 
-        <div className="col-span-2">
-          <Label htmlFor="edit-description">상품 설명 *</Label>
-          <Textarea
-            id="edit-description"
-            name="description"
-            defaultValue={product.description}
-            placeholder="상품에 대한 자세한 설명을 입력하세요."
-            rows={3}
-            required
+            <div className="space-y-2">
+              <Label htmlFor="edit-discountValue">할인</Label>
+              <div className="flex gap-2">
+                <SelectField
+                  id="edit-discountType"
+                  name="discount.discountType"
+                  defaultValue={discountType}
+                  onValueChange={(v) => {
+                    setDiscountType(v as "rate" | "amount");
+                    setDiscountInputError(null);
+                  }}
+                  placeholder=""
+                  data={[
+                    { value: "rate", label: "비율 (%)" },
+                    { value: "amount", label: "금액 (원)" },
+                  ]}
+                >
+                  {""}
+                </SelectField>
+                <div className="relative flex-1">
+                  <Input
+                    id="edit-discountValue"
+                    name="discount.value"
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    step={discountType === "rate" ? "0.01" : "1"}
+                    max={discountType === "rate" ? "1" : undefined}
+                    defaultValue={product.discount.value}
+                    className="pr-12"
+                    onChange={(event) => {
+                      const value = event.target.value;
+                      setDiscountInputError(
+                        discountType === "amount" &&
+                          value !== "" &&
+                          !Number.isInteger(Number(value))
+                          ? "할인액은 원 단위 정수로 입력해주세요."
+                          : null,
+                      );
+                    }}
+                  />
+                  <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+                    {discountType === "rate" ? "율" : "원"}
+                  </span>
+                </div>
+              </div>
+              <TypographyMuted>
+                {discountType === "rate"
+                  ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
+                  : "차감 금액 입력"}
+              </TypographyMuted>
+              {(discountInputError || error?.discount?.[0]) && (
+                <Alert type="error" className="mt-2">
+                  {discountInputError || error?.discount?.[0]}
+                </Alert>
+              )}
+            </div>
+          </div>
+
+          <input
+            type="hidden"
+            name="isPremium"
+            value={isPremium ? "true" : "false"}
           />
-          {error && error["description"] && (
-            <Alert type="error" className="mt-2">
-              {error["description"][0]}
-            </Alert>
-          )}
-        </div>
+          <div className="border-border flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="edit-isPremium" className="text-base">
+                프리미엄 상품
+              </Label>
+              <TypographyMuted>
+                추가 유료 옵션을 제공하는 상품입니다.
+              </TypographyMuted>
+            </div>
+            <Switch
+              id="edit-isPremium"
+              checked={isPremium}
+              onCheckedChange={handlePremiumChange}
+            />
+          </div>
 
-        <div className="col-span-2">
-          <Label htmlFor="edit-images-upload">
+          {isPremium && (
+            <div className="space-y-4 rounded-lg border border-dashed p-4">
+              <TypographyH4 className="font-medium">
+                프리미엄 기능 선택
+              </TypographyH4>
+              <div className="grid grid-cols-2 gap-3">
+                {premiumFeatures.map((feature) => (
+                  <div key={feature.code} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`edit-feature-${feature.code}`}
+                      checked={selectedFeatures.includes(feature._id)}
+                      onCheckedChange={(checked) =>
+                        handleFeatureChange(!!checked, feature._id)
+                      }
+                    />
+                    <Label
+                      htmlFor={`edit-feature-${feature.code}`}
+                      className="cursor-pointer text-sm leading-none font-medium"
+                    >
+                      {feature.label}
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>노출 설정</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <input
+            type="hidden"
+            name="isFeatured"
+            value={isFeature ? "true" : "false"}
+          />
+          <div className="border-border flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label htmlFor="edit-feature" className="text-base">
+                추천 상품
+              </Label>
+              <TypographyMuted>
+                메인 페이지에 추천 상품으로 노출됩니다.
+              </TypographyMuted>
+            </div>
+            <Switch
+              id="edit-feature"
+              checked={isFeature}
+              onCheckedChange={setIsFeature}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="edit-priority">추천 우선순위</Label>
+            <Input
+              id="edit-priority"
+              name="priority"
+              type="number"
+              defaultValue={product.priority}
+              placeholder="0"
+              min="0"
+              max="100"
+              step="1"
+            />
+            {error && error["priority"] && (
+              <Alert type="error" className="mt-2">
+                {error["priority"][0]}
+              </Alert>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>
             상세 이미지{selectedCategory !== "invitation" && " *"}
-          </Label>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
           <ImageField
             id="edit-images-upload"
             folder="products/images"
@@ -283,190 +490,86 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               {imagesError}
             </Alert>
           )}
-        </div>
+        </CardContent>
+      </Card>
 
-        <div>
-          <Label htmlFor="edit-minQuantity">최소 구매 수량 *</Label>
-          <Input
-            id="edit-minQuantity"
-            name="minQuantity"
-            type="number"
-            min={1}
-            step={1}
-            required
-            value={Number.isNaN(minQuantity) ? "" : minQuantity}
-            onChange={handleMinQuantityChange}
-          />
-          {minQuantityError && (
-            <Alert type="error" className="mt-2">
-              {minQuantityError}
-            </Alert>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="edit-maxQuantity">최대 구매 수량 *</Label>
-          {isUnlimitedMax ? (
-            <>
+      <Card>
+        <CardHeader>
+          <CardTitle>구매 수량</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="edit-minQuantity">최소 구매 수량 *</Label>
               <Input
-                id="edit-maxQuantity-display"
+                id="edit-minQuantity"
+                name="minQuantity"
                 type="number"
-                disabled
-                placeholder="무제한"
+                min={1}
+                step={1}
+                required
+                value={Number.isNaN(minQuantity) ? "" : minQuantity}
+                onChange={handleMinQuantityChange}
               />
-              <input type="hidden" name="maxQuantity" value="0" />
-            </>
-          ) : (
-            <Input
-              id="edit-maxQuantity"
-              name="maxQuantity"
-              type="number"
-              min={1}
-              step={1}
-              required
-              defaultValue={maxQuantityDefault}
-            />
-          )}
-          <div className="flex items-center gap-2 pt-1">
-            <Checkbox
-              id="edit-isUnlimitedMax"
-              checked={isUnlimitedMax}
-              onCheckedChange={(checked) => {
-                setIsUnlimitedMax(!!checked);
-                if (!checked) {
-                  setMaxQuantityDefault(
-                    Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity),
-                  );
-                }
-              }}
-            />
-            <Label
-              htmlFor="edit-isUnlimitedMax"
-              className="cursor-pointer text-sm font-normal"
-            >
-              무제한
-            </Label>
-          </div>
-          {maxQuantityError && (
-            <Alert type="error" className="mt-2">
-              {maxQuantityError}
-            </Alert>
-          )}
-        </div>
+              {minQuantityError && (
+                <Alert type="error" className="mt-2">
+                  {minQuantityError}
+                </Alert>
+              )}
+            </div>
 
-        <div className="border-border flex items-center justify-between rounded-lg border p-4">
-          <div className="space-y-0.5">
-            <Label htmlFor="edit-feature" className="text-base">
-              추천 상품
-            </Label>
-            <TypographyMuted>
-              메인 페이지에 추천 상품으로 노출됩니다.
-            </TypographyMuted>
-          </div>
-          <Switch
-            id="edit-feature"
-            checked={isFeature}
-            onCheckedChange={setIsFeature}
-          />
-        </div>
-        <input
-          type="hidden"
-          name="isFeatured"
-          value={isFeature ? "true" : "false"}
-        />
-        <input
-          type="hidden"
-          name="isPremium"
-          value={isPremium ? "true" : "false"}
-        />
-
-        <div>
-          <Label htmlFor="edit-price">기본 가격 *</Label>
-          <div className="relative">
-            <Input
-              id="edit-price"
-              name="price"
-              type="number"
-              defaultValue={product.price}
-              placeholder="0"
-              min="0"
-              step="1000"
-              required
-              className="pr-12"
-            />
-            <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-              원
-            </span>
-          </div>
-          {error && error["price"] && (
-            <Alert type="error" className="mt-2">
-              {error["price"][0]}
-            </Alert>
-          )}
-        </div>
-
-        <div>
-          <Label htmlFor="edit-priority">추천 우선순위</Label>
-          <Input
-            id="edit-priority"
-            name="priority"
-            type="number"
-            defaultValue={product.priority}
-            placeholder="0"
-            min="0"
-            max="100"
-            step="1"
-          />
-          {error && error["priority"] && (
-            <Alert type="error" className="mt-2">
-              {error["priority"][0]}
-            </Alert>
-          )}
-        </div>
-
-        <div className="col-span-2 flex items-center justify-between rounded-lg border p-4">
-          <div>
-            <Label htmlFor="edit-isPremium" className="text-base">
-              프리미엄 상품
-            </Label>
-            <TypographyMuted>
-              추가 유료 옵션을 제공하는 상품입니다.
-            </TypographyMuted>
-          </div>
-          <Switch
-            id="edit-isPremium"
-            checked={isPremium}
-            onCheckedChange={handlePremiumChange}
-          />
-        </div>
-
-        {isPremium && (
-          <div className="col-span-2 space-y-4 rounded-lg border border-dashed p-4">
-            <TypographyH4 className="font-medium">
-              프리미엄 기능 선택
-            </TypographyH4>
-            <div className="grid grid-cols-2 gap-3">
-              {premiumFeatures.map((feature) => (
-                <div key={feature.code} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`edit-feature-${feature.code}`}
-                    checked={selectedFeatures.includes(feature._id)}
-                    onCheckedChange={(checked) =>
-                      handleFeatureChange(!!checked, feature._id)
-                    }
+            <div className="space-y-2">
+              <Label htmlFor="edit-maxQuantity">최대 구매 수량 *</Label>
+              {isUnlimitedMax ? (
+                <>
+                  <Input
+                    id="edit-maxQuantity-display"
+                    type="number"
+                    disabled
+                    placeholder="무제한"
                   />
-                  <Label
-                    htmlFor={`edit-feature-${feature.code}`}
-                    className="cursor-pointer text-sm leading-none font-medium"
-                  >
-                    {feature.label}
-                  </Label>
-                </div>
-              ))}
+                  <input type="hidden" name="maxQuantity" value="0" />
+                </>
+              ) : (
+                <Input
+                  id="edit-maxQuantity"
+                  name="maxQuantity"
+                  type="number"
+                  min={1}
+                  step={1}
+                  required
+                  defaultValue={maxQuantityDefault}
+                />
+              )}
+              <div className="flex items-center gap-2 pt-1">
+                <Checkbox
+                  id="edit-isUnlimitedMax"
+                  checked={isUnlimitedMax}
+                  onCheckedChange={(checked) => {
+                    setIsUnlimitedMax(!!checked);
+                    if (!checked) {
+                      setMaxQuantityDefault(
+                        Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity),
+                      );
+                    }
+                  }}
+                />
+                <Label
+                  htmlFor="edit-isUnlimitedMax"
+                  className="cursor-pointer text-sm font-normal"
+                >
+                  무제한
+                </Label>
+              </div>
+              {maxQuantityError && (
+                <Alert type="error" className="mt-2">
+                  {maxQuantityError}
+                </Alert>
+              )}
             </div>
           </div>
-        )}
-      </div>
+        </CardContent>
+      </Card>
 
       <div className="flex justify-end gap-4 border-t pt-4">
         <Button type="button" variant="outline" onClick={closeModal}>
