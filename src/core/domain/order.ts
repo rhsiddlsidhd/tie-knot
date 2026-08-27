@@ -39,6 +39,27 @@ export const ORDER_STATUSES = [
 
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
+/** 결제가 이미 반영된 주문 상태 — 매출/결제주문 집계의 모집단이다.
+ *  services/payment.ts의 isPaymentAppliedStatus와 같은 정의를 공유한다. */
+export const PAID_ORDER_STATUSES = ["CONFIRMED", "COMPLETED"] as const;
+
+export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  PENDING: "주문대기",
+  CONFIRMED: "결제완료",
+  COMPLETED: "완료",
+  CANCELLED: "취소",
+};
+
+export const ORDER_STATUS_BADGE_VARIANTS: Record<
+  OrderStatus,
+  "default" | "secondary" | "destructive" | "outline"
+> = {
+  PENDING: "secondary",
+  CONFIRMED: "default",
+  COMPLETED: "default",
+  CANCELLED: "destructive",
+};
+
 export type OrderJSON = {
   _id: string;
   merchantUid: string;

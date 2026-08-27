@@ -2,6 +2,7 @@ export type * from "./alert";
 export type * from "./announcement";
 export type * from "./checkout";
 export type * from "./couple-info";
+export type * from "./dashboard";
 export * from "./error";
 export * from "./error-messages";
 export type * from "./field";

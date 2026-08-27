@@ -1,3 +1,6 @@
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
+import { startOfMonth, subMonths, addMonths } from "date-fns";
+
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
@@ -42,6 +45,16 @@ export const updateCountdownMessage = (
   if (minutes > 0) return `결혼식까지 ${minutes}분 남았습니다`;
 
   return "결혼식이 끝났습니다";
+};
+
+/** 주어진 시각이 속한 KST 기준 전월·이번 달·다음 달 경계를 UTC instant로 돌려준다. */
+export const getKstMonthRange = (now: Date = new Date()) => {
+  const zoned = toZonedTime(now, "Asia/Seoul");
+  return {
+    startOfLastMonth: fromZonedTime(startOfMonth(subMonths(zoned, 1)), "Asia/Seoul"),
+    startOfThisMonth: fromZonedTime(startOfMonth(zoned), "Asia/Seoul"),
+    startOfNextMonth: fromZonedTime(startOfMonth(addMonths(zoned, 1)), "Asia/Seoul"),
+  };
 };
 
 export type DateFormatType =
@@ -96,4 +109,22 @@ export const formatDate = (date: string | Date, type: DateFormatType) => {
     default:
       return `${year}-${month}-${dayDate}`;
   }
+};
+
+const KST_TIMEZONE = "Asia/Seoul";
+
+/**
+ * 과거 시각과 기준 시각(now)의 차이를 상대 시간 문구로 변환한다.
+ * <1분 "방금 전", <60분 "N분 전", <24시간 "N시간 전", <7일 "N일 전",
+ * 그 이상은 KST(Asia/Seoul) 기준 `formatDate(date, "dot")` 폴백.
+ */
+export const formatRelativeTime = (date: Date, now: Date = new Date()): string => {
+  const diff = now.getTime() - date.getTime();
+
+  if (diff < MINUTE) return "방금 전";
+  if (diff < HOUR) return `${Math.floor(diff / MINUTE)}분 전`;
+  if (diff < DAY) return `${Math.floor(diff / HOUR)}시간 전`;
+  if (diff < DAY * 7) return `${Math.floor(diff / DAY)}일 전`;
+
+  return formatDate(toZonedTime(date, KST_TIMEZONE), "dot");
 };

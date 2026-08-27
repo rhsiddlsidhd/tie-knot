@@ -39,20 +39,3 @@ export const MOCK_ORDERS: MockOrder[] = [
     finalPrice: 28000,
   },
 ];
-
-export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
-  PENDING: "주문대기",
-  CONFIRMED: "결제완료",
-  COMPLETED: "완료",
-  CANCELLED: "취소",
-};
-
-export const ORDER_STATUS_BADGE_VARIANTS: Record<
-  OrderStatus,
-  "default" | "secondary" | "destructive" | "outline"
-> = {
-  PENDING: "secondary",
-  CONFIRMED: "default",
-  COMPLETED: "default",
-  CANCELLED: "destructive",
-};

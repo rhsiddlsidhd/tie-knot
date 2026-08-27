@@ -1,0 +1,61 @@
+{
+  "unit": "src/core/utils/date.ts — getKstMonthRange",
+  "boundary": "집계 월 경계(backend) ↔ 리스트 날짜 표시(frontend formatRelativeTime 폴백)",
+  "commit": "f450679",
+  "owner": "backend-impl",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "PASS",
+      "at": "2026-08-27T14:38:00Z",
+      "checks": [
+        {
+          "criterion": "#2 필드명 일치",
+          "result": "PASS",
+          "detail": "반환 키 startOfLastMonth/startOfThisMonth/startOfNextMonth가 01_api_contract.md §5.1 및 01_db_schema.md §2-0의 구조분해 `const { startOfThisMonth, startOfLastMonth, startOfNextMonth }`와 정확히 일치."
+        },
+        {
+          "criterion": "#7 옵셔널 처리",
+          "result": "PASS",
+          "detail": "now: Date = new Date() 기본 파라미터. date.test.ts:48 케이스가 인자 생략 시 세 경계 단조증가를 검증."
+        },
+        {
+          "criterion": "타임존 (브리핑 항목 3, backend 절반)",
+          "result": "PASS",
+          "detail": "toZonedTime/fromZonedTime 3곳 전부 \"Asia/Seoul\" 명시. 서버 로컬 TZ에 의존하지 않음."
+        },
+        {
+          "criterion": "상한 경계 (§9 변경점 9)",
+          "result": "PASS",
+          "detail": "startOfNextMonth를 반환해 $lt 상한을 월 경계로 고정 가능. `now` 상한 아님."
+        },
+        {
+          "criterion": "배럴 도달성",
+          "result": "PASS",
+          "detail": "src/core/utils/index.ts에 `export * from \"./date\"`가 이미 존재 → @/core/utils에서 도달 가능. 배럴 수정 불필요."
+        },
+        {
+          "criterion": "core 경계 (서버 전용 패키지 금지)",
+          "result": "PASS",
+          "detail": "date-fns / date-fns-tz는 isomorphic. src/core/AGENTS.md 경계 위반 없음."
+        },
+        {
+          "criterion": "하지 말 것 (§1 §4 §7)",
+          "result": "PASS",
+          "detail": "route handler/Server Action/zod/envelope/unstable_cache/verifySession 없음. 기존 formatDate 미변경(계약 지시대로 스코프 밖 유지)."
+        }
+      ],
+      "independentVerification": {
+        "testArithmetic": "4개 명시 케이스의 UTC↔KST 환산을 손으로 전수 재계산 — 전부 정확",
+        "tzAgnosticism": "vitest를 기본 TZ / TZ=UTC(Vercel 재현) / TZ=America/New_York(음수 오프셋)로 3회 실행, 5 tests 전부 통과 → 구현이 시스템 TZ에 의존하지 않음을 실증",
+        "eslint": "clean"
+      },
+      "falsePositivesRejected": [
+        "prettier --check가 date.ts를 warn 처리하나 결함으로 보고하지 않음: 레포 baseline이 src/core에서만 14개 파일 위반, prettier 설정 파일 부재, lint 스크립트(eslint .)와 CI(static.yml) 어디에도 prettier 미연동. 즉 레포 관행과 일치하며 CI를 깨지 않는다."
+      ],
+      "reason": "7기준 전부 정합. 계약 §5.1과 1:1 일치하며 TZ 독립성을 실행으로 검증함."
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false
+}

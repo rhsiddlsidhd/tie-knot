@@ -1,5 +1,6 @@
 import "server-only";
 export * from "./auth";
+export * from "./dashboard";
 export * from "./invitation";
 export * from "./guestbook";
 export * from "./order";

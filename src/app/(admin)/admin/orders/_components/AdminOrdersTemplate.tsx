@@ -12,11 +12,8 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms";
 import type { OrderStatus } from "@/core/domain";
-import {
-  MOCK_ORDERS,
-  ORDER_STATUS_BADGE_VARIANTS,
-  ORDER_STATUS_LABELS,
-} from "../_constants";
+import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain";
+import { MOCK_ORDERS } from "../_constants";
 
 const STATUS_FILTER_OPTIONS: Array<{ value: OrderStatus | "ALL"; label: string }> = [
   { value: "ALL", label: "전체 상태" },
