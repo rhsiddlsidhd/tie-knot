@@ -1,3 +1,6 @@
+import { toZonedTime, fromZonedTime } from "date-fns-tz";
+import { startOfMonth, subMonths, addMonths } from "date-fns";
+
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
@@ -42,6 +45,16 @@ export const updateCountdownMessage = (
   if (minutes > 0) return `결혼식까지 ${minutes}분 남았습니다`;
 
   return "결혼식이 끝났습니다";
+};
+
+/** 주어진 시각이 속한 KST 기준 전월·이번 달·다음 달 경계를 UTC instant로 돌려준다. */
+export const getKstMonthRange = (now: Date = new Date()) => {
+  const zoned = toZonedTime(now, "Asia/Seoul");
+  return {
+    startOfLastMonth: fromZonedTime(startOfMonth(subMonths(zoned, 1)), "Asia/Seoul"),
+    startOfThisMonth: fromZonedTime(startOfMonth(zoned), "Asia/Seoul"),
+    startOfNextMonth: fromZonedTime(startOfMonth(addMonths(zoned, 1)), "Asia/Seoul"),
+  };
 };
 
 export type DateFormatType =
