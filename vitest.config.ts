@@ -62,6 +62,7 @@ export default defineConfig({
             "src/app/api/**/*.integration.test.{ts,tsx}",
             "src/app/(main)/page.integration.test.ts",
             "src/app/(main)/_components/PopularProductsSection.integration.test.tsx",
+            "src/app/(admin)/admin/dashboard/page.integration.test.ts",
           ],
           globalSetup: ["./testing/support/setup/mongo-server.ts"],
           fileParallelism: false,
