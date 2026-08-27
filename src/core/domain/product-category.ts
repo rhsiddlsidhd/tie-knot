@@ -59,6 +59,11 @@ export const subCategoryLabels: Record<SubCategory, string> = {
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
 export type SubCategory = (typeof SUB_CATEGORY_MAP)[ProductCategory][number];
 
+export interface AvailableSubCategory {
+  category: ProductCategory;
+  subCategory: SubCategory;
+}
+
 export const CUSTOMER_INPUT_ROUTES: Partial<
   Record<ProductCategory, (orderId: string) => string>
 > = {

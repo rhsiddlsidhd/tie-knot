@@ -13,6 +13,8 @@ import {
   getProductService,
   incrementProductViewsService,
   getAllProductsService,
+  getPublicProductsService,
+  getAvailableSubCategoriesService,
   getFeaturedTemplatesService,
   getPopularProductsService,
   updateProductService,
@@ -347,6 +349,118 @@ describe("product", () => {
     });
   });
 
+  describe("getPublicProductsService", () => {
+    it("active이면서 삭제되지 않은 상품만 반환하고 관리자 목록 상태 계약은 유지한다", async () => {
+      await createProductService(buildProductInput({ title: "공개상품" }));
+      await createProductService(
+        buildProductInput({ title: "비활성상품", status: "inactive" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "품절상품", status: "soldOut" }),
+      );
+      await createProductService(buildProductInput({ title: "삭제상품" }));
+      const deleted = await ProductModel.findOne({ title: "삭제상품" }).lean();
+      await deleteProductService(deleted!._id.toString());
+
+      const publicProducts = await getPublicProductsService();
+      const adminProducts = await getAllProductsService();
+
+      expect(publicProducts.map((product) => product.title)).toEqual(["공개상품"]);
+      expect(adminProducts.map((product) => product.status).sort()).toEqual([
+        "active",
+        "inactive",
+        "soldOut",
+      ]);
+    });
+
+    it("category를 지정하면 해당 카테고리 공개 상품만 반환한다", async () => {
+      await createProductService(buildProductInput({ title: "초대장" }));
+      await createProductService(
+        buildProductInput({ title: "캔들", category: "favor", subCategory: "candle" }),
+      );
+
+      const result = await getPublicProductsService("favor");
+      const noMatch = await getPublicProductsService("nonexistent");
+
+      expect(result.map((product) => product.title)).toEqual(["캔들"]);
+      expect(noMatch).toEqual([]);
+    });
+  });
+
+  describe("getAvailableSubCategoriesService", () => {
+    it("공개 상품의 유효 pair만 중복 없이 코드 정의 순서로 반환한다", async () => {
+      await createProductService(
+        buildProductInput({
+          title: "순서상마지막",
+          category: "ceremony",
+          subCategory: "program-book",
+        }),
+      );
+      await createProductService(
+        buildProductInput({ title: "돌잔치", subCategory: "first-birthday" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "비누", category: "favor", subCategory: "soap" }),
+      );
+      await createProductService(buildProductInput({ title: "청첩장1" }));
+      await createProductService(buildProductInput({ title: "청첩장2" }));
+      await createProductService(
+        buildProductInput({
+          title: "비활성캔들",
+          category: "favor",
+          subCategory: "candle",
+          status: "inactive",
+        }),
+      );
+      await createProductService(
+        buildProductInput({
+          title: "품절디퓨저",
+          category: "favor",
+          subCategory: "diffuser",
+          status: "soldOut",
+        }),
+      );
+      await createProductService(
+        buildProductInput({
+          title: "삭제마그넷",
+          category: "favor",
+          subCategory: "magnet",
+        }),
+      );
+      const deleted = await ProductModel.findOne({ title: "삭제마그넷" }).lean();
+      await deleteProductService(deleted!._id.toString());
+      await ProductModel.collection.insertMany([
+        { category: "favor", subCategory: "wedding", status: "active", deletedAt: null },
+        {
+          category: "legacy-category",
+          subCategory: "legacy-sub-category",
+          status: "active",
+          deletedAt: null,
+        },
+      ] as never[]);
+
+      const result = await getAvailableSubCategoriesService();
+
+      expect(result).toEqual([
+        { category: "invitation", subCategory: "wedding" },
+        { category: "invitation", subCategory: "first-birthday" },
+        { category: "favor", subCategory: "soap" },
+        { category: "ceremony", subCategory: "program-book" },
+      ]);
+    });
+
+    it("category를 지정하면 해당 카테고리의 pair만 반환한다", async () => {
+      await createProductService(buildProductInput({ title: "청첩장" }));
+      await createProductService(
+        buildProductInput({ title: "비누", category: "favor", subCategory: "soap" }),
+      );
+
+      const result = await getAvailableSubCategoriesService("favor");
+
+      expect(result).toEqual([{ category: "favor", subCategory: "soap" }]);
+    });
+  });
+
   describe("getFeaturedTemplatesService", () => {
     it("priority가 1 이상인 active 상품만 리턴한다", async () => {
       await createProductService(
@@ -449,6 +563,21 @@ describe("product", () => {
 
       expect(result).toHaveLength(2);
       expect(result.map((p) => p.title)).toEqual(["1", "2"]);
+    });
+
+    it("좋아요가 있어도 inactive와 soldOut 상품은 제외한다", async () => {
+      await createProductService(
+        buildProductInput({ title: "비활성인기", status: "inactive" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "품절인기", status: "soldOut" }),
+      );
+      const inactive = await ProductModel.findOne({ title: "비활성인기" }).lean();
+      const soldOut = await ProductModel.findOne({ title: "품절인기" }).lean();
+      await likeNTimes(inactive!._id.toString(), 2);
+      await likeNTimes(soldOut!._id.toString(), 1);
+
+      expect(await getPopularProductsService()).toEqual([]);
     });
 
     it("좋아요 1개 이상인 상품이 없으면 빈 배열을 리턴한다 (throw 아님)", async () => {
@@ -861,6 +990,17 @@ describe("product", () => {
       const result = await searchProductsService("청첩장");
 
       expect(result).toEqual([]);
+    });
+
+    it("inactive와 soldOut 상품은 결과에서 제외한다", async () => {
+      await createProductService(
+        buildProductInput({ title: "비활성 청첩장", status: "inactive" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "품절 청첩장", status: "soldOut" }),
+      );
+
+      expect(await searchProductsService("청첩장")).toEqual([]);
     });
 
     it("매칭되는 상품이 없으면 빈 배열을 리턴한다 (에러 아님)", async () => {

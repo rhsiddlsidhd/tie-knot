@@ -3,13 +3,16 @@ import { render, screen } from "@testing-library/react";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 
 describe("SubCategoryNavSection", () => {
-  it("전체 카테고리의 서브카테고리를 전부 링크로 렌더한다", () => {
-    render(<SubCategoryNavSection />);
-
-    expect(screen.getByRole("link", { name: "청첩장" })).toHaveAttribute(
-      "href",
-      "/products/invitation?subCategory=wedding",
+  it("전달된 서브카테고리만 링크로 렌더한다", () => {
+    render(
+      <SubCategoryNavSection
+        availableSubCategories={[
+          { category: "invitation", subCategory: "first-birthday" },
+          { category: "favor", subCategory: "candle" },
+        ]}
+      />,
     );
+
     expect(screen.getByRole("link", { name: "돌잔치" })).toHaveAttribute(
       "href",
       "/products/invitation?subCategory=first-birthday",
@@ -18,17 +21,31 @@ describe("SubCategoryNavSection", () => {
       "href",
       "/products/favor?subCategory=candle",
     );
-    expect(screen.getByRole("link", { name: "아일 러너" })).toHaveAttribute(
-      "href",
-      "/products/ceremony?subCategory=aisle-runner",
-    );
+    expect(
+      screen.queryByRole("link", { name: "청첩장" }),
+    ).not.toBeInTheDocument();
   });
 
   it("캐러셀 region 랜드마크로 렌더한다", () => {
-    render(<SubCategoryNavSection />);
+    render(
+      <SubCategoryNavSection
+        availableSubCategories={[
+          { category: "invitation", subCategory: "wedding" },
+        ]}
+      />,
+    );
 
     expect(
       screen.getByRole("region", { name: "서브카테고리 바로가기" }),
     ).toBeInTheDocument();
+  });
+
+  it("사용 가능한 서브카테고리가 없으면 섹션 전체를 렌더링하지 않는다", () => {
+    render(<SubCategoryNavSection availableSubCategories={[]} />);
+
+    expect(screen.queryByText("카테고리 둘러보기")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("region", { name: "서브카테고리 바로가기" }),
+    ).not.toBeInTheDocument();
   });
 });

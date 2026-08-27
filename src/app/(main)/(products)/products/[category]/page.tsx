@@ -2,19 +2,11 @@ export const dynamic = "force-dynamic";
 
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { ProductCatalog } from "../_components";
-import { getAllProductsService } from "@/services";
-import { isProductCategory, isSubCategory } from "@/core/utils";
-import type { SubCategory } from "@/core/domain";
+import { getPublicProductsService } from "@/services";
+import { getAvailableSubCategories, isProductCategory } from "@/core/utils";
 import { productCategoryLabels } from "@/core/domain";
 import { notFound } from "next/navigation";
-
-// searchParams.subCategory → 필터 초기값 계산. 어떤 입력에도 throw하지 않는다(무효/부재 → "all").
-function resolveInitialSubCategory(
-  subCategory: string | string[] | undefined,
-): SubCategory | "all" {
-  if (typeof subCategory !== "string") return "all";
-  return isSubCategory(subCategory) ? subCategory : "all";
-}
+import { resolveInitialSubCategory } from "./_utils";
 
 export default async function ProductsPage({
   params,
@@ -30,10 +22,14 @@ export default async function ProductsPage({
     notFound();
   }
 
+  const products = await getPublicProductsService(category);
+  const availableSubCategories = getAvailableSubCategories(category, products);
   const { subCategory } = await searchParams;
-  const initialSubCategory = resolveInitialSubCategory(subCategory);
+  const initialSubCategory = resolveInitialSubCategory(
+    subCategory,
+    availableSubCategories,
+  );
 
-  const products = await getAllProductsService(category);
   const currentCategoryLabel = productCategoryLabels[category];
 
   return (

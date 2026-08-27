@@ -1,6 +1,4 @@
-import type {
-  ProductCategory,
-  SubCategory} from "@/core/domain";
+import type { ProductCategory, SubCategory } from "@/core/domain";
 import {
   SUB_CATEGORY_MAP,
   productCategoryLabels,
@@ -16,7 +14,9 @@ export const isSubCategory = (value: string): value is SubCategory => {
 };
 
 export const getCategoryOptions = (includeAll = false) => {
-  const allOption = includeAll ? [{ value: "all" as const, label: "전체" }] : [];
+  const allOption = includeAll
+    ? [{ value: "all" as const, label: "전체" }]
+    : [];
   return [
     ...allOption,
     ...Object.entries(productCategoryLabels).map(([value, label]) => ({
@@ -26,8 +26,13 @@ export const getCategoryOptions = (includeAll = false) => {
   ];
 };
 
-export const getSubCategoryOptions = (category: ProductCategory, includeAll = false) => {
-  const allOption = includeAll ? [{ value: "all" as const, label: "전체" }] : [];
+export const getSubCategoryOptions = (
+  category: ProductCategory,
+  includeAll = false,
+) => {
+  const allOption = includeAll
+    ? [{ value: "all" as const, label: "전체" }]
+    : [];
   const options = SUB_CATEGORY_MAP[category].map((value) => ({
     value,
     label: subCategoryLabels[value],
@@ -35,18 +40,36 @@ export const getSubCategoryOptions = (category: ProductCategory, includeAll = fa
   return [...allOption, ...options];
 };
 
+export const getAvailableSubCategories = (
+  category: ProductCategory,
+  products: readonly { category: string; subCategory: string }[],
+): SubCategory[] => {
+  const availableSubCategories = new Set(
+    products
+      .filter((product) => product.category === category)
+      .map((product) => product.subCategory),
+  );
+
+  return SUB_CATEGORY_MAP[category].filter((subCategory) =>
+    availableSubCategories.has(subCategory),
+  );
+};
+
 // 라벨 역조회 최소 길이 — 1글자는 오탐이 지나치다(예: "비" 하나로 "비즈니스" 전체가 딸려옴).
 const LABEL_MATCH_MIN_LENGTH = 2;
 
 // 검색어가 라벨 또는 enum key에 부분일치하는 카테고리 key들을 돌려준다 (대소문자 무시).
-export const findProductCategoriesByTerm = (term: string): ProductCategory[] => {
+export const findProductCategoriesByTerm = (
+  term: string,
+): ProductCategory[] => {
   const normalized = term.trim().toLowerCase();
   if (normalized.length < LABEL_MATCH_MIN_LENGTH) return [];
 
   return (Object.entries(productCategoryLabels) as [ProductCategory, string][])
     .filter(
       ([key, label]) =>
-        label.toLowerCase().includes(normalized) || key.toLowerCase().includes(normalized),
+        label.toLowerCase().includes(normalized) ||
+        key.toLowerCase().includes(normalized),
     )
     .map(([key]) => key);
 };
@@ -59,7 +82,8 @@ export const findSubCategoriesByTerm = (term: string): SubCategory[] => {
   return (Object.entries(subCategoryLabels) as [SubCategory, string][])
     .filter(
       ([key, label]) =>
-        label.toLowerCase().includes(normalized) || key.toLowerCase().includes(normalized),
+        label.toLowerCase().includes(normalized) ||
+        key.toLowerCase().includes(normalized),
     )
     .map(([key]) => key);
 };

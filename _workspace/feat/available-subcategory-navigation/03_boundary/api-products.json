@@ -1,0 +1,13 @@
+{
+  "endpoint": "GET /api/products",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "PASS",
+      "reason": "커밋 7620424의 생산자 src/app/api/products/route.ts:6-18 및 src/services/product.ts:200-220과 기존 소비자 src/ui/hooks/useProducts.ts:8-22, src/ui/fetcher.ts:4-13을 동시에 대조했다. #1 routeSuccess가 { success: true, data: ProductJSON[] }를 만들고 fetcher가 SuccessResponse<T>.data를 언래핑해 useSWR<Product[]>에 전달하므로 배열 wrapping이 일치한다. #2 모델/API/UI 모두 category, subCategory, deletedAt 등 camelCase이며 transformProduct가 ObjectId/Date/nullable 필드를 ProductJSON shape로 직렬화한다. #3 실제 route 파일 /api/products와 소비 URL /api/products?category={category}, GET method가 일치한다. #4 mutation 및 상태 전이가 없는 조회다. #5 기존 useProducts가 이 endpoint를 실제 소비하며 신규 미사용 외부 endpoint가 없다. #6 route는 await 조회 후 즉시 HTTP 배열을 반환하고 소비자는 폴링/비동기 작업 결과 필드를 기대하지 않는다. #7 category는 optional로 처리되고 Product의 previewUrl/theme optional, deletedAt nullable 계약은 기존 Product 타입과 transformProduct에서 유지된다. 공개 predicate는 deletedAt:null,status:active이며 알 수 없는 category는 빈 배열이다. 구현자 보고: integration 2 files/78 tests, tsc, eslint PASS. 검증자 재실행은 MongoMemoryServer 포트 승인 후 애플리케이션 필수 JWT_SECRET 미설정으로 테스트 import 전에 중단됐으며 경계 구현 실패는 관찰되지 않았다.",
+      "at": "2026-08-27T05:34:53Z"
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false
+}

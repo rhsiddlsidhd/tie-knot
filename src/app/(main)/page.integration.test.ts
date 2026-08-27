@@ -32,6 +32,9 @@ vi.mock("@/services", async (importOriginal) => {
   return {
     ...actual,
     getPopularProductsService: vi.fn(actual.getPopularProductsService),
+    getAvailableSubCategoriesService: vi.fn(
+      actual.getAvailableSubCategoriesService,
+    ),
   };
 });
 
@@ -39,6 +42,7 @@ import {
   createProductService,
   updateProductLikeService,
   getPopularProductsService,
+  getAvailableSubCategoriesService,
 } from "@/services";
 import page from "./page";
 
@@ -57,6 +61,7 @@ describe("(main)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     await dbConnect();
     await clearCollections();
     vi.mocked(getPopularProductsService).mockClear();
+    vi.mocked(getAvailableSubCategoriesService).mockClear();
   });
 
   afterAll(async () => {
@@ -91,7 +96,12 @@ describe("(main)/page — 통합(DB~page.tsx 데이터 배선)", () => {
       ),
     ).toBe(true);
     // page.tsx가 POPULAR_PRODUCTS_LIMIT을 명시적으로 넘겨 호출하는 배선 확인.
-    expect(getPopularProductsService).toHaveBeenCalledWith(POPULAR_PRODUCTS_LIMIT);
+    expect(getPopularProductsService).toHaveBeenCalledWith(
+      POPULAR_PRODUCTS_LIMIT,
+    );
+    expect(element.props.availableSubCategories).toEqual([
+      { category: "invitation", subCategory: "wedding" },
+    ]);
   });
 
   it("에러 흐름: getPopularProductsService가 throw해도 page()는 reject하지 않고 popularProducts가 빈 배열로 흡수된다 (.catch(() => []))", async () => {
@@ -104,5 +114,15 @@ describe("(main)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     const element = (await page()) as any;
 
     expect(element.props.popularProducts).toEqual([]);
+  });
+
+  it("가용 서브카테고리 조회가 실패하면 빈 배열로 축약한다", async () => {
+    vi.mocked(getAvailableSubCategoriesService).mockRejectedValueOnce(
+      new Error("DB 커넥션 실패 시뮬레이션"),
+    );
+
+    const element = (await page()) as any;
+
+    expect(element.props.availableSubCategories).toEqual([]);
   });
 });

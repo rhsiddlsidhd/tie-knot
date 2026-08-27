@@ -5,8 +5,16 @@ import type { ProductDto } from "@/core/schemas";
 import { dbConnect } from "@/db";
 import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils";
 import { AppError } from "@/core/domain";
-import type { InvitationTheme} from "@/core/domain";
-import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
+import type {
+  AvailableSubCategory,
+  InvitationTheme,
+  ProductCategory,
+} from "@/core/domain";
+import {
+  POPULAR_PRODUCTS_LIMIT,
+  PRODUCT_CATEGORIES,
+  SUB_CATEGORY_MAP,
+} from "@/core/domain";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 import { requireAdmin, requireAuth } from "./auth";
@@ -184,6 +192,68 @@ export const getAllProductsService = async (
   return products.map((p) => transformProduct(p, userId));
 };
 
+// 공개 상품 목록 — 관리자용 getAllProductsService와 달리 판매 가능한 active 상품만 노출한다.
+export const getPublicProductsService = async (
+  category?: string,
+  userId?: string,
+): Promise<ProductJSON[]> => {
+  await dbConnect();
+
+  const query: Record<string, unknown> = { deletedAt: null, status: "active" };
+  if (category) query.category = category;
+
+  const products = await ProductModel.find(query)
+    .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
+    .lean()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "공개 상품 조회에 실패했습니다.",
+      );
+    });
+
+  return products.map((product) => transformProduct(product, userId));
+};
+
+// 공개 상품이 하나 이상 있는 유효 pair만 코드 taxonomy 순서로 반환한다.
+export const getAvailableSubCategoriesService = async (
+  category?: ProductCategory,
+): Promise<AvailableSubCategory[]> => {
+  await dbConnect();
+
+  const match: Record<string, unknown> = { deletedAt: null, status: "active" };
+  if (category) match.category = category;
+
+  const pairs = await ProductModel.aggregate<{
+    _id: { category: string; subCategory: string };
+  }>([
+    { $match: match },
+    { $group: { _id: { category: "$category", subCategory: "$subCategory" } } },
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error
+        ? err.message
+        : "사용 가능한 서브카테고리 조회에 실패했습니다.",
+    );
+  });
+
+  const availablePairs = new Set(
+    pairs.map(({ _id }) => `${_id.category}:${_id.subCategory}`),
+  );
+  const categories: readonly ProductCategory[] = category
+    ? [category]
+    : PRODUCT_CATEGORIES;
+
+  return categories.flatMap((currentCategory) =>
+    SUB_CATEGORY_MAP[currentCategory]
+      .filter((subCategory) =>
+        availablePairs.has(`${currentCategory}:${subCategory}`),
+      )
+      .map((subCategory) => ({ category: currentCategory, subCategory })),
+  );
+};
+
 // 상품 검색 — title 부분일치(대소문자 무시) OR 카테고리/서브카테고리 라벨 부분일치(역조회 후 $in).
 // q가 없거나 공백뿐이면 DB를 치지 않고 즉시 빈 배열을 리턴한다 — 빈 $or는 MongoDB가 reject한다.
 export const searchProductsService = async (
@@ -210,7 +280,11 @@ export const searchProductsService = async (
 
   await dbConnect();
 
-  const products = await ProductModel.find({ deletedAt: null, $or: or })
+  const products = await ProductModel.find({
+    deletedAt: null,
+    status: "active",
+    $or: or,
+  })
     .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
     .lean();
 
@@ -253,7 +327,13 @@ export const getPopularProductsService = async (
   // mongoose가 discriminator 모델 aggregate 시 첫 $match를 직접 mutate하므로,
   // 상수로 빼면 discriminator 호출 한 번에 이후 모든 호출이 오염된다.
   const products = await ProductModel.aggregate<LeanProduct>([
-    { $match: { deletedAt: null, "likes.0": { $exists: true } } },
+    {
+      $match: {
+        deletedAt: null,
+        status: "active",
+        "likes.0": { $exists: true },
+      },
+    },
     // $ifNull은 방어적 중복이지만 유지한다 — $size는 인자가 missing이면 null이 아니라 에러(Location17124)를 던진다.
     { $addFields: { likesCount: { $size: { $ifNull: ["$likes", []] } } } },
     { $sort: { likesCount: -1, isFeatured: -1, priority: -1, createdAt: -1, _id: -1 } },
