@@ -60,6 +60,12 @@
 | 2 | `src/db/connect.ts`의 `dbConnect()`가 에러를 `AppError`로 안 감쌈 | `services/AGENTS.md` 규약과 어긋나지만 이 브랜치가 도입한 편차 아님 — 전 서비스 공통 기존 패턴 |
 | 3 | `/admin/orders`가 여전히 `MOCK_ORDERS` 기반 | 설계 단계에서 스코프 밖 합의. 단 이번에 추가한 `{createdAt:-1}` 인덱스가 그쪽 실데이터 전환의 DB 선행조건을 이미 충족시켜둠 |
 | 4 | Product/User 소프트 삭제 컨벤션 불일치(`deletedAt` vs `isDelete`) | 통일하려면 전 문서 backfill + 쿼리 전수 수정 필요, 별도 작업 |
+| 5 | `src/adapters/browser/cloudinary/widget.test.ts` 실패 1건 | test-suite가 Phase4 전체 스위트 재실행 중 발견. `dev`에서도 동일 재현, 이 기능과 무관 |
+| 6 | `invitationMessage.mapper.test.ts` 실패 1건 | 위와 동일 — `dev`에서도 동일 재현, 이 기능과 무관 |
+
+## 8. Phase 4 결과
+
+`page.integration.test.ts` 4케이스(골든패스/빈DB=상태C+D/역할불일치 회귀/미인증 회귀) 추가, mongodb-memory-server 기반. 신규 파일 4/4 통과, 전체 스위트 832 passed / 4 failed(전부 §6의 무관 기존 결함, 이 브랜치 미접촉 확인됨). lint/tsc 0 errors. 상세: `04_test_report.md`.
 
 ## 7. Phase 4 위임 사항
 
