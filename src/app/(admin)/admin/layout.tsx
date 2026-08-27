@@ -1,13 +1,15 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/ui/components/atoms";
-import { SidebarToggle as SidebarHeader } from "@/ui/components/organisms";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarProvider } from "@/ui/components/atoms";
+import { SidebarToggle } from "@/ui/components/organisms";
 import type React from "react";
 import { Toaster } from "sonner";
 import { SidebarNavItem } from "@/ui/components/molecules";
 import { AdminModal } from "./_components";
 import { useAuth } from "@/ui/hooks";
-import { Skeleton } from "@/ui/components/atoms";
+import { Skeleton, TypographyH4 } from "@/ui/components/atoms";
+import { routes } from "@/core/domain";
+import Link from "next/link";
 export default function AdminLayout({
   children,
 }: {
@@ -19,6 +21,11 @@ export default function AdminLayout({
     <SidebarProvider>
       <div className="bg-background flex min-h-screen w-screen pt-16">
         <Sidebar className="bg-card border-border fixed top-0 left-0 z-50 h-screen w-64 border-r pt-16">
+          <SidebarHeader className="border-border border-b">
+            <Link href={routes.home}>
+              <TypographyH4 className="m-0">Tie Knot</TypographyH4>
+            </Link>
+          </SidebarHeader>
           <SidebarContent className="flex-1 overflow-y-auto">
             <SidebarNavItem type="ADMIN" />
           </SidebarContent>
@@ -42,7 +49,7 @@ export default function AdminLayout({
         </Sidebar>
         <main className="flex-1">
           <div className="container mx-auto p-4">
-            <SidebarHeader />
+            <SidebarToggle />
             <div className="pt-4">{children}</div>
           </div>
           <AdminModal />
