@@ -13,6 +13,7 @@ import {
   getProductService,
   incrementProductViewsService,
   getAllProductsService,
+  getAdminProductsPageService,
   getPublicProductsService,
   getAvailableSubCategoriesService,
   getFeaturedTemplatesService,
@@ -346,6 +347,139 @@ describe("product", () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].title).toBe("삭제될상품");
+    });
+  });
+
+  describe("getAdminProductsPageService", () => {
+    const setCreatedAt = async (
+      productId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
+      await ProductModel.updateOne(
+        { _id: productId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    const createAndFetch = async (title: string) => {
+      await createProductService(buildProductInput({ title }));
+      return ProductModel.findOne({ title }).lean();
+    };
+
+    it("createdAt 내림차순으로 정렬한다", async () => {
+      const older = await createAndFetch("older");
+      const newer = await createAndFetch("newer");
+      await setCreatedAt(older!._id, new Date("2026-01-01T00:00:00.000Z"));
+      await setCreatedAt(newer!._id, new Date("2026-02-01T00:00:00.000Z"));
+
+      const result = await getAdminProductsPageService({});
+
+      expect(result.items.map((p) => p._id)).toEqual([
+        newer!._id.toString(),
+        older!._id.toString(),
+      ]);
+    });
+
+    it("같은 createdAt이면 _id 내림차순으로 tie-break한다", async () => {
+      const sameCreatedAt = new Date("2026-08-01T00:00:00.000Z");
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const product = await createAndFetch(`상품${i}`);
+        await setCreatedAt(product!._id, sameCreatedAt);
+        created.push(product!._id.toString());
+      }
+
+      const result = await getAdminProductsPageService({});
+
+      expect(result.items.map((p) => p._id)).toEqual([...created].sort().reverse());
+    });
+
+    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const product = await createAndFetch(`상품${i}`);
+        await setCreatedAt(product!._id, new Date(2026, 0, i + 1));
+        created.push(product!._id.toString());
+      }
+
+      const firstPage = await getAdminProductsPageService({ limit: 2 });
+      expect(firstPage.items).toHaveLength(2);
+      expect(firstPage.nextCursor).not.toBe(null);
+
+      const secondPage = await getAdminProductsPageService({
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.nextCursor).toBe(null);
+
+      const paged = [...firstPage.items, ...secondPage.items].map((p) => p._id);
+      expect(new Set(paged).size).toBe(3);
+      expect(paged.sort()).toEqual([...created].sort());
+    });
+
+    it("view가 trash면 소프트 삭제된 상품만, 기본값은 삭제되지 않은 상품만 포함한다", async () => {
+      const active = await createAndFetch("정상상품");
+      const trashed = await createAndFetch("삭제될상품");
+      await deleteProductService(trashed!._id.toString());
+
+      const activeResult = await getAdminProductsPageService({});
+      const trashResult = await getAdminProductsPageService({ view: "trash" });
+
+      expect(activeResult.items.map((p) => p._id)).toEqual([active!._id.toString()]);
+      expect(trashResult.items.map((p) => p._id)).toEqual([trashed!._id.toString()]);
+    });
+
+    it("view 필터와 cursor를 동시에 적용한다", async () => {
+      const products = [];
+      for (let i = 0; i < 3; i += 1) {
+        const product = await createAndFetch(`상품${i}`);
+        await setCreatedAt(product!._id, new Date(2026, 0, i + 1));
+        products.push(product);
+      }
+      const trashed = await createAndFetch("삭제될상품");
+      await deleteProductService(trashed!._id.toString());
+
+      const firstPage = await getAdminProductsPageService({ limit: 2 });
+      const secondPage = await getAdminProductsPageService({
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+
+      expect(secondPage.items).toHaveLength(1);
+      expect(
+        [...firstPage.items, ...secondPage.items].some((p) => p.title === "삭제될상품"),
+      ).toBe(false);
+    });
+
+    it("빈 DB면 빈 목록과 null 커서를 리턴한다", async () => {
+      const result = await getAdminProductsPageService({});
+
+      expect(result).toEqual({ items: [], nextCursor: null });
+    });
+
+    it("형식이 깨진 cursor는 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminProductsPageService({ cursor: "!!broken!!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("잘못된 limit(소수)은 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminProductsPageService({ limit: 1.5 }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("DTO는 문자열 _id를 가지며 discountedPrice/isLiked 등 파생 필드를 포함한다", async () => {
+      await createAndFetch("특별한 청첩장");
+
+      const result = await getAdminProductsPageService({});
+
+      expect(typeof result.items[0]._id).toBe("string");
+      expect(result.items[0].title).toBe("특별한 청첩장");
+      expect(result.items[0].isLiked).toBe(false);
+      expect(typeof result.items[0].discountedPrice).toBe("number");
     });
   });
 

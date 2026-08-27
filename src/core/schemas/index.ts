@@ -1,6 +1,7 @@
 import "./config";
 
 export * from "./request/adminOrderList.schema";
+export * from "./request/adminProductList.schema";
 export * from "./request/adminUserList.schema";
 export * from "./request/coupleInfo.schema";
 export * from "./request/email.schema";

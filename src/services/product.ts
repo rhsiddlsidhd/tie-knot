@@ -3,14 +3,24 @@ import type { ProductJSON, ProductDB, IProduct } from "@/models";
 import { ProductModel, InvitationProductModel } from "@/models";
 import type { ProductDto } from "@/core/schemas";
 import { dbConnect } from "@/db";
-import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils";
+import {
+  calculatePrice,
+  decodeCursor,
+  encodeCursor,
+  escapeRegExp,
+  findProductCategoriesByTerm,
+  findSubCategoriesByTerm,
+  isValidPageLimit,
+} from "@/core/utils";
 import { AppError } from "@/core/domain";
 import type {
+  AdminProductListPage,
   AvailableSubCategory,
   InvitationTheme,
   ProductCategory,
 } from "@/core/domain";
 import {
+  DEFAULT_PAGE_SIZE,
   POPULAR_PRODUCTS_LIMIT,
   PRODUCT_CATEGORIES,
   SUB_CATEGORY_MAP,
@@ -190,6 +200,73 @@ export const getAllProductsService = async (
     .lean();
 
   return products.map((p) => transformProduct(p, userId));
+};
+
+type AdminProductListQuery = {
+  view?: "active" | "trash";
+  cursor?: string;
+  limit?: number;
+};
+
+/**
+ * 관리자 상품 목록 한 페이지 — orders/users(getAdminOrdersPageService,
+ * getAdminUsersPageService)와 동일한 cursor 계약(createdAt desc, _id tie-break,
+ * limit+1)을 쓴다. getAllProductsService와 달리 isFeatured/priority 정렬을 쓰지
+ * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
+ */
+export const getAdminProductsPageService = async ({
+  view = "active",
+  cursor,
+  limit = DEFAULT_PAGE_SIZE,
+}: AdminProductListQuery): Promise<AdminProductListPage> => {
+  await dbConnect();
+
+  if (!isValidPageLimit(limit)) {
+    throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+
+  const filter: Record<string, unknown> =
+    view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) {
+      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    }
+    filter.$or = [
+      { createdAt: { $lt: decoded.createdAt } },
+      {
+        createdAt: decoded.createdAt,
+        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+      },
+    ];
+  }
+
+  const found = await ProductModel.find(filter)
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(limit + 1)
+    .lean<LeanProduct[]>()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+      );
+    });
+
+  const hasMore = found.length > limit;
+  const products = hasMore ? found.slice(0, limit) : found;
+  const lastProduct = products.at(-1);
+
+  return {
+    items: products.map((product) => transformProduct(product)),
+    nextCursor:
+      hasMore && lastProduct
+        ? encodeCursor({
+            createdAt: lastProduct.createdAt,
+            id: lastProduct._id.toString(),
+          })
+        : null,
+  };
 };
 
 // 공개 상품 목록 — 관리자용 getAllProductsService와 달리 판매 가능한 active 상품만 노출한다.

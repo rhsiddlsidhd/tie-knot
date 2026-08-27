@@ -1,21 +1,25 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import type { ProductJSON } from "@/core/domain";
+import { CursorPagination } from "@/ui/components/molecules";
+import type { AdminProductListPage } from "@/core/domain";
 import { routes } from "@/core/domain";
 import { TABLE_COLUMNS } from "../_constants";
 import { ProductTableRow } from "./ProductTableRow";
 
 interface AdminProductsTemplateProps {
-  products: ProductJSON[];
+  page: AdminProductListPage;
   view?: "active" | "trash";
+  cursor?: string;
 }
 
 const AdminProductsTemplate = ({
-  products,
+  page,
   view = "active",
+  cursor,
 }: AdminProductsTemplateProps) => {
   const isTrash = view === "trash";
+  const products = page.items;
 
   return (
     <div className="space-y-6">
@@ -26,8 +30,8 @@ const AdminProductsTemplate = ({
           </TypographyH1>
           <TypographyMuted>
             {isTrash
-              ? `삭제된 상품을 조회하고 복구합니다. (총 ${products.length}개)`
-              : `등록된 템플릿 상품을 관리합니다. (총 ${products.length}개)`}
+              ? "삭제된 상품을 조회하고 복구합니다."
+              : "등록된 템플릿 상품을 관리합니다."}
           </TypographyMuted>
         </div>
         {!isTrash && (
@@ -85,12 +89,12 @@ const AdminProductsTemplate = ({
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <TypographyMuted>
-          총 {products.length}개 상품
-        </TypographyMuted>
-        <div className="flex gap-2">페이지네이션 버튼</div>
-      </div>
+      <CursorPagination
+        basePath={routes.admin.products.root}
+        query={isTrash ? { view: "trash" } : {}}
+        hasCursor={!!cursor}
+        nextCursor={page.nextCursor}
+      />
     </div>
   );
 };
