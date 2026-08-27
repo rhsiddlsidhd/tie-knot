@@ -2,29 +2,45 @@
 
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { AutoCompleteList } from "@/ui/components/molecules";
-import { Command, CommandInput, Button, DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger, Badge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
+import {
+  Command,
+  CommandInput,
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+  Badge,
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms";
 
 import { useSuggestProducts } from "@/ui/hooks";
 
-
-import type { Dispatch} from "react";
+import type { Dispatch } from "react";
 import { useState } from "react";
 
-import type { ProductFilterState, ProductFilterAction } from "@/ui/context/productFilter";
+import type {
+  ProductFilterState,
+  ProductFilterAction,
+} from "@/ui/context/productFilter";
 import type { Product, PremiumFeature } from "@/core/domain";
 
-import { getSubCategoryOptions } from "@/core/utils";
+import { getAvailableSubCategories } from "@/core/utils";
 
 import type {
   SubCategory,
   ProductCategory,
-  ProductSortType} from "@/core/domain";
+  ProductSortType,
+} from "@/core/domain";
 import {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
   PREMIUM_FEATURE_LABELS,
   PRODUCT_SORT_KEYS,
-  PRODUCT_PRICE_KEYS
+  PRODUCT_PRICE_KEYS,
+  subCategoryLabels,
 } from "@/core/domain";
 
 export function ProductFilters({
@@ -48,6 +64,17 @@ export function ProductFilters({
 
   const prices = PRODUCT_PRICE_KEYS;
   const sortBy = PRODUCT_SORT_KEYS;
+  const availableSubCategories = getAvailableSubCategories(category, data);
+  const subCategoryOptions: Array<{
+    value: SubCategory | "all";
+    label: string;
+  }> = [
+    { value: "all", label: "전체" },
+    ...availableSubCategories.map((value) => ({
+      value,
+      label: subCategoryLabels[value],
+    })),
+  ];
 
   return (
     <div className="mb-8 space-y-4">
@@ -81,14 +108,14 @@ export function ProductFilters({
       </TypographyMuted>
 
       <div className="flex flex-wrap gap-2">
-        {getSubCategoryOptions(category, true).map((option) => (
+        {subCategoryOptions.map((option) => (
           <Button
             key={option.value}
             variant={state.subCategory === option.value ? "default" : "outline"}
             onClick={() =>
               dispatch({
                 type: "SELECT_SUB_CATEGORY",
-                payload: option.value as SubCategory | "all",
+                payload: option.value,
               })
             }
             size="sm"

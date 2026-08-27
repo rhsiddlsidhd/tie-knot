@@ -1,20 +1,30 @@
-import { EcommerceHero, LiveDemoSection, TemplateCarouselGroup } from "@/ui/components/organisms";
+import {
+  EcommerceHero,
+  LiveDemoSection,
+  TemplateCarouselGroup,
+} from "@/ui/components/organisms";
 import type { Product } from "@/services";
 import { TypographyH2, TypographyP } from "@/ui/components/atoms";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 import { PopularProductsSection } from "./PopularProductsSection";
+import type { AvailableSubCategory } from "@/core/domain";
 
 interface HomeTemplateProps {
   invitation: Product[];
   popularProducts: Product[];
+  availableSubCategories: readonly AvailableSubCategory[];
 }
 
-const HomeTemplate = ({ invitation, popularProducts }: HomeTemplateProps) => {
+const HomeTemplate = ({
+  invitation,
+  popularProducts,
+  availableSubCategories,
+}: HomeTemplateProps) => {
   return (
     <div className="flex flex-col">
       <EcommerceHero />
 
-      <SubCategoryNavSection />
+      <SubCategoryNavSection availableSubCategories={availableSubCategories} />
 
       <PopularProductsSection products={popularProducts} />
 

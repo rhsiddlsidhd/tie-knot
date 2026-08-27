@@ -61,7 +61,10 @@ describe("ProductFilters", () => {
 
     await user.type(screen.getByPlaceholderText("상품 검색..."), "봄");
 
-    expect(dispatch).toHaveBeenCalledWith({ type: "CHANGE_KEYWORD", payload: "봄" });
+    expect(dispatch).toHaveBeenCalledWith({
+      type: "CHANGE_KEYWORD",
+      payload: "봄",
+    });
   });
 
   it("서브카테고리 버튼 클릭 시 dispatch로 SELECT_SUB_CATEGORY를 전달한다", async () => {
@@ -84,6 +87,47 @@ describe("ProductFilters", () => {
       type: "SELECT_SUB_CATEGORY",
       payload: "all",
     });
+  });
+
+  it("현재 공개 상품이 있는 서브카테고리만 정의 순서로 렌더링한다", () => {
+    render(
+      <ProductFilters
+        data={[
+          buildProduct({ category: "favor", subCategory: "soap" }),
+          buildProduct({ category: "favor", subCategory: "candle" }),
+        ]}
+        category="favor"
+        premiumFeatures={[]}
+        state={initialFilterState}
+        dispatch={vi.fn()}
+      />,
+    );
+
+    const filterLabels = screen
+      .getAllByRole("button")
+      .map((button) => button.textContent);
+
+    expect(filterLabels.slice(0, 3)).toEqual(["전체", "캔들", "비누"]);
+    expect(
+      screen.queryByRole("button", { name: "디퓨저" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("공개 상품이 없으면 전체 버튼만 서브카테고리 필터로 렌더링한다", () => {
+    render(
+      <ProductFilters
+        data={[]}
+        category="favor"
+        premiumFeatures={[]}
+        state={initialFilterState}
+        dispatch={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "전체" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "캔들" }),
+    ).not.toBeInTheDocument();
   });
 
   it("검색창에 입력하면 OPEN_SUGGESTIONS도 함께 dispatch한다", async () => {
@@ -143,7 +187,9 @@ describe("ProductFilters", () => {
     );
 
     await user.click(screen.getByRole("button", { name: /모두/ }));
-    await user.click(await screen.findByRole("menuitemradio", { name: "인기순" }));
+    await user.click(
+      await screen.findByRole("menuitemradio", { name: "인기순" }),
+    );
 
     expect(dispatch).toHaveBeenCalledWith({
       type: "SELECT_SORT_BY",
@@ -189,7 +235,10 @@ describe("ProductFilters", () => {
     await user.click(screen.getByText("상세 필터"));
     await user.click(screen.getByText("무료"));
 
-    expect(dispatch).toHaveBeenCalledWith({ type: "SELECT_PRICE", payload: "FREE" });
+    expect(dispatch).toHaveBeenCalledWith({
+      type: "SELECT_PRICE",
+      payload: "FREE",
+    });
   });
 
   it("특별 옵션 배지를 클릭하면 dispatch로 SELECT_PREMIUM_FEAT를 전달한다(라벨 매핑 사용)", async () => {

@@ -6,6 +6,7 @@ import {
   getSubCategoryOptions,
   findProductCategoriesByTerm,
   findSubCategoriesByTerm,
+  getAvailableSubCategories,
 } from "./category";
 
 describe("isProductCategory", () => {
@@ -95,7 +96,7 @@ describe("getSubCategoryOptions", () => {
     ]);
   });
 
-  it("favor의 서브 카테고리 5개를 label과 함께 리턴한다", () => {
+  it("favor의 서브 카테고리를 label과 함께 리턴한다", () => {
     const options = getSubCategoryOptions("favor");
 
     expect(options).toEqual([
@@ -104,10 +105,11 @@ describe("getSubCategoryOptions", () => {
       { value: "soap", label: "비누" },
       { value: "magnet", label: "마그넷" },
       { value: "handkerchief", label: "손수건" },
+      { value: "cookie", label: "수제 쿠키 세트" },
     ]);
   });
 
-  it("ceremony의 서브 카테고리 4개를 label과 함께 리턴한다", () => {
+  it("ceremony의 서브 카테고리를 label과 함께 리턴한다", () => {
     const options = getSubCategoryOptions("ceremony");
 
     expect(options).toEqual([
@@ -115,7 +117,31 @@ describe("getSubCategoryOptions", () => {
       { value: "escort-card", label: "에스코트 카드" },
       { value: "program-book", label: "예식 순서지" },
       { value: "aisle-runner", label: "아일 러너" },
+      { value: "flower-basket", label: "화동 바구니" },
+      { value: "envelope-set", label: "축의금 봉투 세트" },
+      { value: "vow-book", label: "예식 문서 케이스 세트" },
     ]);
+  });
+});
+
+describe("getAvailableSubCategories", () => {
+  it("현재 카테고리 상품이 있는 서브카테고리만 정의 순서로 반환한다", () => {
+    const products = [
+      { category: "favor", subCategory: "soap" },
+      { category: "favor", subCategory: "candle" },
+      { category: "favor", subCategory: "soap" },
+      { category: "invitation", subCategory: "wedding" },
+      { category: "favor", subCategory: "legacy" },
+    ];
+
+    expect(getAvailableSubCategories("favor", products)).toEqual([
+      "candle",
+      "soap",
+    ]);
+  });
+
+  it("상품이 없으면 빈 배열을 반환한다", () => {
+    expect(getAvailableSubCategories("ceremony", [])).toEqual([]);
   });
 });
 
@@ -177,6 +203,9 @@ describe("findSubCategoriesByTerm", () => {
   });
 
   it("신규 서브카테고리 라벨도 역조회된다 (REQ-1)", () => {
-    expect(findSubCategoriesByTerm("캔들")).toEqual(["candle", "candle-holder"]);
+    expect(findSubCategoriesByTerm("캔들")).toEqual([
+      "candle",
+      "candle-holder",
+    ]);
   });
 });
