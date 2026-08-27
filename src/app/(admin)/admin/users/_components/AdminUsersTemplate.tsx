@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -18,8 +18,10 @@ import {
   TypographyH1,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import type { UserRole } from "@/core/domain";
-import { MOCK_USERS, USER_ROLE_LABELS } from "../_constants";
+import { CursorPagination } from "@/ui/components/molecules";
+import type { AdminUserListPage, UserRole } from "@/core/domain";
+import { formatKstDate } from "@/core/utils";
+import { USER_ROLE_LABELS } from "../_constants";
 
 const ROLE_FILTER_OPTIONS: Array<{ value: UserRole | "ALL"; label: string }> = [
   { value: "ALL", label: "전체 역할" },
@@ -30,29 +32,29 @@ const ROLE_FILTER_OPTIONS: Array<{ value: UserRole | "ALL"; label: string }> = [
 const notifyPreparing = () =>
   toast.message("사용자 관리 기능은 준비 중입니다.");
 
-const AdminUsersTemplate = () => {
-  const [roleFilter, setRoleFilter] = useState<UserRole | "ALL">("ALL");
+interface AdminUsersTemplateProps {
+  page: AdminUserListPage;
+  role?: UserRole;
+  cursor?: string;
+}
 
-  const users =
-    roleFilter === "ALL"
-      ? MOCK_USERS
-      : MOCK_USERS.filter((user) => user.role === roleFilter);
+const AdminUsersTemplate = ({ page, role, cursor }: AdminUsersTemplateProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleRoleChange = (value: UserRole | "ALL") => {
+    const query = value === "ALL" ? "" : `?role=${value}`;
+    router.push(`${pathname}${query}`);
+  };
 
   return (
     <div className="space-y-6">
-      <TypographyMuted>
-        mock UI만 구현 — 실제 사용자 전체조회 API는 아직 없습니다.
-      </TypographyMuted>
-
       <div className="flex items-center justify-between">
         <TypographyH1 className="text-left text-3xl font-bold">
           사용자 관리
         </TypographyH1>
 
-        <Select
-          value={roleFilter}
-          onValueChange={(value) => setRoleFilter(value as UserRole | "ALL")}
-        >
+        <Select value={role ?? "ALL"} onValueChange={handleRoleChange}>
           <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
@@ -80,11 +82,13 @@ const AdminUsersTemplate = () => {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {users.map((user) => (
-                <tr key={user.email} className="hover:bg-muted/50 transition-colors">
+              {page.items.map((user) => (
+                <tr key={user.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3 text-sm">{user.name}</td>
                   <td className="px-4 py-3 text-sm">{user.email}</td>
-                  <td className="px-4 py-3 text-sm">{user.joinedAt}</td>
+                  <td className="px-4 py-3 text-sm">
+                    {formatKstDate(user.createdAt)}
+                  </td>
                   <td className="px-4 py-3 text-sm">{USER_ROLE_LABELS[user.role]}</td>
                   <td className="px-4 py-3">
                     <Badge variant={user.isDelete ? "secondary" : "default"}>
@@ -114,13 +118,20 @@ const AdminUsersTemplate = () => {
           </table>
         </div>
 
-        {users.length === 0 && (
+        {page.items.length === 0 && (
           <div className="flex flex-col items-center gap-1 py-16 text-center">
             <p className="text-sm font-medium">해당 역할의 사용자가 없습니다</p>
             <TypographyMuted>다른 역할 필터를 선택해보세요.</TypographyMuted>
           </div>
         )}
       </div>
+
+      <CursorPagination
+        basePath={pathname}
+        query={role ? { role } : {}}
+        hasCursor={!!cursor}
+        nextCursor={page.nextCursor}
+      />
     </div>
   );
 };

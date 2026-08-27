@@ -111,7 +111,21 @@ export const formatDate = (date: string | Date, type: DateFormatType) => {
   }
 };
 
-const KST_TIMEZONE = "Asia/Seoul";
+export const KST_TIMEZONE = "Asia/Seoul";
+
+/**
+ * 서버/브라우저의 로컬 timezone과 무관하게 항상 KST(Asia/Seoul) 기준으로
+ * 결정적인 날짜 문자열을 만든다. `toZonedTime`이 반환하는 Date는 wall-clock
+ * getter(`getFullYear` 등)가 KST 기준값을 읽도록 내부 timestamp를 이동시키므로
+ * 그대로 `formatDate`에 넘길 수 있다(`formatRelativeTime`의 마지막 폴백과 동일 패턴).
+ */
+export const formatKstDate = (
+  date: string | Date,
+  type: DateFormatType = "dot",
+): string => {
+  const target = typeof date === "string" ? new Date(date) : date;
+  return formatDate(toZonedTime(target, KST_TIMEZONE), type);
+};
 
 /**
  * 과거 시각과 기준 시각(now)의 차이를 상대 시간 문구로 변환한다.

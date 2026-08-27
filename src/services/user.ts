@@ -1,5 +1,8 @@
 import "server-only";
-import { AppError } from "@/core/domain";
+import type { Types } from "mongoose";
+import mongoose from "mongoose";
+import type { AdminUserListPage, UserRole } from "@/core/domain";
+import { AppError, DEFAULT_PAGE_SIZE, USER_ROLES } from "@/core/domain";
 import type { BaseUser, IUser } from "@/models";
 import { UserModel } from "@/models";
 import { dbConnect } from "@/db";
@@ -8,7 +11,12 @@ import { decrypt, encrypt } from "@/adapters/server/jose";
 import { deleteCookie } from "@/adapters/server/cookies";
 import { sendEmail } from "@/adapters/server/nodemailer";
 import { routes } from "@/core/domain";
-import { getAppBaseUrl } from "@/core/utils";
+import {
+  decodeCursor,
+  encodeCursor,
+  getAppBaseUrl,
+  isValidPageLimit,
+} from "@/core/utils";
 // 유저 생성
 export const createUser = async (user: BaseUser): Promise<IUser> => {
   await dbConnect();
@@ -118,3 +126,93 @@ export async function resetUserPasswordService({
   }
   await deleteCookie("userEmail");
 }
+
+type AdminUserListQuery = {
+  role?: UserRole;
+  cursor?: string;
+  limit?: number;
+};
+
+type AdminUserListRow = {
+  _id: Types.ObjectId;
+  name: string;
+  email: string;
+  createdAt: Date;
+  role: UserRole;
+  isDelete: boolean;
+};
+
+/**
+ * 관리자 전역 사용자 목록 한 페이지 — 활동/탈퇴 여부와 무관하게 전체 사용자를
+ * 대상으로 한다(isDelete로 걸러내지 않는다). 정렬·커서 계약(createdAt desc, _id
+ * tie-break, limit+1)은 주문 목록과 동일하되, 비밀번호·전화번호·인증 관련 필드는
+ * select 단계에서부터 제외한다.
+ */
+export const getAdminUsersPageService = async ({
+  role,
+  cursor,
+  limit = DEFAULT_PAGE_SIZE,
+}: AdminUserListQuery): Promise<AdminUserListPage> => {
+  await dbConnect();
+
+  if (!isValidPageLimit(limit)) {
+    throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (role && !USER_ROLES.includes(role)) {
+    throw new AppError("VALIDATION", "잘못된 사용자 역할입니다.");
+  }
+
+  const filter: mongoose.FilterQuery<IUser> = {};
+
+  if (role) {
+    filter.role = role;
+  }
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) {
+      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    }
+    filter.$or = [
+      { createdAt: { $lt: decoded.createdAt } },
+      {
+        createdAt: decoded.createdAt,
+        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+      },
+    ];
+  }
+
+  const found = await UserModel.find(filter)
+    .select("name email createdAt role isDelete")
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(limit + 1)
+    .lean<AdminUserListRow[]>()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "사용자 목록 조회에 실패했습니다.",
+      );
+    });
+
+  const hasMore = found.length > limit;
+  const users = hasMore ? found.slice(0, limit) : found;
+  const lastUser = users.at(-1);
+
+  return {
+    items: users.map((user) => ({
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      role: user.role,
+      isDelete: user.isDelete,
+    })),
+    nextCursor:
+      hasMore && lastUser
+        ? encodeCursor({
+            createdAt: lastUser.createdAt,
+            id: lastUser._id.toString(),
+          })
+        : null,
+  };
+};

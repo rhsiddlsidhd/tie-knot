@@ -1,1 +1,1 @@
-export * from "./mockUsers";
+export * from "./labels";
