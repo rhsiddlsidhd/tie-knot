@@ -1,0 +1,30 @@
+{
+  "branch": "feat/available-subcategory-navigation",
+  "summary": "공개 상품이 있는 서브카테고리만 사용자 화면에 노출하고 홈 탐색 UI를 라벨 중심으로 단순화한다",
+  "items": [
+    {
+      "id": "REQ-1",
+      "description": "관리자용 전체 상품 조회와 사용자용 공개 상품 조회 정책을 분리한다",
+      "acceptance": "사용자 목록과 공개 API는 deletedAt이 null이고 status가 active인 상품만 반환하며 관리자 등록·수정·목록의 전체 분류 및 상태 관리 계약은 유지된다",
+      "passes": true
+    },
+    {
+      "id": "REQ-2",
+      "description": "홈에는 공개 상품이 하나 이상 존재하는 유효한 서브카테고리만 노출한다",
+      "acceptance": "DB 집계 결과와 SUB_CATEGORY_MAP의 교집합을 코드 정의 순서로 렌더링하고 중복·레거시 분류·상품 없는 분류는 노출하지 않는다",
+      "passes": true
+    },
+    {
+      "id": "REQ-3",
+      "description": "홈 서브카테고리 탐색 항목에서 아이콘을 제거하고 타이포그래피 라벨만 제공한다",
+      "acceptance": "기존 링크·캐러셀·키보드 탐색은 유지하면서 아이콘 및 원형 아이콘 배경과 미사용 아이콘 매핑을 제거한다",
+      "passes": true
+    },
+    {
+      "id": "REQ-4",
+      "description": "상품 필터와 서브카테고리 딥링크를 현재 공개 상품 데이터에 맞춘다",
+      "acceptance": "필터에는 해당 카테고리의 공개 상품이 있는 분류만 표시되고 다른 카테고리 소속·상품 없는·잘못된 query 값은 all로 폴백한다",
+      "passes": true
+    }
+  ]
+}

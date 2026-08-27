@@ -6,9 +6,9 @@ import { dbConnect } from "@/db";
 import { calculatePrice, escapeRegExp, findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils";
 import { AppError } from "@/core/domain";
 import type {
+  AvailableSubCategory,
   InvitationTheme,
   ProductCategory,
-  SubCategory,
 } from "@/core/domain";
 import {
   POPULAR_PRODUCTS_LIMIT,
@@ -36,11 +36,6 @@ type LeanProduct = ProductDB & {
   previewUrl?: string;
   theme?: InvitationTheme;
   __v?: number;
-};
-
-export type AvailableSubCategory = {
-  category: ProductCategory;
-  subCategory: SubCategory;
 };
 
 // previewUrl은 invitation 카테고리 discriminator 전용 필드라 base ProductModel로
