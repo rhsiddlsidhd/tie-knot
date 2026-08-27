@@ -1,0 +1,99 @@
+{
+  "unit": "src/core/domain/dashboard.ts + src/services/dashboard.ts (+배럴 2개, integration test)",
+  "boundary": "서비스 리턴 타입(생산자) ↔ DashboardStats 도메인 계약 ↔ AdminDashboardTemplate 소비 필드(소비자 미구현)",
+  "commit": "1accaba",
+  "owner": "backend-impl",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "PASS",
+      "at": "2026-08-27T14:43:00Z",
+      "checks": [
+        {
+          "criterion": "#1 API 응답 래핑 불일치 (envelope)",
+          "result": "PASS",
+          "detail": "서비스가 DashboardStats를 그대로 리턴. routeSuccess/actionError/toErrorPayload 미호출, {success,data} 없음. 브랜치 전체 diff에 해당 패턴 0건. 01_api_contract.md §1 충족."
+        },
+        {
+          "criterion": "#2 필드명 일치 (브리핑 항목 1 — 최중점)",
+          "result": "PASS",
+          "detail": "8개 스칼라 전부 확정본과 일치: totalProducts / productsCreatedThisMonth / totalUsers / usersCreatedThisMonth / revenueThisMonth / revenuePreviousMonth / paidOrderCountThisMonth / paidOrderCountPreviousMonth. 구 이름(monthlyRevenue, previousMonthRevenue, monthlyOrderCount, previousMonthOrderCount) 브랜치 전체에 0건. DashboardRecentOrder 6필드도 §3과 일치."
+        },
+        {
+          "criterion": "#6 즉시응답 ↔ 비동기 (createdAt 타입, 브리핑 항목 5)",
+          "result": "PASS",
+          "detail": "recentOrders[].createdAt이 .lean<RecentOrderLean[]>()의 raw Date를 그대로 매핑, toISOString/String 변환 없음. JSON 직렬화 경계 없음(route handler/fetch 미개입). integration test가 toBeInstanceOf(Date)로 단언."
+        },
+        {
+          "criterion": "#7 옵셔널 필드 처리 (?? 0 보장)",
+          "result": "PASS",
+          "detail": "$group 버킷 부재 시 currentBucket?.revenue ?? 0 등 8개 스칼라 전부 ?? 0 폴백. productAgg/userAgg도 [0] 부재 대비 옵셔널 체이닝. '항상 number, null/undefined 절대 없음' 계약 성립."
+        },
+        {
+          "criterion": "이중 시각 기준 (브리핑 항목 2 — 오판 금지 대상)",
+          "result": "PASS (의도된 설계로 확인)",
+          "detail": "Q1 카드 집계는 confirmedAt 기준 + PAID_ORDER_STATUSES 필터, Q2 최근주문은 createdAt 기준 + 상태 무필터. 01_db_schema.md §2 Q2 주의블록 및 01_ui_flow.md §7 Q7/Q10과 일치 — 불일치로 판정하지 않음."
+        },
+        {
+          "criterion": "타임존 (브리핑 항목 3, backend 절반)",
+          "result": "PASS",
+          "detail": "getKstMonthRange() 사용, 상한을 startOfNextMonth로 고정(§9 변경점 9). 서버 로컬 TZ 산술 없음. frontend formatRelativeTime 폴백과의 대조는 프론트 유닛에서 수행 예정."
+        },
+        {
+          "criterion": "에러 계약 (§6)",
+          "result": "PASS",
+          "detail": "Promise.all(...).catch()에서 AppError(\"INTERNAL\", 원본 message) 래핑. all-or-nothing 유지, per-section 폴백 없음. integration test가 OrderModel.aggregate를 mockRejectedValueOnce로 강제 실패시켜 category/message 검증."
+        },
+        {
+          "criterion": "인증 배치 (§7)",
+          "result": "PASS",
+          "detail": "서비스 내부 verifySession/requireAdmin 호출 없음. 유일한 문자열 매치는 '여기서 검사하지 않는다'는 주석. 계약이 의도한 배치와 일치."
+        },
+        {
+          "criterion": "하지 말 것 (브리핑 항목 8)",
+          "result": "PASS",
+          "detail": "브랜치 전체 9개 파일 — route handler/Server Action/zod 스키마 신규 생성 0건, unstable_cache 0건, src/models 중 order.model.ts만(인덱스 1줄). src/app/api·src/actions 미변경."
+        },
+        {
+          "criterion": "소프트 삭제 두 컨벤션",
+          "result": "PASS",
+          "detail": "Product는 {deletedAt: null}, User는 {isDelete: false} — 01_db_schema.md §1의 실측 결과와 일치(모델마다 컨벤션이 다른 게 프로젝트 현실). ProductModel base 사용으로 discriminator 전 카테고리 포함."
+        },
+        {
+          "criterion": "배럴 노출",
+          "result": "PASS",
+          "detail": "core/domain/index.ts는 `export type * from \"./dashboard\"` (타입 전용 모듈이라 정확), services/index.ts는 `export * from \"./dashboard\"`. 프론트가 @/core/domain에서 DashboardStats 도달 가능."
+        },
+        {
+          "criterion": "런타임 크래시 리스크 (product.title 평탄화)",
+          "result": "PASS",
+          "detail": "order.product.title 접근이 안전한지 스키마로 확인 — order.model.ts에서 product: {type: ProductSnapShotSchema, required: true}, title: {type: String, required: true}. buyerName/finalPrice도 required. 타입 단언이 가리는 undefined 접근 위험 없음."
+        }
+      ],
+      "independentVerification": {
+        "note": "backend 보고를 신뢰하지 않고 직접 실행 검증함",
+        "integrationTest": "npx vitest run --project integration — 11/11 통과",
+        "testDbSafety": "backend가 gitignored .env를 워크트리에 복사했다고 보고 → 운영 DB 오염 가능성을 직접 확인함. 결과: 안전. .env에 MONGO_TEST_URI가 아예 없고, integration 프로젝트의 globalSetup(testing/support/setup/mongo-server.ts)이 MongoMemoryReplSet을 띄워 MONGO_TEST_URI를 주입한다. beforeEach의 clearCollections()는 그 임시 인메모리 replSet만 비운다. dbConnect의 resolveUri도 VITEST일 때 MONGO_TEST_URI 없으면 throw하는 이중 안전장치가 있다. .env는 gitignore되어 커밋에도 없음.",
+        "tsc": "npm run tsc 통과",
+        "eslint": "exit 0",
+        "forbiddenPatternScan": "git diff 1bbce1e..HEAD 전체에서 unstable_cache/routeSuccess/actionError/success:true/z.object 매치 0건"
+      },
+      "falsePositivesRejected": [
+        "dbConnect() 미래핑: line 45의 `await dbConnect()`가 AppError 래핑 .catch() 바깥에 있어 연결 실패 시 raw Error가 샌다(계약 §6 에러표는 'DB 커넥션/타임아웃 → INTERNAL'로 분류). 그러나 결함으로 보고하지 않음 — src/services/*.ts 전 서비스(auth/order/product/user/payment/invitation)가 예외 없이 dbConnect()를 미래핑 호출하는 레포 전역 관행이다. 이 브랜치가 도입한 편차가 아니며, 프로젝트 AGENTS.md의 '목적 밖 과제는 별도 Issue' 규칙에 따라 별도 Issue 후보로만 남긴다."
+      ],
+      "reason": "7기준 + 계약 고유 조항 전부 정합. 필드명 8개·Date 유지·?? 0·AppError·envelope 부재를 전수 대조했고, 통합테스트 11건을 직접 실행해 통과 확인. 타입 단언이 가릴 수 있는 런타임 크래시 지점(product.title)도 스키마로 역추적해 안전 확인."
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false,
+  "openPreconditions": [
+    {
+      "id": "전제-3",
+      "item": "User.isDelete 결측 실측 (01_db_schema.md §4-2)",
+      "status": "NOT_PERFORMED",
+      "detail": "db_schema §4-2가 backend-impl에게 `db.users.countDocuments({isDelete:{$exists:false}})` 실측을 지시했고, 0이면 {isDelete:false} 유지, 아니면 {$ne:true}로 변경하라고 했다. backend 완료 보고에 이 항목이 없다. 코드는 문서가 지정한 기본값({isDelete:false})을 쓰고 있어 '틀린 코드'는 아니지만, 실측이 안 끝나 전제가 열려 있다.",
+      "risk": "mongoose 밖에서 삽입된 레거시 user 문서가 있으면 totalUsers/usersCreatedThisMonth가 에러 없이 조용히 축소된다 — 전제-1(confirmedAt)과 동일한 '그럴듯한 오답' 실패 양상.",
+      "escalatedTo": "leader (운영 DB 접근 주체)"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "unit": "src/core/domain/order.ts (PAID_ORDER_STATUSES) + src/models/order.model.ts ({createdAt:-1} 인덱스)",
+  "boundary": "매출 집계 모집단 정의(도메인 상수) ↔ 서비스 집계 쿼리 / 최근주문 정렬 성능 전제조건",
+  "commit": "71e0d4e",
+  "owner": "backend-impl",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "PASS",
+      "at": "2026-08-27T14:39:00Z",
+      "checks": [
+        {
+          "criterion": "#2 필드명/값 일치",
+          "result": "PASS",
+          "detail": "PAID_ORDER_STATUSES = [\"CONFIRMED\",\"COMPLETED\"] as const — 01_api_contract.md §3 상수 승격 블록과 문자 단위 일치. 01_db_schema.md §1의 isPaymentAppliedStatus(payment.ts:61) 정의와도 동일."
+        },
+        {
+          "criterion": "배치 위치 (§3 상수 승격)",
+          "result": "PASS",
+          "detail": "src/core/domain/order.ts에 승격. dashboard 지역 사본(REVENUE_STATUSES) 생성하지 않음 — '네 번째 사본 금지' 요구 충족."
+        },
+        {
+          "criterion": "스코프 준수",
+          "result": "PASS",
+          "detail": "payment.ts의 isPaymentAppliedStatus와 invitation.ts:63을 건드리지 않음. 계약 §3 각주가 '기존 리팩터링은 스코프 밖'으로 못박은 대로."
+        },
+        {
+          "criterion": "§9 전제-2 (필수 인덱스)",
+          "result": "PASS",
+          "detail": "orderSchema.index({ createdAt: -1 }) 추가. 01_db_schema.md §3-A 요구와 일치. autoIndex:true라 별도 마이그레이션 스크립트 불필요."
+        },
+        {
+          "criterion": "브리핑 항목 8 (스키마 변경 제한)",
+          "result": "PASS",
+          "detail": "src/models 하위에서 order.model.ts만 수정, 변경 내용은 인덱스 1줄 추가뿐. 필드 추가/타입 변경 없음 — 허용 범위와 정확히 일치."
+        },
+        {
+          "criterion": "기존 인덱스 간섭",
+          "result": "PASS",
+          "detail": "기존 3개 복합 인덱스(선두 userId 또는 orderStatus) 미변경. 신규 단일 인덱스는 무필터 createdAt desc 정렬 전용이라 중복/잠식 없음."
+        }
+      ],
+      "independentVerification": {
+        "eslint": "clean (order.ts, order.model.ts)",
+        "diffSize": "order.ts +4, order.model.ts +5 — 외과적 변경, 부수 수정 없음"
+      },
+      "reason": "계약 §3 상수 정의와 db_schema §3-A 인덱스 요구를 정확히 충족. 스코프 밖 파일 무변경."
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false
+}
