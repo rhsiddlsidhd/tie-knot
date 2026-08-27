@@ -161,10 +161,16 @@ orderSchema.index({ userId: 1, orderStatus: 1, createdAt: -1 });
 orderSchema.index({ orderStatus: 1, paymentId: 1, createdAt: 1 }); // findExpiredPendingOrdersForAllUsers
 orderSchema.index({ orderStatus: 1, confirmedAt: 1 }); // findExpiredAwaitingInvitationOrdersForAllUsers
 
-// 관리자 대시보드 "최근 주문" + 관리자 전역 주문 목록 전용 — 둘 다 상태 필터 없이
-// createdAt desc 전역 정렬이라 위 복합 인덱스(선두 필드가 userId/orderStatus)를 못 쓴다.
-// 없으면 COLLSCAN + blocking in-memory SORT(32MB 상한에 걸리면 쿼리 자체가 실패한다).
-orderSchema.index({ createdAt: -1 });
+// 관리자 대시보드 "최근 주문" + 관리자 전역 주문 목록(상태 필터 없음) 전용 — 둘 다
+// 위 복합 인덱스(선두 필드가 userId/orderStatus)를 못 쓴다. _id를 tie-break로
+// 포함해 getAdminOrdersPageService의 (createdAt desc, _id desc) 정렬을 전부
+// 인덱스로 커버한다 — createdAt만 있으면 같은 createdAt인 문서들의 _id 정렬은
+// blocking in-memory SORT로 떨어진다(32MB 상한에 걸리면 쿼리 자체가 실패한다).
+orderSchema.index({ createdAt: -1, _id: -1 });
+
+// 관리자 전역 주문 목록의 상태 필터 조회 전용 — 위 { userId, orderStatus, createdAt }
+// 인덱스는 선두가 userId라 소유자 스코프 없는 전역 상태 필터 조회엔 못 쓴다.
+orderSchema.index({ orderStatus: 1, createdAt: -1, _id: -1 });
 
 export const OrderModel =
   (mongoose.models.Order as Model<IOrder>) ||

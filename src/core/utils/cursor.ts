@@ -1,10 +1,16 @@
 // 커서 기반 페이징의 커서 인코딩 — (생성시각, 문서 ID) 복합 키를 URL에 실을 수 있는
 // 단일 문자열로 바꾼다. base64url이라 쿼리스트링에 그대로 실어도 이스케이프가 필요 없다.
 // btoa/atob를 쓰는 이유: 이 파일이 클라이언트 번들에도 실릴 수 있어 Node 전용 Buffer에 의존하지 않는다.
+import { MAX_PAGE_SIZE } from "@/core/domain";
+
 export type PageCursor = {
   createdAt: Date;
   id: string;
 };
+
+// mongoose 없이 순수 정규식으로만 ObjectId 형식을 검증한다(이 파일은 클라이언트
+// 번들에도 실릴 수 있어 mongoose를 import하지 않는다).
+const OBJECT_ID_HEX_PATTERN = /^[0-9a-fA-F]{24}$/;
 
 const toBase64Url = (value: string): string =>
   btoa(value).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
@@ -30,7 +36,14 @@ export const decodeCursor = (raw: string): PageCursor | null => {
 
   const createdAt = new Date(decoded.slice(0, separatorIndex));
   const id = decoded.slice(separatorIndex + 1);
-  if (Number.isNaN(createdAt.getTime()) || id.length === 0) return null;
+  if (Number.isNaN(createdAt.getTime()) || !OBJECT_ID_HEX_PATTERN.test(id)) {
+    return null;
+  }
 
   return { createdAt, id };
 };
+
+/** limit이 1 이상 MAX_PAGE_SIZE 이하의 정수인지 검증한다 — 범위 밖이면 서비스가
+ * VALIDATION AppError로 번역한다(이 유틸 자체는 boolean만 리턴, throw하지 않는다). */
+export const isValidPageLimit = (limit: number): boolean =>
+  Number.isInteger(limit) && limit >= 1 && limit <= MAX_PAGE_SIZE;

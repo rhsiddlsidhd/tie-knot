@@ -13,6 +13,7 @@ import {
   changePassword,
   signupUserService,
   requestPasswordResetService,
+  getAdminUsersPageService,
 } from "./user";
 
 const sendEmailMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
@@ -169,6 +170,154 @@ describe("user", () => {
       const result = await changePassword(input.email, "new-password");
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe("getAdminUsersPageService", () => {
+    // createdAt은 timestamps가 자동으로 채우고 immutable로 잠그므로, 순서 검증을
+    // 위해 덮어쓰려면 두 보호를 모두 풀어야 한다(order.integration.test.ts와 동일 패턴).
+    const setCreatedAt = async (userId: mongoose.Types.ObjectId, createdAt: Date) => {
+      await UserModel.updateOne(
+        { _id: userId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    it("createdAt 내림차순으로 정렬한다", async () => {
+      const older = await UserModel.create(buildUserInput());
+      const newer = await UserModel.create(buildUserInput());
+      await setCreatedAt(older._id, new Date("2026-01-01T00:00:00.000Z"));
+      await setCreatedAt(newer._id, new Date("2026-02-01T00:00:00.000Z"));
+
+      const result = await getAdminUsersPageService({});
+
+      expect(result.items.map((u) => u.id)).toEqual([
+        newer._id.toString(),
+        older._id.toString(),
+      ]);
+    });
+
+    it("같은 createdAt이면 _id 내림차순으로 tie-break한다", async () => {
+      const sameCreatedAt = new Date("2026-08-01T00:00:00.000Z");
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const user = await UserModel.create(buildUserInput());
+        await setCreatedAt(user._id, sameCreatedAt);
+        created.push(user._id.toString());
+      }
+
+      const result = await getAdminUsersPageService({});
+
+      expect(result.items.map((u) => u.id)).toEqual([...created].sort().reverse());
+    });
+
+    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const user = await UserModel.create(buildUserInput());
+        await setCreatedAt(user._id, new Date(2026, 0, i + 1));
+        created.push(user._id.toString());
+      }
+
+      const firstPage = await getAdminUsersPageService({ limit: 2 });
+      expect(firstPage.items).toHaveLength(2);
+      expect(firstPage.nextCursor).not.toBe(null);
+
+      const secondPage = await getAdminUsersPageService({
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.nextCursor).toBe(null);
+
+      const paged = [...firstPage.items, ...secondPage.items].map((u) => u.id);
+      expect(new Set(paged).size).toBe(3);
+      expect(paged.sort()).toEqual([...created].sort());
+    });
+
+    it("마지막 페이지는 nextCursor가 null이다", async () => {
+      await UserModel.create(buildUserInput());
+
+      const result = await getAdminUsersPageService({});
+
+      expect(result.nextCursor).toBe(null);
+    });
+
+    it("role 필터를 DB 쿼리 단계에서 적용한다", async () => {
+      const user = await UserModel.create(buildUserInput({ role: "USER" }));
+      await UserModel.create(buildUserInput({ role: "ADMIN" }));
+
+      const result = await getAdminUsersPageService({ role: "USER" });
+
+      expect(result.items.map((u) => u.id)).toEqual([user._id.toString()]);
+    });
+
+    it("role 필터와 cursor를 동시에 적용한다", async () => {
+      const users = [];
+      for (let i = 0; i < 3; i += 1) {
+        const user = await UserModel.create(buildUserInput({ role: "USER" }));
+        await setCreatedAt(user._id, new Date(2026, 0, i + 1));
+        users.push(user);
+      }
+      await UserModel.create(buildUserInput({ role: "ADMIN" }));
+
+      const firstPage = await getAdminUsersPageService({ role: "USER", limit: 2 });
+      const secondPage = await getAdminUsersPageService({
+        role: "USER",
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.items[0].role).toBe("USER");
+    });
+
+    it("활동 사용자와 탈퇴 사용자를 모두 포함한다(isDelete로 제외하지 않는다)", async () => {
+      const active = await UserModel.create(buildUserInput({ isDelete: false }));
+      const deleted = await UserModel.create(buildUserInput({ isDelete: true }));
+
+      const result = await getAdminUsersPageService({});
+
+      expect(result.items.map((u) => u.id).sort()).toEqual(
+        [active._id.toString(), deleted._id.toString()].sort(),
+      );
+    });
+
+    it("빈 DB면 빈 목록과 null 커서를 리턴한다", async () => {
+      const result = await getAdminUsersPageService({});
+
+      expect(result).toEqual({ items: [], nextCursor: null });
+    });
+
+    it("잘못된 role은 서비스가 방어적으로 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminUsersPageService({ role: "SUPERADMIN" as never }),
+      ).rejects.toBeInstanceOf(AppError);
+    });
+
+    it("형식이 깨진 cursor는 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminUsersPageService({ cursor: "!!broken!!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("잘못된 limit(0)은 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminUsersPageService({ limit: 0 }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("DTO에 password/phone 등 인증 관련 필드가 없다", async () => {
+      await UserModel.create(buildUserInput());
+
+      const result = await getAdminUsersPageService({});
+
+      expect(result.items[0]).not.toHaveProperty("password");
+      expect(result.items[0]).not.toHaveProperty("phone");
+      expect(Object.keys(result.items[0]).sort()).toEqual(
+        ["createdAt", "email", "id", "isDelete", "name", "role"].sort(),
+      );
     });
   });
 });

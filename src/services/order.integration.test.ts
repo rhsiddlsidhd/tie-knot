@@ -18,6 +18,7 @@ import {
   createOrderService,
   getOrderSeviceByMerchantUid,
   getOrdersPageForUser,
+  getAdminOrdersPageService,
   cancelPendingOrderForCurrentUser,
   findExpiredAwaitingInvitationOrders,
   findExpiredAwaitingInvitationOrdersForAllUsers,
@@ -894,6 +895,174 @@ describe("order", () => {
         bank: "SHINHAN",
         accountNumber: "110-123-456789",
       });
+    });
+  });
+
+  describe("getAdminOrdersPageService", () => {
+    it("createdAt 내림차순으로 정렬한다", async () => {
+      const older = await createOrderService(buildOrderInputForTest());
+      const newer = await createOrderService(buildOrderInputForTest());
+      await setCreatedAt(older._id, new Date("2026-01-01T00:00:00.000Z"));
+      await setCreatedAt(newer._id, new Date("2026-02-01T00:00:00.000Z"));
+
+      const result = await getAdminOrdersPageService({});
+
+      expect(result.items.map((o) => o.id)).toEqual([
+        newer._id.toString(),
+        older._id.toString(),
+      ]);
+    });
+
+    it("같은 createdAt이면 _id 내림차순으로 tie-break한다", async () => {
+      const sameCreatedAt = new Date("2026-08-01T00:00:00.000Z");
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const order = await createOrderService(buildOrderInputForTest());
+        await setCreatedAt(order._id, sameCreatedAt);
+        created.push(order._id.toString());
+      }
+
+      const result = await getAdminOrdersPageService({});
+
+      expect(result.items.map((o) => o.id)).toEqual([...created].sort().reverse());
+    });
+
+    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const order = await createOrderService(buildOrderInputForTest());
+        await setCreatedAt(order._id, new Date(2026, 0, i + 1));
+        created.push(order._id.toString());
+      }
+
+      const firstPage = await getAdminOrdersPageService({ limit: 2 });
+      expect(firstPage.items).toHaveLength(2);
+      expect(firstPage.nextCursor).not.toBe(null);
+
+      const secondPage = await getAdminOrdersPageService({
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.nextCursor).toBe(null);
+
+      const paged = [...firstPage.items, ...secondPage.items].map((o) => o.id);
+      expect(new Set(paged).size).toBe(3);
+      expect(paged.sort()).toEqual([...created].sort());
+    });
+
+    it("첫 페이지는 항목이 limit을 넘을 때만 nextCursor를 갖는다", async () => {
+      await createOrderService(buildOrderInputForTest());
+
+      const result = await getAdminOrdersPageService({});
+
+      expect(result.nextCursor).toBe(null);
+    });
+
+    it("네 주문 상태(PENDING/CONFIRMED/COMPLETED/CANCELLED)를 모두 포함한다", async () => {
+      const statuses = ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"] as const;
+      for (const status of statuses) {
+        const order = await createOrderService(buildOrderInputForTest());
+        await OrderModel.updateOne({ _id: order._id }, { $set: { orderStatus: status } });
+      }
+
+      const result = await getAdminOrdersPageService({});
+
+      expect(result.items.map((o) => o.orderStatus).sort()).toEqual(
+        [...statuses].sort(),
+      );
+    });
+
+    it("status 필터를 DB 쿼리 단계에서 적용한다", async () => {
+      const pending = await createOrderService(buildOrderInputForTest());
+      const confirmed = await createOrderService(buildOrderInputForTest());
+      await OrderModel.updateOne(
+        { _id: confirmed._id },
+        { $set: { orderStatus: "CONFIRMED" } },
+      );
+
+      const result = await getAdminOrdersPageService({ status: "PENDING" });
+
+      expect(result.items.map((o) => o.id)).toEqual([pending._id.toString()]);
+    });
+
+    it("status 필터와 cursor를 동시에 적용한다", async () => {
+      const orders = [];
+      for (let i = 0; i < 3; i += 1) {
+        const order = await createOrderService(buildOrderInputForTest());
+        await setCreatedAt(order._id, new Date(2026, 0, i + 1));
+        orders.push(order);
+      }
+      const other = await createOrderService(buildOrderInputForTest());
+      await OrderModel.updateOne(
+        { _id: other._id },
+        { $set: { orderStatus: "CONFIRMED" } },
+      );
+
+      const firstPage = await getAdminOrdersPageService({
+        status: "PENDING",
+        limit: 2,
+      });
+      const secondPage = await getAdminOrdersPageService({
+        status: "PENDING",
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.items[0].orderStatus).toBe("PENDING");
+    });
+
+    it("빈 DB면 빈 목록과 null 커서를 리턴한다", async () => {
+      const result = await getAdminOrdersPageService({});
+
+      expect(result).toEqual({ items: [], nextCursor: null });
+    });
+
+    it("잘못된 status는 서비스가 방어적으로 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminOrdersPageService({ status: "REFUNDED" as never }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("형식이 깨진 cursor는 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminOrdersPageService({ cursor: "!!broken!!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("잘못된 limit(소수)은 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminOrdersPageService({ limit: 1.5 }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("DTO는 문자열 id와 평탄화된 productTitle을 가지며 불필요한 문서 필드가 없다", async () => {
+      await createOrderService(
+        buildOrderInputForTest({
+          product: {
+            ...buildOrderInput().product,
+            productId: defaultProductId,
+            title: "특별한 청첩장",
+          },
+        }),
+      );
+
+      const result = await getAdminOrdersPageService({});
+
+      expect(typeof result.items[0].id).toBe("string");
+      expect(result.items[0].productTitle).toBe("특별한 청첩장");
+      expect(Object.keys(result.items[0]).sort()).toEqual(
+        [
+          "buyerName",
+          "createdAt",
+          "finalPrice",
+          "id",
+          "merchantUid",
+          "orderStatus",
+          "productTitle",
+        ].sort(),
+      );
     });
   });
 

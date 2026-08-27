@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import {
   Badge,
   Select,
@@ -11,9 +11,10 @@ import {
   TypographyH1,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import type { OrderStatus } from "@/core/domain";
+import { CursorPagination } from "@/ui/components/molecules";
+import type { AdminOrderListPage, OrderStatus } from "@/core/domain";
 import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain";
-import { MOCK_ORDERS } from "../_constants";
+import { formatKstDate } from "@/core/utils";
 
 const STATUS_FILTER_OPTIONS: Array<{ value: OrderStatus | "ALL"; label: string }> = [
   { value: "ALL", label: "전체 상태" },
@@ -23,29 +24,29 @@ const STATUS_FILTER_OPTIONS: Array<{ value: OrderStatus | "ALL"; label: string }
   { value: "CANCELLED", label: ORDER_STATUS_LABELS.CANCELLED },
 ];
 
-const AdminOrdersTemplate = () => {
-  const [statusFilter, setStatusFilter] = useState<OrderStatus | "ALL">("ALL");
+interface AdminOrdersTemplateProps {
+  page: AdminOrderListPage;
+  status?: OrderStatus;
+  cursor?: string;
+}
 
-  const orders =
-    statusFilter === "ALL"
-      ? MOCK_ORDERS
-      : MOCK_ORDERS.filter((order) => order.orderStatus === statusFilter);
+const AdminOrdersTemplate = ({ page, status, cursor }: AdminOrdersTemplateProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const handleStatusChange = (value: OrderStatus | "ALL") => {
+    const query = value === "ALL" ? "" : `?status=${value}`;
+    router.push(`${pathname}${query}`);
+  };
 
   return (
     <div className="space-y-6">
-      <TypographyMuted>
-        mock UI만 구현 — 실제 주문 전체조회 API는 아직 없습니다.
-      </TypographyMuted>
-
       <div className="flex items-center justify-between">
         <TypographyH1 className="text-left text-3xl font-bold">
           주문 관리
         </TypographyH1>
 
-        <Select
-          value={statusFilter}
-          onValueChange={(value) => setStatusFilter(value as OrderStatus | "ALL")}
-        >
+        <Select value={status ?? "ALL"} onValueChange={handleStatusChange}>
           <SelectTrigger className="w-40">
             <SelectValue />
           </SelectTrigger>
@@ -69,11 +70,12 @@ const AdminOrdersTemplate = () => {
                 <th className="px-4 py-3 text-left text-sm font-semibold">상품</th>
                 <th className="px-4 py-3 text-left text-sm font-semibold">상태</th>
                 <th className="px-4 py-3 text-right text-sm font-semibold">금액</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">주문일</th>
               </tr>
             </thead>
             <tbody className="divide-y">
-              {orders.map((order) => (
-                <tr key={order.merchantUid} className="hover:bg-muted/50 transition-colors">
+              {page.items.map((order) => (
+                <tr key={order.id} className="hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3 text-sm">{order.merchantUid}</td>
                   <td className="px-4 py-3 text-sm">{order.buyerName}</td>
                   <td className="px-4 py-3 text-sm">{order.productTitle}</td>
@@ -85,19 +87,29 @@ const AdminOrdersTemplate = () => {
                   <td className="px-4 py-3 text-right text-sm font-semibold">
                     {order.finalPrice.toLocaleString()}원
                   </td>
+                  <td className="px-4 py-3 text-sm">
+                    {formatKstDate(order.createdAt)}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {orders.length === 0 && (
+        {page.items.length === 0 && (
           <div className="flex flex-col items-center gap-1 py-16 text-center">
             <p className="text-sm font-medium">조건에 해당하는 주문이 없습니다</p>
             <TypographyMuted>다른 상태 필터를 선택해보세요.</TypographyMuted>
           </div>
         )}
       </div>
+
+      <CursorPagination
+        basePath={pathname}
+        query={status ? { status } : {}}
+        hasCursor={!!cursor}
+        nextCursor={page.nextCursor}
+      />
     </div>
   );
 };

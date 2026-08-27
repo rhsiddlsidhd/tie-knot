@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatRelativeTime, getKstMonthRange } from "./date";
+import { formatRelativeTime, getKstMonthRange, formatKstDate } from "./date";
 
 const SECOND = 1000;
 const MINUTE = SECOND * 60;
@@ -48,6 +48,30 @@ describe("formatRelativeTime", () => {
     // UTC 기준 2026-08-19T15:30:00Z = KST 2026-08-20 00:30 — UTC로 포맷하면 8/19로 하루 밀린다.
     const date = new Date("2026-08-19T15:30:00.000Z");
     expect(formatRelativeTime(date, now)).toBe("2026.8.20");
+  });
+});
+
+describe("formatKstDate", () => {
+  it("UTC 기준 자정 넘어간 시각도 KST 날짜로 포맷한다", () => {
+    // UTC 2026-08-19T15:30:00Z = KST 2026-08-20 00:30 — UTC로 포맷하면 8/19로 하루 밀린다.
+    const date = new Date("2026-08-19T15:30:00.000Z");
+    expect(formatKstDate(date, "dot")).toBe("2026.8.20");
+  });
+
+  it("문자열 입력도 동일하게 KST로 변환한다", () => {
+    expect(formatKstDate("2026-08-19T15:30:00.000Z", "dot")).toBe(
+      "2026.8.20",
+    );
+  });
+
+  it("같은 입력이면 항상 같은 문자열을 반환한다(서버/브라우저 결정적)", () => {
+    const date = new Date("2026-03-01T09:00:00.000Z");
+    expect(formatKstDate(date, "dot")).toBe(formatKstDate(date, "dot"));
+  });
+
+  it("type을 생략하면 dot 포맷이 기본값이다", () => {
+    const date = new Date("2026-08-19T15:30:00.000Z");
+    expect(formatKstDate(date)).toBe("2026.8.20");
   });
 });
 

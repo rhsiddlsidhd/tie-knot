@@ -8,9 +8,15 @@ import {
   ProductModel,
 } from "@/models";
 import type { CreateOrderDto } from "@/core/schemas";
-import { encodeCursor, decodeCursor, generateUid } from "@/core/utils";
+import {
+  encodeCursor,
+  decodeCursor,
+  generateUid,
+  isValidPageLimit,
+} from "@/core/utils";
 import { dbConnect } from "@/db";
 import type {
+  AdminOrderListPage,
   OrderDetail,
   OrderListItem,
   OrderListPage,
@@ -19,9 +25,11 @@ import type {
 } from "@/core/domain";
 import { AppError } from "@/core/domain";
 import {
+  DEFAULT_PAGE_SIZE,
   EXPIRED_ORDER_BATCH_LIMIT,
   INVITATION_INPUT_DEADLINE_DAYS,
   ORDER_PAGE_SIZE,
+  ORDER_STATUSES,
   PENDING_ORDER_EXPIRE_HOURS,
 } from "@/core/domain";
 import { getProductQuantityBoundsService } from "./product";
@@ -349,6 +357,99 @@ export const getOrdersPageForUser = async ({
 
   return {
     items: await toOrderListItems(orders),
+    nextCursor:
+      hasMore && lastOrder
+        ? encodeCursor({
+            createdAt: lastOrder.createdAt,
+            id: lastOrder._id.toString(),
+          })
+        : null,
+  };
+};
+
+type AdminOrderListQuery = {
+  status?: OrderStatus;
+  cursor?: string;
+  limit?: number;
+};
+
+type AdminOrderListRow = {
+  _id: mongoose.Types.ObjectId;
+  merchantUid: string;
+  buyerName: string;
+  product: { title: string };
+  orderStatus: OrderStatus;
+  finalPrice: number;
+  createdAt: Date;
+};
+
+/**
+ * 관리자 전역 주문 목록 한 페이지 — 소유자 스코프 없이 전체 주문을 대상으로 한다.
+ * my-orders(getOrdersPageForUser)와 정렬·커서 계약(createdAt desc, _id tie-break,
+ * limit+1)은 공유하지만, Invitation/Payment 조인 없이 주문 스냅샷만으로 채울 수 있는
+ * 최소 필드만 select한다 — 목록에 필요 이상의 문서 필드나 Mongoose 인스턴스를
+ * 노출하지 않는다.
+ */
+export const getAdminOrdersPageService = async ({
+  status,
+  cursor,
+  limit = DEFAULT_PAGE_SIZE,
+}: AdminOrderListQuery): Promise<AdminOrderListPage> => {
+  await dbConnect();
+
+  if (!isValidPageLimit(limit)) {
+    throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (status && !ORDER_STATUSES.includes(status)) {
+    throw new AppError("VALIDATION", "잘못된 주문 상태입니다.");
+  }
+
+  const filter: mongoose.FilterQuery<IOrder> = {};
+
+  if (status) {
+    filter.orderStatus = status;
+  }
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) {
+      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    }
+    filter.$or = [
+      { createdAt: { $lt: decoded.createdAt } },
+      {
+        createdAt: decoded.createdAt,
+        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+      },
+    ];
+  }
+
+  const found = await OrderModel.find(filter)
+    .select("merchantUid buyerName product.title orderStatus finalPrice createdAt")
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(limit + 1)
+    .lean<AdminOrderListRow[]>()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "주문 목록 조회에 실패했습니다.",
+      );
+    });
+
+  const hasMore = found.length > limit;
+  const orders = hasMore ? found.slice(0, limit) : found;
+  const lastOrder = orders.at(-1);
+
+  return {
+    items: orders.map((order) => ({
+      id: order._id.toString(),
+      merchantUid: order.merchantUid,
+      buyerName: order.buyerName,
+      productTitle: order.product.title,
+      orderStatus: order.orderStatus,
+      finalPrice: order.finalPrice,
+      createdAt: order.createdAt,
+    })),
     nextCursor:
       hasMore && lastOrder
         ? encodeCursor({

@@ -1,5 +1,7 @@
 import type { PayMethod, PayStatus } from "./payment";
 import type { ProductCategory } from "./product-category";
+import type { CursorPage } from "./cursor";
+import { DEFAULT_PAGE_SIZE } from "./cursor";
 
 // 결제완료 후 청첩장 콘텐츠를 이 기간(일) 안에 입력하지 않으면
 // 자동취소+환불 대상이 된다.
@@ -111,13 +113,24 @@ export type OrderListItem = OrderJSON & {
   virtualAccount?: OrderVirtualAccount;
 };
 
-export type OrderListPage = {
-  items: OrderListItem[];
-  nextCursor: string | null;
-};
+export type OrderListPage = CursorPage<OrderListItem>;
 
 // 목록 한 페이지에 담는 주문 수 — RSC 첫 페이지와 더보기(route handler)가 같은 값을 쓴다.
-export const ORDER_PAGE_SIZE = 10;
+export const ORDER_PAGE_SIZE = DEFAULT_PAGE_SIZE;
+
+// 관리자 전역 주문 목록 한 행 — my-orders(OrderListItem)와 달리 소유자 스코프가 없고
+// Invitation/Payment 조인 없이 주문 스냅샷만으로 표시 가능한 필드만 추린다.
+export type AdminOrderListItem = {
+  id: string;
+  merchantUid: string;
+  buyerName: string;
+  productTitle: string;
+  orderStatus: OrderStatus;
+  finalPrice: number;
+  createdAt: Date;
+};
+
+export type AdminOrderListPage = CursorPage<AdminOrderListItem>;
 
 // 주문 상세의 결제 내역 — Payment 문서에서 화면이 실제로 그리는 필드만 추린다.
 export type OrderPaymentSummary = {
