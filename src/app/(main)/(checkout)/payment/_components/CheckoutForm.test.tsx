@@ -22,7 +22,12 @@ vi.mock("@/ui/stores", () => ({
 vi.mock("@/ui/hooks", () => ({
   usePortOnePayment: usePortOnePaymentMock,
   useCheckoutData: () => ({ data: null as unknown, loading: false }),
-  useCheckoutForm: () => ({ errors: {}, handleSubmit: vi.fn() }),
+  useCheckoutForm: () => ({
+    errors: {},
+    shippingErrors: {},
+    requiresShipping: false,
+    handleSubmit: vi.fn(),
+  }),
 }));
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));

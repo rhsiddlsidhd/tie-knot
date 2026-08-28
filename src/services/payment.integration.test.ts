@@ -86,6 +86,7 @@ describe("payment", () => {
           productId: savedProduct!._id.toString(),
           title: productInput.title,
           thumbnail: productInput.thumbnail,
+          category: savedProduct!.category,
           pricing: { originalPrice: 9900, discountedPrice: 9900 },
           quantity,
           selectedFeatures: [],

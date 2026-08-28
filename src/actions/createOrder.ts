@@ -8,7 +8,7 @@ import { actionError } from "@/boundary";
 
 import { validateAndFlatten } from "@/core/utils";
 import { createOrderSchema } from "@/core/schemas";
-import type { PayMethod } from "@/core/domain";
+import type { PayMethod, ProductCategory } from "@/core/domain";
 import { routes } from "@/core/domain";
 export type CreateOrderResult = {
   merchantUid: string;
@@ -35,6 +35,20 @@ export async function createOrder(
   // FormData에서 주문 정보 추출
   const selectedOptionsRaw = formData.get("selectedFeatures") as string;
 
+  // 넷 중 하나라도 값이 있으면 shipping 객체를 구성한다 — 모바일초대장 주문은
+  // ShippingInfoCard 자체가 폼에 없어 이 필드들이 애초에 안 실려있으므로 항상
+  // undefined가 되고, zod의 shipping.optional()을 그대로 통과한다.
+  const shippingReceiver = formData.get("shippingReceiver") as string | null;
+  const shippingPhone = formData.get("shippingPhone") as string | null;
+  const shipAddress = formData.get("ship_address") as string | null;
+  const shipAddressDetail = formData.get("ship_address_detail") as string | null;
+  const hasShippingInput = [
+    shippingReceiver,
+    shippingPhone,
+    shipAddress,
+    shipAddressDetail,
+  ].some((value) => !!value);
+
   const data = {
     buyerName: formData.get("buyerName") as string,
     buyerEmail: formData.get("buyerEmail") as string,
@@ -44,6 +58,7 @@ export async function createOrder(
       productId: formData.get("productId") as string,
       title: formData.get("productTitle") as string,
       thumbnail: formData.get("productThumbnail") as string,
+      category: formData.get("productCategory") as ProductCategory,
       pricing: {
         originalPrice: Number(formData.get("originalPrice")),
         discountedPrice: Number(formData.get("discountedPrice")),
@@ -51,6 +66,14 @@ export async function createOrder(
       quantity: Number(formData.get("productQuantity")),
       selectedFeatures: JSON.parse(selectedOptionsRaw) ?? [],
     },
+    shipping: hasShippingInput
+      ? {
+          receiver: shippingReceiver ?? "",
+          phone: shippingPhone ?? "",
+          address: shipAddress ?? "",
+          addressDetail: shipAddressDetail ?? "",
+        }
+      : undefined,
   };
 
   // Zod 스키마로 유효성 검증

@@ -1,8 +1,8 @@
 import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
-import type { PayMethod } from "@/core/domain";
-import { PAY_METHOD } from "@/core/domain";
+import type { PayMethod, ProductCategory } from "@/core/domain";
+import { PAY_METHOD, PRODUCT_CATEGORIES, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 export type { OrderJSON } from "@/core/domain";
 interface ProductPricing {
   originalPrice: number;
@@ -19,9 +19,17 @@ interface ProductSnapShot {
   productId: Types.ObjectId | string;
   title: string;
   thumbnail: string;
+  category: ProductCategory;
   pricing: ProductPricing;
   quantity: number;
   selectedFeatures: SelectedFeatureSnapShot[];
+}
+
+export interface ShippingInfo {
+  receiver: string;
+  phone: string;
+  address: string;
+  addressDetail: string;
 }
 
 const selectedFeatureSnapShotSchema = new Schema<SelectedFeatureSnapShot>(
@@ -49,6 +57,7 @@ const ProductSnapShotSchema = new Schema<ProductSnapShot>(
     },
     title: { type: String, required: true },
     thumbnail: { type: String, required: true },
+    category: { type: String, enum: PRODUCT_CATEGORIES, required: true },
     pricing: {
       originalPrice: { type: Number, required: true },
       discountedPrice: {
@@ -61,6 +70,16 @@ const ProductSnapShotSchema = new Schema<ProductSnapShot>(
       type: [selectedFeatureSnapShotSchema],
       default: [],
     },
+  },
+  { _id: false },
+);
+
+const ShippingInfoSchema = new Schema<ShippingInfo>(
+  {
+    receiver: { type: String, required: true },
+    phone: { type: String, required: true },
+    address: { type: String, required: true },
+    addressDetail: { type: String, required: true },
   },
   { _id: false },
 );
@@ -82,6 +101,9 @@ export interface IOrder {
   buyerEmail: string;
   buyerPhone: string;
   product: ProductSnapShot;
+  // 모바일초대장 카테고리는 배송이 필요 없어 없을 수 있다 — required 여부는
+  // orderSchema.shipping의 conditional required(형제 필드 product.category 참조)가 정한다.
+  shipping?: ShippingInfo;
   finalPrice: number;
   discountRate: number;
   discountAmount: number;
@@ -115,6 +137,16 @@ const orderSchema = new Schema<IOrder>(
 
     // 상품정보
     product: { type: ProductSnapShotSchema, required: true },
+    // 실물 카테고리 주문의 최후 방어선 — createOrderService가 1차로 사용자에게
+    // 보이는 VALIDATION 에러를 던지고, 여기는 그 체크를 우회하는 미래의 다른
+    // 코드 경로까지 막는 안전망이다(도달하면 버그이므로 mongoose 에러 그대로
+    // AppError(INTERNAL)로 감싸지는 게 맞다 — services/AGENTS.md 컨벤션).
+    shipping: {
+      type: ShippingInfoSchema,
+      required: function (this: IOrder) {
+        return this.product.category !== MOBILE_INVITATION_CATEGORY;
+      },
+    },
     finalPrice: { type: Number, required: true },
     discountRate: { type: Number, default: 0, min: 0, max: 1 },
     discountAmount: { type: Number, default: 0 },

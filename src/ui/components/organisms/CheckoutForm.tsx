@@ -1,7 +1,7 @@
 import { AlertCircle } from "lucide-react";
 
 import type { PayStatus } from "@/core/domain";
-import type { BuyerInfo } from "@/core/schemas";
+import type { BuyerInfo, ShippingInfo } from "@/core/schemas";
 
 import { Spinner } from "@/ui/components/molecules";
 import { PaymentPendingOverlay } from "@/app/(main)/(checkout)/payment/_components/PaymentPendingOverlay";
@@ -19,6 +19,8 @@ interface CheckoutFormProps {
   onAgreedChange: (agreed: boolean) => void;
   errorMessage: string | null;
   errors: Partial<Record<keyof BuyerInfo, string[]>>;
+  requiresShipping: boolean;
+  shippingErrors: Partial<Record<keyof ShippingInfo, string[]>>;
   pending: boolean;
   onSubmit: (e: React.FormEvent) => void;
 }
@@ -30,6 +32,8 @@ export function CheckoutForm({
   onAgreedChange,
   errorMessage,
   errors,
+  requiresShipping,
+  shippingErrors,
   pending,
   onSubmit,
 }: CheckoutFormProps) {
@@ -41,14 +45,21 @@ export function CheckoutForm({
     );
   }
 
+  // 배송 카드는 실물 상품 주문일 때만 트리에 들어간다 — 번호 배지는 그에 맞춰
+  // 매번 다시 매긴다(카드를 숨긴다고 결제수단 배지가 "3"으로 남아 건너뛰지 않도록).
+  const shippingStep = requiresShipping ? 2 : undefined;
+  const paymentStep = requiresShipping ? 3 : 2;
+
   return (
     <div className="relative">
       <PaymentPendingOverlay visible={paymentStatus === "PENDING"} />
       <form onSubmit={onSubmit} className="space-y-6 pb-24">
-        <BuyerInfoCard errors={errors} />
-        <ShippingInfoCard />
+        <BuyerInfoCard step={1} errors={errors} />
+        {requiresShipping && shippingStep && (
+          <ShippingInfoCard step={shippingStep} errors={shippingErrors} />
+        )}
         <TermsAgreementCard agreed={agreed} onAgreedChange={onAgreedChange} />
-        <PaymentMethodSelector error={errors.payMethod?.[0]} />
+        <PaymentMethodSelector step={paymentStep} error={errors.payMethod?.[0]} />
 
         {errorMessage && (
           <div className="border-destructive/50 bg-destructive/10 text-destructive flex items-start gap-3 rounded-lg border p-4 text-sm">

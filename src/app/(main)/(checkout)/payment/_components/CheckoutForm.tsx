@@ -42,7 +42,11 @@ export function CheckoutForm() {
   // 직접 참조해 "주문 없음" 오탐 리다이렉트를 알아서 가드한다(OrderSummary도 동일).
   const { data: order, loading } = useCheckoutData();
 
-  const { errors, handleSubmit } = useCheckoutForm({ order, action, router });
+  const { errors, shippingErrors, requiresShipping, handleSubmit } = useCheckoutForm({
+    order,
+    action,
+    router,
+  });
 
   const [prevActionState, setPrevActionState] = useState(state);
   if (state !== prevActionState) {
@@ -90,6 +94,8 @@ export function CheckoutForm() {
       onAgreedChange={setAgreed}
       errorMessage={errorMessage}
       errors={errors}
+      requiresShipping={requiresShipping}
+      shippingErrors={shippingErrors}
       pending={pending}
       onSubmit={handleFormSubmit}
     />

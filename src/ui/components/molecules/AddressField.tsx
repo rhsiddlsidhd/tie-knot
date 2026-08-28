@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/ui/components/atoms";
-import { FormField } from "@/ui/components/molecules";
+import { FormField, TextField } from "@/ui/components/molecules";
 import { useDaumPopup } from "@/adapters/browser/daum";
 import { useState } from "react";
 
@@ -54,6 +54,16 @@ const AddressField = ({
         onClick={handleDaumAddressPopup}
         aria-invalid={!!error}
       />
+
+      <TextField
+        id={`${name}AddressDetail`}
+        name={`${name}_address_detail`}
+        type="text"
+        placeholder="예: 3층 그랜드볼룸"
+        required={required}
+      >
+        상세 주소
+      </TextField>
     </FormField>
   );
 };
