@@ -29,7 +29,7 @@ import {
   DEFAULT_PAGE_SIZE,
   EXPIRED_ORDER_BATCH_LIMIT,
   INVITATION_INPUT_DEADLINE_DAYS,
-  MOBILE_INVITATION_CATEGORY,
+  categoryRequiresShipping,
   ORDER_PAGE_SIZE,
   ORDER_STATUSES,
   PENDING_ORDER_EXPIRE_HOURS,
@@ -79,7 +79,7 @@ export const createOrderService = async (
   // 1차 방어선(REQ-5 수량 검증과 같은 패턴). Order 모델의 conditional required는
   // 이 체크를 우회하는 미래의 다른 코드 경로를 막는 최후 방어선일 뿐이다.
   if (
-    data.product.category !== MOBILE_INVITATION_CATEGORY &&
+    categoryRequiresShipping(data.product.category) &&
     (!data.shipping?.receiver ||
       !data.shipping.phone ||
       !data.shipping.address ||

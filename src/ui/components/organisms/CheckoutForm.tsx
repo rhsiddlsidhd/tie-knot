@@ -47,7 +47,6 @@ export function CheckoutForm({
 
   // 배송 카드는 실물 상품 주문일 때만 트리에 들어간다 — 번호 배지는 그에 맞춰
   // 매번 다시 매긴다(카드를 숨긴다고 결제수단 배지가 "3"으로 남아 건너뛰지 않도록).
-  const shippingStep = requiresShipping ? 2 : undefined;
   const paymentStep = requiresShipping ? 3 : 2;
 
   return (
@@ -55,9 +54,7 @@ export function CheckoutForm({
       <PaymentPendingOverlay visible={paymentStatus === "PENDING"} />
       <form onSubmit={onSubmit} className="space-y-6 pb-24">
         <BuyerInfoCard step={1} errors={errors} />
-        {requiresShipping && shippingStep && (
-          <ShippingInfoCard step={shippingStep} errors={shippingErrors} />
-        )}
+        {requiresShipping && <ShippingInfoCard step={2} errors={shippingErrors} />}
         <TermsAgreementCard agreed={agreed} onAgreedChange={onAgreedChange} />
         <PaymentMethodSelector step={paymentStep} error={errors.payMethod?.[0]} />
 

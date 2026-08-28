@@ -47,7 +47,8 @@ export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
         <AddressField
           name="ship"
           required
-          error={errors.address?.[0] ?? errors.addressDetail?.[0]}
+          error={errors.address?.[0]}
+          addressDetailError={errors.addressDetail?.[0]}
         />
       </CardContent>
     </Card>

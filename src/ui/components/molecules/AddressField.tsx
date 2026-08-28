@@ -9,8 +9,10 @@ interface AddressFieldProps {
   name: string;
   label?: string;
   error?: string;
+  addressDetailError?: string;
   required?: boolean;
   defaultValue?: string;
+  addressDetailDefaultValue?: string;
 }
 
 /**
@@ -20,8 +22,10 @@ const AddressField = ({
   name,
   label = "주소",
   error,
+  addressDetailError,
   required = false,
   defaultValue = "",
+  addressDetailDefaultValue = "",
 }: AddressFieldProps) => {
   const { handleDaumAddressPopup, address } = useDaumPopup();
   const [weddingAddress, setWeddingAddress] = useState(defaultValue);
@@ -61,6 +65,8 @@ const AddressField = ({
         type="text"
         placeholder="예: 3층 그랜드볼룸"
         required={required}
+        defaultValue={addressDetailDefaultValue}
+        error={addressDetailError}
       >
         상세 주소
       </TextField>

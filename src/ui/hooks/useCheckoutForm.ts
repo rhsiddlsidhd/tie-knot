@@ -8,7 +8,7 @@ import type { BuyerInfo, ShippingInfo } from "@/core/schemas";
 import { BuyerInfoSchema, ShippingInfoSchema } from "@/core/schemas";
 import type { CheckoutItem } from "@/core/domain";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { routes, categoryRequiresShipping } from "@/core/domain";
 
 interface UseCheckoutFormOptions {
   order: CheckoutItem | null;
@@ -28,7 +28,7 @@ export function useCheckoutForm({
     Partial<Record<keyof ShippingInfo, string[]>>
   >({});
 
-  const requiresShipping = order?.category !== MOBILE_INVITATION_CATEGORY;
+  const requiresShipping = categoryRequiresShipping(order?.category);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

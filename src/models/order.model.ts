@@ -2,7 +2,7 @@ import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 import type { PayMethod, ProductCategory } from "@/core/domain";
-import { PAY_METHOD, PRODUCT_CATEGORIES, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { PAY_METHOD, PRODUCT_CATEGORIES, categoryRequiresShipping } from "@/core/domain";
 export type { OrderJSON } from "@/core/domain";
 interface ProductPricing {
   originalPrice: number;
@@ -141,10 +141,17 @@ const orderSchema = new Schema<IOrder>(
     // 보이는 VALIDATION 에러를 던지고, 여기는 그 체크를 우회하는 미래의 다른
     // 코드 경로까지 막는 안전망이다(도달하면 버그이므로 mongoose 에러 그대로
     // AppError(INTERNAL)로 감싸지는 게 맞다 — services/AGENTS.md 컨벤션).
+    //
+    // discriminator로 안 뺀 이유(AGENTS.md 하위타입 전용 필드 규칙 검토 결과):
+    // (1) 판별 필드(product.category)가 base 스키마의 root path가 아니라 product
+    // 서브도큐먼트 안에 있어 mongoose discriminatorKey로 재사용할 수 없다.
+    // (2) 5개 카테고리 중 4개가 이 필드를 요구해 "하위 타입 전용 필드"라기보다
+    // "한 카테고리만 예외인 필드"에 가깝다 — discriminator로 쪼개도 예외 카테고리
+    // (mobile-invitation) 하나만 shipping 없는 서브타입이 되어 얻는 이득이 적다.
     shipping: {
       type: ShippingInfoSchema,
       required: function (this: IOrder) {
-        return this.product.category !== MOBILE_INVITATION_CATEGORY;
+        return categoryRequiresShipping(this.product.category);
       },
     },
     finalPrice: { type: Number, required: true },
