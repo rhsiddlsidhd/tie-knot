@@ -12,7 +12,6 @@ export const routes = {
   terms: "/terms",
   privacy: "/privacy",
   search: "/search",
-  reviews: "/reviews",
   payment: {
     root: "/payment",
     result: "/payment-result",
@@ -42,6 +41,7 @@ export const routes = {
   admin: {
     dashboard: "/admin/dashboard",
     orders: "/admin/orders",
+    reviews: "/admin/reviews",
     users: "/admin/users",
     settings: "/admin/settings",
     products: {

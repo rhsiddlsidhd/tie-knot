@@ -46,15 +46,15 @@ describe("CloudinaryWidget", () => {
     vi.restoreAllMocks();
   });
 
-  it("크롭 가능한 단일 이미지 위젯으로 초기화한다", async () => {
+  it("크롭 없는 다중 이미지 위젯으로 초기화한다", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(buildResponse("bootstrap"));
     renderWidget();
 
     await waitFor(() => expect(capturedOptions).toBeDefined());
     expect(capturedOptions).toMatchObject({
-      cropping: true,
+      cropping: false,
       folder: "products/images",
-      multiple: false,
+      multiple: true,
       resourceType: "image",
     });
   });

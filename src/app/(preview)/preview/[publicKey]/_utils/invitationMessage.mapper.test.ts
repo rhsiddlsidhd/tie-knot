@@ -27,14 +27,16 @@ const invitationContent: InvitationContent = {
 };
 
 describe("초대 문구 매퍼", () => {
-  it("부모 연락처 관계를 측과 존칭을 포함해 표시한다", () => {
+  it("본인과 부모 연락처 관계를 측과 존칭을 포함해 표시한다", () => {
     const { parties } = mapCoupleInfoToInvitationProps(invitationContent);
 
     expect(parties[0].contacts.map(({ relation }) => relation)).toEqual([
+      "신랑",
       "신랑측 아버님",
       "신랑측 어머님",
     ]);
     expect(parties[1].contacts.map(({ relation }) => relation)).toEqual([
+      "신부",
       "신부측 아버님",
       "신부측 어머님",
     ]);

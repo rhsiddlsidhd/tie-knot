@@ -6,6 +6,7 @@ export * from "./error";
 export * from "./escape-regexp";
 export * from "./hangul";
 export * from "./id";
+export * from "./mask";
 export * from "./page";
 export * from "./percent";
 export * from "./price";

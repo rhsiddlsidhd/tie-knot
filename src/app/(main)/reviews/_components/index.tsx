@@ -1,1 +1,0 @@
-export { ReviewsTemplate } from "./ReviewsTemplate";

@@ -20,6 +20,7 @@ export * from "./PageTitle";
 export * from "./PersonValueCard";
 export * from "./QuantityStepper";
 export * from "./RadioField";
+export * from "./RatingStars";
 export * from "./SelectField";
 export * from "./SidebarNavItem";
 export * from "./Spinner";

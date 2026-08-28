@@ -32,6 +32,8 @@ const product: Product = {
   maxQuantity: 1,
   createdAt: "2026-01-01T00:00:00.000Z",
   updatedAt: "2026-01-01T00:00:00.000Z",
+  ratingAverage: 0,
+  ratingCount: 0,
   deletedAt: null,
 };
 

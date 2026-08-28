@@ -106,11 +106,24 @@ export type OrderVirtualAccount = {
   expiredAt?: Date;
 };
 
+// my-orders 카드가 "리뷰 작성"/"리뷰 보기·수정" 버튼을 렌더+수정 폼을 미리 채우는 데
+// 필요한 최소 필드만 담는다 — 목록 조회 시점에 이미 join하므로 편집 다이얼로그를 열 때
+// 별도 조회(route handler 등)가 필요 없다.
+export type OrderReviewSummary = {
+  id: string;
+  rating: number;
+  content: string;
+  images: string[];
+};
+
 // 목록 한 행이 실제로 그리는 데 필요한 것까지 합친 형태 — 주문 문서 자체에는 없고
-// 다른 컬렉션(Invitation/Payment)에서 채워지는 값이 붙는다.
+// 다른 컬렉션(Invitation/Payment/Review)에서 채워지는 값이 붙는다.
 export type OrderListItem = OrderJSON & {
   invitationPublicKey?: string;
   virtualAccount?: OrderVirtualAccount;
+  // 이 주문에 이미 작성된 리뷰 — 없으면 null. orderStatus===COMPLETED와 이 값의
+  // 존재로 "작성/보기·수정" 버튼을 분기한다.
+  review: OrderReviewSummary | null;
 };
 
 export type OrderListPage = CursorPage<OrderListItem>;

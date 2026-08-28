@@ -3,6 +3,7 @@ import type {
 import {
   HelpCircle,
   LayoutDashboard,
+  MessageSquareText,
   Package,
   Settings,
   ShoppingCart,
@@ -65,6 +66,11 @@ const adminNavigateItems: NavigateItem[] = [
     title: "주문 관리",
     href: routes.admin.orders,
     icon: ShoppingCart,
+  },
+  {
+    title: "리뷰 관리",
+    href: routes.admin.reviews,
+    icon: MessageSquareText,
   },
   {
     title: "회원 관리",

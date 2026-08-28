@@ -11,7 +11,7 @@ import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { ProductLikeBadge } from "@/app/(main)/(products)/products/[category]/[id]/_components/ProductLikeBadge";
 import { ProductOptions } from "@/ui/components/organisms";
-import { CloudImage } from "@/ui/components/molecules";
+import { CloudImage, RatingStars } from "@/ui/components/molecules";
 export function ProductSummary({
   product,
   options,
@@ -75,6 +75,14 @@ export function ProductSummary({
             <TypographyH1 className="mb-3 text-left text-lg font-bold text-balance">
               {product.title}
             </TypographyH1>
+            {product.ratingCount > 0 && (
+              <div className="mb-3 flex items-center gap-2">
+                <RatingStars value={Math.round(product.ratingAverage)} size="sm" />
+                <TypographyMuted>
+                  {product.ratingAverage.toFixed(1)} ({product.ratingCount.toLocaleString()}개 리뷰)
+                </TypographyMuted>
+              </div>
+            )}
             <TypographyMuted className="leading-relaxed text-balance">
               {product.description}
             </TypographyMuted>

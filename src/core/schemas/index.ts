@@ -2,6 +2,7 @@ import "./config";
 
 export * from "./request/adminOrderList.schema";
 export * from "./request/adminProductList.schema";
+export * from "./request/adminReviewList.schema";
 export * from "./request/adminUserList.schema";
 export * from "./request/coupleInfo.schema";
 export * from "./request/email.schema";
@@ -11,10 +12,12 @@ export * from "./request/order.schema";
 export * from "./request/orderList.schema";
 export * from "./request/premiumFeature.schema";
 export * from "./request/product.schema";
+export * from "./request/productReviewList.schema";
 export * from "./request/productSearch.schema";
 export * from "./request/pw.schema";
 export * from "./request/pwConfirm.schema";
 export * from "./request/register.schema";
+export * from "./request/review.schema";
 export * from "./request/userEmail.schema";
 
 export * from "./response/auth.schema";

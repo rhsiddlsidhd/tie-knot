@@ -24,7 +24,7 @@
 - 이 함수는 내부에서 `getAuth()`를 그대로 재사용한다 — `getAuth()`가 page.tsx(Server Component render) 안에서 호출해도 안전한 이유(무-side-effect 성질, 공식 문서 근거)는 아래 "인증 토큰" 참고. `token` 단일 쿠키 결정이 이 설계가 성립하는 전제조건이다.
 - 이 함수는 인증 존재 여부를 먼저 확인하고, 그 다음에 role을 확인한다 — 순서를 바꾸지 않는다. 이유: 순서를 바꾸면 미인증 유저가 role-mismatch로 오분류돼 "Redirect 목적지" 규칙(재로그인 가능/불가능 구분)이 깨진다 — 미인증 상태에서는 role 자체가 없으므로 role 체크가 먼저 오면 그 분기를 통과 못 하고 엉뚱한 목적지로 갈 수 있다.
 - 관리자 페이지(`admin/*`)를 포함해 인증·인가가 필요한 모든 page.tsx가 `verifySession()`을 예외 없이 호출한다 — 규칙과 어긋난 레퍼런스 코드를 남겨두지 않는다. 이유: 규칙과 어긋난 레퍼런스 코드가 남으면 문서의 강제력이 없어진다.
-  - 적용 완료: admin 8개 page.tsx(dashboard/orders/products/products/new/premium-features/premium-features/new/settings/users), order/page.tsx, order/edit/page.tsx, profile/page.tsx, couple-info/page.tsx, payment/page.tsx.
+  - 적용 완료: admin 9개 page.tsx(dashboard/orders/products/products/new/premium-features/premium-features/new/reviews/settings/users), order/page.tsx, order/edit/page.tsx, profile/page.tsx, couple-info/page.tsx, payment/page.tsx.
 
 ## Redirect 목적지
 
