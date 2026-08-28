@@ -45,9 +45,9 @@ export const useOrderStore = create<OrderState>()(
       // v1: CheckoutItem에 필수 category 필드가 추가됨 — 그 이전(version < 1)에
       // persist된 order는 category가 없어 그대로 두면 배송 필요 여부 판단과
       // FormData 직렬화가 깨진다. 버려서 사용자가 상품 페이지에서 다시 담게 한다.
-      migrate: (persistedState) => {
+      migrate: (persistedState): Pick<OrderState, "order" | "resumePayment"> => {
         const state = persistedState as Pick<OrderState, "order" | "resumePayment">;
-        return { ...state, order: null };
+        return { ...state, order: null as CheckoutItem | null };
       },
       partialize: (state): Pick<OrderState, "order" | "resumePayment"> => ({
         order: state.order,
