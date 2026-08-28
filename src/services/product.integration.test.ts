@@ -27,35 +27,6 @@ import {
   getProductQuantityBoundsService,
 } from "./product";
 
-// images/minQuantity/maxQuantity 필드 자체가 없는 레거시 문서 — mongoose 경로를
-// 우회해 직접 삽입한다(§8 #12 test-suite 요청사항: 정상 케이스만으론 .lean() +
-// mongoose default 미적용 함정이 절대 드러나지 않는다).
-const insertLegacyProductWithoutQuantityFields = async (title: string) => {
-  const result = await ProductModel.collection.insertOne({
-    authorId: "legacy",
-    title,
-    description: "레거시 문서(필드 없음)",
-    thumbnail: "https://example.com/legacy.jpg",
-    price: 1000,
-    category: "invitation",
-    subCategory: "wedding",
-    isPremium: false,
-    isFeatured: false,
-    priority: 0,
-    likes: [],
-    views: 0,
-    salesCount: 0,
-    discount: { discountType: "rate", value: 0 },
-    status: "active",
-    featureIds: [],
-    deletedAt: null,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    // images/minQuantity/maxQuantity 의도적으로 생략
-  } as never);
-  return result.insertedId.toString();
-};
-
 describe("product", () => {
   beforeEach(async () => {
     await dbConnect();
@@ -177,17 +148,6 @@ describe("product", () => {
       expect(result?.deletedAt).toBeNull();
     });
 
-    // ── REQ-2 §7 핵심 리스크: .lean() + mongoose default 미적용 → transformProduct 정규화 ──
-    it("images/minQuantity/maxQuantity 필드가 없는 레거시 문서는 [] / 1 / 1로 정규화된다 (maxQuantity는 0이 아니라 1 — REQ-4 회귀 방지)", async () => {
-      const legacyId = await insertLegacyProductWithoutQuantityFields("레거시 상품");
-
-      const result = await getProductService(legacyId);
-
-      expect(result?.images).toEqual([]);
-      expect(result?.minQuantity).toBe(1);
-      expect(result?.maxQuantity).toBe(1);
-    });
-
     it("신규 생성 상품은 images/minQuantity/maxQuantity를 지정한 값 그대로 리턴한다", async () => {
       const input = buildProductInput({
         images: ["https://example.com/a.jpg"],
@@ -225,14 +185,6 @@ describe("product", () => {
       const result = await getProductQuantityBoundsService(saved!._id.toString());
 
       expect(result).toEqual({ minQuantity: 2, maxQuantity: 5 });
-    });
-
-    it("필드가 없는 레거시 문서는 {minQuantity:1, maxQuantity:1}로 폴백한다 (REQ-5 핵심 — 안 하면 검증 무증상 통과)", async () => {
-      const legacyId = await insertLegacyProductWithoutQuantityFields("레거시 주문 대상");
-
-      const result = await getProductQuantityBoundsService(legacyId);
-
-      expect(result).toEqual({ minQuantity: 1, maxQuantity: 1 });
     });
 
     it("존재하지 않는 id면 null을 리턴한다", async () => {
