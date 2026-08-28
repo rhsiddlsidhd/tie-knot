@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import type { ProductDto } from "@/core/schemas";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 type CreateProductServiceInput = Omit<ProductDto, "thumbnail" | "images"> & {
   thumbnail: string;
@@ -14,7 +15,7 @@ export const buildProductInput = (
   authorId: new mongoose.Types.ObjectId().toString(),
   title: "봄맞이 청첩장",
   description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
-  category: "invitation",
+  category: MOBILE_INVITATION_CATEGORY,
   subCategory: "wedding",
   price: 9900,
   isPremium: false,

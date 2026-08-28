@@ -36,6 +36,7 @@ vi.mock("@/ui/components/organisms", () => ({
 }));
 
 import { ProductCatalog } from "./ProductCatalog";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({ title: "봄맞이 청첩장", ...overrides }) as Product;
@@ -54,12 +55,12 @@ describe("ProductCatalog (container)", () => {
     render(
       <ProductCatalog
         products={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         initialSubCategory="wedding"
       />,
     );
 
-    expect(screen.getByTestId("category")).toHaveTextContent("invitation");
+    expect(screen.getByTestId("category")).toHaveTextContent(MOBILE_INVITATION_CATEGORY);
     expect(screen.getByTestId("initial-sub-category")).toHaveTextContent(
       "wedding",
     );

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/core/domain";
 import { PopularProductsSection } from "./PopularProductsSection";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({
@@ -11,7 +12,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
     thumbnail: "https://example.com/thumb.jpg",
     price: 10000,
-    category: "invitation",
+    category: MOBILE_INVITATION_CATEGORY,
     subCategory: "wedding",
     isPremium: false,
     isFeatured: false,

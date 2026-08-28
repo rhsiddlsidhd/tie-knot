@@ -1,4 +1,5 @@
 import type { OrderStatus, PayMethod, ProductCategory } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 // 상태 탭 라벨 — 여러 카테고리가 섞여 보이는 자리(카테고리 필터가 "전체")라 중립어를 쓴다.
 export const ORDER_STATUS_TAB_LABELS: Record<OrderStatus, string> = {
@@ -20,7 +21,7 @@ const DEFAULT_ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
 const CATEGORY_ORDER_STATUS_LABELS: Partial<
   Record<ProductCategory, Partial<Record<OrderStatus, string>>>
 > = {
-  invitation: {
+  [MOBILE_INVITATION_CATEGORY]: {
     CONFIRMED: "정보입력 대기",
     COMPLETED: "발행완료",
   },

@@ -1,5 +1,10 @@
 import * as z from "zod";
-import { INVITATION_THEMES, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain";
+import {
+  INVITATION_THEMES,
+  MOBILE_INVITATION_CATEGORY,
+  SUB_CATEGORY_MAP,
+  PRODUCT_CATEGORIES,
+} from "@/core/domain";
 
 export const productSchema = z
   .object({
@@ -71,9 +76,9 @@ export const productSchema = z
       path: ["subCategory"],
     },
   )
-  // invitation은 previewUrl이 상세 확인을 대신하므로 images 없이도 판매 성립.
+  // mobile-invitation은 previewUrl이 상세 확인을 대신하므로 images 없이도 판매 성립.
   // 물리 상품 4종(favor/accessory/guestbook/ceremony)은 최소 1장 필요.
-  .refine((data) => data.category === "invitation" || data.images.length > 0, {
+  .refine((data) => data.category === MOBILE_INVITATION_CATEGORY || data.images.length > 0, {
     message: "상세 이미지를 1장 이상 등록해주세요.",
     path: ["images"],
   })

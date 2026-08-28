@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
-import { AppError } from "@/core/domain";
-import { ProductModel, InvitationProductModel } from "@/models";
+import { AppError, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { ProductModel, MobileInvitationProductModel } from "@/models";
 
 const { deleteProductAsset } = vi.hoisted(() => ({ deleteProductAsset: vi.fn() }));
 vi.mock("@/adapters/server/cloudinary/cleanup", () => ({ deleteProductAsset }));
@@ -77,7 +77,7 @@ describe("product", () => {
 
       await createProductService(input);
 
-      const saved = await InvitationProductModel.findOne({ title: input.title }).lean();
+      const saved = await MobileInvitationProductModel.findOne({ title: input.title }).lean();
       expect(saved?.previewUrl).toBe("https://example.com/preview.jpg");
     });
 
@@ -86,7 +86,7 @@ describe("product", () => {
 
       await createProductService(input);
 
-      const saved = await InvitationProductModel.findOne({ title: input.title }).lean();
+      const saved = await MobileInvitationProductModel.findOne({ title: input.title }).lean();
       expect(saved?.theme).toBe("default");
     });
 
@@ -95,7 +95,7 @@ describe("product", () => {
 
       await createProductService(input);
 
-      const saved = await InvitationProductModel.findOne({ title: input.title }).lean();
+      const saved = await MobileInvitationProductModel.findOne({ title: input.title }).lean();
       expect(saved?.theme).toBe("blossom");
     });
   });
@@ -268,7 +268,7 @@ describe("product", () => {
       await createProductService(buildProductInput({ title: "상품1" }));
       await createProductService(buildProductInput({ title: "상품2" }));
 
-      const result = await getAllProductsService("invitation");
+      const result = await getAllProductsService(MOBILE_INVITATION_CATEGORY);
       const noMatch = await getAllProductsService("nonexistent");
 
       expect(result).toHaveLength(2);
@@ -528,8 +528,8 @@ describe("product", () => {
       const result = await getAvailableSubCategoriesService();
 
       expect(result).toEqual([
-        { category: "invitation", subCategory: "wedding" },
-        { category: "invitation", subCategory: "first-birthday" },
+        { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
+        { category: MOBILE_INVITATION_CATEGORY, subCategory: "first-birthday" },
         { category: "favor", subCategory: "soap" },
         { category: "ceremony", subCategory: "program-book" },
       ]);
@@ -556,7 +556,7 @@ describe("product", () => {
         buildProductInput({ title: "일반상품", priority: 0 }),
       );
 
-      const result = await getFeaturedTemplatesService("invitation");
+      const result = await getFeaturedTemplatesService(MOBILE_INVITATION_CATEGORY);
 
       expect(result).toHaveLength(1);
       expect(result[0].title).toBe("추천상품");
@@ -609,7 +609,7 @@ describe("product", () => {
         description: "레거시 문서",
         thumbnail: "https://example.com/legacy.jpg",
         price: 1000,
-        category: "invitation",
+        category: MOBILE_INVITATION_CATEGORY,
         subCategory: "wedding",
         isPremium: false,
         isFeatured: false,
@@ -780,7 +780,7 @@ describe("product", () => {
       const saved = await ProductModel.findOne({ title: input.title }).lean();
 
       const result = await updateProductService(saved!._id.toString(), {
-        category: "invitation",
+        category: MOBILE_INVITATION_CATEGORY,
         previewUrl: "https://example.com/updated-preview.jpg",
       });
 
@@ -1022,9 +1022,9 @@ describe("product", () => {
       expect(result[0].title).toBe("a.b(c)");
     });
 
-    it("카테고리 라벨 부분일치로 역조회해 매칭한다 ('초대' -> '초대장' -> invitation)", async () => {
+    it("카테고리 라벨 부분일치로 역조회해 매칭한다 ('초대' -> '모바일초대장' -> mobile-invitation)", async () => {
       await createProductService(
-        buildProductInput({ title: "무관한 제목", category: "invitation" }),
+        buildProductInput({ title: "무관한 제목", category: MOBILE_INVITATION_CATEGORY }),
       );
 
       const result = await searchProductsService("초대");
@@ -1054,7 +1054,7 @@ describe("product", () => {
 
       const result = await searchProductsService("장");
 
-      // "장"은 subCategoryLabels.wedding === "청첩장"과 productCategoryLabels.invitation === "초대장"에
+      // "장"은 subCategoryLabels.wedding === "청첩장"과 productCategoryLabels["mobile-invitation"] === "모바일초대장"에
       // 모두 포함되지만, 2글자 미만이라 라벨 역조회가 스킵된다.
       // title("가을맞이 카드")에도 "장"이 없으므로 빈 배열이어야 한다.
       expect(result).toEqual([]);

@@ -79,7 +79,7 @@ await mongoose.connection.collection("products").insertOne({
   description: "주문 생성과 mock 결제 완료 흐름을 검증하는 상품입니다.",
   thumbnail: "https://res.cloudinary.com/e2e/image/upload/checkout.png",
   price: 12000,
-  category: "invitation",
+  category: "mobile-invitation",
   subCategory: "wedding-invitation",
   isPremium: false,
   featureIds: [],

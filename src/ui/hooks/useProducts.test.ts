@@ -8,6 +8,7 @@ vi.mock("@/ui/fetcher", () => ({ fetcher: vi.fn() }));
 
 import type { Product } from "@/core/domain";
 import { useProducts } from "./useProducts";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({
@@ -17,7 +18,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
     thumbnail: "https://example.com/thumb.jpg",
     price: 10000,
-    category: "invitation",
+    category: MOBILE_INVITATION_CATEGORY,
     subCategory: "wedding",
     isPremium: false,
     isFeatured: false,
@@ -44,7 +45,7 @@ describe("useProducts", () => {
     useSWRMock.mockReturnValue({ data: swrProducts });
 
     const { result } = renderHook(() =>
-      useProducts("invitation", [buildProduct({ _id: "fallback-product" })]),
+      useProducts(MOBILE_INVITATION_CATEGORY, [buildProduct({ _id: "fallback-product" })]),
     );
 
     expect(result.current).toBe(swrProducts);
@@ -54,7 +55,7 @@ describe("useProducts", () => {
     useSWRMock.mockReturnValue({ data: undefined });
     const fallback = [buildProduct({ _id: "fallback-product" })];
 
-    const { result } = renderHook(() => useProducts("invitation", fallback));
+    const { result } = renderHook(() => useProducts(MOBILE_INVITATION_CATEGORY, fallback));
 
     expect(result.current).toBe(fallback);
   });

@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
 import type * as UtilsModule from "@/core/utils";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 vi.mock("@/adapters/browser/cloudinary", () => ({
   CloudinaryWidget: ({
@@ -31,11 +32,11 @@ vi.mock("@/core/utils", async (importOriginal) => {
   return {
     ...actual,
     getCategoryOptions: () => [
-      { value: "invitation", label: "초대장" },
+      { value: MOBILE_INVITATION_CATEGORY, label: "모바일초대장" },
       { value: "favor", label: "답례품" },
     ],
     getSubCategoryOptions: (category: string) =>
-      category === "invitation"
+      category === MOBILE_INVITATION_CATEGORY
         ? [{ value: "wedding", label: "청첩장" }]
         : [{ value: "candle", label: "캔들" }],
   };
@@ -69,7 +70,7 @@ describe("ProductRegistrationForm — REQ-6 invitation 전용 필드 조건부 �
       .find(
         (el) =>
           el.textContent?.includes("카테고리를 선택하세요") ||
-          el.textContent?.includes("초대장"),
+          el.textContent?.includes("모바일초대장"),
       );
     await user.click(categoryTrigger!);
     await user.click(await screen.findByRole("option", { name: "답례품" }));
@@ -89,7 +90,7 @@ describe("ProductRegistrationForm — REQ-6 invitation 전용 필드 조건부 �
       .find(
         (el) =>
           el.textContent?.includes("카테고리를 선택하세요") ||
-          el.textContent?.includes("초대장"),
+          el.textContent?.includes("모바일초대장"),
       );
     await user.click(categoryTrigger!);
     await user.click(await screen.findByRole("option", { name: "답례품" }));

@@ -1,13 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 describe("SubCategoryNavSection", () => {
   it("전달된 서브카테고리만 링크로 렌더한다", () => {
     render(
       <SubCategoryNavSection
         availableSubCategories={[
-          { category: "invitation", subCategory: "first-birthday" },
+          { category: MOBILE_INVITATION_CATEGORY, subCategory: "first-birthday" },
           { category: "favor", subCategory: "candle" },
         ]}
       />,
@@ -15,7 +16,7 @@ describe("SubCategoryNavSection", () => {
 
     expect(screen.getByRole("link", { name: "돌잔치" })).toHaveAttribute(
       "href",
-      "/products/invitation?subCategory=first-birthday",
+      "/products/mobile-invitation?subCategory=first-birthday",
     );
     expect(screen.getByRole("link", { name: "캔들" })).toHaveAttribute(
       "href",
@@ -30,7 +31,7 @@ describe("SubCategoryNavSection", () => {
     render(
       <SubCategoryNavSection
         availableSubCategories={[
-          { category: "invitation", subCategory: "wedding" },
+          { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
         ]}
       />,
     );

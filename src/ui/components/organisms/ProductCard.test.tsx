@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/core/domain";
 import { ProductCard } from "./ProductCard";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({
@@ -11,7 +12,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
     thumbnail: "https://example.com/thumb.jpg",
     price: 10000,
-    category: "invitation",
+    category: MOBILE_INVITATION_CATEGORY,
     subCategory: "wedding",
     isPremium: false,
     isFeatured: false,
@@ -33,7 +34,7 @@ describe("ProductCard", () => {
     render(<ProductCard product={buildProduct()} />);
 
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/products/invitation/product-1");
+    expect(link).toHaveAttribute("href", "/products/mobile-invitation/product-1");
   });
 
   it("할인이 없으면 원가만 표시하고 할인 배지/취소선을 렌더링하지 않는다", () => {

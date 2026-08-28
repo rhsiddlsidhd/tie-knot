@@ -1,10 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { productSchema } from "./product.schema";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildValidInput = (overrides?: Record<string, unknown>) => ({
   title: "봄맞이 청첩장",
   description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
-  category: "invitation",
+  category: MOBILE_INVITATION_CATEGORY,
   subCategory: "wedding",
   price: 9900,
   isPremium: false,
@@ -273,7 +274,7 @@ describe("productSchema", () => {
 
     it("invitation은 images 없이 통과한다 (previewUrl이 대신함)", () => {
       const result = productSchema.safeParse(
-        buildValidInput({ category: "invitation", subCategory: "wedding" }),
+        buildValidInput({ category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" }),
       );
 
       expect(result.success).toBe(true);

@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { productResponseSchema } from "./product.schema";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildValidProduct = (overrides?: Record<string, unknown>) => ({
   _id: "507f1f77bcf86cd799439011",
@@ -8,7 +9,7 @@ const buildValidProduct = (overrides?: Record<string, unknown>) => ({
   description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
   thumbnail: "https://example.com/thumbnail.jpg",
   price: 9900,
-  category: "invitation",
+  category: MOBILE_INVITATION_CATEGORY,
   subCategory: "wedding",
   isPremium: false,
   featureIds: [] as string[],

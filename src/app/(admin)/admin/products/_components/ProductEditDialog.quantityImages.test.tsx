@@ -44,11 +44,11 @@ vi.mock("@/core/utils", async (importOriginal) => {
   return {
     ...actual,
     getCategoryOptions: () => [
-      { value: "invitation", label: "초대장" },
+      { value: MOBILE_INVITATION_CATEGORY, label: "모바일초대장" },
       { value: "favor", label: "답례품" },
     ],
     getSubCategoryOptions: (category: string) =>
-      category === "invitation"
+      category === MOBILE_INVITATION_CATEGORY
         ? [{ value: "wedding", label: "청첩장" }]
         : [{ value: "candle", label: "캔들" }],
   };
@@ -56,6 +56,7 @@ vi.mock("@/core/utils", async (importOriginal) => {
 
 import type { Product } from "@/core/domain";
 import { ProductEditDialog } from "./ProductEditDialog";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   _id: "507f1f77bcf86cd799439011",
@@ -64,7 +65,7 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
   description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
   thumbnail: "https://example.com/thumbnail.jpg",
   price: 9900,
-  category: "invitation",
+  category: MOBILE_INVITATION_CATEGORY,
   subCategory: "wedding",
   isPremium: false,
   featureIds: [],
@@ -118,7 +119,7 @@ describe("ProductEditDialog — REQ-6 invitation 전용 필드 조건부 렌더"
 
     const categoryTrigger = screen
       .getAllByRole("combobox")
-      .find((el) => el.textContent?.includes("초대장"));
+      .find((el) => el.textContent?.includes("모바일초대장"));
     await user.click(categoryTrigger!);
     await user.click(await screen.findByRole("option", { name: "답례품" }));
 
@@ -164,7 +165,7 @@ describe("ProductEditDialog — 상세 이미지 갤러리(REQ-2/3)", () => {
     const { container } = render(
       <ProductEditDialog
         product={buildProduct({
-          category: "invitation",
+          category: MOBILE_INVITATION_CATEGORY,
           images: ["https://example.com/a.jpg"],
         })}
       />,

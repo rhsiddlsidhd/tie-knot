@@ -15,6 +15,7 @@ vi.mock("@/actions", () => ({
 import { updateProductStatus } from "@/actions";
 import type { Product } from "@/core/domain";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   _id: "507f1f77bcf86cd799439011",
@@ -23,7 +24,7 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
   description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
   thumbnail: "https://example.com/thumbnail.jpg",
   price: 9900,
-  category: "invitation",
+  category: MOBILE_INVITATION_CATEGORY,
   subCategory: "wedding",
   isPremium: false,
   featureIds: [],

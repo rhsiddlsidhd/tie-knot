@@ -283,12 +283,12 @@ describe("ProductRegistrationForm", () => {
 
     const categoryTrigger = screen
       .getAllByRole("combobox")
-      .find((el) => el.textContent?.includes("초대장"));
+      .find((el) => el.textContent?.includes("모바일초대장"));
     expect(categoryTrigger).toBeDefined();
 
     await user.click(categoryTrigger!);
-    await user.click(await screen.findByRole("option", { name: "초대장" }));
+    await user.click(await screen.findByRole("option", { name: "모바일초대장" }));
 
-    expect(categoryTrigger!.textContent).toContain("초대장");
+    expect(categoryTrigger!.textContent).toContain("모바일초대장");
   });
 });

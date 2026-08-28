@@ -15,6 +15,7 @@ import { dbConnect } from "@/db";
 import { buildProductInput, clearCollections } from "@testing/support";
 import { createProductService } from "@/services";
 import { GET } from "./route";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildRequest = (query: string) =>
   new NextRequest(`http://localhost/api/products${query}`);
@@ -41,17 +42,17 @@ describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후
     expect(body.data).toHaveLength(2);
   });
 
-  it("category=invitation으로 필터링하면 해당 카테고리 상품만 반환한다 (완전일치 — 검색 기능의 부분일치와 무관하게 동작 유지)", async () => {
+  it("category=mobile-invitation으로 필터링하면 해당 카테고리 상품만 반환한다 (완전일치 — 검색 기능의 부분일치와 무관하게 동작 유지)", async () => {
     await createProductService(
-      buildProductInput({ title: "상품1", category: "invitation" }),
+      buildProductInput({ title: "상품1", category: MOBILE_INVITATION_CATEGORY }),
     );
 
-    const res = await GET(buildRequest("?category=invitation"));
+    const res = await GET(buildRequest(`?category=${MOBILE_INVITATION_CATEGORY}`));
     const body = await res.json();
 
     expect(res.status).toBe(200);
     expect(body.data).toHaveLength(1);
-    expect(body.data[0].category).toBe("invitation");
+    expect(body.data[0].category).toBe(MOBILE_INVITATION_CATEGORY);
   });
 
   it("존재하지 않는 category로 필터링하면 빈 배열을 반환한다 (에러 아님)", async () => {

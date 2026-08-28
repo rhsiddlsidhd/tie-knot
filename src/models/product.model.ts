@@ -77,8 +77,8 @@ export interface IProduct extends ProductDB {
   updatedAt: Date;
 }
 
-// invitation 카테고리 전용 필드 — mongoose discriminator로 base(IProduct)에 병합된다.
-export interface IInvitationProduct extends IProduct {
+// mobile-invitation 카테고리 전용 필드 — mongoose discriminator로 base(IProduct)에 병합된다.
+export interface IMobileInvitationProduct extends IProduct {
   previewUrl?: string;
   theme?: InvitationTheme;
 }
@@ -163,14 +163,17 @@ export const ProductModel =
   (mongoose.models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);
 
-const invitationProductSchema = new Schema<IInvitationProduct>({
+const mobileInvitationProductSchema = new Schema<IMobileInvitationProduct>({
   previewUrl: { type: String },
   theme: { type: String, enum: INVITATION_THEMES, default: "default" },
 });
 
-// discriminator 이름("invitation")이 곧 category 필드에 저장되는 값이다 —
+// discriminator 이름("mobile-invitation")이 곧 category 필드에 저장되는 값이다 —
 // 기존 category enum 값과 그대로 일치시킨다. HMR 재컴파일 시 이미 등록된
 // discriminator를 재사용해 "Cannot overwrite discriminator" 에러를 피한다.
-export const InvitationProductModel =
-  (ProductModel.discriminators?.invitation as Model<IInvitationProduct>) ||
-  ProductModel.discriminator<IInvitationProduct>("invitation", invitationProductSchema);
+export const MobileInvitationProductModel =
+  (ProductModel.discriminators?.["mobile-invitation"] as Model<IMobileInvitationProduct>) ||
+  ProductModel.discriminator<IMobileInvitationProduct>(
+    "mobile-invitation",
+    mobileInvitationProductSchema,
+  );

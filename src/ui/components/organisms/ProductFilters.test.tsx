@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { initialFilterState } from "@/ui/context/productFilter";
 import type { Product } from "@/core/domain";
 import { ProductFilters } from "./ProductFilters";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({
@@ -13,7 +14,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
     thumbnail: "https://example.com/thumb.jpg",
     price: 10000,
-    category: "invitation",
+    category: MOBILE_INVITATION_CATEGORY,
     subCategory: "wedding",
     isPremium: false,
     isFeatured: false,
@@ -35,7 +36,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={{ ...initialFilterState, keyword: "봄맞이" }}
         dispatch={vi.fn()}
@@ -52,7 +53,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={dispatch}
@@ -74,7 +75,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={dispatch}
@@ -137,7 +138,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={dispatch}
@@ -156,7 +157,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct({ title: "봄맞이 청첩장" })]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={{ ...initialFilterState, keyword: "봄", isOpen: true }}
         dispatch={dispatch}
@@ -179,7 +180,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={dispatch}
@@ -203,7 +204,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={vi.fn()}
@@ -225,7 +226,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={dispatch}
@@ -248,7 +249,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[
           {
             _id: "feat-1",
@@ -280,7 +281,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[
           {
             _id: "feat-2",
@@ -309,7 +310,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category="invitation"
+        category={MOBILE_INVITATION_CATEGORY}
         premiumFeatures={[]}
         state={initialFilterState}
         dispatch={dispatch}

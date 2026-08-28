@@ -8,12 +8,12 @@ import {
   getPopularProductsService,
 } from "@/services";
 import type { AvailableSubCategory } from "@/core/domain";
-import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY, POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
 
 const page = async () => {
   const [invitation, popularProducts, availableSubCategories] =
     await Promise.all([
-      getFeaturedTemplatesService("invitation").catch(() => [] as Product[]),
+      getFeaturedTemplatesService(MOBILE_INVITATION_CATEGORY).catch(() => [] as Product[]),
       getPopularProductsService(POPULAR_PRODUCTS_LIMIT).catch(
         () => [] as Product[],
       ),
