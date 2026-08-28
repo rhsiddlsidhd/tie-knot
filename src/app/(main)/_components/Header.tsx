@@ -28,7 +28,7 @@ const Header = () => {
               </Button>
             ))}
             <Button asChild variant="ghost" size="sm">
-              <Link href={routes.reviews}>고객후기</Link>
+              <Link href={routes.support}>고객센터</Link>
             </Button>
           </nav>
         </div>
