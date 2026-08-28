@@ -29,6 +29,9 @@ export interface ProductJSON {
   images: string[];
   minQuantity: number;
   maxQuantity: number;
+  // Review 컬렉션 aggregate 결과 캐시 — 리뷰 write마다 services/review.ts가 재계산해 갱신한다.
+  ratingAverage: number;
+  ratingCount: number;
   previewUrl?: string;
   theme?: InvitationTheme;
   isLiked: boolean;

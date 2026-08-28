@@ -1,14 +1,37 @@
 export const dynamic = "force-dynamic";
 
 import { ProductDetailTemplate } from "./_components";
-import { getPremiumFeatureService, getProductService } from "@/services";
+import {
+  getAuth,
+  getPremiumFeatureService,
+  getProductReviewsPageService,
+  getProductService,
+} from "@/services";
+import { productReviewListRequestSchema } from "@/core/schemas";
+import { validateAndFlatten } from "@/core/utils";
 
 import { notFound } from "next/navigation";
 
+const resolveReviewQuery = (
+  searchParams: Record<string, string | string[] | undefined>,
+) => {
+  const parsed = validateAndFlatten(productReviewListRequestSchema, {
+    sort: typeof searchParams.sort === "string" ? searchParams.sort : null,
+    reviewCursor:
+      typeof searchParams.reviewCursor === "string"
+        ? searchParams.reviewCursor
+        : null,
+  });
+
+  return parsed.success ? parsed.data : {};
+};
+
 export default async function ProductDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ category: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { id } = await params;
 
@@ -17,5 +40,23 @@ export default async function ProductDetailPage({
   if (!product) notFound();
   const options = await getPremiumFeatureService(product.featureIds);
 
-  return <ProductDetailTemplate product={product} options={options} />;
+  const { sort = "LATEST", reviewCursor } = resolveReviewQuery(
+    await searchParams,
+  );
+  const session = await getAuth();
+  const reviews = await getProductReviewsPageService({
+    productId: product._id,
+    sort,
+    cursor: reviewCursor,
+    viewerUserId: session?.userId,
+  });
+
+  return (
+    <ProductDetailTemplate
+      product={product}
+      options={options}
+      reviews={reviews}
+      sort={sort}
+    />
+  );
 }

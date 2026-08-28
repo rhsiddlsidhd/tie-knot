@@ -52,6 +52,26 @@ describe("cursor", () => {
     ).toEqual({ createdAt, id });
   });
 
+  it("secondary 값을 포함해 인코딩한 커서는 원래 값으로 복원된다", () => {
+    const decoded = decodeCursor(encodeCursor({ createdAt, id, secondary: 4.5 }));
+
+    expect(decoded).toEqual({ createdAt, id, secondary: 4.5 });
+  });
+
+  it("secondary 부분이 숫자가 아니면 null을 리턴한다", () => {
+    expect(
+      decodeCursor(
+        encodeRawPayload(`2026-08-19T05:30:00.000Z|${id}|not-a-number`),
+      ),
+    ).toBe(null);
+  });
+
+  it("구분자가 3개 이상이면 null을 리턴한다", () => {
+    expect(
+      decodeCursor(encodeRawPayload(`2026-08-19T05:30:00.000Z|${id}|4.5|extra`)),
+    ).toBe(null);
+  });
+
   describe("isValidPageLimit", () => {
     it("1 이상 MAX_PAGE_SIZE 이하의 정수는 유효하다", () => {
       expect(isValidPageLimit(1)).toBe(true);

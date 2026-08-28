@@ -8,11 +8,6 @@ export const MAIN_NAV_ITEMS = [
     label: "모바일 청첩장",
     href: routes.products.byCategory("invitation"),
   },
-  {
-    id: "reviews",
-    label: "고객후기",
-    href: routes.reviews,
-  },
 ] as const;
 
 export const userNavItems = [

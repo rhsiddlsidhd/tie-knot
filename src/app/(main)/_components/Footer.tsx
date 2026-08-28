@@ -42,11 +42,6 @@ export function Footer() {
                   고객센터
                 </Link>
               </li>
-              <li>
-                <Link href={routes.reviews} className="hover:text-foreground">
-                  고객후기
-                </Link>
-              </li>
             </ul>
           </div>
         </div>

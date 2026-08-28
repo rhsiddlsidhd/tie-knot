@@ -79,6 +79,7 @@ describe("OrderList", () => {
               discountAmount: 0,
               payMethod: "CARD",
               orderStatus: "PENDING",
+              review: null,
               createdAt: new Date("2026-08-01T00:00:00.000Z"),
               updatedAt: new Date("2026-08-01T00:00:00.000Z"),
               product: {

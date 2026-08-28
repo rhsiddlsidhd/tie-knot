@@ -7,5 +7,6 @@ export * from "./order";
 export * from "./payment";
 export * from "./premiumFeature";
 export * from "./product";
+export * from "./review";
 export * from "./subway";
 export * from "./user";

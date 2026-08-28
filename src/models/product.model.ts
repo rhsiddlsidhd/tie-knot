@@ -66,6 +66,9 @@ export interface ProductDB {
   images: string[];
   minQuantity: number;
   maxQuantity: number;
+  // Review 컬렉션 aggregate 결과 캐시 — 리뷰 write마다 services/review.ts가 재계산해 갱신한다.
+  ratingAverage: number;
+  ratingCount: number;
 }
 
 export interface IProduct extends ProductDB {
@@ -145,6 +148,8 @@ const productSchema = new Schema<IProduct>(
     images: { type: [String], default: [] },
     minQuantity: { type: Number, required: true, default: 1, min: 1 },
     maxQuantity: { type: Number, required: true, default: 0, min: 0 },
+    ratingAverage: { type: Number, default: 0, min: 0, max: 5 },
+    ratingCount: { type: Number, default: 0, min: 0 },
   },
   {
     timestamps: true,

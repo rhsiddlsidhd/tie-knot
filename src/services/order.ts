@@ -6,6 +6,7 @@ import {
   OrderModel,
   PaymentModel,
   ProductModel,
+  ReviewModel,
 } from "@/models";
 import type { CreateOrderDto } from "@/core/schemas";
 import {
@@ -231,7 +232,7 @@ const toOrderListItems = async (
     .map((order) => order.paymentId)
     .filter((paymentId) => paymentId !== undefined);
 
-  const [products, invitations, payments] = await Promise.all([
+  const [products, invitations, payments, reviews] = await Promise.all([
     ProductModel.find({ _id: { $in: productIds } })
       .select("category")
       .lean(),
@@ -243,6 +244,9 @@ const toOrderListItems = async (
           .select("status methodDetail.virtualAccount")
           .lean()
       : [],
+    ReviewModel.find({ orderId: { $in: orderIds } })
+      .select("orderId rating content images")
+      .lean(),
   ]);
 
   const categories = new Map(
@@ -256,6 +260,17 @@ const toOrderListItems = async (
   );
   const paymentsById = new Map(
     payments.map((payment) => [payment._id.toString(), payment]),
+  );
+  const reviewsByOrder = new Map(
+    reviews.map((review) => [
+      review.orderId.toString(),
+      {
+        id: review._id.toString(),
+        rating: review.rating,
+        content: review.content,
+        images: review.images,
+      },
+    ]),
   );
 
   return orders.map((order) => {
@@ -277,6 +292,7 @@ const toOrderListItems = async (
       invitationPublicKey:
         invitation?.status === "published" ? invitation.publicKey : undefined,
       virtualAccount,
+      review: reviewsByOrder.get(order._id.toString()) ?? null,
       userId: order.userId.toString(),
       paymentId: order.paymentId?.toString(),
       product: {

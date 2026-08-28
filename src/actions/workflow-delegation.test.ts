@@ -9,6 +9,10 @@ const services = vi.hoisted(() => ({
   restoreProductAsAdminService: vi.fn(),
   permanentlyDeleteProductAsAdminService: vi.fn(),
   toggleProductLikeForCurrentUserService: vi.fn(),
+  createReviewForCurrentUserService: vi.fn(),
+  updateReviewForCurrentUserService: vi.fn(),
+  deleteReviewForCurrentUserService: vi.fn(),
+  deleteReviewByAdminService: vi.fn(),
 }));
 const revalidatePath = vi.hoisted(() => vi.fn());
 
@@ -22,6 +26,10 @@ import { deleteProduct } from "./deleteProduct";
 import { restoreProduct } from "./restoreProduct";
 import { permanentlyDeleteProduct } from "./permanentlyDeleteProduct";
 import { toggleProductLike } from "./toggleProductLike";
+import { createReview } from "./createReview";
+import { updateReview } from "./updateReview";
+import { deleteReview } from "./deleteReview";
+import { deleteReviewByAdmin } from "./deleteReviewByAdmin";
 
 const formData = (data: Record<string, string>) => {
   const result = new FormData();
@@ -114,6 +122,70 @@ describe("Action 유스케이스 위임", () => {
     const result = await toggleProductLike("product-1");
 
     expect(services.toggleProductLikeForCurrentUserService).toHaveBeenCalledWith("product-1");
+    expect(result.success).toBe(true);
+  });
+
+  it("createReview는 검증된 입력을 현재 사용자 유스케이스에 위임한다", async () => {
+    services.createReviewForCurrentUserService.mockResolvedValue({});
+
+    const result = await createReview(
+      null,
+      formData({
+        orderId: "order-1",
+        rating: "5",
+        content: "만족스러운 상품이었습니다.",
+      }),
+    );
+
+    expect(services.createReviewForCurrentUserService).toHaveBeenCalledWith({
+      orderId: "order-1",
+      rating: 5,
+      content: "만족스러운 상품이었습니다.",
+      images: [],
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("createReview는 검증 실패 시 Service를 호출하지 않는다", async () => {
+    const result = await createReview(
+      null,
+      formData({ orderId: "order-1", rating: "5", content: "짧음" }),
+    );
+
+    expect(result.success).toBe(false);
+    expect(services.createReviewForCurrentUserService).not.toHaveBeenCalled();
+  });
+
+  it("updateReview는 채운 필드만 골라 현재 사용자 유스케이스에 위임한다", async () => {
+    services.updateReviewForCurrentUserService.mockResolvedValue({});
+
+    const result = await updateReview(
+      null,
+      formData({ reviewId: "review-1", rating: "4" }),
+    );
+
+    expect(services.updateReviewForCurrentUserService).toHaveBeenCalledWith({
+      reviewId: "review-1",
+      rating: 4,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("deleteReview는 리뷰 ID를 현재 사용자 유스케이스에 위임한다", async () => {
+    services.deleteReviewForCurrentUserService.mockResolvedValue(undefined);
+
+    const result = await deleteReview("review-1");
+
+    expect(services.deleteReviewForCurrentUserService).toHaveBeenCalledWith("review-1");
+    expect(result.success).toBe(true);
+  });
+
+  it("deleteReviewByAdmin은 리뷰 ID를 어드민 유스케이스에 위임한다", async () => {
+    services.deleteReviewByAdminService.mockResolvedValue(undefined);
+
+    const result = await deleteReviewByAdmin("review-1");
+
+    expect(services.deleteReviewByAdminService).toHaveBeenCalledWith("review-1");
     expect(result.success).toBe(true);
   });
 });

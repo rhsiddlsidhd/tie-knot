@@ -28,6 +28,7 @@ import { PAY_METHOD_LABEL, resolveOrderStatusLabel } from "../_constants";
 import { getInvitationInputDaysLeft } from "../_utils";
 import { PaymentButton } from "./PaymentButton";
 import { PendingCoupleInfoBanner } from "./PendingCoupleInfoBanner";
+import { ReviewFormDialog } from "./ReviewFormDialog";
 
 const STATUS_BADGE_VARIANTS: Record<
   OrderStatus,
@@ -166,6 +167,13 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
           </div>
 
           <div className="flex shrink-0 flex-col gap-2">
+            {order.orderStatus === "COMPLETED" && (
+              <ReviewFormDialog
+                key={order.review?.id ?? "new"}
+                orderId={order._id}
+                review={order.review}
+              />
+            )}
             {isAbandonedPending && <PaymentButton order={order} />}
             {order.invitationStatus &&
               order.orderStatus !== "CANCELLED" &&

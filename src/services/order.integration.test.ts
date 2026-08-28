@@ -12,6 +12,7 @@ import {
   OrderModel,
   PaymentModel,
   ProductModel,
+  ReviewModel,
 } from "@/models";
 import type * as AuthModule from "./auth";
 import {
@@ -766,6 +767,33 @@ describe("order", () => {
       expect(result.items).toHaveLength(1);
       expect(result.items[0]._id).toBe(created._id.toString());
       expect(result.nextCursor).toBe(null);
+    });
+
+    it("리뷰가 작성된 주문은 review 요약을 채우고, 없으면 null이다", async () => {
+      const userId = new mongoose.Types.ObjectId().toString();
+      const reviewed = await createOrderService(buildOrderInputForTest({ userId }));
+      const notReviewed = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
+      const review = await ReviewModel.create({
+        productId: reviewed.product.productId,
+        userId,
+        orderId: reviewed._id,
+        rating: 5,
+        content: "만족스러운 상품이었어요.",
+        images: [],
+      });
+
+      const result = await getOrdersPageForUser({ userId });
+
+      const byId = new Map(result.items.map((item) => [item._id, item.review]));
+      expect(byId.get(reviewed._id.toString())).toEqual({
+        id: review._id.toString(),
+        rating: 5,
+        content: "만족스러운 상품이었어요.",
+        images: [],
+      });
+      expect(byId.get(notReviewed._id.toString())).toBe(null);
     });
 
     it("상태 필터를 적용한다", async () => {
