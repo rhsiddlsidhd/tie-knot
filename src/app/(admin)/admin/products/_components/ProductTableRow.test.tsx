@@ -11,6 +11,7 @@ vi.mock("./ProductTableRowSelect", () => ({
 }));
 
 import { ProductTableRow } from "./ProductTableRow";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({
@@ -20,7 +21,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
     thumbnail: "https://example.com/thumbnail.jpg",
     price: 9900,
-    category: "invitation",
+    category: MOBILE_INVITATION_CATEGORY,
     subCategory: "wedding",
     isPremium: false,
     featureIds: [],
@@ -54,7 +55,7 @@ describe("ProductTableRow", () => {
     );
 
     expect(screen.getByText("봄맞이 청첩장")).toBeInTheDocument();
-    expect(screen.getByText("초대장")).toBeInTheDocument();
+    expect(screen.getByText("모바일초대장")).toBeInTheDocument();
     expect(screen.getByText("청첩장")).toBeInTheDocument();
     expect(screen.getByText("9,900원")).toBeInTheDocument();
     expect(screen.getByText("3")).toBeInTheDocument();

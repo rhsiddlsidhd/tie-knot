@@ -1,7 +1,7 @@
 import { SearchX } from "lucide-react";
 import Link from "next/link";
 import { TypographyP, TypographyMuted } from "@/ui/components/atoms";
-import { routes } from "@/core/domain";
+import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 export function SearchEmptyState({ query }: { query: string }) {
   return (
@@ -24,7 +24,7 @@ export function SearchEmptyState({ query }: { query: string }) {
         문구 + 이 링크까지만 노출한다(00_requirements REQ-4).
       */}
       <Link
-        href={routes.products.byCategory("invitation")}
+        href={routes.products.byCategory(MOBILE_INVITATION_CATEGORY)}
         className="text-primary mt-6 text-sm font-medium underline-offset-4 hover:underline"
       >
         전체 상품 보기

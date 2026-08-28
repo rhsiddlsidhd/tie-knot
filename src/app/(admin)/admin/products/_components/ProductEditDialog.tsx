@@ -37,7 +37,7 @@ import type {
   ProductCategory,
   SubCategory,
 } from "@/core/domain";
-import { getInvitationThemeOptions } from "@/core/domain";
+import { getInvitationThemeOptions, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/ui/stores";
 interface ProductEditDialogProps {
@@ -247,7 +247,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               서브 카테고리
             </SelectField>
 
-            {selectedCategory === "invitation" && (
+            {selectedCategory === MOBILE_INVITATION_CATEGORY && (
               <SelectField
                 id="edit-theme"
                 name="theme"
@@ -471,7 +471,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
       <Card>
         <CardHeader>
           <CardTitle>
-            상세 이미지{selectedCategory !== "invitation" && " *"}
+            상세 이미지{selectedCategory !== MOBILE_INVITATION_CATEGORY && " *"}
           </CardTitle>
         </CardHeader>
         <CardContent>

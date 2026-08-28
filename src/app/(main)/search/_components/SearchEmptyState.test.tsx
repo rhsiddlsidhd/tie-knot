@@ -18,11 +18,11 @@ describe("SearchEmptyState", () => {
     ).toBeInTheDocument();
   });
 
-  it("전체 상품 보기 링크가 /products/invitation으로 연결된다", () => {
+  it("전체 상품 보기 링크가 /products/mobile-invitation으로 연결된다", () => {
     render(<SearchEmptyState query="abc" />);
 
     expect(
       screen.getByRole("link", { name: "전체 상품 보기" }),
-    ).toHaveAttribute("href", "/products/invitation");
+    ).toHaveAttribute("href", "/products/mobile-invitation");
   });
 });

@@ -6,7 +6,7 @@ import {
   buildProductInput,
   clearCollections,
 } from "@testing/support";
-import { AppError, EXPIRED_ORDER_BATCH_LIMIT } from "@/core/domain";
+import { AppError, EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import {
   InvitationModel,
   OrderModel,
@@ -229,7 +229,7 @@ describe("order", () => {
           description: "레거시 문서(필드 없음)",
           thumbnail: "https://example.com/legacy.jpg",
           price: 1000,
-          category: "invitation",
+          category: MOBILE_INVITATION_CATEGORY,
           subCategory: "wedding",
           isPremium: false,
           isFeatured: false,
@@ -843,13 +843,13 @@ describe("order", () => {
 
       const result = await getOrdersPageForUser({
         userId,
-        category: "invitation",
+        category: MOBILE_INVITATION_CATEGORY,
       });
 
       expect(result.items.map((item) => item._id)).toEqual([
         invitationOrder._id.toString(),
       ]);
-      expect(result.items[0].product.category).toBe("invitation");
+      expect(result.items[0].product.category).toBe(MOBILE_INVITATION_CATEGORY);
     });
 
     it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복되지 않는다", async () => {

@@ -25,7 +25,7 @@ import { useImageList } from "@/ui/hooks";
 import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils";
 import { getFieldError } from "@/core/utils";
 import type { ProductCategory } from "@/core/domain";
-import { getInvitationThemeOptions } from "@/core/domain";
+import { getInvitationThemeOptions, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import type { APIResponse } from "@/core/domain";
 
 interface ProductRegistrationFormProps {
@@ -45,7 +45,7 @@ export function ProductRegistrationForm({
 }: ProductRegistrationFormProps) {
   const [isPremium, setIsPremium] = useState(false);
   const [selectedCategory, setSelectedCategory] =
-    useState<ProductCategory>("invitation");
+    useState<ProductCategory>(MOBILE_INVITATION_CATEGORY);
   const [isFeature, setIsFeature] = useState(false);
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
   const [discountType, setDiscountType] = useState<"rate" | "amount">("rate");
@@ -148,7 +148,7 @@ export function ProductRegistrationForm({
                   서브 카테고리
                 </SelectField>
 
-                {selectedCategory === "invitation" && (
+                {selectedCategory === MOBILE_INVITATION_CATEGORY && (
                   <SelectField
                     id="theme"
                     name="theme"
@@ -360,7 +360,7 @@ export function ProductRegistrationForm({
           </Card>
 
           {/* 미리보기 URL — invitation 전용(REQ-6). */}
-          {selectedCategory === "invitation" && (
+          {selectedCategory === MOBILE_INVITATION_CATEGORY && (
             <Card>
               <CardHeader>
                 <CardTitle>미리보기 이미지</CardTitle>
@@ -392,10 +392,10 @@ export function ProductRegistrationForm({
           <Card>
             <CardHeader>
               <CardTitle>
-                상세 이미지{selectedCategory !== "invitation" && " *"}
+                상세 이미지{selectedCategory !== MOBILE_INVITATION_CATEGORY && " *"}
               </CardTitle>
               <CardDescription>
-                {selectedCategory === "invitation"
+                {selectedCategory === MOBILE_INVITATION_CATEGORY
                   ? "선택사항입니다. 등록하지 않아도 됩니다."
                   : "상품 상세 페이지에 표시될 이미지를 최소 1장 등록해주세요."}
               </CardDescription>

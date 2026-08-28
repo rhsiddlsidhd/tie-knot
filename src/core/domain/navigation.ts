@@ -1,12 +1,13 @@
 import { LayoutDashboard, User, ShoppingBag } from "lucide-react";
 
 import { routes } from "./routes";
+import { MOBILE_INVITATION_CATEGORY } from "./product-category";
 
 export const MAIN_NAV_ITEMS = [
   {
-    id: "invitation",
+    id: MOBILE_INVITATION_CATEGORY,
     label: "모바일 청첩장",
-    href: routes.products.byCategory("invitation"),
+    href: routes.products.byCategory(MOBILE_INVITATION_CATEGORY),
   },
 ] as const;
 

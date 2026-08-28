@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { Product, PremiumFeature } from "@/core/domain";
 import { ProductOptions } from "./ProductOptions";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildOption = (overrides?: Partial<PremiumFeature>): PremiumFeature => ({
   _id: "feature-1",
@@ -23,7 +24,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     description: "봄 시즌 한정 모바일 청첩장 템플릿입니다.",
     thumbnail: "https://example.com/thumb.jpg",
     price: 10000,
-    category: "invitation",
+    category: MOBILE_INVITATION_CATEGORY,
     subCategory: "wedding",
     isPremium: false,
     isFeatured: false,

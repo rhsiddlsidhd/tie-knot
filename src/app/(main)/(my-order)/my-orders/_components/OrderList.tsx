@@ -15,7 +15,7 @@ import type {
   OrderStatus,
   ProductCategory,
 } from "@/core/domain";
-import { routes } from "@/core/domain";
+import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { OrderCard } from "./OrderCard";
 
 interface OrderListProps {
@@ -98,7 +98,7 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
               아직 주문한 상품이 없어요. 상품을 구경하고 첫 주문을 해보세요.
             </TypographyMuted>
             <Button asChild className="mt-6">
-              <Link href={routes.products.byCategory("invitation")}>
+              <Link href={routes.products.byCategory(MOBILE_INVITATION_CATEGORY)}>
                 청첩장 보러가기
               </Link>
             </Button>

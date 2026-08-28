@@ -8,10 +8,11 @@ import {
   findSubCategoriesByTerm,
   getAvailableSubCategories,
 } from "./category";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 describe("isProductCategory", () => {
   it("invitation은 유효한 카테고리다", () => {
-    expect(isProductCategory("invitation")).toBe(true);
+    expect(isProductCategory(MOBILE_INVITATION_CATEGORY)).toBe(true);
   });
 
   it("신규 4개 카테고리(favor/accessory/guestbook/ceremony)도 유효하다 (REQ-1)", () => {
@@ -70,7 +71,7 @@ describe("getCategoryOptions", () => {
     const options = getCategoryOptions();
 
     expect(options).toEqual([
-      { value: "invitation", label: "초대장" },
+      { value: MOBILE_INVITATION_CATEGORY, label: "모바일초대장" },
       { value: "favor", label: "답례품" },
       { value: "accessory", label: "웨딩소품" },
       { value: "guestbook", label: "방명록 굿즈" },
@@ -88,7 +89,7 @@ describe("getCategoryOptions", () => {
 
 describe("getSubCategoryOptions", () => {
   it("invitation의 서브 카테고리 2개를 label과 함께 리턴한다", () => {
-    const options = getSubCategoryOptions("invitation");
+    const options = getSubCategoryOptions(MOBILE_INVITATION_CATEGORY);
 
     expect(options).toEqual([
       { value: "wedding", label: "청첩장" },
@@ -130,7 +131,7 @@ describe("getAvailableSubCategories", () => {
       { category: "favor", subCategory: "soap" },
       { category: "favor", subCategory: "candle" },
       { category: "favor", subCategory: "soap" },
-      { category: "invitation", subCategory: "wedding" },
+      { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
       { category: "favor", subCategory: "legacy" },
     ];
 
@@ -147,15 +148,15 @@ describe("getAvailableSubCategories", () => {
 
 describe("findProductCategoriesByTerm", () => {
   it("라벨에 부분일치하면 해당 카테고리 key를 리턴한다", () => {
-    expect(findProductCategoriesByTerm("초대")).toEqual(["invitation"]);
+    expect(findProductCategoriesByTerm("초대")).toEqual([MOBILE_INVITATION_CATEGORY]);
   });
 
   it("enum key에 부분일치해도 매칭한다 (영문 입력 대응)", () => {
-    expect(findProductCategoriesByTerm("invit")).toEqual(["invitation"]);
+    expect(findProductCategoriesByTerm("invit")).toEqual([MOBILE_INVITATION_CATEGORY]);
   });
 
   it("대소문자를 무시한다", () => {
-    expect(findProductCategoriesByTerm("INVIT")).toEqual(["invitation"]);
+    expect(findProductCategoriesByTerm("INVIT")).toEqual([MOBILE_INVITATION_CATEGORY]);
   });
 
   it("2글자 미만이면 빈 배열을 리턴한다 (오탐 방지)", () => {

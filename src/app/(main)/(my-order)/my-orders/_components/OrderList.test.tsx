@@ -39,6 +39,7 @@ vi.mock("swr/infinite", () => ({
 }));
 
 import { OrderList } from "./OrderList";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const EMPTY_PAGE: OrderListPage = { items: [], nextCursor: null };
 
@@ -84,7 +85,7 @@ describe("OrderList", () => {
               updatedAt: new Date("2026-08-01T00:00:00.000Z"),
               product: {
                 productId: "product-1",
-                category: "invitation",
+                category: MOBILE_INVITATION_CATEGORY,
                 title: "봄맞이 청첩장",
                 thumbnail: "https://example.com/thumb.jpg",
                 pricing: { originalPrice: 10000, discountedPrice: 9000 },

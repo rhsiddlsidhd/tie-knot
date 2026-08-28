@@ -17,6 +17,7 @@ vi.mock("@/actions", () => ({
 }));
 
 import { OrderCard } from "./OrderCard";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const buildOrder = (overrides?: Partial<OrderListItem>): OrderListItem =>
   ({
@@ -35,7 +36,7 @@ const buildOrder = (overrides?: Partial<OrderListItem>): OrderListItem =>
     updatedAt: new Date("2026-08-01T00:00:00.000Z"),
     product: {
       productId: "product-1",
-      category: "invitation",
+      category: MOBILE_INVITATION_CATEGORY,
       title: "봄맞이 청첩장",
       thumbnail: "https://example.com/thumb.jpg",
       pricing: { originalPrice: 10000, discountedPrice: 9000 },

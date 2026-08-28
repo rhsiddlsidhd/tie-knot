@@ -6,6 +6,7 @@ import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { Product } from "@/core/domain";
 import { useProductSearch } from "./useProductSearch";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const product: Product = {
   _id: "product-1",
@@ -14,7 +15,7 @@ const product: Product = {
   description: "검색 통합 테스트 상품 설명입니다.",
   thumbnail: "https://example.com/thumb.jpg",
   price: 10_000,
-  category: "invitation",
+  category: MOBILE_INVITATION_CATEGORY,
   subCategory: "wedding",
   isPremium: false,
   isFeatured: false,

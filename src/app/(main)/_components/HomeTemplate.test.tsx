@@ -12,9 +12,10 @@ vi.mock("@/ui/components/organisms", () => ({
 }));
 
 import { HomeTemplate } from "./HomeTemplate";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const AVAILABLE_SUB_CATEGORIES = [
-  { category: "invitation", subCategory: "wedding" },
+  { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
 ] as const;
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
