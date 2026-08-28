@@ -60,20 +60,13 @@ export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps
           예식장명
         </TextField>
 
-        {/* Address */}
-        <AddressField required name="venue" defaultValue={data?.address} />
-
-        {/* Address Detail */}
-        <TextField
-          id="venueAddressDetail"
-          name="venue_address_detail"
-          type="text"
-          placeholder="예: 3층 그랜드볼룸"
-          defaultValue={data?.addressDetail}
+        {/* Address (+ 상세 주소는 AddressField 내부에서 함께 렌더) */}
+        <AddressField
           required
-        >
-          상세 주소
-        </TextField>
+          name="venue"
+          defaultValue={data?.address}
+          addressDetailDefaultValue={data?.addressDetail}
+        />
 
         {/* 인근 지하철 역 */}
         <ComboboxField

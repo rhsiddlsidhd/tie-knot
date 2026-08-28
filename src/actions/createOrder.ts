@@ -8,8 +8,8 @@ import { actionError } from "@/boundary";
 
 import { validateAndFlatten } from "@/core/utils";
 import { createOrderSchema } from "@/core/schemas";
-import type { PayMethod } from "@/core/domain";
-import { routes } from "@/core/domain";
+import type { PayMethod, ProductCategory } from "@/core/domain";
+import { routes, categoryRequiresShipping } from "@/core/domain";
 export type CreateOrderResult = {
   merchantUid: string;
   finalPrice: number;
@@ -35,6 +35,11 @@ export async function createOrder(
   // FormData에서 주문 정보 추출
   const selectedOptionsRaw = formData.get("selectedFeatures") as string;
 
+  const category = formData.get("productCategory") as ProductCategory;
+
+  // 모바일초대장 주문은 ShippingInfoCard 자체가 폼에 없어 이 필드들이 애초에 안
+  // 실려있다 — source of truth인 category로 판단하고, 실물 카테고리인데 값이
+  // 비었으면 아래 zod 검증(shipping.optional())을 통과 못 시켜 걸러지게 둔다.
   const data = {
     buyerName: formData.get("buyerName") as string,
     buyerEmail: formData.get("buyerEmail") as string,
@@ -44,6 +49,7 @@ export async function createOrder(
       productId: formData.get("productId") as string,
       title: formData.get("productTitle") as string,
       thumbnail: formData.get("productThumbnail") as string,
+      category,
       pricing: {
         originalPrice: Number(formData.get("originalPrice")),
         discountedPrice: Number(formData.get("discountedPrice")),
@@ -51,6 +57,14 @@ export async function createOrder(
       quantity: Number(formData.get("productQuantity")),
       selectedFeatures: JSON.parse(selectedOptionsRaw) ?? [],
     },
+    shipping: categoryRequiresShipping(category)
+      ? {
+          receiver: formData.get("shippingReceiver") as string,
+          phone: formData.get("shippingPhone") as string,
+          address: formData.get("ship_address") as string,
+          addressDetail: formData.get("ship_address_detail") as string,
+        }
+      : undefined,
   };
 
   // Zod 스키마로 유효성 검증

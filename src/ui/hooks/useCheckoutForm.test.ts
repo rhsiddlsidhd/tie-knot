@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type { CheckoutItem } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { useCheckoutForm } from "./useCheckoutForm";
 
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
@@ -9,6 +10,7 @@ import { toast } from "sonner";
 
 const buildOrder = (overrides?: Partial<CheckoutItem>): CheckoutItem => ({
   productId: "product-1",
+  category: MOBILE_INVITATION_CATEGORY,
   title: "봄맞이 청첩장",
   thumbnail: "https://example.com/thumb.jpg",
   originalPrice: 10000,
@@ -21,13 +23,14 @@ const buildOrder = (overrides?: Partial<CheckoutItem>): CheckoutItem => ({
   ...overrides,
 });
 
-const buildSubmitEvent = () => {
+const buildSubmitEvent = (extraFields?: Record<string, string>) => {
   const form = document.createElement("form");
   const fields = {
     buyerName: "홍길동",
     buyerEmail: "test@example.com",
     buyerPhone: "010-1234-5678",
     payMethod: "CARD",
+    ...extraFields,
   };
   Object.entries(fields).forEach(([name, value]) => {
     const input = document.createElement("input");
@@ -112,6 +115,50 @@ describe("useCheckoutForm", () => {
     expect(action).toHaveBeenCalledTimes(1);
     const formData = action.mock.calls[0][0] as FormData;
     expect(formData.get("productId")).toBe("product-1");
+    expect(formData.get("productCategory")).toBe(MOBILE_INVITATION_CATEGORY);
     expect(result.current.errors).toEqual({});
+  });
+
+  it("실물 카테고리인데 배송 정보가 비어있으면 shippingErrors에 담고 action을 호출하지 않는다", () => {
+    const routerReplace = vi.fn();
+    const action = vi.fn();
+    const order = buildOrder({ category: "favor" });
+    const { result } = renderHook(() =>
+      useCheckoutForm({ order, action, router: { replace: routerReplace } as never }),
+    );
+
+    expect(result.current.requiresShipping).toBe(true);
+
+    act(() => {
+      result.current.handleSubmit(buildSubmitEvent());
+    });
+
+    expect(action).not.toHaveBeenCalled();
+    expect(result.current.shippingErrors.receiver).toBeDefined();
+  });
+
+  it("실물 카테고리 + 배송 정보를 채우면 formData에 담아 action을 호출한다", () => {
+    const routerReplace = vi.fn();
+    const action = vi.fn();
+    const order = buildOrder({ category: "favor" });
+    const { result } = renderHook(() =>
+      useCheckoutForm({ order, action, router: { replace: routerReplace } as never }),
+    );
+
+    act(() => {
+      result.current.handleSubmit(
+        buildSubmitEvent({
+          shippingReceiver: "홍길동",
+          shippingPhone: "010-1234-5678",
+          ship_address: "서울시 강남구",
+          ship_address_detail: "101동 202호",
+        }),
+      );
+    });
+
+    expect(action).toHaveBeenCalledTimes(1);
+    const formData = action.mock.calls[0][0] as FormData;
+    expect(formData.get("productCategory")).toBe("favor");
+    expect(result.current.shippingErrors).toEqual({});
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
 import type { CheckoutItem } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 const { pushMock, setOrderMock } = vi.hoisted(() => ({
   pushMock: vi.fn(),
@@ -35,6 +36,7 @@ import { ProductSummary } from "./ProductSummary";
 
 const CHECKOUT_ITEM: CheckoutItem = {
   productId: "product-1",
+  category: MOBILE_INVITATION_CATEGORY,
   title: "봄맞이 청첩장",
   thumbnail: "https://example.com/thumb.jpg",
   originalPrice: 10000,

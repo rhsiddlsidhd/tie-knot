@@ -4,11 +4,11 @@ import { useState, startTransition } from "react";
 import type React from "react";
 import { toast } from "sonner";
 import { validateAndFlatten } from "@/core/utils";
-import type { BuyerInfo } from "@/core/schemas";
-import { BuyerInfoSchema } from "@/core/schemas";
+import type { BuyerInfo, ShippingInfo } from "@/core/schemas";
+import { BuyerInfoSchema, ShippingInfoSchema } from "@/core/schemas";
 import type { CheckoutItem } from "@/core/domain";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { routes } from "@/core/domain";
+import { routes, categoryRequiresShipping } from "@/core/domain";
 
 interface UseCheckoutFormOptions {
   order: CheckoutItem | null;
@@ -24,10 +24,16 @@ export function useCheckoutForm({
   const [errors, setErrors] = useState<
     Partial<Record<keyof BuyerInfo, string[]>>
   >({});
+  const [shippingErrors, setShippingErrors] = useState<
+    Partial<Record<keyof ShippingInfo, string[]>>
+  >({});
+
+  const requiresShipping = categoryRequiresShipping(order?.category);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setErrors({});
+    setShippingErrors({});
 
     if (!order) {
       toast.error("주문 정보를 찾을 수 없습니다. 다시 시도해주세요.");
@@ -49,8 +55,23 @@ export function useCheckoutForm({
       return;
     }
 
+    if (requiresShipping) {
+      const shippingParsed = validateAndFlatten<ShippingInfo>(ShippingInfoSchema, {
+        receiver: formData.get("shippingReceiver") as string,
+        phone: formData.get("shippingPhone") as string,
+        address: formData.get("ship_address") as string,
+        addressDetail: formData.get("ship_address_detail") as string,
+      });
+
+      if (!shippingParsed.success) {
+        setShippingErrors(shippingParsed.error);
+        return;
+      }
+    }
+
     const {
       productId,
+      category,
       originalPrice,
       discountedPrice,
       quantity,
@@ -59,6 +80,7 @@ export function useCheckoutForm({
       title,
     } = order;
     formData.append("productId", productId);
+    formData.append("productCategory", category);
     formData.append("productTitle", title);
     formData.append("productThumbnail", thumbnail);
     formData.append("productQuantity", String(quantity));
@@ -68,5 +90,5 @@ export function useCheckoutForm({
     startTransition(() => action(formData));
   };
 
-  return { errors, handleSubmit };
+  return { errors, shippingErrors, requiresShipping, handleSubmit };
 }

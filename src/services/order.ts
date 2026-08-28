@@ -29,6 +29,7 @@ import {
   DEFAULT_PAGE_SIZE,
   EXPIRED_ORDER_BATCH_LIMIT,
   INVITATION_INPUT_DEADLINE_DAYS,
+  categoryRequiresShipping,
   ORDER_PAGE_SIZE,
   ORDER_STATUSES,
   PENDING_ORDER_EXPIRE_HOURS,
@@ -72,6 +73,19 @@ export const createOrderService = async (
       "VALIDATION",
       `이 상품은 최대 ${maxQuantity}개까지 주문할 수 있습니다.`,
     );
+  }
+
+  // 실물 카테고리(모바일초대장 제외)는 배송 정보가 필수다 — 사용자에게 보이는
+  // 1차 방어선(REQ-5 수량 검증과 같은 패턴). Order 모델의 conditional required는
+  // 이 체크를 우회하는 미래의 다른 코드 경로를 막는 최후 방어선일 뿐이다.
+  if (
+    categoryRequiresShipping(data.product.category) &&
+    (!data.shipping?.receiver ||
+      !data.shipping.phone ||
+      !data.shipping.address ||
+      !data.shipping.addressDetail)
+  ) {
+    throw new AppError("VALIDATION", "배송 정보를 입력해주세요.");
   }
 
   const merchantUid = generateUid("ORDER");

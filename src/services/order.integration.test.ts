@@ -111,6 +111,7 @@ describe("order", () => {
           product: {
             productId: product!._id.toString(),
             title: productInput.title,
+            category: productInput.category,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 9900, discountedPrice: 9900 },
             quantity: 2,
@@ -139,6 +140,7 @@ describe("order", () => {
           product: {
             productId: product!._id.toString(),
             title: productInput.title,
+            category: productInput.category,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 9900, discountedPrice: 9900 },
             quantity: 6,
@@ -166,6 +168,7 @@ describe("order", () => {
           product: {
             productId: product!._id.toString(),
             title: productInput.title,
+            category: productInput.category,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 9900, discountedPrice: 9900 },
             quantity: 999,
@@ -192,6 +195,7 @@ describe("order", () => {
           product: {
             productId: product!._id.toString(),
             title: productInput.title,
+            category: productInput.category,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 9900, discountedPrice: 9900 },
             quantity: 5,
@@ -210,6 +214,7 @@ describe("order", () => {
           product: {
             productId: missingProductId,
             title: "존재하지 않는 상품",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 9900, discountedPrice: 9900 },
             quantity: 1,
@@ -250,6 +255,7 @@ describe("order", () => {
           product: {
             productId: legacyProductId,
             title: "레거시 주문 상품",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/legacy.jpg",
             pricing: { originalPrice: 1000, discountedPrice: 1000 },
             quantity: 2,
@@ -264,6 +270,7 @@ describe("order", () => {
           product: {
             productId: legacyProductId,
             title: "레거시 주문 상품",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/legacy.jpg",
             pricing: { originalPrice: 1000, discountedPrice: 1000 },
             quantity: 1,
@@ -275,6 +282,83 @@ describe("order", () => {
       });
     });
 
+    describe("배송 정보 필수 여부", () => {
+      const buildPhysicalProductId = async () => {
+        const productInput = buildProductInput({
+          category: "favor",
+          subCategory: "candle",
+          minQuantity: 1,
+          maxQuantity: 0,
+        });
+        await createProductService(productInput);
+        const product = await ProductModel.findOne({
+          title: productInput.title,
+        }).lean();
+        return product!._id.toString();
+      };
+
+      it("실물 카테고리인데 배송 정보가 없으면 VALIDATION을 던지고 주문이 생성되지 않는다", async () => {
+        const productId = await buildPhysicalProductId();
+        const input = buildOrderInput({
+          product: {
+            productId,
+            title: "답례품 캔들",
+            category: "favor",
+            thumbnail: "https://example.com/thumbnail.jpg",
+            pricing: { originalPrice: 9900, discountedPrice: 9900 },
+            quantity: 1,
+            selectedFeatures: [],
+          },
+        });
+
+        await expect(createOrderService(input)).rejects.toMatchObject({
+          category: "VALIDATION",
+          message: "배송 정보를 입력해주세요.",
+        });
+        expect(await OrderModel.countDocuments({})).toBe(0);
+      });
+
+      it("실물 카테고리 + 배송 정보를 채우면 order.shipping/product.category가 저장된다", async () => {
+        const productId = await buildPhysicalProductId();
+        const input = buildOrderInput({
+          product: {
+            productId,
+            title: "답례품 캔들",
+            category: "favor",
+            thumbnail: "https://example.com/thumbnail.jpg",
+            pricing: { originalPrice: 9900, discountedPrice: 9900 },
+            quantity: 1,
+            selectedFeatures: [],
+          },
+          shipping: {
+            receiver: "홍길동",
+            phone: "010-1234-5678",
+            address: "서울시 강남구",
+            addressDetail: "101동 202호",
+          },
+        });
+
+        const result = await createOrderService(input);
+
+        expect(result.product.category).toBe("favor");
+        expect(result.shipping).toMatchObject({
+          receiver: "홍길동",
+          phone: "010-1234-5678",
+          address: "서울시 강남구",
+          addressDetail: "101동 202호",
+        });
+      });
+
+      it("모바일초대장 카테고리는 배송 정보 없이도 정상 생성된다(기존 동작 유지)", async () => {
+        const input = buildOrderInputForTest();
+
+        const result = await createOrderService(input);
+
+        expect(result.product.category).toBe(MOBILE_INVITATION_CATEGORY);
+        expect(result.shipping).toBeUndefined();
+      });
+    });
+
     describe("finalPrice 계산", () => {
       it("할인 없으면 상품가*수량 + 옵션가 합산이 finalPrice다", async () => {
         const input = buildOrderInput({
@@ -283,6 +367,7 @@ describe("order", () => {
           product: {
             productId: defaultProductId,
             title: "봄맞이 청첩장",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 10000, discountedPrice: 10000 },
             quantity: 2,
@@ -309,6 +394,7 @@ describe("order", () => {
           product: {
             productId: defaultProductId,
             title: "봄맞이 청첩장",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 10000, discountedPrice: 10000 },
             quantity: 1,
@@ -328,6 +414,7 @@ describe("order", () => {
           product: {
             productId: defaultProductId,
             title: "봄맞이 청첩장",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 10000, discountedPrice: 10000 },
             quantity: 1,
@@ -347,6 +434,7 @@ describe("order", () => {
           product: {
             productId: defaultProductId,
             title: "봄맞이 청첩장",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 1000, discountedPrice: 1000 },
             quantity: 1,
@@ -366,6 +454,7 @@ describe("order", () => {
           product: {
             productId: defaultProductId,
             title: "봄맞이 청첩장",
+            category: MOBILE_INVITATION_CATEGORY,
             thumbnail: "https://example.com/thumbnail.jpg",
             pricing: { originalPrice: 999, discountedPrice: 999 },
             quantity: 1,

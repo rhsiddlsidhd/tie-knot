@@ -115,6 +115,7 @@ const ProductOptions = ({
 
     const checkoutData: CheckoutItem = {
       productId: product._id.toString(),
+      category: product.category,
       title: product.title,
       thumbnail: product.thumbnail,
       originalPrice: product.price,

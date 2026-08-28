@@ -8,6 +8,7 @@ import {
   clearCollections,
 } from "@testing/support";
 import { getKstMonthRange } from "@/core/utils";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { OrderModel, ProductModel, UserModel } from "@/models";
 import { createOrderService } from "./order";
 import { createProductService } from "./product";
@@ -261,6 +262,7 @@ describe("getDashboardStatsService", () => {
             productId: defaultProductId,
             title: "스냅샷 확인용 상품명",
             thumbnail: "https://example.com/thumbnail.jpg",
+            category: MOBILE_INVITATION_CATEGORY,
             pricing: { originalPrice: 9900, discountedPrice: 9900 },
             quantity: 1,
             selectedFeatures: [],

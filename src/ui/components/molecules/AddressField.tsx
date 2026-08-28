@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/ui/components/atoms";
-import { FormField } from "@/ui/components/molecules";
+import { FormField, TextField } from "@/ui/components/molecules";
 import { useDaumPopup } from "@/adapters/browser/daum";
 import { useState } from "react";
 
@@ -9,8 +9,10 @@ interface AddressFieldProps {
   name: string;
   label?: string;
   error?: string;
+  addressDetailError?: string;
   required?: boolean;
   defaultValue?: string;
+  addressDetailDefaultValue?: string;
 }
 
 /**
@@ -20,8 +22,10 @@ const AddressField = ({
   name,
   label = "주소",
   error,
+  addressDetailError,
   required = false,
   defaultValue = "",
+  addressDetailDefaultValue = "",
 }: AddressFieldProps) => {
   const { handleDaumAddressPopup, address } = useDaumPopup();
   const [weddingAddress, setWeddingAddress] = useState(defaultValue);
@@ -54,6 +58,18 @@ const AddressField = ({
         onClick={handleDaumAddressPopup}
         aria-invalid={!!error}
       />
+
+      <TextField
+        id={`${name}AddressDetail`}
+        name={`${name}_address_detail`}
+        type="text"
+        placeholder="예: 3층 그랜드볼룸"
+        required={required}
+        defaultValue={addressDetailDefaultValue}
+        error={addressDetailError}
+      >
+        상세 주소
+      </TextField>
     </FormField>
   );
 };

@@ -50,13 +50,13 @@ const PAYMENT_METHODS: RadioFieldOption<PayMethod>[] = [
   },
 ];
 
-const PaymentMethodSelector = ({ error }: { error?: string }) => {
+const PaymentMethodSelector = ({ step, error }: { step: number; error?: string }) => {
   return (
     <Card className="border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold">
-            3
+            {step}
           </span>
           결제 수단 {error && <Alert type="error">{error}</Alert>}
         </CardTitle>

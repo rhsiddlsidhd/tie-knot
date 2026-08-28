@@ -7,7 +7,7 @@ import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/ui/stores";
 import type { OrderJSON } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
-import { routes } from "@/core/domain";
+import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { completePayment } from "@/actions";
 
 const PaymentButton = ({ order }: { order: OrderJSON }) => {
@@ -41,6 +41,9 @@ const PaymentButton = ({ order }: { order: OrderJSON }) => {
 
     const checkoutItem: CheckoutItem = {
       productId: order.product.productId.toString(),
+      // 재결제 흐름은 이 값을 실제로 쓰지 않는다(resumePayment 분기가 ShippingInfoCard
+      // 렌더 전에 걸린다) — 카테고리 정보 없는 레거시 주문 대비 안전한 기본값만 채운다.
+      category: order.product.category ?? MOBILE_INVITATION_CATEGORY,
       title: order.product.title,
       thumbnail: order.product.thumbnail,
       originalPrice: order.product.pricing.originalPrice,
