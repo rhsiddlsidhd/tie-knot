@@ -299,7 +299,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               required
               error={getFieldError(state, "price")}
             >
-              기본 가격 *
+              기본 가격
             </NumberField>
 
             <div className="space-y-2">
@@ -491,13 +491,15 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               onChange={handleMinQuantityChange}
               error={minQuantityError}
             >
-              최소 구매 수량 *
+              최소 구매 수량
             </NumberField>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-maxQuantity">최대 구매 수량 *</Label>
               {isUnlimitedMax ? (
                 <>
+                  <Label htmlFor="edit-maxQuantity-display">
+                    최대 구매 수량 *
+                  </Label>
                   <Input
                     id="edit-maxQuantity-display"
                     type="number"
@@ -515,7 +517,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   required
                   defaultValue={maxQuantityDefault}
                 >
-                  <span className="sr-only">최대 구매 수량</span>
+                  최대 구매 수량
                 </NumberField>
               )}
               <div className="flex items-center gap-2 pt-1">
