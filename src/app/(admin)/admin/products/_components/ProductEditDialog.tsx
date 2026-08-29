@@ -548,7 +548,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-4 border-t pt-4">
+      <div className="bg-background sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-4 border-t px-6 py-4">
         <Button type="button" variant="outline" onClick={closeModal}>
           취소
         </Button>
