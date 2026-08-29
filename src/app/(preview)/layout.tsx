@@ -1,4 +1,5 @@
 import { GuestbookModal } from "./_components";
+import { GuestbookDemoProvider, initialGuestbookDemoState } from "@/ui/context/guestbookDemo";
 import React from "react";
 
 const PreviewLayout = ({ children }: { children: React.ReactNode }) => {
@@ -7,8 +8,10 @@ const PreviewLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen bg-[var(--preview-background)]">
       <div className="bg-background border-muted-foreground-foreground mx-auto min-h-screen max-w-lg">
-        {children}
-        <GuestbookModal />
+        <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
+          {children}
+          <GuestbookModal />
+        </GuestbookDemoProvider>
       </div>
     </div>
   );
