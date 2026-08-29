@@ -31,6 +31,7 @@ import {
   getCategoryOptions,
   getFieldError,
   getSubCategoryOptions,
+  hasFieldErrors,
 } from "@/core/utils";
 import type {
   InvitationTheme,
@@ -95,9 +96,12 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
   const maxQuantityError = getFieldError(state, "maxQuantity");
 
   useEffect(() => {
-    if (state && state.success) {
+    if (!state) return;
+    if (state.success) {
       toast.message(state.data.message);
       closeModal();
+    } else if (!hasFieldErrors(state.error)) {
+      toast.error(state.error.message);
     }
   }, [state, closeModal]);
 
@@ -122,9 +126,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
     );
   }
 
-  const error =
-    state && !state.success && "errors" in state.error && state.error.errors;
-
   // "deleted"는 여기서 선택할 수 없다 — 삭제는 이 드롭다운이 아니라 삭제/복구
   // 버튼(ProductTableRowAction) 전용 경로이며, deletedAt과 함께 세팅된다.
   // 드롭다운으로 status만 "deleted"로 바꾸면 deletedAt이 안 바뀌어 목록 필터
@@ -145,7 +146,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
           value={featureId}
         />
       ))}
-      <input type="hidden" name="discount.discountType" value={discountType} />
 
       <Card>
         <CardHeader>
@@ -169,9 +169,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             name="thumbnail"
             value={thumbnail.getUrls()[0] ?? ""}
           />
-          {error && error["thumbnail"] && (
+          {getFieldError(state, "thumbnail") && (
             <Alert type="error" className="mt-2">
-              {error["thumbnail"][0]}
+              {getFieldError(state, "thumbnail")}
             </Alert>
           )}
         </CardContent>
@@ -191,9 +191,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               placeholder="예: 엘레강트 로즈 청첩장"
               required
             />
-            {error && error["title"] && (
+            {getFieldError(state, "title") && (
               <Alert type="error" className="mt-2">
-                {error["title"][0]}
+                {getFieldError(state, "title")}
               </Alert>
             )}
           </div>
@@ -208,9 +208,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               rows={3}
               required
             />
-            {error && error["description"] && (
+            {getFieldError(state, "description") && (
               <Alert type="error" className="mt-2">
-                {error["description"][0]}
+                {getFieldError(state, "description")}
               </Alert>
             )}
           </div>
@@ -226,7 +226,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               }}
               placeholder="카테고리를 선택하세요"
               data={getCategoryOptions()}
-              error={error?.category?.[0]}
+              error={getFieldError(state, "category")}
               required
             >
               카테고리(대분류)
@@ -241,7 +241,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               }
               placeholder="서브 카테고리를 선택하세요"
               data={getSubCategoryOptions(selectedCategory)}
-              error={error?.subCategory?.[0]}
+              error={getFieldError(state, "subCategory")}
               required
             >
               서브 카테고리
@@ -305,9 +305,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   원
                 </span>
               </div>
-              {error && error["price"] && (
+              {getFieldError(state, "price") && (
                 <Alert type="error" className="mt-2">
-                  {error["price"][0]}
+                  {getFieldError(state, "price")}
                 </Alert>
               )}
             </div>
@@ -363,9 +363,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
                   : "차감 금액 입력"}
               </TypographyMuted>
-              {(discountInputError || error?.discount?.[0]) && (
+              {(discountInputError || getFieldError(state, "discount")) && (
                 <Alert type="error" className="mt-2">
-                  {discountInputError || error?.discount?.[0]}
+                  {discountInputError || getFieldError(state, "discount")}
                 </Alert>
               )}
             </div>
@@ -459,9 +459,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               max="100"
               step="1"
             />
-            {error && error["priority"] && (
+            {getFieldError(state, "priority") && (
               <Alert type="error" className="mt-2">
-                {error["priority"][0]}
+                {getFieldError(state, "priority")}
               </Alert>
             )}
           </div>
