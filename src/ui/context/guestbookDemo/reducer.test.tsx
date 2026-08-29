@@ -1,15 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { act, renderHook } from "@testing-library/react";
 import type { ReactNode } from "react";
-import { createElement } from "react";
 import { GuestbookDemoProvider, initialGuestbookDemoState, useGuestbookDemo } from "./reducer";
 
-const wrapper = ({ children }: { children: ReactNode }) =>
-  createElement(
-    GuestbookDemoProvider,
-    { initialValue: initialGuestbookDemoState },
-    children,
-  );
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
+    {children}
+  </GuestbookDemoProvider>
+);
 
 describe("guestbookDemoReducer", () => {
   it("초기 목데이터는 여러 페이지 분량(10개 초과)이다", () => {
