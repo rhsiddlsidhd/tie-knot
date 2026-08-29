@@ -53,14 +53,10 @@ export function GuestbookSection({ publicKey }: { publicKey: string }) {
   const { data: items } = mapDataToGuestbookProps(publicKey, pages);
   const hasMore = Boolean(pages.at(-1)?.nextCursor);
 
-  const [isDelete, setIsDelete] = useState<Record<string, boolean>>({});
-  useEffect(() => {
-    if (data) {
-      items.forEach((item) => {
-        setIsDelete((prev) => ({ ...prev, [item.id]: false }));
-      });
-    }
-  }, [data, items]);
+  // 새로 불러온 항목은 별도 초기화 없이도 isDelete[id]가 undefined(falsy)라 기본
+  // 애니메이션 상태(opacity 1)와 동일하다 — 매 렌더 재계산되는 items를 의존성에
+  // 넣어 매 렌더 setState하던 원래 초기화 effect는 무한 렌더 루프였다.
+  const [isDelete] = useState<Record<string, boolean>>({});
 
   const observerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
