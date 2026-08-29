@@ -78,7 +78,10 @@ export default defineConfig({
         test: {
           name: "integration-component",
           environment: "jsdom",
-          include: ["src/ui/**/*.integration.test.{ts,tsx}"],
+          include: [
+            "src/ui/**/*.integration.test.{ts,tsx}",
+            "src/app/(preview)/preview/[publicKey]/_components/GuestbookSection.integration.test.tsx",
+          ],
           setupFiles: ["./testing/support/setup/jsdom-polyfill.ts"],
           maxWorkers: 2,
         },
