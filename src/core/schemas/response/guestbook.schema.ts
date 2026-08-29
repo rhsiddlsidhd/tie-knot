@@ -15,6 +15,9 @@ export const guestbookEntryResponseSchema = z.strictObject({
   createdAt: isoDateString,
 });
 
-export const guestbookListResponseSchema = z.array(guestbookEntryResponseSchema);
+export const guestbookListPageResponseSchema = z.object({
+  items: z.array(guestbookEntryResponseSchema),
+  nextCursor: z.string().nullable(),
+});
 
-export type GuestbookListResponse = z.infer<typeof guestbookListResponseSchema>;
+export type GuestbookListResponse = z.infer<typeof guestbookListPageResponseSchema>;

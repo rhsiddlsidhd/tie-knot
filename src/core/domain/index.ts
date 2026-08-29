@@ -7,6 +7,7 @@ export type * from "./dashboard";
 export * from "./error";
 export * from "./error-messages";
 export type * from "./field";
+export type * from "./guestbook";
 export type * from "./image";
 export * from "./navigation";
 export * from "./order";

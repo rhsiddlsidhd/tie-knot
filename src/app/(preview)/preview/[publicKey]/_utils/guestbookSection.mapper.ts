@@ -12,14 +12,16 @@ export interface GuestbookSectionProps {
 
 export const mapDataToGuestbookProps = (
   id: string,
-  data: GuestbookListResponse,
+  pages: GuestbookListResponse[],
 ): GuestbookSectionProps => {
   return {
     id,
-    data: data.map((item) => ({
-      id: item._id,
-      author: item.author,
-      message: item.message,
-    })),
+    data: pages
+      .flatMap((page) => page.items)
+      .map((item) => ({
+        id: item._id,
+        author: item.author,
+        message: item.message,
+      })),
   };
 };

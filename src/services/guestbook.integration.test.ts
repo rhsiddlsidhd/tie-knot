@@ -87,7 +87,7 @@ describe("guestbook", () => {
 
     const result = await getGuestbookService(invitation.publicKey);
 
-    expect(result.map((entry) => entry.message)).toEqual(["공개 글"]);
+    expect(result.items.map((entry) => entry.message)).toEqual(["공개 글"]);
   });
 
   it("비소유자는 draft 청첩장의 방명록을 조회할 수 없다", async () => {
@@ -104,7 +104,10 @@ describe("guestbook", () => {
       isPrivate: false,
     });
 
-    expect(await getGuestbookService(invitation.publicKey)).toEqual([]);
+    expect(await getGuestbookService(invitation.publicKey)).toEqual({
+      items: [],
+      nextCursor: null,
+    });
   });
 
   it("소유자 요청에는 공개 글과 비공개 글을 모두 반환한다", async () => {
@@ -126,16 +129,21 @@ describe("guestbook", () => {
       },
     ]);
 
-    const result = await getGuestbookService(invitation.publicKey, userId);
+    const result = await getGuestbookService(invitation.publicKey, {
+      viewerUserId: userId,
+    });
 
-    expect(result.map((entry) => entry.message).sort()).toEqual([
+    expect(result.items.map((entry) => entry.message).sort()).toEqual([
       "공개 글",
       "비공개 글",
     ]);
   });
 
-  it("알 수 없는 publicKey면 빈 배열을 반환한다", async () => {
-    expect(await getGuestbookService("missing-public-key")).toEqual([]);
+  it("알 수 없는 publicKey면 빈 페이지를 반환한다", async () => {
+    expect(await getGuestbookService("missing-public-key")).toEqual({
+      items: [],
+      nextCursor: null,
+    });
   });
 
   it("필수 필드 누락으로 저장에 실패하면 INTERNAL을 던진다", async () => {

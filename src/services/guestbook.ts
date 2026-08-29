@@ -3,8 +3,10 @@ import type { IGuestbook } from "@/models";
 import { GuestbookModel, InvitationModel } from "@/models";
 import type { GuestbookType } from "@/core/schemas";
 import { dbConnect } from "@/db";
-import { AppError } from "@/core/domain";
+import type { GuestbookListPage } from "@/core/domain";
+import { AppError, DEFAULT_PAGE_SIZE } from "@/core/domain";
 import { comparePasswords, hashPassword } from "@/adapters/server/bcrypt";
+import { decodeCursor, encodeCursor } from "@/core/utils";
 
 import mongoose from "mongoose";
 
@@ -40,30 +42,65 @@ export const createGuestbookService = async ({
 
 export const getGuestbookService = async (
   publicKey: string,
-  viewerUserId?: string,
-): Promise<IGuestbook[]> => {
+  { cursor, viewerUserId }: { cursor?: string; viewerUserId?: string } = {},
+): Promise<GuestbookListPage> => {
   await dbConnect();
 
   const invitation = await InvitationModel.findOne({ publicKey })
     .select("_id userId status")
     .lean();
-  if (!invitation) return [];
+  if (!invitation) return { items: [], nextCursor: null };
+
   const isOwner = viewerUserId === invitation.userId.toString();
-  if (!isOwner && invitation.status !== "published") return [];
-  const guestbooks = await GuestbookModel.find({
+  if (!isOwner && invitation.status !== "published")
+    return { items: [], nextCursor: null };
+
+  const filter: Record<string, unknown> = {
     invitationId: invitation._id,
     ...(isOwner ? {} : { isPrivate: false }),
-  })
+  };
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    filter.$or = [
+      { createdAt: { $lt: decoded.createdAt } },
+      {
+        createdAt: decoded.createdAt,
+        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+      },
+    ];
+  }
+
+  const found = await GuestbookModel.find(filter)
     .select("-__v -password -updatedAt")
-    .sort({
-      createdAt: -1,
-    })
-    .lean();
-  return guestbooks.map((guestbook) => ({
-    ...guestbook,
-    _id: guestbook._id.toString(),
-    invitationId: guestbook.invitationId.toString(),
-  }));
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(DEFAULT_PAGE_SIZE + 1)
+    .lean()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "방명록 조회에 실패했습니다.",
+      );
+    });
+
+  const hasMore = found.length > DEFAULT_PAGE_SIZE;
+  const items = hasMore ? found.slice(0, DEFAULT_PAGE_SIZE) : found;
+  const last = items.at(-1);
+
+  return {
+    items: items.map((guestbook) => ({
+      id: guestbook._id.toString(),
+      author: guestbook.author,
+      message: guestbook.message,
+      isPrivate: guestbook.isPrivate,
+      createdAt: guestbook.createdAt,
+    })),
+    nextCursor:
+      hasMore && last
+        ? encodeCursor({ createdAt: last.createdAt, id: last._id.toString() })
+        : null,
+  };
 };
 
 export const getPrivateGuestbookService = async (
