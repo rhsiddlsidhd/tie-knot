@@ -85,9 +85,9 @@ export const getDashboardStatsService = async (): Promise<DashboardStats> => {
           },
         },
       ]),
-      // Q4 — 회원 총계 + 이번달 신규(한 스캔). 소프트 삭제는 isDelete: false 기준.
+      // Q4 — 회원 총계 + 이번달 신규(한 스캔). 소프트 삭제는 deletedAt: null 기준.
       UserModel.aggregate<UserMonthlyStats>([
-        { $match: { isDelete: false } },
+        { $match: { deletedAt: null } },
         {
           $group: {
             _id: null,

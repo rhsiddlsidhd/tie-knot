@@ -163,8 +163,8 @@ describe("user", () => {
       expect(result).toBe(false);
     });
 
-    it("탈퇴(isDelete: true)한 유저는 갱신되지 않는다", async () => {
-      const input = buildUserInput({ isDelete: true });
+    it("탈퇴(deletedAt: 비-null)한 유저는 갱신되지 않는다", async () => {
+      const input = buildUserInput({ deletedAt: new Date() });
       await UserModel.create(input);
 
       const result = await changePassword(input.email, "new-password");
@@ -273,9 +273,9 @@ describe("user", () => {
       expect(secondPage.items[0].role).toBe("USER");
     });
 
-    it("활동 사용자와 탈퇴 사용자를 모두 포함한다(isDelete로 제외하지 않는다)", async () => {
-      const active = await UserModel.create(buildUserInput({ isDelete: false }));
-      const deleted = await UserModel.create(buildUserInput({ isDelete: true }));
+    it("활동 사용자와 탈퇴 사용자를 모두 포함한다(deletedAt으로 제외하지 않는다)", async () => {
+      const active = await UserModel.create(buildUserInput({ deletedAt: null }));
+      const deleted = await UserModel.create(buildUserInput({ deletedAt: new Date() }));
 
       const result = await getAdminUsersPageService({});
 
@@ -316,7 +316,7 @@ describe("user", () => {
       expect(result.items[0]).not.toHaveProperty("password");
       expect(result.items[0]).not.toHaveProperty("phone");
       expect(Object.keys(result.items[0]).sort()).toEqual(
-        ["createdAt", "email", "id", "isDelete", "name", "role"].sort(),
+        ["createdAt", "deletedAt", "email", "id", "name", "role"].sort(),
       );
     });
   });

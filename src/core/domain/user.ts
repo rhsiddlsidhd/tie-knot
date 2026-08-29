@@ -10,7 +10,7 @@ export type AdminUserListItem = {
   email: string;
   createdAt: Date;
   role: UserRole;
-  isDelete: boolean;
+  deletedAt: Date | null;
 };
 
 export type AdminUserListPage = CursorPage<AdminUserListItem>;

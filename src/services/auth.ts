@@ -18,14 +18,14 @@ export type LeanUser = {
   phone: string;
   password: string;
   role: UserRole;
-  isDelete: boolean;
+  deletedAt: Date | null;
   _id: string; // MongoDB id
 };
 
 type UserQuery = { email?: string; id?: string };
 
 type UserFilter = {
-  isDelete: boolean;
+  deletedAt: null;
   email?: string;
   _id?: mongoose.Types.ObjectId;
 };
@@ -33,7 +33,7 @@ type UserFilter = {
 export const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
   await dbConnect();
 
-  const filter: UserFilter = { isDelete: false };
+  const filter: UserFilter = { deletedAt: null };
 
   if (query.email) filter.email = query.email;
   if (query.id) {
@@ -42,7 +42,7 @@ export const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
   }
 
   const user = await UserModel.findOne(filter)
-    .select("_id email name phone password role isDelete")
+    .select("_id email name phone password role deletedAt")
     .lean<LeanUser>();
 
   return user;

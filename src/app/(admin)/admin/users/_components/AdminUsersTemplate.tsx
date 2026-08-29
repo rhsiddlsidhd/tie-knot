@@ -91,8 +91,8 @@ const AdminUsersTemplate = ({ page, role, cursor }: AdminUsersTemplateProps) => 
                   </td>
                   <td className="px-4 py-3 text-sm">{USER_ROLE_LABELS[user.role]}</td>
                   <td className="px-4 py-3">
-                    <Badge variant={user.isDelete ? "secondary" : "default"}>
-                      {user.isDelete ? "탈퇴" : "활동중"}
+                    <Badge variant={user.deletedAt ? "secondary" : "default"}>
+                      {user.deletedAt ? "탈퇴" : "활동중"}
                     </Badge>
                   </td>
                   <td className="px-4 py-3 text-center">

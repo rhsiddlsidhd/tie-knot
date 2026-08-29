@@ -21,7 +21,7 @@ export interface DashboardStats {
   totalProducts: number;
   /** 이번 달(KST) 등록된 상품 수. */
   productsCreatedThisMonth: number;
-  /** 탈퇴하지 않은 전체 회원 수(isDelete: false). */
+  /** 탈퇴하지 않은 전체 회원 수(deletedAt: null). */
   totalUsers: number;
   /** 이번 달(KST) 가입한 회원 수. */
   usersCreatedThisMonth: number;

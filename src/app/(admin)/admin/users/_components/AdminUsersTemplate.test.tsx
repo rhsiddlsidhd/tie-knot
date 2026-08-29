@@ -22,7 +22,7 @@ const buildPage = (overrides?: Partial<AdminUserListPage>): AdminUserListPage =>
       email: "minjun.kim@email.com",
       createdAt: new Date("2026-08-19T15:30:00.000Z"), // KST 2026-08-20
       role: "USER",
-      isDelete: false,
+      deletedAt: null,
     },
   ],
   nextCursor: null,
@@ -49,8 +49,8 @@ describe("AdminUsersTemplate", () => {
       <AdminUsersTemplate
         page={buildPage({
           items: [
-            { id: "u1", name: "A", email: "a@x.com", createdAt: new Date(), role: "USER", isDelete: false },
-            { id: "u2", name: "B", email: "b@x.com", createdAt: new Date(), role: "USER", isDelete: true },
+            { id: "u1", name: "A", email: "a@x.com", createdAt: new Date(), role: "USER", deletedAt: null },
+            { id: "u2", name: "B", email: "b@x.com", createdAt: new Date(), role: "USER", deletedAt: new Date() },
           ],
         })}
       />,

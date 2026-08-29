@@ -65,7 +65,7 @@ export const changePassword = async (
 
   // 비밀번호 업데이트
   const userBeforeUpdate = await UserModel.findOneAndUpdate(
-    { email, isDelete: false },
+    { email, deletedAt: null },
     { password: hashedNewPassword },
     { runValidators: true },
   ).catch((err) => {
@@ -139,12 +139,12 @@ type AdminUserListRow = {
   email: string;
   createdAt: Date;
   role: UserRole;
-  isDelete: boolean;
+  deletedAt: Date | null;
 };
 
 /**
  * 관리자 전역 사용자 목록 한 페이지 — 활동/탈퇴 여부와 무관하게 전체 사용자를
- * 대상으로 한다(isDelete로 걸러내지 않는다). 정렬·커서 계약(createdAt desc, _id
+ * 대상으로 한다(deletedAt으로 걸러내지 않는다). 정렬·커서 계약(createdAt desc, _id
  * tie-break, limit+1)은 주문 목록과 동일하되, 비밀번호·전화번호·인증 관련 필드는
  * select 단계에서부터 제외한다.
  */
@@ -183,7 +183,7 @@ export const getAdminUsersPageService = async ({
   }
 
   const found = await UserModel.find(filter)
-    .select("name email createdAt role isDelete")
+    .select("name email createdAt role deletedAt")
     .sort({ createdAt: -1, _id: -1 })
     .limit(limit + 1)
     .lean<AdminUserListRow[]>()
@@ -205,7 +205,7 @@ export const getAdminUsersPageService = async ({
       email: user.email,
       createdAt: user.createdAt,
       role: user.role,
-      isDelete: user.isDelete,
+      deletedAt: user.deletedAt,
     })),
     nextCursor:
       hasMore && lastUser

@@ -68,8 +68,8 @@ describe("auth", () => {
       expect(result).toBeNull();
     });
 
-    it("isDelete가 true인 유저는 조회되지 않는다", async () => {
-      const input = buildUserInput({ isDelete: true });
+    it("deletedAt이 non-null인 유저는 조회되지 않는다", async () => {
+      const input = buildUserInput({ deletedAt: new Date() });
       await UserModel.create(input);
 
       const result = await getUser({ email: input.email });
