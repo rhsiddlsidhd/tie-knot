@@ -20,6 +20,7 @@ interface CloudImageProps {
   className?: string;
   priority?: boolean;
   loading?: "eager" | "lazy";
+  onError?: () => void;
 }
 
 const CloudImage = ({
@@ -29,6 +30,7 @@ const CloudImage = ({
   className,
   priority = false,
   loading,
+  onError,
 }: CloudImageProps) => {
   if (!src) return null;
 
@@ -42,6 +44,7 @@ const CloudImage = ({
       className={cn(`object-cover`, className)}
       priority={priority}
       loading={loading}
+      onError={onError}
     />
   );
 };

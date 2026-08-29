@@ -121,6 +121,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
       <Button
         size="sm"
         variant="outline"
+        aria-label="상품 수정"
         onClick={() => open("EDIT-PRODUCT", { product })}
       >
         <Edit className="h-4 w-4" />
@@ -128,6 +129,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
       <Button
         size="sm"
         variant="outline"
+        aria-label="상품 삭제"
         onClick={handleDelete}
         disabled={isDeleting}
       >
