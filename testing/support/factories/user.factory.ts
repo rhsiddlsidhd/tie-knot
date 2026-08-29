@@ -6,7 +6,7 @@ type BuildUserInput = {
   phone: string;
   password: string;
   role: UserRole;
-  isDelete: boolean;
+  deletedAt: Date | null;
 };
 
 export const buildUserInput = (overrides?: Partial<BuildUserInput>): BuildUserInput => ({
@@ -15,6 +15,6 @@ export const buildUserInput = (overrides?: Partial<BuildUserInput>): BuildUserIn
   phone: "010-1234-5678",
   password: "hashed-password",
   role: "USER",
-  isDelete: false,
+  deletedAt: null,
   ...overrides,
 });

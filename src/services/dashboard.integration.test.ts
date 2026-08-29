@@ -129,7 +129,7 @@ describe("getDashboardStatsService", () => {
         buildUserInput({ email: "active-this-month@example.com" }),
       );
       await UserModel.create(
-        buildUserInput({ email: "deleted@example.com", isDelete: true }),
+        buildUserInput({ email: "deleted@example.com", deletedAt: new Date() }),
       );
       const oldUser = await UserModel.create(
         buildUserInput({ email: "old@example.com" }),

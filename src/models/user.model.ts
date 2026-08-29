@@ -14,7 +14,8 @@ export interface BaseUser {
 export interface IUser extends BaseUser {
   _id: Types.ObjectId;
   role: UserRole;
-  isDelete: boolean;
+  // 스키마가 default: null이라 모든 문서에 항상 존재한다 — optional이 아니라 nullable.
+  deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,7 +27,7 @@ const userSchema = new Schema<IUser>(
     phone: { type: String, required: true },
     password: { type: String, required: true },
     role: { type: String, enum: ["USER", "ADMIN"], default: "USER" },
-    isDelete: { type: Boolean, default: false },
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
