@@ -7,6 +7,7 @@ import type { Product } from "@/services";
 import {
   Alert,
   ImageField,
+  NumberField,
   SelectField,
   Spinner,
 } from "@/ui/components/molecules";
@@ -286,62 +287,55 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
           <CardTitle>가격 정보</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="edit-price">기본 가격 *</Label>
-              <div className="relative">
-                <Input
-                  id="edit-price"
-                  name="price"
-                  type="number"
-                  defaultValue={product.price}
-                  placeholder="0"
-                  min="0"
-                  step="1"
-                  required
-                  className="pr-12"
-                />
-                <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-                  원
-                </span>
-              </div>
-              {getFieldError(state, "price") && (
-                <Alert type="error" className="mt-2">
-                  {getFieldError(state, "price")}
-                </Alert>
-              )}
-            </div>
+          <div className="flex flex-col gap-6">
+            <NumberField
+              id="edit-price"
+              name="price"
+              defaultValue={product.price}
+              placeholder="0"
+              min={0}
+              step={1}
+              unit="원"
+              required
+              error={getFieldError(state, "price")}
+            >
+              기본 가격 *
+            </NumberField>
 
             <div className="space-y-2">
               <Label htmlFor="edit-discountValue">할인</Label>
               <div className="flex gap-2">
-                <SelectField
-                  id="edit-discountType"
-                  name="discount.discountType"
-                  defaultValue={discountType}
-                  onValueChange={(v) => {
-                    setDiscountType(v as "rate" | "amount");
-                    setDiscountInputError(null);
-                  }}
-                  placeholder=""
-                  data={[
-                    { value: "rate", label: "비율 (%)" },
-                    { value: "amount", label: "금액 (원)" },
-                  ]}
-                >
-                  {""}
-                </SelectField>
-                <div className="relative flex-1">
-                  <Input
+                <div className="w-32 shrink-0">
+                  <SelectField
+                    id="edit-discountType"
+                    name="discount.discountType"
+                    defaultValue={discountType}
+                    onValueChange={(v) => {
+                      setDiscountType(v as "rate" | "amount");
+                      setDiscountInputError(null);
+                    }}
+                    placeholder=""
+                    data={[
+                      { value: "rate", label: "비율 (%)" },
+                      { value: "amount", label: "금액 (원)" },
+                    ]}
+                  >
+                    <span className="sr-only">할인 방식</span>
+                  </SelectField>
+                </div>
+                <div className="flex-1">
+                  <NumberField
                     id="edit-discountValue"
                     name="discount.value"
-                    type="number"
                     placeholder="0"
-                    min="0"
+                    min={0}
                     step={discountType === "rate" ? "0.01" : "1"}
-                    max={discountType === "rate" ? "1" : undefined}
+                    max={discountType === "rate" ? 1 : undefined}
                     defaultValue={product.discount.value}
-                    className="pr-12"
+                    unit={discountType === "rate" ? "율" : "원"}
+                    error={
+                      discountInputError || getFieldError(state, "discount")
+                    }
                     onChange={(event) => {
                       const value = event.target.value;
                       setDiscountInputError(
@@ -352,10 +346,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                           : null,
                       );
                     }}
-                  />
-                  <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-                    {discountType === "rate" ? "율" : "원"}
-                  </span>
+                  >
+                    <span className="sr-only">할인 값</span>
+                  </NumberField>
                 </div>
               </div>
               <TypographyMuted>
@@ -363,11 +356,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
                   : "차감 금액 입력"}
               </TypographyMuted>
-              {(discountInputError || getFieldError(state, "discount")) && (
-                <Alert type="error" className="mt-2">
-                  {discountInputError || getFieldError(state, "discount")}
-                </Alert>
-              )}
             </div>
           </div>
 
@@ -447,24 +435,18 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-priority">추천 우선순위</Label>
-            <Input
-              id="edit-priority"
-              name="priority"
-              type="number"
-              defaultValue={product.priority}
-              placeholder="0"
-              min="0"
-              max="100"
-              step="1"
-            />
-            {getFieldError(state, "priority") && (
-              <Alert type="error" className="mt-2">
-                {getFieldError(state, "priority")}
-              </Alert>
-            )}
-          </div>
+          <NumberField
+            id="edit-priority"
+            name="priority"
+            defaultValue={product.priority}
+            placeholder="0"
+            min={0}
+            max={100}
+            step={1}
+            error={getFieldError(state, "priority")}
+          >
+            추천 우선순위
+          </NumberField>
         </CardContent>
       </Card>
 
@@ -499,24 +481,18 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="edit-minQuantity">최소 구매 수량 *</Label>
-              <Input
-                id="edit-minQuantity"
-                name="minQuantity"
-                type="number"
-                min={1}
-                step={1}
-                required
-                value={Number.isNaN(minQuantity) ? "" : minQuantity}
-                onChange={handleMinQuantityChange}
-              />
-              {minQuantityError && (
-                <Alert type="error" className="mt-2">
-                  {minQuantityError}
-                </Alert>
-              )}
-            </div>
+            <NumberField
+              id="edit-minQuantity"
+              name="minQuantity"
+              min={1}
+              step={1}
+              required
+              value={Number.isNaN(minQuantity) ? "" : minQuantity}
+              onChange={handleMinQuantityChange}
+              error={minQuantityError}
+            >
+              최소 구매 수량 *
+            </NumberField>
 
             <div className="space-y-2">
               <Label htmlFor="edit-maxQuantity">최대 구매 수량 *</Label>
@@ -531,15 +507,16 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   <input type="hidden" name="maxQuantity" value="0" />
                 </>
               ) : (
-                <Input
+                <NumberField
                   id="edit-maxQuantity"
                   name="maxQuantity"
-                  type="number"
                   min={1}
                   step={1}
                   required
                   defaultValue={maxQuantityDefault}
-                />
+                >
+                  <span className="sr-only">최대 구매 수량</span>
+                </NumberField>
               )}
               <div className="flex items-center gap-2 pt-1">
                 <Checkbox
