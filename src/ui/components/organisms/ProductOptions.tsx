@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { Badge, Button } from "@/ui/components/atoms";
 
-import { QuantityStepper, StatusSelect } from "@/ui/components/molecules";
+import { BaseSelect, QuantityStepper } from "@/ui/components/molecules";
 import type { Product, PremiumFeature } from "@/core/domain";
 
 import type { CheckoutItem } from "@/core/domain";
@@ -134,11 +134,11 @@ const ProductOptions = ({
     <div>
       {options.length > 0 && (
         <div className="col-span-2 w-full space-y-4">
-          <StatusSelect
+          <BaseSelect
             value=""
             onValueChange={handleSelectOption}
             disabled={selectedOptionIds.length === options.length}
-            items={_options}
+            options={_options}
             placeholder="프리미엄 옵션 선택"
           />
           {selectedOptionIds.length > 0 && (
