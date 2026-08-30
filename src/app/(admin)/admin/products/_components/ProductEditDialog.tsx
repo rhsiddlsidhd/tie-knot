@@ -10,6 +10,7 @@ import {
   SelectField,
   Spinner,
 } from "@/ui/components/molecules";
+import { NumberField } from "./NumberField";
 import {
   Input,
   Button,
@@ -31,6 +32,7 @@ import {
   getCategoryOptions,
   getFieldError,
   getSubCategoryOptions,
+  hasFieldErrors,
 } from "@/core/utils";
 import type {
   InvitationTheme,
@@ -90,14 +92,20 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
     setMinQuantity(raw === "" ? NaN : Number(raw));
   };
 
+  const thumbnailError = getFieldError(state, "thumbnail");
+  const titleError = getFieldError(state, "title");
+  const descriptionError = getFieldError(state, "description");
   const imagesError = getFieldError(state, "images");
   const minQuantityError = getFieldError(state, "minQuantity");
   const maxQuantityError = getFieldError(state, "maxQuantity");
 
   useEffect(() => {
-    if (state && state.success) {
+    if (!state) return;
+    if (state.success) {
       toast.message(state.data.message);
       closeModal();
+    } else if (!hasFieldErrors(state.error)) {
+      toast.error(state.error.message);
     }
   }, [state, closeModal]);
 
@@ -122,9 +130,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
     );
   }
 
-  const error =
-    state && !state.success && "errors" in state.error && state.error.errors;
-
   // "deleted"는 여기서 선택할 수 없다 — 삭제는 이 드롭다운이 아니라 삭제/복구
   // 버튼(ProductTableRowAction) 전용 경로이며, deletedAt과 함께 세팅된다.
   // 드롭다운으로 status만 "deleted"로 바꾸면 deletedAt이 안 바뀌어 목록 필터
@@ -145,7 +150,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
           value={featureId}
         />
       ))}
-      <input type="hidden" name="discount.discountType" value={discountType} />
 
       <Card>
         <CardHeader>
@@ -169,9 +173,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             name="thumbnail"
             value={thumbnail.getUrls()[0] ?? ""}
           />
-          {error && error["thumbnail"] && (
+          {thumbnailError && (
             <Alert type="error" className="mt-2">
-              {error["thumbnail"][0]}
+              {thumbnailError}
             </Alert>
           )}
         </CardContent>
@@ -191,9 +195,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               placeholder="예: 엘레강트 로즈 청첩장"
               required
             />
-            {error && error["title"] && (
+            {titleError && (
               <Alert type="error" className="mt-2">
-                {error["title"][0]}
+                {titleError}
               </Alert>
             )}
           </div>
@@ -208,9 +212,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               rows={3}
               required
             />
-            {error && error["description"] && (
+            {descriptionError && (
               <Alert type="error" className="mt-2">
-                {error["description"][0]}
+                {descriptionError}
               </Alert>
             )}
           </div>
@@ -226,7 +230,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               }}
               placeholder="카테고리를 선택하세요"
               data={getCategoryOptions()}
-              error={error?.category?.[0]}
+              error={getFieldError(state, "category")}
               required
             >
               카테고리(대분류)
@@ -241,7 +245,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               }
               placeholder="서브 카테고리를 선택하세요"
               data={getSubCategoryOptions(selectedCategory)}
-              error={error?.subCategory?.[0]}
+              error={getFieldError(state, "subCategory")}
               required
             >
               서브 카테고리
@@ -286,62 +290,54 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
           <CardTitle>가격 정보</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="edit-price">기본 가격 *</Label>
-              <div className="relative">
-                <Input
-                  id="edit-price"
-                  name="price"
-                  type="number"
-                  defaultValue={product.price}
-                  placeholder="0"
-                  min="0"
-                  step="1"
-                  required
-                  className="pr-12"
-                />
-                <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-                  원
-                </span>
-              </div>
-              {error && error["price"] && (
-                <Alert type="error" className="mt-2">
-                  {error["price"][0]}
-                </Alert>
-              )}
-            </div>
+          <div className="flex flex-col gap-6">
+            <NumberField
+              id="edit-price"
+              name="price"
+              defaultValue={product.price}
+              placeholder="0"
+              min={0}
+              step={1}
+              unit="원"
+              required
+              error={getFieldError(state, "price")}
+            >
+              기본 가격
+            </NumberField>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-discountValue">할인</Label>
               <div className="flex gap-2">
-                <SelectField
-                  id="edit-discountType"
-                  name="discount.discountType"
-                  defaultValue={discountType}
-                  onValueChange={(v) => {
-                    setDiscountType(v as "rate" | "amount");
-                    setDiscountInputError(null);
-                  }}
-                  placeholder=""
-                  data={[
-                    { value: "rate", label: "비율 (%)" },
-                    { value: "amount", label: "금액 (원)" },
-                  ]}
-                >
-                  {""}
-                </SelectField>
-                <div className="relative flex-1">
-                  <Input
+                <div className="w-32 shrink-0">
+                  <SelectField
+                    id="edit-discountType"
+                    name="discount.discountType"
+                    defaultValue={discountType}
+                    onValueChange={(v) => {
+                      setDiscountType(v as "rate" | "amount");
+                      setDiscountInputError(null);
+                    }}
+                    placeholder=""
+                    data={[
+                      { value: "rate", label: "비율 (%)" },
+                      { value: "amount", label: "금액 (원)" },
+                    ]}
+                  >
+                    <span className="sr-only">할인 방식</span>
+                  </SelectField>
+                </div>
+                <div className="flex-1">
+                  <NumberField
                     id="edit-discountValue"
                     name="discount.value"
-                    type="number"
                     placeholder="0"
-                    min="0"
+                    min={0}
                     step={discountType === "rate" ? "0.01" : "1"}
-                    max={discountType === "rate" ? "1" : undefined}
+                    max={discountType === "rate" ? 1 : undefined}
                     defaultValue={product.discount.value}
-                    className="pr-12"
+                    unit={discountType === "rate" ? "율" : "원"}
+                    error={
+                      discountInputError || getFieldError(state, "discount")
+                    }
                     onChange={(event) => {
                       const value = event.target.value;
                       setDiscountInputError(
@@ -352,10 +348,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                           : null,
                       );
                     }}
-                  />
-                  <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-                    {discountType === "rate" ? "율" : "원"}
-                  </span>
+                  >
+                    할인
+                  </NumberField>
                 </div>
               </div>
               <TypographyMuted>
@@ -363,11 +358,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
                   : "차감 금액 입력"}
               </TypographyMuted>
-              {(discountInputError || error?.discount?.[0]) && (
-                <Alert type="error" className="mt-2">
-                  {discountInputError || error?.discount?.[0]}
-                </Alert>
-              )}
             </div>
           </div>
 
@@ -447,24 +437,18 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-priority">추천 우선순위</Label>
-            <Input
-              id="edit-priority"
-              name="priority"
-              type="number"
-              defaultValue={product.priority}
-              placeholder="0"
-              min="0"
-              max="100"
-              step="1"
-            />
-            {error && error["priority"] && (
-              <Alert type="error" className="mt-2">
-                {error["priority"][0]}
-              </Alert>
-            )}
-          </div>
+          <NumberField
+            id="edit-priority"
+            name="priority"
+            defaultValue={product.priority}
+            placeholder="0"
+            min={0}
+            max={100}
+            step={1}
+            error={getFieldError(state, "priority")}
+          >
+            추천 우선순위
+          </NumberField>
         </CardContent>
       </Card>
 
@@ -499,29 +483,25 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="edit-minQuantity">최소 구매 수량 *</Label>
-              <Input
-                id="edit-minQuantity"
-                name="minQuantity"
-                type="number"
-                min={1}
-                step={1}
-                required
-                value={Number.isNaN(minQuantity) ? "" : minQuantity}
-                onChange={handleMinQuantityChange}
-              />
-              {minQuantityError && (
-                <Alert type="error" className="mt-2">
-                  {minQuantityError}
-                </Alert>
-              )}
-            </div>
+            <NumberField
+              id="edit-minQuantity"
+              name="minQuantity"
+              min={1}
+              step={1}
+              required
+              value={Number.isNaN(minQuantity) ? "" : minQuantity}
+              onChange={handleMinQuantityChange}
+              error={minQuantityError}
+            >
+              최소 구매 수량
+            </NumberField>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-maxQuantity">최대 구매 수량 *</Label>
               {isUnlimitedMax ? (
                 <>
+                  <Label htmlFor="edit-maxQuantity-display">
+                    최대 구매 수량 *
+                  </Label>
                   <Input
                     id="edit-maxQuantity-display"
                     type="number"
@@ -531,15 +511,16 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                   <input type="hidden" name="maxQuantity" value="0" />
                 </>
               ) : (
-                <Input
+                <NumberField
                   id="edit-maxQuantity"
                   name="maxQuantity"
-                  type="number"
                   min={1}
                   step={1}
                   required
                   defaultValue={maxQuantityDefault}
-                />
+                >
+                  최대 구매 수량
+                </NumberField>
               )}
               <div className="flex items-center gap-2 pt-1">
                 <Checkbox
@@ -571,7 +552,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-4 border-t pt-4">
+      <div className="bg-background sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-4 border-t px-6 py-4">
         <Button type="button" variant="outline" onClick={closeModal}>
           취소
         </Button>

@@ -192,7 +192,7 @@ describe("ProductEditDialog — 구매 수량(REQ-2/3, §3-4)", () => {
       />,
     );
 
-    expect(screen.getByLabelText("최소 구매 수량 *")).toHaveValue(2);
+    expect(screen.getByLabelText("최소 구매 수량")).toHaveValue(2);
     expect(screen.getByPlaceholderText("무제한")).toBeDisabled();
     const hidden = container.querySelector(
       'input[type="hidden"][name="maxQuantity"]',
@@ -209,7 +209,7 @@ describe("ProductEditDialog — 구매 수량(REQ-2/3, §3-4)", () => {
     );
 
     const active = screen.getByLabelText(
-      "최대 구매 수량 *",
+      "최대 구매 수량",
     ) as HTMLInputElement;
     expect(active).not.toBeDisabled();
     expect(active.value).toBe("8");
