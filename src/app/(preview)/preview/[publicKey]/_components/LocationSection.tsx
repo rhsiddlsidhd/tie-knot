@@ -1,9 +1,10 @@
 "use client";
 
 import { Badge } from "@/ui/components/atoms";
-import { ClipboardButton, KakaoMap } from "@/ui/components/molecules";
+import { ClipboardButton } from "@/ui/components/organisms";
 import { useCopy, useNavigationGeo, useSubwayLineInfo } from "@/ui/hooks";
 import { EyebrowSection } from "./EyebrowSection";
+import { KakaoMap } from "./KakaoMap";
 
 import { Navigation } from "./Navigation";
 import type { LocationSectionProps } from "../_utils/locationSection.mapper";

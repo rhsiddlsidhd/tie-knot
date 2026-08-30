@@ -1,7 +1,6 @@
-import { Header, Footer } from "./_components";
+import { AnnouncementBar, Footer, Header } from "./_components";
 import React from "react";
 import { Toaster } from "sonner";
-import { AnnouncementBar } from "@/ui/components/molecules";
 import announcementData from "@/core/content/announcement.json";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
