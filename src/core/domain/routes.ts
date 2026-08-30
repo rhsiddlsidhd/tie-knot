@@ -37,6 +37,7 @@ export const routes = {
   preview: {
     detail: (publicKey: string) => `/preview/${publicKey}`,
     sample: "/preview/sample",
+    samplePublicKey: "sample",
   },
   admin: {
     dashboard: "/admin/dashboard",

@@ -1,28 +1,17 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { validateAndFlatten } from "@/core/utils";
-import { GuestbookSchema } from "@/core/schemas";
+import { parseDeleteGuestbookFormData } from "@/core/schemas";
 import { deleteGuestbookWithPasswordService } from "@/services";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
-import * as z from "zod";
 import { revalidatePath } from "next/cache";
 
 export const deleteGuestbook = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
-  const data = {
-    password: formData.get("password") as string,
-    guestbookId: formData.get("guestbookId") as string,
-    publicKey: formData.get("publicKey") as string,
-  };
-  const passwordSchema = GuestbookSchema.pick({ password: true }).extend({
-    guestbookId: z.string().min(1, "게시글 ID가 필요합니다."),
-    publicKey: z.string().min(1, "청첩장 공개 키가 필요합니다."),
-  });
-  const parsed = validateAndFlatten(passwordSchema, data);
+  const parsed = parseDeleteGuestbookFormData(formData);
 
   if (!parsed.success) {
     return {

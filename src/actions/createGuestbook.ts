@@ -1,10 +1,9 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { GuestbookSchema } from "@/core/schemas";
+import { parseGuestbookFormData } from "@/core/schemas";
 import { createGuestbookWithPasswordService } from "@/services";
 import { actionError } from "@/boundary";
-import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";
 
@@ -12,15 +11,7 @@ export const createGuestbook = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
-  const data = {
-    publicKey: formData.get("publicKey") as string,
-    author: formData.get("author") as string,
-    password: formData.get("password") as string,
-    message: formData.get("message") as string,
-    isPrivate: formData.get("isPrivate") === "true",
-  };
-
-  const parsed = validateAndFlatten(GuestbookSchema, data);
+  const parsed = parseGuestbookFormData(formData);
   if (!parsed.success) {
     return {
       success: false,
