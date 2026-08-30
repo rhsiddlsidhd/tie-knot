@@ -1,5 +1,5 @@
 import { Badge, Card, TypographyLarge, TypographyMuted } from "@/ui/components/atoms";
-import { ClipboardButton } from "./ClipboardButton";
+import { ClipboardButton } from "@/ui/components/molecules";
 
 interface PersonValueCardProps {
   relation: string;
@@ -13,7 +13,7 @@ interface PersonValueCardProps {
 
 /**
  * 계좌 정보(AccountSection)/연락처(ViewContact) 둘 다 "관계 배지 + 이름 + 복사 가능한
- * 값" 구조가 동일해서 승격한 molecule이다. 왼쪽(배지/이름/보조라벨)은 세로로 3단
+ * 값" 구조가 동일해서 승격한 organism이다. 왼쪽(배지/이름/보조라벨)은 세로로 3단
  * 쌓아서 값 영역과 너비를 다투지 않게 하고, 오른쪽 값은 `whitespace-nowrap`으로
  * 강제 한 줄 처리한다 — 계좌번호처럼 긴 값도 줄바꿈 없이 보이도록 오른쪽 비율을
  * 왼쪽보다 넉넉히 준다(1:1.35).

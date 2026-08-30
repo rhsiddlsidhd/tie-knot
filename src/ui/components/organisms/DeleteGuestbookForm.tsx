@@ -1,4 +1,5 @@
-import { Alert, TextField } from "@/ui/components/molecules";
+import { Alert } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 import {
   Button,
   DialogClose,

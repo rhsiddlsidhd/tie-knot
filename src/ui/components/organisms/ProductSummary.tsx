@@ -11,7 +11,8 @@ import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { ProductLikeBadge } from "@/app/(main)/(products)/products/[category]/[id]/_components/ProductLikeBadge";
 import { ProductOptions } from "@/ui/components/organisms";
-import { CloudImage, RatingStars } from "@/ui/components/molecules";
+import { CloudImage } from "@/ui/components/molecules";
+import { RatingStars } from "@/ui/components/organisms";
 export function ProductSummary({
   product,
   options,

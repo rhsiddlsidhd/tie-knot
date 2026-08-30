@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 
 import { Card, Button, TypographyH1, TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
 
-import { TextField } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 import { getFieldError } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";

@@ -7,7 +7,7 @@ import {
   CardTitle,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import { ImageField, FormField } from "@/ui/components/molecules";
+import { FormField, ImageField } from "@/ui/components/organisms";
 
 import type { useImageList } from "@/ui/hooks";
 

@@ -3,7 +3,7 @@
 import React from "react";
 import { Upload, Plus } from "lucide-react";
 import { CloudinaryWidget } from "@/adapters/browser/cloudinary";
-import { ImagePreviewItem } from "@/ui/components/molecules";
+import { ImagePreviewItem } from "@/ui/components/organisms";
 import { Button, TypographyMuted } from "@/ui/components/atoms";
 
 import type { ImageItem } from "@/ui/hooks";

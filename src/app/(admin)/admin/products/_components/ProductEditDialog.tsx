@@ -6,10 +6,9 @@ import { updateProduct } from "@/actions";
 import type { Product } from "@/services";
 import {
   Alert,
-  ImageField,
-  SelectField,
   Spinner,
 } from "@/ui/components/molecules";
+import { ImageField, SelectField } from "@/ui/components/organisms";
 import { NumberField } from "./NumberField";
 import {
   Input,

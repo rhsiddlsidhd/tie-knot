@@ -1,6 +1,6 @@
 import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms";
 
-import { TextField, SwitchField } from "@/ui/components/molecules";
+import { SwitchField, TextField } from "@/ui/components/organisms";
 
 import { cn } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";

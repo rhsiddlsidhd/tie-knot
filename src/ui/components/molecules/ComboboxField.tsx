@@ -1,6 +1,7 @@
 "use client";
 
-import { FormField, AutoCompleteList } from "@/ui/components/molecules";
+import { AutoCompleteList } from "@/ui/components/molecules";
+import { FormField } from "@/ui/components/organisms";
 import { Command, CommandInput } from "@/ui/components/atoms";
 import type { FieldBase } from "@/core/domain";
 import { useMemo, useState } from "react";

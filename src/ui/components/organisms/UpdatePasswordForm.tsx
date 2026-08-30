@@ -1,6 +1,6 @@
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 
-import { TextField } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 import Link from "next/link";
 import { getFieldError } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";

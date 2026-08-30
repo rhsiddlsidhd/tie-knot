@@ -16,7 +16,7 @@ import {
   DialogTrigger,
   Textarea,
 } from "@/ui/components/atoms";
-import { ImageField, RatingStars } from "@/ui/components/molecules";
+import { ImageField, RatingStars } from "@/ui/components/organisms";
 import { useImageList } from "@/ui/hooks";
 import { getFieldError, hasFieldErrors } from "@/core/utils";
 import type { APIResponse, OrderReviewSummary } from "@/core/domain";

@@ -3,7 +3,8 @@
 import type React from "react";
 import { useState } from "react";
 import type { PremiumFeature } from "@/core/domain";
-import { Alert, ImageField, SelectField } from "@/ui/components/molecules";
+import { Alert } from "@/ui/components/molecules";
+import { ImageField, SelectField } from "@/ui/components/organisms";
 import {
   Card,
   CardContent,

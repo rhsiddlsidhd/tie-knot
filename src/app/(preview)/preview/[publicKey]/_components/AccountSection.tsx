@@ -3,7 +3,7 @@
 import { EyebrowSection } from "./EyebrowSection";
 import React, { useMemo, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TypographyMuted } from "@/ui/components/atoms";
-import { PersonValueCard } from "@/ui/components/molecules";
+import { PersonValueCard } from "@/ui/components/organisms";
 import { useCopy } from "@/ui/hooks";
 
 import { cn } from "@/core/utils";

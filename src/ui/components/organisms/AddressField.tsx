@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/ui/components/atoms";
-import { FormField, TextField } from "@/ui/components/molecules";
+import { FormField, TextField } from "@/ui/components/organisms";
 import { useDaumPopup } from "@/adapters/browser/daum";
 import { useState } from "react";
 

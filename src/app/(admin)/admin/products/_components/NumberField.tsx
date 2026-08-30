@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/ui/components/atoms";
-import { FormField } from "@/ui/components/molecules";
+import { FormField } from "@/ui/components/organisms";
 import type { FieldBase } from "@/core/domain";
 import type React from "react";
 import { useState } from "react";

@@ -4,7 +4,8 @@ import { Button, DialogFooter, Input, TypographyMuted, Textarea, Label } from "@
 
 
 import type { PremiumFeature } from "@/core/domain";
-import { Alert, TextField } from "@/ui/components/molecules";
+import { Alert } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 import type { APIResponse } from "@/core/domain";
 import { getFieldError } from "@/core/utils";
 

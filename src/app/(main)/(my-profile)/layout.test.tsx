@@ -19,10 +19,8 @@ vi.mock("@/ui/components/atoms", async (importOriginal) => {
   };
 });
 vi.mock("@/ui/components/organisms", () => ({
-  SidebarToggle: (): null => null,
-}));
-vi.mock("@/ui/components/molecules", () => ({
   SidebarNavItem: (): null => null,
+  SidebarToggle: (): null => null,
 }));
 
 import Layout from "./layout";

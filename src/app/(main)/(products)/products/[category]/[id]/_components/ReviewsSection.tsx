@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { format } from "date-fns";
 import { Button, TypographyH2, TypographyMuted } from "@/ui/components/atoms";
-import { CloudImage, RatingStars } from "@/ui/components/molecules";
+import { CloudImage } from "@/ui/components/molecules";
+import { RatingStars } from "@/ui/components/organisms";
 import type { ReviewListPage, ReviewSortType } from "@/core/domain";
 import { REVIEW_SORT_KEYS, REVIEW_SORT_OPTIONS } from "@/core/domain";
 
