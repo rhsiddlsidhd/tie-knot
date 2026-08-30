@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { deleteGuestbook } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";
+import { parseDeleteGuestbookFormData } from "@/core/schemas";
 import { hasFieldErrors } from "@/core/utils";
 import { useGuestbookDemo } from "@/ui/context/guestbookDemo";
 import { useGuestbookModalStore } from "@/ui/stores";
@@ -30,36 +31,50 @@ const isPayload = (payload: unknown): payload is Payload => {
 };
 
 export function DeleteGuestbookForm({ payload }: { payload: unknown }) {
-  if (!isPayload(payload)) throw new Error("DeleteGuestbookForm payload is required");
-  const { id: guestbookId, publicKey } = payload;
+  const parsedPayload = isPayload(payload) ? payload : null;
+  const guestbookId = parsedPayload?.id ?? "";
+  const publicKey = parsedPayload?.publicKey ?? "";
+  const isDemo = publicKey === routes.preview.samplePublicKey;
 
+  // 아래 hook 3개는 payload 유효성과 무관하게 항상 호출된다 — 유효성 검사(throw)는
+  // 맨 아래로 미뤄, 렌더마다 호출되는 hook 개수가 달라지는 걸 막는다.
   const closeModal = useGuestbookModalStore((state) => state.closeModal);
   const [{ entries }, dispatchDemo] = useGuestbookDemo();
 
-  const isDemo = publicKey === routes.preview.samplePublicKey;
-
   // 데모 페이지에서는 실제 deleteGuestbook Server Action/DB를 호출하지 않는다 —
-  // Context가 들고 있는 해당 항목의 비밀번호를 직접 대조한 뒤 제거한다.
+  // 실제 Action과 같은 파싱+검증(parseDeleteGuestbookFormData)을 거친 뒤 Context가
+  // 들고 있는 해당 항목의 비밀번호를 직접 대조해 제거한다.
   const deleteDemoGuestbook = async (
     _prev: null,
     formData: FormData,
   ): Promise<APIResponse<{ message: string }>> => {
-    const password = formData.get("password") as string;
-    const entry = entries.find((item) => item.id === guestbookId);
+    const parsed = parseDeleteGuestbookFormData(formData);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: {
+          category: "VALIDATION",
+          message: "비밀번호 또는 게시글 ID 형식이 올바르지 않습니다.",
+          fieldErrors: parsed.error,
+        },
+      };
+    }
+
+    const entry = entries.find((item) => item.id === parsed.data.guestbookId);
     if (!entry) {
       return {
         success: false,
         error: { category: "NOT_FOUND", message: "해당 게시글을 찾을 수 없습니다." },
       };
     }
-    if (entry.password !== password) {
+    if (entry.password !== parsed.data.password) {
       return {
         success: false,
         error: { category: "UNAUTHENTICATED", message: "비밀번호가 일치하지 않습니다." },
       };
     }
 
-    dispatchDemo({ type: "REMOVE_ENTRY", payload: { id: guestbookId } });
+    dispatchDemo({ type: "REMOVE_ENTRY", payload: { id: parsed.data.guestbookId } });
 
     return {
       success: true,
@@ -83,6 +98,8 @@ export function DeleteGuestbookForm({ payload }: { payload: unknown }) {
       }
     }
   }, [state, closeModal]);
+
+  if (!parsedPayload) throw new Error("DeleteGuestbookForm payload is required");
 
   return (
     <>

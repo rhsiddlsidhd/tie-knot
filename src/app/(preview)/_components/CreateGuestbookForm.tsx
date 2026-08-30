@@ -7,8 +7,8 @@ import { toast } from "sonner";
 import { createGuestbook } from "@/actions";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";
-import { GuestbookSchema } from "@/core/schemas";
-import { hasFieldErrors, validateAndFlatten } from "@/core/utils";
+import { parseGuestbookFormData } from "@/core/schemas";
+import { hasFieldErrors } from "@/core/utils";
 import { useGuestbookDemo } from "@/ui/context/guestbookDemo";
 import { useGuestbookModalStore } from "@/ui/stores";
 import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/ui/components/organisms";
@@ -28,28 +28,23 @@ const isPayload = (payload: unknown): payload is Payload => {
 };
 
 export function CreateGuestbookForm({ payload }: { payload: unknown }) {
+  const publicKey = isPayload(payload) ? payload.publicKey : null;
+  const isDemo = publicKey === routes.preview.samplePublicKey;
+
+  // 아래 hook 4개는 payload 유효성과 무관하게 항상 호출된다 — 유효성 검사(throw)는
+  // 맨 아래로 미뤄, 렌더마다 호출되는 hook 개수가 달라지는 걸 막는다.
   const closeModal = useGuestbookModalStore((state) => state.closeModal);
   const router = useRouter();
   const [, dispatchDemo] = useGuestbookDemo();
-  const publicKey = isPayload(payload) ? payload.publicKey : null;
-  if (!publicKey) throw new Error("CreateGuestbookForm payload is required");
-
-  const isDemo = publicKey === routes.preview.samplePublicKey;
 
   // 데모 페이지에서는 실제 createGuestbook Server Action/DB를 호출하지 않는다 —
-  // 동일한 zod 계약(GuestbookSchema)으로 검증한 뒤 Context에만 항목을 추가한다.
+  // 실제 Action과 같은 파싱+검증(parseGuestbookFormData)을 거친 뒤 Context에만
+  // 항목을 추가한다.
   const createDemoGuestbook = async (
     _prev: null,
     formData: FormData,
   ): Promise<APIResponse<{ message: string }>> => {
-    const data = {
-      publicKey,
-      author: formData.get("author") as string,
-      password: formData.get("password") as string,
-      message: formData.get("message") as string,
-      isPrivate: formData.get("isPrivate") === "true",
-    };
-    const parsed = validateAndFlatten(GuestbookSchema, data);
+    const parsed = parseGuestbookFormData(formData);
     if (!parsed.success) {
       return {
         success: false,
@@ -93,6 +88,8 @@ export function CreateGuestbookForm({ payload }: { payload: unknown }) {
       }
     }
   }, [state, router, closeModal, isDemo]);
+
+  if (!publicKey) throw new Error("CreateGuestbookForm payload is required");
 
   return (
     <>

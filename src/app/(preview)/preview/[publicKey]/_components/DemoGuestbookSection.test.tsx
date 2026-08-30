@@ -3,7 +3,7 @@ import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import {
   GuestbookDemoProvider,
-  initialGuestbookDemoState,
+  INITIAL_GUESTBOOK_DEMO_STATE,
 } from "@/ui/context/guestbookDemo";
 import { useGuestbookModalStore } from "@/ui/stores";
 import { DemoGuestbookSection } from "./DemoGuestbookSection";
@@ -41,7 +41,7 @@ const intersect = async () => {
 
 const renderDemoSection = () =>
   render(
-    <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
+    <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
       <DemoGuestbookSection />
     </GuestbookDemoProvider>,
   );
@@ -116,7 +116,7 @@ describe("DemoGuestbookSection", () => {
     expect(modalState.isOpen).toBe(true);
     expect(modalState.type).toBe("DELETE_GUESTBOOK");
     expect(modalState.payload).toMatchObject({
-      id: initialGuestbookDemoState.entries[0].id,
+      id: INITIAL_GUESTBOOK_DEMO_STATE.entries[0].id,
       publicKey: "sample",
     });
   });

@@ -13,13 +13,13 @@ import { Dialog, DialogContent } from "@/ui/components/atoms";
 import { useGuestbookModalStore } from "@/ui/stores";
 import {
   GuestbookDemoProvider,
-  initialGuestbookDemoState,
+  INITIAL_GUESTBOOK_DEMO_STATE,
   useGuestbookDemo,
 } from "@/ui/context/guestbookDemo";
 import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
 
-const TARGET_ID = initialGuestbookDemoState.entries[0].id;
-const TARGET_PASSWORD = initialGuestbookDemoState.entries[0].password;
+const TARGET_ID = INITIAL_GUESTBOOK_DEMO_STATE.entries[0].id;
+const TARGET_PASSWORD = INITIAL_GUESTBOOK_DEMO_STATE.entries[0].password;
 
 const EntryExistsProbe = () => {
   const [{ entries }] = useGuestbookDemo();
@@ -31,7 +31,7 @@ const EntryExistsProbe = () => {
 // 동일하게 Dialog 컨텍스트 안에서 렌더해야 한다.
 const renderForm = (payload: unknown) =>
   render(
-    <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
+    <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
       <Dialog open>
         <DialogContent>
           <DeleteGuestbookForm payload={payload} />
