@@ -176,27 +176,6 @@ export const incrementProductViewsService = async (
   return !!updated;
 };
 
-// 모든 상품 조회 — view="trash"는 admin 휴지통 전용, 소프트 삭제된(deletedAt 존재) 상품만 리턴한다.
-export const getAllProductsService = async (
-  category?: string,
-  userId?: string,
-  view: "active" | "trash" = "active",
-): Promise<ProductJSON[]> => {
-  await dbConnect();
-
-  const query: Record<string, unknown> =
-    view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
-  if (category) {
-    query.category = category;
-  }
-
-  const products = await ProductModel.find(query)
-    .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
-    .lean();
-
-  return products.map((p) => transformProduct(p, userId));
-};
-
 type AdminProductListQuery = {
   view?: "active" | "trash";
   cursor?: string;
@@ -206,7 +185,7 @@ type AdminProductListQuery = {
 /**
  * 관리자 상품 목록 한 페이지 — orders/users(getAdminOrdersPageService,
  * getAdminUsersPageService)와 동일한 cursor 계약(createdAt desc, _id tie-break,
- * limit+1)을 쓴다. getAllProductsService와 달리 isFeatured/priority 정렬을 쓰지
+ * limit+1)을 쓴다. getPublicProductsService와 달리 isFeatured/priority 정렬을 쓰지
  * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
  */
 export const getAdminProductsPageService = async ({
@@ -264,7 +243,7 @@ export const getAdminProductsPageService = async ({
   };
 };
 
-// 공개 상품 목록 — 관리자용 getAllProductsService와 달리 판매 가능한 active 상품만 노출한다.
+// 공개 상품 목록 — 관리자용 getAdminProductsPageService와 달리 판매 가능한 active 상품만 노출한다.
 export const getPublicProductsService = async (
   category?: string,
   userId?: string,
@@ -358,27 +337,6 @@ export const searchProductsService = async (
     $or: or,
   })
     .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
-    .lean();
-
-  return products.map((p) => transformProduct(p, userId));
-};
-
-/**
- * 특정 카테고리에서 우선순위(priority)가 1 이상인 추천 템플릿들을 조회합니다.
- */
-export const getFeaturedTemplatesService = async (
-  category: string,
-  userId?: string,
-): Promise<ProductJSON[]> => {
-  await dbConnect();
-
-  const products = await ProductModel.find({
-    category,
-    priority: { $gte: 1 },
-    status: "active",
-    deletedAt: null,
-  })
-    .sort({ priority: -1, createdAt: -1 })
     .lean();
 
   return products.map((p) => transformProduct(p, userId));

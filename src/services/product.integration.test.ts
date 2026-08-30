@@ -12,11 +12,9 @@ import {
   createProductService,
   getProductService,
   incrementProductViewsService,
-  getAllProductsService,
   getAdminProductsPageService,
   getPublicProductsService,
   getAvailableSubCategoriesService,
-  getFeaturedTemplatesService,
   getPopularProductsService,
   updateProductService,
   deleteProductService,
@@ -254,54 +252,6 @@ describe("product", () => {
     });
   });
 
-  describe("getAllProductsService", () => {
-    it("카테고리 없이 호출하면 전체 상품을 리턴한다", async () => {
-      await createProductService(buildProductInput({ title: "상품1" }));
-      await createProductService(buildProductInput({ title: "상품2" }));
-
-      const result = await getAllProductsService();
-
-      expect(result).toHaveLength(2);
-    });
-
-    it("카테고리를 지정하면 해당 카테고리에 속하는 상품만 리턴한다", async () => {
-      await createProductService(buildProductInput({ title: "상품1" }));
-      await createProductService(buildProductInput({ title: "상품2" }));
-
-      const result = await getAllProductsService(MOBILE_INVITATION_CATEGORY);
-      const noMatch = await getAllProductsService("nonexistent");
-
-      expect(result).toHaveLength(2);
-      expect(noMatch).toHaveLength(0);
-    });
-
-    it("view를 지정하지 않으면 삭제되지 않은 상품만 리턴한다", async () => {
-      const input = buildProductInput({ title: "삭제될상품" });
-      await createProductService(input);
-      const saved = await ProductModel.findOne({ title: input.title }).lean();
-      await deleteProductService(saved!._id.toString());
-      await createProductService(buildProductInput({ title: "정상상품" }));
-
-      const result = await getAllProductsService();
-
-      expect(result).toHaveLength(1);
-      expect(result[0].title).toBe("정상상품");
-    });
-
-    it("view가 trash면 소프트 삭제된(deletedAt 존재) 상품만 리턴한다", async () => {
-      const input = buildProductInput({ title: "삭제될상품" });
-      await createProductService(input);
-      const saved = await ProductModel.findOne({ title: input.title }).lean();
-      await deleteProductService(saved!._id.toString());
-      await createProductService(buildProductInput({ title: "정상상품" }));
-
-      const result = await getAllProductsService(undefined, undefined, "trash");
-
-      expect(result).toHaveLength(1);
-      expect(result[0].title).toBe("삭제될상품");
-    });
-  });
-
   describe("getAdminProductsPageService", () => {
     const setCreatedAt = async (
       productId: mongoose.Types.ObjectId,
@@ -449,7 +399,7 @@ describe("product", () => {
       await deleteProductService(deleted!._id.toString());
 
       const publicProducts = await getPublicProductsService();
-      const adminProducts = await getAllProductsService();
+      const adminProducts = (await getAdminProductsPageService({})).items;
 
       expect(publicProducts.map((product) => product.title)).toEqual(["공개상품"]);
       expect(adminProducts.map((product) => product.status).sort()).toEqual([
@@ -544,22 +494,6 @@ describe("product", () => {
       const result = await getAvailableSubCategoriesService("favor");
 
       expect(result).toEqual([{ category: "favor", subCategory: "soap" }]);
-    });
-  });
-
-  describe("getFeaturedTemplatesService", () => {
-    it("priority가 1 이상인 active 상품만 리턴한다", async () => {
-      await createProductService(
-        buildProductInput({ title: "추천상품", priority: 1 }),
-      );
-      await createProductService(
-        buildProductInput({ title: "일반상품", priority: 0 }),
-      );
-
-      const result = await getFeaturedTemplatesService(MOBILE_INVITATION_CATEGORY);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].title).toBe("추천상품");
     });
   });
 
