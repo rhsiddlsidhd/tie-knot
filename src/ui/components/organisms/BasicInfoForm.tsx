@@ -1,7 +1,7 @@
 "use client";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, TypographyMuted } from "@/ui/components/atoms";
 
-import { TextField } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 import clsx from "clsx";
 
 import { Save } from "lucide-react";

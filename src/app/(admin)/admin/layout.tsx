@@ -4,7 +4,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarProvider 
 import { SidebarToggle } from "@/ui/components/organisms";
 import type React from "react";
 import { Toaster } from "sonner";
-import { SidebarNavItem } from "@/ui/components/molecules";
+import { SidebarNavItem } from "@/ui/components/organisms";
 import { AdminModal } from "./_components";
 import { useAuth } from "@/ui/hooks";
 import { Skeleton, TypographyH4 } from "@/ui/components/atoms";

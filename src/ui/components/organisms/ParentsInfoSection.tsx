@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle, Collapsible, CollapsibleContent, CollapsibleTrigger, TypographyH3, TypographySmall } from "@/ui/components/atoms";
 
-import { BankField, TextField } from "@/ui/components/molecules";
+import { BankField } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 
 import { ChevronDown } from "lucide-react";
 

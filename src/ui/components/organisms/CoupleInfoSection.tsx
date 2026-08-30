@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle, TypographyH3 } from "@/ui/components/atoms";
 
-import { BankField, TextField } from "@/ui/components/molecules";
+import { BankField } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 
 import type { InvitationContent } from "@/core/domain";
 import type { BanksResponse } from "@/core/schemas";

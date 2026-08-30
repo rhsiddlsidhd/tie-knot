@@ -9,7 +9,7 @@ import { Checkbox, Button, Label, TypographyH1, TypographyMuted } from "@/ui/com
 
 
 
-import { TextField } from "@/ui/components/molecules";
+import { TextField } from "@/ui/components/organisms";
 import { getFieldError } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";

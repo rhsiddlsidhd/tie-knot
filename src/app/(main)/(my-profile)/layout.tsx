@@ -1,7 +1,7 @@
 "use client";
 
 import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/ui/components/atoms";
-import { SidebarNavItem } from "@/ui/components/molecules";
+import { SidebarNavItem } from "@/ui/components/organisms";
 import { SidebarToggle } from "@/ui/components/organisms";
 import { useAuth } from "@/ui/hooks";
 import { Skeleton } from "@/ui/components/atoms";

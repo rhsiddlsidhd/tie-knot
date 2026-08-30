@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle, Input } from "@/ui/components/atoms";
-import { AddressField, FormField } from "@/ui/components/molecules";
+import { AddressField, FormField } from "@/ui/components/organisms";
 import type { ShippingInfo } from "@/core/schemas";
 
 interface ShippingInfoCardProps {

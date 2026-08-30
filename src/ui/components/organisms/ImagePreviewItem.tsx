@@ -12,7 +12,7 @@ interface ImagePreviewItemProps {
 }
 
 /**
- * 삭제 버튼이 있는 이미지 미리보기 아이템 (Molecule)
+ * 삭제 버튼이 있는 이미지 미리보기 아이템 (Organism)
  */
 export const ImagePreviewItem = ({
   id,

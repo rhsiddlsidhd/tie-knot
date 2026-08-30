@@ -3,7 +3,7 @@
 import { DialogDescription, DialogHeader, DialogTitle, TypographyMuted } from "@/ui/components/atoms";
 import React from "react";
 
-import { PersonValueCard } from "@/ui/components/molecules";
+import { PersonValueCard } from "@/ui/components/organisms";
 import { useCopy } from "@/ui/hooks";
 
 

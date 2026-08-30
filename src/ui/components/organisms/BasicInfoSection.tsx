@@ -2,7 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms";
 import { format } from "date-fns";
-import { TextField, AddressField, SwitchField, ComboboxField, DateField } from "@/ui/components/molecules";
+import { ComboboxField, DateField } from "@/ui/components/molecules";
+import { AddressField, SwitchField, TextField } from "@/ui/components/organisms";
 
 import type { InvitationContent } from "@/core/domain";
 import type { SubwayStationsResponse } from "@/core/schemas";
