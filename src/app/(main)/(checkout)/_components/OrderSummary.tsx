@@ -1,15 +1,25 @@
-"use client";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, TypographyH3, TypographyMuted, TypographyP, TypographySmall } from "@/ui/components/atoms";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  TypographyH3,
+  TypographyMuted,
+  TypographyP,
+  TypographySmall,
+} from "@/ui/components/atoms";
+import { DELIVERY_FEE } from "@/core/domain";
+import type { CheckoutItem } from "@/core/domain";
 import { formatPriceWithComma } from "@/core/utils";
 import { CloudImage } from "@/ui/components/molecules";
-import { DELIVERY_FEE } from "@/core/domain";
 
-import { useCheckoutData } from "@/ui/hooks";
-import type { SelectFeatureDto } from "@/core/schemas";
+interface OrderSummaryProps {
+  data: CheckoutItem | null;
+  loading: boolean;
+}
 
-export const OrderSummary = () => {
-  const { data, loading } = useCheckoutData();
-
+const OrderSummary = ({ data, loading }: OrderSummaryProps) => {
   if (loading) {
     return (
       <main className="bg-background flex min-h-screen items-center justify-center">
@@ -64,7 +74,7 @@ export const OrderSummary = () => {
           {selectedFeatures && selectedFeatures.length > 0 && (
             <div className="space-y-1">
               <TypographySmall className="font-medium">선택 옵션:</TypographySmall>
-              {selectedFeatures.map((option: SelectFeatureDto) => (
+              {selectedFeatures.map((option) => (
                 <div
                   key={option.featureId}
                   className="flex justify-between text-xs"
@@ -159,3 +169,5 @@ export const OrderSummary = () => {
     </div>
   );
 };
+
+export { OrderSummary };

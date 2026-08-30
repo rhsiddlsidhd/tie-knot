@@ -15,7 +15,6 @@ export * from "./ImagesSection";
 export * from "./LiveDemoSection";
 export * from "./LoginForm";
 export * from "./MobileNav";
-export * from "./OrderSummary";
 export * from "./ParentsInfoSection";
 export * from "./PaymentMethodSelector";
 export * from "./PremiumFeatureDialog";
