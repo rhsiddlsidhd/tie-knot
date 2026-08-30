@@ -7,10 +7,10 @@ import type { Product } from "@/services";
 import {
   Alert,
   ImageField,
-  NumberField,
   SelectField,
   Spinner,
 } from "@/ui/components/molecules";
+import { NumberField } from "./NumberField";
 import {
   Input,
   Button,
@@ -92,6 +92,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
     setMinQuantity(raw === "" ? NaN : Number(raw));
   };
 
+  const thumbnailError = getFieldError(state, "thumbnail");
+  const titleError = getFieldError(state, "title");
+  const descriptionError = getFieldError(state, "description");
   const imagesError = getFieldError(state, "images");
   const minQuantityError = getFieldError(state, "minQuantity");
   const maxQuantityError = getFieldError(state, "maxQuantity");
@@ -170,9 +173,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             name="thumbnail"
             value={thumbnail.getUrls()[0] ?? ""}
           />
-          {getFieldError(state, "thumbnail") && (
+          {thumbnailError && (
             <Alert type="error" className="mt-2">
-              {getFieldError(state, "thumbnail")}
+              {thumbnailError}
             </Alert>
           )}
         </CardContent>
@@ -192,9 +195,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               placeholder="예: 엘레강트 로즈 청첩장"
               required
             />
-            {getFieldError(state, "title") && (
+            {titleError && (
               <Alert type="error" className="mt-2">
-                {getFieldError(state, "title")}
+                {titleError}
               </Alert>
             )}
           </div>
@@ -209,9 +212,9 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
               rows={3}
               required
             />
-            {getFieldError(state, "description") && (
+            {descriptionError && (
               <Alert type="error" className="mt-2">
-                {getFieldError(state, "description")}
+                {descriptionError}
               </Alert>
             )}
           </div>
@@ -303,7 +306,6 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
             </NumberField>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-discountValue">할인</Label>
               <div className="flex gap-2">
                 <div className="w-32 shrink-0">
                   <SelectField
@@ -347,7 +349,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                       );
                     }}
                   >
-                    <span className="sr-only">할인 값</span>
+                    할인
                   </NumberField>
                 </div>
               </div>

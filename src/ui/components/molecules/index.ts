@@ -16,7 +16,6 @@ export * from "./ImageField";
 export * from "./ImagePreviewItem";
 export * from "./KakaoMap";
 export * from "./LoginEntryButton";
-export * from "./NumberField";
 export * from "./PageTitle";
 export * from "./PersonValueCard";
 export * from "./QuantityStepper";
