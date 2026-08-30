@@ -5,9 +5,9 @@
 // 같은 원리를 쓴다 — 실제 mongodb-memory-server DB를 관통시켜 page.tsx가
 // 리턴하는 React 엘리먼트의 props를 검사한다. 렌더링은 하지 않는다: JSX는
 // 함수 호출이 아니라 엘리먼트 서술자라, `<HomeTemplate ... />`를 await한
-// 시점엔 HomeTemplate/EcommerceHero/TemplateCarouselGroup 등 하위 컴포넌트
-// 바디가 전혀 실행되지 않는다 — 그래서 이 파일은 jsdom도, 하위 organism
-// mock도 필요 없다("@vitest-environment node").
+// 시점엔 HomeTemplate/EcommerceHero 등 하위 컴포넌트 바디가 전혀 실행되지
+// 않는다 — 그래서 이 파일은 jsdom도, 하위 organism mock도 필요 없다
+// ("@vitest-environment node").
 //
 // 검증 대상(04_integration_report.md §6 인계 사항):
 // 1. 골든패스 — DB → getPopularProductsService(실제 aggregate) → page.tsx →
@@ -25,8 +25,8 @@ import { POPULAR_PRODUCTS_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domai
 
 // getPopularProductsService만 vi.fn으로 감싸 개별 테스트에서 override할 수
 // 있게 하고, 기본 동작은 실제 구현(actual)을 그대로 위임한다 — 그 외
-// createProductService/updateProductLikeService/getFeaturedTemplatesService/
-// getProductService는 실제 구현 그대로(spread) 둔다.
+// createProductService/updateProductLikeService/getProductService는 실제
+// 구현 그대로(spread) 둔다.
 vi.mock("@/services", async (importOriginal) => {
   const actual = await importOriginal<typeof ServicesModule>();
   return {

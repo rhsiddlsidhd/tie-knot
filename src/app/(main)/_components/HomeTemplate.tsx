@@ -1,22 +1,15 @@
-import {
-  EcommerceHero,
-  LiveDemoSection,
-  TemplateCarouselGroup,
-} from "@/ui/components/organisms";
+import { EcommerceHero, LiveDemoSection } from "@/ui/components/organisms";
 import type { Product } from "@/services";
-import { TypographyH2, TypographyP } from "@/ui/components/atoms";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 import { PopularProductsSection } from "./PopularProductsSection";
 import type { AvailableSubCategory } from "@/core/domain";
 
 interface HomeTemplateProps {
-  invitation: Product[];
   popularProducts: Product[];
   availableSubCategories: readonly AvailableSubCategory[];
 }
 
 const HomeTemplate = ({
-  invitation,
   popularProducts,
   availableSubCategories,
 }: HomeTemplateProps) => {
@@ -27,30 +20,6 @@ const HomeTemplate = ({
       <SubCategoryNavSection availableSubCategories={availableSubCategories} />
 
       <PopularProductsSection products={popularProducts} />
-
-      {/* 추천 템플릿 섹션: 데이터가 있을 경우에만 렌더링 */}
-      {invitation.length > 0 && (
-        <section className="bg-background py-24">
-          <div className="container mx-auto px-4">
-            <div className="mb-16 text-center">
-              <TypographyH2 className="text-foreground mb-4 border-none text-3xl font-bold tracking-tight md:text-4xl">
-                베스트 디자인 템플릿
-              </TypographyH2>
-              <TypographyP className="text-muted-foreground mx-auto max-w-2xl text-lg">
-                가장 많은 사랑을 받은 디자인들을 카테고리별로 확인해보세요.
-              </TypographyP>
-            </div>
-
-            <div className="space-y-24">
-              <TemplateCarouselGroup
-                data={invitation}
-                title="초대장"
-                description="소중한 순간을 함께할 분들께 마음을 전하는 초대장"
-              />
-            </div>
-          </div>
-        </section>
-      )}
 
       <LiveDemoSection />
     </div>
