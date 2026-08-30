@@ -1,5 +1,5 @@
 import { Badge, Card, TypographyLarge, TypographyMuted } from "@/ui/components/atoms";
-import { ClipboardButton } from "@/ui/components/molecules";
+import { ClipboardButton } from "./ClipboardButton";
 
 interface PersonValueCardProps {
   relation: string;

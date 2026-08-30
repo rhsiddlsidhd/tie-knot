@@ -4,6 +4,7 @@ export * from "./BasicInfoSection";
 export * from "./BottomActionBar";
 export * from "./ChangePasswordForm";
 export * from "./CheckoutForm";
+export * from "./ClipboardButton";
 export * from "./InvitationFormView";
 export * from "./CoupleInfoSection";
 export * from "./CreateGuestbookForm";

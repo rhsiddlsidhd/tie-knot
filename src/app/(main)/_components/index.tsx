@@ -1,3 +1,4 @@
+export { AnnouncementBar } from "./AnnouncementBar";
 export { Header } from "./Header";
 export { AuthButtons } from "./AuthButtons";
 export { UserAccountNav } from "./UserAccountNav";
