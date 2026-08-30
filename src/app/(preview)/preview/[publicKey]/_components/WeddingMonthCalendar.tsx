@@ -3,9 +3,9 @@ import React, { useMemo } from "react";
 
 import { formatInTimeZone } from "date-fns-tz";
 import { EyebrowSection } from "./EyebrowSection";
+import { DigitalWatch } from "./DigitalWatch";
 import { ko } from "date-fns/locale";
 import clsx from "clsx";
-import { DigitalWatch } from "@/ui/components/molecules";
 import { useCountdown } from "@/ui/hooks";
 
 import type { WeddingMonthCalendarProps } from "../_utils/weddingMonthCalendar.mapper";

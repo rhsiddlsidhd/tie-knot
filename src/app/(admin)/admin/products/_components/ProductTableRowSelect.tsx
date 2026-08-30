@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { isStatus, STATUS_ITEMS } from "../_types";
 import { updateProductStatus } from "@/actions";
 import { toast } from "sonner";
-import { StatusSelect } from "@/ui/components/molecules";
+import { BaseSelect } from "@/ui/components/molecules";
 import type { Product } from "@/services";
 const ProductTableRowSelect = ({ product }: { product: Product }) => {
   const router = useRouter();
@@ -33,10 +33,10 @@ const ProductTableRowSelect = ({ product }: { product: Product }) => {
     }
   };
   return (
-    <StatusSelect
+    <BaseSelect
       value={status}
       disabled={isUpdatingStatus}
-      items={STATUS_ITEMS}
+      options={[...STATUS_ITEMS]}
       onValueChange={(value) => {
         handleStatusChange(value);
       }}
