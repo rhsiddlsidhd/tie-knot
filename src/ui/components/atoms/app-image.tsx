@@ -2,18 +2,9 @@
 
 import { cn } from "@/core/utils";
 import { ImageOff } from "lucide-react";
-import type { ImageLoaderProps, StaticImageData } from "next/image";
+import type { StaticImageData } from "next/image";
 import Image from "next/image";
 import { useState } from "react";
-
-const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {
-  if (typeof src !== "string" || !src.includes("res.cloudinary.com")) {
-    return src;
-  }
-  const params = [`f_auto`, quality ? `q_${quality}` : `q_auto`, `w_${width}`];
-
-  return src.replace("/upload/", `/upload/${params.join(",")}/`);
-};
 
 interface AppImageProps {
   src: string | StaticImageData;
@@ -54,7 +45,6 @@ const AppImage = ({
 
   return (
     <Image
-      loader={cloudinaryLoader}
       src={src}
       sizes={sizes}
       fill
