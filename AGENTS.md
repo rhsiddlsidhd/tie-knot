@@ -12,6 +12,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 > 현재 구현된 상품 카테고리는 모바일 청첩장 하나다.
 
+## Shared Skills
+
+- `.claude/skills/` is the single source of truth for project skills shared between Claude Code and Codex.
+- Create and modify shared skill source files only under `.claude/skills/`.
+- Use `migrate-to-codex` to generate Codex-compatible copies under `.agents/skills/`.
+- Do not manually modify generated files under `.agents/skills/`.
+- After every migration, validate the generated Codex artifacts.
+
 ## 하네스: 풀스택 기능 구현 팀
 
 **목표:** API/UI/DB 설계 팬아웃 → 구현+상주 경계면 검증 → 통합 테스트로 이어지는 5-Phase 파이프라인으로 신규 기능을 처음부터 끝까지 구현.
