@@ -1,5 +1,5 @@
 import type { InvitationContent } from "@/core/domain";
-import { CloudImage } from "@/ui/components/molecules";
+import { AppImage } from "@/ui/components/atoms";
 import { InteractionOverlay } from "./interactions";
 import { ThemeAmbience } from "./ThemeAmbience";
 import { ThemeSync } from "./ThemeSync";
@@ -62,7 +62,7 @@ export function InvitationTemplate({
           />
           <LocationSection {...mapCoupleInfoToLocationProps(content)} />
           <div className="relative h-[50vh] w-full">
-            <CloudImage
+            <AppImage
               src={thumbnails.divider}
               sizes="(max-width: 512px) 100vw, 512px"
             />
@@ -72,7 +72,7 @@ export function InvitationTemplate({
           )}
           <AccountSection {...mapCoupleInfoToAccountProps(content)} />
           <Footer>
-            <CloudImage
+            <AppImage
               src={thumbnails.footer}
               sizes="(max-width: 512px) 100vw, 512px"
             />

@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import {
+  AppImage,
   Button,
   Card,
   TypographyH2,
   TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import { CloudImage } from "@/ui/components/molecules";
 import type { PremiumFeature } from "@/core/domain";
 import clsx from "clsx";
 import { Check, ChevronDown, Palette, Type, Settings, FileText } from "lucide-react";
@@ -73,7 +73,7 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
                   key={src}
                   className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-transparent"
                 >
-                  <CloudImage
+                  <AppImage
                     src={src}
                     alt={`상세 이미지 ${index + 1}`}
                     className="object-contain"
@@ -94,7 +94,7 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
                         key={src}
                         className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-transparent"
                       >
-                        <CloudImage
+                        <AppImage
                           src={src}
                           alt={`상세 이미지 ${VISIBLE_IMAGE_COUNT + index + 1}`}
                           className="object-contain"

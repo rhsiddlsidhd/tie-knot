@@ -2,7 +2,7 @@
 
 import { Share2 } from "lucide-react";
 import { useMemo } from "react";
-import { Badge, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { AppImage, Badge, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import type { Product, PremiumFeature } from "@/core/domain";
 import { isProductCategory, calculatePrice } from "@/core/utils";
 import type { SubCategory } from "@/core/domain";
@@ -11,7 +11,6 @@ import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { ProductLikeBadge } from "./ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
-import { CloudImage } from "@/ui/components/molecules";
 import { RatingStars } from "@/ui/components/organisms";
 export function ProductSummary({
   product,
@@ -31,7 +30,7 @@ export function ProductSummary({
       <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Left side - Thumbnail */}
         <div className="group bg-muted border-border relative aspect-square overflow-hidden rounded-2xl border shadow-lg">
-          <CloudImage
+          <AppImage
             src={product.thumbnail}
             alt={`${product.title} 상품 썸네일`}
             loading="eager"

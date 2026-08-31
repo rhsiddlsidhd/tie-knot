@@ -1,4 +1,5 @@
 import {
+  AppImage,
   Card,
   CardContent,
   CardFooter,
@@ -12,7 +13,6 @@ import {
 import { DELIVERY_FEE } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { formatPriceWithComma } from "@/core/utils";
-import { CloudImage } from "@/ui/components/molecules";
 
 interface OrderSummaryProps {
   data: CheckoutItem | null;
@@ -58,7 +58,7 @@ const OrderSummary = ({ data, loading }: OrderSummaryProps) => {
         <CardContent className="space-y-4">
           <div className="flex gap-4">
             <div className="bg-muted relative h-24 w-20 shrink-0 overflow-hidden rounded-lg">
-              <CloudImage src={thumbnail} sizes="80px" />
+              <AppImage src={thumbnail} sizes="80px" />
             </div>
             <div className="min-w-0 flex-1">
               <TypographyH3 className="mb-1 truncate font-medium">

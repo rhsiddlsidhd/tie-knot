@@ -1,9 +1,7 @@
 "use client";
 
-import { ImageOff, X } from "lucide-react";
-import React, { useState } from "react";
-import { CloudImage } from "@/ui/components/molecules";
-import { Button } from "@/ui/components/atoms";
+import { X } from "lucide-react";
+import { AppImage, Button } from "@/ui/components/atoms";
 interface ImagePreviewItemProps {
   id: string;
   preview: string;
@@ -20,22 +18,9 @@ export const ImagePreviewItem = ({
   onRemove,
   sizes,
 }: ImagePreviewItemProps) => {
-  const [hasError, setHasError] = useState(false);
-
   return (
     <div className="border-border group relative aspect-square overflow-hidden rounded-lg border">
-      {hasError ? (
-        <div className="bg-muted flex h-full w-full items-center justify-center">
-          <ImageOff className="text-muted-foreground h-6 w-6" />
-        </div>
-      ) : (
-        <CloudImage
-          src={preview}
-          alt={`Preview ${id}`}
-          sizes={sizes}
-          onError={() => setHasError(true)}
-        />
-      )}
+      <AppImage src={preview} alt={`Preview ${id}`} sizes={sizes} />
       <Button
         type="button"
         variant="ghost"

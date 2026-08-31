@@ -3,8 +3,7 @@ import Link from "next/link";
 import type { Product, SubCategory } from "@/core/domain";
 import { routes, subCategoryLabels } from "@/core/domain";
 import { calculatePrice } from "@/core/utils";
-import { Badge, TypographyMuted } from "@/ui/components/atoms";
-import { CloudImage } from "./CloudImage";
+import { AppImage, Badge, TypographyMuted } from "@/ui/components/atoms";
 
 export function ProductCard({ product, rank }: { product: Product; rank?: number }) {
   const finalPrice =
@@ -26,11 +25,11 @@ export function ProductCard({ product, rank }: { product: Product; rank?: number
       <div className="bg-muted relative aspect-[1/1.618] overflow-hidden rounded-2xl">
         {/* Thumbnail with zoom on hover */}
         <div className="absolute inset-0 transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]">
-          <CloudImage
+          <AppImage
             src={product.thumbnail}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
             alt={`${product.title} 썸네일`}
-            priority={true}
+            preload={true}
           />
         </div>
 
