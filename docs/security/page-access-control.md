@@ -38,10 +38,6 @@
 - 이 인가 재확인은 page 게이트와 별도의 세션 조회를 새로 만들지 않는다 — 같은 렌더 패스 안이면 위 `cache()` 덕분에 추가 DB 비용 없이 재확인이 가능하다.
 - 관리자 전용 데이터와 특정 유저 소유 데이터를 같은 service 함수가 같이 다뤄야 하는 경우(예: admin은 전체 조회, 유저는 자기 소유만)의 파라미터 형태는 지금 정하지 않는다 — 현재 코드에 그런 인스턴스가 없다(`admin/orders/page.tsx`가 아직 빈 스텁). 실제로 그 필요가 생기는 시점에 그 자리에서 재검토한다(가정만으로 미리 만들지 않는다, `src/services/AGENTS.md` 트랜잭션 섹션과 같은 원칙).
 
-## Gotchas
-
-- React `cache()`의 dedupe 범위는 Server Component render tree 기준이다 — page 게이트와 그 아래 service 재확인이 "같은 렌더 패스"일 때만 DB 재조회가 안 생긴다는 전제가 성립한다. 같은 service 함수를 나중에 route.ts나 Server Action에서도 호출하게 되면, 그 경로에서는 `cache()`가 이 dedupe를 보장한다고 가정하지 않는다 — 그 경로용 세션 조회 비용은 별도로 계산한다.
-
 ## 인증 토큰
 
 > 구현 완료(PR #59, 커밋 `7a553a3`) — access/refresh 이중 토큰은 `token` 단일 쿠키로 이미 마이그레이션됐다, 코드에 access 토큰은 존재하지 않는다.

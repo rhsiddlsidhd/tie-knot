@@ -1,29 +1,66 @@
 # AGENTS.md — src/ui/components/
 
-> Last updated: 2026-07-18
+> Last updated: 2026-08-31
 
 ## Overview
 
-이 프로젝트의 컴포넌트 조직 구조를 정의한다. Brad Frost의 Atomic Design 원본 5단계(atoms/molecules/organisms/templates/pages) 중 pages만 빼고 그대로 차용한다 — pages 역할은 `src/app/**/page.tsx`가 대신한다(`src/app/AGENTS.md` 참고). 각 티어 세부 정의는 `src/ui/components/atoms/AGENTS.md`/`molecules/AGENTS.md`/`organisms/AGENTS.md`/`templates/AGENTS.md` 소관.
+이 프로젝트는 Brad Frost의 Atomic Design에서 pages를 제외한 atoms, molecules, organisms, templates 네 티어를 사용한다. pages 역할은 `src/app/**/page.tsx`가 담당한다.
 
-컴포넌트는 두 개의 독립된 축으로 판단한다 — 헷갈리면 이 구분으로 돌아온다: **축 A**(atom/molecule/organism/template, 조합 복잡도)와 **축 B**(공용 `src/ui/components/{tier}/` vs 라우트 전용 `_components/`, 물리적 위치). 이 파일의 Critical Convention이 두 축의 판단 기준과 예외를 정의한다.
+티어 판정은 축 A(컴포넌트의 역할)와 축 B(공용 폴더인지 라우트 로컬인지)를 분리해서 수행한다. **이 문서와 각 티어의 `AGENTS.md`가 판정 기준의 유일한 진실 소스다.** 별도 메모나 과거 배치 사례를 기준으로 삼지 않는다.
 
-## Critical Convention
+## 축 A — 티어 판정
 
-- **축 A — 티어 분류.** 원본 Atomic Design 기준 그대로 쓴다: 조합 복잡도/책임 범위로 판단한다. "몇 곳에서 재사용되는가"는 이 축과 무관하다. **"무엇을 조합하는가"를 묻지 않고 "공간적으로 어떻게 배치하는가"(예: CSS grid 배치)만 다루는 건 이 축 자체와 직교하는 문제라 어느 티어에도 억지로 끼워 넣지 않는다** — 소비처가 매번 직접 인라인한다(구 `atoms/grid.tsx` 사례, `atoms/AGENTS.md` Gotchas 참고).
-- **축 B — 물리적 위치.** 원본에 없는, 이 프로젝트가 독자적으로 추가한 것 — 순수성 원칙(핵심 원칙 1)과 소비자 수(`src/app/AGENTS.md` 컨테이너 승격 규칙)로 판단한다. 어떤 티어든 축 B는 동일하게 적용된다. **소비자 수는 직접 호출자가 아니라 실제로 몇 개 라우트에서 최종 렌더되는지로 전이적으로 센다** — 중간에 몇 겹을 거치든(공용 컴포넌트든 라우트 로컬이든) 무관하게 최종 도달 라우트 개수만 본다. 예: organism X의 유일한 소비자가 라우트 로컬 Template Y 하나뿐이고 Template Y도 라우트 1곳 전용이면, organism X도 실질 소비 라우트가 1곳이라 승격 보류 대상이다.
-- 과거 `fields/`·`(preview)/` 서브폴더를 "예외존"처럼 다룬 게 혼란의 원인이었다 — 서브폴더에 있다는 사실 자체는 두 축 어느 쪽 판단에도 영향을 주지 않는다.
-- **핵심 원칙 1 — atoms/molecules/organisms/templates 전부 순수(presentational)하다(축 B 관련).** 도메인 로직·데이터 페칭·Server Actions을 이 4단계 어디에도 두지 않는다 — props로만 데이터/핸들러를 받는다. 도메인 로직이 필요한 화면은 그 로직을 감싸는 **컨테이너**(`src/app/**/_containers/{Name}.tsx`, 라우트 전용)가 순수 organism/molecule을 import해서 props를 채워 넣는 방식으로 만든다. 컨테이너 판정 기준은 `src/app/AGENTS.md`의 `_containers/` 규칙을 따른다.
-  - 예: `_containers/LoginForm.tsx`(컨테이너 — `useActionState`+SWR `mutate`+`router.push` 처리) → `organisms/Form.tsx`(순수 — props로 필드/핸들러/에러만 받음) import.
-  - 컨테이너 승격 규칙은 `src/app/AGENTS.md`의 `_containers/` 규칙과 동일: **소비자가 라우트(또는 그 라우트의 `layout.tsx`) 1곳뿐이면** 그 라우트의 `_containers/`에 머문다. 순수 organism/molecule 자체가 2곳 이상의 라우트/컨테이너에서 재사용되면 그게 공용 자격의 근거다. 단, 유일한 소비자가 라우트가 아니라 **다른 공유 컴포넌트**(그 컴포넌트 자체가 이미 2곳 이상에서 쓰임)라면 이 승격-보류 규칙이 적용되지 않는다 — 그 하위 조각은 그냥 같은 공용 티어 폴더에 남는다(예: `DateField`/`AddressField`/`ImageField`의 유일한 소비자는 `BasicInfoSection`이고, `BasicInfoSection`은 라우트가 아니라 `InvitationFormView`의 하위 조각이므로 `molecules/`에 그대로 남는다 — 라우트 전용 `_components`/`_containers`/`_utils`는 Next.js가 라우트 단위로 주는 private 폴더 개념이지 컴포넌트 단위로 확장할 근거가 없다).
-  - 소비자 1곳이 `page.tsx`가 아니라 `layout.tsx`(라우트 그룹 셸)여도 축 B는 동일하게 적용된다 — 셸 조각 배치 규칙과 구체 사례(Header/AuthButtons/Footer/GuestbookModal 등)는 `src/app/AGENTS.md` 참고. (`src/ui/components/layout/`은 이 정리로 폐기됐다 — atoms/molecules/organisms 3단계 밖의 미분류 폴더였다.)
-  - **컨테이너가 2곳 이상의 라우트/레이아웃에서 진짜 도메인 로직까지 겹치면(`SidebarLayout`처럼 여러 레이아웃이 같은 `useAuth()` 조회+렌더를 반복), 억지로 공용 컴포넌트로 승격하지 않는다** — 각 레이아웃이 자기 파일 안에서 직접 정의한다(`(admin)/admin/layout.tsx`, `(my-order)/layout.tsx`, `(my-profile)/layout.tsx` 각각). 지금은 내용이 동일해 보여도 각 레이어가 독립적으로 진화할 수 있는 컨텍스트라, 공용 컴포넌트로 묶으면 나중에 레이어별로 갈라져야 할 때 오히려 인위적으로 갈라야 한다.
-  - **컨테이너 로직 자체(순수 UI 말고)가 2곳 이상의 라우트에서 100% 동일하게 재사용돼야 하면, 그 로직을 `src/ui/hooks/`의 커스텀 훅으로 뽑는다** — 각 라우트는 자기 `_containers/`에 그 훅을 호출하고 순수 UI를 렌더하는 얇은 컨테이너를 각자 둔다("라우트당 컨테이너 1개" 원칙은 그대로 유지). 공유되는 순수 UI 쪽은 `organisms/`에 남되, 여러 컨테이너가 공유한다는 걸 이름으로 드러낸다 — 이름 짓는 방법 자체는 `src/AGENTS.md`의 추상화 네이밍 규칙 참고.
-  - **예외 2 — 단순 페이지 이동은 `useRouter().push()` 대신 `<Link href>`(또는 `Button asChild`)로 쓰면 위반이 아니다.** 데이터 mutation 없이 그냥 다른 라우트로 이동만 하는 클릭 핸들러는 `next/link`로 대체 가능하면 그렇게 한다 — 그러면 애초에 컨테이너 분리가 필요 없어진다. mutation(폼 제출, store 쓰기 등) 뒤에 이어지는 조건부 리다이렉트는 이 예외 대상이 아니다(컨테이너 소관).
-- **핵심 원칙 2 — atom/molecule 경계는 "누가 조합했는가"다(축 A 관련).** shadcn/Radix 산출물은 내부적으로 여러 하위 요소를 묶은 복합 시스템(`sidebar.tsx`, `dialog.tsx` 등)이어도 통째로 atom 취급한다 — "물리적으로 더 못 쪼갠다"가 기준이 아니라, **조합의 주체가 이 프로젝트 코드가 아니라 외부 라이브러리**라는 게 기준이다(원본 Atomic Design도 atom=우리가 안 쪼갠 것, molecule=우리가 atom을 조합해 만든 것이 전제라 실제로는 원본과 어긋나지 않는다). 커스텀 프리미티브(예: Typography)는 "다른 컴포넌트를 조합하지 않고 그 자체로 완결"되면 atom이다 — 이건 프로젝트가 직접 만들었으므로 "조합했는가"로 그대로 판단 가능.
-- **핵심 원칙 3 — molecule/organism 경계는 "완성됐는가"가 아니라 "단순한가 복잡한가"다(축 A 관련, 원본 그대로).** Brad Frost 원본: molecule은 "relatively simple"(단일 책임의 단순 단위), organism은 "relatively complex... distinct section"(여러 책임을 묶은, 페이지에서 뚜렷이 구분되는 복잡한 구획)이다 — "이대로 바로 쓰이느냐"가 아니라 "책임이 하나냐 여러 개냐"로 판단한다. 예: `TextField`(라벨+입력 필드 하나, 단일 책임)는 그 자체로 완성돼 바로 쓰여도 molecule — `BasicInfoForm`(필드 여러 개+제출 로직을 묶은 폼 섹션 전체)이 organism이다.
-- **핵심 원칙 4 — template은 "페이지 전체 배치"이지 organism의 확장판이 아니다(축 A 관련, 원본 그대로).** organism은 페이지 안의 한 구획(section)이고, template은 그 구획들을 모아 **페이지 하나 전체**를 배치한 것 — 원본 정의상 실제 데이터 없이 placeholder 성격 콘텐츠만 다룬다(이 프로젝트에선 "진짜 데이터 없이 props로만 완성된 콘텐츠를 받는다"로 구현). 세부 규칙(순수성, self-fetching 자식 있을 때 opt-out, page.tsx와의 경계)은 `src/ui/components/templates/AGENTS.md` 참고.
+다음 순서로 판정하고, 앞 단계에서 결론이 나면 뒤 단계는 적용하지 않는다.
+
+1. `page.tsx`가 페이지 몸통 전체를 위임하는 컴포넌트인지 확인한다. 맞으면 조합 재료나 동작 수와 무관하게 template이다.
+2. shadcn/Radix CLI 산출물인지 확인한다. 맞으면 내부 복잡도나 동작 수와 무관하게 atom이다.
+3. 우리가 작성한 코드라면 표시, 입력, 검증, 삭제, 탐색처럼 사용자가 인식하는 동작 종류를 센다. 두 종류 이상이면 조합 수와 무관하게 organism이다.
+4. 동작이 한 종류라면 프로젝트 UI 컴포넌트 조합 수를 본다. 조합이 없으면 atom, 하나 이상이면 molecule이다.
+
+| 조건                               | 판정     |
+| ---------------------------------- | -------- |
+| 페이지 몸통 전체를 위임받음        | template |
+| shadcn/Radix CLI 산출물            | atom     |
+| 우리 코드, 조합 0개, 동작 1종      | atom     |
+| 우리 코드, 조합 1개 이상, 동작 1종 | molecule |
+| 우리 코드, 동작 2종 이상           | organism |
+
+props로 받은 핸들러를 그대로 전달하는 상호작용도 동작으로 센다. 예를 들어 라벨 표시와 `onChange` 전달을 함께 하는 `TextField`는 표시와 입력 두 종류의 동작을 가지므로 organism이다. 반대로 CSS grid처럼 무엇을 조합하는지가 아니라 배치 방식만 반복하는 코드는 티어 컴포넌트로 만들지 않고 소비처에 배치 클래스를 둔다.
+
+## 축 B — 공용 여부
+
+축 A로 티어를 정한 다음 물리적 위치를 판단한다. 소비처 수는 직접 import 수가 아니라 최종 렌더되는 라우트 수를 전이적으로 센다.
+
+- 최종 소비 라우트가 2곳 이상이면 `src/ui/components/{tier}/`의 공용 컴포넌트 후보가 된다.
+- 최종 소비 라우트가 1곳이면 해당 라우트의 `_components/`에 둔다. 데이터 페칭, mutation, 도메인 로직을 소유하면 `_containers/`에 둔다.
+- 유일한 직접 소비자가 이미 여러 라우트에서 쓰이는 공용 컴포넌트라면 그 하위 구현도 공용 티어 폴더에 둘 수 있다.
+- `page.tsx`와 `layout.tsx` 소비를 동일하게 라우트 소비로 센다.
+
+atoms, molecules, organisms, templates는 모두 props 기반의 순수한 표현 컴포넌트다. 데이터 페칭, Server Actions, mutation, 도메인 로직을 두지 않는다. 도메인 타입과 리터럴 상수를 참조하기 위한 `@/core/domain` import는 허용한다.
+
+## 현재 판정 예시
+
+| 컴포넌트                    | 실측 근거                             | 판정     |
+| --------------------------- | ------------------------------------- | -------- |
+| `app-image.tsx`             | 프로젝트 UI 조합 0개, 이미지 표시 1종 | atom     |
+| `Alert.tsx`                 | Typography 조합, 상태 메시지 표시 1종 | molecule |
+| `TextField.tsx`             | 라벨·오류 표시와 입력 전달            | organism |
+| `RatingStars.tsx`           | 별점 표시와 입력                      | organism |
+| `LegalDocumentTemplate.tsx` | terms/privacy 페이지 몸통 전체 위임   | template |
+
+## Structure
+
+```text
+src/ui/components/
+├── atoms/       # 외부 산출물 또는 조합 없는 단일 동작 프리미티브
+├── molecules/   # 프로젝트 UI를 조합한 단일 동작 단위
+├── organisms/   # 두 종류 이상의 동작을 묶은 구획
+└── templates/   # 페이지 몸통 전체 구조
+```
+
+각 폴더는 flat 구조와 `index.ts` 배럴을 유지한다. 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
 
 ## 관련 문서
 
-- 컨테이너 승격 규칙(축 B), 셸 조각 배치 규칙, `_components/` 규칙: `src/app/AGENTS.md`
+- 라우트 로컬 `_components/`와 `_containers/`, page/layout 경계: `src/app/AGENTS.md`
+- 공통 배럴 import와 네이밍 규칙: `src/AGENTS.md`
