@@ -5,7 +5,8 @@ import { toast } from "sonner";
 
 import { Badge, Button } from "@/ui/components/atoms";
 
-import { BaseSelect, QuantityStepper } from "@/ui/components/molecules";
+import { BaseSelect } from "@/ui/components/molecules";
+import { QuantityStepper } from "./QuantityStepper";
 import type { Product, PremiumFeature } from "@/core/domain";
 
 import type { CheckoutItem } from "@/core/domain";
