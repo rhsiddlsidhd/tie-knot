@@ -9,7 +9,7 @@ interface QuantityStepperProps {
   id: string;
   value: number;
   min: number;
-  max: number; // 실제 상한(무제한 모드는 소프트 상한이 들어온다 — organisms/ProductOptions.tsx §7 참고)
+  max: number; // 실제 상한(무제한 모드는 소프트 상한이 들어온다 — ProductOptions.tsx 참고)
   onChange: (next: number) => void;
   disabled?: boolean; // fixed 모드에서 true
   unlimited?: boolean; // true면 상한 안내(aria)에 상한을 노출하지 않는다
@@ -20,7 +20,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 /**
  * 순수 controlled 수량 증감 위젯. 범위/모드 파생 로직은 소유하지 않는다 —
- * 호출부(organisms/ProductOptions)가 min/max/value/onChange를 전부 결정한다.
+ * 호출부(ProductOptions)가 min/max/value/onChange를 전부 결정한다.
  */
 const QuantityStepper = ({
   id,

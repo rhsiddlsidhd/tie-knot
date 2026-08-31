@@ -6,7 +6,7 @@ vi.mock("./ProductViewTracker", () => ({
   ProductViewTracker: (): null => null,
 }));
 
-vi.mock("./ProductSummary", () => ({
+vi.mock("../_containers/ProductSummary", () => ({
   ProductSummary: ({ product }: { product: { title: string } }) => (
     <div>{product.title}</div>
   ),
@@ -18,7 +18,7 @@ vi.mock("./ReviewsSection", () => ({
   ),
 }));
 
-vi.mock("@/ui/components/organisms", () => ({
+vi.mock("./ProductFeatures", () => ({
   ProductFeatures: ({ options }: { options: { label: string }[] }) => (
     <div>{options.map((o) => o.label).join(",")}</div>
   ),

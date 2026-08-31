@@ -1,7 +1,7 @@
-import { ProductFeatures } from "@/ui/components/organisms";
 import type { Product, PremiumFeature } from "@/services";
 import type { ReviewListPage, ReviewSortType } from "@/core/domain";
-import { ProductSummary } from "./ProductSummary";
+import { ProductSummary } from "../_containers/ProductSummary";
+import { ProductFeatures } from "./ProductFeatures";
 import { ProductViewTracker } from "./ProductViewTracker";
 import { ReviewsSection } from "./ReviewsSection";
 

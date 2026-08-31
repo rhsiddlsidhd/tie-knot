@@ -44,7 +44,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     ...overrides,
   }) as Product;
 
-describe("ProductOptions — 수량 모드 파생(REQ-4)", () => {
+describe("ProductOptions (상품 상세) — 수량 모드 파생(REQ-4)", () => {
   it("minQuantity===1 && maxQuantity===1이면 '1개' 고정 표시고 stepper가 없다(invitation 회귀 없음)", () => {
     render(
       <ProductOptions

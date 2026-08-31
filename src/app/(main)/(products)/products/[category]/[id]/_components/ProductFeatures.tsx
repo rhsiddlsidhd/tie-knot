@@ -13,7 +13,7 @@ import type { PremiumFeature } from "@/core/domain";
 import clsx from "clsx";
 import { Check, ChevronDown, Palette, Type, Settings, FileText } from "lucide-react";
 
-// 상세 이미지가 이 개수를 넘으면 나머지는 "더보기" 뒤로 접는다 — 청첩장 상세페이지가
+// 상품 상세 이미지가 이 개수를 넘으면 나머지는 "더보기" 뒤로 접는다 — 청첩장 상세페이지가
 // 원래 세로로 긴 이미지 여러 장이라, 다 펼쳐두면 스크롤이 지나치게 길어진다.
 const VISIBLE_IMAGE_COUNT = 1;
 

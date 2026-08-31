@@ -7,4 +7,3 @@ export * from "./CursorPagination";
 export * from "./LegalDocumentTemplate";
 export * from "./Pricing";
 export * from "./ProductCard";
-export * from "./QuantityStepper";

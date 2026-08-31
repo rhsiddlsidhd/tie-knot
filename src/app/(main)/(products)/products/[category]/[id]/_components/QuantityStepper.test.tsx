@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QuantityStepper } from "./QuantityStepper";
 
-describe("QuantityStepper", () => {
+describe("QuantityStepper (상품 상세)", () => {
   it("value/min/max를 받아 입력값을 표시한다", () => {
     render(
       <QuantityStepper id="quantity" value={3} min={1} max={10} onChange={vi.fn()} />,
