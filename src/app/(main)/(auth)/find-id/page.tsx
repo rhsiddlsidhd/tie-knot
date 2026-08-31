@@ -1,4 +1,4 @@
-import { FindIdForm } from "./_components";
+import { FindIdForm } from "./_containers";
 
 export default function FindIdPage() {
   return <FindIdForm />;

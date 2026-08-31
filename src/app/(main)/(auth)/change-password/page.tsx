@@ -1,4 +1,4 @@
-import { UpdatePasswordForm } from "./_components";
+import { UpdatePasswordForm } from "./_containers";
 import React, { Suspense } from "react";
 
 const ResetPassword = () => {

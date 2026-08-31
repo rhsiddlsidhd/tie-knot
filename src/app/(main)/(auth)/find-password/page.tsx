@@ -1,4 +1,4 @@
-import { ForgotPasswordForm } from "./_components";
+import { ForgotPasswordForm } from "./_containers";
 
 import React from "react";
 
