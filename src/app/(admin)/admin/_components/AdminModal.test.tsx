@@ -9,7 +9,7 @@ vi.mock("@/ui/stores", () => ({ useAdminModalStore: useAdminModalStoreMock }));
 vi.mock("@/app/(admin)/admin/products/_components", () => ({
   ProductEditDialog: () => <div>product-edit-dialog</div>,
 }));
-vi.mock("@/app/(admin)/admin/premium-features/_components", () => ({
+vi.mock("@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog", () => ({
   PremiumFeatureDialog: () => <div>premium-feature-dialog</div>,
 }));
 

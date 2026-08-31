@@ -5,7 +5,7 @@ import type { AdminModalState, ModalPropsMap } from "@/ui/stores";
 import { useAdminModalStore } from "@/ui/stores";
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms";
-import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_components";
+import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog";
 
 const modalCopy: Record<
   Exclude<AdminModalState["type"], null>,
