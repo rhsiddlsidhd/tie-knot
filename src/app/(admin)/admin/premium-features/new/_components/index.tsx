@@ -1,0 +1,1 @@
+export { NewPremiumFeatureTemplate } from "./NewPremiumFeatureTemplate";
