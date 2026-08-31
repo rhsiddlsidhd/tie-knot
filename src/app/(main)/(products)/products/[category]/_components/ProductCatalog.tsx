@@ -6,7 +6,8 @@ import {
   useProductFilter,
 } from "@/ui/context/productFilter";
 import React from "react";
-import { ProductFilters, ProductGrid } from "@/ui/components/organisms";
+import { ProductGrid } from "@/ui/components/organisms";
+import { ProductFilters } from "./ProductFilters";
 import type { Product, PremiumFeature } from "@/core/domain";
 
 import type { ProductCategory, SubCategory } from "@/core/domain";

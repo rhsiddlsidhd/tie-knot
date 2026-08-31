@@ -12,7 +12,7 @@ vi.mock("@/ui/hooks", () => ({
   usePremiumFeature: usePremiumFeatureMock,
 }));
 
-vi.mock("@/ui/components/organisms", () => ({
+vi.mock("../_components", () => ({
   ProductCatalog: ({
     products,
     category,
