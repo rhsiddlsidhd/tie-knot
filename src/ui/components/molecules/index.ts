@@ -7,7 +7,6 @@ export * from "./ComboboxField";
 export * from "./CursorPagination";
 export * from "./DateField";
 export * from "./LegalDocumentTemplate";
-export * from "./PageTitle";
 export * from "./Pricing";
 export * from "./ProductCard";
 export * from "./QuantityStepper";

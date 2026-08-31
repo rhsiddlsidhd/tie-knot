@@ -1,54 +1,38 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
 
-const { pushMock, clearOrderMock, usePortOnePaymentMock } = vi.hoisted(() => ({
-  pushMock: vi.fn(),
-  clearOrderMock: vi.fn(),
-  usePortOnePaymentMock: vi.fn(),
+vi.mock("@/adapters/browser/daum", () => ({
+  useDaumPopup: () => ({ address: "", handleDaumAddressPopup: vi.fn() }),
 }));
 
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock }),
-}));
-
-vi.mock("@/actions", () => ({ createOrder: vi.fn() }));
-
-vi.mock("@/ui/stores", () => ({
-  useOrderStore: (
-    selector: (s: { clearOrder: () => void; resumePayment: null }) => unknown,
-  ) => selector({ clearOrder: clearOrderMock, resumePayment: null }),
-}));
-
-vi.mock("@/ui/hooks", () => ({
-  usePortOnePayment: usePortOnePaymentMock,
-  useCheckoutData: () => ({ data: null as unknown, loading: false }),
-  useCheckoutForm: () => ({
-    errors: {},
-    shippingErrors: {},
-    requiresShipping: false,
-    handleSubmit: vi.fn(),
-  }),
-}));
-
-vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
-
-import { toast } from "sonner";
 import { CheckoutForm } from "./CheckoutForm";
 
-describe("CheckoutForm (컨테이너)", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    usePortOnePaymentMock.mockReturnValue({ paymentStatus: "IDLE", triggerPayment: vi.fn() });
+const baseProps = {
+  loading: false,
+  paymentStatus: "IDLE" as const,
+  agreed: false,
+  onAgreedChange: vi.fn(),
+  errorMessage: null as string | null,
+  errors: {},
+  shippingErrors: {},
+  pending: false,
+  onSubmit: vi.fn(),
+};
+
+describe("CheckoutForm (organism)", () => {
+  it("실물 상품 주문이면 배송 카드를 2번으로 보여주고 결제수단은 3번이 된다", () => {
+    render(<CheckoutForm {...baseProps} requiresShipping />);
+
+    expect(screen.getByText("배송 정보")).toBeInTheDocument();
+    const headings = screen.getAllByText(/^[123]$/);
+    expect(headings.map((el) => el.textContent)).toEqual(["1", "2", "3"]);
   });
 
-  it("결제 성공 시 주문 정보를 비우고 /payment/success로 이동한다", () => {
-    render(<CheckoutForm />);
+  it("모바일초대장 주문이면 배송 카드가 없고 결제수단이 2번으로 당겨진다", () => {
+    render(<CheckoutForm {...baseProps} requiresShipping={false} />);
 
-    const { onSuccess } = usePortOnePaymentMock.mock.calls[0][0];
-    onSuccess("merchant-1");
-
-    expect(clearOrderMock).toHaveBeenCalled();
-    expect(toast.success).toHaveBeenCalledWith("결제가 완료되었습니다!");
-    expect(pushMock).toHaveBeenCalledWith("/payment/success?orderId=merchant-1");
+    expect(screen.queryByText("배송 정보")).not.toBeInTheDocument();
+    const headings = screen.getAllByText(/^[12]$/);
+    expect(headings.map((el) => el.textContent)).toEqual(["1", "2"]);
   });
 });
