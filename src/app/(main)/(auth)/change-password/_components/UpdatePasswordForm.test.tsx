@@ -1,29 +1,27 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render } from "@testing-library/react";
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn() }),
-  useSearchParams: () => new URLSearchParams("?t=token-1"),
-}));
-
-vi.mock("@/actions", () => ({
-  updateUserPassword: vi.fn(),
-  clearUserEmailCookie: vi.fn().mockResolvedValue(undefined),
-}));
-
-import { clearUserEmailCookie } from "@/actions";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { UpdatePasswordForm } from "./UpdatePasswordForm";
 
-describe("UpdatePasswordForm (컨테이너)", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+describe("UpdatePasswordForm", () => {
+  it("제출 시 action이 호출된다", async () => {
+    const action = vi.fn();
+    const user = userEvent.setup();
+    render(<UpdatePasswordForm action={action} pending={false} state={null} token="token-1" />);
+
+    await user.type(screen.getByLabelText("비밀번호"), "password1234!A");
+    await user.type(screen.getByLabelText("비밀번호 확인"), "password1234!A");
+    await user.click(screen.getByRole("button", { name: /비밀번호 변경/ }));
+
+    expect(action).toHaveBeenCalled();
   });
 
-  it("언마운트 시 userEmail 쿠키 정리 액션을 호출한다", () => {
-    const { unmount } = render(<UpdatePasswordForm />);
+  it("로그인으로 돌아가는 링크를 보여준다", () => {
+    render(<UpdatePasswordForm action={vi.fn()} pending={false} state={null} token="token-1" />);
 
-    unmount();
-
-    expect(clearUserEmailCookie).toHaveBeenCalled();
+    expect(screen.getByRole("link", { name: "로그인으로 돌아가기" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
   });
 });

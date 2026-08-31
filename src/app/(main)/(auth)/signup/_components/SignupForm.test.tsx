@@ -1,46 +1,68 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-
-const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
-
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushMock }),
-}));
-vi.mock("@/actions", () => ({ signupUser: vi.fn() }));
-vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
-
-const alertMock = vi.fn();
-vi.stubGlobal("alert", alertMock);
-
-import { signupUser } from "@/actions";
 import { SignupForm } from "./SignupForm";
 
-describe("SignupForm (컨테이너)", () => {
+describe("SignupForm", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("회원가입 성공 시 안내 후 /login으로 이동한다", async () => {
-    vi.mocked(signupUser).mockResolvedValue({
-      success: true,
-      data: { message: "회원가입이 완료되었습니다." },
-    });
+  it("약관에 모두 동의하기 전에는 제출 버튼이 비활성화된다", () => {
+    render(<SignupForm action={vi.fn()} pending={false} state={null} />);
+
+    expect(screen.getByRole("button", { name: "회원가입" })).toBeDisabled();
+  });
+
+  it("이용약관/개인정보 모두 동의하면 제출 버튼이 활성화되고, 제출 시 action이 호출된다", async () => {
+    const action = vi.fn();
     const user = userEvent.setup();
-    render(<SignupForm />);
+    render(<SignupForm action={action} pending={false} state={null} />);
 
     await user.click(screen.getByRole("checkbox", { name: /이용약관/ }));
     await user.click(screen.getByRole("checkbox", { name: /개인정보 처리방침/ }));
+
+    const submitButton = screen.getByRole("button", { name: "회원가입" });
+    expect(submitButton).toBeEnabled();
+
     await user.type(screen.getByLabelText("이름"), "홍길동");
     await user.type(screen.getByLabelText("이메일"), "a@b.com");
     await user.type(screen.getByLabelText("전화번호"), "010-1234-5678");
     await user.type(screen.getByLabelText("비밀번호"), "password1234");
     await user.type(screen.getByLabelText("비밀번호 확인"), "password1234");
-    await user.click(screen.getByRole("button", { name: "회원가입" }));
+    await user.click(submitButton);
 
-    await waitFor(() => {
-      expect(pushMock).toHaveBeenCalledWith("/login");
-    });
-    expect(alertMock).toHaveBeenCalledWith("회원가입이 완료되었습니다.");
+    expect(action).toHaveBeenCalled();
+  });
+
+  it("로그인 페이지로 가는 링크를 보여준다", () => {
+    render(<SignupForm action={vi.fn()} pending={false} state={null} />);
+
+    expect(screen.getByRole("link", { name: "로그인" })).toHaveAttribute("href", "/login");
+  });
+
+  it("Google 버튼은 준비 중 상태로 비활성화되고 안내 문구를 보여준다", () => {
+    render(<SignupForm action={vi.fn()} pending={false} state={null} />);
+
+    expect(screen.getByRole("button", { name: /Google/ })).toBeDisabled();
+    expect(screen.getByText("소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.")).toBeInTheDocument();
+  });
+
+  it("이용약관/개인정보 처리방침 링크가 실제 문서 경로로 연결된다", () => {
+    render(<SignupForm action={vi.fn()} pending={false} state={null} />);
+
+    expect(screen.getByRole("link", { name: "이용약관" })).toHaveAttribute("href", "/terms");
+    expect(screen.getByRole("link", { name: "개인정보 처리방침" })).toHaveAttribute(
+      "href",
+      "/privacy",
+    );
+  });
+
+  it("빈 앵커(href=\"#\") 링크가 더 이상 남아있지 않다", () => {
+    const { container } = render(
+      <SignupForm action={vi.fn()} pending={false} state={null} />,
+    );
+
+    expect(container.querySelectorAll('a[href="#"]')).toHaveLength(0);
   });
 });

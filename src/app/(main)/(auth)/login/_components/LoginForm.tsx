@@ -1,52 +1,122 @@
-"use client";
+import Link from "next/link";
+import { Globe } from "lucide-react";
 
-import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { mutate } from "swr";
-import { toast } from "sonner";
+import { Button, TypographyH1, TypographyMuted, Checkbox, Label } from "@/ui/components/atoms";
 
-import { loginUser } from "@/actions";
-import type { APIResponse } from "@/core/domain";
-import type { UserRole } from "@/core/domain";
-import { getFieldError, hasFieldErrors } from "@/core/utils";
-import { LoginForm as PureLoginForm } from "@/ui/components/organisms";
+
+
+import { TextField } from "@/ui/components/organisms";
 import { routes } from "@/core/domain";
-export function LoginForm() {
-  const router = useRouter();
-  const [state, action, pending] = useActionState<
-    APIResponse<{ role: UserRole; email: string; userId: string }>,
-    FormData
-  >(loginUser, null);
+interface LoginFormProps {
+  action: (formData: FormData) => void;
+  pending: boolean;
+  emailError?: string;
+  passwordError?: string;
+}
 
-  useEffect(() => {
-    if (!state) return;
-    if (state.success === true) {
-      mutate(
-        "/api/auth/me",
-        {
-          role: state.data.role,
-          email: state.data.email,
-          userId: state.data.userId,
-        },
-        false,
-      );
-      return router.push(routes.home);
-    } else {
-      if (!hasFieldErrors(state.error)) {
-        toast.error(state.error.message);
-      }
-    }
-  }, [state, router]);
-
-  const emailError = getFieldError(state, "email");
-  const passwordError = getFieldError(state, "password");
-
+export function LoginForm({
+  action,
+  pending,
+  emailError,
+  passwordError,
+}: LoginFormProps) {
   return (
-    <PureLoginForm
-      action={action}
-      pending={pending}
-      emailError={emailError}
-      passwordError={passwordError}
-    />
+    <div className="space-y-6">
+      <div className="space-y-2 text-center lg:text-left">
+        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">로그인</TypographyH1>
+        <TypographyMuted className="text-sm">
+          계정에 로그인하여 청첩장을 만들어보세요
+        </TypographyMuted>
+      </div>
+
+      <form action={action} className="space-y-4">
+        <TextField
+          id="email"
+          name="email"
+          type="email"
+          placeholder="your@email.com"
+          required
+          error={emailError}
+        >
+          이메일
+        </TextField>
+
+        <TextField
+          id="password"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          required
+          error={passwordError}
+        >
+          비밀번호
+        </TextField>
+
+        <div className="flex items-center gap-2">
+          <Checkbox id="remember" name="remember" />
+          <Label
+            htmlFor="remember"
+            className="cursor-pointer text-sm font-normal"
+          >
+            로그인 상태 유지
+          </Label>
+        </div>
+
+        <Button type="submit" className="w-full" size="lg" disabled={pending}>
+          {pending ? "로그인 중..." : "로그인"}
+        </Button>
+      </form>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="border-border w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="bg-background text-muted-foreground px-4">또는</span>
+        </div>
+      </div>
+
+      {/* OAuth 미구현 — 연동 전까지 비활성 안내만 */}
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full bg-transparent"
+        size="lg"
+        disabled
+      >
+        <Globe className="mr-2 h-5 w-5" />
+        Google로 계속하기 (준비 중)
+      </Button>
+      <TypographyMuted className="text-center text-xs">
+        소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.
+      </TypographyMuted>
+
+      <div className="space-y-2 text-center">
+        <TypographyMuted>
+          아직 계정이 없으신가요?{" "}
+          <Link
+            href={routes.signup}
+            className="text-primary font-medium hover:underline"
+          >
+            회원가입
+          </Link>
+        </TypographyMuted>
+        <div className="flex items-center justify-center gap-2 text-sm">
+          <Link
+            href={routes.findId}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            아이디 찾기
+          </Link>
+          <span className="text-muted-foreground">·</span>
+          <Link
+            href={routes.findPw}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            비밀번호 찾기
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

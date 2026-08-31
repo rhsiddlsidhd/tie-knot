@@ -1,4 +1,4 @@
-import { LoginForm } from "./_components";
+import { LoginForm } from "./_containers";
 import React from "react";
 
 const LoginPage = () => {
