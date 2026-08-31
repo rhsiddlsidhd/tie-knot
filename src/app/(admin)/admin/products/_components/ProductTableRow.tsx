@@ -1,7 +1,6 @@
 import { Eye, Heart, ShoppingCart } from "lucide-react";
-import { Badge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
+import { AppImage, Badge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
 import type { Product } from "@/services";
-import { CloudImage } from "@/ui/components/molecules";
 import { ProductTableRowAction } from "./ProductTableRowAction";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
 import type { ProductCategory, SubCategory } from "@/core/domain";
@@ -17,7 +16,7 @@ export function ProductTableRow({ product, view = "active" }: ProductTableRowPro
     <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-4 py-3">
         <div className="relative h-16 w-16 overflow-hidden rounded">
-          <CloudImage
+          <AppImage
             src={product.thumbnail}
             sizes="128px"
             alt={`${product.title} 이미지`}

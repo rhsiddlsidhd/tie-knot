@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { CloudImage } from "@/ui/components/molecules";
-import { Button, Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms";
+import { AppImage, Button, Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";
@@ -37,7 +36,7 @@ export function GallerySection({
             onClick={() => openLightbox(index)}
             className="bg-muted relative aspect-square w-full overflow-hidden rounded-lg transition-opacity hover:opacity-90"
           >
-            <CloudImage
+            <AppImage
               src={src}
               alt={`Gallery image ${index + 1}`}
               sizes="(max-width: 512px) 50vw, 320px"
@@ -53,7 +52,7 @@ export function GallerySection({
               <DialogTitle>갤러리 이미지 보기</DialogTitle>
             </VisuallyHidden>
             <div className="relative h-[70vh]">
-              <CloudImage
+              <AppImage
                 src={images[currentIndex] || ""}
                 alt={`Gallery image ${currentIndex + 1}`}
                 sizes="(max-width)100vw , 512px"

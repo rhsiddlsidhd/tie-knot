@@ -1,8 +1,10 @@
 "use client";
+
 import { cn } from "@/core/utils";
+import { ImageOff } from "lucide-react";
 import type { ImageLoaderProps, StaticImageData } from "next/image";
 import Image from "next/image";
-import React from "react";
+import { useState } from "react";
 
 const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {
   if (typeof src !== "string" || !src.includes("res.cloudinary.com")) {
@@ -13,26 +15,42 @@ const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {
   return src.replace("/upload/", `/upload/${params.join(",")}/`);
 };
 
-interface CloudImageProps {
+interface AppImageProps {
   src: string | StaticImageData;
   alt?: string;
   sizes?: string;
   className?: string;
-  priority?: boolean;
+  preload?: boolean;
   loading?: "eager" | "lazy";
-  onError?: () => void;
 }
 
-const CloudImage = ({
+const AppImage = ({
   src,
   alt = "",
   sizes = "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw",
   className,
-  priority = false,
+  preload = false,
   loading,
-  onError,
-}: CloudImageProps) => {
-  if (!src) return null;
+}: AppImageProps) => {
+  const [failedSrc, setFailedSrc] = useState<AppImageProps["src"] | null>(null);
+
+  if (!src || failedSrc === src) {
+    return (
+      <div
+        role="img"
+        aria-label={alt || "이미지를 불러올 수 없습니다"}
+        className={cn(
+          "bg-muted flex h-full w-full items-center justify-center",
+          className,
+        )}
+      >
+        <ImageOff
+          aria-hidden="true"
+          className="text-muted-foreground h-6 w-6"
+        />
+      </div>
+    );
+  }
 
   return (
     <Image
@@ -41,12 +59,12 @@ const CloudImage = ({
       sizes={sizes}
       fill
       alt={alt}
-      className={cn(`object-cover`, className)}
-      priority={priority}
+      className={cn("object-cover", className)}
+      preload={preload}
       loading={loading}
-      onError={onError}
+      onError={() => setFailedSrc(src)}
     />
   );
 };
 
-export { CloudImage };
+export { AppImage };

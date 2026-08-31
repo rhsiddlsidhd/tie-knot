@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import {
+  AppImage,
   Badge,
   Button,
   Card,
@@ -18,7 +19,7 @@ import {
   TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import { Alert, CloudImage } from "@/ui/components/molecules";
+import { Alert } from "@/ui/components/molecules";
 import { useCopy } from "@/ui/hooks";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
 import type { OrderListItem, OrderStatus } from "@/core/domain";
@@ -137,7 +138,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
         <div className="flex items-start justify-between gap-6">
           <div className="flex min-w-0 flex-1 items-start gap-4">
             <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg">
-              <CloudImage
+              <AppImage
                 src={product.thumbnail ?? "#"}
                 alt={product.title}
                 sizes="128px"

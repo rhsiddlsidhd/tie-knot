@@ -3,8 +3,7 @@ import { formatInTimeZone } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 
 import type { HeroSectionProps } from "../_utils/heroSection.mapper";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import { CloudImage } from "@/ui/components/molecules";
+import { AppImage, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { ScrollIndicator } from "./ScrollIndicator";
 export function HeroSection({
   groomName,
@@ -19,11 +18,11 @@ export function HeroSection({
     <section className="relative flex h-screen items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
-        <CloudImage
+        <AppImage
           src={thumbnailImage}
           alt="inivitation main Thumbnail"
           sizes="(max-width: 768px) 100vw, 512px"
-          priority={true}
+          preload={true}
         />
         <div className="absolute inset-0 bg-black/40" />
       </div>
