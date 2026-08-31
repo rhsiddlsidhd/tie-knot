@@ -10,7 +10,6 @@ export * from "./PersonValueCard";
 export * from "./ProductFeatures";
 export * from "./ProductGrid";
 export * from "./ProductOptions";
-export * from "./ProductRegistrationForm";
 export * from "./ProductSummary";
 export * from "./RadioField";
 export * from "./RatingStars";

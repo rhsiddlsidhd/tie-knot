@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { getAllPremiumFeatureService, verifySession } from "@/services";
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import { ProductRegistrationForm } from "./_components";
+import { ProductRegistrationForm } from "./_containers";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { routes } from "@/core/domain";
