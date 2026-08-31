@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/ui/components/atoms";
-import { ProductCard } from "@/ui/components/organisms";
+import { ProductCard } from "@/ui/components/molecules";
 import type { Product } from "@/services";
 import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain";
 

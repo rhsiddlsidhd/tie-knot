@@ -4,8 +4,8 @@ import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { SearchEmptyState } from "./SearchEmptyState";
 import { useDebouncedValue, useProductSearch } from "@/ui/hooks";
-import { TypographyMuted } from "@/ui/components/atoms";
-import { Spinner, Alert } from "@/ui/components/molecules";
+import { Spinner, TypographyMuted } from "@/ui/components/atoms";
+import { Alert } from "@/ui/components/molecules";
 import { ProductGrid } from "@/ui/components/organisms";
 import { initialFilterState } from "@/ui/context/productFilter";
 

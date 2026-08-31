@@ -1,7 +1,7 @@
 "use client";
 
 import { BottomActionBar } from "@/ui/components/organisms";
-import { Spinner } from "@/ui/components/molecules";
+import { Spinner } from "@/ui/components/atoms";
 import { Save } from "lucide-react";
 import type { PayStatus } from "@/core/domain";
 interface CheckoutSubmitBarProps {
