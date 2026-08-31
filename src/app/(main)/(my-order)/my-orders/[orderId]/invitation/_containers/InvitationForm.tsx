@@ -1,7 +1,7 @@
 "use client";
 
 import { useInvitationForm } from "@/ui/hooks";
-import { InvitationFormView } from "@/ui/components/organisms";
+import { InvitationFormView } from "../_components/InvitationFormView";
 
 export function InvitationForm() {
   const formState = useInvitationForm();

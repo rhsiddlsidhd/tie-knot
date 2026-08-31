@@ -1,7 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import { getOwnedInvitationByOrder, verifySession } from "@/services";
-import { InvitationForm, InvitationStatusControls } from "./_components";
+import { InvitationStatusControls } from "./_components";
+import { InvitationForm } from "./_containers";
 
 export default async function Page({ params }: { params: Promise<{ orderId: string }> }) {
   const { orderId } = await params;
