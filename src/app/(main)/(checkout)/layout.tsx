@@ -1,4 +1,4 @@
-import { PageTitle } from "@/ui/components/molecules";
+import { PageTitle } from "./_components";
 import { OrderSummary } from "./_containers";
 import React from "react";
 

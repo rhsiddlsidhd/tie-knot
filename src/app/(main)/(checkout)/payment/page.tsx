@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { CheckoutForm } from "./_components";
+import { CheckoutForm } from "./_containers";
 import { verifySession } from "@/services";
 import React from "react";
 
