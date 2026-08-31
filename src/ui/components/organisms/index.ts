@@ -5,8 +5,6 @@ export * from "./ClipboardButton";
 export * from "./ComingSoonTemplate";
 export * from "./InvitationFormView";
 export * from "./CoupleInfoSection";
-export * from "./CreateGuestbookForm";
-export * from "./DeleteGuestbookForm";
 export * from "./ErrorFallback";
 export * from "./FormField";
 export * from "./ImageField";

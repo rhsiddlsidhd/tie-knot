@@ -1,109 +1,89 @@
-"use client";
+import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms";
 
-import { useActionState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { SwitchField, TextField } from "@/ui/components/organisms";
 
-import { createGuestbook } from "@/actions";
+import { cn } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
-import { routes } from "@/core/domain";
-import { parseGuestbookFormData } from "@/core/schemas";
-import { hasFieldErrors } from "@/core/utils";
-import { useGuestbookDemo } from "@/ui/context/guestbookDemo";
-import { useGuestbookModalStore } from "@/ui/stores";
-import { CreateGuestbookForm as PureCreateGuestbookForm } from "@/ui/components/organisms";
-interface Payload {
+import { getFieldError } from "@/core/utils";
+
+interface CreateGuestbookFormProps {
   publicKey: string;
+  action: (formData: FormData) => void;
+  pending: boolean;
+  state: APIResponse<{ message: string }> | null;
 }
 
-const isPayload = (payload: unknown): payload is Payload => {
-  if (!payload) return false;
-  if (
-    typeof payload === "object" &&
-    "publicKey" in payload &&
-    typeof payload.publicKey === "string"
-  )
-    return true;
-  return false;
-};
-
-export function CreateGuestbookForm({ payload }: { payload: unknown }) {
-  const publicKey = isPayload(payload) ? payload.publicKey : null;
-  const isDemo = publicKey === routes.preview.samplePublicKey;
-
-  // 아래 hook 4개는 payload 유효성과 무관하게 항상 호출된다 — 유효성 검사(throw)는
-  // 맨 아래로 미뤄, 렌더마다 호출되는 hook 개수가 달라지는 걸 막는다.
-  const closeModal = useGuestbookModalStore((state) => state.closeModal);
-  const router = useRouter();
-  const [, dispatchDemo] = useGuestbookDemo();
-
-  // 데모 페이지에서는 실제 createGuestbook Server Action/DB를 호출하지 않는다 —
-  // 실제 Action과 같은 파싱+검증(parseGuestbookFormData)을 거친 뒤 Context에만
-  // 항목을 추가한다.
-  const createDemoGuestbook = async (
-    _prev: null,
-    formData: FormData,
-  ): Promise<APIResponse<{ message: string }>> => {
-    const parsed = parseGuestbookFormData(formData);
-    if (!parsed.success) {
-      return {
-        success: false,
-        error: {
-          category: "VALIDATION",
-          message: "입력값을 확인해주세요",
-          fieldErrors: parsed.error,
-        },
-      };
-    }
-
-    dispatchDemo({
-      type: "ADD_ENTRY",
-      payload: {
-        author: parsed.data.author,
-        message: parsed.data.message,
-        password: parsed.data.password,
-      },
-    });
-
-    return {
-      success: true,
-      data: { message: "방명록 작성이 완료되었습니다." },
-    };
-  };
-
-  const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
-    FormData
-  >(isDemo ? createDemoGuestbook : createGuestbook, null);
-
-  useEffect(() => {
-    if (!state) return;
-    if (state.success === true) {
-      toast.message(state.data.message);
-      closeModal();
-      if (!isDemo) return router.refresh();
-    } else {
-      if (!hasFieldErrors(state.error)) {
-        toast.error(state.error.message);
-      }
-    }
-  }, [state, router, closeModal, isDemo]);
-
-  if (!publicKey) throw new Error("CreateGuestbookForm payload is required");
+export function CreateGuestbookForm({
+  publicKey,
+  action,
+  pending,
+  state,
+}: CreateGuestbookFormProps) {
+  const authorError = getFieldError(state, "author");
+  const passwordError = getFieldError(state, "password");
 
   return (
-    <>
-      <PureCreateGuestbookForm
-        publicKey={publicKey}
-        action={action}
-        pending={pending}
-        state={state}
-      />
-      {isDemo && (
-        <p className="text-muted-foreground text-center text-xs">
-          데모 페이지의 방명록은 저장되지 않습니다.
-        </p>
-      )}
-    </>
+    <form action={action} className="space-y-4">
+      <DialogHeader>
+        <DialogTitle>방명록 작성</DialogTitle>
+        <DialogDescription>소중한 축하 메시지를 남겨주세요.</DialogDescription>
+      </DialogHeader>
+
+      <input type="hidden" name="publicKey" value={publicKey} />
+
+      <TextField
+        name="author"
+        placeholder="이름을 입력하세요."
+        id="author"
+        type="text"
+        required
+        error={authorError}
+      >
+        이름
+      </TextField>
+
+      <TextField
+        type="password"
+        name="password"
+        id="password"
+        placeholder="비밀번호를 입력하세요."
+        error={passwordError}
+      >
+        비밀번호
+      </TextField>
+
+      <div className="space-y-2">
+        <label htmlFor="message" className="text-sm font-medium">
+          메시지
+        </label>
+        <textarea
+          name="message"
+          id="message"
+          placeholder="메시지를 입력하세요."
+          rows={5}
+          required
+          className={cn(
+            "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+            "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+          )}
+        />
+      </div>
+
+      <SwitchField id="isPrivate" name="isPrivate">
+        비밀글
+      </SwitchField>
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">
+            취소
+          </Button>
+        </DialogClose>
+        <Button type="submit" disabled={pending}>
+          {pending ? "전송 중..." : "축하 글 전달하기"}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }
