@@ -1,7 +1,8 @@
 "use client";
 
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import { BasicInfoForm, ChangePasswordForm } from "@/ui/components/organisms";
+import { BasicInfoForm } from "./BasicInfoForm";
+import { ChangePasswordForm } from "./ChangePasswordForm";
 import { Camera } from "lucide-react";
 
 interface MyProfileTemplateProps {
