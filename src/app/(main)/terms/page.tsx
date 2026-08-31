@@ -1,4 +1,4 @@
-import { LegalDocumentTemplate } from "@/ui/components/molecules";
+import { LegalDocumentTemplate } from "@/ui/components/templates";
 import { TERMS_SECTIONS, TERMS_EFFECTIVE_DATE } from "./_constants";
 
 // 법무 미검수 초안 — 서비스 오픈 전 검토 필요.

@@ -1,4 +1,5 @@
 export * from "./AddressField";
+export * from "./BankField";
 export * from "./BottomActionBar";
 export * from "./ClipboardButton";
 export * from "./ComingSoonTemplate";
