@@ -7,7 +7,7 @@ vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
 vi.mock("./UserAccountNav", () => ({
   UserAccountNav: () => <div>account-nav</div>,
 }));
-vi.mock("@/ui/components/molecules", () => ({
+vi.mock("./LoginEntryButton", () => ({
   LoginEntryButton: () => <div>login-entry</div>,
 }));
 

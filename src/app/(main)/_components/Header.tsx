@@ -1,5 +1,5 @@
 import { AuthButtons } from "./AuthButtons";
-import { MobileNav } from "@/ui/components/organisms";
+import { MobileNav } from "./MobileNav";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";

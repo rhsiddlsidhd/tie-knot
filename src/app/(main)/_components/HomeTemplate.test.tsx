@@ -2,9 +2,13 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/core/domain";
 
-vi.mock("@/ui/components/organisms", () => ({
+vi.mock("./EcommerceHero", () => ({
   EcommerceHero: () => <div>hero</div>,
+}));
+vi.mock("./LiveDemoSection", () => ({
   LiveDemoSection: () => <div>live-demo</div>,
+}));
+vi.mock("@/ui/components/molecules", () => ({
   ProductCard: ({ product }: { product: Product }) => (
     <div>card-{product._id}</div>
   ),

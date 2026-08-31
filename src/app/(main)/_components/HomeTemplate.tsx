@@ -1,5 +1,6 @@
-import { EcommerceHero, LiveDemoSection } from "@/ui/components/organisms";
 import type { Product } from "@/services";
+import { EcommerceHero } from "./EcommerceHero";
+import { LiveDemoSection } from "./LiveDemoSection";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 import { PopularProductsSection } from "./PopularProductsSection";
 import type { AvailableSubCategory } from "@/core/domain";
