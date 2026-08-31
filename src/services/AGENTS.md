@@ -54,11 +54,6 @@ src/services/
 - **트랜잭션 안에서 `Promise.all`류로 연산을 병렬 실행하지 않는다** — mongoose 공식 문서: "Running operations in parallel is not supported during a transaction... is undefined behaviour and should be avoided." 순차로(`await`를 하나씩) 실행한다.
 - **롤백은 DB 쓰기 되돌리기만 다룬다 — 외부 API 호출 같은 비-DB 부수효과는 트랜잭션 경계 안에 넣지 않는다.** `syncPayment`는 PortOne을 조회만 하고(쓰기 없음) 그 결과를 트랜잭션 시작 전에 이미 받아온 뒤 DB 쓰기만 트랜잭션으로 묶으므로 이 조건을 만족한다 — 트랜잭션 도중 외부 API에 실제로 쓰기 요청을 보내야 하는 경우가 생기면(아직 없음) DB 롤백만으로 부족해 별도 보상 로직이 필요해진다는 것을 그 시점에 재검토한다(가정만으로 지금 보상 로직 자리를 미리 만들지 않는다).
 
-## Gotchas
-
-- `requireAuth()`는 `getAuth()`를 감싸서 세션 없으면 `AppError(UNAUTHENTICATED)`를 throw하는 얇은 헬퍼다 — HTTP status(401)는 여기서 모른다, 각 채널 공용 핸들러가 UNAUTHENTICATED를 자기 형태(route.ts는 401 Response, Server Action은 `ErrorPayload`)로 번역한다. 인증이 필수인 Route Handler·Server Action 둘 다 세션 검증에 이 함수를 공유한다(`src/app/api/AGENTS.md` Gotchas 참고).
-- mongoose에 `mongoose.set('transactionAsyncLocalStorage', true)` 글로벌 옵션이 있다(설치된 버전 8.20.3에 실재 확인) — 켜면 트랜잭션 콜백 안의 모든 연산에 `session`을 자동 주입해 위 "session 빠뜨림" 실수 자체를 없앤다. 지금은 안 켠다 — 트랜잭션을 쓰는 지점이 `syncPayment` 하나뿐이라 켰을 때의 영향 범위(다른 서비스 함수들의 기존 동작)를 실제로 검증할 근거가 부족하다. 트랜잭션 쓰는 지점이 늘어나 session 누락 실수가 반복되면 그때 켤지 재검토한다(가정만으로 미리 켜지 않는다).
-
 ## References
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.

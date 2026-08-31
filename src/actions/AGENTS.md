@@ -29,12 +29,6 @@ src/actions/
 - Client Component에서 직접 호출할 Server Action을 컴포넌트 파일 안에 인라인으로 정의하지 않는다 — Client Component는 `"use server"`가 선언된 별도 파일의 export만 import해 호출할 수 있다(인라인 함수 레벨 `"use server"`는 Server Component 전용).
 - `useActionState`로 연결되는 액션의 인자 순서를 `(prevState, formData)` 밖으로 바꾸지 않는다 — 이 훅의 계약이 이 순서를 요구한다.
 
-## Gotchas
-
-- `"use server"` 파일이라 배럴(`index.ts`)로 묶여도 클라이언트엔 실제 코드 대신 RPC 참조만 내려가서 다른 액션의 서버 전용 의존성(mongodb/bcrypt 등)이 새지 않는다.
-- 클라이언트에서 여러 Server Action을 `Promise.all`로 동시에 트리거해도 병렬로 실행되지 않는다 — Next.js가 클라이언트당 순차 디스패치(sequential dispatch)하므로 두 번째 액션은 첫 번째가 끝난 뒤 시작된다. 진짜 병렬 처리가 필요하면 액션 하나 안에서 처리하거나 Route Handler를 쓴다.
-- CSRF 체크(Origin/Host 대조)·요청 본문 1MB 제한·클로저 값 암호화는 프레임워크가 자동으로 처리한다 — 액션 안에 직접 구현하지 않는다.
-
 ## References
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.

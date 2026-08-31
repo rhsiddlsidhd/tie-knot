@@ -32,11 +32,6 @@ src/ui/
 - `fetcher` 밖에서 client-side fetch를 직접 만들지 않는다 — envelope 파싱/에러 정규화가 `fetcher`에 집중돼있으므로 우회하면 각자 다른 파싱 로직을 재구현하게 된다. GET 조회는 `useSWR`+`fetcher`, mutation은 Server Action이라 클라이언트에 그 외 fetch가 없다.
 - 서버 전용 코드(DB 드라이버, `next/headers` 등)를 이 트리에 두지 않는다 — 새 서버 전용 코드는 `src/`.
 
-## Gotchas
-
-- 서비스 레이어가 던지는 에러 타입(`src/core/types/error.ts`)은 이 경계 + 서비스 레이어 전용이다 — 서비스 함수가 이미 이 타입을 던지는 경우 Server Action이 받아서 리턴값으로 번역한다(`src/actions/AGENTS.md` Gotchas 참고).
-- 세션 토큰은 Bearer 헤더가 아니라 httpOnly 쿠키로 전달된다(목표 설계·트레이드오프는 `docs/security/page-access-control.md` "인증 토큰" 참고) — `fetcher`는 토큰을 다루지 않는다(쿠키가 동일 origin이라 자동으로 실림), 클라이언트도 토큰 값을 들고 있지 않는다(`useAuth.ts`가 `useSWR`로 노출하는 세션도 role/email/userId 같은 파생 정보만 담는다).
-
 ## References
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.
