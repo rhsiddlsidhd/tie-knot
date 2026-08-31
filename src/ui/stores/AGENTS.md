@@ -2,7 +2,7 @@
 
 > Last updated: 2026-08-26
 > 이 폴더는 프로젝트 고유 선택 — 전역 클라이언트 상태(Zustand) 레이어.
-> **목표 설계, 마이그레이션 진행 전** — 아래 Critical Convention은 공식 가이드 기준 목표 아키텍처다. 현재 코드는 아직 이 형태가 아니다(Gotchas 참고). 문서를 먼저 확정하고 이 문서 기준으로 코드를 리팩토링한다.
+> **목표 설계, 마이그레이션 진행 전** — 아래 Critical Convention은 공식 가이드 기준 목표 아키텍처다. 현재 코드는 아직 이 형태가 아니다. 문서를 먼저 확정하고 이 문서 기준으로 코드를 리팩토링한다.
 
 ## Overview
 
@@ -32,13 +32,6 @@ src/ui/stores/
 - **여러 필드를 객체/배열로 한 번에 select할 땐 `useShallow`(`zustand/react/shallow`)로 감싼다** — v5부터 selector 결과의 얕은 비교가 자동이 아니다, 감싸지 않으면 매 렌더마다 새 객체/배열이 만들어져 selector가 매번 다른 값으로 보여 리렌더가 안 걸러진다(공식 문서 "Selecting multiple state slices" 참고).
 - 액션 안에서 현재 상태를 읽어야 하면 클로저 대신 `get()`을 쓴다 — `(set, get) => ({ ... })`(공식 문서 "Read from state in actions"). `set`은 기본적으로 얕은 merge라 일부 필드만 갱신할 땐 나머지를 직접 스프레드할 필요 없다 — 전체 교체가 필요할 때만 `set(newState, true)`(두 번째 인자)를 쓴다, 이때 다른 슬라이스 필드까지 날아갈 수 있으니 결합 store에선 특히 주의(공식 문서 "Overwriting state").
 - 전부 named export로 통일한다 — `src/AGENTS.md`의 `src/` 전체 default export 금지 규칙 참고.
-
-## Gotchas
-
-- **지금 코드는 위 목표 아키텍처로 아직 마이그레이션되지 않았다** — `order.store.ts`/`admin.modal.store.ts`/`guestbook.modal.store.ts` 3개가 각자 전역 `create()`(slices 아님, Context 아님)로 분리돼있다. 실제 위험은 낮다 — 셋 다 Client Component 전용으로만 쓰이고(RSC/Server Action에서 import 없음, grep 확인됨) 초기값도 고정값(`isOpen: false` 등)이라 요청 간 상태 누수 시나리오가 실질적으로 없다. 그래도 공식 권장과는 다른 상태이니 다음 리팩토링 대상.
-- 결합 store 하나로 합치면 Provider를 **어디까지 감싸야 하는지**가 새로운 문제가 된다 — `admin-modal` 슬라이스는 `/admin` 라우트에서만, `guestbook-modal`은 `/preview`에서만, `order`는 `/checkout`·`/my-orders`·`/products`에서만 쓰인다. 세 도메인이 라우트를 공유하지 않으므로 Provider를 root layout까지 올려야 전부 커버되는데, 그러면 그 도메인을 안 쓰는 페이지도 슬라이스 인스턴스 생성 비용을 진다(가벼운 비용이지만 트레이드오프는 있다).
-- `order.store.ts`만 zustand `persist` 미들웨어(sessionStorage)를 씀 — 새로고침에도 유지돼야 하는 상태(주문 진행 중 데이터)라 그런 것으로 보인다. 결합 store로 합친 뒤엔 `persist`의 `partialize`로 `order` 슬라이스만 골라 저장해야 한다(위 Critical Convention).
-- 지금 `admin.modal.store.ts`/`guestbook.modal.store.ts`는 curried `create<State>()(...)` 형태가 아니다(`order.store.ts`만 미들웨어 때문에 curried) — 이것도 리팩토링 대상.
 
 ## 관련 문서
 

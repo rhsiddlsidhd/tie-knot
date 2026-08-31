@@ -25,10 +25,6 @@ src/ui/context/
 - 도메인 폴더 안 파일은 `type.ts`/`reducer.ts`로 고정한다 — 폴더명이 이미 도메인을 특정하므로 파일명에 도메인명을 반복하지 않는다(`productFilter/productFilterType.ts` 금지).
 - Provider/hook은 reducer.ts에서 `createStateContext` 호출 결과로 export한다 — 별도 `provider.tsx` 파일로 쪼개지 않는다(지금까지는 파일 1개로 충분했음).
 
-## Gotchas
-
-- 없음.
-
 ## 관련 문서
 
 - 전역 상태(Zustand)와의 경계: `src/ui/stores/AGENTS.md` — 앱 전체 범위면 Context가 아니라 Zustand(`src/ui/stores/`)로 간다.

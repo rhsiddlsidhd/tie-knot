@@ -25,10 +25,6 @@ src/app/api/
 - Route Handler 안에서 `updateTag()`를 호출하지 않는다 — 공식 문서: `updateTag`는 Server Action 전용이며 Route Handler에서 호출하면 에러가 던져진다. Route Handler에서 캐시를 무효화해야 하면 `revalidateTag`/`revalidatePath`를 쓴다.
 - 응답은 `src/boundary.ts`의 `routeSuccess`(성공)/`routeError`(에러)로만 만든다 — `NextResponse.json(...)`/`Response.json(...)`을 route.ts 안에서 직접 호출하지 않는다. Server Action은 이 계약 대상이 아니다(예상된 실패를 이 envelope 없이 plain 객체로 직접 리턴, `actionError` 사용 — `src/actions/AGENTS.md` 참고). `routeSuccess`/`routeError`가 뭘 하는지는 `src/AGENTS.md`(Key Files), 왜 두 채널이 갈라지는지는 `docs/architecture/error-handling.md` §채널 분리 규칙 참고.
 
-## Gotchas
-
-- 인증이 필요한 Route Handler는 Bearer 헤더를 직접 파싱하지 않고 `services/auth.ts`의 `requireAuth()`를 호출한다(세션 없으면 401 throw) — `couple-info`/`order/create`가 이 패턴을 따른다. `kakaomap`의 `Authorization` 헤더는 별개(외부 Kakao API 인증용)라 해당 없음.
-
 ## References
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.
