@@ -1,7 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import { ProductCatalog } from "./_containers";
+import { ProductCatalogTemplate } from "./_components";
 import { getPublicProductsService } from "@/services";
 import { getAvailableSubCategories, isProductCategory } from "@/core/utils";
 import { productCategoryLabels } from "@/core/domain";
@@ -33,27 +32,11 @@ export default async function ProductsPage({
   const currentCategoryLabel = productCategoryLabels[category];
 
   return (
-    <main className="bg-background min-h-screen">
-      {/* <Header /> */}
-      <div className="container mx-auto px-4 pt-24 pb-16">
-        <div className="mx-auto max-w-7xl">
-          {/* Page Header */}
-          <div className="mb-12 text-center">
-            <TypographyH1 className="mb-4 text-4xl font-bold text-balance md:text-5xl">
-              {currentCategoryLabel}
-            </TypographyH1>
-            <TypographyMuted>
-              당신의 스타일에 맞는 완벽한 {currentCategoryLabel} 상품을
-              찾아보세요
-            </TypographyMuted>
-          </div>
-          <ProductCatalog
-            products={products}
-            category={category}
-            initialSubCategory={initialSubCategory}
-          />
-        </div>
-      </div>
-    </main>
+    <ProductCatalogTemplate
+      products={products}
+      category={category}
+      categoryLabel={currentCategoryLabel}
+      initialSubCategory={initialSubCategory}
+    />
   );
 }
