@@ -2,9 +2,8 @@ import { BasicInfoSection } from "./BasicInfoSection";
 import { CoupleInfoSection } from "./CoupleInfoSection";
 import { ParentsInfoSection } from "./ParentsInfoSection";
 import { ImagesSection } from "./ImagesSection";
-import { BottomActionBar } from "./BottomActionBar";
-import { Progress } from "../atoms/progress";
-import { Skeleton } from "../atoms/skeleton";
+import { BottomActionBar } from "@/ui/components/organisms";
+import { Progress, Skeleton } from "@/ui/components/atoms";
 import { Save } from "lucide-react";
 import type { useInvitationForm } from "@/ui/hooks";
 
