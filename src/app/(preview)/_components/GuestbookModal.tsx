@@ -8,8 +8,8 @@ import { Dialog, DialogContent } from "@/ui/components/atoms";
 import { ViewContact } from "./ViewContact";
 import { cn } from "@/core/utils";
 import clsx from "clsx";
-import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
-import { CreateGuestbookForm } from "./CreateGuestbookForm";
+import { CreateGuestbookForm } from "../_containers/CreateGuestbookForm";
+import { DeleteGuestbookForm } from "../_containers/DeleteGuestbookForm";
 
 const GUESTBOOK: Record<
   GuestbookModalType,
