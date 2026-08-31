@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductCard } from "@/ui/components/organisms";
+import { ProductCard } from "@/ui/components/molecules";
 
 import { useVisibleProducts } from "@/ui/hooks";
 import { Button } from "@/ui/components/atoms";

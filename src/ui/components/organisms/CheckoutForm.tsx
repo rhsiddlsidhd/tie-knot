@@ -3,7 +3,7 @@ import { AlertCircle } from "lucide-react";
 import type { PayStatus } from "@/core/domain";
 import type { BuyerInfo, ShippingInfo } from "@/core/schemas";
 
-import { Spinner } from "@/ui/components/molecules";
+import { Spinner } from "@/ui/components/atoms";
 import { PaymentPendingOverlay } from "@/app/(main)/(checkout)/payment/_components/PaymentPendingOverlay";
 import { TypographySmall, TypographyMuted } from "@/ui/components/atoms";
 import { BuyerInfoCard } from "@/app/(main)/(checkout)/payment/_components/BuyerInfoCard";

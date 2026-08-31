@@ -5,10 +5,10 @@ import {
   Button,
   Card,
   CardContent,
+  Spinner,
   TypographyH1,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import { Spinner } from "@/ui/components/molecules";
 
 interface PaymentResultTemplateProps {
   errorMessage: string | null;
