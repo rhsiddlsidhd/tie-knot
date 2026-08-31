@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { routes } from "@/core/domain";
-import { PremiumFeatureRegistrationForm } from "./_components";
+import { PremiumFeatureRegistrationForm } from "./_containers";
 import { Button, TypographyH1, TypographyMuted, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms";
 import { verifySession } from "@/services";
 

@@ -12,8 +12,6 @@ export * from "./ImagePreviewItem";
 export * from "./ImagesSection";
 export * from "./ParentsInfoSection";
 export * from "./PersonValueCard";
-export * from "./PremiumFeatureDialog";
-export * from "./PremiumFeatureRegistrationForm";
 export * from "./ProductCatalog";
 export * from "./ProductFeatures";
 export * from "./ProductFilters";
