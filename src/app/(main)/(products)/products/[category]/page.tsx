@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import { ProductCatalog } from "../_components";
+import { ProductCatalog } from "./_containers";
 import { getPublicProductsService } from "@/services";
 import { getAvailableSubCategories, isProductCategory } from "@/core/utils";
 import { productCategoryLabels } from "@/core/domain";
