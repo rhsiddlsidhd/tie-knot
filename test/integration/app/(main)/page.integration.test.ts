@@ -19,7 +19,7 @@ import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import type * as ServicesModule from "@/services";
 import { dbConnect } from "@/db";
-import { buildProductInput, clearCollections } from "@testing/support";
+import { buildProductInput, clearCollections } from "@test/support";
 import { ProductModel } from "@/models";
 import { POPULAR_PRODUCTS_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
@@ -44,7 +44,7 @@ import {
   getPopularProductsService,
   getAvailableSubCategoriesService,
 } from "@/services";
-import page from "./page";
+import page from "@/app/(main)/page";
 
 // product.service.test.ts / PopularProductsSection.integration.test.tsx와 동일한 헬퍼.
 const likeNTimes = async (productId: string, n: number) => {

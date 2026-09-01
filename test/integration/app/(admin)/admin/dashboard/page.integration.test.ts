@@ -25,7 +25,7 @@ import {
   buildProductInput,
   buildUserInput,
   clearCollections,
-} from "@testing/support";
+} from "@test/support";
 import { OrderModel, ProductModel } from "@/models";
 
 const { authState } = vi.hoisted(() => ({
@@ -60,7 +60,7 @@ import {
   verifySession,
 } from "@/services";
 import { UserModel } from "@/models";
-import page from "./page";
+import page from "@/app/(admin)/admin/dashboard/page";
 
 describe("(admin)/admin/dashboard/page — 통합(DB~page.tsx 데이터 배선)", () => {
   beforeEach(async () => {

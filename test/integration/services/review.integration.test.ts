@@ -6,18 +6,18 @@ import {
   buildProductInput,
   buildUserInput,
   clearCollections,
-} from "@testing/support";
+} from "@test/support";
 import type { AppError } from "@/core/domain";
 import { OrderModel, ProductModel, ReviewModel, UserModel } from "@/models";
-import { createProductService } from "./product";
-import type * as AuthModule from "./auth";
+import { createProductService } from "@/services/product";
+import type * as AuthModule from "@/services/auth";
 import {
   createReviewService,
   deleteReviewByAdminService,
   deleteReviewService,
   getProductReviewsPageService,
   updateReviewService,
-} from "./review";
+} from "@/services/review";
 
 // deleteReviewByAdminService가 자체적으로 requireAdmin()을 호출한다 — 세션
 // 조회만 대체하고 나머지 auth 구현(getUser 등)은 그대로 둔다(partial mock).

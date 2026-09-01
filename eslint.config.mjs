@@ -43,10 +43,8 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
 }, {
   files: ["src/core/**/*.{ts,tsx}"],
   ignores: [
-    "src/core/**/*.test.ts",
-    "src/core/**/*.test.tsx",
-    "src/core/**/*.integration.test.ts",
-    "src/core/**/*.integration.test.tsx",
+    "src/core/**/*.unit.test.ts",
+    "src/core/**/*.unit.test.tsx",
   ],
   rules: {
     "import/no-nodejs-modules": "error",
@@ -66,10 +64,8 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
 }, {
   files: ["src/actions/**/*.{ts,tsx}"],
   ignores: [
-    "src/actions/**/*.test.ts",
-    "src/actions/**/*.test.tsx",
-    "src/actions/**/*.integration.test.ts",
-    "src/actions/**/*.integration.test.tsx",
+    "src/actions/**/*.unit.test.ts",
+    "src/actions/**/*.unit.test.tsx",
   ],
   rules: {
     "no-restricted-imports": ["error", {
@@ -80,7 +76,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     }],
   },
 }, {
-  files: ["src/actions/**/*.test.ts", "src/actions/**/*.integration.test.ts"],
+  files: ["src/actions/**/*.unit.test.ts"],
   rules: {
     "import/no-restricted-paths": "off",
   },

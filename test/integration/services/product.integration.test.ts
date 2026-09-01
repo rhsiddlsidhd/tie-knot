@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
-import { buildProductInput, clearCollections } from "@testing/support";
+import { buildProductInput, clearCollections } from "@test/support";
 import { AppError, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { ProductModel, MobileInvitationProductModel } from "@/models";
 
@@ -23,7 +23,7 @@ import {
   updateProductLikeService,
   searchProductsService,
   getProductQuantityBoundsService,
-} from "./product";
+} from "@/services/product";
 
 describe("product", () => {
   beforeEach(async () => {

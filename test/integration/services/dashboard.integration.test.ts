@@ -6,13 +6,13 @@ import {
   buildProductInput,
   buildUserInput,
   clearCollections,
-} from "@testing/support";
+} from "@test/support";
 import { getKstMonthRange } from "@/core/utils";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import { OrderModel, ProductModel, UserModel } from "@/models";
-import { createOrderService } from "./order";
-import { createProductService } from "./product";
-import { getDashboardStatsService } from "./dashboard";
+import { createOrderService } from "@/services/order";
+import { createProductService } from "@/services/product";
+import { getDashboardStatsService } from "@/services/dashboard";
 
 describe("getDashboardStatsService", () => {
   let defaultProductId: string;

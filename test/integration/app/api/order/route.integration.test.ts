@@ -12,11 +12,11 @@ import {
   buildOrderInput,
   buildProductInput,
   clearCollections,
-} from "@testing/support";
+} from "@test/support";
 import { ProductModel } from "@/models";
 import type * as ServicesModule from "@/services";
 import { createOrderService, createProductService } from "@/services";
-import { GET } from "./route";
+import { GET } from "@/app/api/order/route";
 
 const { authState } = vi.hoisted(() => ({
   authState: { userId: "" as string | null },

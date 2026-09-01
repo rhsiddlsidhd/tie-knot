@@ -5,11 +5,11 @@ import {
   buildOrderInput,
   buildProductInput,
   clearCollections,
-} from "@testing/support";
+} from "@test/support";
 import { ProductModel, OrderModel, PaymentModel, InvitationModel } from "@/models";
-import { createProductService } from "./product";
-import { createOrderService } from "./order";
-import type * as AuthModule from "./auth";
+import { createProductService } from "@/services/product";
+import { createOrderService } from "@/services/order";
+import type * as AuthModule from "@/services/auth";
 
 const { getPaymentMock, cancelPaymentMock } = vi.hoisted(() => ({
   getPaymentMock: vi.fn(),
@@ -60,7 +60,7 @@ import {
   cancelExpiredPendingOrders,
   cancelExpiredPendingOrdersForAllUsers,
   completePaymentService,
-} from "./payment";
+} from "@/services/payment";
 
 describe("payment", () => {
   beforeEach(async () => {
