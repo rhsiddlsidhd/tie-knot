@@ -1,10 +1,6 @@
-"use client";
-
-import { useReducer } from "react";
-import { createStateContext } from "../createStateContext";
 import type { ProductFilterAction, ProductFilterState } from "./type";
 
-const initialFilterState: ProductFilterState = {
+export const initialFilterState: ProductFilterState = {
   keyword: "",
   subCategory: "all",
   isOpen: false,
@@ -13,7 +9,7 @@ const initialFilterState: ProductFilterState = {
   premiumFeat: [],
 };
 
-function filterReducer(
+export function filterReducer(
   state: ProductFilterState,
   action: ProductFilterAction,
 ): ProductFilterState {
@@ -72,9 +68,3 @@ function filterReducer(
       return state;
   }
 }
-
-export const [ProductFilterProvider, useProductFilter] = createStateContext(
-  (init: ProductFilterState) => useReducer(filterReducer, init),
-);
-
-export { initialFilterState };

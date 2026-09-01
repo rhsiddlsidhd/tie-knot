@@ -13,17 +13,18 @@
 src/ui/context/
 ├── index.ts                  # 배럴 — export * from "./createStateContext"
 ├── createStateContext.tsx   # Provider+useContext 페어를 만드는 제네릭 팩토리(도메인 무관)
-└── productFilter/            # 팩토리를 실제로 쓰는 도메인 하나
+└── {domain}/                  # 팩토리를 실제로 쓰는 도메인 폴더(예: productFilter/)
     ├── index.ts                # 이 도메인 전용 배럴
     ├── type.ts                # State/Action 타입
-    └── reducer.ts              # reducer + Provider/hook export(팩토리 호출)
+    ├── reducer.ts              # 초기값 선언 + 순수 reducer((state, action) => newState)
+    └── provider.tsx            # createStateContext(reducer 기반 useValue) 호출 결과로 Provider/hook export — 고유 로직 추가 금지
 ```
 
 ## Critical Convention
 
 - 새 Context 도메인을 추가할 때 `createStateContext.tsx`를 직접 복붙해 새 팩토리를 만들지 않는다 — 기존 팩토리를 import해서 쓴다(제네릭이라 도메인 무관 재사용 가능).
-- 도메인 폴더 안 파일은 `type.ts`/`reducer.ts`로 고정한다 — 폴더명이 이미 도메인을 특정하므로 파일명에 도메인명을 반복하지 않는다(`productFilter/productFilterType.ts` 금지).
-- Provider/hook은 reducer.ts에서 `createStateContext` 호출 결과로 export한다 — 별도 `provider.tsx` 파일로 쪼개지 않는다(지금까지는 파일 1개로 충분했음).
+- 도메인 폴더 안 파일은 `type.ts`/`reducer.ts`/`provider.tsx`로 고정한다 — 폴더명이 이미 도메인을 특정하므로 파일명에 도메인명을 반복하지 않는다(`productFilter/productFilterType.ts` 금지).
+- `reducer.ts`(초기값+순수 reducer)와 `provider.tsx`(`createStateContext` 호출)를 분리한다 — `provider.tsx`엔 이 호출 외 다른 로직을 추가하지 않는다. 이 경계로 `reducer.ts`는 항상 테스트 후보(분기 있는 경우), `provider.tsx`는 항상 테스트 배제로 판정한다.
 
 ## 관련 문서
 

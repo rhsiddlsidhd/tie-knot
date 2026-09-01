@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
+import { StoreProvider } from "@/ui/stores";
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ["latin"],
@@ -75,7 +76,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${notoSansKR.variable} ${gowunBatang.variable}`}>
-      <body>{children}</body>
+      <body>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

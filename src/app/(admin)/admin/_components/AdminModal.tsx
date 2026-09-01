@@ -1,14 +1,14 @@
 "use client";
 
 import { ProductEditDialog } from "@/app/(admin)/admin/products/_components";
-import type { AdminModalState, ModalPropsMap } from "@/ui/stores";
+import type { AdminModalPropsMap, AdminModalType } from "@/ui/stores";
 import { useAdminModalStore } from "@/ui/stores";
 
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms";
 import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog";
 
 const modalCopy: Record<
-  Exclude<AdminModalState["type"], null>,
+  AdminModalType,
   { title: string; des: string }
 > = {
   "EDIT-PRODUCT": {
@@ -39,11 +39,11 @@ const AdminModal = () => {
           <DialogDescription>{copy.des}</DialogDescription>
         </DialogHeader>
         {type === "EDIT-PRODUCT" && (
-          <ProductEditDialog {...(props as ModalPropsMap["EDIT-PRODUCT"])} />
+          <ProductEditDialog {...(props as AdminModalPropsMap["EDIT-PRODUCT"])} />
         )}
         {type === "EDIT-PREMIUMFEATURE" && (
           <PremiumFeatureDialog
-            {...(props as ModalPropsMap["EDIT-PREMIUMFEATURE"])}
+            {...(props as AdminModalPropsMap["EDIT-PREMIUMFEATURE"])}
           />
         )}
       </DialogContent>

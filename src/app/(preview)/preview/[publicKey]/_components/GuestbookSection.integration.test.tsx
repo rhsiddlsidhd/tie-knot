@@ -8,19 +8,23 @@ import { SWRConfig } from "swr";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { GuestbookListResponse } from "@/core/schemas";
-import { useGuestbookModalStore } from "@/ui/stores";
+import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
 import { GuestbookSection } from "./GuestbookSection";
 
 const PUBLIC_KEY = "guestbook-infinite-scroll-test";
+
+let testStore: AppStoreApi;
 
 // 테스트마다 새 SWR 캐시를 준다 — 기본 전역 캐시를 쓰면 같은 key(publicKey)로
 // 렌더하는 뒤쪽 테스트가 앞선 테스트의 캐시를 그대로 재사용해 네트워크 호출
 // 자체가 생략된다(useProductSearch.integration.test.tsx와 동일한 패턴).
 const renderGuestbookSection = () =>
   render(
-    <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
-      <GuestbookSection publicKey={PUBLIC_KEY} />
-    </SWRConfig>,
+    <StoreProvider store={testStore}>
+      <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>
+        <GuestbookSection publicKey={PUBLIC_KEY} />
+      </SWRConfig>
+    </StoreProvider>,
   );
 
 const page1: GuestbookListResponse = {
@@ -96,7 +100,7 @@ beforeAll(() => {
 beforeEach(() => {
   requestedCursors = [];
   latestIntersectionCallback = null;
-  useGuestbookModalStore.getState().clearIsOpen();
+  testStore = createAppStore();
 });
 
 afterEach(() => server.resetHandlers());
@@ -144,14 +148,14 @@ describe("GuestbookSection — 실제 useSWRInfinite + MSW HTTP 경계", () => {
     expect(requestedCursors).toEqual([null]);
 
     act(() => {
-      useGuestbookModalStore.getState().setIsOpen({
+      testStore.getState().setIsOpen({
         isOpen: true,
         type: "WRITE_GUESTBOOK",
         payload: { publicKey: PUBLIC_KEY },
       });
     });
     act(() => {
-      useGuestbookModalStore.getState().closeModal();
+      testStore.getState().closeGuestbookModal();
     });
 
     await screen.findByText("1페이지-작성자");
@@ -164,7 +168,7 @@ describe("GuestbookSection — 실제 useSWRInfinite + MSW HTTP 경계", () => {
     expect(requestedCursors).toEqual([null]);
 
     act(() => {
-      useGuestbookModalStore.getState().setIsOpen({
+      testStore.getState().setIsOpen({
         isOpen: true,
         type: "WRITE_GUESTBOOK",
         payload: { publicKey: PUBLIC_KEY },

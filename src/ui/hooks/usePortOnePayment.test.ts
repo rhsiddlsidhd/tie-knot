@@ -52,7 +52,11 @@ const orderData: CreateOrderResult = {
 describe("usePortOnePayment", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useOrderStore.setState({ paymentStatus: "IDLE" });
+    // useOrderStore는 여기서 실제 zustand create()로 대체 mock됐지만, 정적 타입은
+    // 여전히 실제 selector-only 훅 시그니처라 setState가 안 보인다 — mock 전용 캐스팅.
+    (useOrderStore as unknown as { setState: (partial: { paymentStatus: string }) => void }).setState({
+      paymentStatus: "IDLE",
+    });
     process.env.NEXT_PUBLIC_PORTONE_STORE_ID = "store-1";
     process.env.NEXT_PUBLIC_PORTONE_CHANNEL_KEY = "channel-1";
   });
