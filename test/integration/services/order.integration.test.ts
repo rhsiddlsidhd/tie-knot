@@ -5,7 +5,7 @@ import {
   buildOrderInput,
   buildProductInput,
   clearCollections,
-} from "@testing/support";
+} from "@test/support";
 import { AppError, EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 import {
   InvitationModel,
@@ -14,7 +14,7 @@ import {
   ProductModel,
   ReviewModel,
 } from "@/models";
-import type * as AuthModule from "./auth";
+import type * as AuthModule from "@/services/auth";
 import {
   createOrderService,
   getOrderSeviceByMerchantUid,
@@ -24,8 +24,8 @@ import {
   findExpiredAwaitingInvitationOrders,
   findExpiredAwaitingInvitationOrdersForAllUsers,
   findExpiredPendingOrdersForAllUsers,
-} from "./order";
-import { createProductService } from "./product";
+} from "@/services/order";
+import { createProductService } from "@/services/product";
 
 // 세션 조회만 대체한다 — 쿠키/JWT는 이 파일의 검증 대상이 아니고, 나머지 auth 구현은
 // 그대로 둔다(partial mock).

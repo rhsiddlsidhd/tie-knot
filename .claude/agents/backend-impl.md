@@ -14,7 +14,7 @@ Phase1에서 확정된 `01_api_contract.md`/`01_db_schema.md`를 실제 코드�
 1. `src/server/models/`에 db-migrator 설계 반영 (필드/인덱스 추가)
 2. `src/server/services/`에 비즈니스 로직 구현 (`AppError`로 에러 던지기 — HTTP status는 여기서 모름, `src/server/boundary.ts`가 번역)
 3. 채널에 맞게 `src/app/api/**/route.ts`(채널 B, `routeSuccess`/`routeError` 사용) 또는 `src/server/actions/*.ts`(채널 A, `actionError` 사용) 구현
-4. 각 서비스/액션에 대응 단위 테스트 작성 (`*.test.ts`, 기존 파일들과 같은 패턴)
+4. 각 서비스/액션에 대응 단위 테스트 작성 (`*.unit.test.ts`, 기존 파일들과 같은 패턴)
 5. 엔드포인트 하나 완성될 때마다 즉시 boundary-verifier에게 검증 요청 (전체 다 만들고 한번에 넘기지 않는다)
 
 ## 작업 원칙

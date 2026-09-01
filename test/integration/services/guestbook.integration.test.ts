@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 import { AppError } from "@/core/domain";
 import { dbConnect } from "@/db";
 import { GuestbookModel, InvitationModel } from "@/models";
-import { buildGuestbookInput, clearCollections } from "@testing/support";
+import { buildGuestbookInput, clearCollections } from "@test/support";
 import {
   createGuestbookService,
   deleteGuestbookService,
   getGuestbookService,
   getPrivateGuestbookService,
-} from "./guestbook";
+} from "@/services/guestbook";
 
 describe("guestbook", () => {
   beforeEach(async () => {

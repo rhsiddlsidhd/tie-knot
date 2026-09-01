@@ -13,7 +13,7 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
-import { buildProductInput, clearCollections } from "@testing/support";
+import { buildProductInput, clearCollections } from "@test/support";
 import { ProductModel } from "@/models";
 import {
   createProductService,
@@ -21,7 +21,7 @@ import {
   getPopularProductsService,
   updateProductLikeService,
 } from "@/services";
-import { PopularProductsSection } from "./PopularProductsSection";
+import { PopularProductsSection } from "@/app/(main)/_components/PopularProductsSection";
 
 // 좋아요 N개를 만들기 위해 서로 다른 userId N명으로 각각 1회씩 toggle한다
 // (product.service.test.ts와 동일한 헬퍼 — updateProductLikeService는 유저

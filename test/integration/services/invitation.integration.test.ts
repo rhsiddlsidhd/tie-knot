@@ -7,12 +7,12 @@ import {
   buildCoupleInfoInput,
   buildOrderInput,
   clearCollections,
-} from "@testing/support";
-import type * as AuthModule from "./auth";
+} from "@test/support";
+import type * as AuthModule from "@/services/auth";
 import {
   saveInvitationForOrder,
   setInvitationStatusForCurrentUser,
-} from "./invitation";
+} from "@/services/invitation";
 
 // 세션 조회만 대체한다(partial mock) — 쿠키/JWT는 이 파일의 검증 대상이 아니다.
 const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));

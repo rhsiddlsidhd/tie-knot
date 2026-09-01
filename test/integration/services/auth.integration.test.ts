@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
-import { buildUserInput, clearCollections } from "@testing/support";
+import { buildUserInput, clearCollections } from "@test/support";
 import { AppError } from "@/core/domain";
 import { UserModel } from "@/models";
 import { encrypt } from "@/adapters/server/jose";
@@ -22,7 +22,7 @@ vi.mock("next/navigation", () => ({
 import { getCookie, deleteCookie, setCookie } from "@/adapters/server/cookies";
 import { hashPassword } from "@/adapters/server/bcrypt";
 import { redirect } from "next/navigation";
-import { getUser, getAuth, requireAuth, logoutService, verifySession, loginUserService } from "./auth";
+import { getUser, getAuth, requireAuth, logoutService, verifySession, loginUserService } from "@/services/auth";
 
 describe("auth", () => {
   beforeEach(async () => {

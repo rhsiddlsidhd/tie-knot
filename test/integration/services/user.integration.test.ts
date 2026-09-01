@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, afterAll, vi, afterEach } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db";
-import { buildUserInput, clearCollections } from "@testing/support";
+import { buildUserInput, clearCollections } from "@test/support";
 import { AppError } from "@/core/domain";
 import { UserModel } from "@/models";
 import {
@@ -14,7 +14,7 @@ import {
   signupUserService,
   requestPasswordResetService,
   getAdminUsersPageService,
-} from "./user";
+} from "@/services/user";
 
 const sendEmailMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
 vi.mock("@/adapters/server/nodemailer", () => ({ sendEmail: sendEmailMock }));
