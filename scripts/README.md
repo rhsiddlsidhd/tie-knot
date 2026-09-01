@@ -14,6 +14,6 @@
 | --- | --- |
 | 애플리케이션 | `dev`, `build`, `start` |
 | 정적 검증 | `lint`, `tsc`, `build` |
-| 테스트 묶음 | `test`, `test:unit`, `test:integration:client`, `test:integration:server`, `test:e2e`, `test:e2e:portone` |
+| 테스트 묶음 | `test`, `test:unit`, `test:integration:client`, `test:integration:server`, `test:e2e` |
 
 제거된 TDD proof, mutation, coverage, `check` 명령은 현재 계약이 아니다.
