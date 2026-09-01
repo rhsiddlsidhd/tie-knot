@@ -14,9 +14,3 @@ export const INVITATION_THEME_LABELS: Record<InvitationTheme, string> = {
   botanical: "세이지그린",
   midnight: "네이비골드",
 };
-
-export const getInvitationThemeOptions = () =>
-  Object.entries(INVITATION_THEME_LABELS).map(([value, label]) => ({
-    value: value as InvitationTheme,
-    label,
-  }));

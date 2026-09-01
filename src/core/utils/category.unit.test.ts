@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  categoryRequiresShipping,
   isProductCategory,
   isSubCategory,
   getCategoryOptions,
@@ -8,7 +9,27 @@ import {
   findSubCategoriesByTerm,
   getAvailableSubCategories,
 } from "./category";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { PRODUCT_CATEGORIES, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+
+describe("categoryRequiresShipping", () => {
+  it("모바일초대장은 디지털 상품이라 배송이 필요 없다", () => {
+    expect(categoryRequiresShipping(MOBILE_INVITATION_CATEGORY)).toBe(false);
+  });
+
+  it("모바일초대장을 제외한 모든 카테고리는 배송이 필요하다", () => {
+    const shippingCategories = PRODUCT_CATEGORIES.filter(
+      (category) => category !== MOBILE_INVITATION_CATEGORY,
+    );
+
+    for (const category of shippingCategories) {
+      expect(categoryRequiresShipping(category)).toBe(true);
+    }
+  });
+
+  it("카테고리가 정해지지 않았으면 배송이 필요하다고 본다(안전한 기본값)", () => {
+    expect(categoryRequiresShipping(undefined)).toBe(true);
+  });
+});
 
 describe("isProductCategory", () => {
   it("invitation은 유효한 카테고리다", () => {

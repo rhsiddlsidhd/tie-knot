@@ -12,12 +12,6 @@ export const PRODUCT_CATEGORIES = [
 // 판단의 기준이 되는 값이라 리터럴 재입력 대신 이 상수를 쓴다).
 export const MOBILE_INVITATION_CATEGORY = "mobile-invitation" satisfies ProductCategory;
 
-// 모바일초대장만 배송이 필요 없는 유일한 카테고리다 — 이 판단을 쓰는 모든
-// 레이어(클라이언트 폼/서비스 검증/DB conditional required)가 이 함수 하나로
-// 수렴해야 카테고리 추가·rename 시 한 곳만 고치면 된다.
-export const categoryRequiresShipping = (category: ProductCategory | undefined): boolean =>
-  category !== MOBILE_INVITATION_CATEGORY;
-
 export const SUB_CATEGORY_MAP = {
   "mobile-invitation": ["wedding", "first-birthday"],
   favor: ["candle", "diffuser", "soap", "magnet", "handkerchief", "cookie"],

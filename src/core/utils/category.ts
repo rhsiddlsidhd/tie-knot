@@ -1,9 +1,17 @@
 import type { ProductCategory, SubCategory } from "@/core/domain";
 import {
+  MOBILE_INVITATION_CATEGORY,
   SUB_CATEGORY_MAP,
   productCategoryLabels,
   subCategoryLabels,
 } from "@/core/domain";
+
+// 모바일초대장만 배송이 필요 없는 유일한 카테고리다 — 이 판단을 쓰는 모든
+// 레이어(클라이언트 폼/서비스 검증/DB conditional required)가 이 함수 하나로
+// 수렴해야 카테고리 추가·rename 시 한 곳만 고치면 된다.
+export const categoryRequiresShipping = (
+  category: ProductCategory | undefined,
+): boolean => category !== MOBILE_INVITATION_CATEGORY;
 
 export const isProductCategory = (value: string): value is ProductCategory => {
   return Object.keys(productCategoryLabels).includes(value);
