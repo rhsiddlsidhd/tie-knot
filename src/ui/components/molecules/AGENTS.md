@@ -26,7 +26,8 @@ src/ui/components/molecules/
 ├── AutoCompleteList.tsx
 ├── BaseSelect.tsx
 ├── CursorPagination.tsx
-└── ProductCard.tsx
+├── ProductCard.tsx
+└── ...              # 축 A/B 판정마다 추가되는 molecule
 ```
 
 ## Critical Convention
