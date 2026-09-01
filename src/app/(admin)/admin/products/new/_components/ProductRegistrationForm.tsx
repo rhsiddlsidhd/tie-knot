@@ -26,7 +26,8 @@ import { useImageList } from "@/ui/hooks";
 import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils";
 import { getFieldError } from "@/core/utils";
 import type { ProductCategory } from "@/core/domain";
-import { getInvitationThemeOptions, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { getInvitationThemeOptions } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 
 interface ProductRegistrationFormProps {

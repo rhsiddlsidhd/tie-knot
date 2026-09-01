@@ -19,12 +19,3 @@ export type InvitationEditor = InvitationContent & {
 };
 
 export const INVITATION_EXPIRY_DAYS = 10;
-
-export const isInvitationExpired = (
-  weddingDate: Date,
-  now = new Date(),
-): boolean => {
-  const expiresAt = new Date(weddingDate);
-  expiresAt.setDate(expiresAt.getDate() + INVITATION_EXPIRY_DAYS);
-  return now > expiresAt;
-};

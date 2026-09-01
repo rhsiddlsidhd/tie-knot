@@ -2,7 +2,8 @@ import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 import type { PayMethod, ProductCategory } from "@/core/domain";
-import { PAY_METHOD, PRODUCT_CATEGORIES, categoryRequiresShipping } from "@/core/domain";
+import { PAY_METHOD, PRODUCT_CATEGORIES } from "@/core/domain";
+import { categoryRequiresShipping } from "@/core/utils";
 export type { OrderJSON } from "@/core/domain";
 interface ProductPricing {
   originalPrice: number;

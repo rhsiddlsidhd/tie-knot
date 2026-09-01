@@ -6,10 +6,10 @@ import { redirect } from "next/navigation";
 import { getAuth, createOrderForCurrentUserService } from "@/services";
 import { actionError } from "@/boundary";
 
-import { validateAndFlatten } from "@/core/utils";
+import { categoryRequiresShipping, validateAndFlatten } from "@/core/utils";
 import { createOrderSchema } from "@/core/schemas";
 import type { PayMethod, ProductCategory } from "@/core/domain";
-import { routes, categoryRequiresShipping } from "@/core/domain";
+import { routes } from "@/core/domain";
 export type CreateOrderResult = {
   merchantUid: string;
   finalPrice: number;

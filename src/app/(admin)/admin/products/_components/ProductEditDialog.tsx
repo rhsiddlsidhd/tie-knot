@@ -36,7 +36,8 @@ import type {
   ProductCategory,
   SubCategory,
 } from "@/core/domain";
-import { getInvitationThemeOptions, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { getInvitationThemeOptions } from "@/core/utils";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/ui/stores";
 interface ProductEditDialogProps {

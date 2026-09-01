@@ -12,9 +12,9 @@
 | 디렉토리 | 담당 | 검증 |
 |---|---|---|
 | `schemas/` | zod request/response 계약 | lint, tsc, build |
-| `domain/` | 도메인 타입·상수·계산 | lint, tsc, build |
+| `domain/` | 도메인 타입·상수 (함수는 두지 않는다 — `utils/`로) | lint, tsc, build |
 | `content/` | 정적 JSON 콘텐츠 | lint, tsc, build |
-| `utils/` | 도메인 무관 순수 함수 | lint, tsc, build |
+| `utils/` | 순수 함수 — 도메인 무관 헬퍼와 도메인 규칙 계산 | lint, tsc, build |
 
 ## 경계
 

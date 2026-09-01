@@ -10,6 +10,7 @@ import {
 } from "@/models";
 import type { CreateOrderDto } from "@/core/schemas";
 import {
+  categoryRequiresShipping,
   encodeCursor,
   decodeCursor,
   generateUid,
@@ -29,7 +30,6 @@ import {
   DEFAULT_PAGE_SIZE,
   EXPIRED_ORDER_BATCH_LIMIT,
   INVITATION_INPUT_DEADLINE_DAYS,
-  categoryRequiresShipping,
   ORDER_PAGE_SIZE,
   ORDER_STATUSES,
   PENDING_ORDER_EXPIRE_HOURS,
