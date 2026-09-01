@@ -12,8 +12,7 @@
     "test:unit": "vitest run --project unit",
     "test:component": "vitest run --project component --project integration-component",
     "test:integration": "vitest run --project integration",
-    "test:e2e": "playwright test --project=core",
-    "test:e2e:portone": "playwright test --config=playwright.portone.config.ts --headed"
+    "test:e2e": "playwright test --project=core"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

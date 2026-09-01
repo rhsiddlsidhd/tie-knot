@@ -10,10 +10,6 @@
 
 정적 검증은 별도 테스트 래퍼 없이 `npm run build`를 직접 실행한다. 테스트 스위트는 로컬에서 필요에 따라 실행하며 PR 필수 게이트가 아니다.
 
-## 정기·수동 게이트
-
-- `.github/workflows/portone-smoke.yml`은 별도 self-hosted runner와 보호된 환경 secret이 필요한 수동 smoke test다. 실제 PortOne KG Inicis 흐름의 표시와 연동을 확인하며 일반 PR에서 자동 실행하지 않는다.
-
 ## 브랜치 보호
 
 GitHub 브랜치 보호의 필수 상태 체크는 `static` 하나로 맞춘다. `dev`와 `main` 모두 최신 기준 브랜치 반영, 관리자 포함 적용, 선형 히스토리, 대화 해결을 요구하며 force-push와 삭제를 허용하지 않는다.
