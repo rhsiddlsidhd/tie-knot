@@ -15,7 +15,7 @@ vi.mock("sonner", () => ({
 import { createGuestbook } from "@/actions";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/ui/components/atoms";
-import { useGuestbookModalStore } from "@/ui/stores";
+import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
 import {
   GuestbookDemoProvider,
   INITIAL_GUESTBOOK_DEMO_STATE,
@@ -28,18 +28,22 @@ const DemoEntriesProbe = () => {
   return <p>최신항목:{entries[0]?.author ?? "없음"}</p>;
 };
 
+let testStore: AppStoreApi;
+
 // 순수 organism이 Radix DialogTitle/DialogFooter 등을 쓰므로, 실제 GuestbookModal과
 // 동일하게 Dialog 컨텍스트 안에서 렌더해야 한다.
 const renderForm = (payload: unknown) =>
   render(
-    <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
-      <Dialog open>
-        <DialogContent>
-          <CreateGuestbookForm payload={payload} />
-        </DialogContent>
-      </Dialog>
-      <DemoEntriesProbe />
-    </GuestbookDemoProvider>,
+    <StoreProvider store={testStore}>
+      <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
+        <Dialog open>
+          <DialogContent>
+            <CreateGuestbookForm payload={payload} />
+          </DialogContent>
+        </Dialog>
+        <DemoEntriesProbe />
+      </GuestbookDemoProvider>
+    </StoreProvider>,
   );
 
 const fillAndSubmit = async (author: string, password: string, message: string) => {
@@ -53,7 +57,7 @@ const fillAndSubmit = async (author: string, password: string, message: string) 
 describe("CreateGuestbookForm (컨테이너)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useGuestbookModalStore.getState().clearIsOpen();
+    testStore = createAppStore();
   });
 
   describe("live (일반 청첩장)", () => {
@@ -62,7 +66,7 @@ describe("CreateGuestbookForm (컨테이너)", () => {
         success: true,
         data: { message: "방명록 작성이 완료되었습니다." },
       });
-      useGuestbookModalStore.getState().setIsOpen({
+      testStore.getState().setIsOpen({
         isOpen: true,
         type: "WRITE_GUESTBOOK",
         payload: { publicKey: "real-invitation" },
@@ -73,7 +77,7 @@ describe("CreateGuestbookForm (컨테이너)", () => {
 
       await waitFor(() => expect(createGuestbook).toHaveBeenCalled());
       await waitFor(() =>
-        expect(useGuestbookModalStore.getState().isOpen).toBe(false),
+        expect(testStore.getState().guestbookModalIsOpen).toBe(false),
       );
       expect(refreshMock).toHaveBeenCalled();
       expect(toast.message).toHaveBeenCalledWith("방명록 작성이 완료되었습니다.");

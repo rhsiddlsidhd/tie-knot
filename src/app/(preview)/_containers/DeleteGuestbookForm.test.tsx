@@ -10,7 +10,7 @@ vi.mock("sonner", () => ({
 import { deleteGuestbook } from "@/actions";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/ui/components/atoms";
-import { useGuestbookModalStore } from "@/ui/stores";
+import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
 import {
   GuestbookDemoProvider,
   INITIAL_GUESTBOOK_DEMO_STATE,
@@ -27,18 +27,22 @@ const EntryExistsProbe = () => {
   return <p>대상항목:{stillExists ? "존재" : "삭제됨"}</p>;
 };
 
+let testStore: AppStoreApi;
+
 // 순수 organism이 Radix DialogTitle/DialogFooter 등을 쓰므로, 실제 GuestbookModal과
 // 동일하게 Dialog 컨텍스트 안에서 렌더해야 한다.
 const renderForm = (payload: unknown) =>
   render(
-    <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
-      <Dialog open>
-        <DialogContent>
-          <DeleteGuestbookForm payload={payload} />
-        </DialogContent>
-      </Dialog>
-      <EntryExistsProbe />
-    </GuestbookDemoProvider>,
+    <StoreProvider store={testStore}>
+      <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
+        <Dialog open>
+          <DialogContent>
+            <DeleteGuestbookForm payload={payload} />
+          </DialogContent>
+        </Dialog>
+        <EntryExistsProbe />
+      </GuestbookDemoProvider>
+    </StoreProvider>,
   );
 
 const submitPassword = async (password: string) => {
@@ -50,7 +54,7 @@ const submitPassword = async (password: string) => {
 describe("DeleteGuestbookForm (컨테이너)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useGuestbookModalStore.getState().clearIsOpen();
+    testStore = createAppStore();
   });
 
   describe("live (일반 청첩장)", () => {
@@ -59,7 +63,7 @@ describe("DeleteGuestbookForm (컨테이너)", () => {
         success: true,
         data: { message: "게시글이 성공적으로 삭제되었습니다." },
       });
-      useGuestbookModalStore.getState().setIsOpen({
+      testStore.getState().setIsOpen({
         isOpen: true,
         type: "DELETE_GUESTBOOK",
         payload: { id: "entry-1", publicKey: "real-invitation" },
@@ -74,7 +78,7 @@ describe("DeleteGuestbookForm (컨테이너)", () => {
       expect(formData.get("publicKey")).toBe("real-invitation");
 
       await waitFor(() =>
-        expect(useGuestbookModalStore.getState().isOpen).toBe(false),
+        expect(testStore.getState().guestbookModalIsOpen).toBe(false),
       );
       expect(toast).toHaveBeenCalledWith("게시글이 성공적으로 삭제되었습니다.");
     });

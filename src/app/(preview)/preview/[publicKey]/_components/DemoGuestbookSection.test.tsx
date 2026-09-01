@@ -5,7 +5,7 @@ import {
   GuestbookDemoProvider,
   INITIAL_GUESTBOOK_DEMO_STATE,
 } from "@/ui/context/guestbookDemo";
-import { useGuestbookModalStore } from "@/ui/stores";
+import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
 import { DemoGuestbookSection } from "./DemoGuestbookSection";
 
 // jsdom-polyfill.ts의 IntersectionObserverMock은 콜백을 저장하지 않는 no-op이라
@@ -39,11 +39,15 @@ const intersect = async () => {
   });
 };
 
+let testStore: AppStoreApi;
+
 const renderDemoSection = () =>
   render(
-    <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
-      <DemoGuestbookSection />
-    </GuestbookDemoProvider>,
+    <StoreProvider store={testStore}>
+      <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
+        <DemoGuestbookSection />
+      </GuestbookDemoProvider>
+    </StoreProvider>,
   );
 
 beforeEach(() => {
@@ -51,7 +55,7 @@ beforeEach(() => {
   observedCount = 0;
   globalThis.IntersectionObserver =
     CapturingIntersectionObserverMock as unknown as typeof IntersectionObserver;
-  useGuestbookModalStore.getState().clearIsOpen();
+  testStore = createAppStore();
 });
 
 afterEach(() => {
@@ -99,9 +103,9 @@ describe("DemoGuestbookSection", () => {
       screen.getByRole("button", { name: "방명록 작성하기" }),
     );
 
-    const modalState = useGuestbookModalStore.getState();
-    expect(modalState.isOpen).toBe(true);
-    expect(modalState.type).toBe("WRITE_GUESTBOOK");
+    const modalState = testStore.getState();
+    expect(modalState.guestbookModalIsOpen).toBe(true);
+    expect(modalState.guestbookModalType).toBe("WRITE_GUESTBOOK");
     expect(modalState.payload).toEqual({ publicKey: "sample" });
   });
 
@@ -112,9 +116,9 @@ describe("DemoGuestbookSection", () => {
     if (!firstItem) throw new Error("첫 방명록 항목을 찾지 못했습니다");
     await userEvent.click(within(firstItem).getByRole("button"));
 
-    const modalState = useGuestbookModalStore.getState();
-    expect(modalState.isOpen).toBe(true);
-    expect(modalState.type).toBe("DELETE_GUESTBOOK");
+    const modalState = testStore.getState();
+    expect(modalState.guestbookModalIsOpen).toBe(true);
+    expect(modalState.guestbookModalType).toBe("DELETE_GUESTBOOK");
     expect(modalState.payload).toMatchObject({
       id: INITIAL_GUESTBOOK_DEMO_STATE.entries[0].id,
       publicKey: "sample",
