@@ -4,8 +4,8 @@
 // 단위 테스트다 — route.ts의 얇은 파싱/응답 wrapping 로직만 검증한다.
 // 이 파일은 그 mock을 걷어내고 실제 mongodb-memory-server DB까지 관통시켜서,
 // route.ts → searchProductsService → MongoDB → 응답 envelope으로 이어지는
-// 골든패스/에러 흐름이 실제로 맞물려 동작하는지를 검증한다(docs/__test/README.md
-// 의 "route.ts는 얇은 wrapper라 중복"이라는 후순위 원칙은 서비스 단위 로직
+// 골든패스/에러 흐름이 실제로 맞물려 동작하는지를 검증한다. "route.ts는 얇은
+// wrapper라 중복"이라는 후순위 원칙은 서비스 단위 로직
 // 재검증에는 적용되지만, 여러 레이어를 가로지르는 통합 시나리오에는 해당하지
 // 않는다).
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
