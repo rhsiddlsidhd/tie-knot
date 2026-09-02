@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/core/domain/product";
 
-vi.mock("./ProductTableRowAction", () => ({
+vi.mock("../_containers/ProductTableRowAction", () => ({
   ProductTableRowAction: (): null => null,
 }));
 
-vi.mock("./ProductTableRowSelect", () => ({
+vi.mock("../_containers/ProductTableRowSelect", () => ({
   ProductTableRowSelect: (): null => null,
 }));
 

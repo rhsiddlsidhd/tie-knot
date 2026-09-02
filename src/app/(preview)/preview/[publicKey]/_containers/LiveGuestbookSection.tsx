@@ -3,8 +3,8 @@
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "@/ui/fetcher";
 import { Button } from "@/ui/components/atoms/button";
-import { EyebrowSection } from "./EyebrowSection";
-import { GuestbookList } from "./GuestbookList";
+import { EyebrowSection } from "../_components/EyebrowSection";
+import { GuestbookList } from "../_components/GuestbookList";
 import { PenLine } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";

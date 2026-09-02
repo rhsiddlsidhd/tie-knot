@@ -22,7 +22,7 @@ import { PAY_METHOD_LABEL } from "@/app/(main)/(my-order)/my-orders/_constants/l
 import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
 import { getInvitationInputDaysLeft } from "@/app/(main)/(my-order)/my-orders/_utils/orderDeadline";
 import { PaymentButton } from "./PaymentButton";
-import { PendingCoupleInfoBanner } from "./PendingCoupleInfoBanner";
+import { PendingCoupleInfoBanner } from "../_components/PendingCoupleInfoBanner";
 import { ReviewFormDialog } from "./ReviewFormDialog";
 
 const STATUS_BADGE_VARIANTS: Record<

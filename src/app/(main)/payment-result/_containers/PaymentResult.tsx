@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { completePayment } from "@/actions/completePayment";
 import { routes } from "@/core/domain/routes";
 import { useOrderStore } from "@/ui/stores/use-app-store";
-import { PaymentResultTemplate } from "./PaymentResultTemplate";
+import { PaymentResultTemplate } from "../_components/PaymentResultTemplate";
 
 interface PaymentResultProps {
   paymentId?: string;

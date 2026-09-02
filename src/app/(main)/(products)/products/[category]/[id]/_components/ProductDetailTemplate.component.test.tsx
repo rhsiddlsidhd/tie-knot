@@ -4,7 +4,7 @@ import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import type { ReviewListPage } from "@/core/domain/review";
 
-vi.mock("./ProductViewTracker", () => ({
+vi.mock("../_containers/ProductViewTracker", () => ({
   ProductViewTracker: (): null => null,
 }));
 

@@ -14,7 +14,7 @@ vi.mock("@/actions/deleteReviewByAdmin", () => ({
   deleteReviewByAdmin: (...args: unknown[]) => deleteReviewByAdmin(...args),
 }));
 
-import { AdminReviewsTemplate } from "./AdminReviewsTemplate";
+import { AdminReviewsTable } from "./AdminReviewsTable";
 
 const buildPage = (
   overrides?: Partial<AdminReviewListPage>,
@@ -33,14 +33,14 @@ const buildPage = (
   ...overrides,
 });
 
-describe("AdminReviewsTemplate", () => {
+describe("AdminReviewsTable", () => {
   beforeEach(() => {
     refreshMock.mockClear();
     deleteReviewByAdmin.mockClear();
   });
 
   it("리뷰 행을 실제 props 기준으로 렌더링하고 작성일을 KST로 표시한다", () => {
-    render(<AdminReviewsTemplate page={buildPage()} />);
+    render(<AdminReviewsTable page={buildPage()} />);
 
     expect(screen.getByText("봄빛 청첩장 세트")).toBeInTheDocument();
     expect(screen.getByText("김민준")).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe("AdminReviewsTemplate", () => {
   });
 
   it("항목이 없으면 빈 상태 UI를 보여준다", () => {
-    render(<AdminReviewsTemplate page={buildPage({ items: [] })} />);
+    render(<AdminReviewsTable page={buildPage({ items: [] })} />);
 
     expect(screen.getByText("등록된 리뷰가 없습니다")).toBeInTheDocument();
   });
@@ -63,7 +63,7 @@ describe("AdminReviewsTemplate", () => {
       data: { message: "리뷰가 삭제되었습니다." },
     });
     const user = userEvent.setup();
-    render(<AdminReviewsTemplate page={buildPage()} />);
+    render(<AdminReviewsTable page={buildPage()} />);
 
     await user.click(screen.getByRole("button", { name: "삭제" }));
 
@@ -74,7 +74,7 @@ describe("AdminReviewsTemplate", () => {
   it("삭제를 취소하면 deleteReviewByAdmin을 호출하지 않는다", async () => {
     vi.spyOn(window, "confirm").mockReturnValue(false);
     const user = userEvent.setup();
-    render(<AdminReviewsTemplate page={buildPage()} />);
+    render(<AdminReviewsTable page={buildPage()} />);
 
     await user.click(screen.getByRole("button", { name: "삭제" }));
 
@@ -82,7 +82,7 @@ describe("AdminReviewsTemplate", () => {
   });
 
   it("nextCursor가 없으면 다음 페이지 버튼이 비활성화된다", () => {
-    render(<AdminReviewsTemplate page={buildPage({ nextCursor: null })} />);
+    render(<AdminReviewsTable page={buildPage({ nextCursor: null })} />);
 
     expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });

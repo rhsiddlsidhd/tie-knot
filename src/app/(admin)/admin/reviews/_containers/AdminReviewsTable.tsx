@@ -11,7 +11,7 @@ import type { AdminReviewListPage } from "@/core/domain/review";
 import { formatKstDate } from "@/core/utils/date";
 import { deleteReviewByAdmin } from "@/actions/deleteReviewByAdmin";
 
-interface AdminReviewsTemplateProps {
+interface AdminReviewsTableProps {
   page: AdminReviewListPage;
   cursor?: string;
 }
@@ -47,7 +47,7 @@ const ReviewDeleteButton = ({ reviewId, onDeleted }: ReviewDeleteButtonProps) =>
   );
 };
 
-const AdminReviewsTemplate = ({ page, cursor }: AdminReviewsTemplateProps) => {
+const AdminReviewsTable = ({ page, cursor }: AdminReviewsTableProps) => {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -113,4 +113,4 @@ const AdminReviewsTemplate = ({ page, cursor }: AdminReviewsTemplateProps) => {
   );
 };
 
-export { AdminReviewsTemplate };
+export { AdminReviewsTable };

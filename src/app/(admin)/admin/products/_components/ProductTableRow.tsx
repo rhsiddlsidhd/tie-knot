@@ -3,8 +3,8 @@ import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
 import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
 import type { Product } from "@/services/product";
-import { ProductTableRowAction } from "./ProductTableRowAction";
-import { ProductTableRowSelect } from "./ProductTableRowSelect";
+import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
+import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
 import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 

@@ -23,7 +23,7 @@ import { restoreProduct } from "@/actions/restoreProduct";
 import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
 import type { Product } from "@/core/domain/product";
 import { ProductTableRowAction } from "./ProductTableRowAction";
-import type { ProductTableRowProps } from "./ProductTableRow";
+import type { ProductTableRowProps } from "../_components/ProductTableRow";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
 import { StoreProvider } from "@/ui/stores/provider";

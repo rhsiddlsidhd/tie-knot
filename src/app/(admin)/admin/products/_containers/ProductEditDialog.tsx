@@ -8,7 +8,7 @@ import { Spinner } from "@/ui/components/atoms/spinner";
 import { Alert } from "@/ui/components/molecules/Alert";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { SelectField } from "@/ui/components/organisms/SelectField";
-import { NumberField } from "./NumberField";
+import { NumberField } from "../_components/NumberField";
 import { Input } from "@/ui/components/atoms/input";
 import { Button } from "@/ui/components/atoms/button";
 import { Textarea } from "@/ui/components/atoms/textarea";
