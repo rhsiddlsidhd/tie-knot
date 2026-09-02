@@ -1,16 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@/ui/components/atoms";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms/select";
+import { Tabs, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
 import type { OrderStatus } from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { ORDER_STATUSES } from "@/core/domain/order";

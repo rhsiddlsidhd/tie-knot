@@ -1,7 +1,8 @@
 "use client";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms/card";
 
-import { TextField } from "@/ui/components/organisms";
+import { TextField } from "@/ui/components/organisms/TextField";
 import clsx from "clsx";
 import { Save } from "lucide-react";
 import React, { useState } from "react";

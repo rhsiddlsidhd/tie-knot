@@ -1,15 +1,9 @@
 "use client";
 
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import {
-  TypographyH2,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/ui/components/atoms";
-import { ProductCard } from "@/ui/components/molecules";
+import { TypographyH2 } from "@/ui/components/atoms/typography";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/ui/components/atoms/carousel";
+import { ProductCard } from "@/ui/components/molecules/ProductCard";
 import type { Product } from "@/services/product";
 import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain/product";
 

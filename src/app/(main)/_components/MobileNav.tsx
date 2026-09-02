@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Menu, X, Gem } from "lucide-react";
 import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, Button } from "@/ui/components/atoms";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/ui/components/atoms/sheet";
+import { Button } from "@/ui/components/atoms/button";
 
 export function MobileNav() {
   const [open, setOpen] = useState(false);

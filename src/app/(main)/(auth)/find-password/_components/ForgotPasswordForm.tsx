@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
 
-import { Card, Button, TypographyH1, TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
+import { Card } from "@/ui/components/atoms/card";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH1, TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms";
+import { TextField } from "@/ui/components/organisms/TextField";
 import { getFieldError } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";
 import { routes } from "@/core/domain/routes";

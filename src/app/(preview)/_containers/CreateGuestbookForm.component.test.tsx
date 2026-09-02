@@ -16,13 +16,11 @@ vi.mock("sonner", () => ({
 
 import { createGuestbook } from "@/actions/createGuestbook";
 import { toast } from "sonner";
-import { Dialog, DialogContent } from "@/ui/components/atoms";
-import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
-import {
-  GuestbookDemoProvider,
-  INITIAL_GUESTBOOK_DEMO_STATE,
-  useGuestbookDemo,
-} from "@/ui/context/guestbookDemo";
+import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
+import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
+import { StoreProvider } from "@/ui/stores/provider";
+import { GuestbookDemoProvider, useGuestbookDemo } from "@/ui/context/guestbookDemo/provider";
+import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
 import { CreateGuestbookForm } from "./CreateGuestbookForm";
 
 const DemoEntriesProbe = () => {

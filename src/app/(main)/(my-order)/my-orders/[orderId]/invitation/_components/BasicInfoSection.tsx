@@ -1,10 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
 import { format } from "date-fns";
 import { ComboboxField } from "./ComboboxField";
 import { DateField } from "./DateField";
-import { AddressField, SwitchField, TextField } from "@/ui/components/organisms";
+import { AddressField } from "@/ui/components/organisms/AddressField";
+import { SwitchField } from "@/ui/components/organisms/SwitchField";
+import { TextField } from "@/ui/components/organisms/TextField";
 
 import type { InvitationContent } from "@/core/domain/invitation";
 import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";

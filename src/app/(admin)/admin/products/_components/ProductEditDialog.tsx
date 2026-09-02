@@ -4,26 +4,22 @@ import type React from "react";
 import { useActionState, useEffect, useState } from "react";
 import { updateProduct } from "@/actions/updateProduct";
 import type { Product } from "@/services/product";
-import { Spinner } from "@/ui/components/atoms";
-import { Alert } from "@/ui/components/molecules";
-import { ImageField, SelectField } from "@/ui/components/organisms";
+import { Spinner } from "@/ui/components/atoms/spinner";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { ImageField } from "@/ui/components/organisms/ImageField";
+import { SelectField } from "@/ui/components/organisms/SelectField";
 import { NumberField } from "./NumberField";
-import {
-  Input,
-  Button,
-  Textarea,
-  Switch,
-  Checkbox,
-  Label,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  TypographyH4,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Input } from "@/ui/components/atoms/input";
+import { Button } from "@/ui/components/atoms/button";
+import { Textarea } from "@/ui/components/atoms/textarea";
+import { Switch } from "@/ui/components/atoms/switch";
+import { Checkbox } from "@/ui/components/atoms/checkbox";
+import { Label } from "@/ui/components/atoms/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyH4, TypographyMuted } from "@/ui/components/atoms/typography";
 
-import { usePremiumFeature, useImageList } from "@/ui/hooks";
+import { usePremiumFeature } from "@/ui/hooks/usePremiumFeatures";
+import { useImageList } from "@/ui/hooks/useImageList";
 
 import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
@@ -32,7 +28,7 @@ import type { ProductCategory, SubCategory } from "@/core/domain/product-categor
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getInvitationThemeOptions } from "@/core/utils/theme";
 import { toast } from "sonner";
-import { useAdminModalStore } from "@/ui/stores";
+import { useAdminModalStore } from "@/ui/stores/use-app-store";
 interface ProductEditDialogProps {
   product: Product;
 }

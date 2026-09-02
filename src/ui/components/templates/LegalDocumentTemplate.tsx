@@ -1,4 +1,4 @@
-import { TypographyH1, TypographyH2, TypographyMuted, TypographyP } from "@/ui/components/atoms";
+import { TypographyH1, TypographyH2, TypographyMuted, TypographyP } from "@/ui/components/atoms/typography";
 
 interface LegalSection {
   heading: string;

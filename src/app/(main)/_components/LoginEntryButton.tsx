@@ -1,4 +1,4 @@
-import { Button } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
 import Link from "next/link";
 import { routes } from "@/core/domain/routes";
 

@@ -1,10 +1,12 @@
 "use client";
 
-import { Button, TypographyP, TypographyLarge, TypographyMuted, Separator } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyP, TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
+import { Separator } from "@/ui/components/atoms/separator";
 import { EyebrowSection } from "./EyebrowSection";
 
 
-import { useGuestbookModalStore } from "@/ui/stores";
+import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 import type { InvitationMessageMappedProps } from "../_utils/invitationMessage.mapper";
 
 const pinMessage = [

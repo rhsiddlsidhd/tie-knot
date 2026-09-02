@@ -4,11 +4,14 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { ko } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
-import { Button, Calendar, Popover, PopoverContent, PopoverTrigger, Input } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Calendar } from "@/ui/components/atoms/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/ui/components/atoms/popover";
+import { Input } from "@/ui/components/atoms/input";
 
 
 
-import { FormField } from "@/ui/components/organisms";
+import { FormField } from "@/ui/components/organisms/FormField";
 import type { FieldBase } from "@/core/domain/field";
 import { cn } from "@/core/utils/cn";
 

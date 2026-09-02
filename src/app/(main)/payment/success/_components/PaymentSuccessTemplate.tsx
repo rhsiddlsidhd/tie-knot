@@ -1,5 +1,7 @@
 import { Check, AlertCircle, Home, FileText } from "lucide-react";
-import { Button, Card, CardContent, CardHeader, CardTitle, TypographyH1, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyH1, TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
 import Link from "next/link";
 import { routes } from "@/core/domain/routes";
 

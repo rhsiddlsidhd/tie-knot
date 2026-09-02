@@ -5,11 +5,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { Globe } from "lucide-react";
 
-import { Checkbox, Button, Label, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { Checkbox } from "@/ui/components/atoms/checkbox";
+import { Button } from "@/ui/components/atoms/button";
+import { Label } from "@/ui/components/atoms/label";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
 
 
-import { TextField } from "@/ui/components/organisms";
+import { TextField } from "@/ui/components/organisms/TextField";
 import { getFieldError } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";
 import { routes } from "@/core/domain/routes";

@@ -1,5 +1,5 @@
-import { Alert } from "@/ui/components/molecules";
-import { Label } from "@/ui/components/atoms";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { Label } from "@/ui/components/atoms/label";
 import React from "react";
 import { Asterisk } from "lucide-react";
 

@@ -3,25 +3,19 @@
 import type React from "react";
 import { useState } from "react";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
-import { Alert } from "@/ui/components/molecules";
-import { ImageField, SelectField } from "@/ui/components/organisms";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-  Button,
-  Textarea,
-  Switch,
-  Checkbox,
-  Label,
-  TypographyMuted,
-  TypographyH4,
-} from "@/ui/components/atoms";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { ImageField } from "@/ui/components/organisms/ImageField";
+import { SelectField } from "@/ui/components/organisms/SelectField";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { Input } from "@/ui/components/atoms/input";
+import { Button } from "@/ui/components/atoms/button";
+import { Textarea } from "@/ui/components/atoms/textarea";
+import { Switch } from "@/ui/components/atoms/switch";
+import { Checkbox } from "@/ui/components/atoms/checkbox";
+import { Label } from "@/ui/components/atoms/label";
+import { TypographyMuted, TypographyH4 } from "@/ui/components/atoms/typography";
 
-import { useImageList } from "@/ui/hooks";
+import { useImageList } from "@/ui/hooks/useImageList";
 
 import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
 import { getFieldError } from "@/core/utils/error";

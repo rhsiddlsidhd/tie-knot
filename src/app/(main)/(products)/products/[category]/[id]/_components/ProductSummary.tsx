@@ -2,7 +2,9 @@
 
 import { Share2 } from "lucide-react";
 import { useMemo } from "react";
-import { AppImage, Badge, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Badge } from "@/ui/components/atoms/badge";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { isProductCategory } from "@/core/utils/category";
@@ -13,7 +15,7 @@ import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "./ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
-import { RatingStars } from "@/ui/components/organisms";
+import { RatingStars } from "@/ui/components/organisms/RatingStars";
 export function ProductSummary({
   product,
   options,

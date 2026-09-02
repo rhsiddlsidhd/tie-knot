@@ -1,21 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type * as HooksModule from "@/ui/hooks";
+import type * as UseProductSearchModule from "@/ui/hooks/useProductSearch";
 
 const { useProductSearchMock } = vi.hoisted(() => ({
   useProductSearchMock: vi.fn(),
 }));
 
-vi.mock("@/ui/hooks", async (importOriginal) => {
-  const actual = await importOriginal<typeof HooksModule>();
+vi.mock("@/ui/hooks/useProductSearch", async (importOriginal) => {
+  const actual = await importOriginal<typeof UseProductSearchModule>();
   return {
     ...actual,
     useProductSearch: useProductSearchMock,
   };
 });
 
-vi.mock("@/ui/components/organisms", () => ({
+vi.mock("@/ui/components/organisms/ProductGrid", () => ({
   ProductGrid: ({ data }: { data: unknown[] }) => (
     <div data-testid="product-grid">{data.length}건</div>
   ),

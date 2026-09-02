@@ -1,5 +1,5 @@
 "use client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms/select";
 import React from "react";
 import { cn } from "@/core/utils/cn";
 

@@ -1,5 +1,5 @@
 import type { InvitationContent } from "@/core/domain/invitation";
-import { AppImage } from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
 import { InteractionOverlay } from "./interactions";
 import { ThemeAmbience } from "./ThemeAmbience";
 import { ThemeSync } from "./ThemeSync";

@@ -1,6 +1,6 @@
 import { SearchX } from "lucide-react";
 import Link from "next/link";
-import { TypographyP, TypographyMuted } from "@/ui/components/atoms";
+import { TypographyP, TypographyMuted } from "@/ui/components/atoms/typography";
 import { routes } from "@/core/domain/routes";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 

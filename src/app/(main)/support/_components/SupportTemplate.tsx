@@ -1,20 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Button,
-  Card,
-  CardContent,
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-  Input,
-  Label,
-  Textarea,
-  TypographyH1,
-  TypographyH2,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent } from "@/ui/components/atoms/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/components/atoms/collapsible";
+import { Input } from "@/ui/components/atoms/input";
+import { Label } from "@/ui/components/atoms/label";
+import { Textarea } from "@/ui/components/atoms/textarea";
+import { TypographyH1, TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import { MOCK_FAQS } from "../_constants";

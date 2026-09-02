@@ -2,18 +2,12 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import {
-  Button,
-  Input,
-  Label,
-  Switch,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-  TypographyH1,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Input } from "@/ui/components/atoms/input";
+import { Label } from "@/ui/components/atoms/label";
+import { Switch } from "@/ui/components/atoms/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
 const notifyPreparing = () =>
   toast.message("설정 저장 기능은 준비 중입니다 — 실제로 저장되지 않습니다.");

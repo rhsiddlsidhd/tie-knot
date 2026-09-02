@@ -12,7 +12,9 @@ vi.mock("sonner", () => ({
   toast: { error: vi.fn() },
 }));
 
-vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
+vi.mock("@/ui/hooks/useAuth", () => ({
+  useAuth: useAuthMock,
+}));
 
 import { toast } from "sonner";
 import { toggleProductLike } from "@/actions/toggleProductLike";

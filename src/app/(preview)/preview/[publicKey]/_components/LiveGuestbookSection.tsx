@@ -2,13 +2,13 @@
 
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "@/ui/fetcher";
-import { Button } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
 import { EyebrowSection } from "./EyebrowSection";
 import { GuestbookList } from "./GuestbookList";
 import { PenLine } from "lucide-react";
 import React, { useEffect, useRef } from "react";
 import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";
-import { useGuestbookModalStore } from "@/ui/stores";
+import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 import { mapDataToGuestbookProps } from "../_utils/guestbookSection.mapper";
 
 const buildKey = (publicKey: string, cursor?: string) => {

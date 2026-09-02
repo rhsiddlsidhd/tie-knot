@@ -1,10 +1,10 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/ui/components/atoms";
-import { SidebarNavItem } from "@/ui/components/organisms";
-import { SidebarToggle } from "@/ui/components/organisms";
-import { useAuth } from "@/ui/hooks";
-import { Skeleton } from "@/ui/components/atoms";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
+import { SidebarToggle } from "@/ui/components/organisms/SidebarToggle";
+import { useAuth } from "@/ui/hooks/useAuth";
+import { Skeleton } from "@/ui/components/atoms/skeleton";
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { session, isLoading } = useAuth();
 

@@ -2,10 +2,11 @@ import { BasicInfoSection } from "./BasicInfoSection";
 import { CoupleInfoSection } from "./CoupleInfoSection";
 import { ParentsInfoSection } from "./ParentsInfoSection";
 import { ImagesSection } from "./ImagesSection";
-import { BottomActionBar } from "@/ui/components/organisms";
-import { Progress, Skeleton } from "@/ui/components/atoms";
+import { BottomActionBar } from "@/ui/components/organisms/BottomActionBar";
+import { Progress } from "@/ui/components/atoms/progress";
+import { Skeleton } from "@/ui/components/atoms/skeleton";
 import { Save } from "lucide-react";
-import type { useInvitationForm } from "@/ui/hooks";
+import type { useInvitationForm } from "@/ui/hooks/useInvitationForm";
 
 type InvitationFormViewProps = ReturnType<typeof useInvitationForm> & {
   type: "create" | "edit";

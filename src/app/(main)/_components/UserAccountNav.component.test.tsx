@@ -13,7 +13,9 @@ vi.mock("swr", () => ({ mutate: mutateMock }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, refresh: refreshMock }),
 }));
-vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
+vi.mock("@/ui/hooks/useAuth", () => ({
+  useAuth: useAuthMock,
+}));
 vi.mock("@/actions/logoutUser", () => ({
   logoutUser: vi.fn().mockResolvedValue({ success: true, data: null }),
 }));

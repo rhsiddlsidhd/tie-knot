@@ -1,14 +1,10 @@
 import Link from "next/link";
 import { X } from "lucide-react";
 import { routes } from "@/core/domain/routes";
-import {
-  Button,
-  Card,
-  CardContent,
-  Spinner,
-  TypographyH1,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent } from "@/ui/components/atoms/card";
+import { Spinner } from "@/ui/components/atoms/spinner";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
 interface PaymentResultTemplateProps {
   errorMessage: string | null;

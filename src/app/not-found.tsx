@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { TypographyMuted } from "@/ui/components/atoms";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { routes } from "@/core/domain/routes";
 
 const FADE_DELAY = { 1: 0.1, 2: 0.25, 3: 0.4, 4: 0.6, 5: 0.75 } as const;

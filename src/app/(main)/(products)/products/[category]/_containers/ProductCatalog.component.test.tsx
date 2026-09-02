@@ -7,8 +7,10 @@ const { useProductsMock, usePremiumFeatureMock } = vi.hoisted(() => ({
   usePremiumFeatureMock: vi.fn(),
 }));
 
-vi.mock("@/ui/hooks", () => ({
+vi.mock("@/ui/hooks/useProducts", () => ({
   useProducts: useProductsMock,
+}));
+vi.mock("@/ui/hooks/usePremiumFeatures", () => ({
   usePremiumFeature: usePremiumFeatureMock,
 }));
 

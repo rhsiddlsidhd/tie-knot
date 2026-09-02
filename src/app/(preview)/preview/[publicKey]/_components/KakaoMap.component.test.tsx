@@ -10,11 +10,11 @@ vi.mock("react-kakao-maps-sdk", () => ({
   MapMarker: () => <div data-testid="kakao-marker" />,
 }));
 
-vi.mock("@/ui/hooks", () => ({
+vi.mock("@/ui/hooks/useKakaomapGeocode", () => ({
   useKakaomapGeocode: vi.fn(),
 }));
 
-import { useKakaomapGeocode } from "@/ui/hooks";
+import { useKakaomapGeocode } from "@/ui/hooks/useKakaomapGeocode";
 import { KakaoMap } from "./KakaoMap";
 
 describe("KakaoMap", () => {

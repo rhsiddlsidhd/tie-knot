@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, Skeleton } from "@/ui/components/atoms";
+import { Card, CardContent, CardHeader } from "@/ui/components/atoms/card";
+import { Skeleton } from "@/ui/components/atoms/skeleton";
 
 export default function MyOrdersLoading() {
   return (

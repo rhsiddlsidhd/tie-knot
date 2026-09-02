@@ -1,14 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import {
-  AppImage,
-  Button,
-  Card,
-  TypographyH2,
-  TypographyH3,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Button } from "@/ui/components/atoms/button";
+import { Card } from "@/ui/components/atoms/card";
+import { TypographyH2, TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import clsx from "clsx";
 import { Check, ChevronDown, Palette, Type, Settings, FileText } from "lucide-react";

@@ -1,12 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type * as AtomsModule from "@/ui/components/atoms";
+import type * as SidebarModule from "@/ui/components/atoms/sidebar";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
-vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
-vi.mock("@/ui/components/atoms", async (importOriginal) => {
-  const actual = await importOriginal<typeof AtomsModule>();
+vi.mock("@/ui/hooks/useAuth", () => ({
+  useAuth: useAuthMock,
+}));
+vi.mock("@/ui/components/atoms/sidebar", async (importOriginal) => {
+  const actual = await importOriginal<typeof SidebarModule>();
   const Passthrough = ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
   );
@@ -18,8 +20,10 @@ vi.mock("@/ui/components/atoms", async (importOriginal) => {
     SidebarFooter: Passthrough,
   };
 });
-vi.mock("@/ui/components/organisms", () => ({
+vi.mock("@/ui/components/organisms/SidebarNavItem", () => ({
   SidebarNavItem: (): null => null,
+}));
+vi.mock("@/ui/components/organisms/SidebarToggle", () => ({
   SidebarToggle: (): null => null,
 }));
 vi.mock("./_components", () => ({ AdminModal: (): null => null }));

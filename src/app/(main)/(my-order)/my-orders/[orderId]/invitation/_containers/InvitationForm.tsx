@@ -1,6 +1,6 @@
 "use client";
 
-import { useInvitationForm } from "@/ui/hooks";
+import { useInvitationForm } from "@/ui/hooks/useInvitationForm";
 import { InvitationFormView } from "../_components/InvitationFormView";
 
 export function InvitationForm() {

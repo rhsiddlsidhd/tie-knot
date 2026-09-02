@@ -1,7 +1,7 @@
 "use client";
 
 import { OrderSummary as OrderSummaryView } from "../_components";
-import { useCheckoutData } from "@/ui/hooks";
+import { useCheckoutData } from "@/ui/hooks/useCheckoutData";
 
 const OrderSummary = () => {
   const { data, loading } = useCheckoutData();

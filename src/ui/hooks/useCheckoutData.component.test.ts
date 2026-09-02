@@ -6,7 +6,9 @@ const { useOrderStoreMock, routerReplaceMock } = vi.hoisted(() => ({
   routerReplaceMock: vi.fn(),
 }));
 
-vi.mock("@/ui/stores", () => ({ useOrderStore: useOrderStoreMock }));
+vi.mock("@/ui/stores/use-app-store", () => ({
+  useOrderStore: useOrderStoreMock,
+}));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: routerReplaceMock }),
 }));

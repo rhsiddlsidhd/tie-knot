@@ -1,6 +1,8 @@
 "use client";
 
-import { Button, Card, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Card } from "@/ui/components/atoms/card";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
 import { AlertCircle, ArrowLeft, RotateCcw } from "lucide-react";
 import Link from "next/link";

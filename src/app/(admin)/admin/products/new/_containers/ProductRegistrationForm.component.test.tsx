@@ -11,11 +11,13 @@ vi.mock("@/actions/createProduct", () => ({
   createProduct: vi.fn(),
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
-vi.mock("@/ui/hooks", () => ({
+vi.mock("@/ui/hooks/usePremiumFeatures", () => ({
   usePremiumFeature: () => ({
     premiumFeatures: [] as unknown[],
     loading: false,
   }),
+}));
+vi.mock("@/ui/hooks/useImageList", () => ({
   useImageList: () => ({
     items: [] as unknown[],
     add: vi.fn(),

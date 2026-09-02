@@ -8,7 +8,8 @@ import { SWRConfig } from "swr";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";
-import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
+import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
+import { StoreProvider } from "@/ui/stores/provider";
 import { GuestbookSection } from "./GuestbookSection";
 
 const PUBLIC_KEY = "guestbook-infinite-scroll-test";

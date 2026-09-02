@@ -6,7 +6,7 @@ import { EyebrowSection } from "./EyebrowSection";
 import { DigitalWatch } from "./DigitalWatch";
 import { ko } from "date-fns/locale";
 import clsx from "clsx";
-import { useCountdown } from "@/ui/hooks";
+import { useCountdown } from "@/ui/hooks/useCountdown";
 
 import type { WeddingMonthCalendarProps } from "../_utils/weddingMonthCalendar.mapper";
 

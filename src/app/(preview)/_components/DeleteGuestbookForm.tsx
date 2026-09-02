@@ -1,13 +1,7 @@
-import { Alert } from "@/ui/components/molecules";
-import { TextField } from "@/ui/components/organisms";
-import {
-  Button,
-  DialogClose,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/ui/components/atoms";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { TextField } from "@/ui/components/organisms/TextField";
+import { Button } from "@/ui/components/atoms/button";
+import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
 
 import type { APIResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";

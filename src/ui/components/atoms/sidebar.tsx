@@ -5,7 +5,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
 
-import { useIsMobile } from "@/ui/hooks";
+import { useIsMobile } from "@/ui/hooks/useMobile";
 import { cn } from "@/core/utils/cn";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import {
@@ -15,7 +15,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "./sheet";
-import { Button } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
 import { Input } from "./input";
 import { Separator } from "./separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";

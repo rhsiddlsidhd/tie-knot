@@ -1,7 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
-import { StoreProvider } from "@/ui/stores";
+import { StoreProvider } from "@/ui/stores/provider";
 
 const notoSansKR = Noto_Sans_KR({
   subsets: ["latin"],

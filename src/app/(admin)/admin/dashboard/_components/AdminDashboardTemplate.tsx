@@ -1,13 +1,7 @@
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
 import type { ComponentType } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  TypographyMuted,
-  TypographySmall,
-} from "@/ui/components/atoms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
 import type { DashboardStats } from "@/core/domain/dashboard";
 import { cn } from "@/core/utils/cn";
 import { formatPriceWithComma } from "@/core/utils/price";

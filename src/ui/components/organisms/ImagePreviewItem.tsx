@@ -1,7 +1,8 @@
 "use client";
 
 import { X } from "lucide-react";
-import { AppImage, Button } from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Button } from "@/ui/components/atoms/button";
 interface ImagePreviewItemProps {
   id: string;
   preview: string;

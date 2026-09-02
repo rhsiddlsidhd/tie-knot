@@ -1,8 +1,8 @@
 "use client";
 
-import type { SelectOption } from "@/ui/components/molecules";
-import { BaseSelect } from "@/ui/components/molecules";
-import { FormField } from "@/ui/components/organisms";
+import type { SelectOption } from "@/ui/components/molecules/BaseSelect";
+import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
+import { FormField } from "@/ui/components/organisms/FormField";
 import { useState } from "react";
 import type { FieldBase } from "@/core/domain/field";
 

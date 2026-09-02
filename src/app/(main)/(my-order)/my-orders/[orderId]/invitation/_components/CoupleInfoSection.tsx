@@ -1,8 +1,10 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, TypographyH3 } from "@/ui/components/atoms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyH3 } from "@/ui/components/atoms/typography";
 
-import { BankField, TextField } from "@/ui/components/organisms";
+import { BankField } from "@/ui/components/organisms/BankField";
+import { TextField } from "@/ui/components/organisms/TextField";
 
 import type { InvitationContent } from "@/core/domain/invitation";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";

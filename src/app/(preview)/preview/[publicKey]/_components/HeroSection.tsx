@@ -3,7 +3,8 @@ import { formatInTimeZone } from "date-fns-tz";
 import { ko } from "date-fns/locale";
 
 import type { HeroSectionProps } from "../_utils/heroSection.mapper";
-import { AppImage, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ScrollIndicator } from "./ScrollIndicator";
 export function HeroSection({
   groomName,

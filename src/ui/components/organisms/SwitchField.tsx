@@ -1,6 +1,7 @@
 "use client";
 
-import { Switch, TypographyMuted } from "@/ui/components/atoms";
+import { Switch } from "@/ui/components/atoms/switch";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { Label } from "@radix-ui/react-label";
 import React, { useState } from "react";
 

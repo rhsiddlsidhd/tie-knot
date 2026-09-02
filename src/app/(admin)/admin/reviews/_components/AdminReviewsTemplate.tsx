@@ -3,9 +3,10 @@
 import { useTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner";
-import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import { CursorPagination } from "@/ui/components/molecules";
-import { RatingStars } from "@/ui/components/organisms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
+import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import type { AdminReviewListPage } from "@/core/domain/review";
 import { formatKstDate } from "@/core/utils/date";
 import { deleteReviewByAdmin } from "@/actions/deleteReviewByAdmin";

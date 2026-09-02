@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms";
-import { TextField } from "@/ui/components/organisms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TextField } from "@/ui/components/organisms/TextField";
 import type { BuyerInfo } from "@/core/schemas/request/order.schema";
 
 interface BuyerInfoCardProps {

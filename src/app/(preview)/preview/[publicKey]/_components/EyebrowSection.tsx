@@ -1,4 +1,4 @@
-import { TypographyEyebrow, TypographyLead } from "@/ui/components/atoms";
+import { TypographyEyebrow, TypographyLead } from "@/ui/components/atoms/typography";
 import React from "react";
 
 interface EyebrowSectionProps {

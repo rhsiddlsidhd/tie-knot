@@ -1,4 +1,5 @@
-import { Button, Card, CardContent } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent } from "@/ui/components/atoms/card";
 
 import { Eye, ExternalLink } from "lucide-react";
 import Link from "next/link";

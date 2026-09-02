@@ -1,10 +1,11 @@
 "use client";
 
-import { DialogDescription, DialogHeader, DialogTitle, TypographyMuted } from "@/ui/components/atoms";
+import { DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 import React from "react";
 
-import { PersonValueCard } from "@/ui/components/organisms";
-import { useCopy } from "@/ui/hooks";
+import { PersonValueCard } from "@/ui/components/organisms/PersonValueCard";
+import { useCopy } from "@/ui/hooks/useCopy";
 
 
 // Contact 타입을 컴포넌트 내에서 직접 정의하여 의존성 제거

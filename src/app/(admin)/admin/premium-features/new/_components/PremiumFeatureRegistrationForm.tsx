@@ -1,5 +1,9 @@
-import { Alert } from "@/ui/components/molecules";
-import { Button, Input, Label, Textarea, TypographyMuted } from "@/ui/components/atoms";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { Button } from "@/ui/components/atoms/button";
+import { Input } from "@/ui/components/atoms/input";
+import { Label } from "@/ui/components/atoms/label";
+import { Textarea } from "@/ui/components/atoms/textarea";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 
 
 

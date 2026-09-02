@@ -1,12 +1,9 @@
 "use client";
 
-import {
-  initialFilterState,
-  ProductFilterProvider,
-  useProductFilter,
-} from "@/ui/context/productFilter";
+import { initialFilterState } from "@/ui/context/productFilter/reducer";
+import { ProductFilterProvider, useProductFilter } from "@/ui/context/productFilter/provider";
 import React from "react";
-import { ProductGrid } from "@/ui/components/organisms";
+import { ProductGrid } from "@/ui/components/organisms/ProductGrid";
 import { ProductFilters } from "./ProductFilters";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";

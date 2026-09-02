@@ -1,4 +1,4 @@
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { OrderFilters } from "./OrderFilters";

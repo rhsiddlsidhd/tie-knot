@@ -1,10 +1,10 @@
 "use client";
 
 import { ProductEditDialog } from "@/app/(admin)/admin/products/_components";
-import type { AdminModalPropsMap, AdminModalType } from "@/ui/stores";
-import { useAdminModalStore } from "@/ui/stores";
+import type { AdminModalPropsMap, AdminModalType } from "@/ui/stores/use-app-store";
+import { useAdminModalStore } from "@/ui/stores/use-app-store";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
 import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog";
 
 const modalCopy: Record<

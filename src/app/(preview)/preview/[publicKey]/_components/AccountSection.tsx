@@ -2,12 +2,13 @@
 
 import { EyebrowSection } from "./EyebrowSection";
 import React, { useMemo, useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TypographyMuted } from "@/ui/components/atoms";
-import { PersonValueCard } from "@/ui/components/organisms";
-import { useCopy } from "@/ui/hooks";
+import { Tabs, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { PersonValueCard } from "@/ui/components/organisms/PersonValueCard";
+import { useCopy } from "@/ui/hooks/useCopy";
 
 import { cn } from "@/core/utils/cn";
-import { useBanks } from "@/ui/hooks";
+import { useBanks } from "@/ui/hooks/useBanks";
 
 import type {
   AccountInfo,
