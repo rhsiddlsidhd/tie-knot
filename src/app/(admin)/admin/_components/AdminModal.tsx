@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductEditDialog } from "@/app/(admin)/admin/products/_components/ProductEditDialog";
+import { ProductEditDialog } from "@/app/(admin)/admin/products/_containers/ProductEditDialog";
 import type { AdminModalPropsMap, AdminModalType } from "@/ui/stores/use-app-store";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 

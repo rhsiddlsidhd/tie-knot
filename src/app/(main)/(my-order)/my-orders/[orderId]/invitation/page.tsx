@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { getOwnedInvitationByOrder } from "@/services/invitation";
 import { verifySession } from "@/services/auth";
-import { InvitationStatusControls } from "@/app/(main)/(my-order)/my-orders/[orderId]/invitation/_components/InvitationStatusControls";
+import { InvitationStatusControls } from "@/app/(main)/(my-order)/my-orders/[orderId]/invitation/_containers/InvitationStatusControls";
 import { InvitationForm } from "@/app/(main)/(my-order)/my-orders/[orderId]/invitation/_containers/InvitationForm";
 
 export default async function Page({ params }: { params: Promise<{ orderId: string }> }) {

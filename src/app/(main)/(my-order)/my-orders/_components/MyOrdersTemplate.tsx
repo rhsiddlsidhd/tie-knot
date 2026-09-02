@@ -2,7 +2,7 @@ import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography"
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { OrderFilters } from "./OrderFilters";
-import { OrderList } from "./OrderList";
+import { OrderList } from "../_containers/OrderList";
 
 interface MyOrdersTemplateProps {
   firstPage: OrderListPage;

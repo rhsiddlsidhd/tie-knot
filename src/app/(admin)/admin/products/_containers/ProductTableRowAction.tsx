@@ -2,7 +2,7 @@
 import { deleteProduct } from "@/actions/deleteProduct";
 import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
 import { restoreProduct } from "@/actions/restoreProduct";
-import type { ProductTableRowProps } from "./ProductTableRow";
+import type { ProductTableRowProps } from "../_components/ProductTableRow";
 import { Button } from "@/ui/components/atoms/button";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 import { Edit, RotateCcw, Trash2 } from "lucide-react";

@@ -1,4 +1,4 @@
-import { PaymentResult } from "@/app/(main)/payment-result/_components/PaymentResult";
+import { PaymentResult } from "@/app/(main)/payment-result/_containers/PaymentResult";
 
 export default async function PaymentResultPage({
   searchParams,

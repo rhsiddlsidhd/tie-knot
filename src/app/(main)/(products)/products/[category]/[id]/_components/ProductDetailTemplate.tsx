@@ -3,7 +3,7 @@ import type { PremiumFeature } from "@/services/premiumFeature";
 import type { ReviewListPage, ReviewSortType } from "@/core/domain/review";
 import { ProductSummary } from "../_containers/ProductSummary";
 import { ProductFeatures } from "./ProductFeatures";
-import { ProductViewTracker } from "./ProductViewTracker";
+import { ProductViewTracker } from "../_containers/ProductViewTracker";
 import { ReviewsSection } from "./ReviewsSection";
 
 interface ProductDetailTemplateProps {

@@ -13,7 +13,7 @@ import type { SubCategory } from "@/core/domain/product-category";
 import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 
 import type { CheckoutItem } from "@/core/domain/checkout";
-import { ProductLikeBadge } from "./ProductLikeBadge";
+import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 export function ProductSummary({
