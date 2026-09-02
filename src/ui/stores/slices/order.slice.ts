@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 import type { CheckoutItem, PayStatus } from "@/core/domain";
-import type { CreateOrderResult } from "@/actions";
+import type { CreateOrderResult } from "@/actions/createOrder";
 import type { AppStore } from "../app.store";
 
 export interface OrderSlice {

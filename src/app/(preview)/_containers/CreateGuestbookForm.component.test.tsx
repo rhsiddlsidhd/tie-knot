@@ -7,12 +7,14 @@ const { refreshMock } = vi.hoisted(() => ({ refreshMock: vi.fn() }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
 }));
-vi.mock("@/actions", () => ({ createGuestbook: vi.fn() }));
+vi.mock("@/actions/createGuestbook", () => ({
+  createGuestbook: vi.fn(),
+}));
 vi.mock("sonner", () => ({
   toast: Object.assign(vi.fn(), { message: vi.fn(), error: vi.fn() }),
 }));
 
-import { createGuestbook } from "@/actions";
+import { createGuestbook } from "@/actions/createGuestbook";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/ui/components/atoms";
 import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";

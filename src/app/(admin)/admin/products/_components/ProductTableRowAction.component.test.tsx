@@ -8,13 +8,19 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
 }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/deleteProduct", () => ({
   deleteProduct: vi.fn(),
+}));
+vi.mock("@/actions/restoreProduct", () => ({
   restoreProduct: vi.fn(),
+}));
+vi.mock("@/actions/permanentlyDeleteProduct", () => ({
   permanentlyDeleteProduct: vi.fn(),
 }));
 
-import { deleteProduct, restoreProduct, permanentlyDeleteProduct } from "@/actions";
+import { deleteProduct } from "@/actions/deleteProduct";
+import { restoreProduct } from "@/actions/restoreProduct";
+import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
 import type { Product } from "@/core/domain";
 import { ProductTableRowAction } from "./ProductTableRowAction";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";

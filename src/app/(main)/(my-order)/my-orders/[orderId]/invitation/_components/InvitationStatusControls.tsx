@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { setInvitationStatus } from "@/actions";
+import { setInvitationStatus } from "@/actions/setInvitationStatus";
 import { routes } from "@/core/domain";
 import { Button } from "@/ui/components/atoms";
 

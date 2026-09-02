@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
-import type { CreateOrderResult } from "@/actions";
+import type { CreateOrderResult } from "@/actions/createOrder";
 
 const { requestPaymentMock } = vi.hoisted(() => ({
   requestPaymentMock: vi.fn(),
@@ -10,7 +10,7 @@ vi.mock("@/adapters/browser/portone/request-payment", () => ({
   requestPayment: requestPaymentMock,
 }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/completePayment", () => ({
   completePayment: vi.fn(),
 }));
 
@@ -32,7 +32,7 @@ vi.mock("@/ui/stores", async () => {
   return { useOrderStore };
 });
 
-import { completePayment } from "@/actions";
+import { completePayment } from "@/actions/completePayment";
 import { useOrderStore } from "@/ui/stores";
 import { usePortOnePayment } from "./usePortOnePayment";
 

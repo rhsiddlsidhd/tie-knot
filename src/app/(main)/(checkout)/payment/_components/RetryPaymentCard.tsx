@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircle } from "lucide-react";
-import type { CreateOrderResult } from "@/actions";
+import type { CreateOrderResult } from "@/actions/createOrder";
 import type { PayStatus } from "@/core/domain";
 import { Button } from "@/ui/components/atoms";
 import { TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";

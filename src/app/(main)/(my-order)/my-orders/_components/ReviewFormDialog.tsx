@@ -20,7 +20,9 @@ import { ImageField, RatingStars } from "@/ui/components/organisms";
 import { useImageList } from "@/ui/hooks";
 import { getFieldError, hasFieldErrors } from "@/core/utils";
 import type { APIResponse, OrderReviewSummary } from "@/core/domain";
-import { createReview, deleteReview, updateReview } from "@/actions";
+import { createReview } from "@/actions/createReview";
+import { deleteReview } from "@/actions/deleteReview";
+import { updateReview } from "@/actions/updateReview";
 
 interface ReviewFormDialogProps {
   orderId: string;

@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { createGuestbook } from "@/actions";
+import { createGuestbook } from "@/actions/createGuestbook";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";
 import { parseGuestbookFormData } from "@/core/schemas";

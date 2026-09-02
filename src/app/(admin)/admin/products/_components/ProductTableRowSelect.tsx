@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { isStatus, STATUS_ITEMS } from "../_types";
-import { updateProductStatus } from "@/actions";
+import { updateProductStatus } from "@/actions/updateProductStatus";
 import { toast } from "sonner";
 import { BaseSelect } from "@/ui/components/molecules";
 import type { Product } from "@/services/product";

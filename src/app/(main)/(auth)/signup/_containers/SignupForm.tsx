@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { signupUser } from "@/actions";
+import { signupUser } from "@/actions/signupUser";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 import { SignupForm as PureSignupForm } from "../_components/SignupForm";

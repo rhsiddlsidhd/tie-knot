@@ -11,7 +11,9 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-vi.mock("@/actions", () => ({ createOrder: vi.fn() }));
+vi.mock("@/actions/createOrder", () => ({
+  createOrder: vi.fn(),
+}));
 
 vi.mock("@/ui/stores", () => ({
   useOrderStore: (

@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react";
 
-import { createPremiumFeature } from "@/actions";
+import { createPremiumFeature } from "@/actions/createPremiumFeature";
 import type { APIResponse } from "@/core/domain";
 import { PremiumFeatureRegistrationForm as PurePremiumFeatureRegistrationForm } from "../_components/PremiumFeatureRegistrationForm";
 export function PremiumFeatureRegistrationForm() {

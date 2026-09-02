@@ -14,7 +14,7 @@ vi.mock("@/adapters/browser/cloudinary", () => ({
   }) => children({ isLoading: false, open: vi.fn() }),
 }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/updateProduct", () => ({
   updateProduct: () => async (): Promise<null> => null,
 }));
 

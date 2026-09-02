@@ -24,7 +24,7 @@ import { useCopy } from "@/ui/hooks";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
 import type { OrderListItem, OrderStatus } from "@/core/domain";
 import { CUSTOMER_INPUT_ROUTES, routes } from "@/core/domain";
-import { cancelOrder } from "@/actions";
+import { cancelOrder } from "@/actions/cancelOrder";
 import { PAY_METHOD_LABEL, resolveOrderStatusLabel } from "../_constants";
 import { getInvitationInputDaysLeft } from "../_utils";
 import { PaymentButton } from "./PaymentButton";
