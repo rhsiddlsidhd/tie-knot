@@ -24,7 +24,6 @@ props로 주입받은 핸들러를 하위 요소에 전달하기만 해도 해�
 
 ```text
 src/ui/components/organisms/
-├── index.ts
 ├── BankField.tsx
 ├── ClipboardButton.tsx
 ├── FormField.tsx

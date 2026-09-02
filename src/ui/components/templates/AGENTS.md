@@ -16,7 +16,6 @@
 
 ```text
 src/ui/components/templates/
-├── index.ts
 ├── LegalDocumentTemplate.tsx
 └── ...                        # {Name}Template.tsx — 페이지 몸통 전체를 공유하는 라우트가 2곳 이상일 때 추가
 ```

@@ -21,7 +21,6 @@ props로 받은 핸들러를 전달하는 상호작용도 동작으로 센다. �
 
 ```text
 src/ui/components/molecules/
-├── index.ts
 ├── Alert.tsx
 ├── AutoCompleteList.tsx
 ├── BaseSelect.tsx

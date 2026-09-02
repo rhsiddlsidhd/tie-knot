@@ -22,7 +22,6 @@ shadcn/Radix CLI 산출물은 내부에 여러 하위 요소와 상호작용이 
 
 ```text
 src/ui/components/atoms/
-├── index.ts
 ├── app-image.tsx
 ├── button.tsx
 ├── dialog.tsx

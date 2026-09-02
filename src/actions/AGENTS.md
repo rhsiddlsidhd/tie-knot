@@ -10,7 +10,6 @@ Server Component가 `src/services/*`를 직접 import해서 호출하는 것과 
 
 ```
 src/actions/
-├── index.ts   # 배럴 — export *
 └── {동사}{Domain}.ts   # 예: createProduct.ts, deleteGuestbook.ts, loginUser.ts — "Action" 접미사 없음
 ```
 

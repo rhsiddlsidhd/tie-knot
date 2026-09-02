@@ -11,10 +11,8 @@
 
 ```
 src/ui/context/
-├── index.ts                  # 배럴 — export * from "./createStateContext"
 ├── createStateContext.tsx   # Provider+useContext 페어를 만드는 제네릭 팩토리(도메인 무관)
 └── {domain}/                  # 팩토리를 실제로 쓰는 도메인 폴더(예: productFilter/)
-    ├── index.ts                # 이 도메인 전용 배럴
     ├── type.ts                # State/Action 타입
     ├── reducer.ts              # 초기값 선언 + 순수 reducer((state, action) => newState)
     └── provider.tsx            # createStateContext(reducer 기반 useValue) 호출 결과로 Provider/hook export — 고유 로직 추가 금지
