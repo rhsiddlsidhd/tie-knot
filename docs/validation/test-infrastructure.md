@@ -5,7 +5,7 @@
 ## Vitest project
 
 - `unit`: actions, core, 서버/순수 adapter, API 경계의 `*.unit.test.ts`를 Node에서 실행한다.
-- `component`: ui, app UI, 브라우저 adapter의 `*.component.test.ts(x)`를 jsdom에서 실행한다. MongoDB 없이 Hook·컴포넌트 경계를 관통하는 파일(예: Hook → SWR → fetch → MSW)도 이 접미사로 여기 속한다 — `docs/__test/component.md` 참고.
+- `component`: ui, app UI, 브라우저 adapter의 `*.component.test.ts(x)`를 jsdom에서 실행한다. MongoDB 없이 Hook·컴포넌트 경계를 관통하는 파일(예: Hook → SWR → fetch → MSW)도 이 접미사로 여기 속한다.
 - `integration`: `test/integration/`의 `*.integration.test.ts(x)`로 actions/db/services/API와 DB를 관통하는 계약을 실행한다. 단일 replica set을 공유하므로 파일을 직렬 실행한다. jsdom이 필요한 파일은 `@vitest-environment jsdom`을 선언한다.
 
 루트 설정은 `@next/env`로 환경 파일을 로드하고 Vite의 `resolve.tsconfigPaths`로 TypeScript alias를 해석한다. `server-only`는 테스트 전용 빈 shim으로 해석하되 제품 코드의 서버 경계는 변경하지 않는다.
