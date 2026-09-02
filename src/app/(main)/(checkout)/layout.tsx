@@ -1,5 +1,5 @@
-import { PageTitle } from "./_components";
-import { OrderSummary } from "./_containers";
+import { PageTitle } from "@/app/(main)/(checkout)/_components/PageTitle";
+import { OrderSummary } from "@/app/(main)/(checkout)/_containers/OrderSummary";
 import React from "react";
 
 const CheckoutLayout = async ({ children }: { children: React.ReactNode }) => {

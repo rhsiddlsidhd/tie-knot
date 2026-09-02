@@ -1,1 +1,0 @@
-export { OrderDetailTemplate } from "./OrderDetailTemplate";

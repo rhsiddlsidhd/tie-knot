@@ -1,6 +1,6 @@
 import { routes } from "@/core/domain/routes";
-import { InvitationTemplate } from "../[publicKey]/_components";
-import { SAMPLE_FEATURES, SAMPLE_THEME, sampleInvitation } from "./_constants";
+import { InvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate";
+import { SAMPLE_FEATURES, SAMPLE_THEME, sampleInvitation } from "@/app/(preview)/preview/sample/_constants/sampleInvitation";
 
 export default function Page() {
   return (

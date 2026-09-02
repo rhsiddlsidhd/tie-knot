@@ -26,7 +26,9 @@ vi.mock("@/ui/components/organisms/SidebarNavItem", () => ({
 vi.mock("@/ui/components/organisms/SidebarToggle", () => ({
   SidebarToggle: (): null => null,
 }));
-vi.mock("./_components", () => ({ AdminModal: (): null => null }));
+vi.mock("@/app/(admin)/admin/_components/AdminModal", () => ({
+  AdminModal: (): null => null,
+}));
 
 import AdminLayout from "./layout";
 

@@ -1,5 +1,5 @@
 import { LegalDocumentTemplate } from "@/ui/components/templates/LegalDocumentTemplate";
-import { PRIVACY_SECTIONS, PRIVACY_EFFECTIVE_DATE } from "./_constants";
+import { PRIVACY_SECTIONS, PRIVACY_EFFECTIVE_DATE } from "./_constants/privacy-sections";
 
 // 법무 미검수 초안 — 서비스 오픈 전 검토 필요. 보호책임자 연락처는 TODO(legal).
 export default function PrivacyPage() {

@@ -1,27 +1,23 @@
 import type { InvitationContent } from "@/core/domain/invitation";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { InteractionOverlay } from "./interactions";
+import { InteractionOverlay } from "@/app/(preview)/preview/[publicKey]/_components/interactions/InteractionOverlay";
 import { ThemeAmbience } from "./ThemeAmbience";
 import { ThemeSync } from "./ThemeSync";
-import {
-  mapCoupleInfoToAccountProps,
-  mapCoupleInfoToCalendarProps,
-  mapCoupleInfoToGalleryProps,
-  mapCoupleInfoToHeroProps,
-  mapCoupleInfoToInvitationProps,
-  mapCoupleInfoToLocationProps,
-  mapCoupleInfoToThumbnails,
-} from "../_utils";
-import {
-  AccountSection,
-  Footer,
-  GallerySection,
-  GuestbookSection,
-  HeroSection,
-  InvitationMessage,
-  LocationSection,
-  WeddingMonthCalendar,
-} from ".";
+import { mapCoupleInfoToAccountProps } from "@/app/(preview)/preview/[publicKey]/_utils/accountSection.mapper";
+import { mapCoupleInfoToCalendarProps } from "@/app/(preview)/preview/[publicKey]/_utils/weddingMonthCalendar.mapper";
+import { mapCoupleInfoToGalleryProps } from "@/app/(preview)/preview/[publicKey]/_utils/gallerySection.mapper";
+import { mapCoupleInfoToHeroProps } from "@/app/(preview)/preview/[publicKey]/_utils/heroSection.mapper";
+import { mapCoupleInfoToInvitationProps } from "@/app/(preview)/preview/[publicKey]/_utils/invitationMessage.mapper";
+import { mapCoupleInfoToLocationProps } from "@/app/(preview)/preview/[publicKey]/_utils/locationSection.mapper";
+import { mapCoupleInfoToThumbnails } from "@/app/(preview)/preview/[publicKey]/_utils/thumbnails.mapper";
+import { AccountSection } from "@/app/(preview)/preview/[publicKey]/_components/AccountSection";
+import { Footer } from "@/app/(preview)/preview/[publicKey]/_components/Footer";
+import { GallerySection } from "@/app/(preview)/preview/[publicKey]/_components/GallerySection";
+import { GuestbookSection } from "@/app/(preview)/preview/[publicKey]/_components/GuestbookSection";
+import { HeroSection } from "@/app/(preview)/preview/[publicKey]/_components/HeroSection";
+import { InvitationMessage } from "@/app/(preview)/preview/[publicKey]/_components/InvitationMessage";
+import { LocationSection } from "@/app/(preview)/preview/[publicKey]/_components/LocationSection";
+import { WeddingMonthCalendar } from "@/app/(preview)/preview/[publicKey]/_components/WeddingMonthCalendar";
 
 interface InvitationTemplateProps {
   content: InvitationContent;

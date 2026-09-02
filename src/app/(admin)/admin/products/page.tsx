@@ -5,7 +5,7 @@ import { getAdminProductsPageService } from "@/services/product";
 import { adminProductListRequestSchema } from "@/core/schemas/request/adminProductList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { AdminProductsTemplate } from "./_components";
+import { AdminProductsTemplate } from "@/app/(admin)/admin/products/_components/AdminProductsTemplate";
 
 // 필터/커서는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은
 // view는 스키마가, 형식이 깨진 cursor는 decodeCursor가 걸러 "필터/커서 없음"으로

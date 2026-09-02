@@ -1,1 +1,0 @@
-export { AdminOrdersTemplate } from "./AdminOrdersTemplate";

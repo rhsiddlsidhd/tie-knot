@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { MyProfileTemplate } from "./_components";
+import { MyProfileTemplate } from "@/app/(main)/(my-profile)/my-profile/_components/MyProfileTemplate";
 import { verifySession, getUser } from "@/services/auth";
 import { redirect } from "next/navigation";
 import { routes } from "@/core/domain/routes";

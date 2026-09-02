@@ -10,7 +10,7 @@ import { Textarea } from "@/ui/components/atoms/textarea";
 import { TypographyH1, TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ChevronDown } from "lucide-react";
 import clsx from "clsx";
-import { MOCK_FAQS } from "../_constants";
+import { MOCK_FAQS } from "../_constants/faqs";
 
 function FaqItem({ question, answer }: { question: string; answer: string }) {
   const [isOpen, setIsOpen] = useState(false);

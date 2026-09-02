@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { ProductDetailTemplate } from "./_components";
+import { ProductDetailTemplate } from "@/app/(main)/(products)/products/[category]/[id]/_components/ProductDetailTemplate";
 import { getAuth } from "@/services/auth";
 import { getPremiumFeatureService } from "@/services/premiumFeature";
 import { getProductReviewsPageService } from "@/services/review";

@@ -1,7 +1,7 @@
 import { isInvitationExpired } from "@/core/utils/invitation";
 import { getProductService } from "@/services/product";
 import { getPublishedInvitationByPublicKey } from "@/services/invitation";
-import { InvitationTemplate } from "./_components";
+import { InvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate";
 
 export const revalidate = 300;
 

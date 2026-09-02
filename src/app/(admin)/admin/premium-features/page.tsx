@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { PremiumFeaturesTemplate } from "./_components";
+import { PremiumFeaturesTemplate } from "@/app/(admin)/admin/premium-features/_components/PremiumFeaturesTemplate";
 import { getAllPremiumFeatureService } from "@/services/premiumFeature";
 import { verifySession } from "@/services/auth";
 

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getOwnedOrderDetail } from "@/services/order";
 import { verifySession } from "@/services/auth";
 import { AppError } from "@/core/domain/error";
-import { OrderDetailTemplate } from "./_components";
+import { OrderDetailTemplate } from "@/app/(main)/(my-order)/my-orders/[orderId]/_components/OrderDetailTemplate";
 
 const Page = async ({ params }: { params: Promise<{ orderId: string }> }) => {
   const { orderId } = await params;

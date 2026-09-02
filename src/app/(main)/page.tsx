@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { HomeTemplate } from "./_components";
+import { HomeTemplate } from "@/app/(main)/_components/HomeTemplate";
 import type { Product } from "@/services/product";
 import { getAvailableSubCategoriesService, getPopularProductsService } from "@/services/product";
 import type { AvailableSubCategory } from "@/core/domain/product-category";

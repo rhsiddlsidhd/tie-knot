@@ -1,11 +1,11 @@
 export const dynamic = "force-dynamic";
 
-import { ProductCatalogTemplate } from "./_components";
+import { ProductCatalogTemplate } from "@/app/(main)/(products)/products/[category]/_components/ProductCatalogTemplate";
 import { getPublicProductsService } from "@/services/product";
 import { getAvailableSubCategories, isProductCategory } from "@/core/utils/category";
 import { productCategoryLabels } from "@/core/domain/product-category";
 import { notFound } from "next/navigation";
-import { resolveInitialSubCategory } from "./_utils";
+import { resolveInitialSubCategory } from "@/app/(main)/(products)/products/[category]/_utils/resolveInitialSubCategory";
 
 export default async function ProductsPage({
   params,

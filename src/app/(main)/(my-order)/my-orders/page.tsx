@@ -4,7 +4,7 @@ import { verifySession } from "@/services/auth";
 import { getOrdersPageForUser } from "@/services/order";
 import { orderListRequestSchema } from "@/core/schemas/request/orderList.schema";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { MyOrdersTemplate } from "./_components";
+import { MyOrdersTemplate } from "@/app/(main)/(my-order)/my-orders/_components/MyOrdersTemplate";
 
 // 필터는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은 값은
 // "필터 없음"으로 떨어뜨린다(더보기 route handler는 같은 스키마로 400을 낸다).

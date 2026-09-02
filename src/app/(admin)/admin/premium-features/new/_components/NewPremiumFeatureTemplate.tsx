@@ -5,7 +5,7 @@ import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography"
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { PremiumFeatureRegistrationForm } from "../_containers";
+import { PremiumFeatureRegistrationForm } from "@/app/(admin)/admin/premium-features/new/_containers/PremiumFeatureRegistrationForm";
 
 const NewPremiumFeatureTemplate = () => (
   <div className="space-y-6">
