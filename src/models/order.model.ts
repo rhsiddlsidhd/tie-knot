@@ -1,10 +1,12 @@
 import "server-only";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
-import type { PayMethod, ProductCategory } from "@/core/domain";
-import { PAY_METHOD, PRODUCT_CATEGORIES } from "@/core/domain";
-import { categoryRequiresShipping } from "@/core/utils";
-export type { OrderJSON } from "@/core/domain";
+import type { PayMethod } from "@/core/domain/payment";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { PAY_METHOD } from "@/core/domain/payment";
+import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
+import { categoryRequiresShipping } from "@/core/utils/category";
+export type { OrderJSON } from "@/core/domain/order";
 interface ProductPricing {
   originalPrice: number;
   discountedPrice: number;

@@ -1,9 +1,9 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { deleteReviewForCurrentUserService } from "@/services/review";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
 export const deleteReview = async (

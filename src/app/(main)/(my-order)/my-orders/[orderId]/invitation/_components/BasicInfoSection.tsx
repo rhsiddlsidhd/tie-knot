@@ -6,8 +6,8 @@ import { ComboboxField } from "./ComboboxField";
 import { DateField } from "./DateField";
 import { AddressField, SwitchField, TextField } from "@/ui/components/organisms";
 
-import type { InvitationContent } from "@/core/domain";
-import type { SubwayStationsResponse } from "@/core/schemas";
+import type { InvitationContent } from "@/core/domain/invitation";
+import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";
 
 type BasicInfoSectionProps = {
   data?: Pick<InvitationContent, "weddingDate" | "venue" | "address" | "addressDetail" | "subwayStation" | "guestbookEnabled">;

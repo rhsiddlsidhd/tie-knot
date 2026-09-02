@@ -3,11 +3,11 @@ import { Button, DialogFooter, Input, TypographyMuted, Textarea, Label } from "@
 
 
 
-import type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { Alert } from "@/ui/components/molecules";
 import { TextField } from "@/ui/components/organisms";
-import type { APIResponse } from "@/core/domain";
-import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain/error";
+import { getFieldError } from "@/core/utils/error";
 
 interface PremiumFeatureDialogProps {
   premiumFeature: PremiumFeature;

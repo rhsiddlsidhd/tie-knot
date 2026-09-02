@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { OrderJSON } from "@/core/domain";
+import type { OrderJSON } from "@/core/domain/order";
 
 const { pushMock, setOrderMock, setResumePaymentMock, completePaymentMock } =
   vi.hoisted(() => ({

@@ -21,7 +21,8 @@ import type * as ProductServiceModule from "@/services/product";
 import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
 import { ProductModel } from "@/models/product.model";
-import { POPULAR_PRODUCTS_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 // getPopularProductsService만 vi.fn으로 감싸 개별 테스트에서 override할 수
 // 있게 하고, 기본 동작은 실제 구현(actual)을 그대로 위임한다 — 그 외

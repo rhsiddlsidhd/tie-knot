@@ -1,4 +1,4 @@
-import type { SelectFeatureDto } from "@/core/schemas";
+import type { SelectFeatureDto } from "@/core/schemas/request/order.schema";
 import type { ProductCategory } from "./product-category";
 
 export interface CheckoutItem {

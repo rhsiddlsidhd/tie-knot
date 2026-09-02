@@ -1,4 +1,5 @@
-import type { SubCategory, ProductPriceType, ProductSortType } from "@/core/domain";
+import type { SubCategory } from "@/core/domain/product-category";
+import type { ProductPriceType, ProductSortType } from "@/core/domain/product";
 
 export type ProductFilterState = {
   keyword: string;

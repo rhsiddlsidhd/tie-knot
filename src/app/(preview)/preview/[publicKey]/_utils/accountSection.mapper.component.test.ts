@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { InvitationContent } from "@/core/domain";
+import type { InvitationContent } from "@/core/domain/invitation";
 
 import { mapCoupleInfoToAccountProps } from "./accountSection.mapper";
 

@@ -1,16 +1,18 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { redirect } from "next/navigation";
 
 import { getAuth } from "@/services/auth";
 import { createOrderForCurrentUserService } from "@/services/order";
 import { actionError } from "@/boundary";
 
-import { categoryRequiresShipping, validateAndFlatten } from "@/core/utils";
-import { createOrderSchema } from "@/core/schemas";
-import type { PayMethod, ProductCategory } from "@/core/domain";
-import { routes } from "@/core/domain";
+import { categoryRequiresShipping } from "@/core/utils/category";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { createOrderSchema } from "@/core/schemas/request/order.schema";
+import type { PayMethod } from "@/core/domain/payment";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { routes } from "@/core/domain/routes";
 export type CreateOrderResult = {
   merchantUid: string;
   finalPrice: number;

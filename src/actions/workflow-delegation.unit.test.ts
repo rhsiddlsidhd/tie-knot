@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 
 const services = vi.hoisted(() => ({
   loginUserService: vi.fn(),

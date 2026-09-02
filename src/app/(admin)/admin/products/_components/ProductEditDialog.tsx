@@ -25,19 +25,12 @@ import {
 
 import { usePremiumFeature, useImageList } from "@/ui/hooks";
 
-import {
-  getCategoryOptions,
-  getFieldError,
-  getSubCategoryOptions,
-  hasFieldErrors,
-} from "@/core/utils";
-import type {
-  InvitationTheme,
-  ProductCategory,
-  SubCategory,
-} from "@/core/domain";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import { getInvitationThemeOptions } from "@/core/utils";
+import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
+import { getFieldError, hasFieldErrors } from "@/core/utils/error";
+import type { InvitationTheme } from "@/core/domain/theme";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import { getInvitationThemeOptions } from "@/core/utils/theme";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/ui/stores";
 interface ProductEditDialogProps {

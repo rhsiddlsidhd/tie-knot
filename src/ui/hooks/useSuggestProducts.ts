@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 const useSuggestProducts = ({
   data,
   keyword,

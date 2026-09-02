@@ -1,4 +1,4 @@
-import { INVITATION_INPUT_DEADLINE_DAYS } from "@/core/domain";
+import { INVITATION_INPUT_DEADLINE_DAYS } from "@/core/domain/order";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 

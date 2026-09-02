@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
-import type * as UtilsModule from "@/core/utils";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import type * as CategoryUtilsModule from "@/core/utils/category";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
@@ -27,8 +27,8 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
 // REQ-6 검증을 위해 이 파일에서만 카테고리 옵션에 invitation이 아닌 항목을 추가한다 —
 // 실제 category.ts(REQ-1, backend-impl 담당)와 무관하게 selectedCategory 조건부 렌더
 // 로직 자체(문자열 비교)를 검증하기 위한 격리된 목이다.
-vi.mock("@/core/utils", async (importOriginal) => {
-  const actual = await importOriginal<typeof UtilsModule>();
+vi.mock("@/core/utils/category", async (importOriginal) => {
+  const actual = await importOriginal<typeof CategoryUtilsModule>();
   return {
     ...actual,
     getCategoryOptions: () => [

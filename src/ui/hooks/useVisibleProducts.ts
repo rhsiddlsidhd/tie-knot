@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import type { ProductFilterState } from "@/ui/context/productFilter";
-import { getChosung } from "@/core/utils";
+import { getChosung } from "@/core/utils/hangul";
 
 const useVisibleProducts = ({
   state,

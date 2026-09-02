@@ -2,7 +2,8 @@ import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
-import { AppError, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
 
 const { deleteProductAsset } = vi.hoisted(() => ({ deleteProductAsset: vi.fn() }));

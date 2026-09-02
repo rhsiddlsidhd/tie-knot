@@ -1,13 +1,13 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { createProductWorkflow } from "@/services/product";
 import { actionError } from "@/boundary";
-import { productSchema } from "@/core/schemas";
-import { routes } from "@/core/domain";
+import { productSchema } from "@/core/schemas/request/product.schema";
+import { routes } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
-import { validateAndFlatten } from "@/core/utils";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
 // 빈 문자열/null이면 undefined를 넘겨 zod .default()가 동작하게 한다 —
 // Number(null)===0 / Number("")===0으로 파싱되면 min(1) 검증에 걸린다.

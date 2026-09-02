@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { setInvitationStatus } from "@/actions/setInvitationStatus";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import { Button } from "@/ui/components/atoms";
 
 export function InvitationStatusControls({ orderId, status }: { orderId: string; status?: "draft" | "published" }) {

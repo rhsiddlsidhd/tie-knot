@@ -11,13 +11,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/ui/components/atoms";
-import type { OrderStatus, ProductCategory } from "@/core/domain";
-import {
-  ORDER_STATUSES,
-  PRODUCT_CATEGORIES,
-  productCategoryLabels,
-  routes,
-} from "@/core/domain";
+import type { OrderStatus } from "@/core/domain/order";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { ORDER_STATUSES } from "@/core/domain/order";
+import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
+import { routes } from "@/core/domain/routes";
 import { ORDER_STATUS_TAB_LABELS, resolveOrderStatusLabel } from "../_constants";
 
 const ALL_VALUE = "ALL";

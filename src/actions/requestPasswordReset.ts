@@ -1,8 +1,8 @@
 "use server";
 
-import { validateAndFlatten } from "@/core/utils";
-import { emailSchema } from "@/core/schemas";
-import type { APIResponse } from "@/core/domain";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { emailSchema } from "@/core/schemas/request/email.schema";
+import type { APIResponse } from "@/core/domain/error";
 import { requestPasswordResetService } from "@/services/user";
 import { actionError } from "@/boundary";
 

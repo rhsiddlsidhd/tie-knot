@@ -9,7 +9,7 @@ import {
   findSubCategoriesByTerm,
   getAvailableSubCategories,
 } from "./category";
-import { PRODUCT_CATEGORIES, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { PRODUCT_CATEGORIES, MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 describe("categoryRequiresShipping", () => {
   it("모바일초대장은 디지털 상품이라 배송이 필요 없다", () => {

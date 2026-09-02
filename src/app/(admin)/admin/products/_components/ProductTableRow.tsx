@@ -3,8 +3,8 @@ import { AppImage, Badge, TypographyMuted, TypographySmall } from "@/ui/componen
 import type { Product } from "@/services/product";
 import { ProductTableRowAction } from "./ProductTableRowAction";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
-import type { ProductCategory, SubCategory } from "@/core/domain";
-import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 
 export interface ProductTableRowProps {
   product: Product;

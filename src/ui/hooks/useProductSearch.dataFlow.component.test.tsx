@@ -4,9 +4,9 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { SWRConfig } from "swr";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import { useProductSearch } from "./useProductSearch";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const product: Product = {
   _id: "product-1",

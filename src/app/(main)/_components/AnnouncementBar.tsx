@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import type { Announcement } from "@/core/domain";
+import type { Announcement } from "@/core/domain/announcement";
 import { useIntervalIndex } from "@/ui/hooks";
 
 interface AnnouncementBarProps {

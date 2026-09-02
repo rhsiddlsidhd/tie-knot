@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { OrderListItem } from "@/core/domain";
+import type { OrderListItem } from "@/core/domain/order";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
@@ -17,7 +17,7 @@ vi.mock("@/actions/cancelOrder", () => ({
 }));
 
 import { OrderCard } from "./OrderCard";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildOrder = (overrides?: Partial<OrderListItem>): OrderListItem =>
   ({

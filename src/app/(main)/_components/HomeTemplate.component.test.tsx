@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 
 vi.mock("./EcommerceHero", () => ({
   EcommerceHero: () => <div>hero</div>,
@@ -15,7 +15,7 @@ vi.mock("@/ui/components/molecules", () => ({
 }));
 
 import { HomeTemplate } from "./HomeTemplate";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const AVAILABLE_SUB_CATEGORIES = [
   { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },

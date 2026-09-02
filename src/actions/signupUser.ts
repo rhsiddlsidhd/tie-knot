@@ -1,9 +1,9 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 
-import { validateAndFlatten } from "@/core/utils";
-import { RegisterSchema } from "@/core/schemas";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { RegisterSchema } from "@/core/schemas/request/register.schema";
 import { signupUserService } from "@/services/user";
 import { actionError } from "@/boundary";
 export async function signupUser(

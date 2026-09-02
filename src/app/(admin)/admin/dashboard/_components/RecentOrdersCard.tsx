@@ -7,13 +7,11 @@ import {
   CardTitle,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import type { DashboardRecentOrder } from "@/core/domain";
-import {
-  ORDER_STATUS_BADGE_VARIANTS,
-  ORDER_STATUS_LABELS,
-  routes,
-} from "@/core/domain";
-import { formatPriceWithComma, formatRelativeTime } from "@/core/utils";
+import type { DashboardRecentOrder } from "@/core/domain/dashboard";
+import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
+import { routes } from "@/core/domain/routes";
+import { formatPriceWithComma } from "@/core/utils/price";
+import { formatRelativeTime } from "@/core/utils/date";
 
 interface RecentOrdersCardProps {
   orders: DashboardRecentOrder[];

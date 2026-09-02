@@ -9,8 +9,8 @@ import {
   DialogTitle,
 } from "@/ui/components/atoms";
 
-import type { APIResponse } from "@/core/domain";
-import { getFieldError } from "@/core/utils";
+import type { APIResponse } from "@/core/domain/error";
+import { getFieldError } from "@/core/utils/error";
 
 interface DeleteGuestbookFormProps {
   guestbookId: string;

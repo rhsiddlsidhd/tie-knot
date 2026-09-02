@@ -2,12 +2,13 @@ import "server-only";
 import type { IGuestbook } from "@/models/guestbook.model";
 import { GuestbookModel } from "@/models/guestbook.model";
 import { InvitationModel } from "@/models/invitation.model";
-import type { GuestbookType } from "@/core/schemas";
+import type { GuestbookType } from "@/core/schemas/request/guestbook.schema";
 import { dbConnect } from "@/db/connect";
-import type { GuestbookListPage } from "@/core/domain";
-import { AppError, DEFAULT_PAGE_SIZE } from "@/core/domain";
+import type { GuestbookListPage } from "@/core/domain/guestbook";
+import { AppError } from "@/core/domain/error";
+import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
 import { comparePasswords, hashPassword } from "@/adapters/server/bcrypt/hash";
-import { decodeCursor, encodeCursor } from "@/core/utils";
+import { decodeCursor, encodeCursor } from "@/core/utils/cursor";
 
 import mongoose from "mongoose";
 

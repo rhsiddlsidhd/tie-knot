@@ -1,7 +1,7 @@
 import type { APIRouteResponse} from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getAllPremiumFeatureService } from "@/services/premiumFeature";
-import type { PremiumFeaturesResponse } from "@/core/schemas";
+import type { PremiumFeaturesResponse } from "@/core/schemas/response/premiumFeature.schema";
 
 export const GET = async (): Promise<
   APIRouteResponse<PremiumFeaturesResponse>

@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
 import type { GeoState } from "@/adapters/browser/deeplink/open-app";
-import type { KakaomapResponse } from "@/core/schemas";
+import type { KakaomapResponse } from "@/core/schemas/response/kakaomap.schema";
 
 export function useKakaomapGeocode(address: string): GeoState {
   const swrKey = address ? `/api/kakaomap?address=${address}` : null;

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import type { ProductDto } from "@/core/schemas";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import type { ProductDto } from "@/core/schemas/request/product.schema";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 type CreateProductServiceInput = Omit<ProductDto, "thumbnail" | "images"> & {
   thumbnail: string;

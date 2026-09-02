@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import type { BanksResponse } from "@/core/schemas";
+import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 import type * as HooksModule from "@/ui/hooks";
 
 vi.mock("@/ui/hooks", async (importOriginal) => {

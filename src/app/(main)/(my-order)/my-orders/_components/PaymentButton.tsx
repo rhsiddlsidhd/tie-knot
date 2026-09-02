@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/ui/components/atoms";
 import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/ui/stores";
-import type { OrderJSON } from "@/core/domain";
-import type { CheckoutItem } from "@/core/domain";
-import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import type { OrderJSON } from "@/core/domain/order";
+import type { CheckoutItem } from "@/core/domain/checkout";
+import { routes } from "@/core/domain/routes";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { completePayment } from "@/actions/completePayment";
 
 const PaymentButton = ({ order }: { order: OrderJSON }) => {

@@ -18,8 +18,9 @@ import {
 } from "@/ui/components/atoms";
 import { ImageField, RatingStars } from "@/ui/components/organisms";
 import { useImageList } from "@/ui/hooks";
-import { getFieldError, hasFieldErrors } from "@/core/utils";
-import type { APIResponse, OrderReviewSummary } from "@/core/domain";
+import { getFieldError, hasFieldErrors } from "@/core/utils/error";
+import type { APIResponse } from "@/core/domain/error";
+import type { OrderReviewSummary } from "@/core/domain/order";
 import { createReview } from "@/actions/createReview";
 import { deleteReview } from "@/actions/deleteReview";
 import { updateReview } from "@/actions/updateReview";

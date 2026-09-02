@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
@@ -15,7 +15,7 @@ vi.mock("sonner", () => ({
 vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
 
 import { ProductSummary } from "./ProductSummary";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({

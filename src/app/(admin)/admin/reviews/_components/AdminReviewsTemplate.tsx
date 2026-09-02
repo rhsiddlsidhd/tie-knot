@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { CursorPagination } from "@/ui/components/molecules";
 import { RatingStars } from "@/ui/components/organisms";
-import type { AdminReviewListPage } from "@/core/domain";
-import { formatKstDate } from "@/core/utils";
+import type { AdminReviewListPage } from "@/core/domain/review";
+import { formatKstDate } from "@/core/utils/date";
 import { deleteReviewByAdmin } from "@/actions/deleteReviewByAdmin";
 
 interface AdminReviewsTemplateProps {

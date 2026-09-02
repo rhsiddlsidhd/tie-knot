@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import type { CheckoutItem } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import type { CheckoutItem } from "@/core/domain/checkout";
 import { OrderSummary } from "./OrderSummary";
 
 const ORDER: CheckoutItem = {

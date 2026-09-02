@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getOrdersPageForUser } from "@/services/order";
-import { orderListRequestSchema } from "@/core/schemas";
-import { validateAndFlatten } from "@/core/utils";
+import { orderListRequestSchema } from "@/core/schemas/request/orderList.schema";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { MyOrdersTemplate } from "./_components";
 
 // 필터는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은 값은

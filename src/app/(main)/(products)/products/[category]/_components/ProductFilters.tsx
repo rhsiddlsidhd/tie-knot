@@ -25,23 +25,15 @@ import type {
   ProductFilterState,
   ProductFilterAction,
 } from "@/ui/context/productFilter";
-import type { Product, PremiumFeature } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 
-import { getAvailableSubCategories } from "@/core/utils";
+import { getAvailableSubCategories } from "@/core/utils/category";
 
-import type {
-  SubCategory,
-  ProductCategory,
-  ProductSortType,
-} from "@/core/domain";
-import {
-  PRODUCT_SORT_OPTIONS,
-  PRODUCT_PRICE_OPTIONS,
-  PREMIUM_FEATURE_LABELS,
-  PRODUCT_SORT_KEYS,
-  PRODUCT_PRICE_KEYS,
-  subCategoryLabels,
-} from "@/core/domain";
+import type { SubCategory, ProductCategory } from "@/core/domain/product-category";
+import type { ProductSortType } from "@/core/domain/product";
+import { PRODUCT_SORT_OPTIONS, PRODUCT_PRICE_OPTIONS, PREMIUM_FEATURE_LABELS, PRODUCT_SORT_KEYS, PRODUCT_PRICE_KEYS } from "@/core/domain/product";
+import { subCategoryLabels } from "@/core/domain/product-category";
 
 export function ProductFilters({
   data,

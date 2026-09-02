@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 
 vi.mock("@/services/user", () => ({
   getUserEmail: vi.fn(),

@@ -1,12 +1,12 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { updateProductWorkflow } from "@/services/product";
 import { actionError } from "@/boundary";
-import { validateAndFlatten } from "@/core/utils";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
-import { productSchema } from "@/core/schemas";
-import { routes } from "@/core/domain";
+import { productSchema } from "@/core/schemas/request/product.schema";
+import { routes } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 

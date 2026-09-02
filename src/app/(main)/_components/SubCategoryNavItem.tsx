@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { TypographySmall } from "@/ui/components/atoms";
-import {
-  routes,
-  subCategoryLabels,
-  type ProductCategory,
-  type SubCategory,
-} from "@/core/domain";
+import { routes } from "@/core/domain/routes";
+import { subCategoryLabels, type ProductCategory, type SubCategory } from "@/core/domain/product-category";
 
 interface SubCategoryNavItemProps {
   category: ProductCategory;

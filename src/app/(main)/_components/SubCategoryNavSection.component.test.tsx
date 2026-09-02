@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 describe("SubCategoryNavSection", () => {
   it("전달된 서브카테고리만 링크로 렌더한다", () => {

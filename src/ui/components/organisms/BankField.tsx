@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/ui/components/atoms";
-import type { BanksResponse } from "@/core/schemas";
+import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 import { BaseSelect } from "@/ui/components/molecules";
 import { FormField } from "@/ui/components/organisms";
 import { useState } from "react";

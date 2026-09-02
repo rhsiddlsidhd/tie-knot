@@ -1,9 +1,9 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { permanentlyDeleteProductAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 

@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain";
+import type { InvitationContent } from "@/core/domain/invitation";
 import { AppImage } from "@/ui/components/atoms";
 import { InteractionOverlay } from "./interactions";
 import { ThemeAmbience } from "./ThemeAmbience";

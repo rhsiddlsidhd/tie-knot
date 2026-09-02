@@ -1,8 +1,10 @@
 import "server-only";
 import type { Types } from "mongoose";
 import mongoose from "mongoose";
-import type { AdminUserListPage, UserRole } from "@/core/domain";
-import { AppError, DEFAULT_PAGE_SIZE, USER_ROLES } from "@/core/domain";
+import type { AdminUserListPage, UserRole } from "@/core/domain/user";
+import { AppError } from "@/core/domain/error";
+import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
+import { USER_ROLES } from "@/core/domain/user";
 import type { BaseUser, IUser } from "@/models/user.model";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
@@ -11,13 +13,9 @@ import { decrypt } from "@/adapters/server/jose/decrypt";
 import { encrypt } from "@/adapters/server/jose/encrypt";
 import { deleteCookie } from "@/adapters/server/cookies/delete";
 import { sendEmail } from "@/adapters/server/nodemailer/send";
-import { routes } from "@/core/domain";
-import {
-  decodeCursor,
-  encodeCursor,
-  getAppBaseUrl,
-  isValidPageLimit,
-} from "@/core/utils";
+import { routes } from "@/core/domain/routes";
+import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import { getAppBaseUrl } from "@/core/utils/url";
 // 유저 생성
 export const createUser = async (user: BaseUser): Promise<IUser> => {
   await dbConnect();

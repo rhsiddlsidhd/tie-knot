@@ -13,9 +13,9 @@ import {
   TypographyH1,
   type CarouselApi,
 } from "@/ui/components/atoms";
-import { cn } from "@/core/utils";
+import { cn } from "@/core/utils/cn";
 import promotionsData from "@/core/content/promotions.json";
-import type { Promotion } from "@/core/domain";
+import type { Promotion } from "@/core/domain/promotion";
 
 const promotions = (promotionsData as Promotion[]).filter((p) => p.isActive);
 const AUTOPLAY_INTERVAL = 5000;

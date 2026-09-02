@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 import {
   buildOrderInput,
   buildProductInput,

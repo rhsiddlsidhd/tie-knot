@@ -8,9 +8,10 @@ import {
 import React from "react";
 import { ProductGrid } from "@/ui/components/organisms";
 import { ProductFilters } from "./ProductFilters";
-import type { Product, PremiumFeature } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 
-import type { ProductCategory, SubCategory } from "@/core/domain";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
 
 interface ProductCatalogProps {
   products: Product[];

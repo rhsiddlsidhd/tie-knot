@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { completePayment } from "@/actions/completePayment";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import { useOrderStore } from "@/ui/stores";
 import { PaymentResultTemplate } from "./PaymentResultTemplate";
 

@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createProduct } from "@/actions/createProduct";
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import type { PremiumFeature } from "@/services/premiumFeature";
 import { ProductRegistrationForm as PureProductRegistrationForm } from "../_components/ProductRegistrationForm";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 export function ProductRegistrationForm({
   premiumFeatures,
 }: {

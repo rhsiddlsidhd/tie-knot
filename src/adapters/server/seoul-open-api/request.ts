@@ -1,6 +1,6 @@
 import "server-only";
-import { AppError } from "@/core/domain";
-import { parseSeoulOpenApiResponse } from "@/core/utils";
+import { AppError } from "@/core/domain/error";
+import { parseSeoulOpenApiResponse } from "@/core/utils/seoul-open-api-parser";
 
 export async function fetchSeoulOpenApi<T>(
   serviceName: string,

@@ -1,5 +1,6 @@
 import * as z from "zod";
-import { INVITATION_THEMES, PRODUCT_CATEGORIES } from "@/core/domain";
+import { INVITATION_THEMES } from "@/core/domain/theme";
+import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 
 const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
   message: "ISO date string이 아님",

@@ -1,6 +1,6 @@
 "use client";
-import { PAGE_TITLE } from "@/core/domain";
-import { isPageTitle } from "@/core/utils";
+import { PAGE_TITLE } from "@/core/domain/page";
+import { isPageTitle } from "@/core/utils/page";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";

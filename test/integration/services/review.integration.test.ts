@@ -7,7 +7,7 @@ import {
   buildUserInput,
   clearCollections,
 } from "@test/support";
-import type { AppError } from "@/core/domain";
+import type { AppError } from "@/core/domain/error";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
 import { ReviewModel } from "@/models/review.model";

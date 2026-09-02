@@ -6,32 +6,16 @@ import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
 import { ProductModel } from "@/models/product.model";
 import { ReviewModel } from "@/models/review.model";
-import type { CreateOrderDto } from "@/core/schemas";
-import {
-  categoryRequiresShipping,
-  encodeCursor,
-  decodeCursor,
-  generateUid,
-  isValidPageLimit,
-} from "@/core/utils";
+import type { CreateOrderDto } from "@/core/schemas/request/order.schema";
+import { categoryRequiresShipping } from "@/core/utils/category";
+import { encodeCursor, decodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import { generateUid } from "@/core/utils/id";
 import { dbConnect } from "@/db/connect";
-import type {
-  AdminOrderListPage,
-  OrderDetail,
-  OrderListItem,
-  OrderListPage,
-  OrderStatus,
-  ProductCategory,
-} from "@/core/domain";
-import { AppError } from "@/core/domain";
-import {
-  DEFAULT_PAGE_SIZE,
-  EXPIRED_ORDER_BATCH_LIMIT,
-  INVITATION_INPUT_DEADLINE_DAYS,
-  ORDER_PAGE_SIZE,
-  ORDER_STATUSES,
-  PENDING_ORDER_EXPIRE_HOURS,
-} from "@/core/domain";
+import type { AdminOrderListPage, OrderDetail, OrderListItem, OrderListPage, OrderStatus } from "@/core/domain/order";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { AppError } from "@/core/domain/error";
+import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
+import { EXPIRED_ORDER_BATCH_LIMIT, INVITATION_INPUT_DEADLINE_DAYS, ORDER_PAGE_SIZE, ORDER_STATUSES, PENDING_ORDER_EXPIRE_HOURS } from "@/core/domain/order";
 import { getProductQuantityBoundsService } from "./product";
 import { requireAuth } from "./auth";
 

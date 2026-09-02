@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/core/domain";
+import type { UserRole } from "@/core/domain/user";
 type JWTType = "REFRESH" | "ENTRY";
 
 interface JWTBaseProps {

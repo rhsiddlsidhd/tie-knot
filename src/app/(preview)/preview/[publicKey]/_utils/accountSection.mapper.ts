@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain";
+import type { InvitationContent } from "@/core/domain/invitation";
 // AccountSection 컴포넌트가 받을 props 타입 정의
 export interface AccountInfo {
   relation: string;

@@ -3,10 +3,10 @@ import type { APIRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getOrdersPageForUser } from "@/services/order";
 import { requireAuth } from "@/services/auth";
-import { orderListRequestSchema } from "@/core/schemas";
-import { validateAndFlatten } from "@/core/utils";
-import type { OrderListPage } from "@/core/domain";
-import { AppError } from "@/core/domain";
+import { orderListRequestSchema } from "@/core/schemas/request/orderList.schema";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import type { OrderListPage } from "@/core/domain/order";
+import { AppError } from "@/core/domain/error";
 
 /**
  * my-orders 목록의 "더보기" 전용 — 첫 페이지는 Server Component가 서비스를 직접

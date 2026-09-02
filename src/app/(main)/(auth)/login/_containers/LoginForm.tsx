@@ -6,11 +6,11 @@ import { mutate } from "swr";
 import { toast } from "sonner";
 
 import { loginUser } from "@/actions/loginUser";
-import type { APIResponse } from "@/core/domain";
-import type { UserRole } from "@/core/domain";
-import { getFieldError, hasFieldErrors } from "@/core/utils";
+import type { APIResponse } from "@/core/domain/error";
+import type { UserRole } from "@/core/domain/user";
+import { getFieldError, hasFieldErrors } from "@/core/utils/error";
 import { LoginForm as PureLoginForm } from "../_components/LoginForm";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 export function LoginForm() {
   const router = useRouter();
   const [state, action, pending] = useActionState<

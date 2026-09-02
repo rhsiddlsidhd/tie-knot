@@ -9,13 +9,11 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms";
 import { fetcher } from "@/ui/fetcher";
-import type {
-  ErrorPayload,
-  OrderListPage,
-  OrderStatus,
-  ProductCategory,
-} from "@/core/domain";
-import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import type { ErrorPayload } from "@/core/domain/error";
+import type { OrderListPage, OrderStatus } from "@/core/domain/order";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { routes } from "@/core/domain/routes";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { OrderCard } from "./OrderCard";
 
 interface OrderListProps {

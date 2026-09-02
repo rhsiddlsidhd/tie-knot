@@ -2,8 +2,9 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminReviewsPageService } from "@/services/review";
-import { adminReviewListRequestSchema } from "@/core/schemas";
-import { decodeCursor, validateAndFlatten } from "@/core/utils";
+import { adminReviewListRequestSchema } from "@/core/schemas/request/adminReviewList.schema";
+import { decodeCursor } from "@/core/utils/cursor";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminReviewsTemplate } from "./_components";
 
 // 커서는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 형식이 깨진 cursor는

@@ -4,7 +4,7 @@ import { Eye, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 /**
  * 메인 페이지에서 대표 청첩장 샘플(/preview/sample)을 보여주는 섹션 (Organism)

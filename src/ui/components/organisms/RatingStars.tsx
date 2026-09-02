@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Star } from "lucide-react";
-import { cn } from "@/core/utils";
-import { REVIEW_RATING_MAX } from "@/core/domain";
+import { cn } from "@/core/utils/cn";
+import { REVIEW_RATING_MAX } from "@/core/domain/review";
 
 interface RatingStarsProps {
   value: number;

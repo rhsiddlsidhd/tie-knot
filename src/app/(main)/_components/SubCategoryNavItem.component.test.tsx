@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SubCategoryNavItem } from "./SubCategoryNavItem";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 describe("SubCategoryNavItem", () => {
   it("청첩장(wedding) 링크를 올바른 href로 렌더한다", () => {

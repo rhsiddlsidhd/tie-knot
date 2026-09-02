@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { initialFilterState } from "@/ui/context/productFilter";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import { ProductGrid } from "./ProductGrid";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({

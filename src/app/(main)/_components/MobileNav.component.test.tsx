@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { MAIN_NAV_ITEMS } from "@/core/domain";
+import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
 import { MobileNav } from "./MobileNav";
 
 describe("MobileNav", () => {

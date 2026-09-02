@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import mongoose from "mongoose";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 import { dbConnect } from "@/db/connect";
 import { GuestbookModel } from "@/models/guestbook.model";
 import { InvitationModel } from "@/models/invitation.model";

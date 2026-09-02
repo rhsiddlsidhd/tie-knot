@@ -1,6 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Product, PremiumFeature, ReviewListPage } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import type { ReviewListPage } from "@/core/domain/review";
 
 vi.mock("./ProductViewTracker", () => ({
   ProductViewTracker: (): null => null,

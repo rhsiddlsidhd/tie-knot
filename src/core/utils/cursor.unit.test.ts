@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { encodeCursor, decodeCursor, isValidPageLimit } from "./cursor";
-import { MAX_PAGE_SIZE } from "@/core/domain";
+import { MAX_PAGE_SIZE } from "@/core/domain/cursor";
 
 // 디코딩 실패 분기를 검증하려면 encodeCursor가 만들지 않는 형태의 payload가 필요하다.
 const encodeRawPayload = (payload: string): string =>

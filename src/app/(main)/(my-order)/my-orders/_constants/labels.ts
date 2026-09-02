@@ -1,5 +1,7 @@
-import type { OrderStatus, PayMethod, ProductCategory } from "@/core/domain";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import type { OrderStatus } from "@/core/domain/order";
+import type { PayMethod } from "@/core/domain/payment";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 // 상태 탭 라벨 — 여러 카테고리가 섞여 보이는 자리(카테고리 필터가 "전체")라 중립어를 쓴다.
 export const ORDER_STATUS_TAB_LABELS: Record<OrderStatus, string> = {

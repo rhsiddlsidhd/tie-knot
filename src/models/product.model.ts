@@ -1,18 +1,11 @@
 import "server-only";
 import type { Model } from "mongoose";
 import mongoose, { model, Schema } from "mongoose";
-import type {
-  ProductCategory,
-  SubCategory,
-  InvitationTheme,
-  ProductJSON,
-  ProductStatus,
-} from "@/core/domain";
-import {
-  SUB_CATEGORY_MAP,
-  PRODUCT_CATEGORIES,
-  INVITATION_THEMES
-} from "@/core/domain";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import type { InvitationTheme } from "@/core/domain/theme";
+import type { ProductJSON, ProductStatus } from "@/core/domain/product";
+import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
+import { INVITATION_THEMES } from "@/core/domain/theme";
 
 export type { ProductCategory, ProductJSON, SubCategory };
 export { SUB_CATEGORY_MAP };

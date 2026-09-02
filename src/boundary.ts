@@ -1,13 +1,7 @@
 import { NextResponse } from "next/server";
-import type {
-  ErrorCategory,
-  ErrorPayload,
-  SuccessResponse,
-  ErrorResponse,
-  APIResponse,
-} from "@/core/domain";
-import { AppError } from "@/core/domain";
-import { ERROR_SAFE_MESSAGES } from "@/core/domain";
+import type { ErrorCategory, ErrorPayload, SuccessResponse, ErrorResponse, APIResponse } from "@/core/domain/error";
+import { AppError } from "@/core/domain/error";
+import { ERROR_SAFE_MESSAGES } from "@/core/domain/error-messages";
 
 // Re-export types for convenience
 export type APIRouteResponse<T = unknown> = NextResponse<APIResponse<T>>;
