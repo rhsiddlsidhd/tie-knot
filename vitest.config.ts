@@ -31,6 +31,7 @@ export default defineConfig({
             "src/ui/context/**/reducer.unit.test.ts",
             "src/boundary.unit.test.ts",
             "src/proxy.unit.test.ts",
+            "tooling/**/*.unit.test.mjs",
           ],
           setupFiles: ["./test/support/setup/node-polyfill.ts"],
           maxWorkers: 2,

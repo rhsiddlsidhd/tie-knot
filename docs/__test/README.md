@@ -110,6 +110,8 @@ checkout.spec.ts
 
 Vitest의 정확한 수집 범위와 실행 환경은 [`vitest.config.ts`](../../vitest.config.ts),
 공개 명령은 [`package.json`](../../package.json)에서 이 규칙과 일치하도록 관리한다.
+Node에서 직접 실행되는 프로젝트 도구는 대상 옆 `tooling/`에
+`<target>.unit.test.mjs`로 두며 `npm run test:unit`에서 함께 실행한다.
 공용 setup, DB helper, factory는 `test/support/`에 두며 테스트 파일은 두지 않는다.
 하나의 테스트 파일에는 하나의 Test Type만 둔다. 같은 사용자 시나리오라도 Integration,
 Component, E2E의 관찰 대상은 각각의 파일에서 독립적으로 준비하고 검증한다.

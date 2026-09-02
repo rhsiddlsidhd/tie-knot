@@ -24,6 +24,7 @@ Unit의 경계는 실행한 파일이나 함수 개수가 아니라 하나의 �
 - Service를 대체하고 렌더링 없이 직접 호출하는 Server Component와 Page
 - `fetch` 또는 vendor SDK를 대체하고 직접 호출하는 server·browser adapter
 - 입력 정규화, collaborator 위임, 오류 매핑과 반환 계약을 소유한 orchestration 모듈
+- Node에서 직접 실행되는 프로젝트 도구의 입력 정규화와 정책 판정
 
 모든 Unit Test는 다음 조건을 충족해야 한다.
 

@@ -1,4 +1,4 @@
-/** 형제 test 를 tier 별로 좁혀 실행한다. --project 로 좁히지 않으면 integration 의
+/** 공통 TDD gate에서 형제 test 를 tier 별로 좁혀 실행한다. --project 로 좁히지 않으면 integration 의
  *  mongo globalSetup 이 같이 기동해 비용이 폭증한다. */
 
 import { spawnSync } from "node:child_process";
@@ -20,11 +20,20 @@ export function runSiblings(siblings, timeout = 180_000) {
     const result = spawnSync(
       VITEST_BIN,
       ["run", "--project", tier, "--reporter=dot", ...paths],
-      { cwd: ROOT, encoding: "utf8", timeout, env: { ...process.env, CI: "1" } },
+      {
+        cwd: ROOT,
+        encoding: "utf8",
+        timeout,
+        env: { ...process.env, CI: "1" },
+      },
     );
     if (result.error) throw result.error;
     if (result.status !== 0) {
-      failures.push({ tier, paths, output: tail(result.stdout, result.stderr) });
+      failures.push({
+        tier,
+        paths,
+        output: tail(result.stdout, result.stderr),
+      });
     }
   }
   return { green: failures.length === 0, failures };
