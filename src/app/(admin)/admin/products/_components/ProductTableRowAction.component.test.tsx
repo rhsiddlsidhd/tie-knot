@@ -23,7 +23,10 @@ import { restoreProduct } from "@/actions/restoreProduct";
 import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
 import type { Product } from "@/core/domain/product";
 import { ProductTableRowAction } from "./ProductTableRowAction";
+import type { ProductTableRowProps } from "./ProductTableRow";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
+import { StoreProvider } from "@/ui/stores/provider";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   _id: "507f1f77bcf86cd799439011",
@@ -57,21 +60,33 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
   ...overrides,
 });
 
+// ProductTableRowAction은 useAdminModalStore를 구독하므로 StoreProvider 없이는
+// 마운트 시점에 throw한다 — 테스트마다 새 store 인스턴스를 만들어 주입한다.
+let testStore: AppStoreApi;
+
+const renderAction = (props: ProductTableRowProps) =>
+  render(
+    <StoreProvider store={testStore}>
+      <ProductTableRowAction {...props} />
+    </StoreProvider>,
+  );
+
 describe("ProductTableRowAction", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(window, "confirm").mockReturnValue(true);
+    testStore = createAppStore();
   });
 
   it("view가 active(기본값)면 복구/영구 삭제 버튼은 없다", () => {
-    render(<ProductTableRowAction product={buildProduct()} />);
+    renderAction({ product: buildProduct() });
 
     expect(screen.queryByText("복구")).not.toBeInTheDocument();
     expect(screen.queryByText("영구 삭제")).not.toBeInTheDocument();
   });
 
   it("view가 trash면 복구/영구 삭제 버튼을 렌더링한다", () => {
-    render(<ProductTableRowAction product={buildProduct()} view="trash" />);
+    renderAction({ product: buildProduct(), view: "trash" });
 
     expect(screen.getByText("복구")).toBeInTheDocument();
     expect(screen.getByText("영구 삭제")).toBeInTheDocument();
@@ -84,7 +99,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 성공적으로 복구되었습니다." },
     });
 
-    render(<ProductTableRowAction product={buildProduct()} view="trash" />);
+    renderAction({ product: buildProduct(), view: "trash" });
 
     await user.click(screen.getByText("복구"));
 
@@ -99,7 +114,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 성공적으로 삭제되었습니다." },
     });
 
-    render(<ProductTableRowAction product={buildProduct()} />);
+    renderAction({ product: buildProduct() });
 
     const buttons = screen.getAllByRole("button");
     await user.click(buttons[1]);
@@ -115,7 +130,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 영구적으로 삭제되었습니다." },
     });
 
-    render(<ProductTableRowAction product={buildProduct()} view="trash" />);
+    renderAction({ product: buildProduct(), view: "trash" });
 
     await user.click(screen.getByText("영구 삭제"));
 
