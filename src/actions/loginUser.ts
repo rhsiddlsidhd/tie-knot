@@ -4,7 +4,7 @@ import type { APIResponse } from "@/core/domain";
 
 import { validateAndFlatten } from "@/core/utils";
 import { LoginSchema } from "@/core/schemas";
-import { loginUserService } from "@/services";
+import { loginUserService } from "@/services/auth";
 import type { UserRole } from "@/core/domain";
 import { actionError } from "@/boundary";
 

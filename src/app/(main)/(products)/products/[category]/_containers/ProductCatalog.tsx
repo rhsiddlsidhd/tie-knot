@@ -2,7 +2,7 @@
 
 import { useProducts, usePremiumFeature } from "@/ui/hooks";
 import { ProductCatalog as ProductCatalogView } from "../_components";
-import type { Product } from "@/services";
+import type { Product } from "@/services/product";
 import type { ProductCategory, SubCategory } from "@/core/domain";
 
 export function ProductCatalog({

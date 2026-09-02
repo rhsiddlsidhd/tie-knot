@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";
 import { actionError } from "@/boundary";
-import { cancelPendingOrderForCurrentUser } from "@/services";
+import { cancelPendingOrderForCurrentUser } from "@/services/order";
 
 export const cancelOrder = async (
   orderId: string,

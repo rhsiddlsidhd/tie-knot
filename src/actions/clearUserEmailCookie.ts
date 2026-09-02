@@ -1,6 +1,6 @@
 "use server";
 
-import { clearUserEmailCookieService } from "@/services";
+import { clearUserEmailCookieService } from "@/services/auth";
 import { actionError } from "@/boundary";
 import type { APIResponse } from "@/core/domain";
 

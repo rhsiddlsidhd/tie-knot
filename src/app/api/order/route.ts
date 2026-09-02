@@ -1,7 +1,8 @@
 import type { NextRequest } from "next/server";
 import type { APIRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
-import { getOrdersPageForUser, requireAuth } from "@/services";
+import { getOrdersPageForUser } from "@/services/order";
+import { requireAuth } from "@/services/auth";
 import { orderListRequestSchema } from "@/core/schemas";
 import { validateAndFlatten } from "@/core/utils";
 import type { OrderListPage } from "@/core/domain";

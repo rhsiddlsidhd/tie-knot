@@ -15,12 +15,7 @@ import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
 import { ProductModel } from "@/models/product.model";
-import {
-  createProductService,
-  deleteProductService,
-  getPopularProductsService,
-  updateProductLikeService,
-} from "@/services";
+import { createProductService, deleteProductService, getPopularProductsService, updateProductLikeService } from "@/services/product";
 import { PopularProductsSection } from "@/app/(main)/_components/PopularProductsSection";
 
 // 좋아요 N개를 만들기 위해 서로 다른 userId N명으로 각각 1회씩 toggle한다

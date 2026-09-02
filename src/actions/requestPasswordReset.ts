@@ -3,7 +3,7 @@
 import { validateAndFlatten } from "@/core/utils";
 import { emailSchema } from "@/core/schemas";
 import type { APIResponse } from "@/core/domain";
-import { requestPasswordResetService } from "@/services";
+import { requestPasswordResetService } from "@/services/user";
 import { actionError } from "@/boundary";
 
 export const requestPasswordReset = async (

@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { deleteProductAsAdminService } from "@/services";
+import { deleteProductAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 

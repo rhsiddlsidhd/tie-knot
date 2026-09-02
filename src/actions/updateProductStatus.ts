@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 import type { ProductStatus } from "@/core/domain";
-import { updateProductStatusAsAdminService } from "@/services";
+import { updateProductStatusAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 

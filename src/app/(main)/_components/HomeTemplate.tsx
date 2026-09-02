@@ -1,4 +1,4 @@
-import type { Product } from "@/services";
+import type { Product } from "@/services/product";
 import { EcommerceHero } from "./EcommerceHero";
 import { LiveDemoSection } from "./LiveDemoSection";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";

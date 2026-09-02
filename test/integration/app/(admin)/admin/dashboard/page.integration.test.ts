@@ -18,7 +18,8 @@
 // 같은 원리(세션/쿠키/JWT 발급 자체는 이 페이지의 검증 대상이 아니다).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import type * as ServicesModule from "@/services";
+import type * as AuthServiceModule from "@/services/auth";
+import type * as DashboardServiceModule from "@/services/dashboard";
 import { dbConnect } from "@/db/connect";
 import {
   buildOrderInput,
@@ -33,8 +34,16 @@ const { authState } = vi.hoisted(() => ({
   authState: { role: "ADMIN" as "ADMIN" | "USER" | null },
 }));
 
-vi.mock("@/services", async (importOriginal) => {
-  const actual = await importOriginal<typeof ServicesModule>();
+vi.mock("@/services/dashboard", async (importOriginal) => {
+  const actual = await importOriginal<typeof DashboardServiceModule>();
+  return {
+    ...actual,
+    getDashboardStatsService: vi.fn(actual.getDashboardStatsService),
+  };
+});
+
+vi.mock("@/services/auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof AuthServiceModule>();
   return {
     ...actual,
     verifySession: vi.fn(async (requiredRole?: string) => {
@@ -50,16 +59,13 @@ vi.mock("@/services", async (importOriginal) => {
         role: authState.role,
       };
     }),
-    getDashboardStatsService: vi.fn(actual.getDashboardStatsService),
   };
 });
 
-import {
-  createOrderService,
-  createProductService,
-  getDashboardStatsService,
-  verifySession,
-} from "@/services";
+import { createOrderService } from "@/services/order";
+import { createProductService } from "@/services/product";
+import { getDashboardStatsService } from "@/services/dashboard";
+import { verifySession } from "@/services/auth";
 import { UserModel } from "@/models/user.model";
 import page from "@/app/(admin)/admin/dashboard/page";
 

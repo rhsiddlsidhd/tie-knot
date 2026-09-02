@@ -3,11 +3,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/services", () => ({
+vi.mock("@/services/product", () => ({
   searchProductsService: vi.fn(),
 }));
 
-import { searchProductsService } from "@/services";
+import { searchProductsService } from "@/services/product";
 import { GET } from "./route";
 
 const buildRequest = (query: string) =>

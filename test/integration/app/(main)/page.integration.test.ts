@@ -17,7 +17,7 @@
 //    (01_api_contract.md §3, §4의 계약을 실행으로 확인).
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import type * as ServicesModule from "@/services";
+import type * as ProductServiceModule from "@/services/product";
 import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
 import { ProductModel } from "@/models/product.model";
@@ -27,8 +27,8 @@ import { POPULAR_PRODUCTS_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domai
 // 있게 하고, 기본 동작은 실제 구현(actual)을 그대로 위임한다 — 그 외
 // createProductService/updateProductLikeService/getProductService는 실제
 // 구현 그대로(spread) 둔다.
-vi.mock("@/services", async (importOriginal) => {
-  const actual = await importOriginal<typeof ServicesModule>();
+vi.mock("@/services/product", async (importOriginal) => {
+  const actual = await importOriginal<typeof ProductServiceModule>();
   return {
     ...actual,
     getPopularProductsService: vi.fn(actual.getPopularProductsService),
@@ -38,12 +38,7 @@ vi.mock("@/services", async (importOriginal) => {
   };
 });
 
-import {
-  createProductService,
-  updateProductLikeService,
-  getPopularProductsService,
-  getAvailableSubCategoriesService,
-} from "@/services";
+import { createProductService, updateProductLikeService, getPopularProductsService, getAvailableSubCategoriesService } from "@/services/product";
 import page from "@/app/(main)/page";
 
 // product.service.test.ts / PopularProductsSection.integration.test.tsx와 동일한 헬퍼.

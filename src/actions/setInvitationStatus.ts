@@ -3,7 +3,7 @@
 import { updateTag } from "next/cache";
 import type { APIResponse } from "@/core/domain";
 import { actionError } from "@/boundary";
-import { invitationCacheTag, setInvitationStatusForCurrentUser } from "@/services";
+import { invitationCacheTag, setInvitationStatusForCurrentUser } from "@/services/invitation";
 
 export const setInvitationStatus = async (
   orderId: string,

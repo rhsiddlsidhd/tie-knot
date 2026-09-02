@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import { getOwnedInvitationByOrder, verifySession } from "@/services";
+import { getOwnedInvitationByOrder } from "@/services/invitation";
+import { verifySession } from "@/services/auth";
 import { InvitationStatusControls } from "./_components";
 import { InvitationForm } from "./_containers";
 

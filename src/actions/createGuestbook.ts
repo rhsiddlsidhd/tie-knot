@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 import { parseGuestbookFormData } from "@/core/schemas";
-import { createGuestbookWithPasswordService } from "@/services";
+import { createGuestbookWithPasswordService } from "@/services/guestbook";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";

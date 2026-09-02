@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { APIResponse} from "@/core/domain";
-import { toggleProductLikeForCurrentUserService } from "@/services";
+import { toggleProductLikeForCurrentUserService } from "@/services/product";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 

@@ -12,8 +12,10 @@ const { verifySessionMock, getAdminOrdersPageServiceMock } = vi.hoisted(() => ({
   getAdminOrdersPageServiceMock: vi.fn(),
 }));
 
-vi.mock("@/services", () => ({
+vi.mock("@/services/auth", () => ({
   verifySession: verifySessionMock,
+}));
+vi.mock("@/services/order", () => ({
   getAdminOrdersPageService: getAdminOrdersPageServiceMock,
 }));
 

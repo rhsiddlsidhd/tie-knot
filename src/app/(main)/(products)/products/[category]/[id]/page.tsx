@@ -1,12 +1,10 @@
 export const dynamic = "force-dynamic";
 
 import { ProductDetailTemplate } from "./_components";
-import {
-  getAuth,
-  getPremiumFeatureService,
-  getProductReviewsPageService,
-  getProductService,
-} from "@/services";
+import { getAuth } from "@/services/auth";
+import { getPremiumFeatureService } from "@/services/premiumFeature";
+import { getProductReviewsPageService } from "@/services/review";
+import { getProductService } from "@/services/product";
 import { productReviewListRequestSchema } from "@/core/schemas";
 import { validateAndFlatten } from "@/core/utils";
 

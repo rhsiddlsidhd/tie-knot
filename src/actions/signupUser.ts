@@ -4,7 +4,7 @@ import type { APIResponse } from "@/core/domain";
 
 import { validateAndFlatten } from "@/core/utils";
 import { RegisterSchema } from "@/core/schemas";
-import { signupUserService } from "@/services";
+import { signupUserService } from "@/services/user";
 import { actionError } from "@/boundary";
 export async function signupUser(
   prev: unknown,

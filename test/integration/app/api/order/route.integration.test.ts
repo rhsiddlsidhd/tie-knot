@@ -14,8 +14,9 @@ import {
   clearCollections,
 } from "@test/support";
 import { ProductModel } from "@/models/product.model";
-import type * as ServicesModule from "@/services";
-import { createOrderService, createProductService } from "@/services";
+import type * as AuthServiceModule from "@/services/auth";
+import { createOrderService } from "@/services/order";
+import { createProductService } from "@/services/product";
 import { GET } from "@/app/api/order/route";
 
 const { authState } = vi.hoisted(() => ({
@@ -23,8 +24,8 @@ const { authState } = vi.hoisted(() => ({
 }));
 
 // 세션만 대체한다 — 쿠키/JWT 발급은 이 라우트의 검증 대상이 아니다(partial mock).
-vi.mock("@/services", async (importOriginal) => {
-  const actual = await importOriginal<typeof ServicesModule>();
+vi.mock("@/services/auth", async (importOriginal) => {
+  const actual = await importOriginal<typeof AuthServiceModule>();
   return {
     ...actual,
     requireAuth: async () => {

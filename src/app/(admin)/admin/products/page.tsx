@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import { verifySession, getAdminProductsPageService } from "@/services";
+import { verifySession } from "@/services/auth";
+import { getAdminProductsPageService } from "@/services/product";
 import { adminProductListRequestSchema } from "@/core/schemas";
 import { decodeCursor, validateAndFlatten } from "@/core/utils";
 import { AdminProductsTemplate } from "./_components";

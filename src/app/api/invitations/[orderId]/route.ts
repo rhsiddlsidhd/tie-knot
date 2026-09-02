@@ -1,7 +1,8 @@
 import type { APIRouteResponse } from "@/boundary";
 import { routeError, routeSuccess } from "@/boundary";
 import type { InvitationEditor } from "@/core/domain";
-import { getOwnedInvitationByOrder, requireAuth } from "@/services";
+import { getOwnedInvitationByOrder } from "@/services/invitation";
+import { requireAuth } from "@/services/auth";
 
 export const GET = async (
   _request: Request,
