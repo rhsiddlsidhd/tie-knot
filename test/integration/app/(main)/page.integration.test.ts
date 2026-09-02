@@ -18,9 +18,9 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import type * as ServicesModule from "@/services";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
-import { ProductModel } from "@/models";
+import { ProductModel } from "@/models/product.model";
 import { POPULAR_PRODUCTS_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
 // getPopularProductsService만 vi.fn으로 감싸 개별 테스트에서 override할 수

@@ -1,5 +1,7 @@
 import "server-only";
-import { OrderModel, ProductModel, UserModel } from "@/models";
+import { OrderModel } from "@/models/order.model";
+import { ProductModel } from "@/models/product.model";
+import { UserModel } from "@/models/user.model";
 import type {
   DashboardStats,
   DashboardRecentOrder,
@@ -7,7 +9,7 @@ import type {
 } from "@/core/domain";
 import { AppError, PAID_ORDER_STATUSES } from "@/core/domain";
 import { getKstMonthRange } from "@/core/utils";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 
 type OrderMonthlyBucket = {
   _id: "current" | "previous";

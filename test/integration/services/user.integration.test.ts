@@ -1,10 +1,10 @@
 // @vitest-environment node
 import { describe, it, expect, beforeEach, afterAll, vi, afterEach } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import { buildUserInput, clearCollections } from "@test/support";
 import { AppError } from "@/core/domain";
-import { UserModel } from "@/models";
+import { UserModel } from "@/models/user.model";
 import {
   createUser,
   checkEmailDuplicate,

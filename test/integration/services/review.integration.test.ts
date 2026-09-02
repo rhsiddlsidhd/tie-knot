@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import {
   buildOrderInput,
   buildProductInput,
@@ -8,7 +8,10 @@ import {
   clearCollections,
 } from "@test/support";
 import type { AppError } from "@/core/domain";
-import { OrderModel, ProductModel, ReviewModel, UserModel } from "@/models";
+import { OrderModel } from "@/models/order.model";
+import { ProductModel } from "@/models/product.model";
+import { ReviewModel } from "@/models/review.model";
+import { UserModel } from "@/models/user.model";
 import { createProductService } from "@/services/product";
 import type * as AuthModule from "@/services/auth";
 import {

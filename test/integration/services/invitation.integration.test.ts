@@ -1,8 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import mongoose from "mongoose";
 import { AppError } from "@/core/domain";
-import { dbConnect } from "@/db";
-import { InvitationModel, OrderModel } from "@/models";
+import { dbConnect } from "@/db/connect";
+import { InvitationModel } from "@/models/invitation.model";
+import { OrderModel } from "@/models/order.model";
 import {
   buildCoupleInfoInput,
   buildOrderInput,

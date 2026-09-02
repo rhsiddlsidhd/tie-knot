@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect, isConnected } from "@/db";
+import { dbConnect, isConnected } from "@/db/connect";
 
 describe("dbConnect", () => {
   afterEach(async () => {
@@ -135,7 +135,7 @@ describe("연결 시 URI 검증", () => {
   it("모듈을 로드하는 것만으로는 던지지 않는다", async () => {
     vi.stubEnv("MONGO_TEST_URI", undefined);
 
-    await expect(import("@/db")).resolves.toHaveProperty("dbConnect");
+    await expect(import("@/db/connect")).resolves.toHaveProperty("dbConnect");
   });
 
   it("VITEST 환경에서 MONGO_TEST_URI 없이 연결하면 에러를 던진다", async () => {

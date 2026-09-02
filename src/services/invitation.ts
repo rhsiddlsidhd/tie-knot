@@ -6,9 +6,10 @@ import { unstable_cache } from "next/cache";
 import type { InvitationContent } from "@/core/domain";
 import { AppError } from "@/core/domain";
 import type { CoupleInfoSchemaDto } from "@/core/schemas";
-import type { IInvitation } from "@/models";
-import { InvitationModel, OrderModel } from "@/models";
-import { dbConnect } from "@/db";
+import type { IInvitation } from "@/models/invitation.model";
+import { InvitationModel } from "@/models/invitation.model";
+import { OrderModel } from "@/models/order.model";
+import { dbConnect } from "@/db/connect";
 import { requireAuth } from "./auth";
 import { isValidSubwayStationName } from "./subway";
 

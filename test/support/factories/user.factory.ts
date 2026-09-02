@@ -1,4 +1,4 @@
-import type { UserRole } from "@/models";
+import type { UserRole } from "@/models/user.model";
 
 type BuildUserInput = {
   email: string;

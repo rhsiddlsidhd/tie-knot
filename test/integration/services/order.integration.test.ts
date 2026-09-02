@@ -1,19 +1,17 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import {
   buildOrderInput,
   buildProductInput,
   clearCollections,
 } from "@test/support";
 import { AppError, EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import {
-  InvitationModel,
-  OrderModel,
-  PaymentModel,
-  ProductModel,
-  ReviewModel,
-} from "@/models";
+import { InvitationModel } from "@/models/invitation.model";
+import { OrderModel } from "@/models/order.model";
+import { PaymentModel } from "@/models/payment.model";
+import { ProductModel } from "@/models/product.model";
+import { ReviewModel } from "@/models/review.model";
 import type * as AuthModule from "@/services/auth";
 import {
   createOrderService,

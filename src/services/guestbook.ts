@@ -1,8 +1,9 @@
 import "server-only";
-import type { IGuestbook } from "@/models";
-import { GuestbookModel, InvitationModel } from "@/models";
+import type { IGuestbook } from "@/models/guestbook.model";
+import { GuestbookModel } from "@/models/guestbook.model";
+import { InvitationModel } from "@/models/invitation.model";
 import type { GuestbookType } from "@/core/schemas";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import type { GuestbookListPage } from "@/core/domain";
 import { AppError, DEFAULT_PAGE_SIZE } from "@/core/domain";
 import { comparePasswords, hashPassword } from "@/adapters/server/bcrypt";
