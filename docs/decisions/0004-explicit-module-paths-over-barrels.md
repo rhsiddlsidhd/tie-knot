@@ -55,3 +55,4 @@ Next.js가 파일 규약으로 강제하는 `src/app/` 라우트 파일은 이 �
 - [ADR-0002](0002-adapter-runtime-segments.md)
 - [#207](https://github.com/rhsiddlsidhd/tie-knot/issues/207)
 - [#210](https://github.com/rhsiddlsidhd/tie-knot/issues/210)
+- [#213](https://github.com/rhsiddlsidhd/tie-knot/pull/213), [#214](https://github.com/rhsiddlsidhd/tie-knot/pull/214), [#215](https://github.com/rhsiddlsidhd/tie-knot/pull/215), [#216](https://github.com/rhsiddlsidhd/tie-knot/pull/216), [#217](https://github.com/rhsiddlsidhd/tie-knot/pull/217), [#218](https://github.com/rhsiddlsidhd/tie-knot/pull/218), [#219](https://github.com/rhsiddlsidhd/tie-knot/pull/219)
