@@ -14,12 +14,12 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, refresh: refreshMock }),
 }));
 vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/logoutUser", () => ({
   logoutUser: vi.fn().mockResolvedValue({ success: true, data: null }),
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
-import { logoutUser } from "@/actions";
+import { logoutUser } from "@/actions/logoutUser";
 import { toast } from "sonner";
 import { UserAccountNav } from "./UserAccountNav";
 

@@ -24,7 +24,9 @@ vi.mock("@/ui/stores", () => ({
   ) => selector({ setOrder: setOrderMock, setResumePayment: setResumePaymentMock }),
 }));
 
-vi.mock("@/actions", () => ({ completePayment: completePaymentMock }));
+vi.mock("@/actions/completePayment", () => ({
+  completePayment: completePaymentMock,
+}));
 
 import { PaymentButton } from "./PaymentButton";
 

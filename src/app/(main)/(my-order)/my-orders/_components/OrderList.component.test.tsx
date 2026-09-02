@@ -12,7 +12,7 @@ vi.mock("@/ui/stores", () => ({
   ) => selector({ setOrder: vi.fn() }),
 }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/cancelOrder", () => ({
   cancelOrder: vi.fn(),
 }));
 

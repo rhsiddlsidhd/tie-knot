@@ -8,7 +8,7 @@ import { CursorPagination } from "@/ui/components/molecules";
 import { RatingStars } from "@/ui/components/organisms";
 import type { AdminReviewListPage } from "@/core/domain";
 import { formatKstDate } from "@/core/utils";
-import { deleteReviewByAdmin } from "@/actions";
+import { deleteReviewByAdmin } from "@/actions/deleteReviewByAdmin";
 
 interface AdminReviewsTemplateProps {
   page: AdminReviewListPage;

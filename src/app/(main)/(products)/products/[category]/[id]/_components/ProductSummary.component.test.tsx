@@ -4,7 +4,7 @@ import type { Product } from "@/core/domain";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/toggleProductLike", () => ({
   toggleProductLike: vi.fn(),
 }));
 

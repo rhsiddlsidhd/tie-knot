@@ -1,5 +1,7 @@
 "use client";
-import { deleteProduct, permanentlyDeleteProduct, restoreProduct } from "@/actions";
+import { deleteProduct } from "@/actions/deleteProduct";
+import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
+import { restoreProduct } from "@/actions/restoreProduct";
 import type { ProductTableRowProps } from "./ProductTableRow";
 import { Button } from "@/ui/components/atoms";
 import { useAdminModalStore } from "@/ui/stores";

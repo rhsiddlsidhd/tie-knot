@@ -28,7 +28,7 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/saveInvitation", () => ({
   saveInvitation: vi.fn(),
 }));
 

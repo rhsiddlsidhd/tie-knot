@@ -6,12 +6,14 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams("?t=token-1"),
 }));
 
-vi.mock("@/actions", () => ({
+vi.mock("@/actions/updateUserPassword", () => ({
   updateUserPassword: vi.fn(),
+}));
+vi.mock("@/actions/clearUserEmailCookie", () => ({
   clearUserEmailCookie: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { clearUserEmailCookie } from "@/actions";
+import { clearUserEmailCookie } from "@/actions/clearUserEmailCookie";
 import { UpdatePasswordForm } from "./UpdatePasswordForm";
 
 describe("UpdatePasswordForm (컨테이너)", () => {

@@ -9,7 +9,15 @@ const actions = vi.hoisted(() => ({
 }));
 const refresh = vi.hoisted(() => vi.fn());
 
-vi.mock("@/actions", () => actions);
+vi.mock("@/actions/createReview", () => ({
+  createReview: actions.createReview,
+}));
+vi.mock("@/actions/updateReview", () => ({
+  updateReview: actions.updateReview,
+}));
+vi.mock("@/actions/deleteReview", () => ({
+  deleteReview: actions.deleteReview,
+}));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
 vi.mock("@/adapters/browser/cloudinary", () => ({
   CloudinaryWidget: ({

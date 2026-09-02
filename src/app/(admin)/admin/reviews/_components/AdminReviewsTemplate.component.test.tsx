@@ -10,7 +10,9 @@ vi.mock("next/navigation", () => ({
 }));
 
 const deleteReviewByAdmin = vi.fn();
-vi.mock("@/actions", () => ({ deleteReviewByAdmin: (...args: unknown[]) => deleteReviewByAdmin(...args) }));
+vi.mock("@/actions/deleteReviewByAdmin", () => ({
+  deleteReviewByAdmin: (...args: unknown[]) => deleteReviewByAdmin(...args),
+}));
 
 import { AdminReviewsTemplate } from "./AdminReviewsTemplate";
 

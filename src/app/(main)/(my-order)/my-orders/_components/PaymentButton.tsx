@@ -8,7 +8,7 @@ import { useOrderStore } from "@/ui/stores";
 import type { OrderJSON } from "@/core/domain";
 import type { CheckoutItem } from "@/core/domain";
 import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import { completePayment } from "@/actions";
+import { completePayment } from "@/actions/completePayment";
 
 const PaymentButton = ({ order }: { order: OrderJSON }) => {
   const router = useRouter();

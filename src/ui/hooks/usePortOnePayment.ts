@@ -3,8 +3,8 @@
 import { useCallback } from "react";
 import { requestPayment } from "@/adapters/browser/portone/request-payment";
 import { routes, type PayStatus } from "@/core/domain";
-import type { CreateOrderResult } from "@/actions";
-import { completePayment } from "@/actions";
+import type { CreateOrderResult } from "@/actions/createOrder";
+import { completePayment } from "@/actions/completePayment";
 import { useOrderStore } from "@/ui/stores";
 import { toast } from "sonner";
 

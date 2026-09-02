@@ -4,7 +4,7 @@ import { startTransition, useActionState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { saveInvitation } from "@/actions";
+import { saveInvitation } from "@/actions/saveInvitation";
 
 import type { APIResponse } from "@/core/domain";
 import { useImageUpload } from "./useImageUpload";

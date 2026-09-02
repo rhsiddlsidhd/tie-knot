@@ -4,7 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { createProduct } from "@/actions";
+import { createProduct } from "@/actions/createProduct";
 import type { APIResponse } from "@/core/domain";
 import type { PremiumFeature } from "@/services/premiumFeature";
 import { ProductRegistrationForm as PureProductRegistrationForm } from "../_components/ProductRegistrationForm";

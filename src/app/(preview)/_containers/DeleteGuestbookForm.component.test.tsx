@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-vi.mock("@/actions", () => ({ deleteGuestbook: vi.fn() }));
+vi.mock("@/actions/deleteGuestbook", () => ({
+  deleteGuestbook: vi.fn(),
+}));
 vi.mock("sonner", () => ({
   toast: Object.assign(vi.fn(), { error: vi.fn() }),
 }));
 
-import { deleteGuestbook } from "@/actions";
+import { deleteGuestbook } from "@/actions/deleteGuestbook";
 import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/ui/components/atoms";
 import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";

@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { requestPasswordReset } from "@/actions";
+import { requestPasswordReset } from "@/actions/requestPasswordReset";
 import { hasFieldErrors } from "@/core/utils";
 import type { APIResponse } from "@/core/domain";
 import { ForgotPasswordForm as PureForgotPasswordForm } from "../_components/ForgotPasswordForm";

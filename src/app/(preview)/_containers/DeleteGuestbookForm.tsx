@@ -3,7 +3,7 @@
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
-import { deleteGuestbook } from "@/actions";
+import { deleteGuestbook } from "@/actions/deleteGuestbook";
 import type { APIResponse } from "@/core/domain";
 import { routes } from "@/core/domain";
 import { parseDeleteGuestbookFormData } from "@/core/schemas";

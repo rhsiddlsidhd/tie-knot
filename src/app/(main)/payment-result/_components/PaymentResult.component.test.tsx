@@ -13,7 +13,9 @@ const {
   setPaymentStatusMock: vi.fn(),
 }));
 
-vi.mock("@/actions", () => ({ completePayment: completePaymentMock }));
+vi.mock("@/actions/completePayment", () => ({
+  completePayment: completePaymentMock,
+}));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock }),
 }));
