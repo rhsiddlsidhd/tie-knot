@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { Globe } from "lucide-react";
 
-import { Button, TypographyH1, TypographyMuted, Checkbox, Label } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { Checkbox } from "@/ui/components/atoms/checkbox";
+import { Label } from "@/ui/components/atoms/label";
 
 
 
-import { TextField } from "@/ui/components/organisms";
+import { TextField } from "@/ui/components/organisms/TextField";
 import { routes } from "@/core/domain/routes";
 interface LoginFormProps {
   action: (formData: FormData) => void;

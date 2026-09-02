@@ -19,7 +19,7 @@ vi.mock("@/actions/completePayment", () => ({
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: replaceMock }),
 }));
-vi.mock("@/ui/stores", () => ({
+vi.mock("@/ui/stores/use-app-store", () => ({
   useOrderStore: (
     selector: (state: {
       clearOrder: typeof clearOrderMock;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useOrderStore } from "@/ui/stores";
+import { useOrderStore } from "@/ui/stores/use-app-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";

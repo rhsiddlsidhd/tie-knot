@@ -1,6 +1,7 @@
 "use client";
 
-import { Label, RadioGroup, RadioGroupItem } from "@/ui/components/atoms";
+import { Label } from "@/ui/components/atoms/label";
+import { RadioGroup, RadioGroupItem } from "@/ui/components/atoms/radio-group";
 
 import React, { useState } from "react";
 import type { LucideIcon } from "lucide-react";

@@ -5,22 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
-import {
-  AppImage,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  TypographyH3,
-  TypographyMuted,
-} from "@/ui/components/atoms";
-import { Alert } from "@/ui/components/molecules";
-import { useCopy } from "@/ui/hooks";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent, CardHeader } from "@/ui/components/atoms/card";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
+import { TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { useCopy } from "@/ui/hooks/useCopy";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
 import type { OrderListItem, OrderStatus } from "@/core/domain/order";
 import { CUSTOMER_INPUT_ROUTES } from "@/core/domain/product-category";

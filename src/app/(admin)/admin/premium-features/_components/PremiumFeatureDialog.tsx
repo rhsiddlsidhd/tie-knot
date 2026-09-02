@@ -1,11 +1,16 @@
-import { Button, DialogFooter, Input, TypographyMuted, Textarea, Label } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { DialogFooter } from "@/ui/components/atoms/dialog";
+import { Input } from "@/ui/components/atoms/input";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { Textarea } from "@/ui/components/atoms/textarea";
+import { Label } from "@/ui/components/atoms/label";
 
 
 
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
-import { Alert } from "@/ui/components/molecules";
-import { TextField } from "@/ui/components/organisms";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { TextField } from "@/ui/components/organisms/TextField";
 import type { APIResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
 

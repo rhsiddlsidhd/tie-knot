@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
 }));
 
-vi.mock("@/ui/stores", () => ({
+vi.mock("@/ui/stores/use-app-store", () => ({
   useOrderStore: (
     selector: (s: {
       setOrder: (item: unknown) => void;

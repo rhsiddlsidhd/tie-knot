@@ -1,14 +1,8 @@
 "use client";
 
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import {
-  TypographyH2,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/ui/components/atoms";
+import { TypographyH2 } from "@/ui/components/atoms/typography";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/ui/components/atoms/carousel";
 import type { AvailableSubCategory } from "@/core/domain/product-category";
 import { SubCategoryNavItem } from "./SubCategoryNavItem";
 

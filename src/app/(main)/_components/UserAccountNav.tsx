@@ -3,8 +3,9 @@
 import Link from "next/link";
 import React from "react";
 import { mutate } from "swr";
-import { useAuth } from "@/ui/hooks";
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/components/atoms";
+import { useAuth } from "@/ui/hooks/useAuth";
+import { Button } from "@/ui/components/atoms/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
 
 import { UserIcon, LogOut } from "lucide-react";
 import { userNavItems } from "@/core/domain/navigation";

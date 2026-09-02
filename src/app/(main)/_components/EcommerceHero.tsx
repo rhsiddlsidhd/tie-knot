@@ -3,16 +3,9 @@
 import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Button,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-  TypographyH1,
-  type CarouselApi,
-} from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/ui/components/atoms/carousel";
+import { TypographyH1 } from "@/ui/components/atoms/typography";
 import { cn } from "@/core/utils/cn";
 import promotionsData from "@/core/content/promotions.json";
 import type { Promotion } from "@/core/domain/promotion";

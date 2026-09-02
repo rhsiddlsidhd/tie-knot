@@ -1,15 +1,11 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  TypographyMuted,
-} from "@/ui/components/atoms";
-import { FormField, ImageField } from "@/ui/components/organisms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { FormField } from "@/ui/components/organisms/FormField";
+import { ImageField } from "@/ui/components/organisms/ImageField";
 
-import type { useImageList } from "@/ui/hooks";
+import type { useImageList } from "@/ui/hooks/useImageList";
 
 interface ImagesSectionProps {
   thumbnail: ReturnType<typeof useImageList>;

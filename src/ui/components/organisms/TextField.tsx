@@ -1,7 +1,7 @@
 "use client";
 
-import { Input } from "@/ui/components/atoms";
-import { FormField } from "@/ui/components/organisms";
+import { Input } from "@/ui/components/atoms/input";
+import { FormField } from "@/ui/components/organisms/FormField";
 import type { FieldBase } from "@/core/domain/field";
 import type { HTMLInputTypeAttribute} from "react";
 import { useState } from "react";

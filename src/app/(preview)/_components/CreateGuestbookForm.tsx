@@ -1,6 +1,8 @@
-import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
 
-import { SwitchField, TextField } from "@/ui/components/organisms";
+import { SwitchField } from "@/ui/components/organisms/SwitchField";
+import { TextField } from "@/ui/components/organisms/TextField";
 
 import { cn } from "@/core/utils/cn";
 import type { APIResponse } from "@/core/domain/error";

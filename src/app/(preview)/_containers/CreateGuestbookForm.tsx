@@ -9,8 +9,8 @@ import type { APIResponse } from "@/core/domain/error";
 import { routes } from "@/core/domain/routes";
 import { parseGuestbookFormData } from "@/core/schemas/request/guestbook.schema";
 import { hasFieldErrors } from "@/core/utils/error";
-import { useGuestbookDemo } from "@/ui/context/guestbookDemo";
-import { useGuestbookModalStore } from "@/ui/stores";
+import { useGuestbookDemo } from "@/ui/context/guestbookDemo/provider";
+import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 import { CreateGuestbookForm as PureCreateGuestbookForm } from "../_components/CreateGuestbookForm";
 interface Payload {
   publicKey: string;

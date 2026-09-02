@@ -1,12 +1,7 @@
 import Link from "next/link";
-import {
-  Badge,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 import type { DashboardRecentOrder } from "@/core/domain/dashboard";
 import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
 import { routes } from "@/core/domain/routes";

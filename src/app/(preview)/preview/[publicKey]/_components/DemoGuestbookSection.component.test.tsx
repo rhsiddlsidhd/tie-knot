@@ -1,11 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import {
-  GuestbookDemoProvider,
-  INITIAL_GUESTBOOK_DEMO_STATE,
-} from "@/ui/context/guestbookDemo";
-import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
+import { GuestbookDemoProvider } from "@/ui/context/guestbookDemo/provider";
+import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
+import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
+import { StoreProvider } from "@/ui/stores/provider";
 import { DemoGuestbookSection } from "./DemoGuestbookSection";
 
 // jsdom-polyfill.ts의 IntersectionObserverMock은 콜백을 저장하지 않는 no-op이라

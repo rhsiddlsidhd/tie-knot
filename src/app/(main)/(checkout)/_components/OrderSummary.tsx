@@ -1,15 +1,6 @@
-import {
-  AppImage,
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  TypographyH3,
-  TypographyMuted,
-  TypographyP,
-  TypographySmall,
-} from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyH3, TypographyMuted, TypographyP, TypographySmall } from "@/ui/components/atoms/typography";
 import { DELIVERY_FEE } from "@/core/domain/price";
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { formatPriceWithComma } from "@/core/utils/price";

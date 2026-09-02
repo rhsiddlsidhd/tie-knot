@@ -1,13 +1,7 @@
 import type { PremiumFeature } from "@/core/domain/premium-feature";
-import {
-  Badge,
-  Card,
-  CardContent,
-  TypographyH1,
-  TypographyH3,
-  TypographyLarge,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Card, CardContent } from "@/ui/components/atoms/card";
+import { TypographyH1, TypographyH3, TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
 
 import { PremiumFeatureCardAction } from "./PremiumFeatureCardAction";
 

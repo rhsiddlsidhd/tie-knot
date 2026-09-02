@@ -3,9 +3,10 @@ import React, { useCallback, useMemo, useState } from "react";
 import { ShoppingCart, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { Badge, Button } from "@/ui/components/atoms";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Button } from "@/ui/components/atoms/button";
 
-import { BaseSelect } from "@/ui/components/molecules";
+import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
 import { QuantityStepper } from "./QuantityStepper";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";

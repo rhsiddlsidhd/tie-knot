@@ -3,10 +3,11 @@
 import React from "react";
 import { Upload, Plus } from "lucide-react";
 import { CloudinaryWidget } from "@/adapters/browser/cloudinary/widget";
-import { ImagePreviewItem } from "@/ui/components/organisms";
-import { Button, TypographyMuted } from "@/ui/components/atoms";
+import { ImagePreviewItem } from "@/ui/components/organisms/ImagePreviewItem";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 
-import type { ImageItem } from "@/ui/hooks";
+import type { ImageItem } from "@/ui/hooks/useImageList";
 
 interface ImageFieldProps {
   id: string;

@@ -1,8 +1,10 @@
 "use client";
 
-import { Badge } from "@/ui/components/atoms";
-import { ClipboardButton } from "@/ui/components/organisms";
-import { useCopy, useNavigationGeo, useSubwayLineInfo } from "@/ui/hooks";
+import { Badge } from "@/ui/components/atoms/badge";
+import { ClipboardButton } from "@/ui/components/organisms/ClipboardButton";
+import { useCopy } from "@/ui/hooks/useCopy";
+import { useNavigationGeo } from "@/ui/hooks/useNavigationGeo";
+import { useSubwayLineInfo } from "@/ui/hooks/useSubwayLineInfo";
 import { EyebrowSection } from "./EyebrowSection";
 import { KakaoMap } from "./KakaoMap";
 

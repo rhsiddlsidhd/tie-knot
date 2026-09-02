@@ -4,20 +4,12 @@ import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  Button,
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Textarea,
-} from "@/ui/components/atoms";
-import { ImageField, RatingStars } from "@/ui/components/organisms";
-import { useImageList } from "@/ui/hooks";
+import { Button } from "@/ui/components/atoms/button";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/ui/components/atoms/dialog";
+import { Textarea } from "@/ui/components/atoms/textarea";
+import { ImageField } from "@/ui/components/organisms/ImageField";
+import { RatingStars } from "@/ui/components/organisms/RatingStars";
+import { useImageList } from "@/ui/hooks/useImageList";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";
 import type { OrderReviewSummary } from "@/core/domain/order";

@@ -3,7 +3,9 @@ import { render, screen } from "@testing-library/react";
 
 const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
 
-vi.mock("@/ui/hooks", () => ({ useAuth: useAuthMock }));
+vi.mock("@/ui/hooks/useAuth", () => ({
+  useAuth: useAuthMock,
+}));
 vi.mock("./UserAccountNav", () => ({
   UserAccountNav: () => <div>account-nav</div>,
 }));

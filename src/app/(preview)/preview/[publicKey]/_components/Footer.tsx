@@ -1,4 +1,4 @@
-import { TypographyMuted, TypographySmall } from "@/ui/components/atoms";
+import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
 export function Footer({ children }: { children: React.ReactNode }) {
   return (
     <footer className="relative min-h-[60vh] py-12 text-center">

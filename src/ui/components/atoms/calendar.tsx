@@ -14,7 +14,7 @@ import {
 
 import { cn } from "@/core/utils/cn";
 
-import { Button, buttonVariants } from "@/ui/components/atoms";
+import { Button, buttonVariants } from "@/ui/components/atoms/button";
 function Calendar({
   className,
   classNames,

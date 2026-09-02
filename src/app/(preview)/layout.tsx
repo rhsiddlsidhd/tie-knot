@@ -1,5 +1,6 @@
 import { GuestbookModal } from "./_components";
-import { GuestbookDemoProvider, INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo";
+import { GuestbookDemoProvider } from "@/ui/context/guestbookDemo/provider";
+import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
 import React from "react";
 
 const PreviewLayout = ({ children }: { children: React.ReactNode }) => {

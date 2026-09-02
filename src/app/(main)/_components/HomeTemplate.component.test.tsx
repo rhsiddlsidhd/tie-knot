@@ -8,7 +8,7 @@ vi.mock("./EcommerceHero", () => ({
 vi.mock("./LiveDemoSection", () => ({
   LiveDemoSection: () => <div>live-demo</div>,
 }));
-vi.mock("@/ui/components/molecules", () => ({
+vi.mock("@/ui/components/molecules/ProductCard", () => ({
   ProductCard: ({ product }: { product: Product }) => (
     <div>card-{product._id}</div>
   ),

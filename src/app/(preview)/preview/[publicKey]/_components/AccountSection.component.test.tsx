@@ -3,10 +3,10 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
-import type * as HooksModule from "@/ui/hooks";
+import type * as UseBanksModule from "@/ui/hooks/useBanks";
 
-vi.mock("@/ui/hooks", async (importOriginal) => {
-  const hooks = await importOriginal<typeof HooksModule>();
+vi.mock("@/ui/hooks/useBanks", async (importOriginal) => {
+  const hooks = await importOriginal<typeof UseBanksModule>();
 
   return {
     ...hooks,

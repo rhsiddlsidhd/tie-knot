@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import { BasicInfoForm } from "./BasicInfoForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { Camera } from "lucide-react";

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { AppImage, Button, Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Button } from "@/ui/components/atoms/button";
+import { Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms/dialog";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";

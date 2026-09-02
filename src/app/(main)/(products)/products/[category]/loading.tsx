@@ -1,4 +1,4 @@
-import { Skeleton } from "@/ui/components/atoms";
+import { Skeleton } from "@/ui/components/atoms/skeleton";
 
 export default function ProductsLoading() {
   return (

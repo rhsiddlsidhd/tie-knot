@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { useOrderStore } from "@/ui/stores";
+import { useOrderStore } from "@/ui/stores/use-app-store";
 import type { Product } from "@/services/product";
 import type { PremiumFeature } from "@/services/premiumFeature";
 

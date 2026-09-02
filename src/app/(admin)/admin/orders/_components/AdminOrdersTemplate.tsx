@@ -1,17 +1,10 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
-import {
-  Badge,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  TypographyH1,
-  TypographyMuted,
-} from "@/ui/components/atoms";
-import { CursorPagination } from "@/ui/components/molecules";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms/select";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
 import type { AdminOrderListPage, OrderStatus } from "@/core/domain/order";
 import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
 import { formatKstDate } from "@/core/utils/date";

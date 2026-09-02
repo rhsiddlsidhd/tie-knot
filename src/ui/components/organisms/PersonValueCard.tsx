@@ -1,4 +1,6 @@
-import { Badge, Card, TypographyLarge, TypographyMuted } from "@/ui/components/atoms";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Card } from "@/ui/components/atoms/card";
+import { TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ClipboardButton } from "./ClipboardButton";
 
 interface PersonValueCardProps {

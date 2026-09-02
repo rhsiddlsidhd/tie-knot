@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Edit } from "lucide-react";
-import { Button } from "@/ui/components/atoms";
-import { Alert } from "@/ui/components/molecules";
+import { Button } from "@/ui/components/atoms/button";
+import { Alert } from "@/ui/components/molecules/Alert";
 import { routes } from "@/core/domain/routes";
 
 interface PendingCoupleInfoBannerProps {

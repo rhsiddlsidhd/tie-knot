@@ -3,7 +3,7 @@ import { PAGE_TITLE } from "@/core/domain/page";
 import { isPageTitle } from "@/core/utils/page";
 import { usePathname } from "next/navigation";
 import React from "react";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 const PageTitle = () => {
   const pathname = usePathname();
   const key = pathname.replace("/", "");

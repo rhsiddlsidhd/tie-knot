@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
-import { Button } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
 export function SidebarNavItem({
   type,
 }: {

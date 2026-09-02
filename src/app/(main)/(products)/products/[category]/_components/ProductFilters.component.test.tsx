@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { initialFilterState } from "@/ui/context/productFilter";
+import { initialFilterState } from "@/ui/context/productFilter/reducer";
 import type { Product } from "@/core/domain/product";
 import { ProductFilters } from "./ProductFilters";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";

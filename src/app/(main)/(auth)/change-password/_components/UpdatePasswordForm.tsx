@@ -1,6 +1,7 @@
-import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms";
+import { TextField } from "@/ui/components/organisms/TextField";
 import Link from "next/link";
 import { getFieldError } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";

@@ -1,15 +1,9 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  TypographyH1,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Button } from "@/ui/components/atoms/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ChevronLeft } from "lucide-react";
 import type { OrderDetail } from "@/core/domain/order";
 import { routes } from "@/core/domain/routes";

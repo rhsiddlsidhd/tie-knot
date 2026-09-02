@@ -1,5 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle, Input } from "@/ui/components/atoms";
-import { AddressField, FormField } from "@/ui/components/organisms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { Input } from "@/ui/components/atoms/input";
+import { AddressField } from "@/ui/components/organisms/AddressField";
+import { FormField } from "@/ui/components/organisms/FormField";
 import type { ShippingInfo } from "@/core/schemas/request/order.schema";
 
 interface ShippingInfoCardProps {

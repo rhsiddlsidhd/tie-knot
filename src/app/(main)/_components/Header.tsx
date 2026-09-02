@@ -5,7 +5,8 @@ import React from "react";
 import { Search } from "lucide-react";
 import { routes } from "@/core/domain/routes";
 import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
-import { Button, TypographyH4 } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH4 } from "@/ui/components/atoms/typography";
 const Header = () => {
   return (
     <header className="bg-background/80 border-border sticky top-0 right-0 left-0 z-50 w-full border-b backdrop-blur-md">

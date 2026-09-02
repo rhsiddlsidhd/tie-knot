@@ -1,8 +1,8 @@
 "use client";
-import { Input } from "@/ui/components/atoms";
+import { Input } from "@/ui/components/atoms/input";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
-import { BaseSelect } from "@/ui/components/molecules";
-import { FormField } from "@/ui/components/organisms";
+import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
+import { FormField } from "@/ui/components/organisms/FormField";
 import { useState } from "react";
 
 interface BankAccountInfo {

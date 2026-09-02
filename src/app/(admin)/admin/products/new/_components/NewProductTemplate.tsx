@@ -1,6 +1,7 @@
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { routes } from "@/core/domain/routes";
-import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 

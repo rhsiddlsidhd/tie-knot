@@ -5,7 +5,9 @@ import type { SubCategory } from "@/core/domain/product-category";
 import { routes } from "@/core/domain/routes";
 import { subCategoryLabels } from "@/core/domain/product-category";
 import { calculatePrice } from "@/core/utils/price";
-import { AppImage, Badge, TypographyMuted } from "@/ui/components/atoms";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Badge } from "@/ui/components/atoms/badge";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 
 export function ProductCard({ product, rank }: { product: Product; rank?: number }) {
   const finalPrice =

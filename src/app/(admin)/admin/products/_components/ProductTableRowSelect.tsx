@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { isStatus, STATUS_ITEMS } from "../_types";
 import { updateProductStatus } from "@/actions/updateProductStatus";
 import { toast } from "sonner";
-import { BaseSelect } from "@/ui/components/molecules";
+import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
 import type { Product } from "@/services/product";
 const ProductTableRowSelect = ({ product }: { product: Product }) => {
   const router = useRouter();

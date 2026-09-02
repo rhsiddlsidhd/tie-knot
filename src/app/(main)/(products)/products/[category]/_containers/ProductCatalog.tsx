@@ -1,6 +1,7 @@
 "use client";
 
-import { useProducts, usePremiumFeature } from "@/ui/hooks";
+import { useProducts } from "@/ui/hooks/useProducts";
+import { usePremiumFeature } from "@/ui/hooks/usePremiumFeatures";
 import { ProductCatalog as ProductCatalogView } from "../_components";
 import type { Product } from "@/services/product";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";

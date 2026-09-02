@@ -1,13 +1,10 @@
 "use client";
 
-import { ProductCard } from "@/ui/components/molecules";
+import { ProductCard } from "@/ui/components/molecules/ProductCard";
 
-import { useVisibleProducts } from "@/ui/hooks";
-import { Button } from "@/ui/components/atoms";
-import type {
-  ProductFilterAction,
-  ProductFilterState,
-} from "@/ui/context/productFilter";
+import { useVisibleProducts } from "@/ui/hooks/useVisibleProducts";
+import { Button } from "@/ui/components/atoms/button";
+import type { ProductFilterAction, ProductFilterState } from "@/ui/context/productFilter/type";
 import type { Product } from "@/core/domain/product";
 import { TypographyMuted, TypographyP } from "../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";

@@ -1,30 +1,19 @@
 "use client";
 
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
-import { AutoCompleteList } from "@/ui/components/molecules";
-import {
-  Command,
-  CommandInput,
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-  Badge,
-  TypographyMuted,
-  TypographySmall,
-} from "@/ui/components/atoms";
+import { AutoCompleteList } from "@/ui/components/molecules/AutoCompleteList";
+import { Command, CommandInput } from "@/ui/components/atoms/command";
+import { Button } from "@/ui/components/atoms/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
+import { Badge } from "@/ui/components/atoms/badge";
+import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
 
-import { useSuggestProducts } from "@/ui/hooks";
+import { useSuggestProducts } from "@/ui/hooks/useSuggestProducts";
 
 import type { Dispatch } from "react";
 import { useState } from "react";
 
-import type {
-  ProductFilterState,
-  ProductFilterAction,
-} from "@/ui/context/productFilter";
+import type { ProductFilterState, ProductFilterAction } from "@/ui/context/productFilter/type";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 

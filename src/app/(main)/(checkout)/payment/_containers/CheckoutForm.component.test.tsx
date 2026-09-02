@@ -15,15 +15,19 @@ vi.mock("@/actions/createOrder", () => ({
   createOrder: vi.fn(),
 }));
 
-vi.mock("@/ui/stores", () => ({
+vi.mock("@/ui/stores/use-app-store", () => ({
   useOrderStore: (
     selector: (s: { clearOrder: () => void; resumePayment: null }) => unknown,
   ) => selector({ clearOrder: clearOrderMock, resumePayment: null }),
 }));
 
-vi.mock("@/ui/hooks", () => ({
+vi.mock("@/ui/hooks/usePortOnePayment", () => ({
   usePortOnePayment: usePortOnePaymentMock,
+}));
+vi.mock("@/ui/hooks/useCheckoutData", () => ({
   useCheckoutData: () => ({ data: null as unknown, loading: false }),
+}));
+vi.mock("@/ui/hooks/useCheckoutForm", () => ({
   useCheckoutForm: () => ({
     errors: {},
     shippingErrors: {},

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TypographySmall } from "@/ui/components/atoms";
+import { TypographySmall } from "@/ui/components/atoms/typography";
 import { routes } from "@/core/domain/routes";
 import { subCategoryLabels, type ProductCategory, type SubCategory } from "@/core/domain/product-category";
 

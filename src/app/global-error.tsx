@@ -1,7 +1,7 @@
 "use client";
 
 import "./globals.css";
-import { ErrorFallback } from "@/ui/components/organisms";
+import { ErrorFallback } from "@/ui/components/organisms/ErrorFallback";
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };

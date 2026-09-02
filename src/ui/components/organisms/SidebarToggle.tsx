@@ -1,6 +1,7 @@
 "use client";
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator, SidebarTrigger } from "@/ui/components/atoms";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/ui/components/atoms/breadcrumb";
+import { SidebarTrigger } from "@/ui/components/atoms/sidebar";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";

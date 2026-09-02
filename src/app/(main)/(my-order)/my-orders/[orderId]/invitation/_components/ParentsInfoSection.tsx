@@ -1,8 +1,11 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, Collapsible, CollapsibleContent, CollapsibleTrigger, TypographyH3, TypographySmall } from "@/ui/components/atoms";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/components/atoms/collapsible";
+import { TypographyH3, TypographySmall } from "@/ui/components/atoms/typography";
 
-import { BankField, TextField } from "@/ui/components/organisms";
+import { BankField } from "@/ui/components/organisms/BankField";
+import { TextField } from "@/ui/components/organisms/TextField";
 
 import { ChevronDown } from "lucide-react";
 

@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, Separator } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { Separator } from "@/ui/components/atoms/separator";
 
 import clsx from "clsx";
 import React, { useEffect, useRef, useState } from "react";

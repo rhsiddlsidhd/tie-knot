@@ -3,11 +3,8 @@
 import Link from "next/link";
 import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
-import {
-  Button,
-  TypographyH3,
-  TypographyMuted,
-} from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
 import { fetcher } from "@/ui/fetcher";
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";

@@ -6,7 +6,7 @@ import { routes } from "@/core/domain/routes";
 import { type PayStatus } from "@/core/domain/payment";
 import type { CreateOrderResult } from "@/actions/createOrder";
 import { completePayment } from "@/actions/completePayment";
-import { useOrderStore } from "@/ui/stores";
+import { useOrderStore } from "@/ui/stores/use-app-store";
 import { toast } from "sonner";
 
 interface UsePortOnePaymentOptions {

@@ -3,11 +3,13 @@
 import { useState } from "react";
 import { SearchBar } from "./SearchBar";
 import { SearchEmptyState } from "./SearchEmptyState";
-import { useDebouncedValue, useProductSearch } from "@/ui/hooks";
-import { Spinner, TypographyMuted } from "@/ui/components/atoms";
-import { Alert } from "@/ui/components/molecules";
-import { ProductGrid } from "@/ui/components/organisms";
-import { initialFilterState } from "@/ui/context/productFilter";
+import { useDebouncedValue } from "@/ui/hooks/useDebouncedValue";
+import { useProductSearch } from "@/ui/hooks/useProductSearch";
+import { Spinner } from "@/ui/components/atoms/spinner";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { ProductGrid } from "@/ui/components/organisms/ProductGrid";
+import { initialFilterState } from "@/ui/context/productFilter/reducer";
 
 // 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/AGENTS.md)
 const SEARCH_DEBOUNCE_MS = 300;

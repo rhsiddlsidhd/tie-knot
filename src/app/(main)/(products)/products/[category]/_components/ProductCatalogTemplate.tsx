@@ -1,6 +1,6 @@
 import type { Product } from "@/core/domain/product";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
 import { ProductCatalog } from "../_containers";
 

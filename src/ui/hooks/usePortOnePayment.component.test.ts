@@ -20,7 +20,7 @@ vi.mock("sonner", () => ({
 
 // paymentStatus가 order.store로 이전됨(OrderSummary와 공유 목적) — 실제 zustand
 // create로 대체 구현해 hook의 selector 구독이 실제로 재렌더를 트리거하게 한다.
-vi.mock("@/ui/stores", async () => {
+vi.mock("@/ui/stores/use-app-store", async () => {
   const { create } = await import("zustand");
   const useOrderStore = create<{
     paymentStatus: string;
@@ -33,7 +33,7 @@ vi.mock("@/ui/stores", async () => {
 });
 
 import { completePayment } from "@/actions/completePayment";
-import { useOrderStore } from "@/ui/stores";
+import { useOrderStore } from "@/ui/stores/use-app-store";
 import { usePortOnePayment } from "./usePortOnePayment";
 
 const orderData: CreateOrderResult = {

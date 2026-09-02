@@ -2,7 +2,7 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import { Dialog, DialogContent } from "@/ui/components/atoms";
+import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
 
 import { ViewContact } from "./ViewContact";
 

@@ -18,11 +18,13 @@ vi.mock("@/actions/updateProduct", () => ({
   updateProduct: () => async (): Promise<null> => null,
 }));
 
-vi.mock("@/ui/hooks", () => ({
+vi.mock("@/ui/hooks/usePremiumFeatures", () => ({
   usePremiumFeature: (): { premiumFeatures: never[]; loading: boolean } => ({
     premiumFeatures: [],
     loading: false,
   }),
+}));
+vi.mock("@/ui/hooks/useImageList", () => ({
   useImageList: (defaultUrls?: string[]) => {
     const items = (defaultUrls ?? []).map((url) => ({
       id: url,

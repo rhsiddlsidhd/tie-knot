@@ -1,7 +1,7 @@
 "use client";
 
 import { useKakaoLoader } from "@/adapters/browser/kakao/useKakaoLoader";
-import { useKakaomapGeocode } from "@/ui/hooks";
+import { useKakaomapGeocode } from "@/ui/hooks/useKakaomapGeocode";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { MapPin } from "lucide-react";
 import { motion } from "framer-motion";

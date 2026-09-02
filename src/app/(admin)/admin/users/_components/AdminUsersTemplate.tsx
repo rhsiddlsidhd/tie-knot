@@ -3,22 +3,12 @@
 import { useRouter, usePathname } from "next/navigation";
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Badge,
-  Button,
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  TypographyH1,
-  TypographyMuted,
-} from "@/ui/components/atoms";
-import { CursorPagination } from "@/ui/components/molecules";
+import { Badge } from "@/ui/components/atoms/badge";
+import { Button } from "@/ui/components/atoms/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms/select";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
 import type { AdminUserListPage, UserRole } from "@/core/domain/user";
 import { formatKstDate } from "@/core/utils/date";
 import { USER_ROLE_LABELS } from "../_constants";

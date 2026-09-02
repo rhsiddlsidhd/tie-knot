@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/ui/components/atoms";
+import { Button } from "@/ui/components/atoms/button";
 
 interface CursorPaginationProps {
   /** 현재 라우트 pathname — 도메인 의미 없이 그대로 링크 생성에 쓴다. */
