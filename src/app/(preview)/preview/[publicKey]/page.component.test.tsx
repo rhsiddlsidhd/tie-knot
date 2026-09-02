@@ -8,8 +8,10 @@ const { getProductServiceMock, getPublishedInvitationMock } = vi.hoisted(
   }),
 );
 
-vi.mock("@/services", () => ({
+vi.mock("@/services/product", () => ({
   getProductService: getProductServiceMock,
+}));
+vi.mock("@/services/invitation", () => ({
   getPublishedInvitationByPublicKey: getPublishedInvitationMock,
 }));
 

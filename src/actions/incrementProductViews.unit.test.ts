@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/services", () => ({
+vi.mock("@/services/product", () => ({
   incrementProductViewsService: vi.fn(),
 }));
 
-import { incrementProductViewsService } from "@/services";
+import { incrementProductViewsService } from "@/services/product";
 import { incrementProductViews } from "./incrementProductViews";
 
 describe("incrementProductViews", () => {

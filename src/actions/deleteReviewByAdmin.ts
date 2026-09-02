@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { deleteReviewByAdminService } from "@/services";
+import { deleteReviewByAdminService } from "@/services/review";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/services", () => ({
+vi.mock("@/services/user", () => ({
   getUserEmail: vi.fn(),
 }));
 
-import { getUserEmail } from "@/services";
+import { getUserEmail } from "@/services/user";
 import { findUserEmail } from "./findUserEmail";
 
 const buildFormData = (overrides?: Record<string, string>) => {

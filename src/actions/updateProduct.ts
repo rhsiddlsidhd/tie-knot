@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { updateProductWorkflow } from "@/services";
+import { updateProductWorkflow } from "@/services/product";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 

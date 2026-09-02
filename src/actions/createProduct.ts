@@ -1,7 +1,7 @@
 "use server";
 
 import type { APIResponse } from "@/core/domain";
-import { createProductWorkflow } from "@/services";
+import { createProductWorkflow } from "@/services/product";
 import { actionError } from "@/boundary";
 import { productSchema } from "@/core/schemas";
 import { routes } from "@/core/domain";

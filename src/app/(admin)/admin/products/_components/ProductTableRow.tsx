@@ -1,6 +1,6 @@
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { AppImage, Badge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
-import type { Product } from "@/services";
+import type { Product } from "@/services/product";
 import { ProductTableRowAction } from "./ProductTableRowAction";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
 import type { ProductCategory, SubCategory } from "@/core/domain";

@@ -16,7 +16,27 @@ const services = vi.hoisted(() => ({
 }));
 const revalidatePath = vi.hoisted(() => vi.fn());
 
-vi.mock("@/services", () => services);
+vi.mock("@/services/auth", () => ({
+  loginUserService: services.loginUserService,
+}));
+vi.mock("@/services/user", () => ({
+  signupUserService: services.signupUserService,
+}));
+vi.mock("@/services/payment", () => ({
+  completePaymentService: services.completePaymentService,
+}));
+vi.mock("@/services/product", () => ({
+  deleteProductAsAdminService: services.deleteProductAsAdminService,
+  restoreProductAsAdminService: services.restoreProductAsAdminService,
+  permanentlyDeleteProductAsAdminService: services.permanentlyDeleteProductAsAdminService,
+  toggleProductLikeForCurrentUserService: services.toggleProductLikeForCurrentUserService,
+}));
+vi.mock("@/services/review", () => ({
+  createReviewForCurrentUserService: services.createReviewForCurrentUserService,
+  updateReviewForCurrentUserService: services.updateReviewForCurrentUserService,
+  deleteReviewForCurrentUserService: services.deleteReviewForCurrentUserService,
+  deleteReviewByAdminService: services.deleteReviewByAdminService,
+}));
 vi.mock("next/cache", () => ({ revalidatePath }));
 
 import { loginUser } from "./loginUser";

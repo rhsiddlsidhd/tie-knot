@@ -1,7 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import { notFound } from "next/navigation";
-import { getOwnedOrderDetail, verifySession } from "@/services";
+import { getOwnedOrderDetail } from "@/services/order";
+import { verifySession } from "@/services/auth";
 import { AppError } from "@/core/domain";
 import { OrderDetailTemplate } from "./_components";
 

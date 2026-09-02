@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import type { APIRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { AppError } from "@/core/domain";
-import { requireAuth } from "@/services";
+import { requireAuth } from "@/services/auth";
 import { signUploadRequest } from "@/adapters/server/cloudinary/sign";
 import type { UploadSignature } from "@/adapters/server/cloudinary/sign";
 

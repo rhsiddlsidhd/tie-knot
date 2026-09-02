@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { APIResponse} from "@/core/domain";
-import { completePaymentService } from "@/services";
+import { completePaymentService } from "@/services/payment";
 import type { PayStatus } from "@/core/domain";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";

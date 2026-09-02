@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 import { updateReviewSchema } from "@/core/schemas";
-import { updateReviewForCurrentUserService } from "@/services";
+import { updateReviewForCurrentUserService } from "@/services/review";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { routes } from "@/core/domain";

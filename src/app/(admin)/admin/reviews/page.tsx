@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import { verifySession, getAdminReviewsPageService } from "@/services";
+import { verifySession } from "@/services/auth";
+import { getAdminReviewsPageService } from "@/services/review";
 import { adminReviewListRequestSchema } from "@/core/schemas";
 import { decodeCursor, validateAndFlatten } from "@/core/utils";
 import { AdminReviewsTemplate } from "./_components";

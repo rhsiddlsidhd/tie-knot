@@ -3,7 +3,8 @@
 import type { APIResponse } from "@/core/domain";
 import { redirect } from "next/navigation";
 
-import { getAuth, createOrderForCurrentUserService } from "@/services";
+import { getAuth } from "@/services/auth";
+import { createOrderForCurrentUserService } from "@/services/order";
 import { actionError } from "@/boundary";
 
 import { categoryRequiresShipping, validateAndFlatten } from "@/core/utils";

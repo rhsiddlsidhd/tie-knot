@@ -2,7 +2,7 @@
 
 import { updateTag } from "next/cache";
 import type { APIResponse } from "@/core/domain";
-import { invitationCacheTag, saveInvitationForCurrentUser } from "@/services";
+import { invitationCacheTag, saveInvitationForCurrentUser } from "@/services/invitation";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils";
 import { coupleInfoSchema } from "@/core/schemas";

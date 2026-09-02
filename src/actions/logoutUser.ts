@@ -1,6 +1,6 @@
 "use server";
 
-import { logoutService } from "@/services";
+import { logoutService } from "@/services/auth";
 import { actionError } from "@/boundary";
 import type { APIResponse } from "@/core/domain";
 

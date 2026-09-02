@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 import { AppError } from "@/core/domain";
 
-vi.mock("@/services", () => ({
+vi.mock("@/services/auth", () => ({
   requireAuth: vi.fn(),
 }));
 
@@ -18,7 +18,7 @@ vi.mock("@/adapters/server/cloudinary/sign", () => ({
   }),
 }));
 
-import { requireAuth } from "@/services";
+import { requireAuth } from "@/services/auth";
 import { signUploadRequest } from "@/adapters/server/cloudinary/sign";
 import { POST } from "./route";
 

@@ -2,7 +2,7 @@
 
 import type { APIResponse } from "@/core/domain";
 import { parseDeleteGuestbookFormData } from "@/core/schemas";
-import { deleteGuestbookWithPasswordService } from "@/services";
+import { deleteGuestbookWithPasswordService } from "@/services/guestbook";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain";
 import { revalidatePath } from "next/cache";

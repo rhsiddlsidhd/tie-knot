@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 
-import { verifySession, getAdminUsersPageService } from "@/services";
+import { verifySession } from "@/services/auth";
+import { getAdminUsersPageService } from "@/services/user";
 import { adminUserListRequestSchema } from "@/core/schemas";
 import { decodeCursor, validateAndFlatten } from "@/core/utils";
 import { AdminUsersTemplate } from "./_components";

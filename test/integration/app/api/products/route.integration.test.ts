@@ -13,7 +13,7 @@ import { NextRequest } from "next/server";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
-import { createProductService } from "@/services";
+import { createProductService } from "@/services/product";
 import { GET } from "@/app/api/products/route";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
