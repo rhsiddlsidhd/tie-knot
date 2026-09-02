@@ -34,7 +34,7 @@ const buildKey = ({
   if (cursor) params.set("cursor", cursor);
 
   const query = params.toString();
-  return query ? `/api/order?${query}` : "/api/order";
+  return query ? `/api/orders?${query}` : "/api/orders";
 };
 
 /**
