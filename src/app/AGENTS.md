@@ -59,7 +59,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 - **`page.tsx`는 Pages 단계만 담당한다** — 실제 데이터를 fetch/조립해서 Template(`src/ui/components/templates/{Name}Template.tsx` 또는 그 라우트 `_components/{Name}Template.tsx`)에 props로 넘기는 것까지만 한다. organism을 배치(grid/flex/spacing 등)하는 코드가 하나라도 있으면 Template 추출이 필수다 — organism 딱 1개를 배치 코드 없이 그대로 렌더하는 경우에 한해서만 `page.tsx`가 직접 렌더할 수 있다. Template은 `layout.tsx`(라우트 그룹 셸)와 다른 층위다 — Template은 항상 그 layout.tsx 안에 중첩된다. (Template 자격 조건 자체 — 순수성 등 — 은 `src/ui/components/templates/AGENTS.md` 소관.)
 - self-fetching 자식(자기 데이터를 직접 fetch하는 Server Component, Suspense 스트리밍)이 필요해도 Template 순수성 규칙에 예외를 두지 않는다 — 그 자식은 `_containers/`에 두고, Template은 `children: ReactNode` prop으로만 받아 배치한다(`<Template ...><ReviewsContainer productId={id} /></Template>`). Template은 `children`이 뭘 하는지 모른 채 자리만 내주므로 데이터 페칭·도메인 로직을 여전히 두지 않는 것과 같다.
 - `_components`/`_containers`/`_types`/`_utils`/`_constants`/`_hooks`를 폴더 + `index.ts`(컴포넌트는 `index.tsx`) 배럴 형태 외의 방식으로 만들지 않는다 — 폴더 안 파일이 1개뿐이어도 예외 없이 이 형태를 유지한다. **배럴은 `page.tsx`/`layout.tsx`가 직접 소비하는 파일만 재export하면 된다** — 같은 폴더 안 다른 파일에서만 내부적으로 쓰이고 `page.tsx`/`layout.tsx`가 직접 import 안 하는 파일(예: `_components/Navigation.tsx`가 `_components/LocationSection.tsx` 내부에서만 쓰이는 경우)은 배럴에 안 올려도 된다 — 배럴 목적이 "그 라우트 밖에서 이 폴더에 뭐가 있는지 알려주는 것"이지 폴더 안 모든 파일을 강제로 노출하는 게 아니다.
-- **`page.tsx`/`layout.tsx`/`loading.tsx`/`error.tsx`/`not-found.tsx`/`proxy.ts`는 `export default`를 쓴다** — Next.js가 강제하는 파일 컨벤션이다.
+- **`page.tsx`/`layout.tsx`/`loading.tsx`/`error.tsx`/`not-found.tsx`/`template.tsx`/`default.tsx`는 `export default`를 쓴다** — Next.js가 강제하는 파일 컨벤션이다. `route.ts`는 반대로 `GET`/`POST` 등 메서드명 named export를 강제한다(`api/AGENTS.md`). `proxy.ts`는 default와 named `proxy`를 모두 지원하므로 강제 대상이 아니며 `src/` 공통 규칙대로 named export를 쓴다.
 
 ## References
 
