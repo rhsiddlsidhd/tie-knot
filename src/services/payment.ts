@@ -1,14 +1,11 @@
 import "server-only";
 import mongoose from "mongoose";
 import * as PortOne from "@portone/server-sdk";
-import type {
-  PayStatus,
-  PayMethod,
-  PaymentMethodDetail,
-  IPayment,
-  IOrder,
-} from "@/models";
-import { PaymentModel, OrderModel, ProductModel } from "@/models";
+import type { PayStatus, PayMethod, PaymentMethodDetail, IPayment } from "@/models/payment.model";
+import type { IOrder } from "@/models/order.model";
+import { PaymentModel } from "@/models/payment.model";
+import { OrderModel } from "@/models/order.model";
+import { ProductModel } from "@/models/product.model";
 
 import { getProductService } from "./product";
 import {
@@ -24,7 +21,7 @@ import type {
   ExpiredPendingOrderBatchResult,
   ExpiredAwaitingInvitationBatchResult,
 } from "@/core/domain";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import { requireAuth } from "./auth";
 
 // 환경 변수 확인

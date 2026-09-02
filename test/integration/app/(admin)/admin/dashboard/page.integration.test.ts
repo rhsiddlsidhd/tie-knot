@@ -19,14 +19,15 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
 import type * as ServicesModule from "@/services";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import {
   buildOrderInput,
   buildProductInput,
   buildUserInput,
   clearCollections,
 } from "@test/support";
-import { OrderModel, ProductModel } from "@/models";
+import { OrderModel } from "@/models/order.model";
+import { ProductModel } from "@/models/product.model";
 
 const { authState } = vi.hoisted(() => ({
   authState: { role: "ADMIN" as "ADMIN" | "USER" | null },
@@ -59,7 +60,7 @@ import {
   getDashboardStatsService,
   verifySession,
 } from "@/services";
-import { UserModel } from "@/models";
+import { UserModel } from "@/models/user.model";
 import page from "@/app/(admin)/admin/dashboard/page";
 
 describe("(admin)/admin/dashboard/page — 통합(DB~page.tsx 데이터 배선)", () => {

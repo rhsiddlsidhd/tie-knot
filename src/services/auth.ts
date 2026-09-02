@@ -1,7 +1,7 @@
 import "server-only";
 import type { UserRole } from "@/core/domain";
-import { UserModel } from "@/models";
-import { dbConnect } from "@/db";
+import { UserModel } from "@/models/user.model";
+import { dbConnect } from "@/db/connect";
 import { getCookie, deleteCookie, setCookie } from "@/adapters/server/cookies";
 import { decrypt, encrypt } from "@/adapters/server/jose";
 import { comparePasswords } from "@/adapters/server/bcrypt";

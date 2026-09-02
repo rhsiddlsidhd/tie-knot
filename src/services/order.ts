@@ -1,13 +1,11 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IOrder } from "@/models";
-import {
-  InvitationModel,
-  OrderModel,
-  PaymentModel,
-  ProductModel,
-  ReviewModel,
-} from "@/models";
+import type { IOrder } from "@/models/order.model";
+import { InvitationModel } from "@/models/invitation.model";
+import { OrderModel } from "@/models/order.model";
+import { PaymentModel } from "@/models/payment.model";
+import { ProductModel } from "@/models/product.model";
+import { ReviewModel } from "@/models/review.model";
 import type { CreateOrderDto } from "@/core/schemas";
 import {
   categoryRequiresShipping,
@@ -16,7 +14,7 @@ import {
   generateUid,
   isValidPageLimit,
 } from "@/core/utils";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import type {
   AdminOrderListPage,
   OrderDetail,

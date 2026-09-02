@@ -1,8 +1,8 @@
 import "server-only";
-import type { ProductJSON, ProductDB, IProduct } from "@/models";
-import { ProductModel, MobileInvitationProductModel } from "@/models";
+import type { ProductJSON, ProductDB, IProduct } from "@/models/product.model";
+import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
 import type { ProductDto } from "@/core/schemas";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import {
   calculatePrice,
   decodeCursor,

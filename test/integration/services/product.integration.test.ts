@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
 import { AppError, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import { ProductModel, MobileInvitationProductModel } from "@/models";
+import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
 
 const { deleteProductAsset } = vi.hoisted(() => ({ deleteProductAsset: vi.fn() }));
 vi.mock("@/adapters/server/cloudinary/cleanup", () => ({ deleteProductAsset }));

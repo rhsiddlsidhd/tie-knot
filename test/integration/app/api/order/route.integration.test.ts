@@ -6,14 +6,14 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import { AppError } from "@/core/domain";
 import {
   buildOrderInput,
   buildProductInput,
   clearCollections,
 } from "@test/support";
-import { ProductModel } from "@/models";
+import { ProductModel } from "@/models/product.model";
 import type * as ServicesModule from "@/services";
 import { createOrderService, createProductService } from "@/services";
 import { GET } from "@/app/api/order/route";

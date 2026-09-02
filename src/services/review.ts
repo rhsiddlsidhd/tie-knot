@@ -1,8 +1,11 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IReview, IOrder } from "@/models";
-import { ReviewModel, OrderModel, ProductModel } from "@/models";
-import { dbConnect } from "@/db";
+import type { IReview } from "@/models/review.model";
+import type { IOrder } from "@/models/order.model";
+import { ReviewModel } from "@/models/review.model";
+import { OrderModel } from "@/models/order.model";
+import { ProductModel } from "@/models/product.model";
+import { dbConnect } from "@/db/connect";
 import {
   decodeCursor,
   encodeCursor,

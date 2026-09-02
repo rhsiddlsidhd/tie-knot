@@ -1,8 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import mongoose from "mongoose";
 import { AppError } from "@/core/domain";
-import { dbConnect } from "@/db";
-import { GuestbookModel, InvitationModel } from "@/models";
+import { dbConnect } from "@/db/connect";
+import { GuestbookModel } from "@/models/guestbook.model";
+import { InvitationModel } from "@/models/invitation.model";
 import { buildGuestbookInput, clearCollections } from "@test/support";
 import {
   createGuestbookService,

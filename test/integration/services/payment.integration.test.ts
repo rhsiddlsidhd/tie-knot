@@ -1,12 +1,15 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import {
   buildOrderInput,
   buildProductInput,
   clearCollections,
 } from "@test/support";
-import { ProductModel, OrderModel, PaymentModel, InvitationModel } from "@/models";
+import { ProductModel } from "@/models/product.model";
+import { OrderModel } from "@/models/order.model";
+import { PaymentModel } from "@/models/payment.model";
+import { InvitationModel } from "@/models/invitation.model";
 import { createProductService } from "@/services/product";
 import { createOrderService } from "@/services/order";
 import type * as AuthModule from "@/services/auth";

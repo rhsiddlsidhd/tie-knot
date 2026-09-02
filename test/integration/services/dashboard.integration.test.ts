@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterAll, vi } from "vitest";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import {
   buildOrderInput,
   buildProductInput,
@@ -9,7 +9,9 @@ import {
 } from "@test/support";
 import { getKstMonthRange } from "@/core/utils";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import { OrderModel, ProductModel, UserModel } from "@/models";
+import { OrderModel } from "@/models/order.model";
+import { ProductModel } from "@/models/product.model";
+import { UserModel } from "@/models/user.model";
 import { createOrderService } from "@/services/order";
 import { createProductService } from "@/services/product";
 import { getDashboardStatsService } from "@/services/dashboard";

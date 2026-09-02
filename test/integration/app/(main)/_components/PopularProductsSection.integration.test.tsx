@@ -12,9 +12,9 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import mongoose from "mongoose";
-import { dbConnect } from "@/db";
+import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
-import { ProductModel } from "@/models";
+import { ProductModel } from "@/models/product.model";
 import {
   createProductService,
   deleteProductService,
