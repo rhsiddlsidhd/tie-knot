@@ -1,15 +1,16 @@
 # 라우트 명명 규칙
 
-> Last updated: 2026-08-08
+> Last updated: 2026-09-02
 
 새 라우트 세그먼트(폴더명)를 지을 때만 참고한다 — 기존 세그먼트를 일괄 소급 변경하지는 않는다.
 
-## 규칙 4가지
+## 규칙 5가지
 
 - **소문자 + kebab-case 고정** — camelCase/snake_case 안 씀. 하이픈만 검색엔진이 단어 구분자로 인식한다.
 - **명사 위주, 동사는 관용적으로 굳은 것만 예외 허용** — REST 자원 경로는 명사가 기본(`products`, `my-orders`). "행위 자체가 화면"인 경우만 동사/동사구 예외 허용(`login`, `signup`, `search`, `products/new`).
 - **약어는 "어휘화(lexicalized)"된 것만 허용** — 기준: 비개발자가 줄임말인 줄 모를 만큼 이미 굳어졌는가. `id`/`api`/`url`/`info`/`faq`는 허용, `pw`/`addr`/`qty`류는 풀스펠링으로 짓는다.
-- **복수=컬렉션, 단수=단일 리소스** — 목록/여러 건 다루는 경로(`products`, `users`, `my-orders`)는 복수형, 설정·액션·단일 인스턴스 화면(`my-profile`, `payment`, `dashboard`, `settings`)은 단수형.
+- **합성어는 하이픈으로 분리** — 두 단어가 붙은 세그먼트를 무하이픈으로 짓지 않는다(`kakaomap` 대신 `kakao-map`). 1번 규칙이 하이픈을 단어 구분자로 정한 이상, 붙여쓰면 검색엔진도 사람도 단어 경계를 못 읽는다. 예외는 3번 규칙의 어휘화 기준을 통과한 단일어뿐이다 — 비개발자가 한 단어로 인식하면 그대로 둔다(`signup`, `checkout`).
+- **복수=컬렉션, 단수=단일 리소스** — 목록/여러 건 다루는 경로(`products`, `users`, `my-orders`)는 복수형, 설정·액션·단일 인스턴스 화면(`my-profile`, `payment`, `dashboard`, `settings`)은 단수형. API 경로에서 행위는 HTTP 메서드로 표현하고 별도 세그먼트로 노출하지 않는다(`POST /api/orders`이지 `POST /api/order/create`가 아니다).
 
 ## 실제 적용 사례
 

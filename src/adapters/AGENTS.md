@@ -1,7 +1,7 @@
 # AGENTS.md — src/adapters/
 
 > 외부 SDK와 브라우저·프레임워크 API 경계를 감싸는 계층.
-> Last updated: 2026-08-20
+> Last updated: 2026-09-02
 
 ## 공통 디렉토리 컨벤션
 
@@ -26,5 +26,11 @@
 ## 경계
 
 비즈니스 규칙과 DB 접근을 두지 않는다. 공용 타입과 순수 계산은 `src/core/`를 사용한다.
+
+`browser/`는 **대체·스텁이 필요한 capability**를 감싼다 — 권한 게이트가 있거나(`navigator.clipboard`, `navigator.geolocation`), 비결정적이거나(`crypto.randomUUID`), 외부 SDK·앱을 호출하는(portone, daum, kakao, deeplink) 것이다. 렌더 부수효과로서의 DOM 조작·이벤트 리스너·미디어쿼리(`document.body.style`, `addEventListener`, `matchMedia`, `document.cookie`)는 Adapter 대상이 아니며 컴포넌트나 `src/ui/hooks/`에 남긴다.
+
+판정 기준은 "브라우저 전역을 쓰는가"가 아니라 "이름 붙는 capability 하나를 이루고 통째로 바꿔치기할 수 있는가"다. `browser/deeplink/`가 SDK 없이 `window.open`·`window.location`만 쓰고도 Adapter인 이유는 "지도 앱 열기"라는 capability와 티맵 실패 시 폴백 정책을 소유하기 때문이다. `document.body.style.overflow = "hidden"` 한 줄은 그런 단위가 아니다.
+
+전역 접근을 전부 Adapter로 감싸면 서로 무관한 API가 `browser/dom/` 같은 자루 폴더에 모여 "폴더 하나 = 경계 하나" 불변식이 깨진다.
 
 소비자는 구현 파일을 직접 지정해 import한다(`@/adapters/browser/portone/request-payment`).
