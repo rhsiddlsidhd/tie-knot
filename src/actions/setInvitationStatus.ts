@@ -1,7 +1,7 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { actionError } from "@/boundary";
 import { invitationCacheTag, setInvitationStatusForCurrentUser } from "@/services/invitation";
 

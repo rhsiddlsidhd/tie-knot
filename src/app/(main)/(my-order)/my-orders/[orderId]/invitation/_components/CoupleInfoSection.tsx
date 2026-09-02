@@ -4,8 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle, TypographyH3 } from "@/ui/com
 
 import { BankField, TextField } from "@/ui/components/organisms";
 
-import type { InvitationContent } from "@/core/domain";
-import type { BanksResponse } from "@/core/schemas";
+import type { InvitationContent } from "@/core/domain/invitation";
+import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 
 type CoupleInfoSectionProps = {
   data?: Pick<InvitationContent, "groom" | "bride">;

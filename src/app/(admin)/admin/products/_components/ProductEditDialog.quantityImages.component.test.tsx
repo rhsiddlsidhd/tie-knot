@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type * as UtilsModule from "@/core/utils";
+import type * as CategoryUtilsModule from "@/core/utils/category";
 
 vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
@@ -39,8 +39,8 @@ vi.mock("@/ui/hooks", () => ({
 }));
 
 // REQ-6 검증용 — 실제 category.ts(REQ-1, backend-impl 담당)와 무관하게 조건부 렌더 로직만 검증.
-vi.mock("@/core/utils", async (importOriginal) => {
-  const actual = await importOriginal<typeof UtilsModule>();
+vi.mock("@/core/utils/category", async (importOriginal) => {
+  const actual = await importOriginal<typeof CategoryUtilsModule>();
   return {
     ...actual,
     getCategoryOptions: () => [
@@ -54,9 +54,9 @@ vi.mock("@/core/utils", async (importOriginal) => {
   };
 });
 
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import { ProductEditDialog } from "./ProductEditDialog";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   _id: "507f1f77bcf86cd799439011",

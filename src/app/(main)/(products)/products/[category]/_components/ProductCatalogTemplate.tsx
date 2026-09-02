@@ -1,4 +1,5 @@
-import type { Product, ProductCategory, SubCategory } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 
 import { ProductCatalog } from "../_containers";

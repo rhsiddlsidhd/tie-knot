@@ -1,10 +1,10 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
-import { parseDeleteGuestbookFormData } from "@/core/schemas";
+import type { APIResponse } from "@/core/domain/error";
+import { parseDeleteGuestbookFormData } from "@/core/schemas/request/guestbook.schema";
 import { deleteGuestbookWithPasswordService } from "@/services/guestbook";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
 export const deleteGuestbook = async (

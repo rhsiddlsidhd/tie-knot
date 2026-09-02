@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { signupUser } from "@/actions/signupUser";
-import { hasFieldErrors } from "@/core/utils";
-import type { APIResponse } from "@/core/domain";
+import { hasFieldErrors } from "@/core/utils/error";
+import type { APIResponse } from "@/core/domain/error";
 import { SignupForm as PureSignupForm } from "../_components/SignupForm";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 export function SignupForm() {
   const router = useRouter();
   const [state, action, pending] = useActionState<

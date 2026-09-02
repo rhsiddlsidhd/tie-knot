@@ -1,4 +1,4 @@
-import type { GuestbookListResponse } from "@/core/schemas";
+import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";
 export interface GuestbookEntryProps {
   id: string;
   author: string;

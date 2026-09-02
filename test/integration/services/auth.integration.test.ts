@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
 import { buildUserInput, clearCollections } from "@test/support";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 import { UserModel } from "@/models/user.model";
 import { encrypt } from "@/adapters/server/jose/encrypt";
 

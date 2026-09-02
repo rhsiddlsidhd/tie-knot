@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 
 import { ProductCatalogTemplate } from "./_components";
 import { getPublicProductsService } from "@/services/product";
-import { getAvailableSubCategories, isProductCategory } from "@/core/utils";
-import { productCategoryLabels } from "@/core/domain";
+import { getAvailableSubCategories, isProductCategory } from "@/core/utils/category";
+import { productCategoryLabels } from "@/core/domain/product-category";
 import { notFound } from "next/navigation";
 import { resolveInitialSubCategory } from "./_utils";
 

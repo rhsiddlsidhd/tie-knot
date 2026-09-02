@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { CoupleInfoSchemaDto } from "@/core/schemas";
+import type { CoupleInfoSchemaDto } from "@/core/schemas/request/coupleInfo.schema";
 
 export const buildCoupleInfoInput = (
   overrides?: Partial<CoupleInfoSchemaDto & { userId: string }>,

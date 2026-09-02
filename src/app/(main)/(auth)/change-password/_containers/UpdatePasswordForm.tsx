@@ -6,10 +6,10 @@ import { toast } from "sonner";
 
 import { updateUserPassword } from "@/actions/updateUserPassword";
 import { clearUserEmailCookie } from "@/actions/clearUserEmailCookie";
-import { hasFieldErrors } from "@/core/utils";
-import type { APIResponse } from "@/core/domain";
+import { hasFieldErrors } from "@/core/utils/error";
+import type { APIResponse } from "@/core/domain/error";
 import { UpdatePasswordForm as PureUpdatePasswordForm } from "../_components/UpdatePasswordForm";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 export function UpdatePasswordForm() {
   const router = useRouter();

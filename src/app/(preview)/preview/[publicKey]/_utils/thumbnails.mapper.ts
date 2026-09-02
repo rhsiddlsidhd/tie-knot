@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain";
+import type { InvitationContent } from "@/core/domain/invitation";
 export interface ThumbnailsProps {
   divider: string;
   footer: string;

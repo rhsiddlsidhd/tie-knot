@@ -1,6 +1,6 @@
 "use client";
 import { fetcher } from "@/ui/fetcher";
-import type { InvitationEditor } from "@/core/domain";
+import type { InvitationEditor } from "@/core/domain/invitation";
 import useSWR from "swr";
 
 const useFetchInvitation = (orderId?: string) => {

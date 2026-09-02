@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { productSchema } from "./product.schema";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildValidInput = (overrides?: Record<string, unknown>) => ({
   title: "봄맞이 청첩장",

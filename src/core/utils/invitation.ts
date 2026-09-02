@@ -1,4 +1,4 @@
-import { INVITATION_EXPIRY_DAYS } from "@/core/domain";
+import { INVITATION_EXPIRY_DAYS } from "@/core/domain/invitation";
 
 export const isInvitationExpired = (
   weddingDate: Date,

@@ -2,7 +2,7 @@
 
 import { Input } from "@/ui/components/atoms";
 import { FormField } from "@/ui/components/organisms";
-import type { FieldBase } from "@/core/domain";
+import type { FieldBase } from "@/core/domain/field";
 import type { HTMLInputTypeAttribute} from "react";
 import { useState } from "react";
 

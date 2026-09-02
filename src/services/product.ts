@@ -1,31 +1,19 @@
 import "server-only";
 import type { ProductJSON, ProductDB, IProduct } from "@/models/product.model";
 import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
-import type { ProductDto } from "@/core/schemas";
+import type { ProductDto } from "@/core/schemas/request/product.schema";
 import { dbConnect } from "@/db/connect";
-import {
-  calculatePrice,
-  decodeCursor,
-  encodeCursor,
-  escapeRegExp,
-  findProductCategoriesByTerm,
-  findSubCategoriesByTerm,
-  isValidPageLimit,
-} from "@/core/utils";
-import { AppError } from "@/core/domain";
-import type {
-  AdminProductListPage,
-  AvailableSubCategory,
-  InvitationTheme,
-  ProductCategory,
-} from "@/core/domain";
-import {
-  DEFAULT_PAGE_SIZE,
-  MOBILE_INVITATION_CATEGORY,
-  POPULAR_PRODUCTS_LIMIT,
-  PRODUCT_CATEGORIES,
-  SUB_CATEGORY_MAP,
-} from "@/core/domain";
+import { calculatePrice } from "@/core/utils/price";
+import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
+import { findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils/category";
+import { AppError } from "@/core/domain/error";
+import type { AdminProductListPage } from "@/core/domain/product";
+import type { AvailableSubCategory, ProductCategory } from "@/core/domain/product-category";
+import type { InvitationTheme } from "@/core/domain/theme";
+import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
+import { MOBILE_INVITATION_CATEGORY, PRODUCT_CATEGORIES, SUB_CATEGORY_MAP } from "@/core/domain/product-category";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 import { requireAdmin, requireAuth } from "./auth";

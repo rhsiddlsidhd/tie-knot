@@ -7,7 +7,7 @@ import { EyebrowSection } from "./EyebrowSection";
 import { GuestbookList } from "./GuestbookList";
 import { PenLine } from "lucide-react";
 import React, { useEffect, useRef } from "react";
-import type { GuestbookListResponse } from "@/core/schemas";
+import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";
 import { useGuestbookModalStore } from "@/ui/stores";
 import { mapDataToGuestbookProps } from "../_utils/guestbookSection.mapper";
 

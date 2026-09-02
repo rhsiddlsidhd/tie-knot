@@ -1,9 +1,9 @@
 import type { APIRouteResponse} from "@/boundary";
 import { routeError } from "@/boundary";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
-import { validateAndFlatten } from "@/core/utils";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { requireAuth } from "@/services/auth";
 const createOrderRequestSchema = z.object({
   productId: z.string().min(1, { message: "상품 ID가 필요합니다." }),

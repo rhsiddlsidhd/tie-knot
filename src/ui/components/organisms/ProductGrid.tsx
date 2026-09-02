@@ -8,7 +8,7 @@ import type {
   ProductFilterAction,
   ProductFilterState,
 } from "@/ui/context/productFilter";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import { TypographyMuted, TypographyP } from "../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";
 import type { Dispatch } from "react";

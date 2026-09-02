@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { encodeCursor } from "@/core/utils";
+import { encodeCursor } from "@/core/utils/cursor";
 
 const validCursor = encodeCursor({
   createdAt: new Date("2026-08-01T00:00:00.000Z"),

@@ -1,5 +1,6 @@
 import type { StateCreator } from "zustand";
-import type { CheckoutItem, PayStatus } from "@/core/domain";
+import type { CheckoutItem } from "@/core/domain/checkout";
+import type { PayStatus } from "@/core/domain/payment";
 import type { CreateOrderResult } from "@/actions/createOrder";
 import type { AppStore } from "../app.store";
 

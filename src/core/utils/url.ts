@@ -1,4 +1,4 @@
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 
 export const getAppBaseUrl = (): string => {
   const baseUrl =

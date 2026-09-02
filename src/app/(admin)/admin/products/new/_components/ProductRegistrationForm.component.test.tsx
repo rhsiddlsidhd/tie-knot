@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
-import type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 
 vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({

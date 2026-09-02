@@ -5,8 +5,12 @@ const { validateAndFlattenMock } = vi.hoisted(() => ({
   validateAndFlattenMock: vi.fn(),
 }));
 
-vi.mock("@/core/utils", () => ({ validateAndFlatten: validateAndFlattenMock }));
-vi.mock("@/core/schemas", () => ({ coupleInfoClientSchema: {} }));
+vi.mock("@/core/utils/validate-and-flatten", () => ({
+  validateAndFlatten: validateAndFlattenMock,
+}));
+vi.mock("@/core/schemas/request/coupleInfo.schema", () => ({
+  coupleInfoClientSchema: {},
+}));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 import { toast } from "sonner";

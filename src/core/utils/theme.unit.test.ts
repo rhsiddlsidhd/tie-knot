@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { INVITATION_THEMES, INVITATION_THEME_LABELS } from "@/core/domain";
+import { INVITATION_THEMES, INVITATION_THEME_LABELS } from "@/core/domain/theme";
 import { getInvitationThemeOptions } from "./theme";
 
 describe("getInvitationThemeOptions", () => {

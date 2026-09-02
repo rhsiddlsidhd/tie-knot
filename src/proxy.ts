@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { decrypt } from "@/adapters/server/jose/decrypt";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 /**
  * 특정 도메인 접속 시 권한 체크

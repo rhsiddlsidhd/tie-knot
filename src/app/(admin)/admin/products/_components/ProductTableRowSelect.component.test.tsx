@@ -13,9 +13,9 @@ vi.mock("@/actions/updateProductStatus", () => ({
 }));
 
 import { updateProductStatus } from "@/actions/updateProductStatus";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import { ProductTableRowSelect } from "./ProductTableRowSelect";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   _id: "507f1f77bcf86cd799439011",

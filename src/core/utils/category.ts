@@ -1,10 +1,5 @@
-import type { ProductCategory, SubCategory } from "@/core/domain";
-import {
-  MOBILE_INVITATION_CATEGORY,
-  SUB_CATEGORY_MAP,
-  productCategoryLabels,
-  subCategoryLabels,
-} from "@/core/domain";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 
 // 모바일초대장만 배송이 필요 없는 유일한 카테고리다 — 이 판단을 쓰는 모든
 // 레이어(클라이언트 폼/서비스 검증/DB conditional required)가 이 함수 하나로

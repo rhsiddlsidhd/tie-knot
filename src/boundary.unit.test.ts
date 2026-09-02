@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 import { routeSuccess, routeError, actionError, toErrorPayload, ERROR_STATUS_MAP } from "./boundary";
 
 describe("routeSuccess", () => {

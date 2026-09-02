@@ -1,11 +1,11 @@
 import "server-only";
-import type { PayMethod, PayStatus } from "@/core/domain";
+import type { PayMethod, PayStatus } from "@/core/domain/payment";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
 // --- Enums --- TRANS 실시간 계좌이체 VBANK 가상 계좌
 
-export type { PayMethod, PayStatus } from "@/core/domain";
+export type { PayMethod, PayStatus } from "@/core/domain/payment";
 
 // PortOne이 반환하는 PG사 식별자는 동적이므로 string으로 처리
 type PgProvider = string;

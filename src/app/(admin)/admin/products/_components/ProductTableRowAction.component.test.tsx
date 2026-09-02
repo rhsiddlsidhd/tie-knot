@@ -21,9 +21,9 @@ vi.mock("@/actions/permanentlyDeleteProduct", () => ({
 import { deleteProduct } from "@/actions/deleteProduct";
 import { restoreProduct } from "@/actions/restoreProduct";
 import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
-import type { Product } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
 import { ProductTableRowAction } from "./ProductTableRowAction";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildProduct = (overrides?: Partial<Product>): Product => ({
   _id: "507f1f77bcf86cd799439011",

@@ -5,7 +5,8 @@ import { EyebrowSection } from "./EyebrowSection";
 import { GuestbookList } from "./GuestbookList";
 import { PenLine } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { DEFAULT_PAGE_SIZE, routes } from "@/core/domain";
+import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
+import { routes } from "@/core/domain/routes";
 import { useGuestbookDemo } from "@/ui/context/guestbookDemo";
 import { useGuestbookModalStore } from "@/ui/stores";
 

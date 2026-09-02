@@ -1,10 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { APIResponse} from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { toggleProductLikeForCurrentUserService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 export const toggleProductLike = async (
   productId: string,

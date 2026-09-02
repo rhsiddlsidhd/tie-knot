@@ -5,8 +5,8 @@ import { getAuth } from "@/services/auth";
 import { getPremiumFeatureService } from "@/services/premiumFeature";
 import { getProductReviewsPageService } from "@/services/review";
 import { getProductService } from "@/services/product";
-import { productReviewListRequestSchema } from "@/core/schemas";
-import { validateAndFlatten } from "@/core/utils";
+import { productReviewListRequestSchema } from "@/core/schemas/request/productReviewList.schema";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
 import { notFound } from "next/navigation";
 

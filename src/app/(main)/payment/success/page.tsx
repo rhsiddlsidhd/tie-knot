@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import { PaymentSuccessTemplate } from "./_components";
 
 export default async function PaymentSuccessPage({

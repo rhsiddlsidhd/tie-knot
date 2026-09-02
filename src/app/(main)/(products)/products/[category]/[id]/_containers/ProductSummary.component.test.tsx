@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
-import type { CheckoutItem } from "@/core/domain";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import type { CheckoutItem } from "@/core/domain/checkout";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const { pushMock, setOrderMock } = vi.hoisted(() => ({
   pushMock: vi.fn(),

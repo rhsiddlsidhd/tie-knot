@@ -1,4 +1,4 @@
-import type { SubCategory } from "@/core/domain";
+import type { SubCategory } from "@/core/domain/product-category";
 
 export function resolveInitialSubCategory(
   querySubCategory: string | string[] | undefined,

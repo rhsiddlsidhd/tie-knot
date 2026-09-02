@@ -1,5 +1,6 @@
 import type { StateCreator } from "zustand";
-import type { PremiumFeature, Product } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import type { Product } from "@/core/domain/product";
 import type { AppStore } from "../app.store";
 
 export interface AdminModalPropsMap {

@@ -1,6 +1,6 @@
 import { createStore } from "zustand/vanilla";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { CheckoutItem } from "@/core/domain";
+import type { CheckoutItem } from "@/core/domain/checkout";
 import { createOrderSlice, type OrderSlice } from "./slices/order.slice";
 import {
   createAdminModalSlice,

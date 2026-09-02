@@ -7,7 +7,8 @@ import { useAuth } from "@/ui/hooks";
 import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/components/atoms";
 
 import { UserIcon, LogOut } from "lucide-react";
-import { userNavItems, routes } from "@/core/domain";
+import { userNavItems } from "@/core/domain/navigation";
+import { routes } from "@/core/domain/routes";
 import { logoutUser } from "@/actions/logoutUser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";

@@ -8,7 +8,7 @@ import { SidebarNavItem } from "@/ui/components/organisms";
 import { AdminModal } from "./_components";
 import { useAuth } from "@/ui/hooks";
 import { Skeleton, TypographyH4 } from "@/ui/components/atoms";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import Link from "next/link";
 export default function AdminLayout({
   children,

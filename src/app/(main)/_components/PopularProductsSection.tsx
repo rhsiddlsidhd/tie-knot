@@ -11,7 +11,7 @@ import {
 } from "@/ui/components/atoms";
 import { ProductCard } from "@/ui/components/molecules";
 import type { Product } from "@/services/product";
-import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain";
+import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain/product";
 
 interface PopularProductsSectionProps {
   products: Product[];

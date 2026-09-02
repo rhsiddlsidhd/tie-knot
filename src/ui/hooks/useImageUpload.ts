@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { validateAndFlatten } from "@/core/utils";
-import { coupleInfoClientSchema } from "@/core/schemas";
-import type { ImagePayload } from "@/core/domain";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { coupleInfoClientSchema } from "@/core/schemas/request/coupleInfo.schema";
+import type { ImagePayload } from "@/core/domain/image";
 
 export function useImageUpload() {
   const [uploadProgress, setUploadProgress] = useState(0);

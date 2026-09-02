@@ -7,7 +7,7 @@ import { act, render, screen } from "@testing-library/react";
 import { SWRConfig } from "swr";
 import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
-import type { GuestbookListResponse } from "@/core/schemas";
+import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";
 import { createAppStore, StoreProvider, type AppStoreApi } from "@/ui/stores";
 import { GuestbookSection } from "./GuestbookSection";
 

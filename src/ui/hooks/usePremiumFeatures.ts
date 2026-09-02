@@ -2,7 +2,7 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
-import type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { useEffect } from "react";
 import { toast } from "sonner";
 

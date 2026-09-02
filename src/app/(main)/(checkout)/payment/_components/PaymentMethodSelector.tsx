@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms";
-import type { PayMethod } from "@/core/domain";
+import type { PayMethod } from "@/core/domain/payment";
 import { ArrowRightLeft, CreditCard, Landmark, Phone, Gift, Wallet } from "lucide-react";
 import React from "react";
 import { Alert } from "@/ui/components/molecules";

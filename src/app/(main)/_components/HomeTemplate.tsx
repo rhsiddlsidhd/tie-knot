@@ -3,7 +3,7 @@ import { EcommerceHero } from "./EcommerceHero";
 import { LiveDemoSection } from "./LiveDemoSection";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 import { PopularProductsSection } from "./PopularProductsSection";
-import type { AvailableSubCategory } from "@/core/domain";
+import type { AvailableSubCategory } from "@/core/domain/product-category";
 
 interface HomeTemplateProps {
   popularProducts: Product[];

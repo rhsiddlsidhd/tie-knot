@@ -1,6 +1,6 @@
 import React from "react";
-import type { DateFormatType } from "@/core/utils";
-import { formatDate } from "@/core/utils";
+import type { DateFormatType } from "@/core/utils/date";
+import { formatDate } from "@/core/utils/date";
 
 interface DateDisplayProps {
   date: string;

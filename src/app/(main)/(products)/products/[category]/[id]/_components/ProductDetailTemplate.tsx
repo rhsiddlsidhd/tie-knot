@@ -1,6 +1,6 @@
 import type { Product } from "@/services/product";
 import type { PremiumFeature } from "@/services/premiumFeature";
-import type { ReviewListPage, ReviewSortType } from "@/core/domain";
+import type { ReviewListPage, ReviewSortType } from "@/core/domain/review";
 import { ProductSummary } from "../_containers/ProductSummary";
 import { ProductFeatures } from "./ProductFeatures";
 import { ProductViewTracker } from "./ProductViewTracker";

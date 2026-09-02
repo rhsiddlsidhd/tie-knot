@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms";
 import { TextField } from "@/ui/components/organisms";
-import type { BuyerInfo } from "@/core/schemas";
+import type { BuyerInfo } from "@/core/schemas/request/order.schema";
 
 interface BuyerInfoCardProps {
   step: number;

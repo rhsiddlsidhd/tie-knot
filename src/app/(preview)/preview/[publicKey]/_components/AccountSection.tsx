@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TypographyMuted } from "@/ui/components/at
 import { PersonValueCard } from "@/ui/components/organisms";
 import { useCopy } from "@/ui/hooks";
 
-import { cn } from "@/core/utils";
+import { cn } from "@/core/utils/cn";
 import { useBanks } from "@/ui/hooks";
 
 import type {

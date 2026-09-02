@@ -4,7 +4,7 @@ import type { SelectOption } from "@/ui/components/molecules";
 import { BaseSelect } from "@/ui/components/molecules";
 import { FormField } from "@/ui/components/organisms";
 import { useState } from "react";
-import type { FieldBase } from "@/core/domain";
+import type { FieldBase } from "@/core/domain/field";
 
 type SelectFieldProps = FieldBase & {
   placeholder: string;

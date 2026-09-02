@@ -11,8 +11,8 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms";
 import { ChevronLeft } from "lucide-react";
-import type { OrderDetail } from "@/core/domain";
-import { routes } from "@/core/domain";
+import type { OrderDetail } from "@/core/domain/order";
+import { routes } from "@/core/domain/routes";
 import {
   PAY_METHOD_LABEL,
   resolveOrderStatusLabel,

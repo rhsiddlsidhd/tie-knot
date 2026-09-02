@@ -1,6 +1,6 @@
 import { Button } from "@/ui/components/atoms";
 import Link from "next/link";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 const LoginEntryButton = () => {
   return (

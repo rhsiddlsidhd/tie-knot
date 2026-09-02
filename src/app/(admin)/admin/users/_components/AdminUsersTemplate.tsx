@@ -19,8 +19,8 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms";
 import { CursorPagination } from "@/ui/components/molecules";
-import type { AdminUserListPage, UserRole } from "@/core/domain";
-import { formatKstDate } from "@/core/utils";
+import type { AdminUserListPage, UserRole } from "@/core/domain/user";
+import { formatKstDate } from "@/core/utils/date";
 import { USER_ROLE_LABELS } from "../_constants";
 
 const ROLE_FILTER_OPTIONS: Array<{ value: UserRole | "ALL"; label: string }> = [

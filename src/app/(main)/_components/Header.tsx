@@ -3,7 +3,8 @@ import { MobileNav } from "./MobileNav";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
-import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
+import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
 import { Button, TypographyH4 } from "@/ui/components/atoms";
 const Header = () => {
   return (

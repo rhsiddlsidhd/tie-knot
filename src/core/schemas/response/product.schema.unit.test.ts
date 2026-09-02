@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { productResponseSchema } from "./product.schema";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildValidProduct = (overrides?: Record<string, unknown>) => ({
   _id: "507f1f77bcf86cd799439011",

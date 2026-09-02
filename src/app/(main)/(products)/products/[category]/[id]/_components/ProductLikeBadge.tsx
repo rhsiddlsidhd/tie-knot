@@ -4,7 +4,7 @@ import React, { useState, useTransition } from "react";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/ui/components/atoms";
-import { cn } from "@/core/utils";
+import { cn } from "@/core/utils/cn";
 import { toggleProductLike } from "@/actions/toggleProductLike";
 import { useAuth } from "@/ui/hooks";
 interface ProductLikeBadgeProps {

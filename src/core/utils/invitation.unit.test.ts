@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { INVITATION_EXPIRY_DAYS } from "@/core/domain";
+import { INVITATION_EXPIRY_DAYS } from "@/core/domain/invitation";
 import { isInvitationExpired } from "./invitation";
 
 const WEDDING_DATE = new Date("2026-06-10T14:00:00");

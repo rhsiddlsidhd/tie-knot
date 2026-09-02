@@ -1,6 +1,6 @@
 import type { APIRouteResponse } from "@/boundary";
 import { routeError, routeSuccess } from "@/boundary";
-import type { InvitationEditor } from "@/core/domain";
+import type { InvitationEditor } from "@/core/domain/invitation";
 import { getOwnedInvitationByOrder } from "@/services/invitation";
 import { requireAuth } from "@/services/auth";
 

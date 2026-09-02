@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { APIResponse } from "@/core/domain";
-import { routes } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
+import { routes } from "@/core/domain/routes";
 import { actionError } from "@/boundary";
 import { cancelPendingOrderForCurrentUser } from "@/services/order";
 

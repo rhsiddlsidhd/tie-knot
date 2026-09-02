@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain";
+import type { InvitationContent } from "@/core/domain/invitation";
 // 최종적으로 InvitationMessage 컴포넌트가 받을 props 타입
 interface Contact {
   relation: string;

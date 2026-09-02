@@ -1,10 +1,10 @@
 import "server-only";
 import type { IFeature } from "@/models/feature.model";
 import { FeatureModel } from "@/models/feature.model";
-import type { PremiumFeatureDto } from "@/core/schemas";
-import type { PremiumFeature } from "@/core/domain";
-import { AppError } from "@/core/domain";
-export type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeatureDto } from "@/core/schemas/request/premiumFeature.schema";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import { AppError } from "@/core/domain/error";
+export type { PremiumFeature } from "@/core/domain/premium-feature";
 import { dbConnect } from "@/db/connect";
 
 import mongoose from "mongoose";

@@ -1,6 +1,6 @@
 import "server-only";
 import { v2 as cloudinary } from "cloudinary";
-import { AppError } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
 
 // sign.ts는 API secret을 요청마다 직접 인자로 넘겨 서명하므로 전역 config 없이도
 // 동작하지만, uploader.destroy()는 SDK 전역 config(cloud_name/api_key/api_secret)에

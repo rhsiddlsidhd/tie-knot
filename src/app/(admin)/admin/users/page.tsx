@@ -2,8 +2,9 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminUsersPageService } from "@/services/user";
-import { adminUserListRequestSchema } from "@/core/schemas";
-import { decodeCursor, validateAndFlatten } from "@/core/utils";
+import { adminUserListRequestSchema } from "@/core/schemas/request/adminUserList.schema";
+import { decodeCursor } from "@/core/utils/cursor";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminUsersTemplate } from "./_components";
 
 // 필터/커서는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은

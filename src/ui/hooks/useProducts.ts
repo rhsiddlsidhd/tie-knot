@@ -2,8 +2,8 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
-import type { Product } from "@/core/domain";
-import type { ProductCategory } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { ProductCategory } from "@/core/domain/product-category";
 
 export function useProducts(
   category: ProductCategory,

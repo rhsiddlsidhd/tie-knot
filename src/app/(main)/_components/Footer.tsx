@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TypographyH4, TypographySmall } from "@/ui/components/atoms";
-import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
+import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
 
 export function Footer() {
   return (

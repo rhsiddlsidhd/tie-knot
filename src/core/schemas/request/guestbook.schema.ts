@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { validateAndFlatten } from "@/core/utils";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
 export const GuestbookSchema = z.object({
   publicKey: z.string().min(1, "청첩장 공개 키가 필요합니다"),

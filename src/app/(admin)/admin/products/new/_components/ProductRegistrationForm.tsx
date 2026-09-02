@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
-import type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { Alert } from "@/ui/components/molecules";
 import { ImageField, SelectField } from "@/ui/components/organisms";
 import {
@@ -23,12 +23,12 @@ import {
 
 import { useImageList } from "@/ui/hooks";
 
-import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils";
-import { getFieldError } from "@/core/utils";
-import type { ProductCategory } from "@/core/domain";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
-import { getInvitationThemeOptions } from "@/core/utils";
-import type { APIResponse } from "@/core/domain";
+import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
+import { getFieldError } from "@/core/utils/error";
+import type { ProductCategory } from "@/core/domain/product-category";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import { getInvitationThemeOptions } from "@/core/utils/theme";
+import type { APIResponse } from "@/core/domain/error";
 
 interface ProductRegistrationFormProps {
   premiumFeatures: PremiumFeature[];

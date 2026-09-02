@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import type { GuestbookType } from "@/core/schemas";
+import type { GuestbookType } from "@/core/schemas/request/guestbook.schema";
 
 export const buildGuestbookInput = (
   overrides?: Partial<GuestbookType>,

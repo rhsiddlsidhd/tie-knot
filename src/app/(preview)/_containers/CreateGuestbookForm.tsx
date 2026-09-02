@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createGuestbook } from "@/actions/createGuestbook";
-import type { APIResponse } from "@/core/domain";
-import { routes } from "@/core/domain";
-import { parseGuestbookFormData } from "@/core/schemas";
-import { hasFieldErrors } from "@/core/utils";
+import type { APIResponse } from "@/core/domain/error";
+import { routes } from "@/core/domain/routes";
+import { parseGuestbookFormData } from "@/core/schemas/request/guestbook.schema";
+import { hasFieldErrors } from "@/core/utils/error";
 import { useGuestbookDemo } from "@/ui/context/guestbookDemo";
 import { useGuestbookModalStore } from "@/ui/stores";
 import { CreateGuestbookForm as PureCreateGuestbookForm } from "../_components/CreateGuestbookForm";

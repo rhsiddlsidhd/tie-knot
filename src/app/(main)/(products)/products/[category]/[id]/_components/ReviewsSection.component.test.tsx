@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { ReviewListPage } from "@/core/domain";
+import type { ReviewListPage } from "@/core/domain/review";
 import { ReviewsSection } from "./ReviewsSection";
 
 const buildReviews = (overrides?: Partial<ReviewListPage>): ReviewListPage => ({

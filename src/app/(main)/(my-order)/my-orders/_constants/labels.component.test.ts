@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ORDER_STATUS_TAB_LABELS, resolveOrderStatusLabel } from "./labels";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 describe("resolveOrderStatusLabel", () => {
   it("청첩장은 발행 기준 라벨을 쓴다", () => {

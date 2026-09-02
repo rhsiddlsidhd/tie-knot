@@ -1,7 +1,7 @@
 "use client";
 
 import { ErrorFallback } from "@/ui/components/organisms";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 interface ErrorProps {
   error: Error & { digest?: string };
   unstable_retry: () => void;

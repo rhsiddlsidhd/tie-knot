@@ -1,7 +1,8 @@
 import { SearchX } from "lucide-react";
 import Link from "next/link";
 import { TypographyP, TypographyMuted } from "@/ui/components/atoms";
-import { routes, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 export function SearchEmptyState({ query }: { query: string }) {
   return (

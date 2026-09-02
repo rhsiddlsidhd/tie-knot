@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { X } from "lucide-react";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import {
   Button,
   Card,

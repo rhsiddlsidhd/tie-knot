@@ -2,8 +2,8 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { AppImage, Button, TypographyH2, TypographyMuted } from "@/ui/components/atoms";
 import { RatingStars } from "@/ui/components/organisms";
-import type { ReviewListPage, ReviewSortType } from "@/core/domain";
-import { REVIEW_SORT_KEYS, REVIEW_SORT_OPTIONS } from "@/core/domain";
+import type { ReviewListPage, ReviewSortType } from "@/core/domain/review";
+import { REVIEW_SORT_KEYS, REVIEW_SORT_OPTIONS } from "@/core/domain/review";
 
 interface ReviewsSectionProps {
   reviews: ReviewListPage;

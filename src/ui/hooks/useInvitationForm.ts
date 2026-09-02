@@ -6,13 +6,13 @@ import { toast } from "sonner";
 
 import { saveInvitation } from "@/actions/saveInvitation";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 import { useImageUpload } from "./useImageUpload";
 import { useImageList } from "./useImageList";
 import { useFetchInvitation } from "./useFetchInvitation";
 import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 export function useInvitationForm() {
   const router = useRouter();

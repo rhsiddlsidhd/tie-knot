@@ -7,9 +7,9 @@ import { useOrderStore } from "@/ui/stores";
 import type { Product } from "@/services/product";
 import type { PremiumFeature } from "@/services/premiumFeature";
 
-import type { CheckoutItem } from "@/core/domain";
+import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductSummary as PureProductSummary } from "../_components/ProductSummary";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 export function ProductSummary({
   product,
   options,

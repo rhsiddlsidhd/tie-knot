@@ -1,4 +1,5 @@
-import { PAY_METHOD, PRODUCT_CATEGORIES } from "@/core/domain";
+import { PAY_METHOD } from "@/core/domain/payment";
+import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 import * as z from "zod";
 
 const PhoneSchema = z.string().regex(/^\d{3}-\d{3,4}-\d{4}$/, {

@@ -3,7 +3,7 @@
 import { AutoCompleteList } from "@/ui/components/molecules";
 import { FormField } from "@/ui/components/organisms";
 import { Command, CommandInput } from "@/ui/components/atoms";
-import type { FieldBase } from "@/core/domain";
+import type { FieldBase } from "@/core/domain/field";
 import { useMemo, useState } from "react";
 
 type ComboboxOption = { value: string; label: string };

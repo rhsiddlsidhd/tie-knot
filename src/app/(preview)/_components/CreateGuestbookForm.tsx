@@ -2,9 +2,9 @@ import { Button, DialogClose, DialogDescription, DialogFooter, DialogHeader, Dia
 
 import { SwitchField, TextField } from "@/ui/components/organisms";
 
-import { cn } from "@/core/utils";
-import type { APIResponse } from "@/core/domain";
-import { getFieldError } from "@/core/utils";
+import { cn } from "@/core/utils/cn";
+import type { APIResponse } from "@/core/domain/error";
+import { getFieldError } from "@/core/utils/error";
 
 interface CreateGuestbookFormProps {
   publicKey: string;

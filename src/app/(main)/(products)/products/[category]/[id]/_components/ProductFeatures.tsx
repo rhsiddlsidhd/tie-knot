@@ -9,7 +9,7 @@ import {
   TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms";
-import type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 import clsx from "clsx";
 import { Check, ChevronDown, Palette, Type, Settings, FileText } from "lucide-react";
 

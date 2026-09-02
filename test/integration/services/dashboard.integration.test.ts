@@ -7,8 +7,8 @@ import {
   buildUserInput,
   clearCollections,
 } from "@test/support";
-import { getKstMonthRange } from "@/core/utils";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { getKstMonthRange } from "@/core/utils/date";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
 import { UserModel } from "@/models/user.model";

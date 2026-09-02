@@ -2,7 +2,7 @@
 
 import { AlertCircle } from "lucide-react";
 import type { CreateOrderResult } from "@/actions/createOrder";
-import type { PayStatus } from "@/core/domain";
+import type { PayStatus } from "@/core/domain/payment";
 import { Button } from "@/ui/components/atoms";
 import { TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms";
 import { PaymentPendingOverlay } from "./PaymentPendingOverlay";

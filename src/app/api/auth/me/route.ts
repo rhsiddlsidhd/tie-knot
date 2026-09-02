@@ -1,7 +1,7 @@
 import type { APIRouteResponse} from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getAuth } from "@/services/auth";
-import type { AuthSessionResponse } from "@/core/schemas";
+import type { AuthSessionResponse } from "@/core/schemas/response/auth.schema";
 
 export const GET = async (): Promise<
   APIRouteResponse<AuthSessionResponse>

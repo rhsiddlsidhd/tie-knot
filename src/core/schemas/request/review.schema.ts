@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { REVIEW_RATING_MAX, REVIEW_RATING_MIN } from "@/core/domain";
+import { REVIEW_RATING_MAX, REVIEW_RATING_MIN } from "@/core/domain/review";
 
 const ratingSchema = z
   .number()

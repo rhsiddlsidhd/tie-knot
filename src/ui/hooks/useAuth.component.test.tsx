@@ -4,7 +4,7 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { SWRConfig } from "swr";
 import { http, HttpResponse, delay } from "msw";
 import { setupServer } from "msw/node";
-import type { AuthSession } from "@/core/schemas";
+import type { AuthSession } from "@/core/schemas/response/auth.schema";
 import { useAuth } from "./useAuth";
 
 const session: AuthSession = {

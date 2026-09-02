@@ -1,4 +1,4 @@
-import type { PremiumFeature } from "@/core/domain";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 import {
   Badge,
   Card,

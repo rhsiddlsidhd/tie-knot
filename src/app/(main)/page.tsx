@@ -3,8 +3,8 @@ export const dynamic = "force-dynamic";
 import { HomeTemplate } from "./_components";
 import type { Product } from "@/services/product";
 import { getAvailableSubCategoriesService, getPopularProductsService } from "@/services/product";
-import type { AvailableSubCategory } from "@/core/domain";
-import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain";
+import type { AvailableSubCategory } from "@/core/domain/product-category";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
 
 const page = async () => {
   const [popularProducts, availableSubCategories] = await Promise.all([

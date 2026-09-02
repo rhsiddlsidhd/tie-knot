@@ -1,8 +1,10 @@
 import { Sparkles } from "lucide-react";
 import Link from "next/link";
-import type { Product, SubCategory } from "@/core/domain";
-import { routes, subCategoryLabels } from "@/core/domain";
-import { calculatePrice } from "@/core/utils";
+import type { Product } from "@/core/domain/product";
+import type { SubCategory } from "@/core/domain/product-category";
+import { routes } from "@/core/domain/routes";
+import { subCategoryLabels } from "@/core/domain/product-category";
+import { calculatePrice } from "@/core/utils/price";
 import { AppImage, Badge, TypographyMuted } from "@/ui/components/atoms";
 
 export function ProductCard({ product, rank }: { product: Product; rank?: number }) {

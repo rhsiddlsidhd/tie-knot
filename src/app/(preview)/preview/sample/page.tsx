@@ -1,4 +1,4 @@
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 import { InvitationTemplate } from "../[publicKey]/_components";
 import { SAMPLE_FEATURES, SAMPLE_THEME, sampleInvitation } from "./_constants";
 

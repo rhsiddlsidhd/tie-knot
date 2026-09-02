@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import type { APIRouteResponse} from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getPublicProductsService } from "@/services/product";
-import type { ProductResponse } from "@/core/schemas";
+import type { ProductResponse } from "@/core/schemas/response/product.schema";
 export const GET = async (
   request: NextRequest,
 ): Promise<APIRouteResponse<ProductResponse[]>> => {

@@ -10,9 +10,9 @@ import {
   TypographyP,
   TypographySmall,
 } from "@/ui/components/atoms";
-import { DELIVERY_FEE } from "@/core/domain";
-import type { CheckoutItem } from "@/core/domain";
-import { formatPriceWithComma } from "@/core/utils";
+import { DELIVERY_FEE } from "@/core/domain/price";
+import type { CheckoutItem } from "@/core/domain/checkout";
+import { formatPriceWithComma } from "@/core/utils/price";
 
 interface OrderSummaryProps {
   data: CheckoutItem | null;

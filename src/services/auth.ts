@@ -1,5 +1,5 @@
 import "server-only";
-import type { UserRole } from "@/core/domain";
+import type { UserRole } from "@/core/domain/user";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
 import { getCookie } from "@/adapters/server/cookies/get";
@@ -9,11 +9,11 @@ import { decrypt } from "@/adapters/server/jose/decrypt";
 import { encrypt } from "@/adapters/server/jose/encrypt";
 import { comparePasswords } from "@/adapters/server/bcrypt/hash";
 import mongoose from "mongoose";
-import { AppError } from "@/core/domain";
-import type { AuthSession } from "@/core/schemas";
+import { AppError } from "@/core/domain/error";
+import type { AuthSession } from "@/core/schemas/response/auth.schema";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { routes } from "@/core/domain";
+import { routes } from "@/core/domain/routes";
 
 export type LeanUser = {
   email: string;

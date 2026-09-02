@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/ui/components/atoms";
-import type { AvailableSubCategory } from "@/core/domain";
+import type { AvailableSubCategory } from "@/core/domain/product-category";
 import { SubCategoryNavItem } from "./SubCategoryNavItem";
 
 interface SubCategoryNavSectionProps {

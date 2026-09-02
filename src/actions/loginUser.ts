@@ -1,11 +1,11 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
+import type { APIResponse } from "@/core/domain/error";
 
-import { validateAndFlatten } from "@/core/utils";
-import { LoginSchema } from "@/core/schemas";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { LoginSchema } from "@/core/schemas/request/login.schema";
 import { loginUserService } from "@/services/auth";
-import type { UserRole } from "@/core/domain";
+import type { UserRole } from "@/core/domain/user";
 import { actionError } from "@/boundary";
 
 export const loginUser = async (

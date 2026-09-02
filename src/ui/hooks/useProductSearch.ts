@@ -2,8 +2,8 @@
 
 import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
-import type { Product } from "@/core/domain";
-import type { ErrorPayload } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { ErrorPayload } from "@/core/domain/error";
 
 // 런타임 shape은 응답 계약(ProductResponse[])과 동일하다 — Product 타입을 쓰는 이유는
 // 이 데이터의 유일한 소비처가 organisms/ProductGrid이고, 그게 요구하는 프롭 타입이

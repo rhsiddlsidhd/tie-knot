@@ -1,4 +1,4 @@
-import { isInvitationExpired } from "@/core/utils";
+import { isInvitationExpired } from "@/core/utils/invitation";
 import { getProductService } from "@/services/product";
 import { getPublishedInvitationByPublicKey } from "@/services/invitation";
 import { InvitationTemplate } from "./_components";

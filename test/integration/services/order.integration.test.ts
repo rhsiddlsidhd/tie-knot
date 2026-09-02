@@ -6,7 +6,9 @@ import {
   buildProductInput,
   clearCollections,
 } from "@test/support";
-import { AppError, EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { AppError } from "@/core/domain/error";
+import { EXPIRED_ORDER_BATCH_LIMIT } from "@/core/domain/order";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { InvitationModel } from "@/models/invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";

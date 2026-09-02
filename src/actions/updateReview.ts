@@ -1,11 +1,11 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain";
-import { updateReviewSchema } from "@/core/schemas";
+import type { APIResponse } from "@/core/domain/error";
+import { updateReviewSchema } from "@/core/schemas/request/review.schema";
 import { updateReviewForCurrentUserService } from "@/services/review";
 import { actionError } from "@/boundary";
-import { validateAndFlatten } from "@/core/utils";
-import { routes } from "@/core/domain";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
 export const updateReview = async (

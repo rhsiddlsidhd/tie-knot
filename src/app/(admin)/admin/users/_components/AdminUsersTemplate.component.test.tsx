@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { AdminUserListPage } from "@/core/domain";
+import type { AdminUserListPage } from "@/core/domain/user";
 
 const pushMock = vi.fn();
 vi.mock("next/navigation", () => ({

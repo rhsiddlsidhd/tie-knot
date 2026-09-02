@@ -1,8 +1,8 @@
 "use server";
 
-import { validateAndFlatten } from "@/core/utils";
-import { PWConfirmSchema } from "@/core/schemas";
-import type { APIResponse } from "@/core/domain";
+import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
+import { PWConfirmSchema } from "@/core/schemas/request/pwConfirm.schema";
+import type { APIResponse } from "@/core/domain/error";
 import { resetUserPasswordService } from "@/services/user";
 import { actionError } from "@/boundary";
 

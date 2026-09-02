@@ -8,8 +8,10 @@ import {
   TypographyMuted,
   TypographySmall,
 } from "@/ui/components/atoms";
-import type { DashboardStats } from "@/core/domain";
-import { cn, formatPriceWithComma, formatSignedPercent } from "@/core/utils";
+import type { DashboardStats } from "@/core/domain/dashboard";
+import { cn } from "@/core/utils/cn";
+import { formatPriceWithComma } from "@/core/utils/price";
+import { formatSignedPercent } from "@/core/utils/percent";
 import { RecentOrdersCard } from "./RecentOrdersCard";
 
 type TrendDirection = "up" | "down" | "flat";

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
 import { CursorPagination } from "@/ui/components/molecules";
-import type { AdminProductListPage } from "@/core/domain";
-import { routes } from "@/core/domain";
+import type { AdminProductListPage } from "@/core/domain/product";
+import { routes } from "@/core/domain/routes";
 import { TABLE_COLUMNS } from "../_constants";
 import { ProductTableRow } from "./ProductTableRow";
 

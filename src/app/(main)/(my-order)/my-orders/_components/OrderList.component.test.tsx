@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { OrderListPage } from "@/core/domain";
+import type { OrderListPage } from "@/core/domain/order";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
@@ -39,7 +39,7 @@ vi.mock("swr/infinite", () => ({
 }));
 
 import { OrderList } from "./OrderList";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
+import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const EMPTY_PAGE: OrderListPage = { items: [], nextCursor: null };
 

@@ -3,12 +3,14 @@
 import { Share2 } from "lucide-react";
 import { useMemo } from "react";
 import { AppImage, Badge, TypographyH1, TypographyMuted } from "@/ui/components/atoms";
-import type { Product, PremiumFeature } from "@/core/domain";
-import { isProductCategory, calculatePrice } from "@/core/utils";
-import type { SubCategory } from "@/core/domain";
-import { productCategoryLabels, subCategoryLabels } from "@/core/domain";
+import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import { isProductCategory } from "@/core/utils/category";
+import { calculatePrice } from "@/core/utils/price";
+import type { SubCategory } from "@/core/domain/product-category";
+import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 
-import type { CheckoutItem } from "@/core/domain";
+import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "./ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
 import { RatingStars } from "@/ui/components/organisms";

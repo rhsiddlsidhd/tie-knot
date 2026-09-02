@@ -6,8 +6,8 @@ import { BankField, TextField } from "@/ui/components/organisms";
 
 import { ChevronDown } from "lucide-react";
 
-import type { InvitationContent } from "@/core/domain";
-import type { BanksResponse } from "@/core/schemas";
+import type { InvitationContent } from "@/core/domain/invitation";
+import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 
 import { useState } from "react";
 

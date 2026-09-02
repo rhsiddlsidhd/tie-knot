@@ -5,9 +5,9 @@ import { Card, Button, TypographyH1, TypographyLarge, TypographyMuted } from "@/
 
 
 import { TextField } from "@/ui/components/organisms";
-import { getFieldError } from "@/core/utils";
-import type { APIResponse } from "@/core/domain";
-import { routes } from "@/core/domain";
+import { getFieldError } from "@/core/utils/error";
+import type { APIResponse } from "@/core/domain/error";
+import { routes } from "@/core/domain/routes";
 
 interface FindIdFormProps {
   action: (formData: FormData) => void;

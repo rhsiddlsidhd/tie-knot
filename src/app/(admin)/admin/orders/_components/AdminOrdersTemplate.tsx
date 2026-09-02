@@ -12,9 +12,9 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms";
 import { CursorPagination } from "@/ui/components/molecules";
-import type { AdminOrderListPage, OrderStatus } from "@/core/domain";
-import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain";
-import { formatKstDate } from "@/core/utils";
+import type { AdminOrderListPage, OrderStatus } from "@/core/domain/order";
+import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
+import { formatKstDate } from "@/core/utils/date";
 
 const STATUS_FILTER_OPTIONS: Array<{ value: OrderStatus | "ALL"; label: string }> = [
   { value: "ALL", label: "전체 상태" },

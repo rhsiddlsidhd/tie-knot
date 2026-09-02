@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getFieldError, hasFieldErrors } from "./error";
-import type { APIResponse, ErrorResponse } from "@/core/domain";
+import type { APIResponse, ErrorResponse } from "@/core/domain/error";
 
 describe("getFieldError", () => {
   it("state가 null이면 undefined를 반환한다", () => {

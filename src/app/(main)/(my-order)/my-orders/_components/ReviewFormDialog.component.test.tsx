@@ -27,7 +27,7 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   }) => children({ isLoading: false, open: vi.fn() }),
 }));
 
-import type { OrderReviewSummary } from "@/core/domain";
+import type { OrderReviewSummary } from "@/core/domain/order";
 import { ReviewFormDialog } from "./ReviewFormDialog";
 
 const successResponse = { success: true as const, data: { message: "완료되었습니다." } };

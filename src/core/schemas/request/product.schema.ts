@@ -1,10 +1,6 @@
 import * as z from "zod";
-import {
-  INVITATION_THEMES,
-  MOBILE_INVITATION_CATEGORY,
-  SUB_CATEGORY_MAP,
-  PRODUCT_CATEGORIES,
-} from "@/core/domain";
+import { INVITATION_THEMES } from "@/core/domain/theme";
+import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 
 export const productSchema = z
   .object({
