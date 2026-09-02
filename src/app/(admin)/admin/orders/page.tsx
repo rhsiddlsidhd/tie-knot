@@ -5,7 +5,7 @@ import { getAdminOrdersPageService } from "@/services/order";
 import { adminOrderListRequestSchema } from "@/core/schemas/request/adminOrderList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { AdminOrdersTemplate } from "./_components";
+import { AdminOrdersTemplate } from "@/app/(admin)/admin/orders/_components/AdminOrdersTemplate";
 
 // 필터/커서는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은
 // status는 스키마가, 형식이 깨진 cursor는 decodeCursor가 걸러 "필터/커서 없음"으로

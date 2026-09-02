@@ -1,1 +1,0 @@
-export { NewProductTemplate } from "./NewProductTemplate";

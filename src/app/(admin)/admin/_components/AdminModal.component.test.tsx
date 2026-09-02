@@ -8,7 +8,7 @@ const { useAdminModalStoreMock } = vi.hoisted(() => ({
 vi.mock("@/ui/stores/use-app-store", () => ({
   useAdminModalStore: useAdminModalStoreMock,
 }));
-vi.mock("@/app/(admin)/admin/products/_components", () => ({
+vi.mock("@/app/(admin)/admin/products/_components/ProductEditDialog", () => ({
   ProductEditDialog: () => <div>product-edit-dialog</div>,
 }));
 vi.mock("@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog", () => ({

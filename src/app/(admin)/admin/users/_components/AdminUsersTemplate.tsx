@@ -11,7 +11,7 @@ import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography"
 import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
 import type { AdminUserListPage, UserRole } from "@/core/domain/user";
 import { formatKstDate } from "@/core/utils/date";
-import { USER_ROLE_LABELS } from "../_constants";
+import { USER_ROLE_LABELS } from "@/app/(admin)/admin/users/_constants/labels";
 
 const ROLE_FILTER_OPTIONS: Array<{ value: UserRole | "ALL"; label: string }> = [
   { value: "ALL", label: "전체 역할" },

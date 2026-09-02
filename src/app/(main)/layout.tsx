@@ -1,4 +1,6 @@
-import { AnnouncementBar, Footer, Header } from "./_components";
+import { AnnouncementBar } from "@/app/(main)/_components/AnnouncementBar";
+import { Footer } from "@/app/(main)/_components/Footer";
+import { Header } from "@/app/(main)/_components/Header";
 import React from "react";
 import { Toaster } from "sonner";
 import announcementData from "@/core/content/announcement.json";

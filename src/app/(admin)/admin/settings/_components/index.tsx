@@ -1,1 +1,0 @@
-export { AdminSettingsTemplate } from "./AdminSettingsTemplate";

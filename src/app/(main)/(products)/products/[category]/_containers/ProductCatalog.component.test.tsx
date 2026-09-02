@@ -14,7 +14,7 @@ vi.mock("@/ui/hooks/usePremiumFeatures", () => ({
   usePremiumFeature: usePremiumFeatureMock,
 }));
 
-vi.mock("../_components", () => ({
+vi.mock("@/app/(main)/(products)/products/[category]/_components/ProductCatalog", () => ({
   ProductCatalog: ({
     products,
     category,

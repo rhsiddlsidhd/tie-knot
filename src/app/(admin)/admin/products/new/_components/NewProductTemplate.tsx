@@ -5,7 +5,7 @@ import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography"
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
-import { ProductRegistrationForm } from "../_containers";
+import { ProductRegistrationForm } from "@/app/(admin)/admin/products/new/_containers/ProductRegistrationForm";
 
 interface NewProductTemplateProps {
   premiumFeatures: PremiumFeature[];

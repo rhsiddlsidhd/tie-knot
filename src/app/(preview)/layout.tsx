@@ -1,4 +1,4 @@
-import { GuestbookModal } from "./_components";
+import { GuestbookModal } from "@/app/(preview)/_components/GuestbookModal";
 import { GuestbookDemoProvider } from "@/ui/context/guestbookDemo/provider";
 import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
 import React from "react";

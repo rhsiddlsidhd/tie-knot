@@ -19,7 +19,7 @@ vi.mock("@/services/order", () => ({
   getAdminOrdersPageService: getAdminOrdersPageServiceMock,
 }));
 
-vi.mock("./_components", () => ({
+vi.mock("@/app/(admin)/admin/orders/_components/AdminOrdersTemplate", () => ({
   AdminOrdersTemplate: ({
     page,
     status,

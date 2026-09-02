@@ -19,7 +19,7 @@ vi.mock("@/services/user", () => ({
   getAdminUsersPageService: getAdminUsersPageServiceMock,
 }));
 
-vi.mock("./_components", () => ({
+vi.mock("@/app/(admin)/admin/users/_components/AdminUsersTemplate", () => ({
   AdminUsersTemplate: ({
     page,
     role,

@@ -15,7 +15,7 @@ vi.mock("@/services/invitation", () => ({
   getPublishedInvitationByPublicKey: getPublishedInvitationMock,
 }));
 
-vi.mock("./_components", () => ({
+vi.mock("@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate", () => ({
   InvitationTemplate: ({ publicKey }: { publicKey: string }) => (
     <div>청첩장:{publicKey}</div>
   ),

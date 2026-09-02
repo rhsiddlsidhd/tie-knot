@@ -8,7 +8,7 @@ import type { ProductCategory } from "@/core/domain/product-category";
 import { ORDER_STATUSES } from "@/core/domain/order";
 import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
 import { routes } from "@/core/domain/routes";
-import { ORDER_STATUS_TAB_LABELS, resolveOrderStatusLabel } from "../_constants";
+import { ORDER_STATUS_TAB_LABELS, resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
 
 const ALL_VALUE = "ALL";
 

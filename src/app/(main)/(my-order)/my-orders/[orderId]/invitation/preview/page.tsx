@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getOwnedInvitationPreviewByOrder } from "@/services/invitation";
 import { getProductService } from "@/services/product";
 import { verifySession } from "@/services/auth";
-import { InvitationTemplate } from "../../../../../../(preview)/preview/[publicKey]/_components";
+import { InvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate";
 
 export default async function Page({ params }: { params: Promise<{ orderId: string }> }) {
   const { orderId } = await params;

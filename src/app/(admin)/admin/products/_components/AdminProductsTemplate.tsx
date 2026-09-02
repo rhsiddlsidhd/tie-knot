@@ -5,7 +5,7 @@ import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography"
 import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
 import type { AdminProductListPage } from "@/core/domain/product";
 import { routes } from "@/core/domain/routes";
-import { TABLE_COLUMNS } from "../_constants";
+import { TABLE_COLUMNS } from "@/app/(admin)/admin/products/_constants/tableColumns";
 import { ProductTableRow } from "./ProductTableRow";
 
 interface AdminProductsTemplateProps {
