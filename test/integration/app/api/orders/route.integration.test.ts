@@ -17,7 +17,7 @@ import { ProductModel } from "@/models/product.model";
 import type * as AuthServiceModule from "@/services/auth";
 import { createOrderService } from "@/services/order";
 import { createProductService } from "@/services/product";
-import { GET } from "@/app/api/order/route";
+import { GET } from "@/app/api/orders/route";
 
 const { authState } = vi.hoisted(() => ({
   authState: { userId: "" as string | null },
@@ -42,9 +42,9 @@ vi.mock("@/services/auth", async (importOriginal) => {
 });
 
 const buildRequest = (query = "") =>
-  new NextRequest(`http://localhost/api/order${query}`);
+  new NextRequest(`http://localhost/api/orders${query}`);
 
-describe("GET /api/order — 통합(DB~route)", () => {
+describe("GET /api/orders — 통합(DB~route)", () => {
   let productId: string;
 
   beforeEach(async () => {
