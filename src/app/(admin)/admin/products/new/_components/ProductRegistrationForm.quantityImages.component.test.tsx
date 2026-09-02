@@ -5,7 +5,7 @@ import { ProductRegistrationForm } from "./ProductRegistrationForm";
 import type * as UtilsModule from "@/core/utils";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain";
 
-vi.mock("@/adapters/browser/cloudinary", () => ({
+vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
     folder,

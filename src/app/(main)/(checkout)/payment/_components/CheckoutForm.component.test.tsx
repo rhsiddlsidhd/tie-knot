@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-vi.mock("@/adapters/browser/daum", () => ({
+vi.mock("@/adapters/browser/daum/useDaumPopup", () => ({
   useDaumPopup: () => ({ address: "", handleDaumAddressPopup: vi.fn() }),
 }));
 

@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ImageField } from "./ImageField";
 
-vi.mock("@/adapters/browser/cloudinary", () => ({
+vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
     onUpload,

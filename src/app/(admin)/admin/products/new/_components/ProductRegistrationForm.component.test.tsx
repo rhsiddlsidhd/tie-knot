@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { ProductRegistrationForm } from "./ProductRegistrationForm";
 import type { PremiumFeature } from "@/core/domain";
 
-vi.mock("@/adapters/browser/cloudinary", () => ({
+vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
     folder,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { GeoState } from "@/adapters/browser/deeplink";
+import type { GeoState } from "@/adapters/browser/deeplink/open-app";
 import { useKakaomapGeocode } from "./useKakaomapGeocode";
 
 export interface NavigationGeo {
