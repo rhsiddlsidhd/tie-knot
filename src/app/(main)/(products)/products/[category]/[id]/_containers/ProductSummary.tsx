@@ -4,8 +4,8 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { useOrderStore } from "@/ui/stores/use-app-store";
-import type { Product } from "@/services/product";
-import type { PremiumFeature } from "@/services/premiumFeature";
+import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
 
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductSummary as PureProductSummary } from "../_components/ProductSummary";

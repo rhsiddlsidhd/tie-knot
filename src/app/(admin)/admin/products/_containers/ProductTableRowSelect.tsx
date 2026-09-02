@@ -5,7 +5,7 @@ import { isStatus, STATUS_ITEMS } from "@/app/(admin)/admin/products/_types/stat
 import { updateProductStatus } from "@/actions/updateProductStatus";
 import { toast } from "sonner";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
-import type { Product } from "@/services/product";
+import type { Product } from "@/core/domain/product";
 const ProductTableRowSelect = ({ product }: { product: Product }) => {
   const router = useRouter();
   const [status, setStatus] = useState<string>(product.status);

@@ -1,5 +1,6 @@
 import "server-only";
-import type { ProductJSON, ProductDB, IProduct } from "@/models/product.model";
+import type { ProductDB, IProduct } from "@/models/product.model";
+import type { ProductJSON } from "@/core/domain/product";
 import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
 import type { ProductDto } from "@/core/schemas/request/product.schema";
 import { dbConnect } from "@/db/connect";
@@ -20,8 +21,6 @@ import { requireAdmin, requireAuth } from "./auth";
 import { deleteProductAsset } from "@/adapters/server/cloudinary/cleanup";
 import { extractPublicId } from "@/adapters/server/cloudinary/publicId";
 
-// Product 타입을 export (다른 파일에서 사용)
-export type Product = ProductJSON;
 
 type ProductUploadInput = ProductDto & {
   previewUrl?: string;
