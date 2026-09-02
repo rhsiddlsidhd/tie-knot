@@ -1,6 +1,6 @@
 # AGENTS.md — src/app/
 
-> Last updated: 2026-07-28
+> Last updated: 2026-09-02
 
 Next.js App Router 진입점 — 공유 `layout.tsx`/독립 `error.tsx` 근거가 있는 라우트를 그룹(`(folder)`)으로 묶어 섹션을 나눈다(그룹 목록·존재 근거는 아래 "라우트 그룹 구성" 참고). 괄호 폴더는 URL에 영향 없는 조직화 단위다. Route Handler(API) 세부 규칙은 `src/app/api/AGENTS.md`에서 관리한다.
 
@@ -44,6 +44,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 - self-fetching Server Component 컨테이너는 `page.tsx`와 동일하게 얇게 유지한다 — organism을 배치(grid/flex/spacing, 목록 매핑 등)하는 코드가 하나라도 있으면 그 부분을 별도 순수 컴포넌트(`_components/` 또는 공용 티어)로 추출한다. 위임 하나(`return <XGrid data={data} />` 형태)만 남기면 렌더 없이 직접 호출 + 반환 타입·props 확인만으로 검증 가능해진다 — 안에서 직접 조립하면 page.tsx가 겪던 Unit/Component/Integration 3갈래 애매함이 그대로 재발한다. client 훅 기반 컨테이너(`useSWR` 등)는 이 규칙 대상이 아니다 — Rules of Hooks상 애초에 렌더 없이 호출할 수 없어 조립 코드 유무와 무관하게 항상 Component다.
 - 로컬 UI 상태(`useState` open/close, controlled input), 서버와 무관한 client 계산/타이머(`useMemo`, `setInterval` 기반 훅), mutation 없는 단순 페이지 이동(`<Link>`, `Button asChild`)만 다루면 컨테이너가 아니므로 `_components/`에 둔다.
 - 2개 이상 라우트가 공유하는 순수함수/UI/훅/타입/상수를 라우트 폴더 안에 남겨두지 않는다 — 순수함수는 `src/core/utils/`, UI는 `src/ui/components/`, 훅은 `src/ui/hooks/`, 타입은 `src/core/types/`, 상수는 `src/core/constants/`로 승격한다(각 폴더 AGENTS.md 참고).
+- 반대로 소비자가 한 라우트 하위에만 있으면 `_utils`/`_hooks`/`_types`/`_constants`에 그대로 둔다 — 그 라우트 안에서 소비자가 여럿이어도 마찬가지다. 승격 기준은 재사용 **가능성**이 아니라 **2개 이상 라우트가 실제로 공유하는가**다. 순수하다는 이유만으로 `core/`에 올리면 공용 표면만 넓어지고, 그 함수가 원래 어느 라우트 것이었는지 추적할 단서도 사라진다.
 
 ## Critical Conventions
 

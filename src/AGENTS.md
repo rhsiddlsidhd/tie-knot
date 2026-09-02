@@ -1,6 +1,6 @@
 # src/
 
-> Last updated: 2026-08-19
+> Last updated: 2026-09-02
 
 ## Overview
 
@@ -22,6 +22,7 @@
 - **`src/` 안에 배럴(`index.ts`/`index.tsx`)을 만들지 않고, 디렉터리를 가리키는 import도 쓰지 않는다 — 심볼이 실제로 정의된 파일을 지정한다**(`@/services/auth`, `@/models/user.model`). 모듈 그래프가 심볼이 아니라 모듈 단위로 계산되므로, 배럴은 쓰지 않는 형제 모듈까지 그래프에 끌어들여 `vitest related`·`--changed`·watch·mutation 도구를 무력화한다. 근거와 측정값은 `docs/decisions/0004-explicit-module-paths-over-barrels.md` 참고. `npm run lint:barrels`가 CI에서 이를 강제한다 — 배럴이 없으면 디렉터리 지정 import는 모듈 해석 단계에서 실패하므로 `npm run tsc`가 함께 잡는다.
 - **`src/` 안 파일은 `export default`를 쓰지 않는다 — 전부 named export로 짓는다.** 단 `src/app/`의 Next.js 라우트 파일은 프레임워크가 `export default`를 강제하므로 예외이며, 대상 파일 목록은 `src/app/AGENTS.md`를 따른다.
 - 폴더의 공개 API를 재수출 목록으로 선언하지 않는다 — 무엇을 외부에서 써도 되는지는 각 계층 `AGENTS.md`의 역할 경계가 규정한다.
+- **`boundary.ts`가 Route Handler용 `NextResponse` 변환과 Server Action용 반환 오류 변환을 함께 소유하는 것은 `src/` 루트의 명시적 예외다** — 역할로는 둘이지만 "AppError를 바깥 세계 표현으로 번역"이라는 개념 하나이고 `ERROR_STATUS_MAP`·마스킹 정책을 공유한다. 프레임워크 Adapter와 Action 경계로 쪼개면 그 공유 상태를 어디 둘지가 새 문제로 남으므로 분할하지 않는다.
 - 로컬 상태로 충분한 걸 곧바로 Context나 Zustand로 확장하지 않는다 — 클라이언트 상태 범위는 로컬 → Context API(`src/ui/context/`) → Zustand(`src/ui/stores/`) 순으로만 넓힌다.
 - 서버에서 온 데이터를 Context/Zustand로 직접 옮기지 않는다 — 캐싱·중복 호출 방지는 `useSWR`(주로 `src/ui/hooks/`의 훅 안에서 Zustand 구독과 함께 조합)이 전담한다.
 - **구현체 하나가 2곳 이상의 구체적 소비처에서 쓰이면, 이름에 그 소비처 중 하나를 특정하지 않는다** — 특정하면 그 이름이 다른 소비처 입장에선 의미가 맞지 않게 된다.
