@@ -7,7 +7,8 @@ import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography"
 import { ChevronLeft } from "lucide-react";
 import type { OrderDetail } from "@/core/domain/order";
 import { routes } from "@/core/domain/routes";
-import { PAY_METHOD_LABEL, resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
+import { PAY_METHOD_LABEL } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
+import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
 
 const formatDateTime = (value: Date | string) =>
   format(new Date(value), "yyyy.MM.dd HH:mm");
