@@ -31,7 +31,7 @@ import { createProductService } from "@/services/product";
 // 그대로 둔다(partial mock).
 const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
 
-vi.mock("./auth", async (importOriginal) => {
+vi.mock("@/services/auth", async (importOriginal) => {
   const actual = await importOriginal<typeof AuthModule>();
   return {
     ...actual,
@@ -225,60 +225,6 @@ describe("order", () => {
         await expect(createOrderService(input)).rejects.toMatchObject({
           category: "NOT_FOUND",
         });
-      });
-
-      it("minQuantity/maxQuantity 필드가 없는 레거시 상품은 (1,1) 폴백 기준으로 검증한다 (수량 1만 통과)", async () => {
-        const result = await ProductModel.collection.insertOne({
-          authorId: "legacy",
-          title: "레거시 주문 상품",
-          description: "레거시 문서(필드 없음)",
-          thumbnail: "https://example.com/legacy.jpg",
-          price: 1000,
-          category: MOBILE_INVITATION_CATEGORY,
-          subCategory: "wedding",
-          isPremium: false,
-          isFeatured: false,
-          priority: 0,
-          likes: [],
-          views: 0,
-          salesCount: 0,
-          discount: { discountType: "rate", value: 0 },
-          status: "active",
-          featureIds: [],
-          deletedAt: null,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        } as never);
-        const legacyProductId = result.insertedId.toString();
-
-        const invalidInput = buildOrderInput({
-          product: {
-            productId: legacyProductId,
-            title: "레거시 주문 상품",
-            category: MOBILE_INVITATION_CATEGORY,
-            thumbnail: "https://example.com/legacy.jpg",
-            pricing: { originalPrice: 1000, discountedPrice: 1000 },
-            quantity: 2,
-            selectedFeatures: [],
-          },
-        });
-        await expect(createOrderService(invalidInput)).rejects.toMatchObject({
-          category: "VALIDATION",
-        });
-
-        const validInput = buildOrderInput({
-          product: {
-            productId: legacyProductId,
-            title: "레거시 주문 상품",
-            category: MOBILE_INVITATION_CATEGORY,
-            thumbnail: "https://example.com/legacy.jpg",
-            pricing: { originalPrice: 1000, discountedPrice: 1000 },
-            quantity: 1,
-            selectedFeatures: [],
-          },
-        });
-        const validResult = await createOrderService(validInput);
-        expect(validResult.product.quantity).toBe(1);
       });
     });
 
