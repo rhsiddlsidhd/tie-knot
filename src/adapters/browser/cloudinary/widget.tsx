@@ -1,5 +1,7 @@
 "use client";
 
+import "client-only";
+
 import { useEffect, useMemo, useState } from "react";
 import { CldUploadWidget } from "next-cloudinary";
 import type { CloudinaryUploadWidgetResults } from "next-cloudinary";
