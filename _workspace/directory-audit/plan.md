@@ -15,7 +15,7 @@
 
 ## 1. 보고서 판정에 대한 이견
 
-실행 전에 확정해야 하는 사실 층위 이견 3건. 처방이 아니라 판정 자체에 대한 반론이다.
+실행 전에 확정해야 하는 사실 층위 이견 4건. 처방이 아니라 판정 자체에 대한 반론이다.
 
 ### 이견 1 — `webhooks/portone`은 축1 위반이 아니다
 
@@ -45,6 +45,16 @@ return document ? { lat: Number(document.y), lng: Number(document.x) } : ...
 카카오맵 API가 결과 배열을 `documents`로 부르는 탓에 생긴 지역 변수명이다. 전역 `document`에는 `.y`/`.x`가 없다.
 
 판정: Q3 대상은 13개가 아니라 12개.
+
+### 이견 4 — `api/order/create`는 배치 위반이 아니라 dead code
+
+보고서: "브라우저 트리거 주문 생성 mutation을 POST Route Handler로 배치" (축1/Medium), 조치 = `src/actions/createOrder.ts`로 이동.
+
+그 Action은 **이미 존재한다.** `src/app/(main)/(checkout)/payment/_containers/CheckoutForm.tsx:7`이 `@/actions/createOrder`를 import해 쓰고 있고, Route Handler `src/app/api/order/create/route.ts`를 호출하는 곳은 저장소 전체에 없다. 유일한 문자열 매치인 `.claude/skills/feature-team-orchestrator/SKILL.md:156`은 예시 서술이지 호출자가 아니며, `src/core/domain/routes.ts`에 API 경로 상수가 없어 동적 조립 경로도 없다.
+
+즉 이전은 과거에 이미 끝났고 Route Handler만 잔재로 남았다. 보고서는 두 경로가 공존하는 상태를 "잘못 배치됨"으로 읽었지만, 실제 상태는 "이전 완료 후 정리 누락"이다.
+
+판정: 이동 대상이 아니라 삭제 대상. Step 4의 성격과 리스크 등급이 여기서 바뀐다.
 
 ---
 
@@ -85,6 +95,15 @@ Q3 대상 12건의 성격 분류:
 
 ## 3. 실행 순서
 
+| Step | 상태 | PR |
+|---|---|---|
+| 1 — 규칙 문서 반영 | 완료 | #233 |
+| 2 — 계획서 | 완료 | #233 |
+| 3 — `_components` → `_containers` | 완료 | #235 |
+| 4 — order API 정리 | 대기 (Step 3 머지 선행) | — |
+| 5 — 잔여 항목 | 미착수 | — |
+| 6 — lint 규칙 | 미착수 | — |
+
 ### Step 1 — 결정을 규칙 문서에 반영 (docs 전용 PR)
 
 **목적**: Q1·Q3·Q4·Q6의 결정을 규칙 문서에 박아 다음 감사가 같은 질문을 하지 않게 한다. Step 3·4의 판정 기준이 여기서 나오므로 실행보다 먼저다.
@@ -121,24 +140,27 @@ Q3 대상 12건의 성격 분류:
 
 **TDD gate 주의**: `.claude/settings.json`의 훅 matcher는 `Write|Edit|MultiEdit`이다. 순수 이동 리팩터에는 새로 쓸 테스트가 없으므로 `git mv` + `sed` 경로 치환(Bash)으로 진행한다. 훅 우회가 아니라 리네임에 맞는 도구 선택이다.
 
-**검증**: `pnpm typecheck` + 이동한 13개 테스트 파일 통과 + `pnpm lint`.
-**산출물**: Issue 1개 + PR 1개.
+**검증**: `npm run tsc` + `npm run lint` + `npm run lint:barrels` + `npm run test:unit` + `npm run test:component`.
+
+**부수 리네임**: `AdminReviewsTemplate` → `AdminReviewsTable`. `Template` 접미사는 `src/ui/components/templates/AGENTS.md`가 "완성된 콘텐츠를 props로 받는 순수 페이지 몸통"에만 허용하는데 이 파일은 `deleteReviewByAdmin`·`toast`·`router.refresh`를 소유한다. `_containers`로 옮기면 이름이 주장하는 순수성과 위치가 정면으로 어긋나므로 같은 PR에서 처리한다. 형제 컨테이너 27개가 모두 무접미사라 `Container`도 붙이지 않는다.
+
+**산출물**: PR 1개.
 
 ### Step 4 — order API 통합
 
 **목적**: 축1 Medium 1건 + 축2 Low 1건을 한 번에 해소. 따로 하면 같은 파일을 두 번 건드리고 소비자 import가 두 번 깨진다.
 
 **작업**
-1. `src/app/api/order/create/route.ts`의 POST 핸들러를 `src/actions/createOrder.ts`로 이동 (`data-access.md` — 브라우저 트리거 mutation은 Server Action)
+1. `src/app/api/order/create/route.ts` 삭제 (이견 4 — 호출자 0인 dead code, Action은 이미 존재)
 2. `src/app/api/order/route.ts` → `src/app/api/orders/route.ts` 리네임 (`route-naming.md` — 컬렉션 복수형, 행위 세그먼트 금지)
-3. 소비자(`CheckoutForm.tsx` 등) 호출부를 `fetch` → Action 직접 호출로 교체
+3. 소비자 1곳 수정 — `my-orders/_containers/OrderList.tsx:37`의 `/api/order?${query}`
 
-**리스크**: **높음.** 결제 흐름이 걸려 있다.
-- 착수 전 확인: `webhooks/portone`이 `merchantUid`를 역조회에만 쓰는지, 발급 타이밍이 PortOne 결제창 호출 전인지
-- 회귀 테스트 없이 진행하지 않는다
+**리스크**: 낮음. 초안에서는 "높음 — 결제 흐름 회귀 테스트 필수"로 평가했으나 이견 4로 뒤집혔다. 남는 건 소비자 1개짜리 GET 엔드포인트 리네임과 미사용 파일 삭제이고, 결제 생성 경로는 이미 Server Action이 담당하므로 `merchantUid` 발급 타이밍 확인도 불필요하다.
 
-**검증**: 주문 생성 → 결제 → 웹훅 수신 통합 시나리오.
-**산출물**: Issue 1개 + PR 1개. Step 3 머지 후 착수.
+**선행 조건**: Step 3 머지. `OrderList.tsx`가 Step 3에서 `_containers`로 이동한 파일이라, dev에서 새로 분기하면 같은 파일에서 충돌한다.
+
+**검증**: `npm run tsc` / `lint` / `test:unit` / `test:component`. 주문 목록 조회 경로만 바뀌므로 결제 통합 시나리오는 대상이 아니다.
+**산출물**: Issue 1개 + PR 1개.
 
 ### Step 5 — 잔여 항목 (낮은 우선순위)
 
