@@ -17,9 +17,11 @@
 | `server/jose/` | JWT 암복호화 | server-only |
 | `server/nodemailer/` | 이메일 전송 | server-only |
 | `server/seoul-open-api/` | 서울 열린데이터광장 API 호출·가드·에러분류 | server-only |
+| `browser/clipboard/` | 클립보드 쓰기 | client-only |
 | `browser/cloudinary/` | 브라우저 업로드 | client-only |
 | `browser/daum/` | 주소 팝업 | client-only |
 | `browser/deeplink/` | 지도 앱 딥링크 | client-only |
+| `browser/geolocation/` | 현재 위치 조회 | client-only |
 | `browser/kakao/` | 지도 SDK 로더 | client-only |
 | `browser/portone/` | 브라우저 결제 SDK | client-only |
 
