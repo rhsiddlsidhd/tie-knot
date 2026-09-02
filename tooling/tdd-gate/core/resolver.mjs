@@ -3,10 +3,10 @@
  *
  * 게이트는 판단하지 않는다. 이미 선언된 사실만 읽는다.
  *   - vitest.config.ts 의 project include/exclude → 어떤 test 경로가 어느 tier에 속하는가
- *   - .claude/tdd-gate.json 의 exclude          → 어떤 소스가 강제 대상 밖인가
+ *   - tooling/tdd-gate/policy.json 의 exclude  → 어떤 소스가 강제 대상 밖인가
  *   - 파일 존재 여부                              → 형제 test 가 이미 있는가
  *
- * 새 규칙을 여기에 발명하지 마라. 예외가 필요하면 .claude/tdd-gate.json 에 적는다.
+ * 새 규칙을 여기에 발명하지 마라. 예외가 필요하면 tooling/tdd-gate/policy.json 에 적는다.
  */
 
 import fs from "node:fs";
@@ -19,7 +19,7 @@ export const ROOT = path.resolve(HERE, "..", "..", "..");
 
 const VITEST_CONFIG = path.join(ROOT, "vitest.config.ts");
 const TSCONFIG = path.join(ROOT, "tsconfig.json");
-const POLICY_FILE = path.join(ROOT, ".claude", "tdd-gate.json");
+const POLICY_FILE = path.join(ROOT, "tooling", "tdd-gate", "policy.json");
 
 export const CACHE_DIR = path.join(ROOT, "node_modules", ".cache", "tdd-gate");
 const CONFIG_CACHE = path.join(CACHE_DIR, "projects.json");
@@ -61,7 +61,8 @@ function loadAliases() {
   const entries = [];
   try {
     const raw = fs.readFileSync(TSCONFIG, "utf8");
-    const paths = JSON.parse(stripJsonComments(raw))?.compilerOptions?.paths ?? {};
+    const paths =
+      JSON.parse(stripJsonComments(raw))?.compilerOptions?.paths ?? {};
     for (const [pattern, targets] of Object.entries(paths)) {
       if (!pattern.endsWith("/*") || !targets?.[0]?.endsWith("/*")) continue;
       entries.push({
@@ -84,14 +85,16 @@ function expandAlias(p) {
 }
 
 function stripJsonComments(raw) {
-  return raw.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+  return raw
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/(^|[^:])\/\/.*$/gm, "$1");
 }
 
 export function isTestFile(relPath) {
   return TEST_FILE_RE.test(relPath);
 }
 
-/** .claude/tdd-gate.json — 강제 대상에서 뺄 소스 glob. 없으면 빈 목록(fail-open). */
+/** tooling/tdd-gate/policy.json — 강제 대상에서 뺄 소스 glob. 없으면 빈 목록(fail-open). */
 export function loadExcludes() {
   try {
     const parsed = JSON.parse(fs.readFileSync(POLICY_FILE, "utf8"));
@@ -196,7 +199,9 @@ export function findSiblings(relPath, candidates) {
   const allowed = new Set(candidates.map((c) => c.suffix));
   const tierOf = new Map(candidates.map((c) => [c.suffix, c.tier]));
   const escaped = stem.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const re = new RegExp(`^${escaped}(?:\\.[^.]+)?\\.((?:unit|component)\\.test\\.tsx?)$`);
+  const re = new RegExp(
+    `^${escaped}(?:\\.[^.]+)?\\.((?:unit|component)\\.test\\.tsx?)$`,
+  );
 
   const found = [];
   for (const entry of entries) {
@@ -213,9 +218,12 @@ export function findSiblings(relPath, candidates) {
  */
 export async function inspect(filePath) {
   const relPath = toRelative(filePath);
-  if (!relPath) return { relPath: null, enforced: false, reason: "outside-repo" };
-  if (!relPath.startsWith("src/")) return { relPath, enforced: false, reason: "outside-src" };
-  if (isTestFile(relPath)) return { relPath, enforced: false, reason: "test-file" };
+  if (!relPath)
+    return { relPath: null, enforced: false, reason: "outside-repo" };
+  if (!relPath.startsWith("src/"))
+    return { relPath, enforced: false, reason: "outside-src" };
+  if (isTestFile(relPath))
+    return { relPath, enforced: false, reason: "test-file" };
   if (matchesAny(loadExcludes(), relPath)) {
     return { relPath, enforced: false, reason: "policy-excluded" };
   }

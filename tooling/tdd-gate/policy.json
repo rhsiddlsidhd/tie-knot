@@ -1,5 +1,5 @@
 {
-  "$comment": "TDD gate 강제 대상에서 제외할 소스 glob. 원본은 각 AGENTS.md 이며 이 파일은 사본이다.",
+  "$comment": "공통 TDD gate 강제 대상에서 제외할 소스 glob. 원본은 각 AGENTS.md 이며 이 파일은 사본이다.",
   "exclude": [
     "**/*.d.ts",
     "**/type.ts",
