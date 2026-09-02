@@ -43,7 +43,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 테스트를 추가·수정하거나 unit/component/integration/E2E를 분류할 때는 먼저 `docs/__test/README.md`(및 해당 티어의 `docs/__test/{unit,component,integration,e2e}.md`)를 끝까지 읽는다.
 - Vitest·Playwright·MongoDB·jsdom·factory 등 테스트 인프라를 변경할 때는 먼저 `docs/validation/test-infrastructure.md`를 끝까지 읽는다.
 - CI workflow나 브랜치 보호·필수 체크를 변경할 때는 먼저 `docs/validation/ci-gates.md`를 끝까지 읽는다.
-- import 구문을 추가·수정하거나 배럴(`index.ts`)의 재수출을 바꿀 때는 먼저 `docs/conventions/type-imports.md`를 끝까지 읽는다.
+- import 구문을 추가·수정할 때는 먼저 `docs/conventions/type-imports.md`를 끝까지 읽는다.
 - ADR을 새로 작성하거나 기존 ADR의 상태·기록을 갱신할 때는 먼저 `docs/decisions/README.md`를 끝까지 읽는다.
 
 ---

@@ -11,7 +11,6 @@
 
 ```
 src/services/
-├── index.ts               # 배럴 — export *
 ├── auth.ts        # getUser, getAuth, requireAuth, logoutService, verifySession
 ├── user.ts
 ├── product.ts
@@ -21,7 +20,7 @@ src/services/
 ## Critical Convention
 
 - 파일명은 `{도메인}.ts`로 고정한다.
-- DB 쿼리 전에 `dbConnect()`를 호출한다(`src/db/index.ts`) — mongoose는 `bufferCommands: false`(이 프로젝트 connect 설정)일 때 연결 전 쿼리를 버퍼링하지 않고 즉시 에러를 던진다(mongoose 공식 문서, connections 가이드).
+- DB 쿼리 전에 `dbConnect()`를 호출한다(`src/db/connect.ts`) — mongoose는 `bufferCommands: false`(이 프로젝트 connect 설정)일 때 연결 전 쿼리를 버퍼링하지 않고 즉시 에러를 던진다(mongoose 공식 문서, connections 가이드).
 - **쿼리 결과를 수정 없이 그대로 반환할 거면 `.lean()`을 쓴다** — mongoose 공식 문서: "you should use lean if you're executing a query and sending the results without modifying them"(lean 가이드). 반환값에 Document 인스턴스 메서드(`.save()`, virtual, custom getter)를 추가로 써야 하는 경우에만 `.lean()`을 안 쓴다.
 - `.lean()` 결과의 ObjectId 필드는 services에서 명시적으로 `.toString()` 변환한다 — 모델 `toJSON` transform에 기대지 않는다(`src/models/AGENTS.md` 참고).
 - **update 쿼리(`updateOne`/`findOneAndUpdate`/`findByIdAndUpdate`)는 `runValidators: true`를 명시한다** — mongoose 공식 문서: "Update validators are off by default — you need to specify the `runValidators` option." `save()`와 달리 update류는 기본적으로 스키마 검증을 건너뛴다.

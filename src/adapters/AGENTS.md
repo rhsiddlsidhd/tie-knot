@@ -27,4 +27,4 @@
 
 비즈니스 규칙과 DB 접근을 두지 않는다. 공용 타입과 순수 계산은 `src/core/`를 사용한다.
 
-같은 런타임 폴더 안에서는 배럴을 둘 수 있다. 단일 구현 파일만 있는 `browser/portone/`은 불필요한 배럴을 만들지 않고 `request-payment`를 직접 import한다.
+소비자는 구현 파일을 직접 지정해 import한다(`@/adapters/browser/portone/request-payment`).

@@ -58,9 +58,9 @@ src/ui/components/
 └── templates/   # 페이지 몸통 전체 구조
 ```
 
-각 폴더는 flat 구조와 `index.ts` 배럴을 유지한다. 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
+각 폴더는 flat 구조를 유지하며, 소비자는 컴포넌트 파일을 직접 지정해 import한다(`@/ui/components/atoms/Button`). 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
 
 ## 관련 문서
 
 - 라우트 로컬 `_components/`와 `_containers/`, page/layout 경계: `src/app/AGENTS.md`
-- 공통 배럴 import와 네이밍 규칙: `src/AGENTS.md`
+- 공통 import 경로와 네이밍 규칙: `src/AGENTS.md`

@@ -11,7 +11,6 @@
 
 ```
 src/models/
-├── index.ts               # 배럴 — export *
 ├── user.model.ts        # UserRole, BaseUser, IUser, UserModel
 ├── product.model.ts       # ProductDB, IProduct, ProductJSON, ProductModel
 └── ...                     # 도메인당 파일 1개

@@ -24,7 +24,7 @@
 - `npm test`: 전체 Vitest project
 - `npm run test:e2e`: Playwright core 시나리오
 
-`dbConnect()`는 연결 시점에 테스트 URI를 선택하고 검증해야 한다. 모듈 로드 시점에 DB 환경을 요구하면 MongoDB를 띄우지 않는 unit 테스트도 배럴 import만으로 실패한다.
+`dbConnect()`는 연결 시점에 테스트 URI를 선택하고 검증해야 한다. 모듈 로드 시점에 DB 환경을 요구하면 MongoDB를 띄우지 않는 unit 테스트도 이 모듈을 그래프에 포함하는 것만으로 실패한다.
 
 ## jsdom
 

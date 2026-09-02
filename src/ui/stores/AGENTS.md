@@ -11,7 +11,6 @@ Zustand(`node_modules/zustand`, v5) 기반 앱 전체 범위 클라이언트 상
 
 ```
 src/ui/stores/
-├── index.ts                    # 배럴 — export *
 ├── app.store.ts                 # createAppStore — 아래 slices/ 전부 spread해 결합, persist는 여기 한 곳에서만(order 슬라이스만 partialize)
 ├── provider.tsx                 # "use client" — useState(() => createAppStore())로 요청/마운트당 1개 생성, Context.Provider
 ├── use-app-store.ts             # useContext + useStore(store, selector) — 소비 훅, 기존 useXStore(selector) 시그니처 유지
