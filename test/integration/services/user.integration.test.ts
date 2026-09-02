@@ -17,7 +17,9 @@ import {
 } from "@/services/user";
 
 const sendEmailMock = vi.hoisted(() => vi.fn().mockResolvedValue(undefined));
-vi.mock("@/adapters/server/nodemailer", () => ({ sendEmail: sendEmailMock }));
+vi.mock("@/adapters/server/nodemailer/send", () => ({
+  sendEmail: sendEmailMock,
+}));
 
 describe("user", () => {
   beforeEach(async () => {

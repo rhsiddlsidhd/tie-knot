@@ -1,4 +1,4 @@
-import { openApp } from "@/adapters/browser/deeplink";
+import { openApp } from "@/adapters/browser/deeplink/open-app";
 
 export const navigationButtons = [
   {

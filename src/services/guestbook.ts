@@ -6,7 +6,7 @@ import type { GuestbookType } from "@/core/schemas";
 import { dbConnect } from "@/db/connect";
 import type { GuestbookListPage } from "@/core/domain";
 import { AppError, DEFAULT_PAGE_SIZE } from "@/core/domain";
-import { comparePasswords, hashPassword } from "@/adapters/server/bcrypt";
+import { comparePasswords, hashPassword } from "@/adapters/server/bcrypt/hash";
 import { decodeCursor, encodeCursor } from "@/core/utils";
 
 import mongoose from "mongoose";

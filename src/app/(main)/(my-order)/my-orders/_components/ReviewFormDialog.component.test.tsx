@@ -19,7 +19,7 @@ vi.mock("@/actions/deleteReview", () => ({
   deleteReview: actions.deleteReview,
 }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
-vi.mock("@/adapters/browser/cloudinary", () => ({
+vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
   }: {

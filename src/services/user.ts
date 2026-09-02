@@ -6,10 +6,11 @@ import { AppError, DEFAULT_PAGE_SIZE, USER_ROLES } from "@/core/domain";
 import type { BaseUser, IUser } from "@/models/user.model";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
-import { hashPassword } from "@/adapters/server/bcrypt";
-import { decrypt, encrypt } from "@/adapters/server/jose";
-import { deleteCookie } from "@/adapters/server/cookies";
-import { sendEmail } from "@/adapters/server/nodemailer";
+import { hashPassword } from "@/adapters/server/bcrypt/hash";
+import { decrypt } from "@/adapters/server/jose/decrypt";
+import { encrypt } from "@/adapters/server/jose/encrypt";
+import { deleteCookie } from "@/adapters/server/cookies/delete";
+import { sendEmail } from "@/adapters/server/nodemailer/send";
 import { routes } from "@/core/domain";
 import {
   decodeCursor,
