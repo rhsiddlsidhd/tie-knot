@@ -76,6 +76,23 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     }],
   },
 }, {
+  files: ["src/app/**/_components/**/*.{ts,tsx}"],
+  ignores: [
+    "src/app/**/_components/**/*.test.ts",
+    "src/app/**/_components/**/*.test.tsx",
+  ],
+  rules: {
+    "@typescript-eslint/no-restricted-imports": ["error", {
+      patterns: [
+        {
+          group: ["@/actions/*"],
+          allowTypeImports: true,
+          message: "Server Action을 결합하는 컴포넌트는 _components가 아니라 동급 _containers에 둔다 — src/app/AGENTS.md §Structure",
+        },
+      ],
+    }],
+  },
+}, {
   files: ["src/actions/**/*.unit.test.ts"],
   rules: {
     "import/no-restricted-paths": "off",

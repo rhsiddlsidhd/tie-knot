@@ -10,6 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { UserIcon, LogOut } from "lucide-react";
 import { userNavItems } from "@/core/domain/navigation";
 import { routes } from "@/core/domain/routes";
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- layout 셸 조각은 도메인 로직을 가져도 _components에 둔다(src/app/AGENTS.md §Critical Conventions). (main)/_components는 그룹 셸과 홈 라우트를 겸해서 폴더 단위로는 분리할 수 없다.
 import { logoutUser } from "@/actions/logoutUser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
