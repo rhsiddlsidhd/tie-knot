@@ -19,7 +19,7 @@
 - matcher 없이 Proxy를 배포하지 않는다 — 공식 문서: matcher가 없으면 정적 파일(`_next/static`)·이.미지 최적화(`_next/image`)·`public/` 자산까지 모든 요청에서 실행돼, 의도치 않게 CSS/JS/이미지 로딩을 막을 수 있다
 - Proxy 안에서 느린 데이터 페칭(외부 API 호출 등)을 하지 않는다 — 공식 문서: Proxy는 느린 데이터 페칭 용도가 아니며, 세션 관리·인가의 전체 솔루션으로 쓰여서도 안 된다(낙관적 체크 용도로만).
 - 프로젝트당 두 번째 proxy 파일을 만들지 않는다 — 공식 문서: 프로젝트당 `proxy.ts` 단 하나만 지원한다. 로직을 나누고 싶으면 별도 모듈로 쪼갠 뒤 그 안에서 import해서 조립한다.
-- **`src/` 안에 배럴(`index.ts`/`index.tsx`)을 만들지 않고, 디렉터리를 가리키는 import도 쓰지 않는다 — 심볼이 실제로 정의된 파일을 지정한다**(`@/services/auth`, `@/models/user.model`). 모듈 그래프가 심볼이 아니라 모듈 단위로 계산되므로, 배럴은 쓰지 않는 형제 모듈까지 그래프에 끌어들여 `vitest related`·`--changed`·watch·mutation 도구를 무력화한다. 근거와 측정값은 `docs/decisions/0004-explicit-module-paths-over-barrels.md` 참고.
+- **`src/` 안에 배럴(`index.ts`/`index.tsx`)을 만들지 않고, 디렉터리를 가리키는 import도 쓰지 않는다 — 심볼이 실제로 정의된 파일을 지정한다**(`@/services/auth`, `@/models/user.model`). 모듈 그래프가 심볼이 아니라 모듈 단위로 계산되므로, 배럴은 쓰지 않는 형제 모듈까지 그래프에 끌어들여 `vitest related`·`--changed`·watch·mutation 도구를 무력화한다. 근거와 측정값은 `docs/decisions/0004-explicit-module-paths-over-barrels.md` 참고. `npm run lint:barrels`가 CI에서 이를 강제한다 — 배럴이 없으면 디렉터리 지정 import는 모듈 해석 단계에서 실패하므로 `npm run tsc`가 함께 잡는다.
 - **`src/` 안 파일은 `export default`를 쓰지 않는다 — 전부 named export로 짓는다.** 단 `src/app/`의 Next.js 라우트 파일은 프레임워크가 `export default`를 강제하므로 예외이며, 대상 파일 목록은 `src/app/AGENTS.md`를 따른다.
 - 폴더의 공개 API를 재수출 목록으로 선언하지 않는다 — 무엇을 외부에서 써도 되는지는 각 계층 `AGENTS.md`의 역할 경계가 규정한다.
 - 로컬 상태로 충분한 걸 곧바로 Context나 Zustand로 확장하지 않는다 — 클라이언트 상태 범위는 로컬 → Context API(`src/ui/context/`) → Zustand(`src/ui/stores/`) 순으로만 넓힌다.
