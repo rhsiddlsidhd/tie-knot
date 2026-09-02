@@ -18,7 +18,7 @@ import {
 // 세션 조회만 대체한다(partial mock) — 쿠키/JWT는 이 파일의 검증 대상이 아니다.
 const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
 
-vi.mock("./auth", async (importOriginal) => {
+vi.mock("@/services/auth", async (importOriginal) => {
   const actual = await importOriginal<typeof AuthModule>();
   return {
     ...actual,

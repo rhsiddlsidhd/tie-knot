@@ -24,7 +24,7 @@ import {
 
 // deleteReviewByAdminService가 자체적으로 requireAdmin()을 호출한다 — 세션
 // 조회만 대체하고 나머지 auth 구현(getUser 등)은 그대로 둔다(partial mock).
-vi.mock("./auth", async (importOriginal) => {
+vi.mock("@/services/auth", async (importOriginal) => {
   const actual = await importOriginal<typeof AuthModule>();
   return {
     ...actual,

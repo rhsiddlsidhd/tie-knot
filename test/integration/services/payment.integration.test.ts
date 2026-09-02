@@ -42,7 +42,7 @@ vi.mock("@portone/server-sdk", () => {
 // 그대로 둔다(partial mock, order.integration.test.ts와 동일 패턴).
 const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
 
-vi.mock("./auth", async (importOriginal) => {
+vi.mock("@/services/auth", async (importOriginal) => {
   const actual = await importOriginal<typeof AuthModule>();
   return {
     ...actual,
