@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 import { loadEnvConfig } from "@next/env";
@@ -27,6 +27,8 @@ export default defineConfig({
             "src/adapters/server/**/*.unit.test.ts",
             "src/core/**/*.unit.test.ts",
             "src/app/api/**/*.unit.test.ts",
+            "src/ui/stores/slices/**/*.unit.test.ts",
+            "src/ui/context/**/reducer.unit.test.ts",
             "src/boundary.unit.test.ts",
             "src/proxy.unit.test.ts",
           ],
@@ -43,6 +45,12 @@ export default defineConfig({
             "src/ui/**/*.component.test.{ts,tsx}",
             "src/app/**/*.component.test.{ts,tsx}",
             "src/adapters/browser/**/*.component.test.ts",
+          ],
+          exclude: [
+            ...configDefaults.exclude,
+            "src/app/api/**",
+            "src/ui/stores/slices/**",
+            "src/ui/context/**/reducer.*",
           ],
           setupFiles: ["./test/support/setup/jsdom-polyfill.ts"],
           maxWorkers: 2,
