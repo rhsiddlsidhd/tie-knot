@@ -3,7 +3,7 @@
 import type React from "react";
 import { useActionState, useEffect, useState } from "react";
 import { updateProduct } from "@/actions/updateProduct";
-import type { Product } from "@/services/product";
+import type { Product } from "@/core/domain/product";
 import { Spinner } from "@/ui/components/atoms/spinner";
 import { Alert } from "@/ui/components/molecules/Alert";
 import { ImageField } from "@/ui/components/organisms/ImageField";

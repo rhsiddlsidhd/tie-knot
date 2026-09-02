@@ -2,7 +2,7 @@ import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
 import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
-import type { Product } from "@/services/product";
+import type { Product } from "@/core/domain/product";
 import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
 import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";

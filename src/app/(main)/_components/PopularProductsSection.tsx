@@ -4,7 +4,7 @@ import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 import { TypographyH2 } from "@/ui/components/atoms/typography";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/ui/components/atoms/carousel";
 import { ProductCard } from "@/ui/components/molecules/ProductCard";
-import type { Product } from "@/services/product";
+import type { Product } from "@/core/domain/product";
 import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain/product";
 
 interface PopularProductsSectionProps {
