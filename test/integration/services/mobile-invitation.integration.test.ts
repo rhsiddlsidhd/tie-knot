@@ -2,18 +2,18 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import mongoose from "mongoose";
 import { AppError } from "@/core/domain/error";
 import { dbConnect } from "@/db/connect";
-import { InvitationModel } from "@/models/invitation.model";
+import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import {
-  buildCoupleInfoInput,
+  buildMobileInvitationContentInput,
   buildOrderInput,
   clearCollections,
 } from "@test/support";
 import type * as AuthModule from "@/services/auth";
 import {
-  saveInvitationForOrder,
-  setInvitationStatusForCurrentUser,
-} from "@/services/invitation";
+  saveMobileInvitationForOrder,
+  setMobileInvitationStatusForCurrentUser,
+} from "@/services/mobile-invitation";
 
 // 세션 조회만 대체한다(partial mock) — 쿠키/JWT는 이 파일의 검증 대상이 아니다.
 const { authState } = vi.hoisted(() => ({ authState: { userId: "" } }));
@@ -51,7 +51,7 @@ describe("invitation", () => {
   };
 
   const buildContent = () => {
-    const input = buildCoupleInfoInput();
+    const input = buildMobileInvitationContentInput();
     return {
       groom: input.groom,
       bride: input.bride,
@@ -71,7 +71,7 @@ describe("invitation", () => {
     const userId = new mongoose.Types.ObjectId().toString();
     const order = await createEligibleOrder(userId);
 
-    const invitation = await saveInvitationForOrder(
+    const invitation = await saveMobileInvitationForOrder(
       order._id.toString(),
       userId,
       buildContent(),
@@ -83,13 +83,13 @@ describe("invitation", () => {
   it("같은 주문을 수정하면 기존 공개 키를 유지한다", async () => {
     const userId = new mongoose.Types.ObjectId().toString();
     const order = await createEligibleOrder(userId);
-    const first = await saveInvitationForOrder(
+    const first = await saveMobileInvitationForOrder(
       order._id.toString(),
       userId,
       buildContent(),
     );
 
-    const second = await saveInvitationForOrder(order._id.toString(), userId, {
+    const second = await saveMobileInvitationForOrder(order._id.toString(), userId, {
       ...buildContent(),
       venue: "변경된 예식장",
     });
@@ -104,12 +104,12 @@ describe("invitation", () => {
     const firstOrder = await createEligibleOrder(userId);
     const secondOrder = await createEligibleOrder(userId);
 
-    const first = await saveInvitationForOrder(
+    const first = await saveMobileInvitationForOrder(
       firstOrder._id.toString(),
       userId,
       buildContent(),
     );
-    const second = await saveInvitationForOrder(
+    const second = await saveMobileInvitationForOrder(
       secondOrder._id.toString(),
       userId,
       buildContent(),
@@ -117,7 +117,7 @@ describe("invitation", () => {
 
     expect(second._id.toString()).not.toBe(first._id.toString());
     expect(second.publicKey).not.toBe(first.publicKey);
-    expect(await InvitationModel.countDocuments({ userId })).toBe(2);
+    expect(await MobileInvitationModel.countDocuments({ userId })).toBe(2);
   });
 
   it("다른 사용자의 주문이면 FORBIDDEN을 던진다", async () => {
@@ -125,14 +125,14 @@ describe("invitation", () => {
     const order = await createEligibleOrder(ownerId);
 
     await expect(
-      saveInvitationForOrder(
+      saveMobileInvitationForOrder(
         order._id.toString(),
         new mongoose.Types.ObjectId().toString(),
         buildContent(),
       ),
     ).rejects.toMatchObject({ category: "FORBIDDEN" });
     await expect(
-      saveInvitationForOrder(
+      saveMobileInvitationForOrder(
         order._id.toString(),
         new mongoose.Types.ObjectId().toString(),
         buildContent(),
@@ -151,22 +151,22 @@ describe("invitation", () => {
     });
 
     await expect(
-      saveInvitationForOrder(order._id.toString(), userId, buildContent()),
+      saveMobileInvitationForOrder(order._id.toString(), userId, buildContent()),
     ).rejects.toMatchObject({ category: "VALIDATION" });
   });
 
-  describe("setInvitationStatusForCurrentUser", () => {
+  describe("setMobileInvitationStatusForCurrentUser", () => {
     it("발행하면 주문을 COMPLETED로 전이한다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       authState.userId = userId;
       const order = await createEligibleOrder(userId);
-      await saveInvitationForOrder(
+      await saveMobileInvitationForOrder(
         order._id.toString(),
         userId,
         buildContent(),
       );
 
-      await setInvitationStatusForCurrentUser(
+      await setMobileInvitationStatusForCurrentUser(
         order._id.toString(),
         "published",
       );
@@ -179,17 +179,17 @@ describe("invitation", () => {
       const userId = new mongoose.Types.ObjectId().toString();
       authState.userId = userId;
       const order = await createEligibleOrder(userId);
-      await saveInvitationForOrder(
+      await saveMobileInvitationForOrder(
         order._id.toString(),
         userId,
         buildContent(),
       );
-      await setInvitationStatusForCurrentUser(
+      await setMobileInvitationStatusForCurrentUser(
         order._id.toString(),
         "published",
       );
 
-      await setInvitationStatusForCurrentUser(order._id.toString(), "draft");
+      await setMobileInvitationStatusForCurrentUser(order._id.toString(), "draft");
 
       const updated = await OrderModel.findById(order._id).lean();
       expect(updated?.orderStatus).toBe("CONFIRMED");

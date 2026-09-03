@@ -1,4 +1,4 @@
-export * from "./coupleInfo.factory";
+export * from "./mobileInvitationContent.factory";
 export * from "./feature.factory";
 export * from "./guestbook.factory";
 export * from "./order.factory";

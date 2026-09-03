@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { AppError } from "@/core/domain/error";
 import { dbConnect } from "@/db/connect";
 import { GuestbookModel } from "@/models/guestbook.model";
-import { InvitationModel } from "@/models/invitation.model";
+import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { buildGuestbookInput, clearCollections } from "@test/support";
 import {
   createGuestbookService,
@@ -24,7 +24,7 @@ describe("guestbook", () => {
 
   const createInvitation = async () => {
     const userId = new mongoose.Types.ObjectId();
-    const invitation = await InvitationModel.create({
+    const invitation = await MobileInvitationModel.create({
       publicKey: "published-invitation-key",
       userId,
       orderId: new mongoose.Types.ObjectId(),
@@ -50,12 +50,12 @@ describe("guestbook", () => {
     const result = await createGuestbookService({ data: input });
 
     expect(result.author).toBe(input.author);
-    expect(result.invitationId.toString()).toBe(invitation._id.toString());
+    expect(result.mobileInvitationId.toString()).toBe(invitation._id.toString());
   });
 
   it("draft 청첩장에는 방명록을 생성하지 않는다", async () => {
     const { invitation } = await createInvitation();
-    await InvitationModel.updateOne(
+    await MobileInvitationModel.updateOne(
       { _id: invitation._id },
       { status: "draft" },
     );
@@ -71,14 +71,14 @@ describe("guestbook", () => {
     const { invitation } = await createInvitation();
     await GuestbookModel.create([
       {
-        invitationId: invitation._id,
+        mobileInvitationId: invitation._id,
         author: "공개 작성자",
         message: "공개 글",
         password: "hashed-password",
         isPrivate: false,
       },
       {
-        invitationId: invitation._id,
+        mobileInvitationId: invitation._id,
         author: "비공개 작성자",
         message: "비공개 글",
         password: "hashed-password",
@@ -93,12 +93,12 @@ describe("guestbook", () => {
 
   it("비소유자는 draft 청첩장의 방명록을 조회할 수 없다", async () => {
     const { invitation } = await createInvitation();
-    await InvitationModel.updateOne(
+    await MobileInvitationModel.updateOne(
       { _id: invitation._id },
       { status: "draft" },
     );
     await GuestbookModel.create({
-      invitationId: invitation._id,
+      mobileInvitationId: invitation._id,
       author: "공개 작성자",
       message: "공개 글",
       password: "hashed-password",
@@ -115,14 +115,14 @@ describe("guestbook", () => {
     const { invitation, userId } = await createInvitation();
     await GuestbookModel.create([
       {
-        invitationId: invitation._id,
+        mobileInvitationId: invitation._id,
         author: "공개 작성자",
         message: "공개 글",
         password: "hashed-password",
         isPrivate: false,
       },
       {
-        invitationId: invitation._id,
+        mobileInvitationId: invitation._id,
         author: "비공개 작성자",
         message: "비공개 글",
         password: "hashed-password",
