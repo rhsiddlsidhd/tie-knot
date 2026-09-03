@@ -1,3 +1,4 @@
+import { timingSafeEqual } from "node:crypto";
 import {
   cancelExpiredAwaitingInvitationOrdersForAllUsers,
   cancelExpiredPendingOrdersForAllUsers,
@@ -33,7 +34,14 @@ export async function GET(request: Request): Promise<Response> {
     return Response.json({ error: "Cron is not configured" }, { status: 503 });
   }
 
-  if (request.headers.get("authorization") !== `Bearer ${secret}`) {
+  const authorization = request.headers.get("authorization");
+  const expected = `Bearer ${secret}`;
+  const isAuthorized =
+    authorization !== null &&
+    authorization.length === expected.length &&
+    timingSafeEqual(Buffer.from(authorization), Buffer.from(expected));
+
+  if (!isAuthorized) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
