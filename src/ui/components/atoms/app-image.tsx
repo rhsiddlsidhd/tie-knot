@@ -13,6 +13,7 @@ interface AppImageProps {
   className?: string;
   preload?: boolean;
   loading?: "eager" | "lazy";
+  zoomOnHover?: boolean;
 }
 
 const AppImage = ({
@@ -22,6 +23,7 @@ const AppImage = ({
   className,
   preload = false,
   loading,
+  zoomOnHover = false,
 }: AppImageProps) => {
   const [failedSrc, setFailedSrc] = useState<AppImageProps["src"] | null>(null);
 
@@ -49,7 +51,12 @@ const AppImage = ({
       sizes={sizes}
       fill
       alt={alt}
-      className={cn("object-cover", className)}
+      className={cn(
+        "object-cover",
+        zoomOnHover &&
+          "transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]",
+        className,
+      )}
       preload={preload}
       loading={loading}
       onError={() => setFailedSrc(src)}
