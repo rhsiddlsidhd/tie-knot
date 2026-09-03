@@ -1,16 +1,32 @@
 "use client";
 
-import { Share2 } from "lucide-react";
+import { Eye, Share2 } from "lucide-react";
+import Link from "next/link";
 import { useMemo } from "react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+} from "@/ui/components/atoms/card";
+import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { isProductCategory } from "@/core/utils/category";
 import { calculatePrice } from "@/core/utils/price";
 import type { SubCategory } from "@/core/domain/product-category";
-import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
+import {
+  MOBILE_INVITATION_CATEGORY,
+  productCategoryLabels,
+  subCategoryLabels,
+} from "@/core/domain/product-category";
+import { routes } from "@/core/domain/routes";
 
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
@@ -33,23 +49,52 @@ export function ProductSummary({
     <div className="mb-16">
       <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
         {/* Left side - Thumbnail */}
-        <div className="group bg-muted border-border relative aspect-square overflow-hidden rounded-2xl border shadow-lg">
-          <AppImage
-            src={product.thumbnail}
-            alt={`${product.title} 상품 썸네일`}
-            loading="eager"
-          />
-          <div className="absolute top-4 right-4 flex gap-2">
-            {product.isFeatured && (
-              <Badge className="bg-accent text-accent-foreground">추천</Badge>
+        <Card className="group bg-muted border-border relative aspect-square overflow-hidden rounded-2xl p-0 shadow-lg">
+          <CardContent className="absolute inset-0 p-0">
+            <AppImage
+              src={product.thumbnail}
+              alt={`${product.title} 상품 썸네일`}
+              loading="eager"
+              zoomOnHover
+            />
+
+            <HoverDarkenOverlay />
+
+            {product.category === MOBILE_INVITATION_CATEGORY && (
+              <Link
+                href={routes.preview.sampleTheme(product.theme ?? "default")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute inset-0 cursor-pointer"
+              />
             )}
-            {product.isPremium && (
-              <Badge className="bg-accent text-accent-foreground">
-                프리미엄
-              </Badge>
+          </CardContent>
+
+          <CardHeader className="absolute top-4 right-4 left-4 gap-0 px-0">
+            <div>
+              {product.category === MOBILE_INVITATION_CATEGORY && (
+                <Badge variant="secondary">
+                  <Eye className="h-3 w-3" />
+                  미리보기
+                </Badge>
+              )}
+            </div>
+            {(product.isFeatured || product.isPremium) && (
+              <CardAction className="flex gap-2">
+                {product.isFeatured && (
+                  <Badge className="bg-accent text-accent-foreground">
+                    추천
+                  </Badge>
+                )}
+                {product.isPremium && (
+                  <Badge className="bg-accent text-accent-foreground">
+                    프리미엄
+                  </Badge>
+                )}
+              </CardAction>
             )}
-          </div>
-        </div>
+          </CardHeader>
+        </Card>
 
         {/* Right side - Product Info */}
         <div className="space-y-6">
@@ -81,9 +126,13 @@ export function ProductSummary({
             </TypographyH1>
             {product.ratingCount > 0 && (
               <div className="mb-3 flex items-center gap-2">
-                <RatingStars value={Math.round(product.ratingAverage)} size="sm" />
+                <RatingStars
+                  value={Math.round(product.ratingAverage)}
+                  size="sm"
+                />
                 <TypographyMuted>
-                  {product.ratingAverage.toFixed(1)} ({product.ratingCount.toLocaleString()}개 리뷰)
+                  {product.ratingAverage.toFixed(1)} (
+                  {product.ratingCount.toLocaleString()}개 리뷰)
                 </TypographyMuted>
               </div>
             )}
@@ -124,7 +173,11 @@ export function ProductSummary({
           </div>
 
           {/* Options */}
-          <ProductOptions product={product} options={options} onPurchase={onPurchase} />
+          <ProductOptions
+            product={product}
+            options={options}
+            onPurchase={onPurchase}
+          />
 
           {/* Additional Info */}
           <div className="bg-muted space-y-3 rounded-xl p-6">
