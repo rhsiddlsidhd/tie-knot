@@ -25,7 +25,6 @@ export const ERROR_CATEGORIES = [
   "FORBIDDEN",
   "NOT_FOUND",
   "INTERNAL",
-  "DISABLED",
   "EXTERNAL_SERVICE",
 ] as const;
 
