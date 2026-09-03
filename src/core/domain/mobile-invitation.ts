@@ -1,4 +1,4 @@
-export type EntityId = string | { toString(): string };
+import type { MobileInvitationTheme } from "./theme";
 
 export interface CouplePerson {
   name: string;
@@ -17,9 +17,7 @@ export interface CoupleSide extends CouplePerson {
   mother?: CoupleParent;
 }
 
-export interface CoupleInfo {
-  _id: EntityId;
-  userId: EntityId;
+export interface MobileInvitationContent {
   groom: CoupleSide;
   bride: CoupleSide;
   weddingDate: Date;
@@ -30,6 +28,12 @@ export interface CoupleInfo {
   guestbookEnabled: boolean;
   thumbnailImages: string[];
   galleryImages: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  theme: MobileInvitationTheme;
 }
+
+export type MobileInvitationEditor = MobileInvitationContent & {
+  publicKey: string;
+  status: "draft" | "published";
+};
+
+export const MOBILE_INVITATION_EXPIRY_DAYS = 10;

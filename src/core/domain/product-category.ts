@@ -72,5 +72,5 @@ export interface AvailableSubCategory {
 export const CUSTOMER_INPUT_ROUTES: Partial<
   Record<ProductCategory, (orderId: string) => string>
 > = {
-  "mobile-invitation": (orderId: string) => `/my-orders/${orderId}/invitation`,
+  "mobile-invitation": (orderId: string) => `/my-orders/${orderId}/mobile-invitation`,
 };

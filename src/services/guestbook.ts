@@ -1,7 +1,7 @@
 import "server-only";
 import type { IGuestbook } from "@/models/guestbook.model";
 import { GuestbookModel } from "@/models/guestbook.model";
-import { InvitationModel } from "@/models/invitation.model";
+import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import type { GuestbookType } from "@/core/schemas/request/guestbook.schema";
 import { dbConnect } from "@/db/connect";
 import type { GuestbookListPage } from "@/core/domain/guestbook";
@@ -19,7 +19,7 @@ export const createGuestbookService = async ({
 }) => {
   await dbConnect();
 
-  const invitation = await InvitationModel.findOne({
+  const invitation = await MobileInvitationModel.findOne({
     publicKey: data.publicKey,
     status: "published",
   }).lean();
@@ -33,7 +33,7 @@ export const createGuestbookService = async ({
   };
   return GuestbookModel.create({
     ...entry,
-    invitationId: invitation._id,
+    mobileInvitationId: invitation._id,
   }).catch((err) => {
     throw new AppError(
       "INTERNAL",
@@ -48,7 +48,7 @@ export const getGuestbookService = async (
 ): Promise<GuestbookListPage> => {
   await dbConnect();
 
-  const invitation = await InvitationModel.findOne({ publicKey })
+  const invitation = await MobileInvitationModel.findOne({ publicKey })
     .select("_id userId status")
     .lean();
   if (!invitation) return { items: [], nextCursor: null };
@@ -58,7 +58,7 @@ export const getGuestbookService = async (
     return { items: [], nextCursor: null };
 
   const filter: Record<string, unknown> = {
-    invitationId: invitation._id,
+    mobileInvitationId: invitation._id,
     ...(isOwner ? {} : { isPrivate: false }),
   };
 
@@ -122,7 +122,7 @@ export const getPrivateGuestbookService = async (
   return {
     ...guestbook,
     _id: guestbook._id.toString(),
-    invitationId: guestbook.invitationId.toString(),
+    mobileInvitationId: guestbook.mobileInvitationId.toString(),
   };
 };
 

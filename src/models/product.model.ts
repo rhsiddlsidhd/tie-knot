@@ -2,10 +2,10 @@ import "server-only";
 import type { Model } from "mongoose";
 import mongoose, { model, Schema } from "mongoose";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
-import type { InvitationTheme } from "@/core/domain/theme";
+import type { MobileInvitationTheme } from "@/core/domain/theme";
 import type { ProductStatus } from "@/core/domain/product";
 import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
-import { INVITATION_THEMES } from "@/core/domain/theme";
+import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 
 export { SUB_CATEGORY_MAP };
 
@@ -72,7 +72,7 @@ export interface IProduct extends ProductDB {
 // mobile-invitation 카테고리 전용 필드 — mongoose discriminator로 base(IProduct)에 병합된다.
 export interface IMobileInvitationProduct extends IProduct {
   previewUrl?: string;
-  theme?: InvitationTheme;
+  theme?: MobileInvitationTheme;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -157,7 +157,7 @@ export const ProductModel =
 
 const mobileInvitationProductSchema = new Schema<IMobileInvitationProduct>({
   previewUrl: { type: String },
-  theme: { type: String, enum: INVITATION_THEMES, default: "default" },
+  theme: { type: String, enum: MOBILE_INVITATION_THEMES, default: "default" },
 });
 
 // discriminator 이름("mobile-invitation")이 곧 category 필드에 저장되는 값이다 —

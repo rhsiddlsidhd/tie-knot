@@ -2,12 +2,12 @@
 
 import { updateTag } from "next/cache";
 import type { APIResponse } from "@/core/domain/error";
-import { invitationCacheTag, saveInvitationForCurrentUser } from "@/services/invitation";
+import { mobileInvitationCacheTag, saveMobileInvitationForCurrentUser } from "@/services/mobile-invitation";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { coupleInfoSchema } from "@/core/schemas/request/coupleInfo.schema";
+import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 
-export const saveInvitation = async (
+export const saveMobileInvitation = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ message: string; publicKey: string }>> => {
@@ -61,7 +61,7 @@ export const saveInvitation = async (
     galleryImages: galleryData,
   };
 
-  const parsed = validateAndFlatten(coupleInfoSchema, data);
+  const parsed = validateAndFlatten(mobileInvitationContentSchema, data);
 
   if (!parsed.success) {
     return {
@@ -82,8 +82,8 @@ export const saveInvitation = async (
         error: { category: "VALIDATION", message: "주문 ID가 필요합니다." },
       };
     }
-    const invitation = await saveInvitationForCurrentUser(orderId, parsed.data);
-    updateTag(invitationCacheTag(invitation.publicKey));
+    const invitation = await saveMobileInvitationForCurrentUser(orderId, parsed.data);
+    updateTag(mobileInvitationCacheTag(invitation.publicKey));
 
     return {
       success: true,

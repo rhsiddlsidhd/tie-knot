@@ -11,7 +11,7 @@ import { findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/uti
 import { AppError } from "@/core/domain/error";
 import type { AdminProductListPage } from "@/core/domain/product";
 import type { AvailableSubCategory, ProductCategory } from "@/core/domain/product-category";
-import type { InvitationTheme } from "@/core/domain/theme";
+import type { MobileInvitationTheme } from "@/core/domain/theme";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
 import { MOBILE_INVITATION_CATEGORY, PRODUCT_CATEGORIES, SUB_CATEGORY_MAP } from "@/core/domain/product-category";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
@@ -32,7 +32,7 @@ type LeanProduct = ProductDB & {
   createdAt: Date;
   updatedAt: Date;
   previewUrl?: string;
-  theme?: InvitationTheme;
+  theme?: MobileInvitationTheme;
   __v?: number;
 };
 

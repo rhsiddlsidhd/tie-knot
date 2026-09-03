@@ -3,15 +3,15 @@
 import { updateTag } from "next/cache";
 import type { APIResponse } from "@/core/domain/error";
 import { actionError } from "@/boundary";
-import { invitationCacheTag, setInvitationStatusForCurrentUser } from "@/services/invitation";
+import { mobileInvitationCacheTag, setMobileInvitationStatusForCurrentUser } from "@/services/mobile-invitation";
 
-export const setInvitationStatus = async (
+export const setMobileInvitationStatus = async (
   orderId: string,
   status: "draft" | "published",
 ): Promise<APIResponse<{ publicKey: string; status: "draft" | "published" }>> => {
   try {
-    const result = await setInvitationStatusForCurrentUser(orderId, status);
-    updateTag(invitationCacheTag(result.publicKey));
+    const result = await setMobileInvitationStatusForCurrentUser(orderId, status);
+    updateTag(mobileInvitationCacheTag(result.publicKey));
     return { success: true, data: result };
   } catch (error) {
     return actionError(error);

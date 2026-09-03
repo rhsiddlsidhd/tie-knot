@@ -1,4 +1,4 @@
-import type { InvitationTheme } from "./theme";
+import type { MobileInvitationTheme } from "./theme";
 import type { ProductCategory, SubCategory } from "./product-category";
 import type { CursorPage } from "./cursor";
 
@@ -33,7 +33,7 @@ export interface ProductJSON {
   ratingAverage: number;
   ratingCount: number;
   previewUrl?: string;
-  theme?: InvitationTheme;
+  theme?: MobileInvitationTheme;
   isLiked: boolean;
   discountedPrice: number;
   createdAt: string;
