@@ -47,7 +47,6 @@ ErrorPayload = { 분류, message, fieldErrors? }
 | FORBIDDEN | 403 | 인가 실패 |
 | NOT_FOUND | 404 | 리소스 없음 |
 | INTERNAL | 500 | 서버/DB 처리 실패 |
-| DISABLED | 503 | 기능 일시 비활성 |
 | EXTERNAL_SERVICE | 502 | 외부 연동 실패 |
 
 ## 채널 A — Server Action (`src/actions/`)
