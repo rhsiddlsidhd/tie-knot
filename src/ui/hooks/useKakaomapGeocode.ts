@@ -3,10 +3,10 @@
 import { useEffect } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
-import type { GeoState } from "@/adapters/browser/deeplink/open-app";
+import type { NullableCoordinates } from "@/core/domain/geo";
 import type { KakaomapResponse } from "@/core/schemas/response/kakaomap.schema";
 
-export function useKakaomapGeocode(address: string): GeoState {
+export function useKakaomapGeocode(address: string): NullableCoordinates {
   const trimmedAddress = address.trim();
   const swrKey = trimmedAddress
     ? `/api/kakao-map?address=${encodeURIComponent(trimmedAddress)}`

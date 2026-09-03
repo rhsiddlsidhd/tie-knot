@@ -1,17 +1,20 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { GeoState } from "@/adapters/browser/deeplink/open-app";
+import type { NullableCoordinates } from "@/core/domain/geo";
 import { getCurrentCoordinates } from "@/adapters/browser/geolocation/current-position";
 import { useKakaomapGeocode } from "./useKakaomapGeocode";
 
 export interface NavigationGeo {
-  current: GeoState;
-  target: GeoState;
+  current: NullableCoordinates;
+  target: NullableCoordinates;
 }
 
 export function useNavigationGeo(address: string): NavigationGeo {
-  const [current, setCurrent] = useState<GeoState>({ lng: null, lat: null });
+  const [current, setCurrent] = useState<NullableCoordinates>({
+    lng: null,
+    lat: null,
+  });
 
   useEffect(() => {
     const fetchCurrentCoordinates = async () => {

@@ -1,9 +1,5 @@
 import "client-only";
-
-export interface GeoState {
-  lng: number | null;
-  lat: number | null;
-}
+import type { NullableCoordinates } from "@/core/domain/geo";
 
 const openTmap = (address: string) => {
   const timeout = setTimeout(() => {
@@ -21,8 +17,8 @@ const openNaverMap = ({
   target,
   address,
 }: {
-  current: GeoState;
-  target: GeoState;
+  current: NullableCoordinates;
+  target: NullableCoordinates;
   address: string;
 }): void => {
   const timeout = setTimeout(() => {
@@ -38,8 +34,8 @@ const openKakaoMap = ({
   target,
   address,
 }: {
-  current: GeoState;
-  target: GeoState;
+  current: NullableCoordinates;
+  target: NullableCoordinates;
   address: string;
 }): void => {
   const timeout = setTimeout(() => {
