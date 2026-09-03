@@ -15,7 +15,23 @@ import { deleteCookie } from "@/adapters/server/cookies/delete";
 import { sendEmail } from "@/adapters/server/nodemailer/send";
 import { routes } from "@/core/domain/routes";
 import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
-import { getAppBaseUrl } from "@/core/utils/url";
+
+const getAppBaseUrl = (): string => {
+  const baseUrl =
+    process.env.NODE_ENV === "development"
+      ? process.env.BASE_URL
+      : process.env.DEPLOYMENT_BASE_URL;
+
+  if (!baseUrl) {
+    throw new AppError(
+      "INTERNAL",
+      "BASE_URL/DEPLOYMENT_BASE_URL 환경변수가 설정되지 않았습니다.",
+    );
+  }
+
+  return baseUrl;
+};
+
 // 유저 생성
 export const createUser = async (user: BaseUser): Promise<IUser> => {
   await dbConnect();
