@@ -2,6 +2,7 @@
 
 import { useContext } from "react";
 import { useStore } from "zustand";
+import { useShallow } from "zustand/react/shallow";
 import { AppStoreContext } from "./provider";
 import type { OrderSlice } from "./slices/order.slice";
 import type { AdminModalPropsMap, AdminModalSlice, AdminModalType } from "./slices/admin-modal.slice";
@@ -57,14 +58,17 @@ export function useGuestbookModalStore<T = GuestbookModalView>(
   ) => T,
 ): T {
   const store = useAppStoreApi();
-  return useStore(store, (s) =>
-    selector({
-      isOpen: s.guestbookModalIsOpen,
-      type: s.guestbookModalType,
-      payload: s.payload,
-      setIsOpen: s.setIsOpen,
-      closeModal: s.closeGuestbookModal,
-      clearIsOpen: s.clearIsOpen,
-    }),
+  return useStore(
+    store,
+    useShallow((s) =>
+      selector({
+        isOpen: s.guestbookModalIsOpen,
+        type: s.guestbookModalType,
+        payload: s.payload,
+        setIsOpen: s.setIsOpen,
+        closeModal: s.closeGuestbookModal,
+        clearIsOpen: s.clearIsOpen,
+      }),
+    ),
   );
 }
