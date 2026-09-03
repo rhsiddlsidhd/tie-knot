@@ -28,12 +28,48 @@ const buildRequest = (body: unknown) =>
     body: JSON.stringify(body),
   });
 
+const buildRawRequest = (rawBody: string) =>
+  new NextRequest("http://localhost/api/upload/signature", {
+    method: "POST",
+    body: rawBody,
+  });
+
 describe("POST /api/upload/signature", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("인증되지 않으면 401을 리턴한다", async () => {
+  it("깨진 JSON이면 인증 여부와 무관하게 400을 리턴한다", async () => {
+    vi.mocked(requireAuth).mockResolvedValue({
+      role: "USER",
+      email: "a@b.com",
+      userId: "u1",
+    });
+
+    const res = await POST(buildRawRequest("{ invalid json"));
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.success).toBe(false);
+    expect(requireAuth).not.toHaveBeenCalled();
+  });
+
+  it("본문이 JSON null이면 400을 리턴한다(500 아님)", async () => {
+    vi.mocked(requireAuth).mockResolvedValue({
+      role: "USER",
+      email: "a@b.com",
+      userId: "u1",
+    });
+
+    const res = await POST(buildRawRequest("null"));
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.success).toBe(false);
+    expect(requireAuth).not.toHaveBeenCalled();
+  });
+
+  it("파싱은 성공하고 인증되지 않으면 401을 리턴한다", async () => {
     vi.mocked(requireAuth).mockRejectedValue(
       new AppError("UNAUTHENTICATED", "로그인이 필요합니다."),
     );

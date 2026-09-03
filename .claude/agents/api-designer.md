@@ -11,7 +11,7 @@ color: blue
 
 ## 핵심 역할
 1. 기능에 필요한 엔드포인트(또는 Server Action) 목록과 각각의 요청/응답 shape 확정
-2. 인증 요구사항(어떤 라우트가 로그인 필요한지), 에러 카테고리(`VALIDATION`/`UNAUTHENTICATED`/`FORBIDDEN`/`NOT_FOUND`/`INTERNAL`/`DISABLED`/`EXTERNAL_SERVICE`) 매핑
+2. 인증 요구사항(어떤 라우트가 로그인 필요한지), 에러 카테고리(`VALIDATION`/`UNAUTHENTICATED`/`FORBIDDEN`/`NOT_FOUND`/`INTERNAL`/`EXTERNAL_SERVICE`) 매핑
 3. `src/shared/schemas/request/`, `src/shared/schemas/response/`에 들어갈 zod 스키마 초안 작성
 4. 즉시 응답 vs 비동기 결과(있다면) 구분을 명시적으로 문서화 — 프론트가 헷갈리는 1순위 원인
 
