@@ -1,4 +1,5 @@
 import { openApp } from "@/adapters/browser/deeplink/open-app";
+import type { NullableCoordinates } from "@/core/domain/geo";
 
 export const navigationButtons = [
   {
@@ -9,8 +10,8 @@ export const navigationButtons = [
       target,
       address,
     }: {
-      current: { lng: number | null; lat: number | null };
-      target: { lng: number | null; lat: number | null };
+      current: NullableCoordinates;
+      target: NullableCoordinates;
       address: string;
     }) =>
       current &&
@@ -32,8 +33,8 @@ export const navigationButtons = [
       target,
       address,
     }: {
-      current: { lng: number | null; lat: number | null };
-      target: { lng: number | null; lat: number | null };
+      current: NullableCoordinates;
+      target: NullableCoordinates;
       address: string;
     }) =>
       current &&
