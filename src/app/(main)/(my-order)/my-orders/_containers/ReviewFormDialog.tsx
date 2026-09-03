@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/ui/components/atoms/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/ui/components/atoms/dialog";
 import { Textarea } from "@/ui/components/atoms/textarea";
+import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import { useImageList } from "@/ui/hooks/useImageList";
@@ -36,6 +37,10 @@ const ReviewFormDialog = ({ orderId, review }: ReviewFormDialogProps) => {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(review?.rating ?? 0);
   const [result, setResult] = useState<ReviewActionResult | null>(null);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  // 확인창이 닫히면 바깥 Dialog의 FocusScope가 자기 컨테이너로 포커스를 되가져간다 —
+  // 삭제를 시작한 버튼으로 되돌려 키보드 사용자의 위치를 잃지 않게 한다.
+  const deleteButtonRef = useRef<HTMLButtonElement>(null);
   const images = useImageList(review?.images);
   const router = useRouter();
   const [isSubmitting, startSubmitting] = useTransition();
@@ -67,17 +72,16 @@ const ReviewFormDialog = ({ orderId, review }: ReviewFormDialogProps) => {
 
   const handleDelete = () => {
     if (!review) return;
-    if (!window.confirm("리뷰를 삭제할까요? 삭제하면 되돌릴 수 없습니다.")) {
-      return;
-    }
 
     startDeleting(async () => {
       const response = await deleteReview(review.id);
 
       if (response.success === false) {
+        // 실패하면 확인창과 리뷰 다이얼로그를 모두 열어둔 채 재시도할 수 있게 남긴다.
         toast.error(response.error.message);
         return;
       }
+      setIsDeleteConfirmOpen(false);
       handleSuccess(response.data.message);
     });
   };
@@ -152,10 +156,11 @@ const ReviewFormDialog = ({ orderId, review }: ReviewFormDialogProps) => {
           <DialogFooter className="gap-2 sm:justify-between">
             {isEdit && (
               <Button
+                ref={deleteButtonRef}
                 type="button"
                 variant="destructive"
                 disabled={isDeleting}
-                onClick={handleDelete}
+                onClick={() => setIsDeleteConfirmOpen(true)}
               >
                 {isDeleting ? "삭제 중..." : "리뷰 삭제"}
               </Button>
@@ -172,6 +177,20 @@ const ReviewFormDialog = ({ orderId, review }: ReviewFormDialogProps) => {
             </div>
           </DialogFooter>
         </form>
+
+        {isEdit && (
+          <ConfirmDialog
+            open={isDeleteConfirmOpen}
+            onOpenChange={setIsDeleteConfirmOpen}
+            title="리뷰 삭제"
+            description="작성한 리뷰를 삭제합니다. 삭제한 리뷰는 복구할 수 없습니다."
+            confirmLabel="삭제"
+            pendingLabel="삭제 중..."
+            pending={isDeleting}
+            onConfirm={handleDelete}
+            restoreFocusRef={deleteButtonRef}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

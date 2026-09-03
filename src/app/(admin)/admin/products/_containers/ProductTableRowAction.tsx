@@ -4,6 +4,8 @@ import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
 import { restoreProduct } from "@/actions/restoreProduct";
 import type { ProductTableRowProps } from "../_components/ProductTableRow";
 import { Button } from "@/ui/components/atoms/button";
+import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
+import { ProductPermanentDeleteDialog } from "../_components/ProductPermanentDeleteDialog";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 import { Edit, RotateCcw, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -16,12 +18,12 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isRestoreOpen, setIsRestoreOpen] = useState(false);
+  const [isPurgeOpen, setIsPurgeOpen] = useState(false);
 
+  // 실패하면 다이얼로그를 닫지 않는다 — 사용자가 오류 toast를 보고 그대로 재시도한다.
   const handleDelete = async () => {
-    if (!confirm(`"${product.title}" 상품을 삭제하시겠습니까?`)) {
-      return;
-    }
-
     setIsDeleting(true);
 
     try {
@@ -33,6 +35,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
       }
 
       toast.success(result.data.message);
+      setIsDeleteOpen(false);
       router.refresh();
     } catch {
       toast.error("삭제 중 오류가 발생했습니다.");
@@ -42,10 +45,6 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
   };
 
   const handleRestore = async () => {
-    if (!confirm(`"${product.title}" 상품을 복구하시겠습니까?`)) {
-      return;
-    }
-
     setIsRestoring(true);
 
     try {
@@ -57,6 +56,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
       }
 
       toast.success(result.data.message);
+      setIsRestoreOpen(false);
       router.refresh();
     } catch {
       toast.error("복구 중 오류가 발생했습니다.");
@@ -66,14 +66,6 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
   };
 
   const handlePurge = async () => {
-    if (
-      !confirm(
-        `"${product.title}" 상품을 영구 삭제하시겠습니까? 이미지 포함 모든 데이터가 사라지며 되돌릴 수 없습니다.`,
-      )
-    ) {
-      return;
-    }
-
     setIsPurging(true);
 
     try {
@@ -85,6 +77,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
       }
 
       toast.success(result.data.message);
+      setIsPurgeOpen(false);
       router.refresh();
     } catch {
       toast.error("영구 삭제 중 오류가 발생했습니다.");
@@ -99,7 +92,7 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
         <Button
           size="sm"
           variant="outline"
-          onClick={handleRestore}
+          onClick={() => setIsRestoreOpen(true)}
           disabled={isRestoring || isPurging}
         >
           <RotateCcw className="h-4 w-4" />
@@ -108,12 +101,31 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
         <Button
           size="sm"
           variant="outline"
-          onClick={handlePurge}
+          onClick={() => setIsPurgeOpen(true)}
           disabled={isRestoring || isPurging}
         >
           <Trash2 className="h-4 w-4" />
           영구 삭제
         </Button>
+
+        <ConfirmDialog
+          open={isRestoreOpen}
+          onOpenChange={setIsRestoreOpen}
+          title="상품 복구"
+          description={`"${product.title}" 상품을 복구합니다. 복구하면 판매 목록에 다시 표시되며, 언제든 다시 삭제할 수 있습니다.`}
+          confirmLabel="복구"
+          pendingLabel="복구 중..."
+          confirmVariant="default"
+          pending={isRestoring}
+          onConfirm={handleRestore}
+        />
+        <ProductPermanentDeleteDialog
+          open={isPurgeOpen}
+          onOpenChange={setIsPurgeOpen}
+          productTitle={product.title}
+          pending={isPurging}
+          onConfirm={handlePurge}
+        />
       </div>
     );
   }
@@ -132,11 +144,22 @@ const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProp
         size="sm"
         variant="outline"
         aria-label="상품 삭제"
-        onClick={handleDelete}
+        onClick={() => setIsDeleteOpen(true)}
         disabled={isDeleting}
       >
         <Trash2 className="h-4 w-4" />
       </Button>
+
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        title="상품 삭제"
+        description={`"${product.title}" 상품을 삭제합니다. 삭제한 상품은 휴지통에서 복구할 수 있습니다.`}
+        confirmLabel="삭제"
+        pendingLabel="삭제 중..."
+        pending={isDeleting}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader } from "@/ui/components/atoms/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
 import { TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
 import { Alert } from "@/ui/components/molecules/Alert";
+import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { useCopy } from "@/ui/hooks/useCopy";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
 import type { OrderListItem, OrderStatus } from "@/core/domain/order";
@@ -44,6 +45,10 @@ interface OrderCardProps {
 const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
   const router = useRouter();
   const [isCancelling, startCancelling] = useTransition();
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false);
+  // 확인창을 연 DropdownMenuItem은 메뉴가 닫히며 사라진다 — 닫힐 때 포커스를
+  // 되돌릴 대상은 그 메뉴를 여는 버튼이다.
+  const orderMenuTriggerRef = useRef<HTMLButtonElement>(null);
   const { copyToClipboard } = useCopy();
 
   const product = order.product;
@@ -72,17 +77,15 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
     : resolveOrderStatusLabel(order.orderStatus, product.category);
 
   const handleCancel = () => {
-    if (!window.confirm("이 주문을 취소할까요? 취소하면 되돌릴 수 없습니다.")) {
-      return;
-    }
-
     startCancelling(async () => {
       const result = await cancelOrder(order._id);
       if (result.success === false) {
+        // 실패하면 확인창을 열어둔 채 재시도할 수 있게 남긴다.
         toast.error(result.error.message);
         return;
       }
       toast.success("주문이 취소되었습니다.");
+      setIsCancelDialogOpen(false);
       // 화면에 그려지는 건 SWR 캐시라 RSC만 새로 그려서는 반영되지 않는다.
       onOrderChanged?.();
       router.refresh();
@@ -106,7 +109,12 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size="sm" variant="ghost" aria-label="주문 메뉴">
+            <Button
+              ref={orderMenuTriggerRef}
+              size="sm"
+              variant="ghost"
+              aria-label="주문 메뉴"
+            >
               <EllipsisVertical className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -120,12 +128,27 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
               <Link href={routes.myOrders.detail(order._id)}>상세보기</Link>
             </DropdownMenuItem>
             {isAbandonedPending && (
-              <DropdownMenuItem disabled={isCancelling} onSelect={handleCancel}>
+              <DropdownMenuItem
+                disabled={isCancelling}
+                onSelect={() => setIsCancelDialogOpen(true)}
+              >
                 주문 취소
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <ConfirmDialog
+          open={isCancelDialogOpen}
+          onOpenChange={setIsCancelDialogOpen}
+          title="주문 취소"
+          description={`"${product.title}" 주문을 취소합니다. 취소한 주문은 복구할 수 없습니다.`}
+          confirmLabel="주문 취소"
+          pendingLabel="취소 중..."
+          pending={isCancelling}
+          onConfirm={handleCancel}
+          restoreFocusRef={orderMenuTriggerRef}
+        />
       </CardHeader>
 
       <CardContent className="space-y-4">
