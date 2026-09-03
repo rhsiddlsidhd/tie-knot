@@ -1,0 +1,82 @@
+"use client";
+
+import { Button } from "@/ui/components/atoms/button";
+import { Card } from "@/ui/components/atoms/card";
+import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+
+import { AlertCircle, ArrowLeft, RotateCcw } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+
+interface ErrorFallbackProps {
+  error: Error & { digest?: string };
+  retry: () => void;
+  title?: string;
+  description?: string;
+  backPath?: string;
+  backLabel?: string;
+}
+
+export function ErrorFallback({
+  error,
+  retry,
+  title = "오류가 발생했습니다",
+  description = "요청을 처리하는 중 문제가 발생했습니다.",
+  backPath = "/",
+  backLabel = "홈으로 돌아가기",
+}: ErrorFallbackProps) {
+  return (
+    <div className="flex h-screen items-center justify-center p-4">
+      <Card className="border-destructive/20 w-full max-w-lg shadow-lg">
+        <div className="space-y-6 p-8">
+          <div className="flex flex-col items-center space-y-4 text-center">
+            <div className="bg-destructive/10 rounded-full p-4">
+              <AlertCircle className="text-destructive h-10 w-10" />
+            </div>
+
+            <div className="space-y-2">
+              <TypographyH1 className="text-foreground text-3xl font-bold">{title}</TypographyH1>
+              <TypographyMuted className="text-sm">{description}</TypographyMuted>
+            </div>
+          </div>
+
+          {process.env.NODE_ENV === "development" && (
+            <div className="space-y-2">
+              <p className="text-destructive text-xs font-semibold">
+                Development Error Details:
+              </p>
+              <div className="bg-destructive/10 rounded-md p-4">
+                <p className="text-destructive font-mono text-xs break-all whitespace-pre-wrap">
+                  {error.message || "No error message provided"}
+                </p>
+                {error.digest && (
+                  <p className="text-destructive mt-2 text-xs">
+                    Error ID: {error.digest}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-3">
+            <Button
+              onClick={retry}
+              variant="default"
+              size="lg"
+              className="w-full"
+            >
+              <RotateCcw className="mr-2 h-4 w-4" />
+              다시 시도
+            </Button>
+            <Button asChild variant="outline" size="lg" className="w-full">
+              <Link href={backPath}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {backLabel}
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}

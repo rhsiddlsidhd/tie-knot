@@ -1,5 +1,18 @@
 import "./globals.css";
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { Gowun_Batang, Noto_Sans_KR } from "next/font/google";
+import { StoreProvider } from "@/ui/stores/provider";
+
+const notoSansKR = Noto_Sans_KR({
+  subsets: ["latin"],
+  variable: "--font-NotoSansKR",
+});
+
+const gowunBatang = Gowun_Batang({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-NotoSerif",
+});
 
 if (!process.env.BASE_URL || !process.env.DEPLOYMENT_BASE_URL) {
   throw new Error("환경변수가 설정되지 않았습니다.");
@@ -62,8 +75,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" className={`${notoSansKR.variable} ${gowunBatang.variable}`}>
+      <body>
+        <StoreProvider>{children}</StoreProvider>
+      </body>
     </html>
   );
 }

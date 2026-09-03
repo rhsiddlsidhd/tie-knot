@@ -2,7 +2,7 @@
 
 > 작성: api-designer-popular
 > 대상 요구사항: REQ-1(조회 경로), REQ-2/REQ-3에 대한 데이터 계약 부분
-> 근거 문서: `docs/DATA_ACCESS.md`, `docs/ERROR_HANDLING.md`, `src/server/boundary.ts`, `src/app/api/CLAUDE.md`, `src/shared/schemas/CLAUDE.md`, `src/server/services/CLAUDE.md`
+> 근거 문서: `docs/architecture/data-access.md`, `docs/architecture/error-handling.md`, `src/server/boundary.ts`, `src/app/api/AGENTS.md`, `src/shared/schemas/AGENTS.md`, `src/server/services/AGENTS.md`
 
 ---
 
@@ -22,7 +22,7 @@
 
 ## 1. 채널 결정 — 신규 엔드포인트 없음
 
-`docs/DATA_ACCESS.md` 표 기준으로 판정한다.
+`docs/architecture/data-access.md` 표 기준으로 판정한다.
 
 | 표 행 | 조건 | 이번 기능 해당 여부 |
 | --- | --- | --- |
@@ -59,7 +59,7 @@ export const getPopularProductsService = async (
 1. **실행 경로가 다르다.** `getAllProductsService`는 `find().sort()`다. 그런데 MongoDB의 `find().sort()`는 **배열 길이 기준 정렬을 지원하지 않는다** — `likes.length` 정렬은 aggregation(`$addFields` + `$sort`)이 필요하다. 옵션 파라미터를 받으면 함수 본문이 `if (sortBy === "likes") { aggregate 파이프라인 } else { find 체인 }`으로 갈라진다. 그건 "확장"이 아니라 이름 하나에 함수 두 개를 넣는 것이다.
 2. **파라미터가 서로 무의미하게 곱해진다.** `category` × `sortBy` × `limit` × `minLikes` 조합 중 실제로 쓰이는 건 두 개뿐인데, 시그니처는 전 조합을 약속하게 된다. 안 쓰는 조합까지 테스트 대상이 되거나, 테스트 안 하면 조용히 깨진다.
 3. **기존 소비처 회귀 위험.** `getAllProductsService`는 `/products` 그리드 등 기존 화면이 쓴다. 리턴/정렬에 손대면 이번 기능과 무관한 화면이 회귀 검증 대상이 된다.
-4. **프로젝트 선례가 이미 "목적별 전용 조회 함수".** 같은 파일의 `getFeaturedTemplatesService`(priority ≥ 1 + status active 전용), `searchProductsService`(검색 전용)가 각각 자기 필터·정렬을 들고 별도 함수로 존재한다. `src/server/services/CLAUDE.md`도 "한 파일에 같은 도메인의 여러 관련 함수(조회/생성 등)를 같이 둘 수 있다"고 명시한다. 신규 함수 추가가 이 폴더의 컨벤션이다.
+4. **프로젝트 선례가 이미 "목적별 전용 조회 함수".** 같은 파일의 `getFeaturedTemplatesService`(priority ≥ 1 + status active 전용), `searchProductsService`(검색 전용)가 각각 자기 필터·정렬을 들고 별도 함수로 존재한다. `src/server/services/AGENTS.md`도 "한 파일에 같은 도메인의 여러 관련 함수(조회/생성 등)를 같이 둘 수 있다"고 명시한다. 신규 함수 추가가 이 폴더의 컨벤션이다.
 
 ### 2.3 쿼리 shape (db-migrator-popular 협의 완료 — 4개 쟁점 전건 합의, 보강 4건 반영)
 
@@ -94,7 +94,7 @@ export const getPopularProductsService = async (
 
 구현자가 반드시 지켜야 할 지점:
 
-- **`await dbConnect()`를 먼저 호출한다.** aggregate도 예외가 아니다 — 이 프로젝트는 `bufferCommands: false`라 커넥션 전 호출이 즉시 에러가 된다(`src/server/services/CLAUDE.md`).
+- **`await dbConnect()`를 먼저 호출한다.** aggregate도 예외가 아니다 — 이 프로젝트는 `bufferCommands: false`라 커넥션 전 호출이 즉시 에러가 된다(`src/server/services/AGENTS.md`).
 - **`limit`을 클램프한다** (`Math.min(Math.max(Math.trunc(limit), 1), 50)`). `$limit`은 0 이하를 받으면 빈 배열이 아니라 `MongoServerError: the limit must be positive`를 **던진다**. `limit`이 외부에 노출된 파라미터인 이상 방어선은 호출부가 아니라 서비스가 갖는다.
 - **`ProductModel.aggregate<LeanProduct>([...])`로 제네릭을 준다** — `as LeanProduct[]` 캐스팅 금지. `aggregate()`의 기본 리턴은 `any[]`라 `as`로 받으면 파이프라인이 바뀌어도 타입 검사가 안 잡는다.
 - **base `ProductModel`로만 호출한다 — `InvitationProductModel.aggregate`를 쓰지 않는다.** mongoose는 discriminator 모델의 aggregate에 `$match: { category: "invitation" }`을 파이프라인 앞에 **자동 주입**하고(`lib/helpers/aggregate/prepareDiscriminatorPipeline.js`), 그 과정에서 첫 `$match` 객체를 **직접 mutate**한다. base는 `isRoot`라 주입이 없어 전 카테고리가 나오며 invitation 문서의 `previewUrl`/`theme`도 같은 컬렉션이라 그대로 실려 온다.
@@ -106,7 +106,7 @@ export const getPopularProductsService = async (
   - **"어차피 같은 조건인데 왜 이렇게 썼지"라며 `$expr`로 되돌리지 말 것 — 같은 조건이 아니다.**
 - **`$ifNull`을 지우지 않는다(주석 필수).** `$match` 이후엔 `likes`가 항상 non-empty라 방어적 중복이지만, `$size`는 인자가 missing일 때 `null`이 아니라 에러(`Location17124`)를 던진다. 나중에 스테이지 순서가 바뀌거나 `$match`가 완화되면 조용한 오동작이 아니라 500으로 터진다. 비용 0이므로 "왜 남겼는지" 주석과 함께 유지한다.
 - **`$unset: "likesCount"`를 빠뜨리지 않는다.** `transformProduct`가 `...rest`로 스프레드하므로 이 필드를 안 지우면 `ProductJSON`에 `likesCount`가 섞여 나가고, `src/shared/schemas/response/product.schema.ts`의 `productResponseSchema`에 없는 필드가 응답 shape에 생긴다. `likesCount`는 **파이프라인 내부 계산명일 뿐** — DB 저장 필드도, 응답 필드도 아니다(신규 응답 필드 0개). `$unset`은 MongoDB 4.2+ 스테이지이며 Atlas·테스트 환경 모두 충족한다.
-- **`.lean()`을 붙이지 않는다.** `aggregate()`는 이미 POJO를 리턴한다(Document 인스턴스가 아님). `src/server/services/CLAUDE.md`의 lean 규칙은 `find()` 계열 대상이다.
+- **`.lean()`을 붙이지 않는다.** `aggregate()`는 이미 POJO를 리턴한다(Document 인스턴스가 아님). `src/server/services/AGENTS.md`의 lean 규칙은 `find()` 계열 대상이다.
 - **`transformProduct`를 그대로 재사용한다.** aggregate 출력의 `_id`는 ObjectId, `likes`는 ObjectId[], `createdAt/updatedAt`은 Date로 나오므로 `LeanProduct`와 형태가 일치한다 — `_id.toString()`, `likes.map(String)`, ISO 변환, `discountedPrice` 계산, `isLiked` 판정이 기존과 동일하게 동작한다. 별도 변환 함수를 새로 만들지 않는다. (aggregate는 스키마 default/캐스팅을 적용하지 않지만, 기존 읽기 경로가 전부 `.lean()`으로 역시 default 미적용이라 동등하다.)
 - **`$sort`와 `$limit`을 인접시킨다 — 사이에 다른 스테이지를 끼우지 않는다.** 실측 explain(`{"$sort":{"sortKey":{...},"limit":8},"usedDisk":false,"spills":0}`)상 두 스테이지가 하나로 병합돼 정렬 버퍼가 상위 8건으로 제한되는 top-k 최적화가 걸린다. 사이에 뭔가 끼면 이 병합이 깨져 전건 정렬로 되돌아가고, 인덱스가 없는 정렬의 32MB 한도가 실제 위험이 된다. (`$unset`은 `$limit` 뒤에 있어 무관하다.)
 - **정렬 tie-break 5단(`likesCount → isFeatured → priority → createdAt → _id`)은 축약하지 않는다.** `_id`가 유일 필드라 이걸 넣어야만 정렬이 total order가 되어 결과가 결정적이 된다 — MongoDB 정렬은 stable하지 않고 페이지가 `revalidate=3600`으로 주기 재생성되므로, 완전 동점이면 재생성마다 순위 배지가 흔들린다. `createdAt`은 timestamps 자동 세팅이라 같은 초에 생성된 문서끼리 동점이 날 수 있어 `_id`가 최종 결정자로 필요하다. 중간의 `isFeatured`/`priority`는 동점 시 운영자 큐레이션이 이기게 해 기존 카탈로그 정렬(`getAllProductsService`)과 일관되게 한다.
@@ -154,7 +154,7 @@ return (
 
 ## 4. 에러/빈 결과 흐름
 
-`docs/ERROR_HANDLING.md` 기준으로 이번 기능이 실제로 만드는 에러 경로는 하나뿐이다.
+`docs/architecture/error-handling.md` 기준으로 이번 기능이 실제로 만드는 에러 경로는 하나뿐이다.
 
 | 상황 | 서비스 동작 | 호출부(page.tsx) | 최종 UI |
 | --- | --- | --- | --- |
@@ -162,7 +162,7 @@ return (
 | 좋아요≥1 상품이 0~2개 | 짧은 배열(0~2개) 그대로 리턴 — throw 안 함 | 그대로 props | **섹션 미렌더**(REQ-2) |
 | DB 커넥션/쿼리 실패 | `AppError("INTERNAL", 원문)` throw | `.catch(() => [])` | 섹션 미렌더, Home 나머지 정상 |
 
-- **서비스는 "결과 없음"을 에러로 만들지 않는다.** 빈 배열은 정상 흐름이다(`src/server/services/CLAUDE.md`의 "조회형은 없는 게 정상"). `AppError(NOT_FOUND)`를 던지지 않는다.
+- **서비스는 "결과 없음"을 에러로 만들지 않는다.** 빈 배열은 정상 흐름이다(`src/server/services/AGENTS.md`의 "조회형은 없는 게 정상"). `AppError(NOT_FOUND)`를 던지지 않는다.
 - **mongoose 에러는 `AppError("INTERNAL", 원본 message)`로 감싸 다시 throw한다** — 같은 파일의 다른 함수들과 동일(`.catch(err => { throw new AppError("INTERNAL", ...) })`). raw mongoose 에러를 그대로 던지지 않는다.
 - **`ErrorPayload`/`toErrorPayload`/`actionError`/`routeError`는 이번 기능에 등장하지 않는다.** 채널 A/B 경계를 넘지 않기 때문이다. 클라이언트로 나가는 에러 응답 자체가 없다.
 - **3개 미만 숨김(REQ-2)은 서비스가 아니라 UI 책임이다.** 서비스가 "3개 미만이면 빈 배열로 만들어 리턴"하는 식으로 임계값을 흡수하면, 조회 함수가 표시 정책을 들고 다니게 되어 다른 소비처가 생겼을 때 재사용이 막힌다. 서비스는 찾은 것을 그대로 준다. 게이트를 UI 안 어느 파일에 두는지는 ui-designer-popular 소관이며 `01_ui_flow.md`가 `PopularProductsSection` 내부(`if (products.length < POPULAR_PRODUCTS_MIN_ITEMS) return null`)로 확정했다 — **한 곳에만 둔다**(`HomeTemplate` 쪽에 같은 조건을 중복으로 걸지 않는다). API 계약 관점에선 어느 쪽이든 관측 동작이 동일하다.
@@ -190,7 +190,7 @@ export const POPULAR_PRODUCTS_LIMIT = 8;
 export const POPULAR_PRODUCTS_MIN_ITEMS = 3;
 ```
 
-- 순수 숫자 리터럴이므로 SCREAMING_SNAKE_CASE(`src/shared/constants/CLAUDE.md` 케이스 규칙 충족).
+- 순수 숫자 리터럴이므로 SCREAMING_SNAKE_CASE(`src/shared/constants/AGENTS.md` 케이스 규칙 충족).
 - 배럴(`src/shared/constants/index.ts`)이 이미 `export * from "./product"`이라 추가 작업 없음. 소비처는 `@/shared/constants`에서 import.
 - 서비스 기본값(`limit = POPULAR_PRODUCTS_LIMIT`)과 UI 게이트(`length >= POPULAR_PRODUCTS_MIN_ITEMS`)가 같은 상수를 본다 — `8`/`3`을 컴포넌트나 page.tsx에 리터럴로 박지 않는다.
 

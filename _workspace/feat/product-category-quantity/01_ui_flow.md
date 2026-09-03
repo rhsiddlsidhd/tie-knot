@@ -80,12 +80,12 @@
               └───────────────────────────────────────────┘
 ```
 
-**REQ-5 에러 표시에 신규 UI 없음.** `CheckoutForm.tsx:49`가 이미 `state.error.message`를 `errorMessage`로 뽑아 순수 `organisms/CheckoutForm.tsx:51-59`의 destructive 배너에 렌더한다. 토스트를 새로 붙이지 않는다 — 기존 경로가 이미 정확히 이 용도다. 서버가 내려주는 문구(하한 미달 / 상한 초과)를 클라이언트가 조립하지 않고 그대로 표시한다(`src/client/CLAUDE.md` 규칙).
+**REQ-5 에러 표시에 신규 UI 없음.** `CheckoutForm.tsx:49`가 이미 `state.error.message`를 `errorMessage`로 뽑아 순수 `organisms/CheckoutForm.tsx:51-59`의 destructive 배너에 렌더한다. 토스트를 새로 붙이지 않는다 — 기존 경로가 이미 정확히 이 용도다. 서버가 내려주는 문구(하한 미달 / 상한 초과)를 클라이언트가 조립하지 않고 그대로 표시한다(`src/client/AGENTS.md` 규칙).
 
 ### 1-B. 관리자 등록 플로우
 
 ```
-/admin/products/new   [page.tsx — verifySession() 게이트 필수, docs/PAGE_ACCESS_CONTROL.md]
+/admin/products/new   [page.tsx — verifySession() 게이트 필수, docs/security/page-access-control.md]
   └ _components/ProductRegistrationForm (컨테이너: useActionState(createProduct))
       └ organisms/ProductRegistrationForm (순수, 로컬 UI state 보유)
           ├ 카테고리 선택(SelectField) → selectedCategory
@@ -131,7 +131,7 @@
 
 **왜 새로 필요한가:** 기존 molecules 어디에도 "숫자 증감 + 범위 clamp" 위젯이 없다(`StatusSelect`/`SelectField`는 enum 선택, `Input type=number`는 clamp/disabled 파생 로직이 없음). `Input type="number"` 하나로 대신하면 `min`/`max` 속성이 브라우저 네이티브 검증에만 걸려서 **버튼 disabled 상태·상한 없는 모드·fixed 모드를 컴포넌트 밖에서 매번 재구현**해야 한다. 단일 책임("수량 하나를 범위 안에서 고른다")이므로 축 A 기준 molecule이다(organism 아님 — 책임이 하나다).
 
-**배치 근거(축 B):** 유일한 소비자가 라우트가 아니라 이미 공용 티어에 있는 `organisms/ProductOptions`이므로, `src/client/components/CLAUDE.md`의 "유일한 소비자가 다른 공유 컴포넌트면 승격-보류 규칙 대상 아님" 예외에 해당한다(`DateField`/`BasicInfoSection` 선례와 동일). 따라서 `molecules/`에 둔다. 배럴 `molecules/index.ts`에 등록.
+**배치 근거(축 B):** 유일한 소비자가 라우트가 아니라 이미 공용 티어에 있는 `organisms/ProductOptions`이므로, `src/client/components/AGENTS.md`의 "유일한 소비자가 다른 공유 컴포넌트면 승격-보류 규칙 대상 아님" 예외에 해당한다(`DateField`/`BasicInfoSection` 선례와 동일). 따라서 `molecules/`에 둔다. 배럴 `molecules/index.ts`에 등록.
 
 **순수성:** props만 받는 controlled 컴포넌트. 도메인 로직/페칭/Server Action 없음.
 
@@ -340,7 +340,7 @@ mode = derive(product.minQuantity, product.maxQuantity)
 
 ### 7-1. ~~무제한 소프트 상한~~ — **해소(db-migrator 승인)**
 
-**`softMax = 99`로 확정.** `ProductOptions.tsx` 로컬 상수 `UNLIMITED_SOFT_MAX`(SCREAMING_SNAKE_CASE, `src/CLAUDE.md` 규칙)로 둔다.
+**`softMax = 99`로 확정.** `ProductOptions.tsx` 로컬 상수 `UNLIMITED_SOFT_MAX`(SCREAMING_SNAKE_CASE, `src/AGENTS.md` 규칙)로 둔다.
 
 **반드시 코드 주석과 함께 남길 것:** 이 99는 **UI 편의 상한이지 DB/서버 제약이 아니다.** `maxQuantity`의 DB 제약은 `min: 0`뿐이고 상한이 없으며, `createOrder`도 `maxQuantity === 0`이면 상한 검증을 스킵한다. 경계면 검증에서 "UI 99 vs 서버 무제한 = 불일치"로 오판되는 걸 막기 위한 명시다. 서버 측 실제 방어선은 별도로 "`quantity`는 양의 정수"(소수/음수/NaN 거부) 검증이며, UI clamp는 방어선으로 치지 않는다.
 

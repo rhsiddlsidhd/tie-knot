@@ -2,7 +2,7 @@
 
 > 작성: db-migrator (Phase1 설계 팬아웃, 2026-08-05)
 > **상태: 확정 (리더 승인 완료, 2026-08-05)** — 미해결 쟁점 **0건**. api-designer 계약 합의 6건 + 리더 판정 2건 전건 종결(§9). backend-impl 착수 가능.
-> 근거 파일: `src/shared/utils/category.ts`, `src/server/models/product.model.ts`, `src/shared/schemas/request/product.schema.ts`, `src/shared/schemas/response/product.schema.ts`, `src/server/services/product.service.ts`, `src/server/models/CLAUDE.md`
+> 근거 파일: `src/shared/utils/category.ts`, `src/server/models/product.model.ts`, `src/shared/schemas/request/product.schema.ts`, `src/shared/schemas/response/product.schema.ts`, `src/server/services/product.service.ts`, `src/server/models/AGENTS.md`
 > 선행 문서: `_workspace/feat/product-search/01_db_schema.md` §7 (이 브랜치를 "VIP/비즈니스 제거 = 마이그레이션 필요 작업"으로 예고했음 — 본 문서가 그 예고를 **불필요로 정정**한다)
 
 ---
@@ -231,7 +231,7 @@ return allowed?.includes(value as SubCategory) ?? false;
 | update validator 폴백 로직 (L99-105) | ✅ 무관 | `this.model.findOne(this.getQuery())`로 기존 문서의 `category`를 조회하는 부분. `category` 값 집합이 안 변하므로 영향 없음 |
 | discriminator (`category`가 `discriminatorKey`) | ✅ 무관 | `PRODUCT_CATEGORIES`에 `"invitation"`이 그대로 있으므로 `ProductModel.discriminator("invitation", ...)`(L159)와 계속 일치 |
 
-**결론: validator 코드는 한 글자도 건드리지 않는다.** 건드리면 `models/CLAUDE.md` Gotchas에 기록된 update-validator 버그(`this.get('category')`가 payload에 없는 값을 못 가져오는 문제)를 재도입할 위험만 생긴다.
+**결론: validator 코드는 한 글자도 건드리지 않는다.** 건드리면 `models/AGENTS.md` Gotchas에 기록된 update-validator 버그(`this.get('category')`가 payload에 없는 값을 못 가져오는 문제)를 재도입할 위험만 생긴다.
 
 ### 4-3. 다만 — validator가 강해지는 방향이라 "기존 문서 수정 불가" 부작용이 이론상 존재
 
@@ -329,7 +329,7 @@ productSchema.index(
 | "전체" 표현 | **파라미터 부재 = 필터 미적용**이 정규(canonical) 형태. `?subCategory=all`은 소비 측만 수용(→전체)하고 **링크 생성 측은 만들지 않는다** |
 | 무효값 (`vip` 등) | **400 아님. 조용히 무시 → 전체.** `isSubCategory()` 실패 시 `"all"` 폴백, `notFound()`도 안 냄 |
 
-무효값을 400이 아닌 무시로 정한 근거(api-designer): 이 파라미터를 읽는 곳이 Server Component 렌더 경로라 `{success:false, error}` envelope을 돌려줄 채널 자체가 없다(`docs/ERROR_HANDLING.md` 채널 분리 규칙). 경로 세그먼트 `[category]`는 리소스 식별자라 404 유지, 쿼리파라미터는 뷰 옵션이라 무효여도 페이지는 존재한다는 구분.
+무효값을 400이 아닌 무시로 정한 근거(api-designer): 이 파라미터를 읽는 곳이 Server Component 렌더 경로라 `{success:false, error}` envelope을 돌려줄 채널 자체가 없다(`docs/architecture/error-handling.md` 채널 분리 규칙). 경로 세그먼트 `[category]`는 리소스 식별자라 404 유지, 쿼리파라미터는 뷰 옵션이라 무효여도 페이지는 존재한다는 구분.
 
 **DB 관점 검토 결과: 어느 쪽이든 안전하며 이 결정에 이견 없다.** 등치 매칭이라 주입 위험이 없고, 애초에 §6-2대로 이 값이 몽고 쿼리까지 내려가지도 않는다. 오히려 "부재 = 전체" 정규형이 `{ subCategory: "all" }`이라는 존재하지 않는 값으로 쿼리가 나가는 사고를 구조적으로 차단한다.
 

@@ -1,0 +1,157 @@
+{
+  "unit": "AdminDashboardTemplate + RecentOrdersCard + formatSignedPercent + formatRelativeTime",
+  "boundary": "DashboardStats(생산자=backend 서비스) ↔ AdminDashboardTemplate이 실제로 읽는 필드(소비자)",
+  "commit": "553c221",
+  "owner": "frontend-impl",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "FIX",
+      "at": "2026-08-27T14:48:00Z",
+      "summary": "경계면 정합성 자체는 전 항목 PASS. 그러나 계약 파일/도메인 상수의 중복 정의 2건이 있어 FIX. 설계 오류가 아니라 부분 수정으로 해결되므로 REDO 아님.",
+      "passedChecks": [
+        {
+          "criterion": "#2 필드명 일치 (브리핑 항목 1 — 최중점)",
+          "result": "PASS",
+          "detail": "Template이 읽는 8개 스칼라가 backend 확정본과 정확히 일치: totalProducts(54) / productsCreatedThisMonth(57,58) / totalUsers(82) / usersCreatedThisMonth(85,86) / revenueThisMonth(42,64) / revenuePreviousMonth(43) / paidOrderCountThisMonth(46,73) / paidOrderCountPreviousMonth(47). 구 이름 0건. RecentOrdersCard의 6필드도 일치."
+        },
+        {
+          "criterion": "#1 envelope",
+          "result": "PASS",
+          "detail": "Template이 stats prop을 직접 받음. fetch/useSWR/{success,data} 없음."
+        },
+        {
+          "criterion": "브리핑 항목 6 — falsy 단축 금지 (REDO 트리거 대상)",
+          "result": "PASS",
+          "detail": "diff 전체 grep 결과 `|| \"-\"`, `?? \"\"` 패턴 0건. 값은 toLocaleString()/formatPriceWithComma()로 무조건 렌더(0 포함). trend는 `{stat.trend && <TypographySmall>}`(113행)로 줄 자체를 생략 — 빈 문자열 렌더 아님. 저량 카드는 `> 0 ? {...} : null`로 §5 상태 C② 충족."
+        },
+        {
+          "criterion": "브리핑 항목 6 — C+D 테스트 존재 (REDO 트리거 대상)",
+          "result": "PASS",
+          "detail": "AdminDashboardTemplate.test.tsx 4케이스: ①A ②C(전월0→trend 부재) ③D(빈배열→빈상태+카드4개) ④C+D 통합(전 지표 0). ④가 '0'/'₩0'이 렌더됨을 단언(상태 B)하고 동시에 queryByText(/지난 달 대비/).not.toBeInTheDocument()로 trend 부재를 단언한다 — 머지 직후 실제 화면을 정확히 커버."
+        },
+        {
+          "criterion": "브리핑 항목 3 — 타임존 (frontend 절반)",
+          "result": "PASS",
+          "detail": "formatRelativeTime의 >7일 폴백이 formatDate(toZonedTime(date, KST_TIMEZONE), \"dot\")로 Asia/Seoul 명시(date.ts:114,129). 기존 formatDate 자체는 미변경(스코프 준수). 카드 집계(getKstMonthRange)와 리스트 표시가 둘 다 KST로 일치."
+        },
+        {
+          "criterion": "브리핑 항목 5 — createdAt Date 유지",
+          "result": "PASS",
+          "detail": "RecentOrdersCard가 order.createdAt을 Date 그대로 formatRelativeTime에 전달(87행). string 파싱/변환 없음."
+        },
+        {
+          "criterion": "#3 파일경로 ↔ 링크경로",
+          "result": "PASS",
+          "detail": "'전체 보기'가 <Link href={routes.admin.orders}>(28행) — 하드코딩 없음. routes.admin.orders='/admin/orders'이고 실제 파일은 src/app/(admin)/admin/orders/page.tsx((admin) 그룹은 URL에서 소멸) → 일치."
+        },
+        {
+          "criterion": "#4 상태 전이 ↔ 렌더 분기표",
+          "result": "PASS",
+          "detail": "§5 상태 A/B/C/D 전부 코드에 반영. D는 orders.length===0 분기(35행)로 테이블 대신 빈 상태 블록, 문구·클래스가 §5 D행과 일치(py-12, flex flex-col items-center gap-1 text-center)."
+        },
+        {
+          "criterion": "trend 색상 버그 수정",
+          "result": "PASS",
+          "detail": "TREND_DIRECTION_CLASS로 up=text-primary/down=text-destructive/flat=text-muted-foreground(30~34행). 기존 '무조건 text-primary'(감소를 긍정색으로 칠하던 버그) 해소 — §4.1.1 표와 일치."
+        },
+        {
+          "criterion": "UI 카피",
+          "result": "PASS",
+          "detail": "4개 카드 title/description이 §4.1.1 확정본과 일치(등록 상품/삭제 제외 전체 상품, 총 매출/이번 달 결제 완료 기준, 결제 주문/이번 달 결제 완료 주문, 활동 회원/탈퇴 제외 가입 회원). mock 문구 계승 없음. 카드 제목 '최근 활동'→'최근 주문' 반영."
+        },
+        {
+          "criterion": "컴포넌트 규약",
+          "result": "PASS",
+          "detail": "\"use client\" 0건(전 트리 Server Component), named export만, _components/index.tsx 배럴이 AdminDashboardTemplate만 재export(§8 체크리스트대로 RecentOrdersCard는 미노출). page.tsx 미변경 — 브리핑 항목 7의 순서 규칙 준수."
+        },
+        {
+          "criterion": "formatSignedPercent 계약",
+          "result": "PASS",
+          "detail": "previous===0 → null 반환(15행)으로 0 나눗셈 회피. {label, direction} 구조체 반환이라 UI가 색상 판정 가능 — §3.3 시그니처와 일치."
+        }
+      ],
+      "findings": [
+        {
+          "id": "F1",
+          "severity": "FIX",
+          "criterion": "#2 케이스/정의 중복 — 도메인 상수 2중 정의",
+          "problem": "553c221이 ORDER_STATUS_LABELS / ORDER_STATUS_BADGE_VARIANTS를 src/core/domain/order.ts:46,53에 추가했는데, 기존 정의가 src/app/(admin)/admin/orders/_constants/mockOrders.ts:43,50에 그대로 남아 있다. 같은 상수가 두 곳에 존재하고, /admin/orders(AdminOrdersTemplate.tsx:15-19가 '../_constants'에서 import)와 /admin/dashboard(RecentOrdersCard가 @/core/domain에서 import)가 서로 다른 사본을 소비한다.",
+          "why": "현재 값은 두 사본이 동일해서 화면상 차이가 없다. 그러나 01_ui_flow.md §3.4가 이 두 상수를 '재정의 금지'로 명시했고, 01_db_schema.md §5는 초안이 mock 상수에서 도메인으로 '승격'시킨 것을 유지하라고 했다 — 승격은 이동이지 복제가 아니다. 나란히 놓인 두 admin 화면이 같은 주문 상태 어휘를 다른 출처에서 읽으면, 한쪽만 수정될 때 조용히 갈라진다. 01_api_contract.md §3이 PAID_ORDER_STATUSES에 대해 경계한 '사본이 늘어나면 나중에 상태가 추가될 때 한쪽만 조용히 틀려진다'와 같은 실패 양상이다.",
+          "fix": "mockOrders.ts:43-58의 두 상수를 삭제하고, AdminOrdersTemplate.tsx:15-19의 import에서 ORDER_STATUS_LABELS/ORDER_STATUS_BADGE_VARIANTS를 빼서 @/core/domain에서 가져오도록 바꾼다(MOCK_ORDERS는 '../_constants' 유지). 스코프 밖 아님 — 스태시된 초안이 정확히 이 두 파일을 수정했고 db_schema §5가 그 승격을 '유지 권고'했다. 01_ui_flow.md §8.1이 스코프 밖으로 둔 건 MOCK_ORDERS→실데이터 전환이지 상수 위치가 아니다.",
+          "owner": "frontend-impl"
+        },
+        {
+          "id": "F2",
+          "severity": "FIX",
+          "criterion": "계약 파일 2중 소유 — add/add 머지 충돌",
+          "problem": "src/core/domain/dashboard.ts가 두 브랜치에 각각 신규 생성됐다(backend 1accaba, frontend 553c221). 내용은 주석 1줄만 다르다: 42행 recentOrders 주석에서 frontend본이 '(REQ-2 빈 상태)'를 뺐다. src/core/domain/index.ts의 `export type * from \"./dashboard\";` 한 줄도 양쪽이 각각 추가했다.",
+          "why": "타입 필드명은 완전히 일치하므로 경계면 결함은 아니다. 다만 두 브랜치가 같은 신규 파일을 만들었으므로 리더 병합 시 dashboard.ts와 index.ts 둘 다 add/add 충돌이 난다. 이 기능에서 가장 중요한 계약 파일을 손으로 고르게 두면 잘못된 쪽이 채택될 여지가 생긴다. 소유권은 01_api_contract.md §10이 backend-impl에 배정했다.",
+          "fix": "frontend-impl이 backend의 1accaba 위로 rebase하고 자신의 src/core/domain/dashboard.ts와 core/domain/index.ts의 dashboard export 줄을 버린다(backend본 채택). frontend의 core/utils/index.ts `export * from \"./percent\";`는 frontend 단독이라 유지. backend는 조치 불필요.",
+          "owner": "frontend-impl (backend는 인지만)"
+        }
+      ],
+      "independentVerification": {
+        "note": "frontend 보고를 신뢰하지 않고 직접 실행 검증",
+        "tsc": "npm run tsc 통과",
+        "eslint": "exit 0",
+        "tests": "percent.test.ts + date.test.ts + AdminDashboardTemplate.test.tsx — 22/22 통과",
+        "kstFallbackEmpirical": "임시 테스트를 작성해 TZ=UTC / America/New_York / Asia/Seoul 3회 실행. KST 21:00(2026-08-20T12:00Z)과 KST 23:30(2026-08-20T14:30Z) 주문이 세 TZ 모두에서 '2026.8.20'으로 렌더됨을 확인 — 설계자가 경고한 '하루 밀림'이 실제로 발생하지 않음을 실증. 검증 후 임시 파일 삭제함.",
+        "falsyScan": "git diff 71e0d4e..553c221 전체에서 `|| \"`, `?? \"\"` 패턴 0건",
+        "duplicateScan": "order.ts 최종본에서 export const ORDER_STATUS_LABELS 정의 1건(중복 선언 아님) — 컴파일은 통과하나 mockOrders.ts에 별도 사본 잔존을 확인"
+      },
+      "selfCorrection": "이전 라운드 보고에서 'ORDER_STATUS_LABELS/BADGE_VARIANTS가 커밋된 base(1bbce1e)에 이미 존재한다'고 기록했으나 오류였다. git show 1bbce1e:src/core/domain/order.ts 확인 결과 base에는 없고, base의 정의 위치는 mockOrders.ts:43이다. 당시 grep이 frontend 워크트리의 미커밋 작업본을 읽은 것을 커밋 상태로 오독했다. F1은 이 정정에서 드러난 사안이다."
+    },
+    {
+      "round": 2,
+      "verdict": "PASS",
+      "at": "2026-08-27T14:54:00Z",
+      "commits": ["7313451 (rebase 후 재적용)", "8b1e729 (F1 fix)"],
+      "summary": "F1·F2 둘 다 해소 확인. 라운드 1에서 PASS였던 항목들이 rebase 후에도 유지되는지 전수 재확인함.",
+      "findingResolution": [
+        {
+          "id": "F1",
+          "result": "RESOLVED",
+          "detail": "8b1e729이 mockOrders.ts에서 두 상수를 삭제(-17줄)하고 AdminOrdersTemplate.tsx:15를 `@/core/domain` import로 교체. 레포 전역 grep 결과 ORDER_STATUS_LABELS/ORDER_STATUS_BADGE_VARIANTS의 정의는 이제 src/core/domain/order.ts 한 곳뿐이고, 소비처 2곳(AdminOrdersTemplate, RecentOrdersCard)이 모두 @/core/domain에서 읽는다 — 단일 출처 성립.",
+          "collateralChecks": [
+            "_constants/index.ts가 `export * from \"./mockOrders\"`(named 재export 아님)라 상수 삭제로 배럴이 깨지지 않음",
+            "mockOrders.ts의 `import type { OrderStatus }`는 MockOrder 인터페이스가 계속 사용하므로 미사용 import 아님",
+            "core/domain/index.ts는 `export * from \"./order\"`(값 export)라 상수 import 가능 — type-only였다면 깨졌을 지점",
+            "my-orders/_constants/labels.ts의 DEFAULT_ORDER_STATUS_LABELS/CATEGORY_ORDER_STATUS_LABELS는 이름도 목적도 다른 고객용 라벨이라 F1 대상 아님(스코프 밖, 미변경 정상)"
+          ]
+        },
+        {
+          "id": "F2",
+          "result": "RESOLVED",
+          "detail": "backend-1accaba 위로 rebase 완료. src/core/domain/dashboard.ts가 표준 브랜치본과 diff 무출력(바이트 동일) — backend본 채택 확인. core/domain/index.ts의 dashboard export 줄 1개(중복 없음). core/utils/index.ts의 percent export는 frontend 단독분으로 유지. add/add 충돌 소멸."
+        }
+      ],
+      "regressionChecks": [
+        "8개 스칼라 필드 읽기 전부 잔존(각 1~2회), 구 필드명 레포 전역 0건",
+        "falsy 단축 스캔(1accaba..HEAD diff) 0건",
+        "formatRelativeTime KST 폴백 유지(date.ts:114 KST_TIMEZONE, :129 toZonedTime)",
+        "trend 조건부 렌더 유지(AdminDashboardTemplate.tsx:113 `{stat.trend && (`)",
+        "page.tsx 미변경 — 브리핑 항목 7 순서 규칙 준수"
+      ],
+      "independentVerification": {
+        "tsc": "통과",
+        "eslint": "npx eslint . (전체) exit 0",
+        "tests": "src/app/(admin)/ + src/core/utils — 17 파일 / 109 테스트 통과, 대시보드 관련 전건 통과"
+      },
+      "preExistingFailureExcluded": {
+        "file": "src/core/utils/category.test.ts",
+        "tests": "getSubCategoryOptions favor(5개) / ceremony(4개) 2건 실패",
+        "verdict": "이번 기능과 무관한 선행 결함. 표준 브랜치(frontend 변경 0)에서 동일하게 실패하고, 양 브랜치 모두 category.ts/category.test.ts를 건드린 이력이 없다. 원인은 dea757c(서브카테고리 5개 추가) 때 테스트 미갱신으로 보인다. CI(static.yml)는 lint/tsc/build만 돌려 vitest를 실행하지 않으므로 PR을 막지는 않는다. 프로젝트 AGENTS.md의 '목적 밖 과제는 별도 Issue' 규칙에 따라 이 브랜치에서 고치지 않고 Issue 후보로 리더에게 보고함."
+      },
+      "reason": "F1·F2 해소 확인, 라운드 1 PASS 항목 전부 회귀 없음. 경계면 전 기준 정합."
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false,
+  "remainingWork": {
+    "item": "src/app/(admin)/admin/dashboard/page.tsx 배선",
+    "status": "NOT_STARTED",
+    "detail": "7313451이 'mock-first template'이라 Template/Card는 완성됐지만 page.tsx는 여전히 하드코딩 stats 배열을 인라인 렌더한다. 01_ui_flow.md §6의 최종 형태(verifySession → getDashboardStatsService() → <AdminDashboardTemplate stats={stats} />)로 교체돼야 기능이 실제로 연결된다. 브리핑 항목 7의 선행조건(backend 유닛 병합)은 1accaba 표준 브랜치 병합으로 이미 충족됨 — 착수 가능 상태.",
+    "verifyOnSubmit": "page.tsx가 서비스를 직접 await하는지(route handler/fetch 미개입), verifySession과 서비스 호출이 순차 await인지(Promise.all 아님 — 인가 실패 시 집계 미실행), 배치 코드/상수 배열/포맷 로직이 page.tsx에 남지 않는지"
+  }
+}

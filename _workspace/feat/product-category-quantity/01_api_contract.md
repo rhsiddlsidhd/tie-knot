@@ -2,7 +2,7 @@
 
 > Phase1 산출물 (api-designer) · 브랜치 `feat/product-category-quantity`
 > 입력: `_workspace/feat/product-category-quantity/00_requirements.json` (REQ-1~REQ-5)
-> 근거 문서: `src/server/boundary.ts`, `docs/ERROR_HANDLING.md`, `docs/DATA_ACCESS.md`, `src/shared/schemas/CLAUDE.md`, `src/app/api/CLAUDE.md`
+> 근거 문서: `src/server/boundary.ts`, `docs/architecture/error-handling.md`, `docs/architecture/data-access.md`, `src/shared/schemas/AGENTS.md`, `src/app/api/AGENTS.md`
 > 동료 합의: ui-designer(A~E 5건 답신 완료), db-migrator(Q1~Q4 요청 발신, 회신 대기 → §9 참고)
 
 ---
@@ -23,7 +23,7 @@
 **비동기 결과(폴링/웹훅/백그라운드 잡)는 이번 기능에 하나도 없다.** 5개 전부 **즉시 응답**이다 — 프론트는 어떤 경우에도 "나중에 결과가 도착하는" 상태를 만들지 않는다. Cloudinary 이미지 업로드도 Server Action 내부에서 `await`으로 끝난 뒤 응답이 나가므로, 클라이언트 입장에선 액션 하나의 pending 구간에 포함된다(별도 업로드-완료 콜백 없음).
 
 **손대지 않는 것 (명시)**
-- `POST /api/order/create`(`src/app/api/order/create/route.ts`) — 현재 `AppError("DISABLED")`만 던지는 미구현 라우트다. 이번 스코프에서 **활성화하지 않는다.** 주문 생성은 채널 A(`createOrder`) 단일 경로다(`docs/DATA_ACCESS.md` row 2: 브라우저 트리거 mutation은 예외 없이 Server Action).
+- `POST /api/order/create`(`src/app/api/order/create/route.ts`) — 현재 `AppError("DISABLED")`만 던지는 미구현 라우트다. 이번 스코프에서 **활성화하지 않는다.** 주문 생성은 채널 A(`createOrder`) 단일 경로다(`docs/architecture/data-access.md` row 2: 브라우저 트리거 mutation은 예외 없이 Server Action).
 - `updateProductStatus` / `deleteProduct` / `toggleProductLike` / `incrementProductViews` — 신규 3필드를 읽지도 쓰지도 않는다.
 - `POST /api/upload/signature` — 클라이언트 직접 업로드용 서명 발급. 상품 이미지는 Server Action이 서버에서 `uploadProductImage`로 올리는 경로라 이번 기능과 무관.
 
@@ -57,7 +57,7 @@ camelCase 고정. DB(mongoose) 필드명 = 응답 필드명 = 요청 필드명�
 
 두 값이 다른 건 실수가 아니라 의도다. 현존 레거시 문서는 전부 `invitation`이고(카테고리가 그것 하나뿐이었음) invitation은 `min=max=1`이 정답이다. `?? 0`으로 폴백하면 무제한이 돼서 레거시 invitation 상세페이지가 상한 없는 stepper로 렌더된다 — REQ-4의 "invitation 회귀 없음" 조건 위반.
 
-폴백을 mongoose pre/post 훅에 두지 않는다 — `src/server/models/CLAUDE.md`의 "모델 훅에 도메인 로직 두지 않는다" 규칙. `transformProduct` 한 곳에만 둔다(모든 읽기 경로가 이 함수를 통과한다).
+폴백을 mongoose pre/post 훅에 두지 않는다 — `src/server/models/AGENTS.md`의 "모델 훅에 도메인 로직 두지 않는다" 규칙. `transformProduct` 한 곳에만 둔다(모든 읽기 경로가 이 함수를 통과한다).
 
 ```ts
 // src/server/services/product.service.ts — transformProduct 안
@@ -95,7 +95,7 @@ API 검증 규칙 2단:
 |---|---|
 | 경로/함수 | `src/server/actions/createProduct.ts` → `createProduct(_prev, formData)` |
 | 메서드 | Server Action (`useActionState`, `(prevState, formData)` 순서 고정) |
-| 채널 | **A** — 어드민 폼 제출. `docs/DATA_ACCESS.md` row 2(브라우저 트리거 mutation) |
+| 채널 | **A** — 어드민 폼 제출. `docs/architecture/data-access.md` row 2(브라우저 트리거 mutation) |
 | 인증 | **필요.** `requireAuth()` → `role !== "ADMIN"`이면 거부 |
 | 응답 성격 | **즉시** |
 
@@ -251,7 +251,7 @@ useCheckoutForm.ts:53  formData.append("productQuantity", String(quantity))
 
 `createOrderService`(`src/server/services/order.service.ts:15`) 안에서, `OrderModel.create` **이전에** 검증한다.
 
-**클라이언트가 보낸 `minQuantity`/`maxQuantity`를 신뢰하지 않는다** — 요청 본문에 그 두 값을 싣지 않고, `product.productId`로 DB에서 다시 읽는다(`src/server/actions/CLAUDE.md`: "클라이언트가 넘긴 값을 소유권 판단 없이 그대로 쓰지 않는다"). 필요한 조회:
+**클라이언트가 보낸 `minQuantity`/`maxQuantity`를 신뢰하지 않는다** — 요청 본문에 그 두 값을 싣지 않고, `product.productId`로 DB에서 다시 읽는다(`src/server/actions/AGENTS.md`: "클라이언트가 넘긴 값을 소유권 판단 없이 그대로 쓰지 않는다"). 필요한 조회:
 
 ```ts
 ProductModel.findOne({ _id: productId, deletedAt: null })
@@ -290,8 +290,8 @@ if (max !== 0 && quantity > max)           → AppError("VALIDATION", `이 상�
 **설계 근거 3가지 (경계면 검증 대상)**
 
 1. **새 에러 카테고리를 만들지 않는다.** taxonomy는 `VALIDATION` / `UNAUTHENTICATED` / `FORBIDDEN` / `NOT_FOUND` / `INTERNAL` / `DISABLED` / `EXTERNAL_SERVICE` 7개 고정이다(`src/shared/types/error.ts`, `ERROR_STATUS_MAP`). `BAD_REQUEST` 같은 이름은 이 프로젝트에 없다.
-2. **`fieldErrors`를 채우지 않는다.** `docs/ERROR_HANDLING.md`: "필드별 검증 에러(폼 input 단위)는 `AppError`에 넣지 않는다 — zod 검증 실패는 services를 거치지 않고 Server Action 안에서 바로 만들어지는 별개 경로이기 때문이다." 이 검증은 services가 던지므로 message만 실린다. 클라이언트에서 `getFieldError(state, "quantity")`는 **항상 `undefined`** — 인라인 필드 에러 렌더 경로를 만들지 않는다.
-3. **message 원문이 클라이언트까지 그대로 간다.** `ERROR_SAFE_MESSAGES`는 `INTERNAL` / `EXTERNAL_SERVICE` 2개만 일반화한다(`src/shared/constants/error.ts`). `VALIDATION`은 대상이 아니므로 위 문구가 그대로 렌더된다 — 그래서 문구 조립은 전적으로 서버 몫이고 클라이언트는 조립하지 않는다(`src/client/CLAUDE.md`).
+2. **`fieldErrors`를 채우지 않는다.** `docs/architecture/error-handling.md`: "필드별 검증 에러(폼 input 단위)는 `AppError`에 넣지 않는다 — zod 검증 실패는 services를 거치지 않고 Server Action 안에서 바로 만들어지는 별개 경로이기 때문이다." 이 검증은 services가 던지므로 message만 실린다. 클라이언트에서 `getFieldError(state, "quantity")`는 **항상 `undefined`** — 인라인 필드 에러 렌더 경로를 만들지 않는다.
+3. **message 원문이 클라이언트까지 그대로 간다.** `ERROR_SAFE_MESSAGES`는 `INTERNAL` / `EXTERNAL_SERVICE` 2개만 일반화한다(`src/shared/constants/error.ts`). `VALIDATION`은 대상이 아니므로 위 문구가 그대로 렌더된다 — 그래서 문구 조립은 전적으로 서버 몫이고 클라이언트는 조립하지 않는다(`src/client/AGENTS.md`).
 
 ### 표시 경로 — 신규 UI 0개 (ui-designer 정정 확인 완료)
 
@@ -330,7 +330,7 @@ finalPrice   = max(0, floor((productTotal + optionsTotal) * (1 - discountRate) -
 |---|---|
 | 경로 | `/api/products?category={category}` |
 | 메서드 | `GET` |
-| 채널 | **B** — `useSWR` 캐싱/재검증이 필요한 조회(`docs/DATA_ACCESS.md` row 3) |
+| 채널 | **B** — `useSWR` 캐싱/재검증이 필요한 조회(`docs/architecture/data-access.md` row 3) |
 | 인증 | **불필요.** `requireAuth()` 호출 없음 (공개 카탈로그) |
 | 응답 성격 | **즉시** |
 
@@ -357,7 +357,7 @@ finalPrice   = max(0, floor((productTotal + optionsTotal) * (1 - discountRate) -
 |---|---|---|
 | DB 조회 실패 | `INTERNAL` | 500 |
 
-`routeError`가 `ERROR_STATUS_MAP`으로 status를 매핑한다. 라우트 안에서 `Response.json`을 직접 호출하지 않는다(`src/app/api/CLAUDE.md`).
+`routeError`가 `ERROR_STATUS_MAP`으로 status를 매핑한다. 라우트 안에서 `Response.json`을 직접 호출하지 않는다(`src/app/api/AGENTS.md`).
 
 ---
 

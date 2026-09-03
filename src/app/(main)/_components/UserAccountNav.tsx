@@ -3,12 +3,15 @@
 import Link from "next/link";
 import React from "react";
 import { mutate } from "swr";
-import { useAuth } from "@/client/hooks";
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/client/components/atoms";
+import { useAuth } from "@/ui/hooks/useAuth";
+import { Button } from "@/ui/components/atoms/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
 
 import { UserIcon, LogOut } from "lucide-react";
-import { userNavItems, routes } from "@/shared/constants";
-import { logoutUser } from "@/server/actions";
+import { userNavItems } from "@/core/domain/navigation";
+import { routes } from "@/core/domain/routes";
+// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- layout 셸 조각은 도메인 로직을 가져도 _components에 둔다(src/app/AGENTS.md §Critical Conventions). (main)/_components는 그룹 셸과 홈 라우트를 겸해서 폴더 단위로는 분리할 수 없다.
+import { logoutUser } from "@/actions/logoutUser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 

@@ -1,11 +1,12 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/client/components/atoms";
-import { SidebarNavItem } from "@/client/components/molecules";
-import { SidebarToggle } from "@/client/components/organisms";
-import { useAuth } from "@/client/hooks";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
+import { SidebarToggle } from "@/ui/components/organisms/SidebarToggle";
+import { useAuth } from "@/ui/hooks/useAuth";
+import { Skeleton } from "@/ui/components/atoms/skeleton";
 const Layout = ({ children }: { children: React.ReactNode }) => {
-  const { session } = useAuth();
+  const { session, isLoading } = useAuth();
 
   return (
     <SidebarProvider>
@@ -17,14 +18,18 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
 
           <SidebarFooter className="border-border border-t p-4">
             <div className="mb-2 flex items-center gap-3 px-2 py-2">
-              <div className="min-w-0 flex-1">
-                <p className="text-foreground truncate text-sm font-medium">
-                  {session?.email}
-                </p>
-                <p className="text-muted-foreground text-xs">
-                  {session?.role === "ADMIN" ? "관리자" : "일반"} 계정
-                </p>
-              </div>
+              {isLoading ? (
+                <Skeleton className="h-9 w-full rounded-md" />
+              ) : (
+                <div className="min-w-0 flex-1">
+                  <p className="text-foreground truncate text-sm font-medium">
+                    {session?.email}
+                  </p>
+                  <p className="text-muted-foreground text-xs">
+                    {session?.role === "ADMIN" ? "관리자" : "일반"} 계정
+                  </p>
+                </div>
+              )}
             </div>
           </SidebarFooter>
         </Sidebar>

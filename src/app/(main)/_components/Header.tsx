@@ -1,10 +1,12 @@
 import { AuthButtons } from "./AuthButtons";
-import { MobileNav } from "@/client/components/organisms";
+import { MobileNav } from "./MobileNav";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
-import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/shared/constants";
-import { Button, TypographyH4 } from "@/client/components/atoms";
+import { routes } from "@/core/domain/routes";
+import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
+import { Button } from "@/ui/components/atoms/button";
+import { TypographyH4 } from "@/ui/components/atoms/typography";
 const Header = () => {
   return (
     <header className="bg-background/80 border-border sticky top-0 right-0 left-0 z-50 w-full border-b backdrop-blur-md">
@@ -27,9 +29,6 @@ const Header = () => {
                 </Link>
               </Button>
             ))}
-            <Button asChild variant="ghost" size="sm">
-              <Link href={routes.support}>고객센터</Link>
-            </Button>
           </nav>
         </div>
 

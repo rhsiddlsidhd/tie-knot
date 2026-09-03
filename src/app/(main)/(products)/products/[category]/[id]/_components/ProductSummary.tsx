@@ -1,37 +1,207 @@
 "use client";
 
-import { useCallback } from "react";
-import { useRouter } from "next/navigation";
+import { Eye, Share2 } from "lucide-react";
+import Link from "next/link";
+import { useMemo } from "react";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Badge } from "@/ui/components/atoms/badge";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardHeader,
+} from "@/ui/components/atoms/card";
+import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
+import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import { isProductCategory } from "@/core/utils/category";
+import { calculatePrice } from "@/core/utils/price";
+import type { SubCategory } from "@/core/domain/product-category";
+import {
+  MOBILE_INVITATION_CATEGORY,
+  productCategoryLabels,
+  subCategoryLabels,
+} from "@/core/domain/product-category";
+import { routes } from "@/core/domain/routes";
 
-import { useOrderStore } from "@/client/store";
-import { Product, PremiumFeature } from "@/server/services";
-
-import { CheckoutItem } from "@/shared/types";
-import { ProductSummary as PureProductSummary } from "@/client/components/organisms";
-import { routes } from "@/shared/constants";
+import type { CheckoutItem } from "@/core/domain/checkout";
+import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
+import { ProductOptions } from "./ProductOptions";
+import { RatingStars } from "@/ui/components/organisms/RatingStars";
 export function ProductSummary({
   product,
   options,
+  onPurchase,
 }: {
   product: Product;
   options: PremiumFeature[];
+  onPurchase: (checkoutData: CheckoutItem) => void;
 }) {
-  const router = useRouter();
-  const setOrder = useOrderStore((state) => state.setOrder);
-
-  const handlePurchase = useCallback(
-    (checkoutData: CheckoutItem) => {
-      setOrder(checkoutData);
-      router.push(routes.payment.root);
-    },
-    [setOrder, router],
-  );
+  const discountedPrice = useMemo(() => {
+    return calculatePrice(product.price, product.discount);
+  }, [product.price, product.discount]);
 
   return (
-    <PureProductSummary
-      product={product}
-      options={options}
-      onPurchase={handlePurchase}
-    />
+    <div className="mb-16">
+      <div className="grid items-start gap-8 lg:grid-cols-2 lg:gap-12">
+        {/* Left side - Thumbnail */}
+        <Card className="group bg-muted border-border relative aspect-square overflow-hidden rounded-2xl p-0 shadow-lg">
+          <CardContent className="absolute inset-0 p-0">
+            <AppImage
+              src={product.thumbnail}
+              alt={`${product.title} 상품 썸네일`}
+              loading="eager"
+              zoomOnHover
+            />
+
+            <HoverDarkenOverlay />
+
+            {product.category === MOBILE_INVITATION_CATEGORY && (
+              <Link
+                href={routes.preview.sampleTheme(product.theme ?? "default")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="absolute inset-0 cursor-pointer"
+              />
+            )}
+          </CardContent>
+
+          <CardHeader className="absolute top-4 right-4 left-4 gap-0 px-0">
+            <div>
+              {product.category === MOBILE_INVITATION_CATEGORY && (
+                <Badge variant="secondary">
+                  <Eye className="h-3 w-3" />
+                  미리보기
+                </Badge>
+              )}
+            </div>
+            {(product.isFeatured || product.isPremium) && (
+              <CardAction className="flex gap-2">
+                {product.isFeatured && (
+                  <Badge className="bg-accent text-accent-foreground">
+                    추천
+                  </Badge>
+                )}
+                {product.isPremium && (
+                  <Badge className="bg-accent text-accent-foreground">
+                    프리미엄
+                  </Badge>
+                )}
+              </CardAction>
+            )}
+          </CardHeader>
+        </Card>
+
+        {/* Right side - Product Info */}
+        <div className="space-y-6">
+          <div>
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <div className="flex gap-2">
+                <Badge variant="outline">
+                  {isProductCategory(product.category) &&
+                    productCategoryLabels[product.category]}
+                </Badge>
+                <Badge variant="outline">
+                  {subCategoryLabels[product.subCategory as SubCategory] ??
+                    product.subCategory}
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <ProductLikeBadge
+                  productLikes={product.likes}
+                  productId={product._id}
+                />
+                <Badge variant="outline" className="aspect-square">
+                  <Share2 />
+                </Badge>
+              </div>
+            </div>
+            <TypographyH1 className="mb-3 text-left text-lg font-bold text-balance">
+              {product.title}
+            </TypographyH1>
+            {product.ratingCount > 0 && (
+              <div className="mb-3 flex items-center gap-2">
+                <RatingStars
+                  value={Math.round(product.ratingAverage)}
+                  size="sm"
+                />
+                <TypographyMuted>
+                  {product.ratingAverage.toFixed(1)} (
+                  {product.ratingCount.toLocaleString()}개 리뷰)
+                </TypographyMuted>
+              </div>
+            )}
+            <TypographyMuted className="leading-relaxed text-balance">
+              {product.description}
+            </TypographyMuted>
+          </div>
+
+          {/* Price */}
+          <div className="border-border border-y py-6">
+            {product.discount && product.discount.value > 0 ? (
+              <>
+                {/* 할인이 있을 때: 할인율/금액 + 원가(취소선) */}
+                <div className="flex items-baseline gap-2">
+                  <span className="text-primary text-sm font-bold">
+                    {product.discount.discountType === "rate"
+                      ? `${Math.round(product.discount.value * 100)}%`
+                      : `${product.discount.value.toLocaleString()}원 할인`}
+                  </span>
+                  <span className="text-muted-foreground/40 text-sm line-through">
+                    {product.price.toLocaleString()}원
+                  </span>
+                </div>
+
+                {/* 최종 계산된 가격 */}
+                <div className="text-destructive text-lg font-bold">
+                  {discountedPrice.toLocaleString()}원
+                  <span className="ml-1 text-sm font-normal">할인 적용가</span>
+                  <input type="hidden" defaultValue={discountedPrice} />
+                </div>
+              </>
+            ) : (
+              <div className="text-primary text-lg font-bold">
+                {product.price.toLocaleString()}원
+                <input type="hidden" defaultValue={product.price} />
+              </div>
+            )}
+          </div>
+
+          {/* Options */}
+          <ProductOptions
+            product={product}
+            options={options}
+            onPurchase={onPurchase}
+          />
+
+          {/* Additional Info */}
+          <div className="bg-muted space-y-3 rounded-xl p-6">
+            <div className="flex items-start gap-3">
+              <div className="bg-primary mt-2 h-2 w-2 shrink-0 rounded-full" />
+              <TypographyMuted className="leading-relaxed">
+                구매 후 즉시 사용 가능하며, 무제한으로 수정할 수 있습니다.
+              </TypographyMuted>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="bg-primary mt-2 h-2 w-2 shrink-0 rounded-full" />
+              <TypographyMuted className="leading-relaxed">
+                평생 호스팅이 포함되어 있어 별도의 유지비가 없습니다.
+              </TypographyMuted>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="bg-primary mt-2 h-2 w-2 shrink-0 rounded-full" />
+              <TypographyMuted className="leading-relaxed">
+                모바일과 데스크톱 모두에서 완벽하게 작동합니다.
+              </TypographyMuted>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

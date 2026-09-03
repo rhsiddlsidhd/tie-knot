@@ -4,8 +4,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-NotoSansKR: "NotoSansKR";
-  --font-NotoSerif: "NotoSerif";
   --breakpoint-xs: 400px;
 }
 
@@ -26,6 +24,12 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -58,34 +62,42 @@
 }
 
 :root {
-  font-family: var(--font-NotoSerif), var(--font-NotoSansKR);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.141 0.005 285.823);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.141 0.005 285.823);
-  --primary: oklch(0.21 0.006 285.885);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.967 0.001 286.375);
-  --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.21 0.006 285.885);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.705 0.015 286.067);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-primary: oklch(0.21 0.006 285.885);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.705 0.015 286.067);
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.141 0.005 285.823);
-  --destructive: oklch(0.577 0.245 27.325);
+  font-family: var(--font-NotoSansKR), var(--font-NotoSerif), sans-serif;
+  --preview-background: #ffffff;
+  --card: #ffffff;
+  --card-foreground: #3a342e;
+  --popover: #ffffff;
+  --popover-foreground: #3a342e;
+  --primary: #aa6147;
+  --primary-foreground: #ffffff;
+  --secondary: #f0e6da;
+  --secondary-foreground: #3a342e;
+  --muted: #efe7dc;
+  --muted-foreground: #8a7f72;
+  --accent: #e8ddd0;
+  --accent-foreground: #3a342e;
+  --border: #e3d8c9;
+  --input: #e3d8c9;
+  --ring: #c68868;
+  --radius: 0.75rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #3a342e;
+  --sidebar-primary: #aa6147;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f0e6da;
+  --sidebar-accent-foreground: #3a342e;
+  --sidebar-border: #e3d8c9;
+  --sidebar-ring: #c68868;
+  --background: #faf6f1;
+  --foreground: #3a342e;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --success: #3f7d52;
+  --success-foreground: #ffffff;
+  --info: #3b6e8f;
+  --info-foreground: #ffffff;
+  --warning: #a05f0a;
+  --warning-foreground: #ffffff;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -127,28 +139,112 @@
   --destructive: oklch(0.704 0.191 22.216);
 }
 
+/* ── Default Theme / Classic (웜베이지) ──
+   청첩장(invitation 상품)의 "default" 테마 값을 여기 고정한다. 청첩장은 발행되고
+   나면 그 자체로 하객에게 전달되는 완성 상품이라, 이후 쇼핑몰 :root가 다시
+   리브랜딩되더라도 이미 발행된 청첩장 외관은 흔들리면 안 된다 — 그래서 :root를
+   그냥 상속받게 두지 않고 이 시점의 값을 명시적으로 박아넣는다(blossom과 동일 패턴). */
+[data-theme="default"] {
+  --background:           #faf6f1;
+  --foreground:           #3a342e;
+  --card:                 #ffffff;
+  --card-foreground:      #3a342e;
+  --popover:              #ffffff;
+  --popover-foreground:   #3a342e;
+  --muted:                #efe7dc;
+  --muted-foreground:     #8a7f72;
+  --primary:              #aa6147;
+  --primary-foreground:   #ffffff;
+  --secondary:            #f0e6da;
+  --secondary-foreground: #3a342e;
+  --accent:               #e8ddd0;
+  --accent-foreground:    #3a342e;
+  --border:               #e3d8c9;
+  --input:                #e3d8c9;
+  --ring:                 #c68868;
+  --success:              #3f7d52;
+  --success-foreground:   #ffffff;
+  --info:                 #3b6e8f;
+  --info-foreground:      #ffffff;
+  --warning:              #a05f0a;
+  --warning-foreground:   #ffffff;
+}
+
 /* ── Blossom Theme (벚꽃) ── */
 [data-theme="blossom"] {
-  --background:          oklch(0.98 0.012 5);
-  --foreground:          oklch(0.25 0.04 355);
-  --card:                oklch(1 0.006 5);
-  --card-foreground:     oklch(0.25 0.04 355);
-  --popover:             oklch(1 0.006 5);
-  --popover-foreground:  oklch(0.25 0.04 355);
-  --muted:               oklch(0.94 0.03 355);
-  --muted-foreground:    oklch(0.52 0.07 355);
-  --primary:             oklch(0.62 0.17 355);
-  --primary-foreground:  oklch(0.98 0 0);
-  --secondary:           oklch(0.93 0.04 355);
-  --secondary-foreground:oklch(0.32 0.06 355);
-  --accent:              oklch(0.93 0.04 355);
-  --accent-foreground:   oklch(0.32 0.06 355);
-  --border:              oklch(0.87 0.05 355);
-  --input:               oklch(0.87 0.05 355);
-  --ring:                oklch(0.62 0.17 355);
+  --background:           #fff8f7;
+  --foreground:           #4a2d35;
+  --card:                 #fffdfc;
+  --card-foreground:      #4a2d35;
+  --popover:              #fffdfc;
+  --popover-foreground:   #4a2d35;
+  --muted:                #f5ecec;
+  --muted-foreground:     #80656c;
+  --primary:              #b84f69;
+  --primary-foreground:   #ffffff;
+  --secondary:            #f7e4e8;
+  --secondary-foreground: #5b3540;
+  --accent:               #efd0d8;
+  --accent-foreground:    #5b3540;
+  --border:               #e9cdd3;
+  --input:                #e9cdd3;
+  --ring:                 #b84f69;
 
-  --blossom-pink:        oklch(0.70 0.16 355);
-  --blossom-light:       oklch(0.90 0.07 355);
+  --blossom-pink:         #d77f94;
+  --blossom-light:        #f9e9ec;
+  --blossom-gold:         #b99a64;
+}
+
+/* ── Botanical Theme (세이지 그린) ── */
+[data-theme="botanical"] {
+  --background:           #f6f7f0;
+  --foreground:           #30382c;
+  --card:                 #fbfcf8;
+  --card-foreground:      #30382c;
+  --popover:              #fbfcf8;
+  --popover-foreground:   #30382c;
+  --muted:                #edf0e7;
+  --muted-foreground:     #687162;
+  --primary:              #68785b;
+  --primary-foreground:   #ffffff;
+  --secondary:            #e3e8dc;
+  --secondary-foreground: #35402f;
+  --accent:               #d8e0d0;
+  --accent-foreground:    #35402f;
+  --border:               #ccd5c5;
+  --input:                #ccd5c5;
+  --ring:                 #68785b;
+
+  --botanical-green:      #7f9270;
+  --botanical-light:      #e8ede2;
+  --botanical-gold:       #a99467;
+}
+
+/* ── Midnight Theme (네이비 골드) ── */
+[data-theme="midnight"] {
+  --background:           #171b29;
+  --foreground:           #f5f0e8;
+  --card:                 #202534;
+  --card-foreground:      #f5f0e8;
+  --popover:              #202534;
+  --popover-foreground:   #f5f0e8;
+  --muted:                #292e40;
+  --muted-foreground:     #b8b2a8;
+  --primary:              #c9a96e;
+  --primary-foreground:   #171b29;
+  --secondary:            #292e40;
+  --secondary-foreground: #f5f0e8;
+  --accent:               #343a4f;
+  --accent-foreground:    #f5f0e8;
+  --border:               #3c4357;
+  --input:                #3c4357;
+  --ring:                 #c9a96e;
+
+  --midnight-gold:        #c9a96e;
+  --midnight-navy:        #202534;
+  --midnight-light:       #f5f0e8;
+  --midnight-deep:        #0a0d16;
+  --midnight-haze:        #4a5b95;
 }
 
 /* Calendar: D-day 하이라이트 + 주말 색상 */
@@ -165,28 +261,15 @@
   letter-spacing: 0.35em;
 }
 
-/* 꽃잎 float 애니메이션 */
-@keyframes petal-fall {
-  0%   { transform: translateY(-10px) rotate(0deg)   translateX(0);   opacity: 0; }
-  10%  { opacity: 0.7; }
-  50%  { transform: translateY(50vh)  rotate(180deg)  translateX(40px); }
-  90%  { opacity: 0.5; }
-  100% { transform: translateY(100vh) rotate(360deg)  translateX(-20px); opacity: 0; }
+/* midnight·botanical 테마는 배경 자체가 앰비언트 연출(ThemeAmbience, 콘텐츠보다
+   뒤에 깔림)인데, EyebrowSection이 거의 모든 본문 섹션에서 불투명한
+   bg-background로 그 위를 그대로 덮어버려 midnight은 별이, botanical은 좌우
+   매듭 덩굴이 하나도 안 보였다 — 이 두 테마에서만 투명하게 둬서 뒤에 깔린
+   연출이 문단 사이 여백/가장자리에 비쳐 보이게 한다. */
+[data-theme="midnight"] section.bg-background,
+[data-theme="botanical"] section.bg-background {
+  background-color: transparent;
 }
-
-[data-theme="blossom"] .blossom-petal {
-  position: fixed;
-  pointer-events: none;
-  z-index: 50;
-  font-size: 1.1rem;
-  animation: petal-fall linear infinite;
-}
-[data-theme="blossom"] .blossom-petal:nth-child(1) { left:  8%;  animation-duration: 7s;  animation-delay: 0s; }
-[data-theme="blossom"] .blossom-petal:nth-child(2) { left: 22%;  animation-duration: 9s;  animation-delay: 1.5s; }
-[data-theme="blossom"] .blossom-petal:nth-child(3) { left: 40%;  animation-duration: 6s;  animation-delay: 3s; }
-[data-theme="blossom"] .blossom-petal:nth-child(4) { left: 60%;  animation-duration: 10s; animation-delay: 0.5s; }
-[data-theme="blossom"] .blossom-petal:nth-child(5) { left: 78%;  animation-duration: 8s;  animation-delay: 2s; }
-[data-theme="blossom"] .blossom-petal:nth-child(6) { left: 92%;  animation-duration: 7.5s;animation-delay: 4s; }
 
 .scrollbar-hide {
   scrollbar-width: none;
@@ -195,84 +278,3 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-/* Wavy Divider Animation */
-@keyframes wave {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-.animate-wave {
-  animation: wave 10s linear infinite;
-}
-
-/* Additional animations for parallax wave effect */
-@keyframes wave-2 {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-.animate-wave-2 {
-  animation: wave-2 15s linear infinite;
-}
-
-@keyframes wave-3 {
-  0% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-.animate-wave-3 {
-  animation: wave-3 8s linear infinite;
-}
-
-/* ── Not Found (404) page ── */
-@keyframes not-found-float {
-  0%, 100% { transform: translateY(0px) rotate(-1deg); }
-  50%       { transform: translateY(-14px) rotate(1deg); }
-}
-@keyframes not-found-fade-slide-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes not-found-ghost-pulse {
-  0%, 100% { opacity: 0.04; }
-  50%       { opacity: 0.08; }
-}
-@keyframes not-found-dot-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.not-found-float  { animation: not-found-float 6s ease-in-out infinite; }
-.not-found-ghost  { animation: not-found-ghost-pulse 5s ease-in-out infinite; }
-.not-found-dots   { animation: not-found-dot-fade-in 1.2s ease-out 0.2s both; }
-.not-found-fade-1 { animation: not-found-fade-slide-up 0.7s ease-out 0.10s both; }
-.not-found-fade-2 { animation: not-found-fade-slide-up 0.7s ease-out 0.25s both; }
-.not-found-fade-3 { animation: not-found-fade-slide-up 0.7s ease-out 0.40s both; }
-.not-found-fade-4 { animation: not-found-fade-slide-up 0.7s ease-out 0.60s both; }
-.not-found-fade-5 { animation: not-found-fade-slide-up 0.7s ease-out 0.75s both; }
-
-.not-found-btn {
-  position: relative;
-  overflow: hidden;
-  transition: color 0.35s ease;
-}
-.not-found-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--foreground);
-  transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.76, 0, 0.24, 1);
-}
-.not-found-btn:hover::before { transform: translateY(0); }
-.not-found-btn:hover          { color: var(--background); }
-.not-found-btn span           { position: relative; z-index: 1; }

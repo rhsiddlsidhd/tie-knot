@@ -1,22 +1,20 @@
 "use client";
 
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import {
-  TypographyH2,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/client/components/atoms";
-import { PRODUCT_CATEGORIES, SUB_CATEGORY_MAP, type ProductCategory } from "@/shared/constants";
+import { TypographyH2 } from "@/ui/components/atoms/typography";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/ui/components/atoms/carousel";
+import type { AvailableSubCategory } from "@/core/domain/product-category";
 import { SubCategoryNavItem } from "./SubCategoryNavItem";
 
-const categorizedSubCategories = PRODUCT_CATEGORIES.flatMap((category: ProductCategory) =>
-  SUB_CATEGORY_MAP[category].map((subCategory) => ({ category, subCategory })),
-);
+interface SubCategoryNavSectionProps {
+  availableSubCategories: readonly AvailableSubCategory[];
+}
 
-export function SubCategoryNavSection() {
+export function SubCategoryNavSection({
+  availableSubCategories,
+}: SubCategoryNavSectionProps) {
+  if (availableSubCategories.length === 0) return null;
+
   return (
     <section className="py-8">
       <div className="container mx-auto px-4">
@@ -29,9 +27,15 @@ export function SubCategoryNavSection() {
           plugins={[WheelGesturesPlugin()]}
         >
           <CarouselContent>
-            {categorizedSubCategories.map(({ category, subCategory }) => (
-              <CarouselItem key={`${category}-${subCategory}`} className="basis-auto">
-                <SubCategoryNavItem category={category} subCategory={subCategory} />
+            {availableSubCategories.map(({ category, subCategory }) => (
+              <CarouselItem
+                key={`${category}-${subCategory}`}
+                className="basis-auto"
+              >
+                <SubCategoryNavItem
+                  category={category}
+                  subCategory={subCategory}
+                />
               </CarouselItem>
             ))}
           </CarouselContent>

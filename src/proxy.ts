@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { decrypt } from "@/server/lib/jose";
-import { routes } from "@/shared/constants";
+import { decrypt } from "@/adapters/server/jose/decrypt";
+import { routes } from "@/core/domain/routes";
 
 /**
  * 특정 도메인 접속 시 권한 체크
  * Auth && User
  */
 
-export default async function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const tokenCookie = request.cookies.get("token");
 
@@ -16,7 +16,6 @@ export default async function proxy(request: NextRequest) {
     routes.myOrders.root,
     routes.profile,
     routes.payment.root,
-    routes.deliveryInfo,
   ];
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
   const isAdmin = pathname.startsWith("/admin");
@@ -67,6 +66,5 @@ export const config = {
     "/my-orders",
     "/my-profile",
     "/payment/:path*",
-    "/delivery-info",
   ],
 };

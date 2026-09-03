@@ -1,11 +1,11 @@
 "use client";
 
-import { DialogDescription, DialogHeader, DialogTitle, Card, TypographyLarge, TypographyMuted, TypographySmall, Badge } from "@/client/components/atoms";
+import { DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 import React from "react";
 
-import { ClipboardButton } from "@/client/components/molecules";
-import { useCopy } from "@/client/hooks";
-import { PhoneIcon } from "lucide-react";
+import { PersonValueCard } from "@/ui/components/organisms/PersonValueCard";
+import { useCopy } from "@/ui/hooks/useCopy";
 
 
 // Contact 타입을 컴포넌트 내에서 직접 정의하여 의존성 제거
@@ -15,9 +15,22 @@ interface Contact {
   phone: string;
 }
 
-const ViewContact = ({ payload }: { payload: Contact[] }) => {
+const ContactCard = ({ contact }: { contact: Contact }) => {
   const { isCopied, copyToClipboard } = useCopy();
 
+  return (
+    <PersonValueCard
+      relation={contact.relation}
+      name={contact.name}
+      value={contact.phone}
+      isCopied={isCopied}
+      onCopy={() => copyToClipboard(contact.phone)}
+      ariaLabel={`${contact.relation} ${contact.name}의 연락처`}
+    />
+  );
+};
+
+const ViewContact = ({ payload }: { payload: Contact[] }) => {
   if (!payload || payload.length === 0) {
     return (
       <div className="p-6 text-center">
@@ -34,40 +47,16 @@ const ViewContact = ({ payload }: { payload: Contact[] }) => {
 
   return (
     <div className="w-full">
-      <DialogHeader className="p-6">
-        <DialogTitle className="text-xl">마음 전하실 곳</DialogTitle>
+      <DialogHeader className="p-0">
+        <DialogTitle className="text-xl">연락처</DialogTitle>
         <DialogDescription>
           아래 연락처를 통해 축하의 마음을 전해보세요.
         </DialogDescription>
       </DialogHeader>
 
-      <div className="mt-2 space-y-3 p-6 pt-0">
+      <div className="mt-2 space-y-3 p-0">
         {payload.map((contact) => (
-          <Card key={contact.relation} className="p-4 shadow-sm transition-all hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div className="flex flex-col gap-1">
-                <Badge variant="secondary" className="w-fit font-normal text-[10px]">
-                  {contact.relation}
-                </Badge>
-                <TypographyLarge className="font-bold">{contact.name}</TypographyLarge>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="flex flex-col items-end gap-0.5">
-                  <div className="flex items-center gap-1.5 text-primary">
-                    <PhoneIcon className="size-3.5" />
-                    <TypographySmall className="font-mono text-sm font-semibold tracking-tight">
-                      {contact.phone}
-                    </TypographySmall>
-                  </div>
-                </div>
-                <ClipboardButton
-                  isCopied={isCopied}
-                  onCopy={() => copyToClipboard(contact.phone)}
-                />
-              </div>
-            </div>
-          </Card>
+          <ContactCard key={contact.relation} contact={contact} />
         ))}
       </div>
     </div>

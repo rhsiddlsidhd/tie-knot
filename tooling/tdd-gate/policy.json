@@ -1,0 +1,15 @@
+{
+  "$comment": "공통 TDD gate 강제 대상에서 제외할 소스 glob. 원본은 각 AGENTS.md 이며 이 파일은 사본이다.",
+  "exclude": [
+    "**/*.d.ts",
+    "**/type.ts",
+    "**/types.ts",
+    "**/_types/**",
+    "**/_constants/**",
+    "src/core/domain/**",
+    "src/ui/stores/app.store.ts",
+    "src/ui/stores/provider.tsx",
+    "src/ui/stores/use-app-store.ts",
+    "src/ui/context/*/provider.tsx"
+  ]
+}

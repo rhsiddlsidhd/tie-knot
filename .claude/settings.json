@@ -1,22 +1,36 @@
 {
   "hooks": {
-    "PreToolUse": [{
-      "matcher": "Write|Edit",
-      "hooks": [{
-        "type": "command",
-        "command": "node ${CLAUDE_PROJECT_DIR}/scripts/tdd-guard/adapters/claude.mjs pre-edit",
-        "timeout": 10,
-        "statusMessage": "공통 TDD proof 확인 중"
-      }]
-    }],
-    "PostToolUse": [
+    "PreToolUse": [
       {
-        "matcher": "Write|Edit",
+        "matcher": "Write|Edit|MultiEdit",
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PROJECT_DIR}/scripts/tdd-guard/adapters/claude.mjs post-edit",
-            "timeout": 10
+            "command": "node \"$CLAUDE_PROJECT_DIR/tooling/tdd-gate/hook.mjs\" pre",
+            "timeout": 180
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tooling/tdd-gate/hook.mjs\" post",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/tooling/tdd-gate/hook.mjs\" stop",
+            "timeout": 300
           }
         ]
       }

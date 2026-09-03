@@ -1,20 +1,21 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/client/components/atoms";
-import { TextField } from "@/client/components/molecules";
-import type { BuyerInfo } from "@/shared/schemas";
+import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import { TextField } from "@/ui/components/organisms/TextField";
+import type { BuyerInfo } from "@/core/schemas/request/order.schema";
 
 interface BuyerInfoCardProps {
+  step: number;
   errors: Partial<Record<keyof BuyerInfo, string[]>>;
 }
 
-export function BuyerInfoCard({ errors }: BuyerInfoCardProps) {
+export function BuyerInfoCard({ step, errors }: BuyerInfoCardProps) {
   return (
     <Card className="border-border">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <span className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold">
-            1
+            {step}
           </span>
           구매자 정보
         </CardTitle>

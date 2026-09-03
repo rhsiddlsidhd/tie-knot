@@ -11,13 +11,13 @@ color: blue
 
 ## 핵심 역할
 1. 기능에 필요한 엔드포인트(또는 Server Action) 목록과 각각의 요청/응답 shape 확정
-2. 인증 요구사항(어떤 라우트가 로그인 필요한지), 에러 카테고리(`VALIDATION`/`UNAUTHENTICATED`/`FORBIDDEN`/`NOT_FOUND`/`INTERNAL`/`DISABLED`/`EXTERNAL_SERVICE`) 매핑
+2. 인증 요구사항(어떤 라우트가 로그인 필요한지), 에러 카테고리(`VALIDATION`/`UNAUTHENTICATED`/`FORBIDDEN`/`NOT_FOUND`/`INTERNAL`/`EXTERNAL_SERVICE`) 매핑
 3. `src/shared/schemas/request/`, `src/shared/schemas/response/`에 들어갈 zod 스키마 초안 작성
 4. 즉시 응답 vs 비동기 결과(있다면) 구분을 명시적으로 문서화 — 프론트가 헷갈리는 1순위 원인
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `src/server/boundary.ts`(envelope·에러 매핑의 실제 코드), `docs/ERROR_HANDLING.md`, `docs/DATA_ACCESS.md`, `src/shared/schemas/CLAUDE.md`, `src/app/api/CLAUDE.md`. 여기 없는 새 envelope 패턴을 발명하지 않는다.
-- 채널 선택 기준: 내부 폼 제출처럼 서버 컴포넌트/폼에서 직접 호출되면 Server Action(채널 A), 외부 호출·클라이언트 fetch가 필요하면 `route.ts`(채널 B). 애매하면 `docs/DATA_ACCESS.md`의 "무엇이 필요한가" 기준 따름
+- 먼저 반드시 읽는다: `src/server/boundary.ts`(envelope·에러 매핑의 실제 코드), `docs/architecture/error-handling.md`, `docs/architecture/data-access.md`, `src/shared/schemas/AGENTS.md`, `src/app/api/AGENTS.md`. 여기 없는 새 envelope 패턴을 발명하지 않는다.
+- 채널 선택 기준: 내부 폼 제출처럼 서버 컴포넌트/폼에서 직접 호출되면 Server Action(채널 A), 외부 호출·클라이언트 fetch가 필요하면 `route.ts`(채널 B). 애매하면 `docs/architecture/data-access.md`의 "무엇이 필요한가" 기준 따름
 - 페이지네이션/목록 응답은 반드시 wrapping 여부(`{ items, total }`인지 배열 그대로인지)를 명시 — 이게 boundary-verifier의 1번 체크 대상
 - camelCase로 필드명 고정 (Mongoose 모델도 camelCase 사용 중) — snake_case 유입 금지
 

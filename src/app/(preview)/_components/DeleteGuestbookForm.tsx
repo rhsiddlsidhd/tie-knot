@@ -1,43 +1,53 @@
-"use client";
+import { Alert } from "@/ui/components/molecules/Alert";
+import { TextField } from "@/ui/components/organisms/TextField";
+import { Button } from "@/ui/components/atoms/button";
+import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
 
-import { useActionState, useEffect } from "react";
-import { useParams, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
+import type { APIResponse } from "@/core/domain/error";
+import { getFieldError } from "@/core/utils/error";
 
-import { deleteGuestbook } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
-import { hasFieldErrors } from "@/shared/utils";
-import { useGuestbookModalStore } from "@/client/store";
-import { DeleteGuestbookForm as PureDeleteGuestbookForm } from "@/client/components/organisms";
-export function DeleteGuestbookForm({ payload }: { payload: string }) {
-  const params = useParams();
-  const query = useSearchParams();
-  const closeModal = useGuestbookModalStore((state) => state.closeModal);
-  const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
-    FormData
-  >(deleteGuestbook, null);
+interface DeleteGuestbookFormProps {
+  guestbookId: string;
+  publicKey: string;
+  action: (formData: FormData) => void;
+  pending: boolean;
+  state: APIResponse<{ message: string }> | null;
+}
 
-  useEffect(() => {
-    if (!state) return;
-    if (state.success === true) {
-      toast(state.data.message);
-      closeModal();
-    } else {
-      if (!hasFieldErrors(state.error)) {
-        toast.error(state.error.message);
-      }
-    }
-  }, [state, closeModal]);
+export function DeleteGuestbookForm({
+  guestbookId,
+  publicKey,
+  action,
+  pending,
+  state,
+}: DeleteGuestbookFormProps) {
+  const passwordError = getFieldError(state, "password");
 
   return (
-    <PureDeleteGuestbookForm
-      guestbookId={payload}
-      coupleInfoId={params.id}
-      productId={query.get("product")}
-      action={action}
-      pending={pending}
-      state={state}
-    />
+    <form action={action} className="space-y-4">
+      <DialogHeader>
+        <input name="guestbookId" defaultValue={guestbookId} hidden />
+        <input name="publicKey" defaultValue={publicKey} hidden />
+        <DialogTitle>비밀번호 확인</DialogTitle>
+
+        <DialogDescription>
+          계속 진행하려면 비밀번호를 입력해주세요.
+        </DialogDescription>
+      </DialogHeader>
+
+      <TextField id="password" name="password" type="password">
+        비밀번호
+      </TextField>
+      {passwordError && <Alert type="error">{passwordError}</Alert>}
+
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="secondary">
+            취소
+          </Button>
+        </DialogClose>
+        <Button type="submit">{pending ? "삭제 중..." : "전송"}</Button>
+      </DialogFooter>
+    </form>
   );
 }

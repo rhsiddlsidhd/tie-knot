@@ -1,0 +1,13 @@
+{
+  "endpoint": "service:getAvailableSubCategoriesService",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "PASS",
+      "reason": "커밋 7620424의 생산자 src/services/product.ts:223-260을 01_api_contract.md §4.2 및 홈 소비 shape와 교차 대조했다. #1 외부 API wrapping 없이 서버 내부 Array<{category,subCategory}>를 반환한다. #2 반환 필드는 DB/도메인/UI와 동일한 camelCase다. #3 Route Handler/링크 경계가 아닌 Server Component 직접 호출 계약이다. #4 mutation 및 상태 전이가 없는 집계다. #5 홈 RSC가 소비할 유일한 신규 서버 서비스이며 신규 외부 endpoint는 없다. #6 aggregate 완료 뒤 최종 pair 배열을 반환하므로 비동기 작업 결과 혼동이 없다. #7 optional category는 match와 taxonomy 순회 범위를 함께 좁히고 결과 없음은 []다. $match는 deletedAt:null,status:active, $group은 category/subCategory pair 중복 제거, 반환은 PRODUCT_CATEGORIES→SUB_CATEGORY_MAP 순회 교집합이라 중복·레거시·잘못 연결된 pair를 제외하고 코드 순서를 보장한다. 구현자 통합 테스트는 inactive, soldOut, soft-delete, 중복, 레거시, 잘못 연결된 pair 및 category 인자를 포함해 PASS 보고됐다.",
+      "at": "2026-08-27T05:34:53Z"
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false
+}

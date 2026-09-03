@@ -1,17 +1,11 @@
-import { TypographyH1, TypographyMuted } from "@/client/components/atoms";
-import { ProductCatalog } from "../_components";
-import { getAllProductsService } from "@/server/services";
-import { isProductCategory, isSubCategory } from "@/shared/utils";
-import { productCategoryLabels, SubCategory } from "@/shared/constants";
-import { notFound } from "next/navigation";
+export const dynamic = "force-dynamic";
 
-// searchParams.subCategory → 필터 초기값 계산. 어떤 입력에도 throw하지 않는다(무효/부재 → "all").
-function resolveInitialSubCategory(
-  subCategory: string | string[] | undefined,
-): SubCategory | "all" {
-  if (typeof subCategory !== "string") return "all";
-  return isSubCategory(subCategory) ? subCategory : "all";
-}
+import { ProductCatalogTemplate } from "@/app/(main)/(products)/products/[category]/_components/ProductCatalogTemplate";
+import { getPublicProductsService } from "@/services/product";
+import { getAvailableSubCategories, isProductCategory } from "@/core/utils/category";
+import { productCategoryLabels } from "@/core/domain/product-category";
+import { notFound } from "next/navigation";
+import { resolveInitialSubCategory } from "@/app/(main)/(products)/products/[category]/_utils/resolveInitialSubCategory";
 
 export default async function ProductsPage({
   params,
@@ -27,34 +21,22 @@ export default async function ProductsPage({
     notFound();
   }
 
+  const products = await getPublicProductsService(category);
+  const availableSubCategories = getAvailableSubCategories(category, products);
   const { subCategory } = await searchParams;
-  const initialSubCategory = resolveInitialSubCategory(subCategory);
+  const initialSubCategory = resolveInitialSubCategory(
+    subCategory,
+    availableSubCategories,
+  );
 
-  const products = await getAllProductsService(category);
   const currentCategoryLabel = productCategoryLabels[category];
 
   return (
-    <main className="bg-background min-h-screen">
-      {/* <Header /> */}
-      <div className="container mx-auto px-4 pt-24 pb-16">
-        <div className="mx-auto max-w-7xl">
-          {/* Page Header */}
-          <div className="mb-12 text-center">
-            <TypographyH1 className="mb-4 text-4xl font-bold text-balance md:text-5xl">
-              {currentCategoryLabel}
-            </TypographyH1>
-            <TypographyMuted>
-              당신의 스타일에 맞는 완벽한 {currentCategoryLabel} 상품을
-              찾아보세요
-            </TypographyMuted>
-          </div>
-          <ProductCatalog
-            products={products}
-            category={category}
-            initialSubCategory={initialSubCategory}
-          />
-        </div>
-      </div>
-    </main>
+    <ProductCatalogTemplate
+      products={products}
+      category={category}
+      categoryLabel={currentCategoryLabel}
+      initialSubCategory={initialSubCategory}
+    />
   );
 }

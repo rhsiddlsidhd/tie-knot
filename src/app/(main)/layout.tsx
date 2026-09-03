@@ -1,8 +1,9 @@
-import { Header, Footer } from "./_components";
+import { AnnouncementBar } from "@/app/(main)/_components/AnnouncementBar";
+import { Footer } from "@/app/(main)/_components/Footer";
+import { Header } from "@/app/(main)/_components/Header";
 import React from "react";
 import { Toaster } from "sonner";
-import { AnnouncementBar } from "@/client/components/molecules";
-import announcementData from "@/data/announcement.json";
+import announcementData from "@/core/content/announcement.json";
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const activeAnnouncements = announcementData.filter((item) => item.isActive);

@@ -1,30 +1,25 @@
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
-import { HomeTemplate } from "./_components";
-import {
-  getFeaturedTemplatesService,
-  getPopularProductsService,
-  getProductService,
-  Product,
-} from "@/server/services";
-import { POPULAR_PRODUCTS_LIMIT } from "@/shared/constants";
+import { HomeTemplate } from "@/app/(main)/_components/HomeTemplate";
+import type { Product } from "@/core/domain/product";
+import { getAvailableSubCategoriesService, getPopularProductsService } from "@/services/product";
+import type { AvailableSubCategory } from "@/core/domain/product-category";
+import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
 
 const page = async () => {
-  const previewProductId = process.env.MAIN_PREVIEW_PRODUCT_ID;
-  const infoId = process.env.MAIN_PREVIEW_INFO_ID;
-
-  const [product, invitation, popularProducts] = await Promise.all([
-    previewProductId ? getProductService(previewProductId) : null,
-    getFeaturedTemplatesService("invitation").catch(() => [] as Product[]),
-    getPopularProductsService(POPULAR_PRODUCTS_LIMIT).catch(() => [] as Product[]),
+  const [popularProducts, availableSubCategories] = await Promise.all([
+    getPopularProductsService(POPULAR_PRODUCTS_LIMIT).catch(
+      () => [] as Product[],
+    ),
+    getAvailableSubCategoriesService().catch(
+      () => [] as AvailableSubCategory[],
+    ),
   ]);
 
   return (
     <HomeTemplate
-      invitation={invitation}
-      product={product}
-      infoId={infoId}
       popularProducts={popularProducts}
+      availableSubCategories={availableSubCategories}
     />
   );
 };

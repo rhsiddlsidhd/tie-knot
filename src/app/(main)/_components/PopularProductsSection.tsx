@@ -1,17 +1,11 @@
 "use client";
 
 import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
-import {
-  TypographyH2,
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/client/components/atoms";
-import { ProductCard } from "@/client/components/organisms";
-import { Product } from "@/server/services";
-import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/shared/constants";
+import { TypographyH2 } from "@/ui/components/atoms/typography";
+import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/ui/components/atoms/carousel";
+import { ProductCard } from "@/ui/components/molecules/ProductCard";
+import type { Product } from "@/core/domain/product";
+import { POPULAR_PRODUCTS_MIN_ITEMS } from "@/core/domain/product";
 
 interface PopularProductsSectionProps {
   products: Product[];
@@ -35,7 +29,7 @@ export function PopularProductsSection({ products }: PopularProductsSectionProps
             {products.map((product, index) => (
               <CarouselItem
                 key={product._id}
-                className="xs:w-[40%] w-[45%] basis-auto sm:w-56 md:w-60 lg:w-64"
+                className="w-[61.8%] basis-auto sm:w-[38.2%] md:w-[23.6%]"
               >
                 <ProductCard product={product} rank={index + 1} />
               </CarouselItem>

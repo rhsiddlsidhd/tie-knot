@@ -1,7 +1,8 @@
-import { NextRequest } from "next/server";
-import { APIRouteResponse, routeSuccess, routeError } from "@/server/boundary";
-import { getAllProductsService } from "@/server/services";
-import { ProductResponse } from "@/shared/schemas";
+import type { NextRequest } from "next/server";
+import type { APIRouteResponse} from "@/boundary";
+import { routeSuccess, routeError } from "@/boundary";
+import { getPublicProductsService } from "@/services/product";
+import type { ProductResponse } from "@/core/schemas/response/product.schema";
 export const GET = async (
   request: NextRequest,
 ): Promise<APIRouteResponse<ProductResponse[]>> => {
@@ -9,7 +10,7 @@ export const GET = async (
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category") || undefined;
 
-    const products = await getAllProductsService(category);
+    const products = await getPublicProductsService(category);
 
     return routeSuccess(products);
   } catch (error) {

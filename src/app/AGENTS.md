@@ -1,0 +1,79 @@
+# AGENTS.md — src/app/
+
+> Last updated: 2026-09-02
+
+Next.js App Router 진입점 — 공유 `layout.tsx`/독립 `error.tsx` 근거가 있는 라우트를 그룹(`(folder)`)으로 묶어 섹션을 나눈다(그룹 목록·존재 근거는 아래 "라우트 그룹 구성" 참고). 괄호 폴더는 URL에 영향 없는 조직화 단위다. Route Handler(API) 세부 규칙은 `src/app/api/AGENTS.md`에서 관리한다.
+
+## Key Files
+
+`global-error.tsx` — root layout이 렌더 중 던지는 에러의 마지막 안전망이다. `error.tsx`는 route segment 하위만 커버해서 root layout(`layout.tsx`) 자체 에러는 못 잡는다. 없이 배포하지 않는다(필수).
+
+root layout을 통째로 대체하기 때문에 생기는 제약:
+
+- **Provider 소멸**: root layout 자체엔 provider가 없지만 `(main)/layout.tsx`의 Provider/Toaster까지 같이 사라진다 — 렌더하는 컴포넌트는 provider 없이도 동작하는 self-contained 컴포넌트여야 한다(예: `organisms/ErrorFallback.tsx` — atoms만 조합, context 의존 없음).
+- **CSS 재import 필요**: root layout이 담당하던 `globals.css` import도 같이 대체된다 — `global-error.tsx` 안에서 별도로 다시 import하지 않으면 스타일이 안 먹는다.
+- **metadata 미지원**: `metadata`/`generateMetadata` export가 안 먹힌다 — Client Component 강제라서다, 필요하면 React `<title>` 컴포넌트로 대체한다(공식문서).
+
+## 라우트 그룹 구성
+
+라우트 그룹은 공유 `layout.tsx` 또는 독립 `error.tsx` 근거가 있을 때만 만든다 — 조직 편의만으로 만들지 않는다. "내 것" 계열 그룹(`(my-order)`, `(my-profile)` 등)은 그룹명과 폴더명을 동일하게 맞춘다 — URL엔 영향 없지만, 이름이 다르면 그 라우트를 찾을 때마다 "그룹은 my-X인데 폴더는 왜 X야"라는 탐색 비용이 생긴다.
+
+## Structure
+
+- 라우트 전용 부속물(타입/순수함수/상수/서브 UI/컨테이너/훅)은 Next 공식 private 폴더(`_folder`)로 분리한다 — **필요한 것만** 생성, 빈 폴더 강제 금지. 목표 형태(`(main)/(checkout)/payment/` 기준):
+  ```
+  (main)/(checkout)/payment/
+  ├── page.tsx              # 조립(JSX)만 — 아래 6종에서 import
+  ├── _components/          # 라우트 전용 서브 UI
+  │   ├── BuyerInfoCard.tsx
+  │   ├── TermsAgreementCard.tsx
+  │   ├── CheckoutSubmitBar.tsx
+  │   └── ...               # 라우트 전용 서브 UI가 늘어날 때마다 추가
+  ├── _containers/          # 라우트 전용 client 도메인 로직 + 순수 UI 조립
+  │   └── {Name}Container.tsx
+  ├── _types/               # 라우트 전용 타입/interface
+  ├── _utils/               # 라우트 전용 순수함수
+  ├── _constants/           # 라우트 전용 상수
+  └── _hooks/               # 라우트 전용 훅
+  ```
+- 라우트 전용 client 컴포넌트가 다음 중 하나라도 포함하면 `_components/`가 아니라 동급의 `_containers/{Name}.tsx`에 둔다:
+  - `useSWR`/`useSWRInfinite` + `fetcher` 데이터 페칭
+  - `useActionState` 또는 `startTransition(() => action(...))` Server Action 결합
+  - zustand 스토어 결과로 `toast`/`router.replace` 등을 실행하는 도메인 상태 파생 + side effect
+  - 자기 데이터를 직접 fetch하는 self-fetching Server Component(Suspense 스트리밍용) — client 여부와 무관하게 동일하게 `_containers/`에 둔다, 데이터 소유 여부가 기준이지 client/server가 기준이 아니다
+- self-fetching Server Component 컨테이너는 `page.tsx`와 동일하게 얇게 유지한다 — organism을 배치(grid/flex/spacing, 목록 매핑 등)하는 코드가 하나라도 있으면 그 부분을 별도 순수 컴포넌트(`_components/` 또는 공용 티어)로 추출한다. 위임 하나(`return <XGrid data={data} />` 형태)만 남기면 렌더 없이 직접 호출 + 반환 타입·props 확인만으로 검증 가능해진다 — 안에서 직접 조립하면 page.tsx가 겪던 Unit/Component/Integration 3갈래 애매함이 그대로 재발한다. client 훅 기반 컨테이너(`useSWR` 등)는 이 규칙 대상이 아니다 — Rules of Hooks상 애초에 렌더 없이 호출할 수 없어 조립 코드 유무와 무관하게 항상 Component다.
+- 로컬 UI 상태(`useState` open/close, controlled input), 서버와 무관한 client 계산/타이머(`useMemo`, `setInterval` 기반 훅), mutation 없는 단순 페이지 이동(`<Link>`, `Button asChild`)만 다루면 컨테이너가 아니므로 `_components/`에 둔다.
+- 위 조건 중 Server Action 결합은 ESLint가 강제한다 — `_components/` 아래 제품 파일이 `@/actions/*`를 값으로 import하면 `@typescript-eslint/no-restricted-imports`가 막는다(타입 전용 import와 테스트는 제외). SWR 페칭과 zustand 파생 side effect는 정적으로 판정할 수 없어 규칙 대상이 아니며 리뷰가 잡는다. `layout.tsx` 셸 조각은 도메인 로직을 가져도 되므로(아래 Critical Conventions) 예외가 필요하면 사유를 적은 `eslint-disable-next-line`을 그 줄에 붙인다 — `(main)/_components/`는 그룹 셸과 홈 라우트를 겸해 폴더 단위로 분리할 수 없어서다.
+- 2개 이상 라우트가 공유하는 순수함수/UI/훅/타입/상수를 라우트 폴더 안에 남겨두지 않는다 — 순수함수는 `src/core/utils/`, UI는 `src/ui/components/`, 훅은 `src/ui/hooks/`, 타입은 `src/core/types/`, 상수는 `src/core/constants/`로 승격한다(각 폴더 AGENTS.md 참고).
+- 반대로 소비자가 한 라우트 하위에만 있으면 `_utils`/`_hooks`/`_types`/`_constants`에 그대로 둔다 — 그 라우트 안에서 소비자가 여럿이어도 마찬가지다. 승격 기준은 재사용 **가능성**이 아니라 **2개 이상 라우트가 실제로 공유하는가**다. 순수하다는 이유만으로 `core/`에 올리면 공용 표면만 넓어지고, 그 함수가 원래 어느 라우트 것이었는지 추적할 단서도 사라진다.
+
+## Critical Conventions
+
+- `layout.tsx`는 그 라우트 그룹의 페이지 셸(shell)을 구성한다 — 특정 페이지 하나에만 필요한 데이터 페칭/비즈니스 로직을 여기 두지 않는다(그건 `page.tsx`/`_hooks` 소관).
+  - 하위 라우트그룹으로 갈수록 셸이 누적된다(예: `(main)/layout.tsx`가 Header+공지바 셸을 깔면, 그 안의 `(admin)/admin/layout.tsx`가 사이드바 셸을 한 겹 더 얹음).
+  - 셸 전용 조각(`Header`/`AuthButtons`/`UserAccountNav`/`Footer`/`GuestbookModal`처럼 그 layout.tsx 하나만 쓰는 것)은 그 layout이 속한 라우트 그룹의 `_components/`에 둔다 — Zustand 구독 등 도메인 로직이 있어도 된다(라우트 그룹이 사실상의 소유자이므로).
+  - 여러 layout이 겹치는 셸 조각(예: `SidebarLayout`이 admin/my-order/my-profile 3곳에서 쓰이던 것)은 공용 컴포넌트로 승격하지 않고 각 `layout.tsx`가 직접 정의한다 — 지금은 내용이 같아 보여도 각 레이어가 독립적으로 진화할 수 있어서다.
+- 루트 `app/layout.tsx`만 metadata(SEO/OG/Twitter)·전역 CSS import·환경변수 검증을 담당한다 — 하위 `layout.tsx`에서 이걸 중복 정의하지 않는다.
+- `error.tsx`와 `not-found.tsx`를 혼용하지 않는다 — `error.tsx`는 fetch 실패/예외 경계, `not-found.tsx`는 존재하지 않는 리소스 전용이다. 현재는 라우트 개별이 아니라 **라우트 그룹 단위**로 배치돼있다(`(main)/error.tsx`, `(main)/(products)/error.tsx`, `(admin)/error.tsx`, 루트 `not-found.tsx`) — 그룹 내 여러 라우트가 에러 경계를 공유해도 되면 그룹 레벨, 특정 라우트만 다른 처리가 필요하면 그 라우트에 개별 배치한다.
+- `loading.tsx`는 그 세그먼트의 `page.tsx` + 중첩 `layout.tsx` + `not-found.tsx`를 Suspense로 감싸는 fallback UI다 — 같은 세그먼트의 `layout.tsx`/`template.tsx`/`error.tsx`는 감싸지 않는다(공식문서: layout이 `cookies()`/`headers()` 같은 uncached 데이터를 쓰면 그 부분엔 fallback이 안 먹고 layout 렌더가 끝날 때까지 네비게이션이 블록된다). params를 받지 않아 데이터 의존 분기가 구조적으로 불가능하다 — 순수 정적 skeleton/spinner만 둔다. 실제로 스트리밍이 필요한 세그먼트에만 개별 배치한다(`error.tsx`처럼 그룹 단위로 묶지 않는다) — 현재 `(my-order)/my-orders/`, `(products)/products/[category]/`.
+- `page.tsx`에 interface/순수함수/상수/서브 UI 컴포넌트/컨테이너/훅을 인라인으로 쌓지 않는다 — `_components`/`_containers`/`_types`/`_utils`/`_constants`/`_hooks`로 분리한다(새 라우트부터 적용, Gotchas 참고).
+- **`page.tsx`는 Pages 단계만 담당한다** — 실제 데이터를 fetch/조립해서 Template(`src/ui/components/templates/{Name}Template.tsx` 또는 그 라우트 `_components/{Name}Template.tsx`)에 props로 넘기는 것까지만 한다. organism을 배치(grid/flex/spacing 등)하는 코드가 하나라도 있으면 Template 추출이 필수다 — organism 딱 1개를 배치 코드 없이 그대로 렌더하는 경우에 한해서만 `page.tsx`가 직접 렌더할 수 있다. Template은 `layout.tsx`(라우트 그룹 셸)와 다른 층위다 — Template은 항상 그 layout.tsx 안에 중첩된다. (Template 자격 조건 자체 — 순수성 등 — 은 `src/ui/components/templates/AGENTS.md` 소관.)
+- self-fetching 자식(자기 데이터를 직접 fetch하는 Server Component, Suspense 스트리밍)이 필요해도 Template 순수성 규칙에 예외를 두지 않는다 — 그 자식은 `_containers/`에 두고, Template은 `children: ReactNode` prop으로만 받아 배치한다(`<Template ...><ReviewsContainer productId={id} /></Template>`). Template은 `children`이 뭘 하는지 모른 채 자리만 내주므로 데이터 페칭·도메인 로직을 여전히 두지 않는 것과 같다.
+- `_components`/`_containers`/`_types`/`_utils`/`_constants`/`_hooks`를 폴더 형태 외의 방식으로 만들지 않는다 — 폴더 안 파일이 1개뿐이어도 예외 없이 이 형태를 유지한다. 이 폴더들에 배럴(`index.ts`/`index.tsx`)을 두지 않으며, `page.tsx`/`layout.tsx`는 필요한 파일을 직접 지정해 import한다(`./_components/BuyerInfoCard`) — 근거는 `docs/decisions/0004-explicit-module-paths-over-barrels.md`. 그 라우트 밖에서 이 폴더에 뭐가 있는지는 폴더 구조 자체가 알려준다.
+- **`page.tsx`/`layout.tsx`/`loading.tsx`/`error.tsx`/`not-found.tsx`/`template.tsx`/`default.tsx`는 `export default`를 쓴다** — Next.js가 강제하는 파일 컨벤션이다. `route.ts`는 반대로 `GET`/`POST` 등 메서드명 named export를 강제한다(`api/AGENTS.md`). `proxy.ts`는 default와 named `proxy`를 모두 지원하므로 강제 대상이 아니며 `src/` 공통 규칙대로 named export를 쓴다.
+
+## References
+
+즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.
+
+| 문서        | 위치                              | 트리거                                  | 요약                     |
+| ----------- | ---------------------------------- | ----------------------------------------- | ------------------------ |
+| `AGENTS.md` | `src/core/constants/`            | 라우트 경로 문자열(`routes.ts`) 상수화, 승격된 상수 확인 시 | 상수 컨벤션  |
+| `AGENTS.md` | `src/core/utils/`                | 승격된 순수함수 확인 시                   | 순수함수 컨벤션          |
+| `AGENTS.md` | `src/ui/hooks/`                | 승격된 훅 확인 시                         | 훅 컨벤션                |
+| `AGENTS.md` | `src/core/types/`                | 승격된 타입 확인 시                       | 타입 컨벤션              |
+| `AGENTS.md` | `src/ui/components/`           | 컴포넌트 조직 구조 확인 시                | Atomic Design 조직 구조  |
+| `AGENTS.md` | `src/ui/components/templates/` | Templates(페이지 전체 배치) 세부 규칙 확인 시 | template 컨벤션      |
+| `AGENTS.md` | `src/actions/`              | Server Actions 확인 시                    | Server Action 컨벤션     |
+| `AGENTS.md` | `src/`                      | 응답/에러 계약(Route Handler) 확인 시     | 성공/에러 응답 빌더 계약 |
+| `AGENTS.md` | `src/ui/`                      | 응답/에러 계약(Client fetch) 확인 시      | fetcher 계약             |

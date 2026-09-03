@@ -1,21 +1,24 @@
 import { Eye, Heart, ShoppingCart } from "lucide-react";
-import { Badge, TypographyMuted, TypographySmall } from "@/client/components/atoms";
-import { Product } from "@/server/services";
-import { CloudImage } from "@/client/components/molecules";
-import { ProductTableRowAction } from "./ProductTableRowAction";
-import { ProductTableRowSelect } from "./ProductTableRowSelect";
-import { productCategoryLabels, subCategoryLabels, ProductCategory, SubCategory } from "@/shared/constants";
+import { AppImage } from "@/ui/components/atoms/app-image";
+import { Badge } from "@/ui/components/atoms/badge";
+import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import type { Product } from "@/core/domain/product";
+import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
+import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
+import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 
 export interface ProductTableRowProps {
   product: Product;
+  view?: "active" | "trash";
 }
 
-export function ProductTableRow({ product }: ProductTableRowProps) {
+export function ProductTableRow({ product, view = "active" }: ProductTableRowProps) {
   return (
     <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-4 py-3">
         <div className="relative h-16 w-16 overflow-hidden rounded">
-          <CloudImage
+          <AppImage
             src={product.thumbnail}
             sizes="128px"
             alt={`${product.title} 이미지`}
@@ -60,7 +63,20 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
         </div>
       </td>
       <td className="px-4 py-3">
-        <ProductTableRowSelect product={product} />
+        {view === "trash" ? (
+          <div className="flex flex-col gap-1">
+            <Badge variant="outline" className="w-fit">
+              삭제됨
+            </Badge>
+            {product.deletedAt && (
+              <TypographyMuted>
+                {new Date(product.deletedAt).toLocaleDateString("ko-KR")}
+              </TypographyMuted>
+            )}
+          </div>
+        ) : (
+          <ProductTableRowSelect product={product} />
+        )}
       </td>
       <td className="px-4 py-3">
         <div className="text-muted-foreground flex flex-col gap-1 text-sm">
@@ -82,7 +98,7 @@ export function ProductTableRow({ product }: ProductTableRowProps) {
         <span className="font-mono text-sm">{product.priority}</span>
       </td>
       <td className="px-4 py-3">
-        <ProductTableRowAction product={product} />
+        <ProductTableRowAction product={product} view={view} />
       </td>
     </tr>
   );

@@ -1,29 +1,23 @@
 "use client";
 
-import { ProductEditDialog } from "@/app/(admin)/admin/products/_components";
-import { AdminModalState, useAdminModalStore } from "@/client/store";
-import React from "react";
+import { ProductEditDialog } from "@/app/(admin)/admin/products/_containers/ProductEditDialog";
+import type { AdminModalPropsMap, AdminModalType } from "@/ui/stores/use-app-store";
+import { useAdminModalStore } from "@/ui/stores/use-app-store";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/client/components/atoms";
-import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_components";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog";
 
-const modalPayload: Record<
-  Exclude<AdminModalState["type"], null>,
-  {
-    title: string;
-    des: string;
-    component: React.ComponentType<any>;
-  }
+const modalCopy: Record<
+  AdminModalType,
+  { title: string; des: string }
 > = {
   "EDIT-PRODUCT": {
     title: "상품 수정",
     des: "상품 정보를 수정합니다.",
-    component: ProductEditDialog,
   },
   "EDIT-PREMIUMFEATURE": {
     title: "프리미엄 기능 수정",
     des: "프리미엄 기능 정보를 수정합니다.",
-    component: PremiumFeatureDialog,
   },
 };
 
@@ -35,18 +29,23 @@ const AdminModal = () => {
 
   if (!type) return null;
 
-  const payload = modalPayload[type];
-  const Component = payload.component;
+  const copy = modalCopy[type];
 
   return (
     <Dialog open={open} onOpenChange={close}>
       <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{payload.title}</DialogTitle>
-          <DialogDescription>{payload.des}</DialogDescription>
+          <DialogTitle>{copy.title}</DialogTitle>
+          <DialogDescription>{copy.des}</DialogDescription>
         </DialogHeader>
-        {/* form */}
-        <Component {...props} />
+        {type === "EDIT-PRODUCT" && (
+          <ProductEditDialog {...(props as AdminModalPropsMap["EDIT-PRODUCT"])} />
+        )}
+        {type === "EDIT-PREMIUMFEATURE" && (
+          <PremiumFeatureDialog
+            {...(props as AdminModalPropsMap["EDIT-PREMIUMFEATURE"])}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -1,0 +1,68 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import type * as SidebarModule from "@/ui/components/atoms/sidebar";
+
+const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
+
+vi.mock("@/ui/hooks/useAuth", () => ({
+  useAuth: useAuthMock,
+}));
+vi.mock("@/ui/components/atoms/sidebar", async (importOriginal) => {
+  const actual = await importOriginal<typeof SidebarModule>();
+  const Passthrough = ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  );
+  return {
+    ...actual,
+    SidebarProvider: Passthrough,
+    Sidebar: Passthrough,
+    SidebarContent: Passthrough,
+    SidebarFooter: Passthrough,
+  };
+});
+vi.mock("@/ui/components/organisms/SidebarNavItem", () => ({
+  SidebarNavItem: (): null => null,
+}));
+vi.mock("@/ui/components/organisms/SidebarToggle", () => ({
+  SidebarToggle: (): null => null,
+}));
+vi.mock("@/app/(admin)/admin/_components/AdminModal", () => ({
+  AdminModal: (): null => null,
+}));
+
+import AdminLayout from "./layout";
+
+describe("(admin) AdminLayout", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("세션의 email/role을 사이드바 푸터에 렌더한다", () => {
+    useAuthMock.mockReturnValue({
+      session: { role: "ADMIN", email: "admin@b.com", userId: "user-1" },
+      isLoading: false,
+    });
+
+    render(<AdminLayout>children</AdminLayout>);
+
+    expect(screen.getByText("admin@b.com")).toBeInTheDocument();
+    expect(screen.getByText("관리자 계정")).toBeInTheDocument();
+  });
+
+  it("세션이 없으면 일반 계정으로 표시한다", () => {
+    useAuthMock.mockReturnValue({ session: null, isLoading: false });
+
+    render(<AdminLayout>children</AdminLayout>);
+
+    expect(screen.getByText("일반 계정")).toBeInTheDocument();
+  });
+
+  it("로딩 중이면 관리자/일반 계정 어느 쪽도 표시하지 않는다", () => {
+    useAuthMock.mockReturnValue({ session: null, isLoading: true });
+
+    render(<AdminLayout>children</AdminLayout>);
+
+    expect(screen.queryByText("관리자 계정")).not.toBeInTheDocument();
+    expect(screen.queryByText("일반 계정")).not.toBeInTheDocument();
+  });
+});

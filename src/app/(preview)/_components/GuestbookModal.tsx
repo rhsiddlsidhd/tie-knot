@@ -1,14 +1,15 @@
 "use client";
 
-import { GuestbookModalType, useGuestbookModalStore } from "@/client/store";
+import type { GuestbookModalType } from "@/ui/stores/use-app-store";
+import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { Dialog, DialogContent } from "@/client/components/atoms";
+import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
 import { ViewContact } from "./ViewContact";
-import { cn } from "@/client/lib/cn";
+import { cn } from "@/core/utils/cn";
 import clsx from "clsx";
-import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
-import { CreateGuestbookForm } from "./CreateGuestbookForm";
+import { CreateGuestbookForm } from "../_containers/CreateGuestbookForm";
+import { DeleteGuestbookForm } from "../_containers/DeleteGuestbookForm";
 
 const GUESTBOOK: Record<
   GuestbookModalType,
@@ -76,7 +77,7 @@ const GuestbookModal = () => {
           }}
           className={clsx(
             `fixed inset-0 z-50 flex transform-gpu items-center justify-center bg-black/60 p-4 backdrop-blur-sm`,
-            type === "VIEW_CONTACT" && `bg-purple-300/50`,
+            type === "VIEW_CONTACT" && `bg-foreground/40`,
           )}
           onClick={(e: React.MouseEvent<HTMLDivElement>) => {
             if (e.target === e.currentTarget) {
@@ -93,7 +94,7 @@ const GuestbookModal = () => {
               className={cn(
                 `sm:max-w-106.25`,
                 type === "VIEW_CONTACT" &&
-                  "rounded-none border-2 border-r-0 border-l-0 border-dotted border-gray-500/50 bg-transparent shadow-none",
+                  "border-foreground/30 rounded-none border-2 border-r-0 border-l-0 border-dotted bg-transparent shadow-none",
               )}
             >
               <Component payload={payload} />

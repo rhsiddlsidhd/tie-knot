@@ -1,12 +1,12 @@
-export const revalidate = 3600;
+export const dynamic = "force-dynamic";
 
-import React from "react";
-import { verifySession } from "@/server/services";
+import { verifySession } from "@/services/auth";
+import { AdminSettingsTemplate } from "@/app/(admin)/admin/settings/_components/AdminSettingsTemplate";
 
-const page = async () => {
+const SettingsPage = async () => {
   await verifySession("ADMIN");
 
-  return <div></div>;
+  return <AdminSettingsTemplate />;
 };
 
-export default page;
+export default SettingsPage;

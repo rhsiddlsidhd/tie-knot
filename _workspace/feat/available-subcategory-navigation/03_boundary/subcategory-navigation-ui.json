@@ -1,0 +1,19 @@
+{
+  "endpoint": "home-and-product-subcategory-navigation",
+  "rounds": [
+    {
+      "round": 1,
+      "verdict": "FIX",
+      "reason": "초기 API 계약 문구가 SWR 재검증 후 사라진 선택값을 all로 자동 보정하도록 요구했으나, 승인된 요구사항과 UI 계약은 최초 RSC 딥링크 폴백 및 현재 data 기반 옵션 파생까지만 범위로 정했다. 구현 결함이 아니라 설계 문서 간 불일치로 확인되어 API 계약을 승인 범위에 맞게 수정했다.",
+      "at": "2026-08-27T05:40:00Z"
+    },
+    {
+      "round": 2,
+      "verdict": "PASS",
+      "reason": "커밋 cffc7ab의 홈 생산자 page.tsx와 소비자 HomeTemplate/SubCategoryNavSection, 상품 생산자 getPublicProductsService 및 page.tsx와 소비자 ProductFilters/resolveInitialSubCategory를 교차 검증했다. 홈은 Array<{category,subCategory}>를 그대로 전달하고 빈 배열이면 섹션 전체를 숨기며 라벨 Link 경로는 /products/{category}?subCategory={subCategory}와 일치한다. 상품 페이지는 동일 공개 상품 배열에서 코드 taxonomy 순서의 available 목록을 파생해 최초 query membership을 검증하고, 다른 카테고리·상품 없음·레거시·배열 query를 all로 폴백한다. ProductFilters도 같은 순수 함수로 현재 공개 data의 옵션만 렌더한다. 필드명은 camelCase이고 optional query와 빈 배열 처리가 계약과 일치하며 신규 endpoint나 비동기 결과 채널은 없다. 자동 선택 보정은 수정된 API 계약과 UI 계약에서 명시적 비범위다. 구현자 검증 보고: tsc, 변경 파일 eslint, unit 28, component 30, 홈 RSC integration 3 PASS.",
+      "at": "2026-08-27T05:42:00Z"
+    }
+  ],
+  "redoCount": 0,
+  "forcedPass": false
+}

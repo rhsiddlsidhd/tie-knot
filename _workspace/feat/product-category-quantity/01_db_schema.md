@@ -42,7 +42,7 @@ export const SUB_CATEGORY_MAP = {
 } as const satisfies Record<ProductCategory, readonly string[]>;
 ```
 
-`productCategoryLabels`(5개), `subCategoryLabels`(16개) 전부 채운다. **라벨을 빠뜨리면 조용히 깨진다** — `isProductCategory`/`isSubCategory`가 `Object.keys(labels)` 기반이라(`category.ts:21-27`) 라벨 없는 카테고리는 "존재하지 않는 카테고리"로 판정된다. `products/[category]` 라우트의 `generateStaticParams()`/카테고리 검증이 이 함수를 쓴다(`src/shared/utils/CLAUDE.md` Gotchas). `getCategoryOptions()`도 `productCategoryLabels`를 순회하므로 라벨이 곧 어드민 셀렉트 옵션이다.
+`productCategoryLabels`(5개), `subCategoryLabels`(16개) 전부 채운다. **라벨을 빠뜨리면 조용히 깨진다** — `isProductCategory`/`isSubCategory`가 `Object.keys(labels)` 기반이라(`category.ts:21-27`) 라벨 없는 카테고리는 "존재하지 않는 카테고리"로 판정된다. `products/[category]` 라우트의 `generateStaticParams()`/카테고리 검증이 이 함수를 쓴다(`src/shared/utils/AGENTS.md` Gotchas). `getCategoryOptions()`도 `productCategoryLabels`를 순회하므로 라벨이 곧 어드민 셀렉트 옵션이다.
 
 `satisfies Record<ProductCategory, ...>`가 `SUB_CATEGORY_MAP` 누락만 컴파일 타임에 잡아주고 **라벨 맵 2개는 `Record<...>` 타입 annotation이 있어 역시 컴파일 에러로 잡힌다** — 4곳 다 타입이 강제하므로 빌드가 통과하면 누락은 없다.
 
@@ -69,11 +69,11 @@ export const SUB_CATEGORY_MAP = {
 
 ### 2-1. base 스키마에 넣는 이유
 
-`src/server/models/CLAUDE.md`는 "하위 타입 전용 필드는 discriminator로 분리"를 요구한다. 세 필드는 **전 카테고리 공통 개념**이므로 base가 맞다:
+`src/server/models/AGENTS.md`는 "하위 타입 전용 필드는 discriminator로 분리"를 요구한다. 세 필드는 **전 카테고리 공통 개념**이므로 base가 맞다:
 - `images`(상세 갤러리)는 invitation도 가질 수 있다 — 안 쓸 뿐 개념이 배타적이지 않다(`previewUrl`은 invitation 전용 개념이라 discriminator로 간 것과 대비).
 - `minQuantity`/`maxQuantity`는 per-product 정책이고 invitation도 실제 값(1,1)을 갖는다 — "카테고리가 강제하지 않는다"는 게 TODO.md 확정 사항이다.
 
-**신규 4개 카테고리에 discriminator를 만들지 않는다** — 전용 필드가 아직 없다. 같은 CLAUDE.md의 과설계 방지 규칙. `getWritableProductModel`(`product.service.ts:25`)이 `category === "invitation"`이 아니면 base `ProductModel`을 돌려주므로 신규 카테고리는 **서비스 코드 수정 없이** 그대로 저장된다.
+**신규 4개 카테고리에 discriminator를 만들지 않는다** — 전용 필드가 아직 없다. 같은 AGENTS.md의 과설계 방지 규칙. `getWritableProductModel`(`product.service.ts:25`)이 `category === "invitation"`이 아니면 base `ProductModel`을 돌려주므로 신규 카테고리는 **서비스 코드 수정 없이** 그대로 저장된다.
 
 ### 2-2. 스키마 정의
 
@@ -93,7 +93,7 @@ maxQuantity: { type: Number, required: true, default: 0, min: 0 },
 1. invitation은 `images` 없이 판매 성립(`previewUrl`이 대신함) — required면 등록 자체가 깨진다.
 2. 설령 걸어도 목적을 못 이룬다: mongoose에서 배열 path의 `required`는 존재 여부만 보고 **빈 배열 `[]`도 통과**시킨다. "물리상품은 최소 1장"은 zod superRefine이 **유일한** 집행 지점이다.
 
-**`maxQuantity >= minQuantity` 교차검증을 mongoose validator로 옮기지 않는다** — `subCategory` validator가 이미 겪은 함정을 그대로 재현한다: update validator에서 `this`는 Document가 아니라 Query라 다른 필드를 못 읽고, `this.get()`은 이번 payload에 있는 값만 준다(`models/CLAUDE.md` Gotchas). 필드 간 교차검증은 zod 레이어 전담(§3).
+**`maxQuantity >= minQuantity` 교차검증을 mongoose validator로 옮기지 않는다** — `subCategory` validator가 이미 겪은 함정을 그대로 재현한다: update validator에서 `this`는 Document가 아니라 Query라 다른 필드를 못 읽고, `this.get()`은 이번 payload에 있는 값만 준다(`models/AGENTS.md` Gotchas). 필드 간 교차검증은 zod 레이어 전담(§3).
 
 `required: true` + `default`는 저장 시 절대 실패하지 않는다(default가 먼저 채워짐) — 신규 문서에 값이 반드시 존재함을 보장하는 용도다. **기존 문서에는 소급 적용되지 않는다**(§7).
 
@@ -275,7 +275,7 @@ maxQuantity: rest.maxQuantity ?? 1,
 | mongoose `default` (신규 문서 저장 시) | `1` | **`0`** (무제한) |
 | 읽기 경로 폴백 (레거시 문서, 필드 자체가 없을 때) | `1` | **`1`** (고정) |
 
-폴백을 모델 pre/post 훅에 두지 않는다 — `models/CLAUDE.md`의 "모델 훅에 도메인 계산·비즈니스 규칙 금지" 규칙. 서비스 레이어 소관이다.
+폴백을 모델 pre/post 훅에 두지 않는다 — `models/AGENTS.md`의 "모델 훅에 도메인 계산·비즈니스 규칙 금지" 규칙. 서비스 레이어 소관이다.
 
 응답 시점에 정규화되므로 **클라이언트에는 폴백을 깔지 않는다**(ui-designer 합의).
 

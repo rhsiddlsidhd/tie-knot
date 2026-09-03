@@ -11,11 +11,11 @@
 
 | # | 결정 | 근거 |
 |---|---|---|
-| D1 | `/search`는 `src/app/(main)/search/`에 둔다 (신규 라우트 그룹 안 만듦) | 공유 layout/독립 error 근거 없음 → 그룹 생성 금지 규칙(`src/app/CLAUDE.md`) |
+| D1 | `/search`는 `src/app/(main)/search/`에 둔다 (신규 라우트 그룹 안 만듦) | 공유 layout/독립 error 근거 없음 → 그룹 생성 금지 규칙(`src/app/AGENTS.md`) |
 | D2 | 결과 그리드는 **`organisms/ProductCatalog`이 아니라 `organisms/ProductGrid`** 를 재사용 | `ProductCatalog`은 `category: ProductCategory` 필수 + 필터 UI 동반. 검색 결과는 단일 category로 특정 불가 |
 | D3 | 검색 트리거는 **300ms 디바운스 자동 검색** (매 keystroke 아님, 제출식도 아님) | REQ-3 "입력 시 렌더" 문구 충족 + 인덱스 없는 regex 스캔 호출량 억제 |
 | D4 | 0건 UI는 `ProductGrid` 내장 빈 상태를 쓰지 않고 라우트 로컬 `SearchEmptyState`를 신규로 만든다 | `ProductGrid` 내장 문구가 "상품을 준비 중에 있습니다"라 REQ-4 문구와 다름. 공유 organism 수정 시 `/products/[category]` 회귀 위험 |
-| D5 | Template 티어를 추출하지 않는다 | 자식이 self-fetching(useSWR)이라 template 순수성 성립 불가 → `templates/CLAUDE.md` opt-out 조항 적용 |
+| D5 | Template 티어를 추출하지 않는다 | 자식이 self-fetching(useSWR)이라 template 순수성 성립 불가 → `templates/AGENTS.md` opt-out 조항 적용 |
 
 ---
 
@@ -137,11 +137,11 @@ app/(main)/layout.tsx                       [기존]
 | `SearchBar` | `ProductFilters`는 `category`·`premiumFeatures`·`ProductFilterState`·`dispatch`를 전부 요구하고 정렬/가격/프리미엄 드롭다운을 동반한다. 검색창 하나만 필요한 화면엔 과대. `Command`/`CommandInput`(cmdk)은 **로컬 리스트 필터링 + 자동완성**용이라 서버 검색엔 부적합 | molecule 성격(단일 책임: 검색어 입력) / 라우트 로컬(소비 라우트 1곳) |
 | `SearchEmptyState` | `ProductGrid` 내장 빈 상태 문구가 "상품을 준비 중에 있습니다"로 고정. REQ-4 문구("검색결과가 없습니다")와 다르고, 의미도 다름(재고 준비중 vs 검색 미스) | molecule 성격 / 라우트 로컬 |
 
-> 세 컴포넌트 모두 소비 라우트가 `/search` **1곳뿐**이므로 `src/client/components/`로 승격하지 않는다(`src/client/components/CLAUDE.md` 축 B 승격 규칙). 두 번째 소비처가 생기면 그때 승격한다.
+> 세 컴포넌트 모두 소비 라우트가 `/search` **1곳뿐**이므로 `src/client/components/`로 승격하지 않는다(`src/client/components/AGENTS.md` 축 B 승격 규칙). 두 번째 소비처가 생기면 그때 승격한다.
 
 ### 2-4. Template을 추출하지 않는 근거
 
-`src/app/CLAUDE.md`는 "organism을 배치하는 코드가 하나라도 있으면 Template 추출 필수"라고 하지만, `src/client/components/templates/CLAUDE.md`에 opt-out 조항이 있다:
+`src/app/AGENTS.md`는 "organism을 배치하는 코드가 하나라도 있으면 Template 추출 필수"라고 하지만, `src/client/components/templates/AGENTS.md`에 opt-out 조항이 있다:
 
 > 조합 대상 organism/molecule 중 단 하나라도 내부에서 자체 데이터 페칭(예: `useSWR`)을 한다면 … 순수성이 깨져 애초에 template으로 만들 수 없다 — 이런 경우 도입을 강제하지 않고 라우트 로컬 구성(`_components/`)을 그대로 유지한다.
 
@@ -178,7 +178,7 @@ app/(main)/layout.tsx                       [기존]
 | 항목 | 결정 | 근거 |
 |---|---|---|
 | 왜 우측 클러스터인가 | 좌측은 480px에서 `MobileNav`(햄버거)+로고가 이미 차지. 우측 클러스터는 모바일에서 아이콘 1개(`AuthButtons`)뿐이라 여유 있음 | REQ-2 acceptance "기존 데스크톱 nav/MobileNav 레이아웃 안 깨짐" |
-| 왜 `<Link>`인가 | `src/client/components/CLAUDE.md` **예외 2** — mutation 없는 단순 페이지 이동은 `useRouter().push()`가 아니라 `<Link>`/`Button asChild`. 이러면 컨테이너 분리 자체가 불필요해져 `Header`가 Server Component로 남는다 | 컨벤션 |
+| 왜 `<Link>`인가 | `src/client/components/AGENTS.md` **예외 2** — mutation 없는 단순 페이지 이동은 `useRouter().push()`가 아니라 `<Link>`/`Button asChild`. 이러면 컨테이너 분리 자체가 불필요해져 `Header`가 Server Component로 남는다 | 컨벤션 |
 | 왜 `Button asChild`인가 | `<Button>`은 `"use client"` atom이지만 Server Component에서 import 가능. ghost/size=icon 조합은 `MobileNav`의 트리거 버튼과 동일해 시각적 일관성 확보 | 기존 패턴 답습 |
 | `strokeWidth={1.5}` | `MobileNav`의 `Menu`/`X`/`Gem` 아이콘과 동일 굵기 | 시각 일관성 |
 | `aria-label="상품 검색"` | 아이콘 온리 버튼은 접근 가능한 이름이 없다. `MobileNav`가 `aria-label="메뉴 열기"`로 같은 패턴을 씀 | 접근성 + 기존 패턴 |
@@ -192,7 +192,7 @@ app/(main)/layout.tsx                       [기존]
 ```
 
 - 값이 문자열 리터럴 하나뿐이므로 하위 객체(`{ root: ... }`)로 감싸지 않는다. 서브 경로가 생기면 그때 객체로 승격.
-- `routes` 객체 자체가 함수(`byCategory` 등)를 포함해 camelCase이므로 케이스 규칙 변화 없음(`src/CLAUDE.md` 식별자 케이스).
+- `routes` 객체 자체가 함수(`byCategory` 등)를 포함해 camelCase이므로 케이스 규칙 변화 없음(`src/AGENTS.md` 식별자 케이스).
 - `src/proxy.ts`의 `config.matcher`는 **건드리지 않는다** — `/search`는 공개 경로다.
 
 ---
@@ -211,12 +211,12 @@ export default function SearchPage() {
 ```
 
 - 배치(grid/flex/spacing) 코드 0줄 → Template 추출 예외 충족.
-- `export default` — Next.js 파일 컨벤션(`src/app/CLAUDE.md`).
+- `export default` — Next.js 파일 컨벤션(`src/app/AGENTS.md`).
 - `metadata` export는 이번 범위에서 하지 않는다(루트 `app/layout.tsx`가 metadata 단일 담당).
 
 ### 4-2. `_components`/`_hooks` 분리 여부 — **둘 다 만든다**
 
-`src/app/CLAUDE.md`: "필요한 것만 생성, 빈 폴더 강제 금지" + "폴더 + `index` 배럴 형태 외의 방식으로 만들지 않는다(파일 1개여도 예외 없음)".
+`src/app/AGENTS.md`: "필요한 것만 생성, 빈 폴더 강제 금지" + "폴더 + `index` 배럴 형태 외의 방식으로 만들지 않는다(파일 1개여도 예외 없음)".
 
 | 폴더 | 만드는가 | 근거 |
 |---|---|---|
@@ -231,7 +231,7 @@ export default function SearchPage() {
 // _components/index.tsx — page.tsx가 직접 소비하는 것만 재export
 export { ProductSearch } from "./ProductSearch";
 // SearchBar / SearchEmptyState는 ProductSearch 내부 전용이라 올리지 않아도 된다
-// (src/app/CLAUDE.md: 배럴은 page.tsx/layout.tsx가 직접 소비하는 파일만)
+// (src/app/AGENTS.md: 배럴은 page.tsx/layout.tsx가 직접 소비하는 파일만)
 
 // _hooks/index.ts
 export * from "./useProductSearch";
@@ -269,14 +269,14 @@ export function useProductSearch(query: string) {
 
 | 설계 포인트 | 내용 |
 |---|---|
-| `"use client"` 최상단 | `src/client/hooks/CLAUDE.md` 규칙 — 훅 파일은 예외 없이 고정(배럴이 모듈 그래프를 묶기 때문) |
+| `"use client"` 최상단 | `src/client/hooks/AGENTS.md` 규칙 — 훅 파일은 예외 없이 고정(배럴이 모듈 그래프를 묶기 때문) |
 | SWR key = `null` | trim 후 빈 문자열이면 **fetch 자체를 안 한다**. SWR의 conditional fetching 공식 패턴 |
 | `encodeURIComponent` 필수 | 한글 검색어 + `&`/`#`/`+` 같은 문자가 쿼리스트링을 깨뜨린다. **boundary-verifier 체크 포인트** |
 | `keepPreviousData: true` | 검색어가 바뀔 때 이전 결과를 유지해 그리드가 깜빡이지 않게 한다 |
 | `revalidateOnFocus: false` | 검색 결과는 탭 복귀마다 재조회할 이유가 없다. 인덱스 없는 regex 스캔(REQ-1)이라 호출을 아낀다 |
 | 에러 타입 | `fetcher`는 실패 시 `body.error`(= `ErrorPayload`)를 throw한다 → SWR `error`가 곧 `ErrorPayload` |
-| `fetcher` 밖 fetch 금지 | `src/client/CLAUDE.md` — envelope 파싱/에러 정규화가 `fetcher`에 집중돼 있음 |
-| 훅 위치 | 소비 라우트가 `/search` 1곳뿐 → `src/client/hooks/`로 승격하지 않고 `_hooks/`에 둔다(`src/app/CLAUDE.md`: 2곳 이상 공유 시 승격) |
+| `fetcher` 밖 fetch 금지 | `src/client/AGENTS.md` — envelope 파싱/에러 정규화가 `fetcher`에 집중돼 있음 |
+| 훅 위치 | 소비 라우트가 `/search` 1곳뿐 → `src/client/hooks/`로 승격하지 않고 `_hooks/`에 둔다(`src/app/AGENTS.md`: 2곳 이상 공유 시 승격) |
 
 > **리더 정정(2026-07-31, boundary-verifier B2 지적 반영)**: 훅 타입은 `ProductResponse[]`가 아니라 **`Product[]`**(`@/server/services`, = `ProductJSON`)로 쓴다. 런타임 shape은 동일하지만 `ProductGrid`/`ProductCard` prop이 `Product[]`(`subCategory: SubCategory` 유니온)를 요구하는데 `ProductResponse.subCategory`는 `z.string()`이라 `subCategory`에서 타입이 안 맞는다 — `ProductResponse[]`로 타이핑하면 구현자가 `as Product[]` 캐스팅으로 우회하게 된다. 기존 선례(`useProducts.ts`)도 `Product[]`를 쓴다. U6 판정 뒤집음.
 
@@ -301,7 +301,7 @@ export function useDebouncedValue<T>(value: T, delay: number): T {
 ```
 
 - cleanup(`clearTimeout`)이 없으면 타이핑 중 타이머가 누적돼 디바운스가 무력화된다 — 필수.
-- 소비처가 1곳이라 `_hooks/`에 둔다. 두 번째 라우트가 쓰면 `src/client/hooks/useDebouncedValue.ts`로 승격(`src/client/hooks/CLAUDE.md`의 "페칭 외 공유 로직 훅은 목적을 PascalCase로" 네이밍에 이미 부합).
+- 소비처가 1곳이라 `_hooks/`에 둔다. 두 번째 라우트가 쓰면 `src/client/hooks/useDebouncedValue.ts`로 승격(`src/client/hooks/AGENTS.md`의 "페칭 외 공유 로직 훅은 목적을 PascalCase로" 네이밍에 이미 부합).
 
 ### 4-5. fetch 트리거 결정 — **300ms 디바운스**
 
@@ -314,7 +314,7 @@ export function useDebouncedValue<T>(value: T, delay: number): T {
 **Enter 키 처리**: `<form onSubmit={(e) => e.preventDefault()}>`로 폼 기본 제출(=페이지 새로고침)만 막는다. Enter를 별도 검색 트리거로 만들지 **않는다** — 어차피 300ms 안에 디바운스가 발화하므로 트리거를 이중화하면 상태 소스가 둘로 갈라져 경합만 생긴다. `<form role="search">` 자체는 모바일 키보드에 "검색" 확인 키를 띄우기 위해 유지한다.
 
 ```ts
-// ProductSearch.tsx 모듈 로컬 상수 (src/CLAUDE.md: 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE)
+// ProductSearch.tsx 모듈 로컬 상수 (src/AGENTS.md: 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE)
 const SEARCH_DEBOUNCE_MS = 300;
 ```
 
@@ -355,7 +355,7 @@ export function SearchBar({
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 입력 상태 | **controlled input + 부모의 로컬 `useState`로 충분** | `src/CLAUDE.md`: "로컬 상태로 충분한 걸 곧바로 Context나 Zustand로 확장하지 않는다". 검색어를 소비하는 건 같은 트리 안의 형제 하나뿐이라 `ProductFilterProvider` 같은 Context 도입 불필요 |
+| 입력 상태 | **controlled input + 부모의 로컬 `useState`로 충분** | `src/AGENTS.md`: "로컬 상태로 충분한 걸 곧바로 Context나 Zustand로 확장하지 않는다". 검색어를 소비하는 건 같은 트리 안의 형제 하나뿐이라 `ProductFilterProvider` 같은 Context 도입 불필요 |
 | autofocus 처리 | React `autoFocus` prop | `/search`는 검색이 유일한 목적인 전용 페이지라 포커스 탈취가 사용자 기대와 일치. `useEffect` + `ref.current.focus()`로 우회하지 않는다 |
 | `type="search"` | 채택 | iOS/Chrome이 네이티브 클리어(X) 버튼을 붙여준다. 별도 클리어 버튼 구현 불필요 |
 | `enterKeyHint="search"` | 채택 | 모바일 소프트키보드 확인 키를 "검색"으로 바꾼다 |
@@ -434,10 +434,10 @@ export function ProductSearch() {
 | | 원인 | 시각적 표현 | 문구 |
 |---|---|---|---|
 | `LOADING` | 응답 대기 | `Spinner` (회전) | 없음 |
-| `ERROR` | 네트워크 실패 / 서버 5xx·4xx | `Alert type="error"` (빨간 배경) | 서버가 준 `ErrorPayload.message` **그대로**. 클라이언트가 문구를 재작성하지 않는다 (`docs/ERROR_HANDLING.md` §채널 C) |
+| `ERROR` | 네트워크 실패 / 서버 5xx·4xx | `Alert type="error"` (빨간 배경) | 서버가 준 `ErrorPayload.message` **그대로**. 클라이언트가 문구를 재작성하지 않는다 (`docs/architecture/error-handling.md` §채널 C) |
 | `EMPTY` | 200 + `data: []` | 점선 테두리 박스 + 중립 아이콘 | "검색결과가 없습니다" |
 
-에러 문구를 클라이언트에서 category별로 매핑하지 않는 이유: `docs/ERROR_HANDLING.md`가 "클라이언트는 실패를 해석하지 않는다 — 서버가 준 `ErrorPayload`를 그대로 렌더한다"고 못박고 있고, 민감 분류(INTERNAL/EXTERNAL_SERVICE)의 message 일반화는 이미 서버 `toErrorPayload`가 끝냈다.
+에러 문구를 클라이언트에서 category별로 매핑하지 않는 이유: `docs/architecture/error-handling.md`가 "클라이언트는 실패를 해석하지 않는다 — 서버가 준 `ErrorPayload`를 그대로 렌더한다"고 못박고 있고, 민감 분류(INTERNAL/EXTERNAL_SERVICE)의 message 일반화는 이미 서버 `toErrorPayload`가 끝냈다.
 
 ---
 
@@ -453,7 +453,7 @@ export function ProductSearch() {
 
 **`organisms/ProductCatalog`을 쓰지 않는 이유 3가지**
 
-1. `category: ProductCategory` **필수 prop**. 검색 결과는 원리상 여러 카테고리가 섞일 수 있어 단일 값을 정할 수 없다. 지금은 `ProductCategory = "invitation"` 하나뿐이라 하드코딩해도 동작은 하지만, 카테고리가 2개가 되는 순간 조용히 틀리는 코드가 된다(`src/shared/utils/CLAUDE.md`의 "카테고리 추가 절차"가 실제로 예정된 확장이다).
+1. `category: ProductCategory` **필수 prop**. 검색 결과는 원리상 여러 카테고리가 섞일 수 있어 단일 값을 정할 수 없다. 지금은 `ProductCategory = "invitation"` 하나뿐이라 하드코딩해도 동작은 하지만, 카테고리가 2개가 되는 순간 조용히 틀리는 코드가 된다(`src/shared/utils/AGENTS.md`의 "카테고리 추가 절차"가 실제로 예정된 확장이다).
 2. 하위 `ProductFilters`가 `premiumFeatures: PremiumFeature[]`도 요구한다 → 검색 화면에 불필요한 `/api/premium-features` 호출이 따라붙는다.
 3. `ProductFilters`는 자체 검색창(`CommandInput`)을 품고 있다 → `/search` 화면에 검색창이 2개 생긴다.
 
@@ -553,7 +553,7 @@ export function SearchEmptyState({ query }: { query: string }) {
 | 최대 길이 100자 | `<Input maxLength={100}>` | HTML 속성만으로 충분. 별도 검증 로직 불필요 |
 | 그 외 형식 검증 없음 | — | 검색어에 특수문자/공백이 들어와도 정상 입력이다. `encodeURIComponent`로 전송 안전성만 확보 |
 | 서버가 `q`에 zod 제약(min/max 등)을 둔다면 | `@/shared/schemas`에서 **그 스키마를 import해 재사용**한다. 클라이언트에서 동일 규칙을 재정의하지 않는다 | 프로젝트 원칙(스키마 중복 정의 금지) — 현재 `src/shared/schemas/request/`에 검색용 스키마는 없다 |
-| 검증 실패 시 표시 | 서버가 내려준 `ErrorPayload`(`category: "VALIDATION"`)를 `Alert`에 그대로 렌더 | `docs/ERROR_HANDLING.md` §채널 C. `fieldErrors`는 검색창이 단일 필드라 사실상 안 쓰임 |
+| 검증 실패 시 표시 | 서버가 내려준 `ErrorPayload`(`category: "VALIDATION"`)를 `Alert`에 그대로 렌더 | `docs/architecture/error-handling.md` §채널 C. `fieldErrors`는 검색창이 단일 필드라 사실상 안 쓰임 |
 
 ---
 
@@ -600,7 +600,7 @@ frontend-impl / boundary-verifier가 대조해야 할 항목:
 - [ ] `ProductGrid`에 `initialFilterState`가 그대로 주입돼 서버 결과 N건이 N건 렌더되는지 (§6-3 pass-through 표)
 - [ ] `organisms/` 아래 파일이 **하나도 수정되지 않았는지** (공유 컴포넌트 무변경 원칙, §2-1)
 - [ ] `ProductCard`의 상세 링크가 `/products/invitation/{id}`로 정상 생성되는지 (= 응답 `category`가 enum key인지, §6-2 / U1)
-- [ ] `_components/index.tsx`, `_hooks/index.ts` 배럴이 존재하는지 (`src/app/CLAUDE.md` 필수)
-- [ ] `_hooks/*.ts` 두 파일 모두 최상단에 `"use client"`가 있는지 (`src/client/hooks/CLAUDE.md`)
+- [ ] `_components/index.tsx`, `_hooks/index.ts` 배럴이 존재하는지 (`src/app/AGENTS.md` 필수)
+- [ ] `_hooks/*.ts` 두 파일 모두 최상단에 `"use client"`가 있는지 (`src/client/hooks/AGENTS.md`)
 - [ ] `src/proxy.ts` matcher에 `/search`가 추가되지 **않았는지** (공개 페이지, §1)
 - [ ] `Header.test.tsx`에 검색 아이콘/링크 assertion이 추가됐는지 (§2-1)

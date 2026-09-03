@@ -1,0 +1,44 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock }),
+}));
+vi.mock("@/actions/createProduct", () => ({
+  createProduct: vi.fn(),
+}));
+vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
+vi.mock("@/ui/hooks/usePremiumFeatures", () => ({
+  usePremiumFeature: () => ({
+    premiumFeatures: [] as unknown[],
+    loading: false,
+  }),
+}));
+vi.mock("@/ui/hooks/useImageList", () => ({
+  useImageList: () => ({
+    items: [] as unknown[],
+    add: vi.fn(),
+    remove: vi.fn(),
+    getUrls: (): string[] => [],
+  }),
+}));
+
+import { ProductRegistrationForm } from "./ProductRegistrationForm";
+
+describe("ProductRegistrationForm (컨테이너)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("취소 버튼 클릭 시 /admin/products로 이동한다", async () => {
+    const user = userEvent.setup();
+    render(<ProductRegistrationForm premiumFeatures={[]} />);
+
+    await user.click(screen.getByRole("button", { name: "취소" }));
+
+    expect(pushMock).toHaveBeenCalledWith("/admin/products");
+  });
+});

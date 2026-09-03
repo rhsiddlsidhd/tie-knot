@@ -1,81 +1,79 @@
-"use client";
+import { AlertCircle } from "lucide-react";
 
-import { useActionState, useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import type { PayStatus } from "@/core/domain/payment";
+import type { BuyerInfo, ShippingInfo } from "@/core/schemas/request/order.schema";
 
-import { createOrder, type CreateOrderResult } from "@/server/actions";
-import { APIResponse } from "@/shared/types";
-import { useOrderStore } from "@/client/store";
-import { usePortOnePayment } from "@/client/hooks";
-import { useCheckoutData } from "@/client/hooks";
-import { useCheckoutForm } from "@/client/hooks";
-import { CheckoutForm as PureCheckoutForm } from "@/client/components/organisms";
-import { routes } from "@/shared/constants";
-export function CheckoutForm() {
-  const router = useRouter();
-  const clearOrder = useOrderStore((state) => state.clearOrder);
+import { Spinner } from "@/ui/components/atoms/spinner";
+import { PaymentPendingOverlay } from "./PaymentPendingOverlay";
+import { TypographySmall, TypographyMuted } from "@/ui/components/atoms/typography";
+import { BuyerInfoCard } from "./BuyerInfoCard";
+import { ShippingInfoCard } from "./ShippingInfoCard";
+import { TermsAgreementCard } from "./TermsAgreementCard";
+import { CheckoutSubmitBar } from "./CheckoutSubmitBar";
+import { PaymentMethodSelector } from "./PaymentMethodSelector";
 
-  const [state, action, pending] = useActionState<APIResponse<CreateOrderResult>, FormData>(
-    createOrder,
-    null,
-  );
-  const [agreed, setAgreed] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+interface CheckoutFormProps {
+  loading: boolean;
+  paymentStatus: PayStatus | "IDLE";
+  agreed: boolean;
+  onAgreedChange: (agreed: boolean) => void;
+  errorMessage: string | null;
+  errors: Partial<Record<keyof BuyerInfo, string[]>>;
+  requiresShipping: boolean;
+  shippingErrors: Partial<Record<keyof ShippingInfo, string[]>>;
+  pending: boolean;
+  onSubmit: (e: React.FormEvent) => void;
+}
 
-  const handlePaymentSuccess = useCallback(
-    (merchantUid: string) => {
-      clearOrder();
-      toast.success("결제가 완료되었습니다!");
-      router.push(`${routes.payment.success}?orderId=${merchantUid}`);
-    },
-    [clearOrder, router],
-  );
-
-  const { paymentStatus, triggerPayment } = usePortOnePayment({
-    onSuccess: handlePaymentSuccess,
-    onError: setErrorMessage,
-  });
-
-  // 결제 진행 중/실패/완료 상태는 useCheckoutData가 order.store의 paymentStatus를
-  // 직접 참조해 "주문 없음" 오탐 리다이렉트를 알아서 가드한다(OrderSummary도 동일).
-  const { data: order, loading } = useCheckoutData();
-
-  const { errors, handleSubmit } = useCheckoutForm({ order, action, router });
-
-  const [prevActionState, setPrevActionState] = useState(state);
-  if (state !== prevActionState) {
-    setPrevActionState(state);
-    setErrorMessage(state && state.success === false ? state.error.message : null);
+export function CheckoutForm({
+  loading,
+  paymentStatus,
+  agreed,
+  onAgreedChange,
+  errorMessage,
+  errors,
+  requiresShipping,
+  shippingErrors,
+  pending,
+  onSubmit,
+}: CheckoutFormProps) {
+  if (loading) {
+    return (
+      <div className="flex min-h-100 items-center justify-center">
+        <Spinner />
+      </div>
+    );
   }
 
-  useEffect(() => {
-    if (state && state.success !== false) {
-      triggerPayment(state.data);
-    }
-  }, [state, triggerPayment]);
-
-  // 결제 실패 후 재시도 시 기존 주문(merchantUid)으로 재결제 — DB 주문 중복 생성 방지
-  const handleFormSubmit = (e: React.FormEvent) => {
-    if (state?.success) {
-      e.preventDefault();
-      setErrorMessage(null);
-      triggerPayment(state.data);
-      return;
-    }
-    handleSubmit(e);
-  };
+  // 배송 카드는 실물 상품 주문일 때만 트리에 들어간다 — 번호 배지는 그에 맞춰
+  // 매번 다시 매긴다(카드를 숨긴다고 결제수단 배지가 "3"으로 남아 건너뛰지 않도록).
+  const paymentStep = requiresShipping ? 3 : 2;
 
   return (
-    <PureCheckoutForm
-      loading={loading}
-      paymentStatus={paymentStatus}
-      agreed={agreed}
-      onAgreedChange={setAgreed}
-      errorMessage={errorMessage}
-      errors={errors}
-      pending={pending}
-      onSubmit={handleFormSubmit}
-    />
+    <div className="relative">
+      <PaymentPendingOverlay visible={paymentStatus === "PENDING"} />
+      <form onSubmit={onSubmit} className="space-y-6 pb-24">
+        <BuyerInfoCard step={1} errors={errors} />
+        {requiresShipping && <ShippingInfoCard step={2} errors={shippingErrors} />}
+        <TermsAgreementCard agreed={agreed} onAgreedChange={onAgreedChange} />
+        <PaymentMethodSelector step={paymentStep} error={errors.payMethod?.[0]} />
+
+        {errorMessage && (
+          <div className="border-destructive/50 bg-destructive/10 text-destructive flex items-start gap-3 rounded-lg border p-4 text-sm">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div>
+              <TypographySmall className="font-medium">오류가 발생했습니다</TypographySmall>
+              <TypographyMuted className="text-destructive/80 mt-1">{errorMessage}</TypographyMuted>
+            </div>
+          </div>
+        )}
+
+        <CheckoutSubmitBar
+          disabled={!agreed}
+          pending={pending}
+          paymentStatus={paymentStatus}
+        />
+      </form>
+    </div>
   );
 }

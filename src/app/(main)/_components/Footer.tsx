@@ -1,12 +1,13 @@
 import Link from "next/link";
-import { TypographyH4, TypographySmall } from "@/client/components/atoms";
-import { routes, PRODUCT_CATEGORIES, productCategoryLabels } from "@/shared/constants";
+import { TypographyH4, TypographySmall } from "@/ui/components/atoms/typography";
+import { routes } from "@/core/domain/routes";
+import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
 
 export function Footer() {
   return (
-    <footer className="border-border border-t bg-slate-50 py-12">
+    <footer className="border-border bg-muted border-t py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-4 md:text-left">
+        <div className="grid grid-cols-1 gap-8 text-center md:grid-cols-3 md:text-left">
           <div>
             <TypographyH4 className="mb-2">Tie Knot</TypographyH4>
             <p className="text-muted-foreground mx-auto max-w-xs text-sm leading-relaxed md:mx-0">
@@ -40,29 +41,6 @@ export function Footer() {
               <li>
                 <Link href={routes.support} className="hover:text-foreground">
                   고객센터
-                </Link>
-              </li>
-              <li>
-                <Link href={routes.reviews} className="hover:text-foreground">
-                  고객후기
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="hidden md:block">
-            <TypographySmall className="text-foreground mb-3 block font-semibold">
-              계정
-            </TypographySmall>
-            <ul className="text-muted-foreground space-y-2 text-sm">
-              <li>
-                <Link href={routes.login} className="hover:text-foreground">
-                  로그인
-                </Link>
-              </li>
-              <li>
-                <Link href={routes.signup} className="hover:text-foreground">
-                  회원가입
                 </Link>
               </li>
             </ul>

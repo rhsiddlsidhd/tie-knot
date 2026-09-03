@@ -1,10 +1,11 @@
-import { PayMethod } from "@/server/models";
-import { OrderStatus } from "../_types";
+import type { OrderStatus } from "@/core/domain/order";
+import type { PayMethod } from "@/core/domain/payment";
 
-export const PAYMENT_STATUS: Record<OrderStatus, string> = {
+// 상태 탭 라벨 — 여러 카테고리가 섞여 보이는 자리(카테고리 필터가 "전체")라 중립어를 쓴다.
+export const ORDER_STATUS_TAB_LABELS: Record<OrderStatus, string> = {
   PENDING: "주문대기",
   CONFIRMED: "결제완료",
-  COMPLETED: "제작완료",
+  COMPLETED: "완료",
   CANCELLED: "취소",
 };
 
