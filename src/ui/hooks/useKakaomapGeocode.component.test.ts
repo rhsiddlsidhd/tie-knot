@@ -22,6 +22,15 @@ describe("useKakaomapGeocode", () => {
     expect(result.current).toEqual({ lat: null, lng: null });
   });
 
+  it("address가 공백만 있으면 swr key를 null로 전달하고 좌표를 null로 리턴한다", () => {
+    useSWRMock.mockReturnValue({ data: undefined, error: undefined });
+
+    const { result } = renderHook(() => useKakaomapGeocode("   "));
+
+    expect(useSWRMock).toHaveBeenCalledWith(null, expect.any(Function));
+    expect(result.current).toEqual({ lat: null, lng: null });
+  });
+
   it("응답이 있으면 첫 번째 document 좌표를 숫자로 변환해 리턴한다", () => {
     useSWRMock.mockReturnValue({
       data: { documents: [{ x: "127.0", y: "37.5" }] },
@@ -31,10 +40,32 @@ describe("useKakaomapGeocode", () => {
     const { result } = renderHook(() => useKakaomapGeocode("서울"));
 
     expect(useSWRMock).toHaveBeenCalledWith(
-      "/api/kakao-map?address=서울",
+      "/api/kakao-map?address=%EC%84%9C%EC%9A%B8",
       expect.any(Function),
     );
     expect(result.current).toEqual({ lat: 37.5, lng: 127 });
+  });
+
+  it("address 앞뒤 공백은 trim해 swr key를 만든다", () => {
+    useSWRMock.mockReturnValue({ data: undefined, error: undefined });
+
+    renderHook(() => useKakaomapGeocode("  서울  "));
+
+    expect(useSWRMock).toHaveBeenCalledWith(
+      "/api/kakao-map?address=%EC%84%9C%EC%9A%B8",
+      expect.any(Function),
+    );
+  });
+
+  it("&와 #가 포함된 address는 encodeURIComponent로 인코딩해 swr key를 만든다", () => {
+    useSWRMock.mockReturnValue({ data: undefined, error: undefined });
+
+    renderHook(() => useKakaomapGeocode("서울 A&B #101호"));
+
+    expect(useSWRMock).toHaveBeenCalledWith(
+      `/api/kakao-map?address=${encodeURIComponent("서울 A&B #101호")}`,
+      expect.any(Function),
+    );
   });
 
   it("에러가 있으면 콘솔에 로그를 남기고 좌표는 null을 유지한다", () => {

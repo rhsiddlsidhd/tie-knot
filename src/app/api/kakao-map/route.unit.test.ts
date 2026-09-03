@@ -41,12 +41,55 @@ describe("GET /api/kakao-map", () => {
     const body = JSON.stringify({ errorType: "InvalidArgumentError", message: "query is required" });
     vi.mocked(fetch).mockResolvedValueOnce(mockResponse(400, false, body));
 
-    const res = await GET(buildRequest(""));
+    const res = await GET(buildRequest("강남구"));
     const json = await res.json();
 
     expect(res.status).toBe(502);
     expect(json.success).toBe(false);
     expect(json.error.category).toBe("EXTERNAL_SERVICE");
+  });
+
+  it("address 쿼리 파라미터가 없으면 400 VALIDATION을 리턴하고 fetch를 호출하지 않는다", async () => {
+    const res = await GET(new NextRequest("http://localhost/api/kakao-map"));
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.category).toBe("VALIDATION");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("address가 빈 문자열이면 400 VALIDATION을 리턴하고 fetch를 호출하지 않는다", async () => {
+    const res = await GET(buildRequest(""));
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.category).toBe("VALIDATION");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("address가 공백만 있으면 400 VALIDATION을 리턴하고 fetch를 호출하지 않는다", async () => {
+    const res = await GET(buildRequest("   "));
+    const json = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(json.success).toBe(false);
+    expect(json.error.category).toBe("VALIDATION");
+    expect(fetch).not.toHaveBeenCalled();
+  });
+
+  it("address 앞뒤 공백은 trim해 Adapter에 전달한다", async () => {
+    const body = JSON.stringify({ documents: [{ address_name: "서울시 강남구" }] });
+    vi.mocked(fetch).mockResolvedValueOnce(mockResponse(200, true, body));
+
+    const res = await GET(buildRequest("  강남구  "));
+    const json = await res.json();
+
+    expect(res.status).toBe(200);
+    expect(json.success).toBe(true);
+    expect(vi.mocked(fetch).mock.calls[0][0]).toContain(encodeURIComponent("강남구"));
+    expect(vi.mocked(fetch).mock.calls[0][0]).not.toContain(encodeURIComponent("  강남구  "));
   });
 
   it("ok:true이지만 비-JSON(HTML 에러 페이지) 본문이면 502 EXTERNAL_SERVICE로 분류한다", async () => {
