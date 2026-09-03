@@ -7,7 +7,7 @@ import type { GeoState } from "@/adapters/browser/deeplink/open-app";
 import type { KakaomapResponse } from "@/core/schemas/response/kakaomap.schema";
 
 export function useKakaomapGeocode(address: string): GeoState {
-  const swrKey = address ? `/api/kakaomap?address=${address}` : null;
+  const swrKey = address ? `/api/kakao-map?address=${address}` : null;
   const { data, error } = useSWR(swrKey, (url: string) =>
     fetcher<KakaomapResponse>(url),
   );

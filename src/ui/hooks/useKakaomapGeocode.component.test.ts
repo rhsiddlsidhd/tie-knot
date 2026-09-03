@@ -31,7 +31,7 @@ describe("useKakaomapGeocode", () => {
     const { result } = renderHook(() => useKakaomapGeocode("서울"));
 
     expect(useSWRMock).toHaveBeenCalledWith(
-      "/api/kakaomap?address=서울",
+      "/api/kakao-map?address=서울",
       expect.any(Function),
     );
     expect(result.current).toEqual({ lat: 37.5, lng: 127 });

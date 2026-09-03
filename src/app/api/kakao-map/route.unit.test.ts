@@ -12,9 +12,9 @@ function mockResponse(status: number, ok: boolean, body: string): Response {
 }
 
 const buildRequest = (address: string) =>
-  new NextRequest(`http://localhost/api/kakaomap?address=${encodeURIComponent(address)}`);
+  new NextRequest(`http://localhost/api/kakao-map?address=${encodeURIComponent(address)}`);
 
-describe("GET /api/kakaomap", () => {
+describe("GET /api/kakao-map", () => {
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn());
   });
