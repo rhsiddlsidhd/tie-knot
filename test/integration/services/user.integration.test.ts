@@ -89,6 +89,29 @@ describe("user", () => {
         requestPasswordResetService("no-such-user@example.com"),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
+
+    it("개발 환경이면 BASE_URL origin으로 시작하는 링크를 메일로 보낸다", async () => {
+      vi.stubEnv("NODE_ENV", "development");
+      vi.stubEnv("BASE_URL", "http://localhost:3000");
+      const input = buildUserInput();
+      await UserModel.create(input);
+
+      await requestPasswordResetService(input.email);
+
+      const { path } = sendEmailMock.mock.calls[0][0];
+      expect(path.startsWith("http://localhost:3000/change-password?t=")).toBe(true);
+    });
+
+    it("선택된 base url 환경변수가 없으면 INTERNAL을 던진다", async () => {
+      vi.stubEnv("NODE_ENV", "production");
+      vi.stubEnv("DEPLOYMENT_BASE_URL", "");
+      const input = buildUserInput();
+      await UserModel.create(input);
+
+      await expect(requestPasswordResetService(input.email)).rejects.toMatchObject({
+        category: "INTERNAL",
+      });
+    });
   });
 
   describe("checkEmailDuplicate", () => {

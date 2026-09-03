@@ -168,8 +168,6 @@ const app = spawn(
       MONGO_TEST_URI: mongoUri,
       JWT_SECRET: "e2e-jwt-secret-at-least-thirty-two-characters",
       ENTRY_JWT_SECRET: "e2e-entry-secret-at-least-thirty-two-chars",
-      NEXT_PUBLIC_CLOUDINARY_BASE_URL: `http://127.0.0.1:${CLOUDINARY_PORT}`,
-      CLOUDINARY_UPLOAD_PRESET: "e2e-preset",
       CLOUDINARY_CLOUD_NAME: "e2e-cloud",
       CLOUDINARY_API_KEY: "e2e-key",
       CLOUDINARY_API_SECRET: "e2e-secret",
