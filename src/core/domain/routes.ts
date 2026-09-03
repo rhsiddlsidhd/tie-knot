@@ -1,4 +1,5 @@
 import type { SubCategory } from "./product-category";
+import type { InvitationTheme } from "./theme";
 
 export const routes = {
   home: "/",
@@ -37,6 +38,7 @@ export const routes = {
   preview: {
     detail: (publicKey: string) => `/preview/${publicKey}`,
     sample: "/preview/sample",
+    sampleTheme: (theme: InvitationTheme) => `/preview/sample/${theme}`,
     samplePublicKey: "sample",
   },
   admin: {
