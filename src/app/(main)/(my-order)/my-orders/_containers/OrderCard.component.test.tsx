@@ -1,9 +1,12 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { act, render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { OrderListItem } from "@/core/domain/order";
 
+const refresh = vi.hoisted(() => vi.fn());
+
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }),
+  useRouter: () => ({ push: vi.fn(), refresh }),
 }));
 
 vi.mock("@/ui/stores/use-app-store", () => ({
@@ -16,6 +19,7 @@ vi.mock("@/actions/cancelOrder", () => ({
   cancelOrder: vi.fn(),
 }));
 
+import { cancelOrder } from "@/actions/cancelOrder";
 import { OrderCard } from "./OrderCard";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
@@ -46,7 +50,30 @@ const buildOrder = (overrides?: Partial<OrderListItem>): OrderListItem =>
     ...overrides,
   }) as unknown as OrderListItem;
 
+const createDeferred = <T,>() => {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+};
+
+// 주문 메뉴를 열고 "주문 취소"를 골라 확인창까지 진행한다.
+const openCancelConfirm = async (onOrderChanged?: () => void) => {
+  const user = userEvent.setup();
+  render(<OrderCard order={buildOrder()} onOrderChanged={onOrderChanged} />);
+
+  await user.click(screen.getByRole("button", { name: "주문 메뉴" }));
+  await user.click(screen.getByRole("menuitem", { name: "주문 취소" }));
+
+  return user;
+};
+
 describe("OrderCard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("결제창을 벗어난 PENDING 주문은 결제하기 버튼을 보여준다", () => {
     render(<OrderCard order={buildOrder()} />);
 
@@ -117,5 +144,83 @@ describe("OrderCard", () => {
       screen.getByRole("button", { name: /공개 링크 복사/ }),
     ).toBeInTheDocument();
     expect(screen.getByText("발행완료")).toBeInTheDocument();
+  });
+
+  it("주문 취소를 고르면 메뉴가 닫히고 되돌릴 수 없음을 알리는 확인창이 열린다", async () => {
+    await openCancelConfirm();
+
+    expect(screen.queryByRole("menu")).toBeNull();
+    const dialog = screen.getByRole("alertdialog");
+    expect(dialog).toHaveTextContent("봄맞이 청첩장");
+    expect(dialog).toHaveTextContent("복구할 수 없습니다");
+    expect(cancelOrder).not.toHaveBeenCalled();
+  });
+
+  it("확인창을 취소하면 주문을 취소하지 않고 주문 메뉴 버튼으로 포커스가 돌아온다", async () => {
+    const user = await openCancelConfirm();
+
+    await user.click(
+      within(screen.getByRole("alertdialog")).getByRole("button", {
+        name: "취소",
+      }),
+    );
+
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(cancelOrder).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "주문 메뉴" })).toHaveFocus();
+  });
+
+  it("주문 취소를 확인하면 cancelOrder 후 목록 캐시와 라우터를 갱신하고 포커스를 되돌린다", async () => {
+    vi.mocked(cancelOrder).mockResolvedValue({
+      success: true,
+      data: { orderId: "order-1" },
+    });
+    const onOrderChanged = vi.fn();
+    const user = await openCancelConfirm(onOrderChanged);
+
+    await user.click(
+      within(screen.getByRole("alertdialog")).getByRole("button", {
+        name: "주문 취소",
+      }),
+    );
+
+    expect(cancelOrder).toHaveBeenCalledWith("order-1");
+    expect(onOrderChanged).toHaveBeenCalledTimes(1);
+    expect(refresh).toHaveBeenCalledTimes(1);
+    expect(screen.queryByRole("alertdialog")).toBeNull();
+    expect(screen.getByRole("button", { name: "주문 메뉴" })).toHaveFocus();
+  });
+
+  it("주문 취소에 실패하면 확인창을 열어둔 채 재시도할 수 있다", async () => {
+    vi.mocked(cancelOrder).mockResolvedValue({
+      success: false,
+      error: { category: "INTERNAL", message: "취소에 실패했습니다." },
+    });
+    const user = await openCancelConfirm();
+
+    await user.click(
+      within(screen.getByRole("alertdialog")).getByRole("button", {
+        name: "주문 취소",
+      }),
+    );
+
+    expect(screen.getByRole("alertdialog")).toBeInTheDocument();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it("취소가 진행되는 동안 확인 버튼을 다시 눌러도 cancelOrder를 중복 호출하지 않는다", async () => {
+    const deferred = createDeferred<{ success: true; data: { orderId: string } }>();
+    vi.mocked(cancelOrder).mockReturnValue(deferred.promise);
+    const user = await openCancelConfirm();
+
+    const dialog = screen.getByRole("alertdialog");
+    await user.click(within(dialog).getByRole("button", { name: "주문 취소" }));
+    await user.click(within(dialog).getByRole("button", { name: "취소 중..." }));
+
+    expect(cancelOrder).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      deferred.resolve({ success: true, data: { orderId: "order-1" } });
+    });
   });
 });
