@@ -15,6 +15,7 @@
 | `server/cloudinary/` | 서명·정리·서버 업로드 | server-only |
 | `server/cookies/` | Next.js 쿠키 API | server-only |
 | `server/jose/` | JWT 암복호화 | server-only |
+| `server/kakao/` | 로컬 API 주소 검색(지오코딩) | server-only |
 | `server/nodemailer/` | 이메일 전송 | server-only |
 | `server/portone/` | 은행 목록 조회 | server-only |
 | `server/seoul-open-api/` | 서울 열린데이터광장 API 호출·가드·에러분류 | server-only |
