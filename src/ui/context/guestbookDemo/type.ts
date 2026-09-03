@@ -3,7 +3,6 @@ export interface GuestbookDemoEntry {
   author: string;
   message: string;
   password: string;
-  createdAt: string;
 }
 
 export interface GuestbookDemoState {
