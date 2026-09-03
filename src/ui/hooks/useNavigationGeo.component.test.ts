@@ -1,28 +1,27 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 
 vi.mock("./useKakaomapGeocode", () => ({
   useKakaomapGeocode: vi.fn(),
 }));
 
+vi.mock("@/adapters/browser/geolocation/current-position", () => ({
+  getCurrentCoordinates: vi.fn(),
+}));
+
 import { useKakaomapGeocode } from "./useKakaomapGeocode";
+import { getCurrentCoordinates } from "@/adapters/browser/geolocation/current-position";
 import { useNavigationGeo } from "./useNavigationGeo";
 
 describe("useNavigationGeo", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useKakaomapGeocode).mockReturnValue({ lat: 37.5, lng: 127.0 });
+    vi.mocked(getCurrentCoordinates).mockResolvedValue(null);
   });
 
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it("navigator.geolocation으로 현재 위치를 가져와 current에 반영한다", async () => {
-    const getCurrentPosition = vi.fn((success) => {
-      success({ coords: { latitude: 37.5, longitude: 127.0 } });
-    });
-    vi.stubGlobal("navigator", { geolocation: { getCurrentPosition } });
+  it("현재 위치를 가져와 current에 반영한다", async () => {
+    vi.mocked(getCurrentCoordinates).mockResolvedValue({ lat: 37.5, lng: 127.0 });
 
     const { result } = renderHook(() => useNavigationGeo("서울"));
 
@@ -31,28 +30,16 @@ describe("useNavigationGeo", () => {
     });
   });
 
-  it("geolocation 실패 시 current를 null로 유지한다", async () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const getCurrentPosition = vi.fn((_success, error) => {
-      error(new Error("denied"));
-    });
-    vi.stubGlobal("navigator", { geolocation: { getCurrentPosition } });
-
+  it("위치 조회가 null이면 current를 초기값으로 유지한다", async () => {
     const { result } = renderHook(() => useNavigationGeo("서울"));
 
     await waitFor(() => {
-      expect(getCurrentPosition).toHaveBeenCalled();
+      expect(getCurrentCoordinates).toHaveBeenCalled();
     });
     expect(result.current.current).toEqual({ lat: null, lng: null });
-
-    errorSpy.mockRestore();
   });
 
   it("target은 useKakaomapGeocode 결과를 그대로 전달한다", () => {
-    vi.stubGlobal("navigator", {
-      geolocation: { getCurrentPosition: vi.fn() },
-    });
-
     const { result } = renderHook(() => useNavigationGeo("서울"));
 
     expect(useKakaomapGeocode).toHaveBeenCalledWith("서울");
