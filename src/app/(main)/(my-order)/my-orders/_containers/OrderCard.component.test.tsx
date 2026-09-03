@@ -134,8 +134,8 @@ describe("OrderCard", () => {
       <OrderCard
         order={buildOrder({
           orderStatus: "COMPLETED",
-          invitationStatus: "published",
-          invitationPublicKey: "public-key-1",
+          mobileInvitationStatus: "published",
+          mobileInvitationPublicKey: "public-key-1",
         })}
       />,
     );

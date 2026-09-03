@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain/invitation";
+import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 
 export const sampleInvitation = {
   groom: {
@@ -29,7 +29,8 @@ export const sampleInvitation = {
     "/assets/images/output.webp",
   ],
   galleryImages: ["/assets/images/output.webp"],
-} satisfies InvitationContent;
+  theme: "blossom",
+} satisfies MobileInvitationContent;
 
 export const SAMPLE_FEATURES = ["HORIZONTAL_SLIDE"] as const;
 export const SAMPLE_THEME = "blossom";

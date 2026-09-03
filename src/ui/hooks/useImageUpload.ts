@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { coupleInfoClientSchema } from "@/core/schemas/request/coupleInfo.schema";
+import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 import type { ImagePayload } from "@/core/domain/image";
 
 export function useImageUpload() {
@@ -22,7 +22,7 @@ export function useImageUpload() {
 
     try {
       // 1. 클라이언트 검증 (텍스트 필드 + 이미지 상태 합산)
-      const validated = validateAndFlatten(coupleInfoClientSchema, {
+      const validated = validateAndFlatten(mobileInvitationContentSchema, {
         ...buildTextData(formData),
         thumbnailImages: imagePayload.thumbnailImages,
         galleryImages: imagePayload.galleryImages,

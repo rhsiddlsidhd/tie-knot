@@ -1,5 +1,5 @@
-import type { InvitationContent } from "@/core/domain/invitation";
-// 최종적으로 InvitationMessage 컴포넌트가 받을 props 타입
+import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
+// 최종적으로 MobileInvitationMessage 컴포넌트가 받을 props 타입
 interface Contact {
   relation: string;
   name: string;
@@ -18,11 +18,11 @@ interface Party {
   contacts: Contact[];
 }
 
-export interface InvitationMessageMappedProps {
+export interface MobileInvitationMessageMappedProps {
   parties: Party[];
 }
 
-type CoupleSide = InvitationContent["groom"];
+type CoupleSide = MobileInvitationContent["groom"];
 type Parent = NonNullable<CoupleSide["father"]>;
 
 // 헬퍼 함수 1: 부모/신랑/신부 정보를 Contact 타입으로 변환
@@ -53,13 +53,13 @@ function getParentNames(parents: CoupleSide): ParentName[] {
 }
 
 /**
- * coupleInfoData를 받아 InvitationMessage 컴포넌트의 props를 생성하는 매퍼 함수
+ * coupleInfoData를 받아 MobileInvitationMessage 컴포넌트의 props를 생성하는 매퍼 함수
  * @param coupleInfoData - 청첩장 콘텐츠
- * @returns InvitationMessage 컴포넌트가 필요로 하는 `parties` 배열을 포함한 객체
+ * @returns MobileInvitationMessage 컴포넌트가 필요로 하는 `parties` 배열을 포함한 객체
  */
-export function mapCoupleInfoToInvitationProps(
-  coupleInfoData: InvitationContent,
-): InvitationMessageMappedProps {
+export function mapCoupleInfoToMobileInvitationProps(
+  coupleInfoData: MobileInvitationContent,
+): MobileInvitationMessageMappedProps {
   // 1. 신랑측 연락처 배열 생성
   const groomSideContacts = [
     createContact(coupleInfoData.groom, "신랑"),

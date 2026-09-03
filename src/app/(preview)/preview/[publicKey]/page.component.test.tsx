@@ -1,23 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getProductServiceMock, getPublishedInvitationMock } = vi.hoisted(
-  () => ({
-    getProductServiceMock: vi.fn(),
-    getPublishedInvitationMock: vi.fn(),
-  }),
-);
-
-vi.mock("@/services/product", () => ({
-  getProductService: getProductServiceMock,
-}));
-vi.mock("@/services/invitation", () => ({
-  getPublishedInvitationByPublicKey: getPublishedInvitationMock,
+const { getPublishedMobileInvitationMock } = vi.hoisted(() => ({
+  getPublishedMobileInvitationMock: vi.fn(),
 }));
 
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate", () => ({
-  InvitationTemplate: ({ publicKey }: { publicKey: string }) => (
-    <div>청첩장:{publicKey}</div>
+vi.mock("@/services/mobile-invitation", () => ({
+  getPublishedMobileInvitationByPublicKey: getPublishedMobileInvitationMock,
+}));
+
+vi.mock("@/app/(preview)/preview/[publicKey]/_components/MobileInvitationTemplate", () => ({
+  MobileInvitationTemplate: ({ publicKey, theme }: { publicKey: string; theme: string }) => (
+    <div>청첩장:{publicKey}:{theme}</div>
   ),
 }));
 
@@ -29,16 +23,15 @@ describe("공개 청첩장 페이지", () => {
   });
 
   it("존재하지 않는 공개 키면 준비 중 안내를 렌더링한다", async () => {
-    getPublishedInvitationMock.mockResolvedValue(null);
+    getPublishedMobileInvitationMock.mockResolvedValue(null);
 
     render(await Page({ params: Promise.resolve({ publicKey: "missing" }) }));
 
     expect(screen.getByText("준비 중인 청첩장입니다")).toBeInTheDocument();
-    expect(getProductServiceMock).not.toHaveBeenCalled();
   });
 
   it("draft 청첩장은 본문을 공개하지 않는다", async () => {
-    getPublishedInvitationMock.mockResolvedValue({ status: "draft" });
+    getPublishedMobileInvitationMock.mockResolvedValue({ status: "draft" });
 
     render(await Page({ params: Promise.resolve({ publicKey: "draft-key" }) }));
 
@@ -47,11 +40,11 @@ describe("공개 청첩장 페이지", () => {
   });
 
   it("만료된 청첩장은 종료 안내를 렌더링한다", async () => {
-    getPublishedInvitationMock.mockResolvedValue({
+    getPublishedMobileInvitationMock.mockResolvedValue({
       status: "published",
       productId: "product-1",
       features: [],
-      content: { weddingDate: new Date("2020-01-01") },
+      content: { weddingDate: new Date("2020-01-01"), theme: "default" },
     });
 
     render(
@@ -59,23 +52,20 @@ describe("공개 청첩장 페이지", () => {
     );
 
     expect(screen.getByText("종료된 청첩장입니다")).toBeInTheDocument();
-    expect(getProductServiceMock).not.toHaveBeenCalled();
   });
 
-  it("게시된 청첩장은 publicKey로 본문을 렌더링한다", async () => {
-    getPublishedInvitationMock.mockResolvedValue({
+  it("게시된 청첩장은 저장된 theme 스냅샷으로 본문을 렌더링한다 (상품을 다시 조회하지 않는다)", async () => {
+    getPublishedMobileInvitationMock.mockResolvedValue({
       status: "published",
       productId: "product-1",
       features: [],
-      content: { weddingDate: new Date("2099-01-01") },
+      content: { weddingDate: new Date("2099-01-01"), theme: "blossom" },
     });
-    getProductServiceMock.mockResolvedValue({ theme: "default" });
 
     render(
       await Page({ params: Promise.resolve({ publicKey: "published-key" }) }),
     );
 
-    expect(screen.getByText("청첩장:published-key")).toBeInTheDocument();
-    expect(getProductServiceMock).toHaveBeenCalledWith("product-1");
+    expect(screen.getByText("청첩장:published-key:blossom")).toBeInTheDocument();
   });
 });

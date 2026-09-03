@@ -7,7 +7,7 @@ import { EyebrowSection } from "./EyebrowSection";
 
 
 import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
-import type { InvitationMessageMappedProps } from "../_utils/invitationMessage.mapper";
+import type { MobileInvitationMessageMappedProps } from "../_utils/mobileInvitationMessage.mapper";
 
 const pinMessage = [
   "저희 두 사람의 소중한 첫걸음에",
@@ -15,7 +15,7 @@ const pinMessage = [
   "축복해 주시면 감사하겠습니다.",
 ];
 
-export function InvitationMessage({ parties }: InvitationMessageMappedProps) {
+export function MobileInvitationMessage({ parties }: MobileInvitationMessageMappedProps) {
   const { setIsOpen } = useGuestbookModalStore();
 
   return (

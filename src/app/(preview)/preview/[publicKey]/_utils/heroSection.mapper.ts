@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain/invitation";
+import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 export interface HeroSectionProps {
   groomName: string;
   brideName: string;
@@ -10,7 +10,7 @@ export interface HeroSectionProps {
 }
 
 export const mapCoupleInfoToHeroProps = (
-  coupleInfo: InvitationContent,
+  coupleInfo: MobileInvitationContent,
 ): HeroSectionProps => {
   return {
     groomName: coupleInfo.groom.name,

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import type { InvitationContent } from "@/core/domain/invitation";
+import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 
-import { mapCoupleInfoToInvitationProps } from "./invitationMessage.mapper";
+import { mapCoupleInfoToMobileInvitationProps } from "./mobileInvitationMessage.mapper";
 
-const invitationContent: InvitationContent = {
+const invitationContent: MobileInvitationContent = {
   groom: {
     name: "신랑",
     phone: "010-0000-0001",
@@ -24,11 +24,12 @@ const invitationContent: InvitationContent = {
   guestbookEnabled: true,
   thumbnailImages: [],
   galleryImages: [],
+  theme: "default",
 };
 
 describe("초대 문구 매퍼", () => {
   it("본인과 부모 연락처 관계를 측과 존칭을 포함해 표시한다", () => {
-    const { parties } = mapCoupleInfoToInvitationProps(invitationContent);
+    const { parties } = mapCoupleInfoToMobileInvitationProps(invitationContent);
 
     expect(parties[0].contacts.map(({ relation }) => relation)).toEqual([
       "신랑",
@@ -43,7 +44,7 @@ describe("초대 문구 매퍼", () => {
   });
 
   it("부모 이름 라벨에는 측 접두사 없이 존칭만 표시한다", () => {
-    const { parties } = mapCoupleInfoToInvitationProps(invitationContent);
+    const { parties } = mapCoupleInfoToMobileInvitationProps(invitationContent);
 
     expect(parties[0].parents.map(({ label }) => label)).toEqual([
       "아버님",

@@ -23,10 +23,10 @@ import { useImageList } from "@/ui/hooks/useImageList";
 
 import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
-import type { InvitationTheme } from "@/core/domain/theme";
+import type { MobileInvitationTheme } from "@/core/domain/theme";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
-import { getInvitationThemeOptions } from "@/core/utils/theme";
+import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 interface ProductEditDialogProps {
@@ -52,7 +52,7 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
   const [selectedSubCategory, setSelectedSubCategory] = useState<
     SubCategory | ""
   >(product.subCategory as SubCategory);
-  const [selectedTheme, setSelectedTheme] = useState<InvitationTheme>(
+  const [selectedTheme, setSelectedTheme] = useState<MobileInvitationTheme>(
     product.theme ?? "default",
   );
   const [discountType, setDiscountType] = useState<"rate" | "amount">(
@@ -244,10 +244,10 @@ export function ProductEditDialog({ product }: ProductEditDialogProps) {
                 name="theme"
                 defaultValue={selectedTheme}
                 onValueChange={(value) =>
-                  setSelectedTheme(value as InvitationTheme)
+                  setSelectedTheme(value as MobileInvitationTheme)
                 }
                 placeholder="테마를 선택하세요"
-                data={getInvitationThemeOptions()}
+                data={getMobileInvitationThemeOptions()}
               >
                 테마
               </SelectField>

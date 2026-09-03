@@ -1,4 +1,4 @@
-import type { InvitationContent } from "@/core/domain/invitation";
+import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { InteractionOverlay } from "@/app/(preview)/preview/[publicKey]/_components/interactions/InteractionOverlay";
 import { ThemeAmbience } from "./ThemeAmbience";
@@ -7,7 +7,7 @@ import { mapCoupleInfoToAccountProps } from "@/app/(preview)/preview/[publicKey]
 import { mapCoupleInfoToCalendarProps } from "@/app/(preview)/preview/[publicKey]/_utils/weddingMonthCalendar.mapper";
 import { mapCoupleInfoToGalleryProps } from "@/app/(preview)/preview/[publicKey]/_utils/gallerySection.mapper";
 import { mapCoupleInfoToHeroProps } from "@/app/(preview)/preview/[publicKey]/_utils/heroSection.mapper";
-import { mapCoupleInfoToInvitationProps } from "@/app/(preview)/preview/[publicKey]/_utils/invitationMessage.mapper";
+import { mapCoupleInfoToMobileInvitationProps } from "@/app/(preview)/preview/[publicKey]/_utils/mobileInvitationMessage.mapper";
 import { mapCoupleInfoToLocationProps } from "@/app/(preview)/preview/[publicKey]/_utils/locationSection.mapper";
 import { mapCoupleInfoToThumbnails } from "@/app/(preview)/preview/[publicKey]/_utils/thumbnails.mapper";
 import { AccountSection } from "@/app/(preview)/preview/[publicKey]/_components/AccountSection";
@@ -15,23 +15,23 @@ import { Footer } from "@/app/(preview)/preview/[publicKey]/_components/Footer";
 import { GallerySection } from "@/app/(preview)/preview/[publicKey]/_components/GallerySection";
 import { GuestbookSection } from "@/app/(preview)/preview/[publicKey]/_components/GuestbookSection";
 import { HeroSection } from "@/app/(preview)/preview/[publicKey]/_components/HeroSection";
-import { InvitationMessage } from "@/app/(preview)/preview/[publicKey]/_components/InvitationMessage";
+import { MobileInvitationMessage } from "@/app/(preview)/preview/[publicKey]/_components/MobileInvitationMessage";
 import { LocationSection } from "@/app/(preview)/preview/[publicKey]/_components/LocationSection";
 import { WeddingMonthCalendar } from "@/app/(preview)/preview/[publicKey]/_components/WeddingMonthCalendar";
 
-interface InvitationTemplateProps {
-  content: InvitationContent;
+interface MobileInvitationTemplateProps {
+  content: MobileInvitationContent;
   publicKey: string;
   features: string[];
   theme: string;
 }
 
-export function InvitationTemplate({
+export function MobileInvitationTemplate({
   content,
   publicKey,
   features,
   theme,
-}: InvitationTemplateProps) {
+}: MobileInvitationTemplateProps) {
   const thumbnails = mapCoupleInfoToThumbnails(content);
   return (
     <div className="relative" data-theme={theme}>
@@ -48,7 +48,7 @@ export function InvitationTemplate({
         <div className="relative [grid-area:1/1]">
           <InteractionOverlay theme={theme} />
           <HeroSection {...mapCoupleInfoToHeroProps(content)} />
-          <InvitationMessage {...mapCoupleInfoToInvitationProps(content)} />
+          <MobileInvitationMessage {...mapCoupleInfoToMobileInvitationProps(content)} />
           <WeddingMonthCalendar {...mapCoupleInfoToCalendarProps(content)} />
           <GallerySection
             {...mapCoupleInfoToGalleryProps(

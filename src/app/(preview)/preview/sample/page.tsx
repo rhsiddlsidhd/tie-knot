@@ -1,10 +1,10 @@
 import { routes } from "@/core/domain/routes";
-import { InvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate";
+import { MobileInvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/MobileInvitationTemplate";
 import { SAMPLE_FEATURES, SAMPLE_THEME, sampleInvitation } from "@/app/(preview)/preview/sample/_constants/sampleInvitation";
 
 export default function Page() {
   return (
-    <InvitationTemplate
+    <MobileInvitationTemplate
       content={sampleInvitation}
       publicKey={routes.preview.samplePublicKey}
       features={[...SAMPLE_FEATURES]}
