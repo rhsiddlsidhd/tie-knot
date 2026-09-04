@@ -9,7 +9,7 @@ import {
 import { ProductModel } from "@/models/product.model";
 import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
-import { InvitationModel } from "@/models/invitation.model";
+import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { createProductService } from "@/services/product";
 import { createOrderService } from "@/services/order";
 import type * as AuthModule from "@/services/auth";
@@ -58,8 +58,8 @@ import { PortOneError, RestError } from "@portone/server-sdk";
 import {
   syncPayment,
   cancelPayment,
-  cancelExpiredAwaitingInvitationOrders,
-  cancelExpiredAwaitingInvitationOrdersForAllUsers,
+  cancelExpiredAwaitingMobileInvitationOrders,
+  cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
   cancelExpiredPendingOrders,
   cancelExpiredPendingOrdersForAllUsers,
   completePaymentService,
@@ -992,7 +992,7 @@ describe("payment", () => {
     });
   });
 
-  describe("cancelExpiredAwaitingInvitationOrders", () => {
+  describe("cancelExpiredAwaitingMobileInvitationOrders", () => {
     const expireConfirmedAt = async (orderId: mongoose.Types.ObjectId) => {
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
@@ -1002,7 +1002,7 @@ describe("payment", () => {
       );
     };
 
-    it("기한(7일) 초과 + Invitation 없는 CONFIRMED 주문을 자동취소한다", async () => {
+    it("기한(7일) 초과 + MobileInvitation 없는 CONFIRMED 주문을 자동취소한다", async () => {
       const { savedProduct, order } = await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
         paidPayload(
@@ -1022,7 +1022,7 @@ describe("payment", () => {
         },
       });
 
-      await cancelExpiredAwaitingInvitationOrders(order.userId.toString());
+      await cancelExpiredAwaitingMobileInvitationOrders(order.userId.toString());
 
       const updatedOrder = await OrderModel.findById(order._id).lean();
       expect(updatedOrder?.orderStatus).toBe("CANCELLED");
@@ -1038,7 +1038,7 @@ describe("payment", () => {
         ),
       );
       await syncPayment(order.merchantUid);
-      await cancelExpiredAwaitingInvitationOrders(order.userId.toString());
+      await cancelExpiredAwaitingMobileInvitationOrders(order.userId.toString());
 
       expect(cancelPaymentMock).not.toHaveBeenCalled();
       const updatedOrder = await OrderModel.findById(order._id).lean();
@@ -1090,7 +1090,7 @@ describe("payment", () => {
       );
 
       await expect(
-        cancelExpiredAwaitingInvitationOrders(order1.userId.toString()),
+        cancelExpiredAwaitingMobileInvitationOrders(order1.userId.toString()),
       ).resolves.toBeUndefined();
 
       const updatedOrder1 = await OrderModel.findById(order1._id).lean();
@@ -1100,7 +1100,7 @@ describe("payment", () => {
     });
   });
 
-  describe("cancelExpiredAwaitingInvitationOrdersForAllUsers", () => {
+  describe("cancelExpiredAwaitingMobileInvitationOrdersForAllUsers", () => {
     const expireConfirmedAt = async (orderId: mongoose.Types.ObjectId) => {
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
@@ -1139,7 +1139,7 @@ describe("payment", () => {
         },
       });
 
-      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 2, cancelled: 2, failed: 0 });
       const updated1 = await OrderModel.findById(order1._id).lean();
@@ -1148,14 +1148,14 @@ describe("payment", () => {
       expect(updated2?.orderStatus).toBe("CANCELLED");
     });
 
-    it("Invitation이 있는 주문은 cancelPayment를 호출하지 않는다", async () => {
+    it("MobileInvitation이 있는 주문은 cancelPayment를 호출하지 않는다", async () => {
       const { savedProduct, order } = await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
         paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
       );
       await syncPayment(order.merchantUid);
       await expireConfirmedAt(order._id);
-      await InvitationModel.create({
+      await MobileInvitationModel.create({
         publicKey: "batch-test-invitation-key",
         userId: new mongoose.Types.ObjectId(order.userId),
         orderId: order._id,
@@ -1172,7 +1172,7 @@ describe("payment", () => {
         galleryImages: [],
       });
 
-      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
       expect(cancelPaymentMock).not.toHaveBeenCalled();
@@ -1185,7 +1185,7 @@ describe("payment", () => {
       );
       await syncPayment(order.merchantUid);
 
-      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
       expect(cancelPaymentMock).not.toHaveBeenCalled();
@@ -1224,7 +1224,7 @@ describe("payment", () => {
         },
       );
 
-      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 2, cancelled: 1, failed: 1 });
       const updated1 = await OrderModel.findById(order1._id).lean();
@@ -1234,7 +1234,7 @@ describe("payment", () => {
     });
 
     it("후보가 없으면 cancelPaymentMock을 호출하지 않는다", async () => {
-      const result = await cancelExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
       expect(cancelPaymentMock).not.toHaveBeenCalled();

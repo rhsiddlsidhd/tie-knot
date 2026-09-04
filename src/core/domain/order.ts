@@ -5,7 +5,7 @@ import { DEFAULT_PAGE_SIZE } from "./cursor";
 
 // 결제완료 후 청첩장 콘텐츠를 이 기간(일) 안에 입력하지 않으면
 // 자동취소+환불 대상이 된다.
-export const INVITATION_INPUT_DEADLINE_DAYS = 7;
+export const MOBILE_INVITATION_INPUT_DEADLINE_DAYS = 7;
 
 // 결제창을 띄우기 전에 만들어진 주문(paymentId 없는 PENDING)이 이 시간(시간 단위)을
 // 넘기면 버려진 주문으로 보고 자동취소한다. 가상계좌 발급 주문(paymentId 있음)은
@@ -25,7 +25,7 @@ export type ExpiredPendingOrderBatchResult = {
   heldForReview: number;
 };
 
-export type ExpiredAwaitingInvitationBatchResult = {
+export type ExpiredAwaitingMobileInvitationBatchResult = {
   scanned: number;
   cancelled: number;
   // PortOne 환불 호출이 실패한 건 — 다음 실행에서 다시 후보로 잡혀 재시도된다.
@@ -65,7 +65,7 @@ export const ORDER_STATUS_BADGE_VARIANTS: Record<
 export type OrderJSON = {
   _id: string;
   merchantUid: string;
-  invitationStatus?: "draft" | "published";
+  mobileInvitationStatus?: "draft" | "published";
   userId: string;
   buyerName: string;
   buyerEmail: string;
@@ -117,9 +117,9 @@ export type OrderReviewSummary = {
 };
 
 // 목록 한 행이 실제로 그리는 데 필요한 것까지 합친 형태 — 주문 문서 자체에는 없고
-// 다른 컬렉션(Invitation/Payment/Review)에서 채워지는 값이 붙는다.
+// 다른 컬렉션(MobileInvitation/Payment/Review)에서 채워지는 값이 붙는다.
 export type OrderListItem = OrderJSON & {
-  invitationPublicKey?: string;
+  mobileInvitationPublicKey?: string;
   virtualAccount?: OrderVirtualAccount;
   // 이 주문에 이미 작성된 리뷰 — 없으면 null. orderStatus===COMPLETED와 이 값의
   // 존재로 "작성/보기·수정" 버튼을 분기한다.
@@ -132,7 +132,7 @@ export type OrderListPage = CursorPage<OrderListItem>;
 export const ORDER_PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
 // 관리자 전역 주문 목록 한 행 — my-orders(OrderListItem)와 달리 소유자 스코프가 없고
-// Invitation/Payment 조인 없이 주문 스냅샷만으로 표시 가능한 필드만 추린다.
+// MobileInvitation/Payment 조인 없이 주문 스냅샷만으로 표시 가능한 필드만 추린다.
 export type AdminOrderListItem = {
   id: string;
   merchantUid: string;

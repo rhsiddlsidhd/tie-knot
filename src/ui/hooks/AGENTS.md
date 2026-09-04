@@ -11,7 +11,7 @@
 ```
 src/ui/hooks/
 ├── useAuth.ts             # SWR fetch 전담(`/api/auth/me`) — 서버 세션은 Zustand로 옮기지 않는다, `src/AGENTS.md` Critical Convention 참고
-├── useInvitationForm.ts     # 주문별 청첩장 편집 오케스트레이션
+├── useMobileInvitationForm.ts     # 주문별 청첩장 편집 오케스트레이션
 └── ...                       # 훅 1개당 파일 1개
 ```
 

@@ -1,7 +1,7 @@
 import "server-only";
 import mongoose from "mongoose";
 import type { IOrder } from "@/models/order.model";
-import { InvitationModel } from "@/models/invitation.model";
+import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
 import { ProductModel } from "@/models/product.model";
@@ -15,7 +15,7 @@ import type { AdminOrderListPage, OrderDetail, OrderListItem, OrderListPage, Ord
 import type { ProductCategory } from "@/core/domain/product-category";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import { EXPIRED_ORDER_BATCH_LIMIT, INVITATION_INPUT_DEADLINE_DAYS, ORDER_PAGE_SIZE, ORDER_STATUSES, PENDING_ORDER_EXPIRE_HOURS } from "@/core/domain/order";
+import { EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_INPUT_DEADLINE_DAYS, ORDER_PAGE_SIZE, ORDER_STATUSES, PENDING_ORDER_EXPIRE_HOURS } from "@/core/domain/order";
 import { getProductQuantityBoundsService } from "./product";
 import { requireAuth } from "./auth";
 
@@ -118,21 +118,21 @@ export async function createOrderForCurrentUserService(
 }
 
 /**
- * 결제완료(CONFIRMED)됐지만 Invitation을 만들지 않은 채 기한을 넘긴
+ * 결제완료(CONFIRMED)됐지만 MobileInvitation을 만들지 않은 채 기한을 넘긴
  * 주문을 조회한다(자동취소 대상). 순수 조회만 담당하고 실제 취소(PortOne 환불)는
  * payment.service의 cancelPayment가 맡는다(order.service가 payment.service를
  * import하면 순환 의존이 생기므로, 오케스트레이션은 호출부에서 두 함수를
  * 조합한다).
  */
-export const findExpiredAwaitingInvitationOrders = async (
+export const findExpiredAwaitingMobileInvitationOrders = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<IOrder[]> => {
   await dbConnect();
 
   const deadline = new Date();
-  deadline.setDate(deadline.getDate() - INVITATION_INPUT_DEADLINE_DAYS);
+  deadline.setDate(deadline.getDate() - MOBILE_INVITATION_INPUT_DEADLINE_DAYS);
 
-  const invitations = await InvitationModel.find({ userId })
+  const invitations = await MobileInvitationModel.find({ userId })
     .select("orderId")
     .lean();
   const invitationOrderIds = invitations.map(
@@ -148,29 +148,29 @@ export const findExpiredAwaitingInvitationOrders = async (
 };
 
 /**
- * findExpiredAwaitingInvitationOrders의 전체 유저 스캔 버전 — 스케줄러 배치
- * (/api/cron/expired-orders)가 쓴다. 판정 조건(CONFIRMED + Invitation 미생성 +
+ * findExpiredAwaitingMobileInvitationOrders의 전체 유저 스캔 버전 — 스케줄러 배치
+ * (/api/cron/expired-orders)가 쓴다. 판정 조건(CONFIRMED + MobileInvitation 미생성 +
  * confirmedAt 기한 초과)은 동일하고 userId 스코프만 없다.
  *
- * per-user 버전처럼 "유저의 Invitation 전체 → $nin" 순서로 짜면 전역에선 Invitation
+ * per-user 버전처럼 "유저의 MobileInvitation 전체 → $nin" 순서로 짜면 전역에선 MobileInvitation
  * 컬렉션 전체를 메모리로 올리게 된다. 대신 주문 후보를 먼저 조회하고 그 _id로만
- * Invitation을 역조회한다(orderId는 unique 인덱스라 $in 조회가 색인된다).
+ * MobileInvitation을 역조회한다(orderId는 unique 인덱스라 $in 조회가 색인된다).
  *
- * EXPIRED_ORDER_BATCH_LIMIT은 주문 후보 조회가 아니라 Invitation 제외 필터를
+ * EXPIRED_ORDER_BATCH_LIMIT은 주문 후보 조회가 아니라 MobileInvitation 제외 필터를
  * 통과한 "실제 반환 대상"에만 적용한다 — 조회 단계에서 먼저 자르면, draft
  * 초대장이 있어(제외 대상) 정렬 순서상 상위를 차지하는 오래된 주문들이 매
  * 실행마다 같은 window를 채워 새로 들어온 진짜 미입력 주문을 영원히 못 보게
  * 만드는 기아(starvation) 상태가 될 수 있다. 후보 조회 자체는 이 컬렉션의
- * 실제 CONFIRMED+기한초과 규모에 비례하므로(Invitation 전체 컬렉션과 달리)
+ * 실제 CONFIRMED+기한초과 규모에 비례하므로(MobileInvitation 전체 컬렉션과 달리)
  * 상한 없이 조회해도 무제한 증가하지 않는다.
  */
-export const findExpiredAwaitingInvitationOrdersForAllUsers = async (): Promise<
+export const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
   IOrder[]
 > => {
   await dbConnect();
 
   const deadline = new Date();
-  deadline.setDate(deadline.getDate() - INVITATION_INPUT_DEADLINE_DAYS);
+  deadline.setDate(deadline.getDate() - MOBILE_INVITATION_INPUT_DEADLINE_DAYS);
 
   const candidates = await OrderModel.find({
     orderStatus: "CONFIRMED",
@@ -181,18 +181,18 @@ export const findExpiredAwaitingInvitationOrdersForAllUsers = async (): Promise<
 
   if (candidates.length === 0) return [];
 
-  const invitations = await InvitationModel.find({
+  const invitations = await MobileInvitationModel.find({
     orderId: { $in: candidates.map((order) => order._id) },
   })
     .select("orderId")
     .lean();
 
-  const orderIdsWithInvitation = new Set(
+  const orderIdsWithMobileInvitation = new Set(
     invitations.map((invitation) => invitation.orderId.toString()),
   );
 
   return candidates
-    .filter((order) => !orderIdsWithInvitation.has(order._id.toString()))
+    .filter((order) => !orderIdsWithMobileInvitation.has(order._id.toString()))
     .slice(0, EXPIRED_ORDER_BATCH_LIMIT);
 };
 
@@ -232,7 +232,7 @@ const toOrderListItems = async (
     ProductModel.find({ _id: { $in: productIds } })
       .select("category")
       .lean(),
-    InvitationModel.find({ orderId: { $in: orderIds } })
+    MobileInvitationModel.find({ orderId: { $in: orderIds } })
       .select("orderId status publicKey")
       .lean(),
     paymentIds.length > 0
@@ -284,8 +284,8 @@ const toOrderListItems = async (
     return {
       ...order,
       _id: order._id.toString(),
-      invitationStatus: invitation?.status,
-      invitationPublicKey:
+      mobileInvitationStatus: invitation?.status,
+      mobileInvitationPublicKey:
         invitation?.status === "published" ? invitation.publicKey : undefined,
       virtualAccount,
       review: reviewsByOrder.get(order._id.toString()) ?? null,
@@ -398,7 +398,7 @@ type AdminOrderListRow = {
 /**
  * 관리자 전역 주문 목록 한 페이지 — 소유자 스코프 없이 전체 주문을 대상으로 한다.
  * my-orders(getOrdersPageForUser)와 정렬·커서 계약(createdAt desc, _id tie-break,
- * limit+1)은 공유하지만, Invitation/Payment 조인 없이 주문 스냅샷만으로 채울 수 있는
+ * limit+1)은 공유하지만, MobileInvitation/Payment 조인 없이 주문 스냅샷만으로 채울 수 있는
  * 최소 필드만 select한다 — 목록에 필요 이상의 문서 필드나 Mongoose 인스턴스를
  * 노출하지 않는다.
  */
@@ -583,7 +583,7 @@ export const cancelPendingOrderForCurrentUser = async (
  * PENDING만 대상이다. 가상계좌 발급 주문(paymentId 있음)은 입금 대기 중인 정상
  * 주문이므로 제외한다, 여기 끌어들이면 입금받고 주문을 죽이는 결과가 된다.
  * 순수 조회만 담당하고 취소 전 PG 실제 상태 확인은 payment.service의
- * 오케스트레이션이 맡는다(findExpiredAwaitingInvitationOrders와 대칭 — order.service가
+ * 오케스트레이션이 맡는다(findExpiredAwaitingMobileInvitationOrders와 대칭 — order.service가
  * payment.service를 import하면 순환 의존이 생긴다). 오케스트레이션 쪽이 같은
  * `deadline`으로 취소 대상을 다시 걸러야 하므로 함께 리턴한다.
  */

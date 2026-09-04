@@ -1,5 +1,5 @@
 import type { SubCategory } from "./product-category";
-import type { InvitationTheme } from "./theme";
+import type { MobileInvitationTheme } from "./theme";
 
 export const routes = {
   home: "/",
@@ -22,9 +22,9 @@ export const routes = {
     root: "/my-orders",
     refund: "/my-orders/refund",
     detail: (orderId: string) => `/my-orders/${orderId}`,
-    invitation: (orderId: string) => `/my-orders/${orderId}/invitation`,
-    invitationPreview: (orderId: string) =>
-      `/my-orders/${orderId}/invitation/preview`,
+    mobileInvitation: (orderId: string) => `/my-orders/${orderId}/mobile-invitation`,
+    mobileInvitationPreview: (orderId: string) =>
+      `/my-orders/${orderId}/mobile-invitation/preview`,
   },
   products: {
     root: "/products",
@@ -38,7 +38,7 @@ export const routes = {
   preview: {
     detail: (publicKey: string) => `/preview/${publicKey}`,
     sample: "/preview/sample",
-    sampleTheme: (theme: InvitationTheme) => `/preview/sample/${theme}`,
+    sampleTheme: (theme: MobileInvitationTheme) => `/preview/sample/${theme}`,
     samplePublicKey: "sample",
   },
   admin: {

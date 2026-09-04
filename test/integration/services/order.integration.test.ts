@@ -9,7 +9,7 @@ import {
 import { AppError } from "@/core/domain/error";
 import { EXPIRED_ORDER_BATCH_LIMIT } from "@/core/domain/order";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
-import { InvitationModel } from "@/models/invitation.model";
+import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
 import { ProductModel } from "@/models/product.model";
@@ -21,8 +21,8 @@ import {
   getOrdersPageForUser,
   getAdminOrdersPageService,
   cancelPendingOrderForCurrentUser,
-  findExpiredAwaitingInvitationOrders,
-  findExpiredAwaitingInvitationOrdersForAllUsers,
+  findExpiredAwaitingMobileInvitationOrders,
+  findExpiredAwaitingMobileInvitationOrdersForAllUsers,
   findExpiredPendingOrdersForAllUsers,
 } from "@/services/order";
 import { createProductService } from "@/services/product";
@@ -415,8 +415,8 @@ describe("order", () => {
     });
   });
 
-  describe("findExpiredAwaitingInvitationOrders", () => {
-    it("CONFIRMED + Invitation 없음 + 7일 초과면 조회된다", async () => {
+  describe("findExpiredAwaitingMobileInvitationOrders", () => {
+    it("CONFIRMED + MobileInvitation 없음 + 7일 초과면 조회된다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       const created = await createOrderService(
         buildOrderInputForTest({ userId }),
@@ -428,7 +428,7 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingInvitationOrders(userId);
+      const result = await findExpiredAwaitingMobileInvitationOrders(userId);
 
       expect(result.map((o) => o._id.toString())).toEqual([
         created._id.toString(),
@@ -447,12 +447,12 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: oneDayAgo },
       );
 
-      const result = await findExpiredAwaitingInvitationOrders(userId);
+      const result = await findExpiredAwaitingMobileInvitationOrders(userId);
 
       expect(result).toEqual([]);
     });
 
-    it("Invitation이 이미 있으면 조회되지 않는다", async () => {
+    it("MobileInvitation이 이미 있으면 조회되지 않는다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       const created = await createOrderService(
         buildOrderInputForTest({ userId }),
@@ -463,7 +463,7 @@ describe("order", () => {
         { _id: created._id },
         { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
       );
-      await InvitationModel.create({
+      await MobileInvitationModel.create({
         publicKey: "existing-invitation-key",
         userId: new mongoose.Types.ObjectId(userId),
         orderId: created._id,
@@ -480,7 +480,7 @@ describe("order", () => {
         galleryImages: [],
       });
 
-      const result = await findExpiredAwaitingInvitationOrders(userId);
+      const result = await findExpiredAwaitingMobileInvitationOrders(userId);
 
       expect(result).toEqual([]);
     });
@@ -497,7 +497,7 @@ describe("order", () => {
         { confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingInvitationOrders(userId);
+      const result = await findExpiredAwaitingMobileInvitationOrders(userId);
 
       expect(result).toEqual([]);
     });
@@ -506,7 +506,7 @@ describe("order", () => {
   // EXPIRED_ORDER_BATCH_LIMIT(상수 리터럴) 자체를 검증하는 케이스는 두 describe 다
   // 만들지 않는다 — 51건 생성 비용이 크고(integration은 파일 순차 실행), 아래 정렬
   // 케이스가 "상한이 걸렸을 때 어떤 게 남는지"라는 실질 계약을 이미 지킨다.
-  describe("findExpiredAwaitingInvitationOrdersForAllUsers", () => {
+  describe("findExpiredAwaitingMobileInvitationOrdersForAllUsers", () => {
     const confirmExpired = async (orderId: mongoose.Types.ObjectId) => {
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
@@ -522,17 +522,17 @@ describe("order", () => {
       await confirmExpired(orderA._id);
       await confirmExpired(orderB._id);
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result.map((o) => o._id.toString()).sort()).toEqual(
         [orderA._id.toString(), orderB._id.toString()].sort(),
       );
     });
 
-    it("Invitation이 있는 주문은 소유자와 무관하게 제외된다", async () => {
+    it("MobileInvitation이 있는 주문은 소유자와 무관하게 제외된다", async () => {
       const order = await createOrderService(buildOrderInputForTest());
       await confirmExpired(order._id);
-      await InvitationModel.create({
+      await MobileInvitationModel.create({
         publicKey: "existing-invitation-key",
         userId: new mongoose.Types.ObjectId(order.userId),
         orderId: order._id,
@@ -549,25 +549,25 @@ describe("order", () => {
         galleryImages: [],
       });
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
     });
 
-    it("유저 A의 Invitation이 유저 B의 만료 주문 조회를 방해하지 않는다", async () => {
-      const orderWithInvitation = await createOrderService(
+    it("유저 A의 MobileInvitation이 유저 B의 만료 주문 조회를 방해하지 않는다", async () => {
+      const orderWithMobileInvitation = await createOrderService(
         buildOrderInputForTest(),
       );
-      const orderWithoutInvitation = await createOrderService(
+      const orderWithoutMobileInvitation = await createOrderService(
         buildOrderInputForTest(),
       );
-      await confirmExpired(orderWithInvitation._id);
-      await confirmExpired(orderWithoutInvitation._id);
-      await InvitationModel.create({
+      await confirmExpired(orderWithMobileInvitation._id);
+      await confirmExpired(orderWithoutMobileInvitation._id);
+      await MobileInvitationModel.create({
         publicKey: "other-user-invitation-key",
-        userId: new mongoose.Types.ObjectId(orderWithInvitation.userId),
-        orderId: orderWithInvitation._id,
-        productId: orderWithInvitation.product.productId,
+        userId: new mongoose.Types.ObjectId(orderWithMobileInvitation.userId),
+        orderId: orderWithMobileInvitation._id,
+        productId: orderWithMobileInvitation.product.productId,
         status: "draft",
         groom: { name: "신랑", phone: "010-1111-2222" },
         bride: { name: "신부", phone: "010-3333-4444" },
@@ -580,10 +580,10 @@ describe("order", () => {
         galleryImages: [],
       });
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result.map((o) => o._id.toString())).toEqual([
-        orderWithoutInvitation._id.toString(),
+        orderWithoutMobileInvitation._id.toString(),
       ]);
     });
 
@@ -596,7 +596,7 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: oneDayAgo },
       );
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
     });
@@ -610,15 +610,15 @@ describe("order", () => {
         { confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
     });
 
-    it("후보가 없으면 Invitation 조회 없이 빈 배열을 반환한다", async () => {
-      const findSpy = vi.spyOn(InvitationModel, "find");
+    it("후보가 없으면 MobileInvitation 조회 없이 빈 배열을 반환한다", async () => {
+      const findSpy = vi.spyOn(MobileInvitationModel, "find");
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
       expect(findSpy).not.toHaveBeenCalled();
@@ -626,10 +626,10 @@ describe("order", () => {
       findSpy.mockRestore();
     });
 
-    // 회귀 테스트 — LIMIT을 Invitation 제외 필터보다 먼저 적용하면, draft 초대장이
+    // 회귀 테스트 — LIMIT을 MobileInvitation 제외 필터보다 먼저 적용하면, draft 초대장이
     // 있어(제외 대상) 정렬 순서상 상위를 차지하는 오래된 주문들이 매번 같은 window를
     // 채워 새로 들어온 진짜 미입력 주문을 영원히 못 보는 기아 상태가 된다.
-    it("오래된 주문들이 상한을 넘겨 Invitation을 갖고 있어도, 더 최근의 미입력 주문을 놓치지 않는다", async () => {
+    it("오래된 주문들이 상한을 넘겨 MobileInvitation을 갖고 있어도, 더 최근의 미입력 주문을 놓치지 않는다", async () => {
       const oldestFirst = new Date();
       oldestFirst.setDate(oldestFirst.getDate() - 30);
 
@@ -640,7 +640,7 @@ describe("order", () => {
           { _id: order._id },
           { orderStatus: "CONFIRMED", confirmedAt },
         );
-        await InvitationModel.create({
+        await MobileInvitationModel.create({
           publicKey: `starvation-guard-${i}`,
           userId: new mongoose.Types.ObjectId(order.userId),
           orderId: order._id,
@@ -659,7 +659,7 @@ describe("order", () => {
       }
 
       // 위 EXPIRED_ORDER_BATCH_LIMIT건보다는 최근이지만 여전히 7일 기한은 넘겼고,
-      // Invitation이 없는 진짜 취소 후보.
+      // MobileInvitation이 없는 진짜 취소 후보.
       const trueCandidate = await createOrderService(buildOrderInputForTest());
       const eightDaysAgo = new Date();
       eightDaysAgo.setDate(eightDaysAgo.getDate() - 8);
@@ -668,7 +668,7 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingInvitationOrdersForAllUsers();
+      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result.map((o) => o._id.toString())).toEqual([
         trueCandidate._id.toString(),

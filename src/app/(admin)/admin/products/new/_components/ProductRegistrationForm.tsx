@@ -21,7 +21,7 @@ import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category
 import { getFieldError } from "@/core/utils/error";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
-import { getInvitationThemeOptions } from "@/core/utils/theme";
+import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import type { APIResponse } from "@/core/domain/error";
 
 interface ProductRegistrationFormProps {
@@ -150,7 +150,7 @@ export function ProductRegistrationForm({
                     name="theme"
                     defaultValue="default"
                     placeholder="테마를 선택하세요"
-                    data={getInvitationThemeOptions()}
+                    data={getMobileInvitationThemeOptions()}
                     error={themeError}
                   >
                     테마

@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { INVITATION_THEMES } from "@/core/domain/theme";
+import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 
 export const productSchema = z
@@ -8,7 +8,7 @@ export const productSchema = z
     description: z.string().min(10, "상품 설명은 최소 10자 이상이어야 합니다."),
     category: z.enum(PRODUCT_CATEGORIES),
     subCategory: z.string().min(1, "서브 카테고리를 선택해주세요."),
-    theme: z.enum(INVITATION_THEMES).optional(),
+    theme: z.enum(MOBILE_INVITATION_THEMES).optional(),
     price: z
       .number()
       .int("가격은 원 단위 정수로 입력해주세요.")
