@@ -66,9 +66,25 @@ describe("cursor", () => {
     ).toBe(null);
   });
 
-  it("구분자가 3개 이상이면 null을 리턴한다", () => {
+  it("tertiary 값을 포함해 인코딩한 커서는 원래 값으로 복원된다", () => {
+    const decoded = decodeCursor(
+      encodeCursor({ createdAt, id, secondary: 1, tertiary: 42 }),
+    );
+
+    expect(decoded).toEqual({ createdAt, id, secondary: 1, tertiary: 42 });
+  });
+
+  it("tertiary 부분이 숫자가 아니면 null을 리턴한다", () => {
     expect(
-      decodeCursor(encodeRawPayload(`2026-08-19T05:30:00.000Z|${id}|4.5|extra`)),
+      decodeCursor(encodeRawPayload(`2026-08-19T05:30:00.000Z|${id}|1|not-a-number`)),
+    ).toBe(null);
+  });
+
+  it("구분자가 4개 이상이면 null을 리턴한다", () => {
+    expect(
+      decodeCursor(
+        encodeRawPayload(`2026-08-19T05:30:00.000Z|${id}|4.5|6|extra`),
+      ),
     ).toBe(null);
   });
 

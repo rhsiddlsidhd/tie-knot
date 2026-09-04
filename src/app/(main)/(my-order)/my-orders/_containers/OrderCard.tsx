@@ -21,7 +21,7 @@ import { routes } from "@/core/domain/routes";
 import { cancelOrder } from "@/actions/cancelOrder";
 import { PAY_METHOD_LABEL } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
 import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
-import { getInvitationInputDaysLeft } from "@/app/(main)/(my-order)/my-orders/_utils/orderDeadline";
+import { getMobileInvitationInputDaysLeft } from "@/app/(main)/(my-order)/my-orders/_utils/orderDeadline";
 import { PaymentButton } from "./PaymentButton";
 import { PendingCoupleInfoBanner } from "../_components/PendingCoupleInfoBanner";
 import { ReviewFormDialog } from "./ReviewFormDialog";
@@ -59,7 +59,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
   // 결제는 완료됐지만 청첩장 콘텐츠를 아직 입력하지 않은 주문.
   const needsCustomerInput =
     order.orderStatus === "CONFIRMED" &&
-    !order.invitationStatus &&
+    !order.mobileInvitationStatus &&
     customerInputRoute;
 
   // 같은 PENDING이라도 성격이 정반대다 — 가상계좌 주문은 입금을 기다리는 정상 주문이고,
@@ -190,10 +190,11 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
                 key={order.review?.id ?? "new"}
                 orderId={order._id}
                 review={order.review}
+                onOrderChanged={onOrderChanged}
               />
             )}
             {isAbandonedPending && <PaymentButton order={order} />}
-            {order.invitationStatus &&
+            {order.mobileInvitationStatus &&
               order.orderStatus !== "CANCELLED" &&
               customerInputRoute && (
                 <Button size="lg" variant="outline" asChild>
@@ -203,13 +204,13 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
                   </Link>
                 </Button>
               )}
-            {order.invitationPublicKey && (
+            {order.mobileInvitationPublicKey && (
               <Button
                 size="lg"
                 variant="outline"
                 onClick={() =>
                   copyToClipboard(
-                    `${window.location.origin}${routes.preview.detail(order.invitationPublicKey!)}`,
+                    `${window.location.origin}${routes.preview.detail(order.mobileInvitationPublicKey!)}`,
                   )
                 }
               >
@@ -251,7 +252,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
             orderId={order._id}
             daysLeft={
               order.confirmedAt
-                ? getInvitationInputDaysLeft(order.confirmedAt)
+                ? getMobileInvitationInputDaysLeft(order.confirmedAt)
                 : undefined
             }
           />

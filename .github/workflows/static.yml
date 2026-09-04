@@ -10,7 +10,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  static:
+  lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run lint:barrels
+
+  tsc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run tsc
+
+  build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     services:
@@ -31,9 +58,6 @@ jobs:
           cache: npm
           cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npm run lint
-      - run: npm run lint:barrels
-      - run: npm run tsc
       - name: Build
         run: npm run build
         env:
@@ -46,3 +70,20 @@ jobs:
           NEXT_PUBLIC_KAKAO_MAP_API_KEY: kakao-map-ci
           BASE_URL: http://127.0.0.1:3100
           DEPLOYMENT_BASE_URL: http://127.0.0.1:3100
+
+  # lint/tsc/build를 병렬로 돌리는 대신, 브랜치 보호가 요구하는 required status check
+  # 이름("static" 하나, docs/validation/ci-gates.md)은 이 취합 job으로 고정한다 — job을
+  # 여러 개로 쪼개도 GitHub 브랜치 보호 설정을 매번 동기화할 필요가 없다.
+  static:
+    needs: [lint, tsc, build]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check parallel job results
+        run: |
+          if [ "${{ needs.lint.result }}" != "success" ] || \
+             [ "${{ needs.tsc.result }}" != "success" ] || \
+             [ "${{ needs.build.result }}" != "success" ]; then
+            echo "lint=${{ needs.lint.result }} tsc=${{ needs.tsc.result }} build=${{ needs.build.result }}"
+            exit 1
+          fi

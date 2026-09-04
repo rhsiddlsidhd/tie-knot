@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import type { InvitationContent } from "@/core/domain/invitation";
+import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 
 import { mapCoupleInfoToAccountProps } from "./accountSection.mapper";
 
-const invitationContent: InvitationContent = {
+const invitationContent: MobileInvitationContent = {
   groom: {
     name: "신랑",
     phone: "010-0000-0001",
@@ -44,6 +44,7 @@ const invitationContent: InvitationContent = {
   guestbookEnabled: true,
   thumbnailImages: [],
   galleryImages: [],
+  theme: "default",
 };
 
 describe("계좌 정보 매퍼", () => {

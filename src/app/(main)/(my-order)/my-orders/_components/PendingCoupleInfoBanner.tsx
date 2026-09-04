@@ -31,7 +31,7 @@ const PendingCoupleInfoBanner = ({
         )}
       </Alert>
       <Button size="lg" variant="outline" asChild>
-        <Link href={routes.myOrders.invitation(orderId)}>
+        <Link href={routes.myOrders.mobileInvitation(orderId)}>
           <Edit className="mr-1 h-4 w-4" />
           정보 입력하기
         </Link>

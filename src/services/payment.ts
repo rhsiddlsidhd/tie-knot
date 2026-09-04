@@ -10,14 +10,14 @@ import { ProductModel } from "@/models/product.model";
 import { getProductService } from "./product";
 import {
   getOrderSeviceByMerchantUid,
-  findExpiredAwaitingInvitationOrders,
-  findExpiredAwaitingInvitationOrdersForAllUsers,
+  findExpiredAwaitingMobileInvitationOrders,
+  findExpiredAwaitingMobileInvitationOrdersForAllUsers,
   findExpiredPendingOrders,
   findExpiredPendingOrdersForAllUsers,
   PENDING_ORDER_CANCEL_REASONS,
 } from "./order";
 import { AppError } from "@/core/domain/error";
-import type { ExpiredPendingOrderBatchResult, ExpiredAwaitingInvitationBatchResult } from "@/core/domain/order";
+import type { ExpiredPendingOrderBatchResult, ExpiredAwaitingMobileInvitationBatchResult } from "@/core/domain/order";
 import { dbConnect } from "@/db/connect";
 import { requireAuth } from "./auth";
 
@@ -576,7 +576,7 @@ export const syncPayment = async (paymentId: string) => {
 /**
  * 결제 취소 — PortOne 환불 API 호출 후 Order/Payment 상태를 트랜잭션으로
  * 함께 전이한다(syncPayment의 FAILED 분기와 같은 이유). coupleInfo 미입력
- * 자동취소(/api/cron/expired-orders 스케줄러 배치, cancelOrdersAwaitingInvitation)에서 사용.
+ * 자동취소(/api/cron/expired-orders 스케줄러 배치, cancelOrdersAwaitingMobileInvitation)에서 사용.
  * @param merchantUid - 우리 서버에서 생성한 주문번호(PortOne paymentId)
  */
 export const cancelPayment = async (
@@ -656,15 +656,15 @@ export const cancelPayment = async (
  * 배치 실행(/api/cron/expired-orders)에서 다시 후보로 잡혀 재시도된다(주문이
  * CONFIRMED로 남아 있기 때문).
  */
-const cancelOrdersAwaitingInvitation = async (
+const cancelOrdersAwaitingMobileInvitation = async (
   expiredOrders: IOrder[],
-): Promise<ExpiredAwaitingInvitationBatchResult> => {
+): Promise<ExpiredAwaitingMobileInvitationBatchResult> => {
   const outcomes = await Promise.allSettled(
     expiredOrders.map((order) =>
       cancelPayment(order.merchantUid, "정보 미입력으로 인한 자동 취소").catch(
         (e) => {
           console.error(
-            `[cancelOrdersAwaitingInvitation] ${order.merchantUid} 취소 실패:`,
+            `[cancelOrdersAwaitingMobileInvitation] ${order.merchantUid} 취소 실패:`,
             e,
           );
           throw e;
@@ -686,22 +686,22 @@ const cancelOrdersAwaitingInvitation = async (
  * coupleInfo 미입력 자동취소(단일 유저) — 스케줄러 이전(GH #82) 이후 제품 코드에서
  * 호출하는 곳은 없다. 관리자 단위 수동 취소 같은 후속 용도를 위해 진입점만 남긴다.
  */
-export const cancelExpiredAwaitingInvitationOrders = async (
+export const cancelExpiredAwaitingMobileInvitationOrders = async (
   userId: string,
 ): Promise<void> => {
-  const expiredOrders = await findExpiredAwaitingInvitationOrders(userId);
-  await cancelOrdersAwaitingInvitation(expiredOrders);
+  const expiredOrders = await findExpiredAwaitingMobileInvitationOrders(userId);
+  await cancelOrdersAwaitingMobileInvitation(expiredOrders);
 };
 
 /**
  * coupleInfo 미입력 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점.
  * PortOne 실환불을 호출하므로 만료 PENDING 배치(DB-only)와 실행·실패를 분리한다.
  */
-export const cancelExpiredAwaitingInvitationOrdersForAllUsers =
-  async (): Promise<ExpiredAwaitingInvitationBatchResult> => {
+export const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
+  async (): Promise<ExpiredAwaitingMobileInvitationBatchResult> => {
     const expiredOrders =
-      await findExpiredAwaitingInvitationOrdersForAllUsers();
-    return cancelOrdersAwaitingInvitation(expiredOrders);
+      await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+    return cancelOrdersAwaitingMobileInvitation(expiredOrders);
   };
 
 /**

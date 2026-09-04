@@ -201,7 +201,7 @@ orderSchema.index({ userId: 1, orderStatus: 1, createdAt: -1 });
 // paymentId: null 쿼리가 필드 누락 문서와도 매칭돼야 하는데 sparse면 그 문서들이
 // 인덱스에서 빠진다.
 orderSchema.index({ orderStatus: 1, paymentId: 1, createdAt: 1 }); // findExpiredPendingOrdersForAllUsers
-orderSchema.index({ orderStatus: 1, confirmedAt: 1 }); // findExpiredAwaitingInvitationOrdersForAllUsers
+orderSchema.index({ orderStatus: 1, confirmedAt: 1 }); // findExpiredAwaitingMobileInvitationOrdersForAllUsers
 
 // 관리자 대시보드 "최근 주문" + 관리자 전역 주문 목록(상태 필터 없음) 전용 — 둘 다
 // 위 복합 인덱스(선두 필드가 userId/orderStatus)를 못 쓴다. _id를 tie-break로

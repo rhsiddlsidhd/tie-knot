@@ -61,4 +61,14 @@ describe("useImageList", () => {
     expect(result.current.items).toEqual([second]);
     expect(result.current.getUrls()).toEqual(["url-b"]);
   });
+
+  it("reset()은 모든 항목을 제거한다", () => {
+    const { result } = renderHook(() => useImageList());
+
+    act(() => result.current.add(["url-a", "url-b"]));
+    act(() => result.current.reset());
+
+    expect(result.current.items).toEqual([]);
+    expect(result.current.getUrls()).toEqual([]);
+  });
 });

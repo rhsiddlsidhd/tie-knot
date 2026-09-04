@@ -1,6 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import {
-  cancelExpiredAwaitingInvitationOrdersForAllUsers,
+  cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
   cancelExpiredPendingOrdersForAllUsers,
 } from "@/services/payment";
 
@@ -50,7 +50,7 @@ export async function GET(request: Request): Promise<Response> {
   // 충분하다. 순차 실행은 maxDuration(60초) 예산을 불필요하게 두 배로 소모한다.
   const [pending, awaitingInvitation] = await Promise.all([
     runBatch("expired-pending", cancelExpiredPendingOrdersForAllUsers),
-    runBatch("awaiting-invitation", cancelExpiredAwaitingInvitationOrdersForAllUsers),
+    runBatch("awaiting-invitation", cancelExpiredAwaitingMobileInvitationOrdersForAllUsers),
   ]);
 
   const ok = pending !== null && awaitingInvitation !== null;

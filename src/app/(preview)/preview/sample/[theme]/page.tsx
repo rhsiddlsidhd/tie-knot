@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 import { routes } from "@/core/domain/routes";
-import { INVITATION_THEMES } from "@/core/domain/theme";
-import { InvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/InvitationTemplate";
+import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
+import { MobileInvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_components/MobileInvitationTemplate";
 import { SAMPLE_FEATURES, sampleInvitation } from "@/app/(preview)/preview/sample/_constants/sampleInvitation";
-import { isInvitationTheme } from "./_utils/isInvitationTheme";
+import { isMobileInvitationTheme } from "./_utils/isMobileInvitationTheme";
 
 export function generateStaticParams() {
-  return INVITATION_THEMES.map((theme) => ({ theme }));
+  return MOBILE_INVITATION_THEMES.map((theme) => ({ theme }));
 }
 
 export default async function Page({
@@ -15,10 +15,10 @@ export default async function Page({
   params: Promise<{ theme: string }>;
 }) {
   const { theme } = await params;
-  if (!isInvitationTheme(theme)) notFound();
+  if (!isMobileInvitationTheme(theme)) notFound();
 
   return (
-    <InvitationTemplate
+    <MobileInvitationTemplate
       content={sampleInvitation}
       publicKey={routes.preview.samplePublicKey}
       features={[...SAMPLE_FEATURES]}

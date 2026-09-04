@@ -1,14 +1,14 @@
 // ---- 값이 원본 ----
-export const INVITATION_THEMES = [
+export const MOBILE_INVITATION_THEMES = [
   "default",
   "blossom",
   "botanical",
   "midnight",
 ] as const;
 
-export type InvitationTheme = (typeof INVITATION_THEMES)[number];
+export type MobileInvitationTheme = (typeof MOBILE_INVITATION_THEMES)[number];
 
-export const INVITATION_THEME_LABELS: Record<InvitationTheme, string> = {
+export const MOBILE_INVITATION_THEME_LABELS: Record<MobileInvitationTheme, string> = {
   default: "기본",
   blossom: "벚꽃",
   botanical: "세이지그린",
