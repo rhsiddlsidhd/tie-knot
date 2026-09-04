@@ -101,7 +101,12 @@ const productSchema = new Schema<IProduct>(
               .findOne(this.getQuery())
               .select("category")
               .lean();
-            category = existing?.category;
+            // 대상 문서가 아예 없으면 subCategory 유효성을 판단할 근거가 없다 —
+            // false로 떨어뜨려 ValidationError(INTERNAL)를 내면 findOneAndUpdate가
+            // 원래 냈어야 할 "매치 없음"(→ NOT_FOUND) 결과를 가로채게 된다. 검증을
+            // 건너뛰어 update 자체가 매치 없이 끝나도록 위임한다.
+            if (!existing) return true;
+            category = existing.category;
           }
           // 카테고리가 5종으로 늘면서 SUB_CATEGORY_MAP 인덱싱 결과가 카테고리별로 다른
           // 리터럴 튜플 타입의 union이 된다 — 명시적으로 readonly string[]로 넓혀야
