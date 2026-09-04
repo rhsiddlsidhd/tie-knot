@@ -182,6 +182,12 @@ productSchema.index({
   _id: -1,
 });
 
+// 관리자 상품 목록 cursor 페이징(getAdminProductsPageService) 전용 — active(deletedAt:null)
+// /trash(deletedAt:{$ne:null}) 두 view 모두 deletedAt이 leading field라 index 하나로
+// 커버된다(order.model.ts/user.model.ts와 동일하게 admin cursor 정렬을 인덱스로 전부
+// 커버하는 패턴).
+productSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
+
 export const ProductModel =
   (mongoose.models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);
