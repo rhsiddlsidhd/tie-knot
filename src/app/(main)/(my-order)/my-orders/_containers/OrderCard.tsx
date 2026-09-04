@@ -190,6 +190,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
                 key={order.review?.id ?? "new"}
                 orderId={order._id}
                 review={order.review}
+                onOrderChanged={onOrderChanged}
               />
             )}
             {isAbandonedPending && <PaymentButton order={order} />}

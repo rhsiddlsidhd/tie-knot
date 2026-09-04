@@ -21,6 +21,8 @@ import { updateReview } from "@/actions/updateReview";
 interface ReviewFormDialogProps {
   orderId: string;
   review: OrderReviewSummary | null;
+  // 작성/수정/삭제가 성공하면 목록 캐시를 다시 받아와야 한다 — 목록을 소유한 쪽이 그 방법을 안다.
+  onOrderChanged?: () => void;
 }
 
 type ReviewActionResult = APIResponse<{ message: string }>;
@@ -32,7 +34,11 @@ type ReviewActionResult = APIResponse<{ message: string }>;
 // useActionState 대신 수동 onSubmit+useTransition을 쓴다 — 성공 시 다이얼로그를 닫고
 // router.refresh()까지 이어지는데, 이 setState 호출을 useActionState의 effect 안에서
 // 하면 "setState in effect" 경고 대상이라 이벤트 핸들러(transition 콜백) 안에서 처리한다.
-const ReviewFormDialog = ({ orderId, review }: ReviewFormDialogProps) => {
+const ReviewFormDialog = ({
+  orderId,
+  review,
+  onOrderChanged,
+}: ReviewFormDialogProps) => {
   const isEdit = Boolean(review);
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(review?.rating ?? 0);
@@ -49,6 +55,7 @@ const ReviewFormDialog = ({ orderId, review }: ReviewFormDialogProps) => {
   const handleSuccess = (message: string) => {
     toast.success(message);
     setOpen(false);
+    onOrderChanged?.();
     router.refresh();
   };
 
