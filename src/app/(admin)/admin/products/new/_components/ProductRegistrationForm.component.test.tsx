@@ -43,6 +43,7 @@ describe("ProductRegistrationForm", () => {
         pending={false}
         state={null}
         onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
       />,
     );
 
@@ -167,6 +168,7 @@ describe("ProductRegistrationForm", () => {
           },
         }}
         onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
       />,
     );
 
@@ -254,6 +256,7 @@ describe("ProductRegistrationForm", () => {
         pending={false}
         state={null}
         onCancel={onCancel}
+        onSubmitIntentChange={vi.fn()}
       />,
     );
 
@@ -270,11 +273,13 @@ describe("ProductRegistrationForm", () => {
         pending={true}
         state={null}
         onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
       />,
     );
 
-    const submitButton = screen.getByRole("button", { name: "등록 중..." });
-    expect(submitButton).toBeDisabled();
+    const submitButtons = screen.getAllByRole("button", { name: "등록 중..." });
+    expect(submitButtons).toHaveLength(2);
+    submitButtons.forEach((button) => expect(button).toBeDisabled());
   });
 
   it("카테고리를 변경하면 서브 카테고리 선택이 초기화된다", async () => {
@@ -290,5 +295,152 @@ describe("ProductRegistrationForm", () => {
     await user.click(await screen.findByRole("option", { name: "모바일초대장" }));
 
     expect(categoryTrigger!.textContent).toContain("모바일초대장");
+  });
+});
+
+describe("ProductRegistrationForm — 연속 등록(계속 작성)", () => {
+  it("상품 등록/등록 후 계속 작성 두 개의 제출 버튼을 렌더링한다", () => {
+    render(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "상품 등록" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "등록 후 계속 작성" }),
+    ).toBeInTheDocument();
+  });
+
+  it("상품 등록 버튼을 클릭하면 onSubmitIntentChange(false)가 호출된다", async () => {
+    const user = userEvent.setup();
+    const onSubmitIntentChange = vi.fn();
+    render(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={onSubmitIntentChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "상품 등록" }));
+
+    expect(onSubmitIntentChange).toHaveBeenCalledWith(false);
+  });
+
+  it("등록 후 계속 작성 버튼을 클릭하면 onSubmitIntentChange(true)가 호출된다", async () => {
+    const user = userEvent.setup();
+    const onSubmitIntentChange = vi.fn();
+    render(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={onSubmitIntentChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "등록 후 계속 작성" }));
+
+    expect(onSubmitIntentChange).toHaveBeenCalledWith(true);
+  });
+
+  it("계속 작성으로 제출 성공하면 카테고리/서브카테고리/테마는 유지되고 나머지 필드는 초기화된다", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
+      />,
+    );
+
+    const subCategoryTrigger = screen
+      .getAllByRole("combobox")
+      .find((el) => el.textContent?.includes("서브 카테고리를 선택하세요"));
+    await user.click(subCategoryTrigger!);
+    await user.click(await screen.findByRole("option", { name: "청첩장" }));
+
+    const themeTrigger = screen
+      .getAllByRole("combobox")
+      .find((el) => el.textContent?.includes("기본"));
+    await user.click(themeTrigger!);
+    await user.click(await screen.findByRole("option", { name: "벚꽃" }));
+
+    await user.type(screen.getByLabelText(/상품명/), "임시 상품명");
+    await user.click(screen.getByRole("switch", { name: /추천 상품/ }));
+
+    // "계속 작성"을 클릭한 뒤, 서버 성공 응답을 흉내내 state prop을 갱신한다
+    // (실제로는 useActionState가 이 값을 컨테이너를 통해 내려준다).
+    await user.click(screen.getByRole("button", { name: "등록 후 계속 작성" }));
+
+    rerender(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={{ success: true, data: { message: "등록 완료" } }}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
+      />,
+    );
+
+    const subCategoryTriggerAfter = screen
+      .getAllByRole("combobox")
+      .find((el) => el.textContent?.includes("청첩장"));
+    expect(subCategoryTriggerAfter).toBeDefined();
+
+    const themeTriggerAfter = screen
+      .getAllByRole("combobox")
+      .find((el) => el.textContent?.includes("벚꽃"));
+    expect(themeTriggerAfter).toBeDefined();
+
+    expect(screen.getByLabelText(/상품명/)).toHaveValue("");
+    expect(
+      screen.getByRole("switch", { name: /추천 상품/ }),
+    ).not.toBeChecked();
+  });
+
+  it("상품 등록 버튼으로 제출 성공해도 필드를 초기화하지 않는다(기존 흐름 회귀 없음)", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
+      />,
+    );
+
+    await user.type(screen.getByLabelText(/상품명/), "임시 상품명");
+    await user.click(screen.getByRole("button", { name: "상품 등록" }));
+
+    rerender(
+      <ProductRegistrationForm
+        premiumFeatures={[]}
+        action={vi.fn()}
+        pending={false}
+        state={{ success: true, data: { message: "등록 완료" } }}
+        onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByLabelText(/상품명/)).toHaveValue("임시 상품명");
   });
 });
