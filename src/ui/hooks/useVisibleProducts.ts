@@ -20,12 +20,9 @@ const useVisibleProducts = ({
 
   const visibleProducts = useMemo(() => {
     // 1. Filter
+    // subCategory는 여기서 거르지 않는다 — 서버가 이미 subCategory 조건으로 조회해
+    // 내려준 데이터라 클라이언트에서 다시 필터링하면 중복이다(ProductFilters.tsx 참고).
     const filtered = data.filter((item) => {
-      // SubCategory filter
-
-      const subCategoryMatch =
-        state.subCategory === "all" || item.subCategory === state.subCategory;
-
       // Keyword filter
       const keywordMatch = (() => {
         if (!state.keyword) return true;
@@ -66,7 +63,7 @@ const useVisibleProducts = ({
         );
       })();
 
-      return subCategoryMatch && keywordMatch && priceMatch && premiumFeatMatch;
+      return keywordMatch && priceMatch && premiumFeatMatch;
     });
 
     // 2. Sort
@@ -95,7 +92,6 @@ const useVisibleProducts = ({
 
     return sorted;
   }, [
-    state.subCategory,
     state.keyword,
     state.price,
     state.premiumFeat,

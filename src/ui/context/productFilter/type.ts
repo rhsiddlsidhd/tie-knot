@@ -1,9 +1,9 @@
-import type { SubCategory } from "@/core/domain/product-category";
 import type { ProductPriceType, ProductSortType } from "@/core/domain/product";
 
+// subCategory는 여기 없다 — URL searchParams가 소유한다(_components/ProductFilters.tsx
+// 참고). 이 state는 URL과 무관한 순수 클라이언트 필터(검색어/정렬/가격/특별옵션)만 다룬다.
 export type ProductFilterState = {
   keyword: string;
-  subCategory: SubCategory | "all";
   isOpen: boolean;
   sortBy: ProductSortType;
   price: ProductPriceType;
@@ -12,7 +12,6 @@ export type ProductFilterState = {
 
 export type ProductFilterAction =
   | { type: "CHANGE_KEYWORD"; payload: string }
-  | { type: "SELECT_SUB_CATEGORY"; payload: ProductFilterState["subCategory"] }
   | { type: "OPEN_SUGGESTIONS" }
   | { type: "CLOSE_SUGGESTIONS" }
   | { type: "SELECT_SORT_BY"; payload: ProductFilterState["sortBy"] }
