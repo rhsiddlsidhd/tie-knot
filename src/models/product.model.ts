@@ -156,6 +156,32 @@ const productSchema = new Schema<IProduct>(
   },
 );
 
+// 공개 상품 목록 cursor 페이징(getPublicProductsPageService) 전용 — equality 필드
+// (deletedAt/status/category)를 앞에, 정렬 필드(isFeatured/priority/createdAt/_id)를
+// 뒤에 두는 순서를 따른다(mongoose 공식 문서 compound index 가이드). subCategory는
+// 쿼리에 있을 때만 equality로 쓰여 아래 index만으로는 커버되지 않아, subCategory
+// 포함/미포함 두 쿼리 모양을 각각 커버하는 index 두 개를 둔다(order.model.ts가 이미
+// 같은 방식으로 쿼리 모양별 index를 여러 개 두고 있다).
+productSchema.index({
+  deletedAt: 1,
+  status: 1,
+  category: 1,
+  isFeatured: -1,
+  priority: -1,
+  createdAt: -1,
+  _id: -1,
+});
+productSchema.index({
+  deletedAt: 1,
+  status: 1,
+  category: 1,
+  subCategory: 1,
+  isFeatured: -1,
+  priority: -1,
+  createdAt: -1,
+  _id: -1,
+});
+
 export const ProductModel =
   (mongoose.models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);
