@@ -663,6 +663,16 @@ describe("product", () => {
       expect(result).toBeNull();
     });
 
+    it("존재하지 않는 id + category 없이 subCategory만 보내도 null을 리턴한다 (#49)", async () => {
+      const missingId = new mongoose.Types.ObjectId().toString();
+
+      const result = await updateProductService(missingId, {
+        subCategory: "first-birthday",
+      });
+
+      expect(result).toBeNull();
+    });
+
     it("id 형식이 잘못되면 null을 리턴한다", async () => {
       const result = await updateProductService("not-a-valid-id", {
         title: "x",
