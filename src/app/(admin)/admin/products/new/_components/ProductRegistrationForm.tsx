@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { Alert } from "@/ui/components/molecules/Alert";
 import { ImageField } from "@/ui/components/organisms/ImageField";
@@ -30,6 +30,8 @@ interface ProductRegistrationFormProps {
   pending: boolean;
   state: APIResponse<{ message: string }> | null;
   onCancel: () => void;
+  // 등록 성공 시 목록으로 이동할지(false) 폼에 남아 계속 등록할지(true) 컨테이너에 알린다.
+  onSubmitIntentChange: (continueRegistration: boolean) => void;
 }
 
 export function ProductRegistrationForm({
@@ -38,10 +40,15 @@ export function ProductRegistrationForm({
   pending,
   state,
   onCancel,
+  onSubmitIntentChange,
 }: ProductRegistrationFormProps) {
   const [isPremium, setIsPremium] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<ProductCategory>(MOBILE_INVITATION_CATEGORY);
+  // 연속 등록 시 유지되는 필드 — category와 마찬가지로 SelectField에 defaultValue로
+  // 넘겨 외부 상태와 동기화한다(SelectField는 defaultValue prop 변경을 감지해 재동기화한다).
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [selectedTheme, setSelectedTheme] = useState("default");
   const [isFeature, setIsFeature] = useState(false);
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
   const [discountType, setDiscountType] = useState<"rate" | "amount">("rate");
@@ -55,6 +62,36 @@ export function ProductRegistrationForm({
   const [minQuantity, setMinQuantity] = useState<number>(1);
   // 등록 폼 초기값 true — mongoose default(maxQuantity: 0)와 일치.
   const [isUnlimitedMax, setIsUnlimitedMax] = useState(true);
+
+  const formRef = useRef<HTMLFormElement>(null);
+  // 마지막으로 클릭된 제출 버튼 종류. 두 버튼 모두 같은 action을 호출하므로
+  // 성공 이후 어떤 버튼이었는지는 클릭 시점에 기록해뒀다가 state 변화 시 읽는다.
+  const isContinueSubmitRef = useRef(false);
+
+  // "등록 후 계속 작성"으로 성공한 경우에만 category/subCategory/theme을 제외한
+  // 나머지 필드를 초기화한다 — uncontrolled 필드는 form.reset(), controlled 필드는
+  // 각각의 setState로 되돌린다. category/subCategory/theme은 React state이므로
+  // form.reset()의 영향을 받지 않아 그대로 유지된다.
+  useEffect(() => {
+    if (!state?.success) return;
+    if (!isContinueSubmitRef.current) return;
+
+    formRef.current?.reset();
+    setIsPremium(false);
+    setIsFeature(false);
+    setSelectedFeatureIds([]);
+    setDiscountType("rate");
+    setPriceInputError(null);
+    setDiscountInputError(null);
+    setMinQuantity(1);
+    setIsUnlimitedMax(true);
+    thumbnail.reset();
+    preview.reset();
+    images.reset();
+    // thumbnail/preview/images는 매 렌더 새로 생성되는 객체라 deps에 넣으면 매 렌더 실행된다.
+    // 제출 성공(state 변화)에만 반응하면 충분하므로 의도적으로 제외한다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state]);
 
   const handleFeatureChange = (checked: boolean, id: string) => {
     setSelectedFeatureIds((prev) =>
@@ -81,7 +118,7 @@ export function ProductRegistrationForm({
   const maxQuantityError = getFieldError(state, "maxQuantity");
 
   return (
-    <form action={action} className="space-y-6">
+    <form ref={formRef} action={action} className="space-y-6">
       {/* featureIds — 선택된 것만 전송 */}
       {selectedFeatureIds.map((id) => (
         <input key={id} type="hidden" name="featureIds" value={id} />
@@ -136,6 +173,8 @@ export function ProductRegistrationForm({
                 <SelectField
                   id="subCategory"
                   name="subCategory"
+                  defaultValue={selectedSubCategory}
+                  onValueChange={setSelectedSubCategory}
                   placeholder="서브 카테고리를 선택하세요"
                   data={getSubCategoryOptions(selectedCategory)}
                   error={subCategoryError}
@@ -148,7 +187,8 @@ export function ProductRegistrationForm({
                   <SelectField
                     id="theme"
                     name="theme"
-                    defaultValue="default"
+                    defaultValue={selectedTheme}
+                    onValueChange={setSelectedTheme}
                     placeholder="테마를 선택하세요"
                     data={getMobileInvitationThemeOptions()}
                     error={themeError}
@@ -483,7 +523,27 @@ export function ProductRegistrationForm({
         <Button type="button" variant="outline" onClick={onCancel}>
           취소
         </Button>
-        <Button type="submit" className="min-w-30" disabled={pending}>
+        <Button
+          type="submit"
+          variant="secondary"
+          className="min-w-30"
+          disabled={pending}
+          onClick={() => {
+            isContinueSubmitRef.current = true;
+            onSubmitIntentChange(true);
+          }}
+        >
+          {pending ? "등록 중..." : "등록 후 계속 작성"}
+        </Button>
+        <Button
+          type="submit"
+          className="min-w-30"
+          disabled={pending}
+          onClick={() => {
+            isContinueSubmitRef.current = false;
+            onSubmitIntentChange(false);
+          }}
+        >
           {pending ? "등록 중..." : "상품 등록"}
         </Button>
       </div>

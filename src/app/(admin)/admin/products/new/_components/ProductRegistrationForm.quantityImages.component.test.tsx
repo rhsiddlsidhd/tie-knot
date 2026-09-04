@@ -50,6 +50,7 @@ const renderForm = () =>
       pending={false}
       state={null}
       onCancel={vi.fn()}
+      onSubmitIntentChange={vi.fn()}
     />,
   );
 
@@ -124,6 +125,7 @@ describe("ProductRegistrationForm — 상세 이미지 갤러리(REQ-2/3)", () =
           },
         }}
         onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
       />,
     );
 
@@ -198,6 +200,7 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
           },
         }}
         onCancel={vi.fn()}
+        onSubmitIntentChange={vi.fn()}
       />,
     );
 
