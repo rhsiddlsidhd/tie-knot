@@ -1,4 +1,4 @@
-import { INVITATION_INPUT_DEADLINE_DAYS } from "@/core/domain/order";
+import { MOBILE_INVITATION_INPUT_DEADLINE_DAYS } from "@/core/domain/order";
 
 const DAY_IN_MS = 24 * 60 * 60 * 1000;
 
@@ -7,12 +7,12 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000;
  * 계산한다. 하루가 채 안 남았으면 0(오늘 마감), 이미 지났으면 음수를 리턴해 호출부가
  * "기한 경과"를 구분할 수 있게 한다.
  */
-export const getInvitationInputDaysLeft = (
+export const getMobileInvitationInputDaysLeft = (
   confirmedAt: Date | string,
   now: Date = new Date(),
 ): number => {
   const deadline =
-    new Date(confirmedAt).getTime() + INVITATION_INPUT_DEADLINE_DAYS * DAY_IN_MS;
+    new Date(confirmedAt).getTime() + MOBILE_INVITATION_INPUT_DEADLINE_DAYS * DAY_IN_MS;
 
   return Math.floor((deadline - now.getTime()) / DAY_IN_MS);
 };

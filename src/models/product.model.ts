@@ -2,10 +2,10 @@ import "server-only";
 import type { Model } from "mongoose";
 import mongoose, { model, Schema } from "mongoose";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
-import type { InvitationTheme } from "@/core/domain/theme";
+import type { MobileInvitationTheme } from "@/core/domain/theme";
 import type { ProductStatus } from "@/core/domain/product";
 import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
-import { INVITATION_THEMES } from "@/core/domain/theme";
+import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 
 export { SUB_CATEGORY_MAP };
 
@@ -72,7 +72,7 @@ export interface IProduct extends ProductDB {
 // mobile-invitation 카테고리 전용 필드 — mongoose discriminator로 base(IProduct)에 병합된다.
 export interface IMobileInvitationProduct extends IProduct {
   previewUrl?: string;
-  theme?: InvitationTheme;
+  theme?: MobileInvitationTheme;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -101,7 +101,12 @@ const productSchema = new Schema<IProduct>(
               .findOne(this.getQuery())
               .select("category")
               .lean();
-            category = existing?.category;
+            // 대상 문서가 아예 없으면 subCategory 유효성을 판단할 근거가 없다 —
+            // false로 떨어뜨려 ValidationError(INTERNAL)를 내면 findOneAndUpdate가
+            // 원래 냈어야 할 "매치 없음"(→ NOT_FOUND) 결과를 가로채게 된다. 검증을
+            // 건너뛰어 update 자체가 매치 없이 끝나도록 위임한다.
+            if (!existing) return true;
+            category = existing.category;
           }
           // 카테고리가 5종으로 늘면서 SUB_CATEGORY_MAP 인덱싱 결과가 카테고리별로 다른
           // 리터럴 튜플 타입의 union이 된다 — 명시적으로 readonly string[]로 넓혀야
@@ -151,13 +156,45 @@ const productSchema = new Schema<IProduct>(
   },
 );
 
+// 공개 상품 목록 cursor 페이징(getPublicProductsPageService) 전용 — equality 필드
+// (deletedAt/status/category)를 앞에, 정렬 필드(isFeatured/priority/createdAt/_id)를
+// 뒤에 두는 순서를 따른다(mongoose 공식 문서 compound index 가이드). subCategory는
+// 쿼리에 있을 때만 equality로 쓰여 아래 index만으로는 커버되지 않아, subCategory
+// 포함/미포함 두 쿼리 모양을 각각 커버하는 index 두 개를 둔다(order.model.ts가 이미
+// 같은 방식으로 쿼리 모양별 index를 여러 개 두고 있다).
+productSchema.index({
+  deletedAt: 1,
+  status: 1,
+  category: 1,
+  isFeatured: -1,
+  priority: -1,
+  createdAt: -1,
+  _id: -1,
+});
+productSchema.index({
+  deletedAt: 1,
+  status: 1,
+  category: 1,
+  subCategory: 1,
+  isFeatured: -1,
+  priority: -1,
+  createdAt: -1,
+  _id: -1,
+});
+
+// 관리자 상품 목록 cursor 페이징(getAdminProductsPageService) 전용 — active(deletedAt:null)
+// /trash(deletedAt:{$ne:null}) 두 view 모두 deletedAt이 leading field라 index 하나로
+// 커버된다(order.model.ts/user.model.ts와 동일하게 admin cursor 정렬을 인덱스로 전부
+// 커버하는 패턴).
+productSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
+
 export const ProductModel =
   (mongoose.models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);
 
 const mobileInvitationProductSchema = new Schema<IMobileInvitationProduct>({
   previewUrl: { type: String },
-  theme: { type: String, enum: INVITATION_THEMES, default: "default" },
+  theme: { type: String, enum: MOBILE_INVITATION_THEMES, default: "default" },
 });
 
 // discriminator 이름("mobile-invitation")이 곧 category 필드에 저장되는 값이다 —

@@ -9,6 +9,10 @@ export type PageCursor = {
   // createdAt 외 보조 정렬 키가 필요한 목록(예: 리뷰 평점순)에서만 채운다 — 없으면
   // 기존 (createdAt, id) 2단 커서와 동일하게 인코딩/디코딩된다.
   secondary?: number;
+  // secondary로도 부족한(정렬 키가 3개 이상인) 목록(예: 공개 상품의
+  // isFeatured→priority→createdAt→id)에서만 채운다 — secondary 없이 단독으로는
+  // 쓰지 않는다(항상 secondary와 짝으로 채운다).
+  tertiary?: number;
 };
 
 // mongoose 없이 순수 정규식으로만 ObjectId 형식을 검증한다(이 파일은 클라이언트
@@ -21,12 +25,12 @@ const toBase64Url = (value: string): string =>
 const fromBase64Url = (value: string): string =>
   atob(value.replace(/-/g, "+").replace(/_/g, "/"));
 
-export const encodeCursor = ({ createdAt, id, secondary }: PageCursor): string =>
-  toBase64Url(
-    secondary === undefined
-      ? `${createdAt.toISOString()}|${id}`
-      : `${createdAt.toISOString()}|${id}|${secondary}`,
-  );
+export const encodeCursor = ({ createdAt, id, secondary, tertiary }: PageCursor): string => {
+  const parts = [createdAt.toISOString(), id];
+  if (secondary !== undefined) parts.push(String(secondary));
+  if (tertiary !== undefined) parts.push(String(tertiary));
+  return toBase64Url(parts.join("|"));
+};
 
 // 형식이 깨진 커서는 "조건 없음"이 아니라 명시적 실패로 다뤄야 하므로 null을 리턴하고,
 // 호출자(서비스)가 VALIDATION 에러로 번역한다.
@@ -39,9 +43,9 @@ export const decodeCursor = (raw: string): PageCursor | null => {
   }
 
   const parts = decoded.split("|");
-  if (parts.length < 2 || parts.length > 3) return null;
+  if (parts.length < 2 || parts.length > 4) return null;
 
-  const [createdAtRaw, id, secondaryRaw] = parts;
+  const [createdAtRaw, id, secondaryRaw, tertiaryRaw] = parts;
   const createdAt = new Date(createdAtRaw);
   if (!id || Number.isNaN(createdAt.getTime()) || !OBJECT_ID_HEX_PATTERN.test(id)) {
     return null;
@@ -52,7 +56,12 @@ export const decodeCursor = (raw: string): PageCursor | null => {
   const secondary = Number(secondaryRaw);
   if (Number.isNaN(secondary)) return null;
 
-  return { createdAt, id, secondary };
+  if (tertiaryRaw === undefined) return { createdAt, id, secondary };
+
+  const tertiary = Number(tertiaryRaw);
+  if (Number.isNaN(tertiary)) return null;
+
+  return { createdAt, id, secondary, tertiary };
 };
 
 /** limit이 1 이상 MAX_PAGE_SIZE 이하의 정수인지 검증한다 — 범위 밖이면 서비스가

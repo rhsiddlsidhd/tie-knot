@@ -35,7 +35,7 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
   const timelineEvents = [
     { label: "주문 생성", value: formatDateTime(order.createdAt) },
     order.confirmedAt && { label: "결제 완료", value: formatDateTime(order.confirmedAt) },
-    order.invitationStatus === "published" && { label: "청첩장 발행", value: "완료" },
+    order.mobileInvitationStatus === "published" && { label: "청첩장 발행", value: "완료" },
     order.cancelledAt && {
       label: "주문 취소",
       value: `${formatDateTime(order.cancelledAt)}${order.cancelReason ? ` · ${order.cancelReason}` : ""}`,

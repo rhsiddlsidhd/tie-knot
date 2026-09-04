@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { INVITATION_THEMES } from "@/core/domain/theme";
+import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 
 const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
@@ -13,7 +13,7 @@ export const productResponseSchema = z.object({
   description: z.string(),
   thumbnail: z.string(),
   previewUrl: z.string().optional(),
-  theme: z.enum(INVITATION_THEMES).optional(),
+  theme: z.enum(MOBILE_INVITATION_THEMES).optional(),
   price: z.number(),
   category: z.enum(PRODUCT_CATEGORIES),
   subCategory: z.string(),

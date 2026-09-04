@@ -14,7 +14,7 @@ import {
   getProductService,
   incrementProductViewsService,
   getAdminProductsPageService,
-  getPublicProductsService,
+  getPublicProductsPageService,
   getAvailableSubCategoriesService,
   getPopularProductsService,
   updateProductService,
@@ -386,7 +386,26 @@ describe("product", () => {
     });
   });
 
-  describe("getPublicProductsService", () => {
+  describe("getPublicProductsPageService", () => {
+    const setCreatedAt = async (
+      productId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
+      await ProductModel.updateOne(
+        { _id: productId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    const createAndFetch = async (
+      title: string,
+      overrides?: Parameters<typeof buildProductInput>[0],
+    ) => {
+      await createProductService(buildProductInput({ title, ...overrides }));
+      return ProductModel.findOne({ title }).lean();
+    };
+
     it("active이면서 삭제되지 않은 상품만 반환하고 관리자 목록 상태 계약은 유지한다", async () => {
       await createProductService(buildProductInput({ title: "공개상품" }));
       await createProductService(
@@ -399,10 +418,11 @@ describe("product", () => {
       const deleted = await ProductModel.findOne({ title: "삭제상품" }).lean();
       await deleteProductService(deleted!._id.toString());
 
-      const publicProducts = await getPublicProductsService();
+      const publicPage = await getPublicProductsPageService({});
       const adminProducts = (await getAdminProductsPageService({})).items;
 
-      expect(publicProducts.map((product) => product.title)).toEqual(["공개상품"]);
+      expect(publicPage.items.map((product) => product.title)).toEqual(["공개상품"]);
+      expect(publicPage.nextCursor).toBeNull();
       expect(adminProducts.map((product) => product.status).sort()).toEqual([
         "active",
         "inactive",
@@ -416,11 +436,147 @@ describe("product", () => {
         buildProductInput({ title: "캔들", category: "favor", subCategory: "candle" }),
       );
 
-      const result = await getPublicProductsService("favor");
-      const noMatch = await getPublicProductsService("nonexistent");
+      const result = await getPublicProductsPageService({ category: "favor" });
+      const noMatch = await getPublicProductsPageService({ category: "nonexistent" });
 
-      expect(result.map((product) => product.title)).toEqual(["캔들"]);
-      expect(noMatch).toEqual([]);
+      expect(result.items.map((product) => product.title)).toEqual(["캔들"]);
+      expect(noMatch.items).toEqual([]);
+    });
+
+    it("subCategory를 지정하면 같은 카테고리 안에서도 해당 subCategory 상품만 반환한다", async () => {
+      await createProductService(
+        buildProductInput({ title: "청첩장", subCategory: "wedding" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "돌잔치 초대장", subCategory: "first-birthday" }),
+      );
+
+      const result = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        subCategory: "wedding",
+      });
+
+      expect(result.items.map((product) => product.title)).toEqual(["청첩장"]);
+    });
+
+    it("limit보다 상품이 많으면 nextCursor를 반환하고, 그 cursor로 다음 페이지를 중복·누락 없이 이어서 조회한다", async () => {
+      const created = [];
+      for (let i = 0; i < 5; i += 1) {
+        const product = await createAndFetch(`상품${i}`);
+        await setCreatedAt(product!._id, new Date(2026, 0, i + 1));
+        created.push(product!._id.toString());
+      }
+
+      const firstPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+      });
+      expect(firstPage.items).toHaveLength(2);
+      expect(firstPage.nextCursor).not.toBeNull();
+
+      const secondPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+      expect(secondPage.items).toHaveLength(2);
+      expect(secondPage.nextCursor).not.toBeNull();
+
+      const thirdPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+        cursor: secondPage.nextCursor!,
+      });
+      expect(thirdPage.items).toHaveLength(1);
+      expect(thirdPage.nextCursor).toBeNull();
+
+      const allIds = [...firstPage.items, ...secondPage.items, ...thirdPage.items].map(
+        (product) => product._id,
+      );
+      expect(new Set(allIds).size).toBe(5);
+      expect(allIds.sort()).toEqual([...created].sort());
+    });
+
+    it("isFeatured/priority/createdAt이 모두 같아도 _id로 tie-break해 페이지 경계에서 중복·누락 없이 이어진다", async () => {
+      const sameCreatedAt = new Date("2026-08-01T00:00:00.000Z");
+      const created = [];
+      for (let i = 0; i < 3; i += 1) {
+        const product = await createAndFetch(`상품${i}`, {
+          isFeatured: true,
+          priority: 5,
+        });
+        await setCreatedAt(product!._id, sameCreatedAt);
+        created.push(product!._id.toString());
+      }
+
+      const firstPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+      });
+      const secondPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+
+      expect(firstPage.items.map((p) => p._id)).toEqual(
+        [...created].sort().reverse().slice(0, 2),
+      );
+      expect(secondPage.items.map((p) => p._id)).toEqual(
+        [...created].sort().reverse().slice(2),
+      );
+      expect(secondPage.nextCursor).toBeNull();
+    });
+
+    it("isFeatured가 다르면 priority/createdAt이 낮아도 isFeatured=true가 항상 먼저이고, 페이지 경계를 넘어도 순서가 흔들리지 않는다", async () => {
+      const featuredA = await createAndFetch("추천A", { isFeatured: true, priority: 1 });
+      const featuredB = await createAndFetch("추천B", { isFeatured: true, priority: 1 });
+      const notFeatured = await createAndFetch("일반", { isFeatured: false, priority: 99 });
+      await setCreatedAt(featuredA!._id, new Date("2026-01-01T00:00:00.000Z"));
+      await setCreatedAt(featuredB!._id, new Date("2026-01-02T00:00:00.000Z"));
+      await setCreatedAt(notFeatured!._id, new Date("2026-01-03T00:00:00.000Z"));
+
+      const firstPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+      });
+      const secondPage = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+
+      expect(firstPage.items.map((p) => p.title)).toEqual(["추천B", "추천A"]);
+      expect(secondPage.items.map((p) => p.title)).toEqual(["일반"]);
+      expect(secondPage.nextCursor).toBeNull();
+    });
+
+    it("isFeatured/priority 우선순위 정렬을 유지한다", async () => {
+      await createProductService(
+        buildProductInput({ title: "일반-낮은우선순위", isFeatured: false, priority: 0 }),
+      );
+      await createProductService(
+        buildProductInput({ title: "추천-낮은우선순위", isFeatured: true, priority: 0 }),
+      );
+      await createProductService(
+        buildProductInput({ title: "추천-높은우선순위", isFeatured: true, priority: 10 }),
+      );
+
+      const page = await getPublicProductsPageService({
+        category: MOBILE_INVITATION_CATEGORY,
+      });
+
+      expect(page.items.map((p) => p.title)).toEqual([
+        "추천-높은우선순위",
+        "추천-낮은우선순위",
+        "일반-낮은우선순위",
+      ]);
+    });
+
+    it("잘못된 형식의 cursor는 VALIDATION 에러를 던진다", async () => {
+      await expect(
+        getPublicProductsPageService({ cursor: "invalid-cursor" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
     });
   });
 
@@ -659,6 +815,16 @@ describe("product", () => {
       const missingId = new mongoose.Types.ObjectId().toString();
 
       const result = await updateProductService(missingId, { title: "x" });
+
+      expect(result).toBeNull();
+    });
+
+    it("존재하지 않는 id + category 없이 subCategory만 보내도 null을 리턴한다 (#49)", async () => {
+      const missingId = new mongoose.Types.ObjectId().toString();
+
+      const result = await updateProductService(missingId, {
+        subCategory: "first-birthday",
+      });
 
       expect(result).toBeNull();
     });

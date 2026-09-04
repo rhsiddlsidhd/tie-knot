@@ -2,7 +2,6 @@ import type { ProductFilterAction, ProductFilterState } from "./type";
 
 export const initialFilterState: ProductFilterState = {
   keyword: "",
-  subCategory: "all",
   isOpen: false,
   sortBy: "ALL",
   price: "ALL",
@@ -20,11 +19,6 @@ export function filterReducer(
         keyword: action.payload,
       };
 
-    case "SELECT_SUB_CATEGORY":
-      return {
-        ...state,
-        subCategory: action.payload,
-      };
     case "OPEN_SUGGESTIONS":
       return {
         ...state,

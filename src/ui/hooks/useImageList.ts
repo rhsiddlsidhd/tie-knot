@@ -42,5 +42,7 @@ export function useImageList(defaultUrls?: string[]) {
 
   const getUrls = (): string[] => items.map((item) => item.url);
 
-  return { items, add, remove, getUrls };
+  const reset = () => setItems([]);
+
+  return { items, add, remove, getUrls, reset };
 }

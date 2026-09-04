@@ -1,10 +1,18 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { initialFilterState } from "@/ui/context/productFilter/reducer";
 import type { Product } from "@/core/domain/product";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import type { SubCategory } from "@/core/domain/product-category";
 import { ProductFilters } from "./ProductFilters";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+
+const { pushMock } = vi.hoisted(() => ({ pushMock: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: pushMock }),
+}));
 
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({
@@ -31,15 +39,29 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     ...overrides,
   }) as Product;
 
+// category는 object spread({...defaultProps})를 거치면 리터럴 타입이 string으로
+// widen되는 TS의 알려진 동작(as const로 태그된 값만 spread에서 좁은 타입을 유지) 때문에
+// 상수 참조 대신 리터럴에 직접 as const를 건다.
+const defaultProps = {
+  category: "mobile-invitation" as const,
+  subCategory: "all" as const,
+  availableSubCategories: [] as SubCategory[],
+  premiumFeatures: [] as PremiumFeature[],
+  state: initialFilterState,
+  dispatch: vi.fn(),
+};
+
 describe("ProductFilters", () => {
+  beforeEach(() => {
+    pushMock.mockClear();
+  });
+
   it("state를 props로 받아 검색 키워드를 렌더링한다(Context 직접 구독하지 않음)", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
+        {...defaultProps}
         state={{ ...initialFilterState, keyword: "봄맞이" }}
-        dispatch={vi.fn()}
       />,
     );
 
@@ -51,13 +73,7 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters
-        data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={dispatch}
-      />,
+      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
     );
 
     await user.type(screen.getByPlaceholderText("상품 검색..."), "봄");
@@ -68,39 +84,62 @@ describe("ProductFilters", () => {
     });
   });
 
-  it("서브카테고리 버튼 클릭 시 dispatch로 SELECT_SUB_CATEGORY를 전달한다", async () => {
+  it("서브카테고리 버튼 클릭 시 router.push로 해당 subCategory URL을 요청한다", async () => {
     const user = userEvent.setup();
-    const dispatch = vi.fn();
 
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={dispatch}
+        {...defaultProps}
+        availableSubCategories={["wedding"]}
+      />,
+    );
+
+    await user.click(screen.getByText("청첩장"));
+
+    expect(pushMock).toHaveBeenCalledWith(
+      `/products/${MOBILE_INVITATION_CATEGORY}?subCategory=wedding`,
+    );
+  });
+
+  it("전체 버튼 클릭 시 router.push로 subCategory 쿼리 없는 URL을 요청한다", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ProductFilters
+        data={[buildProduct()]}
+        {...defaultProps}
+        subCategory="wedding"
+        availableSubCategories={["wedding"]}
       />,
     );
 
     await user.click(screen.getByText("전체"));
 
-    expect(dispatch).toHaveBeenCalledWith({
-      type: "SELECT_SUB_CATEGORY",
-      payload: "all",
-    });
+    expect(pushMock).toHaveBeenCalledWith(`/products/${MOBILE_INVITATION_CATEGORY}`);
   });
 
-  it("현재 공개 상품이 있는 서브카테고리만 정의 순서로 렌더링한다", () => {
+  it("현재 subCategory와 일치하는 버튼을 활성 상태로 표시한다", () => {
     render(
       <ProductFilters
-        data={[
-          buildProduct({ category: "favor", subCategory: "soap" }),
-          buildProduct({ category: "favor", subCategory: "candle" }),
-        ]}
+        data={[buildProduct()]}
+        {...defaultProps}
+        subCategory="wedding"
+        availableSubCategories={["wedding"]}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "청첩장" })).toHaveClass("bg-primary");
+    expect(screen.getByRole("button", { name: "전체" })).not.toHaveClass("bg-primary");
+  });
+
+  it("서버가 내려준 availableSubCategories 순서 그대로 전체 버튼과 함께 렌더링한다", () => {
+    render(
+      <ProductFilters
+        data={[]}
+        {...defaultProps}
         category="favor"
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={vi.fn()}
+        availableSubCategories={["candle", "soap"]}
       />,
     );
 
@@ -109,19 +148,15 @@ describe("ProductFilters", () => {
       .map((button) => button.textContent);
 
     expect(filterLabels.slice(0, 3)).toEqual(["전체", "캔들", "비누"]);
-    expect(
-      screen.queryByRole("button", { name: "디퓨저" }),
-    ).not.toBeInTheDocument();
   });
 
-  it("공개 상품이 없으면 전체 버튼만 서브카테고리 필터로 렌더링한다", () => {
+  it("availableSubCategories가 비어 있으면 전체 버튼만 서브카테고리 필터로 렌더링한다", () => {
     render(
       <ProductFilters
         data={[]}
+        {...defaultProps}
         category="favor"
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={vi.fn()}
+        availableSubCategories={[]}
       />,
     );
 
@@ -136,13 +171,7 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters
-        data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={dispatch}
-      />,
+      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
     );
 
     await user.type(screen.getByPlaceholderText("상품 검색..."), "봄");
@@ -157,8 +186,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct({ title: "봄맞이 청첩장" })]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
+        {...defaultProps}
         state={{ ...initialFilterState, keyword: "봄", isOpen: true }}
         dispatch={dispatch}
       />,
@@ -178,13 +206,7 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters
-        data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={dispatch}
-      />,
+      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
     );
 
     await user.click(screen.getByRole("button", { name: /모두/ }));
@@ -201,15 +223,7 @@ describe("ProductFilters", () => {
   it("상세 필터 버튼을 클릭하면 가격대/특별옵션 영역이 나타난다", async () => {
     const user = userEvent.setup();
 
-    render(
-      <ProductFilters
-        data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={vi.fn()}
-      />,
-    );
+    render(<ProductFilters data={[buildProduct()]} {...defaultProps} />);
 
     expect(screen.queryByText("가격대")).not.toBeInTheDocument();
 
@@ -224,13 +238,7 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters
-        data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={dispatch}
-      />,
+      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
     );
 
     await user.click(screen.getByText("상세 필터"));
@@ -249,7 +257,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
+        {...defaultProps}
         premiumFeatures={[
           {
             _id: "feat-1",
@@ -261,7 +269,6 @@ describe("ProductFilters", () => {
             createdAt: "2026-01-01T00:00:00.000Z",
           },
         ]}
-        state={initialFilterState}
         dispatch={dispatch}
       />,
     );
@@ -281,7 +288,7 @@ describe("ProductFilters", () => {
     render(
       <ProductFilters
         data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
+        {...defaultProps}
         premiumFeatures={[
           {
             _id: "feat-2",
@@ -293,8 +300,6 @@ describe("ProductFilters", () => {
             createdAt: "2026-01-01T00:00:00.000Z",
           },
         ]}
-        state={initialFilterState}
-        dispatch={vi.fn()}
       />,
     );
 
@@ -308,13 +313,7 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters
-        data={[buildProduct()]}
-        category={MOBILE_INVITATION_CATEGORY}
-        premiumFeatures={[]}
-        state={initialFilterState}
-        dispatch={dispatch}
-      />,
+      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
     );
 
     await user.click(screen.getByText("상세 필터"));

@@ -1,20 +1,22 @@
-import type { Product } from "@/core/domain/product";
+import type { PublicProductListPage } from "@/core/domain/product";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 
 import { ProductCatalog } from "@/app/(main)/(products)/products/[category]/_containers/ProductCatalog";
 
 interface ProductCatalogTemplateProps {
-  products: Product[];
+  firstPage: PublicProductListPage;
   category: ProductCategory;
   categoryLabel: string;
+  availableSubCategories: SubCategory[];
   initialSubCategory: SubCategory | "all";
 }
 
 const ProductCatalogTemplate = ({
-  products,
+  firstPage,
   category,
   categoryLabel,
+  availableSubCategories,
   initialSubCategory,
 }: ProductCatalogTemplateProps) => (
   <main className="bg-background min-h-screen">
@@ -29,8 +31,9 @@ const ProductCatalogTemplate = ({
           </TypographyMuted>
         </div>
         <ProductCatalog
-          products={products}
+          firstPage={firstPage}
           category={category}
+          availableSubCategories={availableSubCategories}
           initialSubCategory={initialSubCategory}
         />
       </div>

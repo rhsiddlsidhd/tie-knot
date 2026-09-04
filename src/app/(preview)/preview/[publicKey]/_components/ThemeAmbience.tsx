@@ -17,7 +17,7 @@ const BLOSSOM_PETALS = [
 // 바깥까지 새어나간다. 그렇다고 absolute inset-0(전체 문서 높이 기준)으로
 // 두면 낙하 애니메이션의 시작/끝 지점(%, vh 단위)이 5000px대 전체 문서
 // 높이에 흩어져 실제로는 스크롤 중 화면에 몇 초 스칠 뿐 거의 안 보인다.
-// sticky + h-screen + grid-area(InvitationTemplate의 grid cell 공유)로
+// sticky + h-screen + grid-area(MobileInvitationTemplate의 grid cell 공유)로
 // "카드 폭 안에서, 매 스크롤 위치의 현재 화면 한 장 분량"에 항상 렌더되게
 // 하면서도 문서 흐름에 추가 높이를 얹지 않는다.
 function BlossomAmbience() {
@@ -170,7 +170,7 @@ function ShootingStar() {
 // 블렌드 모드로 콘텐츠 위를 덮어 물들이는 대신(그러면 텍스트/이미지까지 흐려진다),
 // 레이어를 콘텐츠보다 뒤에 둔다 — 섹션이 불투명한 곳은 자연히 가려지고,
 // 투명한 여백에서만 비쳐 보여 순수하게 "배경"만 표현한다. "뒤에 두기"는
-// z-index를 음수로 낮추는 대신 DOM 순서로만 해결한다 — InvitationTemplate에서
+// z-index를 음수로 낮추는 대신 DOM 순서로만 해결한다 — MobileInvitationTemplate에서
 // 이 컴포넌트가 콘텐츠 wrapper보다 먼저 렌더되고, 둘 다 z-index:auto라서
 // 나중에 오는 콘텐츠가 항상 위에 그려진다. position:sticky + 음수 z-index
 // 조합은 일부 브라우저에서 서브트리 전체가 아예 페인트되지 않는(별이 완전히
