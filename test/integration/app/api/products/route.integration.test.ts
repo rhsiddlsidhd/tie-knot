@@ -1,13 +1,9 @@
 // @vitest-environment node
 //
-// feat/product-search 회귀 스모크 — 이번 기능이 product.service.ts에
-// escapeRegExp/findProductCategoriesByTerm/findSubCategoriesByTerm import와
-// searchProductsService를 추가하면서, 바로 옆에 있는 기존
-// getPublicProductsService(및 그걸 감싸는 이 route.ts)의 동작을 건드리지
-// 않았는지 실제 DB를 관통해 확인한다. 이 route.ts는 지금까지 route 레벨
-// 테스트가 없었다(docs/__test/README.md 상 서비스 레이어가 이미
-// getPublicProductsService를 커버해 후순위였음) — 이번 기능 변경 범위에
-// 인접한 파일이라 최소 스모크만 추가한다.
+// GET /api/products는 상품 목록 "더보기" 전용 route.ts다 — 첫 페이지는
+// Server Component(page.tsx)가 getPublicProductsPageService를 직접 호출하고,
+// 이 route.ts는 cursor 기반 다음 페이지 요청과 category/subCategory 필터를 검증한다
+// (feat/product-list-cursor-pagination, issue #81).
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
@@ -20,7 +16,7 @@ import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 const buildRequest = (query: string) =>
   new NextRequest(`http://localhost/api/products${query}`);
 
-describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후 기존 카테고리 필터 동작 확인)", () => {
+describe("GET /api/products", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();
@@ -30,7 +26,7 @@ describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후
     await mongoose.disconnect();
   });
 
-  it("category 파라미터 없이 호출하면 전체 상품을 반환한다", async () => {
+  it("category 파라미터 없이 호출하면 전체 상품을 페이지 envelope으로 반환한다", async () => {
     await createProductService(buildProductInput({ title: "상품1" }));
     await createProductService(buildProductInput({ title: "상품2" }));
 
@@ -39,10 +35,11 @@ describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후
 
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
-    expect(body.data).toHaveLength(2);
+    expect(body.data.items).toHaveLength(2);
+    expect(body.data.nextCursor).toBeNull();
   });
 
-  it("category=mobile-invitation으로 필터링하면 해당 카테고리 상품만 반환한다 (완전일치 — 검색 기능의 부분일치와 무관하게 동작 유지)", async () => {
+  it("category=mobile-invitation으로 필터링하면 해당 카테고리 상품만 반환한다", async () => {
     await createProductService(
       buildProductInput({ title: "상품1", category: MOBILE_INVITATION_CATEGORY }),
     );
@@ -51,18 +48,35 @@ describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후
     const body = await res.json();
 
     expect(res.status).toBe(200);
-    expect(body.data).toHaveLength(1);
-    expect(body.data[0].category).toBe(MOBILE_INVITATION_CATEGORY);
+    expect(body.data.items).toHaveLength(1);
+    expect(body.data.items[0].category).toBe(MOBILE_INVITATION_CATEGORY);
   });
 
-  it("존재하지 않는 category로 필터링하면 빈 배열을 반환한다 (에러 아님)", async () => {
+  it("subCategory로 필터링하면 해당 subCategory 상품만 반환한다", async () => {
+    await createProductService(
+      buildProductInput({ title: "청첩장", subCategory: "wedding" }),
+    );
+    await createProductService(
+      buildProductInput({ title: "돌잔치 초대장", subCategory: "first-birthday" }),
+    );
+
+    const res = await GET(
+      buildRequest(`?category=${MOBILE_INVITATION_CATEGORY}&subCategory=wedding`),
+    );
+    const body = await res.json();
+
+    expect(body.data.items.map((p: { title: string }) => p.title)).toEqual(["청첩장"]);
+  });
+
+  it("PRODUCT_CATEGORIES에 없는 category 값이면 400 VALIDATION 에러를 반환한다 (orderListRequestSchema와 동일한 enum 검증 방침)", async () => {
     await createProductService(buildProductInput({ title: "상품1" }));
 
     const res = await GET(buildRequest("?category=nonexistent"));
     const body = await res.json();
 
-    expect(res.status).toBe(200);
-    expect(body.data).toEqual([]);
+    expect(res.status).toBe(400);
+    expect(body.success).toBe(false);
+    expect(body.error.category).toBe("VALIDATION");
   });
 
   it("active이면서 삭제되지 않은 공개 상품만 반환한다", async () => {
@@ -79,8 +93,17 @@ describe("GET /api/products — 회귀 스모크 (feat/product-search 병합 후
 
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
-    expect(body.data.map((product: { title: string }) => product.title)).toEqual([
+    expect(body.data.items.map((product: { title: string }) => product.title)).toEqual([
       "공개상품",
     ]);
+  });
+
+  it("잘못된 형식의 cursor면 400 VALIDATION 에러를 반환한다", async () => {
+    const res = await GET(buildRequest("?cursor=not-a-valid-cursor"));
+    const body = await res.json();
+
+    expect(res.status).toBe(400);
+    expect(body.success).toBe(false);
+    expect(body.error.category).toBe("VALIDATION");
   });
 });

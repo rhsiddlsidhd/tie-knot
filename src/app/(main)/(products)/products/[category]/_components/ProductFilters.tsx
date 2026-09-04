@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { AutoCompleteList } from "@/ui/components/molecules/AutoCompleteList";
 import { Command, CommandInput } from "@/ui/components/atoms/command";
 import { Button } from "@/ui/components/atoms/button";
@@ -17,26 +18,37 @@ import type { ProductFilterState, ProductFilterAction } from "@/ui/context/produ
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 
-import { getAvailableSubCategories } from "@/core/utils/category";
+import { routes } from "@/core/domain/routes";
 
 import type { SubCategory, ProductCategory } from "@/core/domain/product-category";
 import type { ProductSortType } from "@/core/domain/product";
 import { PRODUCT_SORT_OPTIONS, PRODUCT_PRICE_OPTIONS, PREMIUM_FEATURE_LABELS, PRODUCT_SORT_KEYS, PRODUCT_PRICE_KEYS } from "@/core/domain/product";
 import { subCategoryLabels } from "@/core/domain/product-category";
 
+/**
+ * subCategory 필터는 URL searchParams가 소유한다(OrderFilters.tsx와 동일 패턴) —
+ * 탭 클릭 시 dispatch가 아니라 router.push로 URL을 갱신해 Server Component가 1페이지를
+ * 다시 렌더하고, 목록의 더보기 누적분도 함께 리셋된다. availableSubCategories도 로드된
+ * 일부 데이터가 아니라 서버가 카테고리 전체를 조회해 내려준 값을 그대로 쓴다.
+ */
 export function ProductFilters({
   data,
   category,
+  subCategory,
+  availableSubCategories,
   premiumFeatures,
   state,
   dispatch,
 }: {
   data: Product[];
   category: ProductCategory;
+  subCategory: SubCategory | "all";
+  availableSubCategories: SubCategory[];
   premiumFeatures: PremiumFeature[];
   state: ProductFilterState;
   dispatch: Dispatch<ProductFilterAction>;
 }) {
+  const router = useRouter();
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const { suggestions } = useSuggestProducts({
     data,
@@ -45,7 +57,6 @@ export function ProductFilters({
 
   const prices = PRODUCT_PRICE_KEYS;
   const sortBy = PRODUCT_SORT_KEYS;
-  const availableSubCategories = getAvailableSubCategories(category, data);
   const subCategoryOptions: Array<{
     value: SubCategory | "all";
     label: string;
@@ -92,12 +103,14 @@ export function ProductFilters({
         {subCategoryOptions.map((option) => (
           <Button
             key={option.value}
-            variant={state.subCategory === option.value ? "default" : "outline"}
+            variant={subCategory === option.value ? "default" : "outline"}
             onClick={() =>
-              dispatch({
-                type: "SELECT_SUB_CATEGORY",
-                payload: option.value,
-              })
+              router.push(
+                routes.products.byCategory(
+                  category,
+                  option.value === "all" ? undefined : option.value,
+                ),
+              )
             }
             size="sm"
           >

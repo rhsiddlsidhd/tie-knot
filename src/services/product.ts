@@ -9,7 +9,7 @@ import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/curso
 import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils/category";
 import { AppError } from "@/core/domain/error";
-import type { AdminProductListPage } from "@/core/domain/product";
+import type { AdminProductListPage, PublicProductListPage } from "@/core/domain/product";
 import type { AvailableSubCategory, ProductCategory } from "@/core/domain/product-category";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
@@ -172,7 +172,7 @@ type AdminProductListQuery = {
 /**
  * 관리자 상품 목록 한 페이지 — orders/users(getAdminOrdersPageService,
  * getAdminUsersPageService)와 동일한 cursor 계약(createdAt desc, _id tie-break,
- * limit+1)을 쓴다. getPublicProductsService와 달리 isFeatured/priority 정렬을 쓰지
+ * limit+1)을 쓴다. getPublicProductsPageService와 달리 isFeatured/priority 정렬을 쓰지
  * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
  */
 export const getAdminProductsPageService = async ({
@@ -230,19 +230,83 @@ export const getAdminProductsPageService = async ({
   };
 };
 
-// 공개 상품 목록 — 관리자용 getAdminProductsPageService와 달리 판매 가능한 active 상품만 노출한다.
-export const getPublicProductsService = async (
-  category?: string,
-  userId?: string,
-): Promise<ProductJSON[]> => {
+const PUBLIC_PRODUCT_SORT_SPEC = {
+  isFeatured: -1,
+  priority: -1,
+  createdAt: -1,
+  _id: -1,
+} as const;
+
+type DecodedPublicProductCursor = {
+  createdAt: Date;
+  id: string;
+  secondary?: number;
+  tertiary?: number;
+};
+
+// 공개 목록은 (isFeatured, priority, createdAt, _id) 4단 정렬이라 admin/review보다
+// 튜플이 한 단 더 길다 — secondary=isFeatured(0|1), tertiary=priority에 태워
+// $or를 4갈래로 펼친다(admin의 2단, review RATING 정렬의 3단과 같은 방식의 확장).
+const buildPublicProductCursorOr = (
+  decoded: DecodedPublicProductCursor,
+): Record<string, unknown>[] => {
+  if (decoded.secondary === undefined || decoded.tertiary === undefined) {
+    throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+  }
+
+  const isFeatured = decoded.secondary === 1;
+  const priority = decoded.tertiary;
+  const idLt = { _id: { $lt: new mongoose.Types.ObjectId(decoded.id) } };
+
+  return [
+    { isFeatured: { $lt: isFeatured } },
+    { isFeatured, priority: { $lt: priority } },
+    { isFeatured, priority, createdAt: { $lt: decoded.createdAt } },
+    { isFeatured, priority, createdAt: decoded.createdAt, ...idLt },
+  ];
+};
+
+type PublicProductListQuery = {
+  category?: string;
+  subCategory?: string;
+  cursor?: string;
+  limit?: number;
+  userId?: string;
+};
+
+// 공개 상품 목록 한 페이지 — 관리자용 getAdminProductsPageService와 달리 판매 가능한
+// active 상품만 노출하고, isFeatured/priority 우선순위 정렬(공개 노출 우선순위 의미)을
+// 유지한 채 cursor 페이징한다. limit+1 조회로 다음 페이지 존재 여부를 판정하는 계약은
+// admin/review와 동일하다.
+export const getPublicProductsPageService = async ({
+  category,
+  subCategory,
+  cursor,
+  limit = DEFAULT_PAGE_SIZE,
+  userId,
+}: PublicProductListQuery): Promise<PublicProductListPage> => {
   await dbConnect();
 
-  const query: Record<string, unknown> = { deletedAt: null, status: "active" };
-  if (category) query.category = category;
+  if (!isValidPageLimit(limit)) {
+    throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
 
-  const products = await ProductModel.find(query)
-    .sort({ isFeatured: -1, priority: -1, createdAt: -1 })
-    .lean()
+  const filter: Record<string, unknown> = { deletedAt: null, status: "active" };
+  if (category) filter.category = category;
+  if (subCategory) filter.subCategory = subCategory;
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) {
+      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    }
+    filter.$or = buildPublicProductCursorOr(decoded);
+  }
+
+  const found = await ProductModel.find(filter)
+    .sort(PUBLIC_PRODUCT_SORT_SPEC)
+    .limit(limit + 1)
+    .lean<LeanProduct[]>()
     .catch((err) => {
       throw new AppError(
         "INTERNAL",
@@ -250,7 +314,22 @@ export const getPublicProductsService = async (
       );
     });
 
-  return products.map((product) => transformProduct(product, userId));
+  const hasMore = found.length > limit;
+  const products = hasMore ? found.slice(0, limit) : found;
+  const lastProduct = products.at(-1);
+
+  return {
+    items: products.map((product) => transformProduct(product, userId)),
+    nextCursor:
+      hasMore && lastProduct
+        ? encodeCursor({
+            createdAt: lastProduct.createdAt,
+            id: lastProduct._id.toString(),
+            secondary: lastProduct.isFeatured ? 1 : 0,
+            tertiary: lastProduct.priority,
+          })
+        : null,
+  };
 };
 
 // 공개 상품이 하나 이상 있는 유효 pair만 코드 taxonomy 순서로 반환한다.

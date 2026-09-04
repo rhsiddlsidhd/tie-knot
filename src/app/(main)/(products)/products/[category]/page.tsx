@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 
 import { ProductCatalogTemplate } from "@/app/(main)/(products)/products/[category]/_components/ProductCatalogTemplate";
-import { getPublicProductsService } from "@/services/product";
-import { getAvailableSubCategories, isProductCategory } from "@/core/utils/category";
+import { getPublicProductsPageService, getAvailableSubCategoriesService } from "@/services/product";
+import { isProductCategory } from "@/core/utils/category";
 import { productCategoryLabels } from "@/core/domain/product-category";
 import { notFound } from "next/navigation";
 import { resolveInitialSubCategory } from "@/app/(main)/(products)/products/[category]/_utils/resolveInitialSubCategory";
@@ -21,21 +21,32 @@ export default async function ProductsPage({
     notFound();
   }
 
-  const products = await getPublicProductsService(category);
-  const availableSubCategories = getAvailableSubCategories(category, products);
-  const { subCategory } = await searchParams;
+  // 탭에 노출할 서브카테고리는 "공개 상품이 하나 이상 있는 것"만이다 — 첫 페이지에
+  // 실제로 로드된 상품 일부가 아니라 카테고리 전체를 기준으로 조회한다(더보기로
+  // 아직 안 불러온 서브카테고리도 탭에는 항상 보여야 한다).
+  const availableSubCategories = (
+    await getAvailableSubCategoriesService(category)
+  ).map(({ subCategory }) => subCategory);
+
+  const { subCategory: querySubCategory } = await searchParams;
   const initialSubCategory = resolveInitialSubCategory(
-    subCategory,
+    querySubCategory,
     availableSubCategories,
   );
+
+  const firstPage = await getPublicProductsPageService({
+    category,
+    subCategory: initialSubCategory === "all" ? undefined : initialSubCategory,
+  });
 
   const currentCategoryLabel = productCategoryLabels[category];
 
   return (
     <ProductCatalogTemplate
-      products={products}
+      firstPage={firstPage}
       category={category}
       categoryLabel={currentCategoryLabel}
+      availableSubCategories={availableSubCategories}
       initialSubCategory={initialSubCategory}
     />
   );
