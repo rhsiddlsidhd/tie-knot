@@ -27,12 +27,26 @@ export function runSiblings(siblings, timeout = 180_000) {
         env: { ...process.env, CI: "1" },
       },
     );
-    if (result.error) throw result.error;
+
+    if (result.error) {
+      if (result.error.code === "ETIMEDOUT") {
+        failures.push({
+          tier,
+          paths,
+          output: "test 실행이 제한 시간을 초과했다.",
+          timedOut: true,
+        });
+        continue;
+      }
+      throw result.error;
+    }
+
     if (result.status !== 0) {
       failures.push({
         tier,
         paths,
         output: tail(result.stdout, result.stderr),
+        timedOut: false,
       });
     }
   }

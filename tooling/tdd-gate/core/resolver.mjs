@@ -12,6 +12,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import picomatch from "picomatch";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -35,8 +36,91 @@ export function turnFile(sessionId) {
   return path.join(CACHE_DIR, `turn-${safe}.txt`);
 }
 
+/** 턴 시작 시점의 src/ dirty 상태 스냅샷. UserPromptSubmit 이 쓰고 Stop 이 소비한다. */
+export function snapshotFile(sessionId) {
+  const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
+  return path.join(CACHE_DIR, `snapshot-${safe}.json`);
+}
+
 export function ensureCacheDir() {
   fs.mkdirSync(CACHE_DIR, { recursive: true });
+}
+
+function git(args) {
+  const result = spawnSync("git", args, { cwd: ROOT, encoding: "utf8" });
+  if (result.status !== 0) return null;
+  return result.stdout;
+}
+
+export function gitHead() {
+  const out = git(["rev-parse", "HEAD"]);
+  return out ? out.trim() : null;
+}
+
+/** src/ 아래 dirty(수정+untracked) 파일의 relPath → git hash-object 해시. 삭제된 항목은 null. */
+export function gitDirtySrcHashes() {
+  const status = git(["status", "--porcelain", "-uall", "--", "src"]);
+  if (status === null) return {};
+
+  const hashes = {};
+  for (const rawLine of status.split("\n")) {
+    if (!rawLine) continue;
+    const marker = rawLine.slice(0, 2);
+    let rel = rawLine.slice(3).trim().replace(/^"|"$/g, "");
+    if (rel.includes(" -> ")) rel = rel.split(" -> ")[1];
+
+    if (marker.includes("D")) {
+      hashes[toPosix(rel)] = null;
+      continue;
+    }
+    const hashOut = git(["hash-object", path.join(ROOT, rel)]);
+    if (hashOut) hashes[toPosix(rel)] = hashOut.trim();
+  }
+  return hashes;
+}
+
+/** snapshotHead 이후 커밋된 src/ 변경 경로. */
+export function gitChangedSrcSince(snapshotHead) {
+  if (!snapshotHead) return [];
+  const out = git(["diff", "--name-only", `${snapshotHead}..HEAD`, "--", "src"]);
+  if (!out) return [];
+  return out.split("\n").filter(Boolean).map(toPosix);
+}
+
+export function writeTurnSnapshot(sessionId) {
+  ensureCacheDir();
+  const snapshot = { head: gitHead(), hashes: gitDirtySrcHashes() };
+  fs.writeFileSync(snapshotFile(sessionId), JSON.stringify(snapshot));
+}
+
+export function readTurnSnapshot(sessionId) {
+  try {
+    return JSON.parse(fs.readFileSync(snapshotFile(sessionId), "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 스냅샷 대비 이번 턴에 실제로 바뀐 src/ 경로.
+ * 스냅샷이 없으면(첫 턴 등) null 을 반환해 호출부가 "미커밋 전체"로 fallback 하게 한다.
+ */
+export function computeTurnChanges(sessionId) {
+  const snapshot = readTurnSnapshot(sessionId);
+  if (!snapshot) return null;
+
+  const currentHashes = gitDirtySrcHashes();
+  const changed = new Set();
+  for (const [rel, hash] of Object.entries(currentHashes)) {
+    if (snapshot.hashes?.[rel] !== hash) changed.add(rel);
+  }
+
+  const currentHead = gitHead();
+  if (snapshot.head && currentHead && snapshot.head !== currentHead) {
+    for (const rel of gitChangedSrcSince(snapshot.head)) changed.add(rel);
+  }
+
+  return [...changed];
 }
 
 export function toPosix(p) {
