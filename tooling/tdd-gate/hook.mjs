@@ -5,14 +5,30 @@ import { fileURLToPath } from "node:url";
 
 import { extractClaudePaths } from "./adapters/claude.mjs";
 import { extractCodexPaths } from "./adapters/codex.mjs";
-import { checkBeforeEdit, checkBeforeStop, recordEdits } from "./core/gate.mjs";
+import {
+  checkBeforeEdit,
+  checkBeforeStop,
+  recordEdits,
+  recordTurnStart,
+} from "./core/gate.mjs";
+
+// 하네스 timeout(180s/300s)보다 여유를 두고 먼저 끊는다 — 하네스가 먼저 죽이면
+// 출력 자체가 안 남아 무조건 fail-open이 되므로, 내부에서 먼저 끊어야 block 결정을
+// 남길 수 있다.
+const PRE_TIMEOUT_MS = 150_000;
+const STOP_TIMEOUT_MS = 270_000;
 
 async function main() {
   const mode = process.argv[2];
   const payload = JSON.parse(await readStdin());
 
+  if (mode === "turn-start") {
+    recordTurnStart(payload.session_id);
+    return;
+  }
+
   if (mode === "pre") {
-    const result = await checkBeforeEdit(extractPaths(payload));
+    const result = await checkBeforeEdit(extractPaths(payload), PRE_TIMEOUT_MS);
     if (result?.action === "deny") writePreToolDeny(result.reason);
     return;
   }
@@ -23,11 +39,12 @@ async function main() {
   }
 
   if (mode === "stop") {
-    const result = await checkBeforeStop({
-      sessionId: payload.session_id,
-      stopHookActive: payload.stop_hook_active,
-    });
+    const result = await checkBeforeStop(
+      { sessionId: payload.session_id, stopHookActive: payload.stop_hook_active },
+      STOP_TIMEOUT_MS,
+    );
     if (result?.action === "block") writeStopBlock(result.reason);
+    else if (result?.action === "warn") writeStopWarn(result.reason);
     return;
   }
 
@@ -54,6 +71,10 @@ function writePreToolDeny(reason) {
 
 function writeStopBlock(reason) {
   process.stdout.write(JSON.stringify({ decision: "block", reason }));
+}
+
+function writeStopWarn(reason) {
+  process.stdout.write(JSON.stringify({ systemMessage: reason }));
 }
 
 function readStdin() {
