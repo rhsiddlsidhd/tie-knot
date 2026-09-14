@@ -6,10 +6,10 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { RegisterSchema } from "@/core/schemas/request/register.schema";
 import { signupUserService } from "@/services/user";
 import { actionError } from "@/boundary";
-async function signupUser(
+const signupUser = async (
   prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> {
+): Promise<APIResponse<{ message: string }>> => {
   const data = {
     email: formData.get("email") as string,
     name: formData.get("name") as string,

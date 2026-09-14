@@ -26,10 +26,10 @@ type CreateOrderResult = {
   message: string;
 };
 
-async function createOrder(
+const createOrder = async (
   _prev: unknown,
   formData: FormData,
-): Promise<APIResponse<CreateOrderResult>> {
+): Promise<APIResponse<CreateOrderResult>> => {
   // 로그인 안 된 상태면 로그인 페이지로(리다이렉트는 try/catch 밖에서)
   if (!(await getAuth())) {
     redirect(routes.login);
