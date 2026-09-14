@@ -23,7 +23,7 @@ src/ui/components/templates/
 ## Critical Convention
 
 - 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
-- 파일명과 export 이름은 PascalCase + `Template` 접미사로 짓는다.
+- 파일명과 export 이름은 PascalCase + `Template` 접미사로 짓는다. 폴더명·파일명 PascalCase는 `check-file/folder-naming-convention`·`check-file/filename-naming-convention`(eslint)이 자동 검증하지만, `Template` 접미사는 도구가 강제하지 않으므로 코드리뷰로 가드한다.
 - 데이터 페칭, Server Actions, mutation, 도메인 로직을 두지 않고 완성된 콘텐츠를 props로 받는다.
 - 한 라우트만 사용하는 template은 해당 라우트의 `_components/`에 두고, 의도적으로 같은 전체 배치를 공유하는 라우트가 2곳 이상일 때 이 폴더로 승격한다.
 - `page.tsx` 추출 기준과 `layout.tsx` 경계는 `src/app/AGENTS.md`를 따른다.

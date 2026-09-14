@@ -32,7 +32,7 @@ src/ui/components/atoms/
 ## Critical Convention
 
 - 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
-- 파일명은 소문자 kebab-case로 짓고 export 이름은 PascalCase를 사용한다.
+- 파일명은 소문자 kebab-case로 짓고 export 이름은 PascalCase를 사용한다. 파일명 케이스는 `check-file/filename-naming-convention`(eslint)이 자동 검증한다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다.
 - 프로젝트 UI 컴포넌트를 하나라도 조합하면 동작 수를 다시 센 뒤 molecule 또는 organism으로 이동한다.
 - 공간 배치만 추상화하는 wrapper를 만들지 않는다. 배치 클래스는 소비처가 소유한다.

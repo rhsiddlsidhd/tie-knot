@@ -32,7 +32,7 @@ src/ui/components/molecules/
 ## Critical Convention
 
 - 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
-- 파일명과 export 이름은 PascalCase로 짓는다.
+- 파일명과 export 이름은 PascalCase로 짓는다. 파일명·폴더명 케이스는 `check-file/filename-naming-convention`·`check-file/folder-naming-convention`(eslint)이 자동 검증한다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다.
 - 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.
 - 유일한 직접 소비자가 이미 여러 라우트에서 쓰이는 공용 컴포넌트라면 그 하위 molecule은 이 폴더에 둘 수 있다.

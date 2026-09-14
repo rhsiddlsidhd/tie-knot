@@ -1,5 +1,6 @@
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
+import checkFile from "eslint-plugin-check-file";
 
 const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   rules: {
@@ -96,6 +97,26 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   files: ["src/actions/**/*.unit.test.ts"],
   rules: {
     "import/no-restricted-paths": "off",
+  },
+}, {
+  // atoms는 shadcn/Radix 컨벤션(kebab-case 파일명) 예외, molecules/organisms/templates는
+  // 컴포넌트별 디렉토리(PascalCase)와 파일명이 일치해야 한다 — src/ui/components/AGENTS.md
+  files: ["src/ui/components/**/*.{ts,tsx}"],
+  plugins: {
+    "check-file": checkFile,
+  },
+  rules: {
+    "check-file/filename-naming-convention": ["error", {
+      "src/ui/components/atoms/*.{ts,tsx}": "KEBAB_CASE",
+      "src/ui/components/{molecules,organisms,templates}/*/!(index).{ts,tsx}": "<1>",
+    }, {
+      ignoreMiddleExtensions: true,
+    }],
+    "check-file/folder-naming-convention": ["error", {
+      "src/ui/components/molecules/*/": "PASCAL_CASE",
+      "src/ui/components/organisms/*/": "PASCAL_CASE",
+      "src/ui/components/templates/*/": "PASCAL_CASE",
+    }],
   },
 }, {
   ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", "coverage/**", "docs/design/**"]
