@@ -17,7 +17,7 @@ import {
 import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 
-export function ProductCard({
+function ProductCard({
   product,
   rank,
 }: {
@@ -126,3 +126,5 @@ export function ProductCard({
     </Link>
   );
 }
+
+export { ProductCard };

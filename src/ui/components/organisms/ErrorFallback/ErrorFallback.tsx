@@ -17,7 +17,7 @@ interface ErrorFallbackProps {
   backLabel?: string;
 }
 
-export function ErrorFallback({
+function ErrorFallback({
   error,
   retry,
   title = "오류가 발생했습니다",
@@ -80,3 +80,5 @@ export function ErrorFallback({
     </div>
   );
 }
+
+export { ErrorFallback };

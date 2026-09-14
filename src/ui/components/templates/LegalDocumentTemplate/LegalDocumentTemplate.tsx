@@ -12,7 +12,7 @@ interface LegalDocumentTemplateProps {
   sections: readonly LegalSection[];
 }
 
-export function LegalDocumentTemplate({ title, effectiveDate, sections }: LegalDocumentTemplateProps) {
+function LegalDocumentTemplate({ title, effectiveDate, sections }: LegalDocumentTemplateProps) {
   return (
     <div className="max-w-2xl space-y-10">
       <div className="space-y-2">
@@ -42,3 +42,5 @@ export function LegalDocumentTemplate({ title, effectiveDate, sections }: LegalD
     </div>
   );
 }
+
+export { LegalDocumentTemplate };

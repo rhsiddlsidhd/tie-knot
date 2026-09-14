@@ -21,17 +21,18 @@ props로 받은 핸들러를 전달하는 상호작용도 동작으로 센다. �
 
 ```text
 src/ui/components/molecules/
-├── Alert.tsx
-├── AutoCompleteList.tsx
-├── BaseSelect.tsx
-├── CursorPagination.tsx
-├── ProductCard.tsx
-└── ...              # 축 A/B 판정마다 추가되는 molecule
+├── Alert/
+│   ├── Alert.tsx
+│   ├── Alert.component.test.tsx
+│   └── index.ts
+├── AutoCompleteList/
+│   ├── AutoCompleteList.tsx
+│   └── index.ts
+└── ...              # 축 A/B 판정마다 추가되는 molecule 디렉토리
 ```
 
 ## Critical Convention
 
-- 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
 - export 이름은 PascalCase로 짓는다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다.
 - 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.

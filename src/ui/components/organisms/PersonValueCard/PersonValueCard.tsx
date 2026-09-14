@@ -1,7 +1,7 @@
 import { Badge } from "@/ui/components/atoms/badge";
 import { Card } from "@/ui/components/atoms/card";
 import { TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
-import { ClipboardButton } from "./ClipboardButton";
+import { ClipboardButton } from "../ClipboardButton";
 
 interface PersonValueCardProps {
   relation: string;
@@ -20,7 +20,7 @@ interface PersonValueCardProps {
  * 강제 한 줄 처리한다 — 계좌번호처럼 긴 값도 줄바꿈 없이 보이도록 오른쪽 비율을
  * 왼쪽보다 넉넉히 준다(1:1.35).
  */
-export function PersonValueCard({
+function PersonValueCard({
   relation,
   name,
   subLabel,
@@ -63,3 +63,5 @@ export function PersonValueCard({
     </Card>
   );
 }
+
+export { PersonValueCard };

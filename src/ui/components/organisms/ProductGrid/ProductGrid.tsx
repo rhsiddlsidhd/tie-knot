@@ -6,11 +6,11 @@ import { useVisibleProducts } from "@/ui/hooks/useVisibleProducts";
 import { Button } from "@/ui/components/atoms/button";
 import type { ProductFilterAction, ProductFilterState } from "@/ui/context/productFilter/type";
 import type { Product } from "@/core/domain/product";
-import { TypographyMuted, TypographyP } from "../atoms/typography";
+import { TypographyMuted, TypographyP } from "../../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";
 import type { Dispatch } from "react";
 
-export function ProductGrid({
+function ProductGrid({
   data,
   state,
   dispatch,
@@ -74,3 +74,5 @@ export function ProductGrid({
     </div>
   );
 }
+
+export { ProductGrid };
