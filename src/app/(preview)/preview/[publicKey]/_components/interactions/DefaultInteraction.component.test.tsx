@@ -8,12 +8,12 @@ import { DefaultInteraction } from "./DefaultInteraction";
 // source와 같은 값으로 초기화된다(motion-dom followValue: initialValue =
 // source.get()). 그래서 애니메이션 settle을 기다리지 않고도 마운트 직후의
 // 위치 계산(SPOTLIGHT_SIZE/2 중심 정렬)을 결정적으로 검증할 수 있다.
-function createMotionValue(initial: number) {
+const createMotionValue = (initial: number) => {
   const { result } = renderHook(() => useMotionValue(initial));
   return result.current;
 }
 
-function getGlow(container: HTMLElement) {
+const getGlow = (container: HTMLElement) => {
   return container.querySelector('[style*="radial-gradient"]') as HTMLElement | null;
 }
 

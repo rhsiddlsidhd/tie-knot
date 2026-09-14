@@ -17,7 +17,7 @@ const buildKey = (publicKey: string, cursor?: string) => {
   return `/api/guestbook?${params.toString()}`;
 };
 
-function LiveGuestbookSection({ publicKey }: { publicKey: string }) {
+const LiveGuestbookSection = ({ publicKey }: { publicKey: string }) => {
   const { data, size, setSize, isValidating, mutate } =
     useSWRInfinite<GuestbookListResponse>(
       (pageIndex, previousPage) => {

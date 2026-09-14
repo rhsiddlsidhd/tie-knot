@@ -30,7 +30,7 @@ const isPayload = (payload: unknown): payload is Payload => {
   return false;
 };
 
-function DeleteGuestbookForm({ payload }: { payload: unknown }) {
+const DeleteGuestbookForm = ({ payload }: { payload: unknown }) => {
   const parsedPayload = isPayload(payload) ? payload : null;
   const guestbookId = parsedPayload?.id ?? "";
   const publicKey = parsedPayload?.publicKey ?? "";

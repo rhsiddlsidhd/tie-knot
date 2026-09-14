@@ -15,12 +15,12 @@ interface CreateGuestbookFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-function CreateGuestbookForm({
+const CreateGuestbookForm = ({
   publicKey,
   action,
   pending,
   state,
-}: CreateGuestbookFormProps) {
+}: CreateGuestbookFormProps) => {
   const authorError = getFieldError(state, "author");
   const passwordError = getFieldError(state, "password");
 

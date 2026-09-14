@@ -2,7 +2,7 @@ import { routes } from "@/core/domain/routes";
 import { DemoGuestbookSection } from "./DemoGuestbookSection";
 import { LiveGuestbookSection } from "../_containers/LiveGuestbookSection";
 
-function GuestbookSection({ publicKey }: { publicKey: string }) {
+const GuestbookSection = ({ publicKey }: { publicKey: string }) => {
   if (publicKey === routes.preview.samplePublicKey) {
     return <DemoGuestbookSection />;
   }

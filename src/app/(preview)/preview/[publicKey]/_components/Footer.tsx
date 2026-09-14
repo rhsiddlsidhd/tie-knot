@@ -1,5 +1,5 @@
 import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
-function Footer({ children }: { children: React.ReactNode }) {
+const Footer = ({ children }: { children: React.ReactNode }) => {
   return (
     <footer className="relative min-h-[60vh] py-12 text-center">
       {/* Background/Overlay Content (Particles, Waves, etc.) */}

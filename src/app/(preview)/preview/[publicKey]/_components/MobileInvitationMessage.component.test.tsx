@@ -24,7 +24,7 @@ const parties: MobileInvitationMessageMappedProps["parties"] = [
   },
 ];
 
-function renderWithStore() {
+const renderWithStore = () => {
   const testStore = createAppStore();
   const utils = render(
     <StoreProvider store={testStore}>

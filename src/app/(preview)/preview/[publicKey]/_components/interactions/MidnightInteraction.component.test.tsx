@@ -7,7 +7,7 @@ import { MidnightInteraction } from "./MidnightInteraction";
 // vi.useFakeTimers()는 이 값을 결정적으로 만들지 못하므로(rAF/JSAnimation
 // 프레임 루프까지 함께 얼려 오히려 예측 불가해진다), performance.now() 자체를
 // mock해 스로틀 경계를 결정적으로 재현한다.
-function createMotionValue(initial: number) {
+const createMotionValue = (initial: number) => {
   const { result } = renderHook(() => useMotionValue(initial));
   return result.current;
 }

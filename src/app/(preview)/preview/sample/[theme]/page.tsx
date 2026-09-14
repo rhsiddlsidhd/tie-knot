@@ -5,7 +5,7 @@ import { MobileInvitationTemplate } from "@/app/(preview)/preview/[publicKey]/_c
 import { SAMPLE_FEATURES, sampleInvitation } from "@/app/(preview)/preview/sample/_constants/sampleInvitation";
 import { isMobileInvitationTheme } from "./_utils/isMobileInvitationTheme";
 
-function generateStaticParams() {
+const generateStaticParams = () => {
   return MOBILE_INVITATION_THEMES.map((theme) => ({ theme }));
 }
 

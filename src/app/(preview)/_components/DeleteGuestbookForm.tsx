@@ -14,13 +14,13 @@ interface DeleteGuestbookFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-function DeleteGuestbookForm({
+const DeleteGuestbookForm = ({
   guestbookId,
   publicKey,
   action,
   pending,
   state,
-}: DeleteGuestbookFormProps) {
+}: DeleteGuestbookFormProps) => {
   const passwordError = getFieldError(state, "password");
 
   return (

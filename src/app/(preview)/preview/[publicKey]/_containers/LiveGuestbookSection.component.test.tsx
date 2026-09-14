@@ -49,7 +49,7 @@ const page1: GuestbookListResponse = {
   nextCursor: null,
 };
 
-function mockSwrInfinite(data: GuestbookListResponse[] | undefined) {
+const mockSwrInfinite = (data: GuestbookListResponse[] | undefined) => {
   useSWRInfiniteMock.mockReturnValue({
     data,
     size: 1,

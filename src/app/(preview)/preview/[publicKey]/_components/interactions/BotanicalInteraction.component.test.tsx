@@ -11,12 +11,12 @@ import { BotanicalInteraction } from "./BotanicalInteraction";
 // 갈라지며 덩굴손이 늘어나는 것은 실제 browser rAF 타이밍에 의존하는 애니메이션
 // geometry라 Component tier 범위 밖이다(docs/__test/component.md "Browser
 // Limitations").
-function createMotionValue(initial: number) {
+const createMotionValue = (initial: number) => {
   const { result } = renderHook(() => useMotionValue(initial));
   return result.current;
 }
 
-function getCurvePath(container: HTMLElement) {
+const getCurvePath = (container: HTMLElement) => {
   return container.querySelector("path[stroke]");
 }
 

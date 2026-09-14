@@ -10,11 +10,11 @@ type RefFreeProps = Omit<GuestbookListProps, "scrollContainerRef" | "sentinelRef
 
 // scrollContainerRef/sentinelRef는 RefObject라 실제 useRef로 감싼 wrapper 없이는
 // hasMore=true일 때 sentinel 엘리먼트가 실제로 마운트되는지 관찰할 수 없다.
-function renderGuestbookList(props: RefFreeProps) {
+const renderGuestbookList = (props: RefFreeProps) => {
   let scrollContainerRef!: RefObject<HTMLDivElement | null>;
   let sentinelRef!: RefObject<HTMLDivElement | null>;
 
-  function Wrapper() {
+  const Wrapper = () => {
     scrollContainerRef = useRef<HTMLDivElement>(null);
     sentinelRef = useRef<HTMLDivElement>(null);
     return (

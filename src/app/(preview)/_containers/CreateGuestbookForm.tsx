@@ -27,7 +27,7 @@ const isPayload = (payload: unknown): payload is Payload => {
   return false;
 };
 
-function CreateGuestbookForm({ payload }: { payload: unknown }) {
+const CreateGuestbookForm = ({ payload }: { payload: unknown }) => {
   const publicKey = isPayload(payload) ? payload.publicKey : null;
   const isDemo = publicKey === routes.preview.samplePublicKey;
 
