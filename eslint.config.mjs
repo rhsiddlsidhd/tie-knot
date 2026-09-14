@@ -175,6 +175,12 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     }],
   },
 }, {
+  files: ["src/**/*.{ts,tsx}"],
+  ignores: ["src/ui/components/atoms/**"],
+  rules: {
+    "func-style": ["error", "expression"],
+  },
+}, {
   ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", ".claude/worktrees/**", "coverage/**", "docs/design/**"]
 }];
 
