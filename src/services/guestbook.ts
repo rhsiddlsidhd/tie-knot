@@ -141,21 +141,21 @@ const deleteGuestbookService = async (
   return result;
 };
 
-async function createGuestbookWithPasswordService(
+const createGuestbookWithPasswordService = async (
   data: GuestbookType,
-): Promise<void> {
+): Promise<void> => {
   await createGuestbookService({
     data: { ...data, password: await hashPassword(data.password) },
   });
 }
 
-async function deleteGuestbookWithPasswordService({
+const deleteGuestbookWithPasswordService = async ({
   guestbookId,
   password,
 }: {
   guestbookId: string;
   password: string;
-}): Promise<void> {
+}): Promise<void> => {
   const guestbook = await getPrivateGuestbookService(guestbookId);
   if (!guestbook) {
     throw new AppError("NOT_FOUND", "해당 게시글을 찾을 수 없습니다.");

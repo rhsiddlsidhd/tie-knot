@@ -30,11 +30,11 @@ const getCachedSubwayStationNames = unstable_cache(
   { revalidate: CACHE_REVALIDATE_SECONDS },
 );
 
-async function getAllSubwayStationNames(): Promise<string[]> {
+const getAllSubwayStationNames = async (): Promise<string[]> => {
   return getCachedSubwayStationNames();
 }
 
-async function isValidSubwayStationName(name: string): Promise<boolean> {
+const isValidSubwayStationName = async (name: string): Promise<boolean> => {
   const names = await getAllSubwayStationNames();
   return names.includes(name);
 }
@@ -47,9 +47,9 @@ type SubwayNameSearchRow = {
 // 한 역이 환승역이면 노선 수만큼 행이 내려온다 — 노선명으로 합친 뒤 표시용 색상을 붙인다.
 // 역 목록(위)과 달리 캐시하지 않는다: 입력 역명마다 키가 갈려 캐시 적중률이 낮고,
 // 청첩장 저장 시점에 한 번 부르는 경로라 매 요청 비용이 문제되지 않는다.
-async function getSubwayStationLines(
+const getSubwayStationLines = async (
   station: string,
-): Promise<SubwayStationLineInfoResponse> {
+): Promise<SubwayStationLineInfoResponse> => {
   const rows = await fetchSeoulOpenApi<SubwayNameSearchRow>(
     STATION_LINE_SERVICE_NAME,
     [1, 50, station],

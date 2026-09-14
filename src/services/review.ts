@@ -248,9 +248,9 @@ const createReviewService = async ({
   return toReviewJSON(review, maskName(author?.name ?? ""), userId);
 };
 
-async function createReviewForCurrentUserService(
+const createReviewForCurrentUserService = async (
   data: Omit<CreateReviewInput, "userId">,
-): Promise<ReviewJSON> {
+): Promise<ReviewJSON> => {
   const { userId } = await requireAuth();
   return createReviewService({ ...data, userId });
 }
@@ -312,9 +312,9 @@ const updateReviewService = async ({
   return toReviewJSON(updated, maskName(author?.name ?? ""), userId);
 };
 
-async function updateReviewForCurrentUserService(
+const updateReviewForCurrentUserService = async (
   data: Omit<UpdateReviewInput, "userId">,
-): Promise<ReviewJSON> {
+): Promise<ReviewJSON> => {
   const { userId } = await requireAuth();
   return updateReviewService({ ...data, userId });
 }
@@ -350,9 +350,9 @@ const deleteReviewService = async ({
   await recomputeProductRating(existing.productId);
 };
 
-async function deleteReviewForCurrentUserService(
+const deleteReviewForCurrentUserService = async (
   reviewId: string,
-): Promise<void> {
+): Promise<void> => {
   const { userId } = await requireAuth();
   return deleteReviewService({ reviewId, userId });
 }

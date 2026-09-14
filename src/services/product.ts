@@ -620,15 +620,15 @@ const updateProductLikeService = async (
   return !!updated;
 };
 
-async function createProductWorkflow(data: ProductUploadInput): Promise<void> {
+const createProductWorkflow = async (data: ProductUploadInput): Promise<void> => {
   const { userId } = await requireAdmin();
   await createProductService({ ...data, authorId: userId });
 }
 
-async function updateProductWorkflow(
+const updateProductWorkflow = async (
   productId: string,
   data: ProductUploadInput,
-): Promise<ProductJSON> {
+): Promise<ProductJSON> => {
   await requireAdmin();
   const updated = await updateProductService(productId, {
     ...data,
@@ -640,33 +640,33 @@ async function updateProductWorkflow(
   return updated;
 }
 
-async function deleteProductAsAdminService(productId: string): Promise<void> {
+const deleteProductAsAdminService = async (productId: string): Promise<void> => {
   await requireAdmin();
   if (!(await deleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
   }
 }
 
-async function restoreProductAsAdminService(productId: string): Promise<void> {
+const restoreProductAsAdminService = async (productId: string): Promise<void> => {
   await requireAdmin();
   if (!(await restoreProductService(productId))) {
     throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
 }
 
-async function permanentlyDeleteProductAsAdminService(
+const permanentlyDeleteProductAsAdminService = async (
   productId: string,
-): Promise<void> {
+): Promise<void> => {
   await requireAdmin();
   if (!(await permanentlyDeleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
 }
 
-async function updateProductStatusAsAdminService(
+const updateProductStatusAsAdminService = async (
   productId: string,
   status: ProductDto["status"],
-): Promise<ProductJSON> {
+): Promise<ProductJSON> => {
   await requireAdmin();
   const updated = await updateProductService(productId, { status });
   if (!updated) {
@@ -675,9 +675,9 @@ async function updateProductStatusAsAdminService(
   return updated;
 }
 
-async function toggleProductLikeForCurrentUserService(
+const toggleProductLikeForCurrentUserService = async (
   productId: string,
-): Promise<void> {
+): Promise<void> => {
   const { userId } = await requireAuth();
   if (!(await updateProductLikeService(productId, userId))) {
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없거나 좋아요 업데이트에 실패했습니다.");
