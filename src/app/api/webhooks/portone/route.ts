@@ -1,7 +1,7 @@
 import { Webhook } from "@portone/server-sdk";
 import { syncPayment } from "@/services/payment";
 
-async function POST(request: Request): Promise<Response> {
+const POST = async (request: Request): Promise<Response> => {
   const secret = process.env.PORTONE_WEBHOOK_SECRET;
   const expectedStoreId = process.env.NEXT_PUBLIC_PORTONE_STORE_ID;
   if (!secret || !expectedStoreId) {
