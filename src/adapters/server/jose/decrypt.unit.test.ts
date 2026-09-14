@@ -4,11 +4,11 @@ import { decrypt } from "./decrypt";
 import { ENTRY_ENCODED_KEY, JWT_ENCODED_KEY } from "./config";
 import { AppError } from "@/core/domain/error";
 
-function signToken(
+const signToken = (
   key: Uint8Array,
   claims: Record<string, unknown>,
   expirationTime: string | number = "10m",
-) {
+) => {
   return new SignJWT(claims)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()

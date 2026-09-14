@@ -12,7 +12,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-async function deleteProductAsset(publicId: string): Promise<void> {
+const deleteProductAsset = async (publicId: string): Promise<void> => {
   if (!publicId) return;
   const result = await cloudinary.uploader.destroy(publicId, {
     resource_type: "image",

@@ -10,10 +10,10 @@ type UploadSignature = {
   apiKey: string | undefined;
 };
 
-function signUploadRequest(
+const signUploadRequest = (
   folder: string,
   widgetParams?: Record<string, unknown>,
-): UploadSignature {
+): UploadSignature => {
   const timestamp =
     typeof widgetParams?.timestamp === "number"
       ? widgetParams.timestamp

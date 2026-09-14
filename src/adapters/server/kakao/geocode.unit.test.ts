@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { geocodeAddress } from "./geocode";
 import { AppError } from "@/core/domain/error";
 
-function mockResponse(status: number, ok: boolean, body: string): Response {
+const mockResponse = (status: number, ok: boolean, body: string): Response => {
   return {
     ok,
     status,

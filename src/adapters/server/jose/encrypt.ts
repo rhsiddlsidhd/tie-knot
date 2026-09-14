@@ -3,7 +3,7 @@ import { SignJWT } from "jose";
 import type { EncryptProps } from "./type";
 import { ENTRY_ENCODED_KEY, JWT_ENCODED_KEY } from "./config";
 
-async function encrypt(payload: EncryptProps) {
+const encrypt = async (payload: EncryptProps) => {
   return await new SignJWT({
     id:
       payload.type !== "ENTRY"
