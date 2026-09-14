@@ -58,7 +58,7 @@ src/ui/components/
 └── templates/   # 페이지 몸통 전체 구조
 ```
 
-각 폴더는 flat 구조를 유지하며, 소비자는 컴포넌트 파일을 직접 지정해 import한다(`@/ui/components/atoms/Button`). 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
+`atoms/`는 flat 구조로 소비자가 파일을 직접 지정해 import한다(`@/ui/components/atoms/button`). `molecules/`·`organisms/`·`templates/`는 컴포넌트마다 동일 이름 디렉토리를 두고 소비자는 그 디렉토리를 지정해 import한다(`@/ui/components/molecules/Alert`). 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
 
 ## 관련 문서
 

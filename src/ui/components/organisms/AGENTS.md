@@ -24,17 +24,22 @@ props로 주입받은 핸들러를 하위 요소에 전달하기만 해도 해�
 
 ```text
 src/ui/components/organisms/
-├── BankField.tsx
-├── ClipboardButton.tsx
-├── FormField.tsx
-├── RatingStars.tsx
-├── TextField.tsx
+├── BankField/
+│   ├── BankField.tsx
+│   ├── BankField.component.test.tsx
+│   └── index.ts
+├── ClipboardButton/
+│   ├── ClipboardButton.tsx
+│   └── index.ts
+├── FormField/
+│   ├── FormField.tsx
+│   ├── FormField.component.test.tsx
+│   └── index.ts
 └── ...
 ```
 
 ## Critical Convention
 
-- 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
 - export 이름은 PascalCase로 짓는다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다. 해당 로직은 라우트의 `_containers/`가 소유하고 organism에는 props로 전달한다.
 - 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.
