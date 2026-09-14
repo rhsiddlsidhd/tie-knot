@@ -1,6 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { MobileInvitationEditor } from "@/core/domain/mobile-invitation";
+import type { BanksResponse } from "@/core/schemas/response/banks.schema";
+import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";
+import type { ImageItem } from "@/ui/hooks/useImageList";
 
 // 하위 Section들이 쓰는 외부 SDK 경계(Daum 주소 팝업, Cloudinary 업로드 위젯)만
 // Mock으로 대체한다 — MobileInvitationFormView 자체는 실제 Section들을 그대로
@@ -19,7 +23,7 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
 import { MobileInvitationFormView } from "./MobileInvitationFormView";
 
 const buildImageList = () => ({
-  items: [],
+  items: [] as ImageItem[],
   add: vi.fn(),
   remove: vi.fn(),
   getUrls: vi.fn(() => []),
@@ -27,25 +31,16 @@ const buildImageList = () => ({
 });
 
 const baseProps = {
-  data: undefined as
-    | {
-        weddingDate: Date;
-        venue: string;
-        address: string;
-        addressDetail: string;
-        subwayStation?: string;
-        guestbookEnabled: boolean;
-        groom: { name: string; phone: string };
-        bride: { name: string; phone: string };
-      }
-    | undefined,
-  banks: [],
-  subwayStations: [],
+  data: undefined as MobileInvitationEditor | undefined,
+  banks: [] as BanksResponse,
+  subwayStations: [] as SubwayStationsResponse,
   thumbnail: buildImageList(),
   gallery: buildImageList(),
   isUploading: false,
   uploadProgress: 0,
-  handleSubmit: vi.fn(),
+  handleSubmit: vi.fn(async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  }),
   orderId: "order-1",
 };
 
@@ -68,13 +63,18 @@ describe("MobileInvitationFormView", () => {
     ).toBeInTheDocument();
   });
 
-  const fullData = {
+  const fullData: MobileInvitationEditor = {
+    publicKey: "public-key-1",
+    status: "draft",
     weddingDate: new Date("2026-05-01T14:30:00"),
     venue: "더 컨벤션 웨딩홀",
     address: "서울시 강남구 테헤란로 123",
     addressDetail: "3층",
     subwayStation: "",
     guestbookEnabled: false,
+    thumbnailImages: [],
+    galleryImages: [],
+    theme: "default",
     groom: { name: "김철수", phone: "010-1111-2222" },
     bride: { name: "이영희", phone: "010-3333-4444" },
   };
@@ -112,7 +112,9 @@ describe("MobileInvitationFormView", () => {
     // 브라우저(및 jsdom)는 필수 필드가 비어 있으면 submit 이벤트 자체를
     // 막는다 — required 필드를 fullData로 채워 실제 제출 경로를 검증한다.
     const user = userEvent.setup();
-    const handleSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
+    const handleSubmit = vi.fn(async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+    });
     render(
       <MobileInvitationFormView
         type="edit"

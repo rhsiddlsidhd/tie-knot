@@ -1,6 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { BanksResponse } from "@/core/schemas/response/banks.schema";
+import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";
 
 // useMobileInvitationForm 훅은 실제 구현을 그대로 쓴다 — 이 테스트의 대상은
 // "훅 오케스트레이션 + View 조합"이라는 컨테이너 책임이다. 데이터 페칭 훅(SWR)과
@@ -27,10 +29,12 @@ vi.mock("@/actions/saveMobileInvitation", () => ({
 }));
 
 vi.mock("@/ui/hooks/useBanks", () => ({
-  useBanks: () => ({ banks: [] }),
+  useBanks: (): { banks: BanksResponse } => ({ banks: [] }),
 }));
 vi.mock("@/ui/hooks/useSubwayStations", () => ({
-  useSubwayStations: () => ({ subwayStations: [] }),
+  useSubwayStations: (): { subwayStations: SubwayStationsResponse } => ({
+    subwayStations: [],
+  }),
 }));
 
 vi.mock("@/adapters/browser/daum/useDaumPopup", () => ({
@@ -67,7 +71,7 @@ const validEditorData = {
     "https://example.com/2.jpg",
     "https://example.com/3.jpg",
   ],
-  galleryImages: [],
+  galleryImages: [] as string[],
   theme: "default",
   publicKey: "pub-1",
   status: "draft" as const,
