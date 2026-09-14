@@ -60,8 +60,6 @@ src/ui/components/
 
 각 폴더는 flat 구조를 유지하며, 소비자는 컴포넌트 파일을 직접 지정해 import한다(`@/ui/components/atoms/Button`). 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
 
-파일명·폴더명 케이스는 `eslint.config.mjs`의 `check-file/filename-naming-convention`, `check-file/folder-naming-convention`가 자동 검증한다 — 위반하면 `npm run lint`가 실패한다.
-
 ## 관련 문서
 
 - 라우트 로컬 `_components/`와 `_containers/`, page/layout 경계: `src/app/AGENTS.md`

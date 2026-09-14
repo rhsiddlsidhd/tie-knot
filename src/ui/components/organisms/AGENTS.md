@@ -35,7 +35,7 @@ src/ui/components/organisms/
 ## Critical Convention
 
 - 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
-- 파일명과 export 이름은 PascalCase로 짓는다. 파일명·폴더명 케이스는 `check-file/filename-naming-convention`·`check-file/folder-naming-convention`(eslint)이 자동 검증한다.
+- 파일명과 export 이름은 PascalCase로 짓는다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다. 해당 로직은 라우트의 `_containers/`가 소유하고 organism에는 props로 전달한다.
 - 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.
 - 여러 도메인이나 라우트에서 쓰는 구현은 특정 소비처 이름을 피하고 역할 중심으로 이름 짓는다.
