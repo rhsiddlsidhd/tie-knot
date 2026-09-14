@@ -17,6 +17,7 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   },
   rules: {
     "@typescript-eslint/consistent-type-exports": "error",
+    "import/no-default-export": "error",
     "import/no-restricted-paths": ["error", {
       zones: [
         { target: "./src/core", from: "./src/models", message: "core는 순수해야 한다" },
@@ -119,7 +120,32 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
     }],
   },
 }, {
-  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", "coverage/**", "docs/design/**"]
+  // Next.js 파일 컨벤션이 요구하는 export default만 허용한다 — src/app/AGENTS.md, docs/decisions/0006-named-exports-over-default.md
+  files: [
+    "src/app/**/page.tsx",
+    "src/app/**/layout.tsx",
+    "src/app/**/loading.tsx",
+    "src/app/**/error.tsx",
+    "src/app/global-error.tsx",
+    "src/app/**/not-found.tsx",
+    "src/app/global-not-found.tsx",
+    "src/app/**/template.tsx",
+    "src/app/**/default.tsx",
+    "src/app/**/forbidden.tsx",
+    "src/app/**/unauthorized.tsx",
+    "src/app/**/icon*.tsx",
+    "src/app/**/apple-icon*.tsx",
+    "src/app/**/opengraph-image.tsx",
+    "src/app/**/twitter-image.tsx",
+    "src/app/**/manifest.ts",
+    "src/app/**/robots.ts",
+    "src/app/**/sitemap.ts",
+  ],
+  rules: {
+    "import/no-default-export": "off",
+  },
+}, {
+  ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", ".claude/worktrees/**", "coverage/**", "docs/design/**"]
 }];
 
 export default eslintConfig;
