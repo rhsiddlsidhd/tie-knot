@@ -15,7 +15,7 @@ interface CreateGuestbookFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-export function CreateGuestbookForm({
+function CreateGuestbookForm({
   publicKey,
   action,
   pending,
@@ -89,3 +89,5 @@ export function CreateGuestbookForm({
     </form>
   );
 }
+
+export { CreateGuestbookForm };

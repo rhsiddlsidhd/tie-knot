@@ -1,4 +1,4 @@
-export type PremiumFeature = {
+type PremiumFeature = {
   _id: string;
   code: string;
   label: string;
@@ -7,3 +7,5 @@ export type PremiumFeature = {
   isActive: boolean;
   createdAt: string;
 };
+
+export { type PremiumFeature };

@@ -16,7 +16,7 @@ type BasicInfoSectionProps = {
   subwayStations?: SubwayStationsResponse;
 };
 
-export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps) {
+function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -96,3 +96,5 @@ export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps
     </Card>
   );
 }
+
+export { BasicInfoSection };

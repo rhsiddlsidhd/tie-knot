@@ -7,7 +7,7 @@ import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/ui/components/atoms/sheet";
 import { Button } from "@/ui/components/atoms/button";
 
-export function MobileNav() {
+function MobileNav() {
   const [open, setOpen] = useState(false);
 
   return (
@@ -88,3 +88,5 @@ export function MobileNav() {
     </Sheet>
   );
 }
+
+export { MobileNav };

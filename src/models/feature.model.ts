@@ -4,7 +4,7 @@ import mongoose, { Schema } from "mongoose";
 
 // toJSON() 반환 타입 정의
 
-export interface IFeature {
+interface IFeature {
   _id: Types.ObjectId;
   code: string;
   label: string; // 관리자/프론트용 이름
@@ -28,6 +28,8 @@ const featureSchema = new Schema<IFeature>(
   },
 );
 
-export const FeatureModel =
+const FeatureModel =
   (mongoose.models.Feature as Model<IFeature>) ||
   mongoose.model<IFeature>("Feature", featureSchema);
+
+export { FeatureModel, type IFeature };

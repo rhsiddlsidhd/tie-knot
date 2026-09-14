@@ -5,9 +5,11 @@ import * as z from "zod";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-export const adminProductListRequestSchema = z.object({
+const adminProductListRequestSchema = z.object({
   view: z.preprocess(emptyToUndefined, z.enum(["active", "trash"]).optional()),
   cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-export type AdminProductListRequest = z.infer<typeof adminProductListRequestSchema>;
+type AdminProductListRequest = z.infer<typeof adminProductListRequestSchema>;
+
+export { adminProductListRequestSchema, type AdminProductListRequest };

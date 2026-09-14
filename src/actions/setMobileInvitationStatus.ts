@@ -5,7 +5,7 @@ import type { APIResponse } from "@/core/domain/error";
 import { actionError } from "@/boundary";
 import { mobileInvitationCacheTag, setMobileInvitationStatusForCurrentUser } from "@/services/mobile-invitation";
 
-export const setMobileInvitationStatus = async (
+const setMobileInvitationStatus = async (
   orderId: string,
   status: "draft" | "published",
 ): Promise<APIResponse<{ publicKey: string; status: "draft" | "published" }>> => {
@@ -17,3 +17,5 @@ export const setMobileInvitationStatus = async (
     return actionError(error);
   }
 };
+
+export { setMobileInvitationStatus };

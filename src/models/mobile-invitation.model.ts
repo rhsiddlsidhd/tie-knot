@@ -4,24 +4,24 @@ import mongoose, { Schema } from "mongoose";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 
-export interface MobileInvitationPerson {
+interface MobileInvitationPerson {
   name: string;
   phone: string;
 }
 
-export interface MobileInvitationParent extends MobileInvitationPerson {
+interface MobileInvitationParent extends MobileInvitationPerson {
   bankName?: string;
   accountNumber?: string;
 }
 
-export interface MobileInvitationSide extends MobileInvitationPerson {
+interface MobileInvitationSide extends MobileInvitationPerson {
   bankName?: string;
   accountNumber?: string;
   father?: MobileInvitationParent;
   mother?: MobileInvitationParent;
 }
 
-export interface IMobileInvitation {
+interface IMobileInvitation {
   _id: Types.ObjectId;
   publicKey: string;
   userId: Types.ObjectId;
@@ -87,6 +87,14 @@ const mobileInvitationSchema = new Schema<IMobileInvitation>(
   { timestamps: true },
 );
 
-export const MobileInvitationModel =
+const MobileInvitationModel =
   (mongoose.models.MobileInvitation as Model<IMobileInvitation>) ||
   mongoose.model<IMobileInvitation>("MobileInvitation", mobileInvitationSchema);
+
+export {
+  MobileInvitationModel,
+  type MobileInvitationPerson,
+  type MobileInvitationParent,
+  type MobileInvitationSide,
+  type IMobileInvitation,
+};

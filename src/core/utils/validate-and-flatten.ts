@@ -4,7 +4,7 @@ type ValidationResult<T> =
   | { success: true; data: T; error?: never }
   | { success: false; data?: never; error: Partial<Record<keyof T, string[]>> };
 
-export const validateAndFlatten = <T>(
+const validateAndFlatten = <T>(
   schema: z.ZodSchema<T>,
   data: unknown,
 ): ValidationResult<T> => {
@@ -17,3 +17,5 @@ export const validateAndFlatten = <T>(
         error: z.flattenError(result.error).fieldErrors,
       };
 };
+
+export { validateAndFlatten };

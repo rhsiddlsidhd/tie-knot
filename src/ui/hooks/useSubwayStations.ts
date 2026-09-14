@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
 import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";
 
-export function useSubwayStations() {
+function useSubwayStations() {
   const { data, error, isLoading } = useSWR<SubwayStationsResponse>(
     "/api/subway",
     fetcher,
@@ -17,3 +17,5 @@ export function useSubwayStations() {
     isError: error,
   };
 }
+
+export { useSubwayStations };

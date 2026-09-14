@@ -17,7 +17,7 @@ interface FindIdFormProps {
   state: APIResponse<{ email: string }> | null;
 }
 
-export function FindIdForm({ action, pending, state }: FindIdFormProps) {
+function FindIdForm({ action, pending, state }: FindIdFormProps) {
   const nameError = getFieldError(state, "name");
   const phoneError = getFieldError(state, "phone");
 
@@ -107,3 +107,5 @@ export function FindIdForm({ action, pending, state }: FindIdFormProps) {
     </div>
   );
 }
+
+export { FindIdForm };

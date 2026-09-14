@@ -25,7 +25,7 @@ const assertObjectIdLike = (id: string, label: string): void => {
   }
 };
 
-export const createOrderService = async (
+const createOrderService = async (
   data: CreateOrderDto & { userId: string },
 ): Promise<IOrder> => {
   await dbConnect();
@@ -110,7 +110,7 @@ export const createOrderService = async (
   return order.toObject();
 };
 
-export async function createOrderForCurrentUserService(
+async function createOrderForCurrentUserService(
   data: CreateOrderDto,
 ): Promise<IOrder> {
   const { userId } = await requireAuth();
@@ -124,7 +124,7 @@ export async function createOrderForCurrentUserService(
  * import하면 순환 의존이 생기므로, 오케스트레이션은 호출부에서 두 함수를
  * 조합한다).
  */
-export const findExpiredAwaitingMobileInvitationOrders = async (
+const findExpiredAwaitingMobileInvitationOrders = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<IOrder[]> => {
   await dbConnect();
@@ -164,7 +164,7 @@ export const findExpiredAwaitingMobileInvitationOrders = async (
  * 실제 CONFIRMED+기한초과 규모에 비례하므로(MobileInvitation 전체 컬렉션과 달리)
  * 상한 없이 조회해도 무제한 증가하지 않는다.
  */
-export const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
+const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
   IOrder[]
 > => {
   await dbConnect();
@@ -196,7 +196,7 @@ export const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Pr
     .slice(0, EXPIRED_ORDER_BATCH_LIMIT);
 };
 
-export const getOrderSeviceByMerchantUid = async (
+const getOrderSeviceByMerchantUid = async (
   merchantUid: string,
 ): Promise<IOrder | null> => {
   await dbConnect();
@@ -317,7 +317,7 @@ type OrderListQuery = {
  * 다음 페이지가 있으면 마지막 행 기준 커서를 함께 리턴한다. 같은 createdAt을 가진
  * 주문이 있어도 _id를 tie-breaker로 써서 행이 중복되거나 건너뛰어지지 않는다.
  */
-export const getOrdersPageForUser = async ({
+const getOrdersPageForUser = async ({
   userId,
   status,
   category,
@@ -402,7 +402,7 @@ type AdminOrderListRow = {
  * 최소 필드만 select한다 — 목록에 필요 이상의 문서 필드나 Mongoose 인스턴스를
  * 노출하지 않는다.
  */
-export const getAdminOrdersPageService = async ({
+const getAdminOrdersPageService = async ({
   status,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
@@ -476,7 +476,7 @@ export const getAdminOrdersPageService = async ({
  * 주문 상세 — 소유자 본인만 조회할 수 있다(page 게이트와 별개의 데이터 게이트,
  * docs/security/page-access-control.md).
  */
-export const getOwnedOrderDetail = async (
+const getOwnedOrderDetail = async (
   orderId: string,
   userId: string,
 ): Promise<OrderDetail> => {
@@ -529,7 +529,7 @@ const requireOwnedOrder = async (
   return order;
 };
 
-export const PENDING_ORDER_CANCEL_REASONS = {
+const PENDING_ORDER_CANCEL_REASONS = {
   byBuyer: "주문자 취소",
   expired: "결제 미완료로 인한 자동 취소",
 } as const;
@@ -540,7 +540,7 @@ export const PENDING_ORDER_CANCEL_REASONS = {
  * 있음)은 이 경로로 취소하지 않는다 — 입금이 이미 진행 중일 수 있어 PortOne 취소를
  * 거쳐야 하고, 그 흐름은 개별 입금기한 만료가 담당한다.
  */
-export const cancelPendingOrderForCurrentUser = async (
+const cancelPendingOrderForCurrentUser = async (
   orderId: string,
 ): Promise<void> => {
   await dbConnect();
@@ -587,7 +587,7 @@ export const cancelPendingOrderForCurrentUser = async (
  * payment.service를 import하면 순환 의존이 생긴다). 오케스트레이션 쪽이 같은
  * `deadline`으로 취소 대상을 다시 걸러야 하므로 함께 리턴한다.
  */
-export const findExpiredPendingOrders = async (
+const findExpiredPendingOrders = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<{ orders: IOrder[]; deadline: Date }> => {
   await dbConnect();
@@ -615,7 +615,7 @@ export const findExpiredPendingOrders = async (
  * 반환 shape을 per-user와 맞춰(orders + deadline) payment.ts의 공통 취소
  * 실행부가 두 진입점을 그대로 공유한다.
  */
-export const findExpiredPendingOrdersForAllUsers = async (): Promise<{
+const findExpiredPendingOrdersForAllUsers = async (): Promise<{
   orders: IOrder[];
   deadline: Date;
 }> => {
@@ -636,4 +636,19 @@ export const findExpiredPendingOrdersForAllUsers = async (): Promise<{
     .lean<IOrder[]>();
 
   return { orders, deadline };
+};
+
+export {
+  createOrderService,
+  createOrderForCurrentUserService,
+  findExpiredAwaitingMobileInvitationOrders,
+  findExpiredAwaitingMobileInvitationOrdersForAllUsers,
+  getOrderSeviceByMerchantUid,
+  getOrdersPageForUser,
+  getAdminOrdersPageService,
+  getOwnedOrderDetail,
+  PENDING_ORDER_CANCEL_REASONS,
+  cancelPendingOrderForCurrentUser,
+  findExpiredPendingOrders,
+  findExpiredPendingOrdersForAllUsers,
 };

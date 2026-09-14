@@ -1,7 +1,7 @@
 import "server-only";
 import { v2 as cloudinary } from "cloudinary";
 
-export type UploadSignature = {
+type UploadSignature = {
   signature: string;
   timestamp: number;
   folder: string;
@@ -10,7 +10,7 @@ export type UploadSignature = {
   apiKey: string | undefined;
 };
 
-export function signUploadRequest(
+function signUploadRequest(
   folder: string,
   widgetParams?: Record<string, unknown>,
 ): UploadSignature {
@@ -37,3 +37,5 @@ export function signUploadRequest(
     apiKey: process.env.CLOUDINARY_API_KEY,
   };
 }
+
+export { signUploadRequest, type UploadSignature };

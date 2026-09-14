@@ -17,7 +17,7 @@ interface LoginFormProps {
   passwordError?: string;
 }
 
-export function LoginForm({
+function LoginForm({
   action,
   pending,
   emailError,
@@ -123,3 +123,5 @@ export function LoginForm({
     </div>
   );
 }
+
+export { LoginForm };

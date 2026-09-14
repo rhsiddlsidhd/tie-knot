@@ -7,7 +7,7 @@ import { requestPasswordReset } from "@/actions/requestPasswordReset";
 import { hasFieldErrors } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";
 import { ForgotPasswordForm as PureForgotPasswordForm } from "../_components/ForgotPasswordForm";
-export function ForgotPasswordForm() {
+function ForgotPasswordForm() {
   const [state, action, pending] = useActionState<
     APIResponse<{ message: string; email: string }>,
     FormData
@@ -25,3 +25,5 @@ export function ForgotPasswordForm() {
     <PureForgotPasswordForm action={action} pending={pending} state={state} />
   );
 }
+
+export { ForgotPasswordForm };

@@ -6,7 +6,7 @@ import type { APIResponse } from "@/core/domain/error";
 import { requestPasswordResetService } from "@/services/user";
 import { actionError } from "@/boundary";
 
-export const requestPasswordReset = async (
+const requestPasswordReset = async (
   prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string; email: string }>> => {
@@ -42,3 +42,5 @@ export const requestPasswordReset = async (
     return actionError(e);
   }
 };
+
+export { requestPasswordReset };

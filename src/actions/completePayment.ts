@@ -7,7 +7,7 @@ import type { PayStatus } from "@/core/domain/payment";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain/routes";
 
-export const completePayment = async (
+const completePayment = async (
   paymentId: string,
 ): Promise<APIResponse<{ status: PayStatus }>> => {
   try {
@@ -20,3 +20,5 @@ export const completePayment = async (
     return actionError(e);
   }
 };
+
+export { completePayment };

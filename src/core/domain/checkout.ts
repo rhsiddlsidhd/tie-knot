@@ -1,7 +1,7 @@
 import type { SelectFeatureDto } from "@/core/schemas/request/order.schema";
 import type { ProductCategory } from "./product-category";
 
-export interface CheckoutItem {
+interface CheckoutItem {
   productId: string;
   category: ProductCategory;
 
@@ -17,3 +17,5 @@ export interface CheckoutItem {
   quantity: number;
   selectedFeatures: SelectFeatureDto[];
 }
+
+export { type CheckoutItem };

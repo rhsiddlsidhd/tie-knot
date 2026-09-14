@@ -14,7 +14,7 @@ let mongoReplSet: MongoMemoryReplSet;
 // 통과하고 운영에서만 드러난다.
 const MONGOD_VERSION = "8.2.6";
 
-export const setup = async () => {
+const setup = async () => {
   mongoReplSet = await MongoMemoryReplSet.create({
     binary: { version: MONGOD_VERSION },
     replSet: { count: 1, storageEngine: "wiredTiger" },
@@ -22,6 +22,8 @@ export const setup = async () => {
   process.env.MONGO_TEST_URI = mongoReplSet.getUri();
 };
 
-export const teardown = async () => {
+const teardown = async () => {
   await mongoReplSet?.stop();
 };
+
+export { setup, teardown };

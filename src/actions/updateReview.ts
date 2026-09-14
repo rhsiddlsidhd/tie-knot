@@ -8,7 +8,7 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
-export const updateReview = async (
+const updateReview = async (
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
@@ -45,3 +45,5 @@ export const updateReview = async (
     return actionError(e);
   }
 };
+
+export { updateReview };

@@ -12,7 +12,7 @@ import { decodeCursor, encodeCursor } from "@/core/utils/cursor";
 
 import mongoose from "mongoose";
 
-export const createGuestbookService = async ({
+const createGuestbookService = async ({
   data,
 }: {
   data: GuestbookType;
@@ -42,7 +42,7 @@ export const createGuestbookService = async ({
   });
 };
 
-export const getGuestbookService = async (
+const getGuestbookService = async (
   publicKey: string,
   { cursor, viewerUserId }: { cursor?: string; viewerUserId?: string } = {},
 ): Promise<GuestbookListPage> => {
@@ -105,7 +105,7 @@ export const getGuestbookService = async (
   };
 };
 
-export const getPrivateGuestbookService = async (
+const getPrivateGuestbookService = async (
   id: string,
 ): Promise<IGuestbook | null> => {
   await dbConnect();
@@ -126,7 +126,7 @@ export const getPrivateGuestbookService = async (
   };
 };
 
-export const deleteGuestbookService = async (
+const deleteGuestbookService = async (
   id: string,
 ): Promise<{ acknowledged: boolean; deletedCount: number }> => {
   await dbConnect();
@@ -141,7 +141,7 @@ export const deleteGuestbookService = async (
   return result;
 };
 
-export async function createGuestbookWithPasswordService(
+async function createGuestbookWithPasswordService(
   data: GuestbookType,
 ): Promise<void> {
   await createGuestbookService({
@@ -149,7 +149,7 @@ export async function createGuestbookWithPasswordService(
   });
 }
 
-export async function deleteGuestbookWithPasswordService({
+async function deleteGuestbookWithPasswordService({
   guestbookId,
   password,
 }: {
@@ -168,3 +168,12 @@ export async function deleteGuestbookWithPasswordService({
     throw new AppError("INTERNAL", "게시글 삭제에 실패했습니다.");
   }
 }
+
+export {
+  createGuestbookService,
+  getGuestbookService,
+  getPrivateGuestbookService,
+  deleteGuestbookService,
+  createGuestbookWithPasswordService,
+  deleteGuestbookWithPasswordService,
+};

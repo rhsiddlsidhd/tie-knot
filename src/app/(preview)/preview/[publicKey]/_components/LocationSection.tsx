@@ -11,7 +11,7 @@ import { KakaoMap } from "./KakaoMap";
 import { Navigation } from "./Navigation";
 import type { LocationSectionProps } from "../_utils/locationSection.mapper";
 
-export function LocationSection({
+function LocationSection({
   venueName,
   address,
   addressDetail,
@@ -67,3 +67,5 @@ export function LocationSection({
     </EyebrowSection>
   );
 }
+
+export { LocationSection };

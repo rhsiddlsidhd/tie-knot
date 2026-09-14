@@ -12,7 +12,7 @@ interface ImagesSectionProps {
   gallery: ReturnType<typeof useImageList>;
 }
 
-export function ImagesSection({ thumbnail, gallery }: ImagesSectionProps) {
+function ImagesSection({ thumbnail, gallery }: ImagesSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -49,3 +49,5 @@ export function ImagesSection({ thumbnail, gallery }: ImagesSectionProps) {
     </Card>
   );
 }
+
+export { ImagesSection };

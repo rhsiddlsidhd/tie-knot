@@ -1,13 +1,15 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
-export interface GallerySectionProps {
+interface GallerySectionProps {
   images: string[];
   lightboxEnabled: boolean;
 }
 
-export const mapCoupleInfoToGalleryProps = (
+const mapCoupleInfoToGalleryProps = (
   coupleInfo: MobileInvitationContent,
   lightboxEnabled: boolean,
 ): GallerySectionProps => ({
   images: coupleInfo.galleryImages,
   lightboxEnabled,
 });
+
+export { mapCoupleInfoToGalleryProps, type GallerySectionProps };

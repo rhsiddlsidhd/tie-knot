@@ -3,16 +3,16 @@ import type { PremiumFeature } from "@/core/domain/premium-feature";
 import type { Product } from "@/core/domain/product";
 import type { AppStore } from "../app.store";
 
-export interface AdminModalPropsMap {
+interface AdminModalPropsMap {
   "EDIT-PRODUCT": { product: Product };
   "EDIT-PREMIUMFEATURE": { premiumFeature: PremiumFeature };
 }
 
-export type AdminModalType = keyof AdminModalPropsMap;
+type AdminModalType = keyof AdminModalPropsMap;
 
 // isOpen/type/closeModal은 guestbook-modal.slice와 결합 시 충돌해 접두사를 붙였다.
 // props는 다른 슬라이스와 겹치지 않아 그대로 둔다.
-export interface AdminModalSlice {
+interface AdminModalSlice {
   adminModalIsOpen: boolean;
   adminModalType: null | AdminModalType;
   props: AdminModalPropsMap[AdminModalType] | Record<string, never>;
@@ -29,7 +29,7 @@ const initialAdminModalState: Pick<
   props: {},
 };
 
-export const createAdminModalSlice: StateCreator<
+const createAdminModalSlice: StateCreator<
   AppStore,
   [],
   [],
@@ -40,3 +40,10 @@ export const createAdminModalSlice: StateCreator<
     set({ adminModalIsOpen: true, adminModalType: type, props }),
   closeAdminModal: () => set({ ...initialAdminModalState, adminModalIsOpen: false }),
 });
+
+export {
+  createAdminModalSlice,
+  type AdminModalPropsMap,
+  type AdminModalType,
+  type AdminModalSlice,
+};

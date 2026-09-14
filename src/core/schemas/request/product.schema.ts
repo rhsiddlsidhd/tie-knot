@@ -2,7 +2,7 @@ import * as z from "zod";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 
-export const productSchema = z
+const productSchema = z
   .object({
     title: z.string().min(1, "상품명을 입력해주세요."),
     description: z.string().min(10, "상품 설명은 최소 10자 이상이어야 합니다."),
@@ -87,4 +87,6 @@ export const productSchema = z
     },
   );
 
-export type ProductDto = z.infer<typeof productSchema>;
+type ProductDto = z.infer<typeof productSchema>;
+
+export { productSchema, type ProductDto };

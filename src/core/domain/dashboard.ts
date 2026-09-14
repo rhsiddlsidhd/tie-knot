@@ -1,7 +1,7 @@
 import type { OrderStatus } from "./order";
 
 /** 대시보드 "최근 주문" 한 행 — 화면이 실제로 그리는 필드만 추린다. */
-export interface DashboardRecentOrder {
+interface DashboardRecentOrder {
   /** 행 key 겸 관리자에게 보이는 주문 식별자. Order 컬렉션에서 unique다. */
   merchantUid: string;
   buyerName: string;
@@ -15,7 +15,7 @@ export interface DashboardRecentOrder {
   createdAt: Date;
 }
 
-export interface DashboardStats {
+interface DashboardStats {
   // ── 저량(stock) 지표 ────────────────────────────────
   /** 소프트 삭제되지 않은 전체 상품 수(deletedAt: null). */
   totalProducts: number;
@@ -42,3 +42,5 @@ export interface DashboardStats {
   /** createdAt desc 최대 5건. 상태 필터 없음. 주문이 없으면 빈 배열(REQ-2 빈 상태). */
   recentOrders: DashboardRecentOrder[];
 }
+
+export { type DashboardRecentOrder, type DashboardStats };

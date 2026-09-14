@@ -8,7 +8,7 @@ import { loginUserService } from "@/services/auth";
 import type { UserRole } from "@/core/domain/user";
 import { actionError } from "@/boundary";
 
-export const loginUser = async (
+const loginUser = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ role: UserRole; email: string; userId: string }>> => {
@@ -44,3 +44,5 @@ export const loginUser = async (
     return actionError(e);
   }
 };
+
+export { loginUser };

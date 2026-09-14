@@ -1,12 +1,12 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
-export interface LocationSectionProps {
+interface LocationSectionProps {
   venueName: string;
   address: string;
   addressDetail?: string;
   subwayStation?: string;
 }
 
-export const mapCoupleInfoToLocationProps = (
+const mapCoupleInfoToLocationProps = (
   coupleInfo: MobileInvitationContent,
 ): LocationSectionProps => {
   return {
@@ -16,3 +16,5 @@ export const mapCoupleInfoToLocationProps = (
     subwayStation: coupleInfo.subwayStation,
   };
 };
+
+export { mapCoupleInfoToLocationProps, type LocationSectionProps };

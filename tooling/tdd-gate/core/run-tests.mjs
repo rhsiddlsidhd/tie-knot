@@ -6,7 +6,7 @@ import path from "node:path";
 import { ROOT } from "./resolver.mjs";
 
 /** @param {{path: string, tier: string}[]} siblings */
-export function runSiblings(siblings, timeout = 180_000) {
+function runSiblings(siblings, timeout = 180_000) {
   const vitestBin = path.join(ROOT, "node_modules", ".bin", "vitest");
   const byTier = new Map();
   for (const s of siblings) {
@@ -56,3 +56,5 @@ function tail(stdout, stderr) {
   const lines = `${stdout ?? ""}${stderr ?? ""}`.trimEnd().split("\n");
   return lines.slice(-25).join("\n");
 }
+
+export { runSiblings };

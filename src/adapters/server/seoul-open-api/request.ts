@@ -2,7 +2,7 @@ import "server-only";
 import { AppError } from "@/core/domain/error";
 import { parseSeoulOpenApiResponse } from "@/core/utils/seoul-open-api-parser";
 
-export async function fetchSeoulOpenApi<T>(
+async function fetchSeoulOpenApi<T>(
   serviceName: string,
   pathParams: (string | number)[],
 ): Promise<T[]> {
@@ -40,3 +40,5 @@ export async function fetchSeoulOpenApi<T>(
 
   return result.rows;
 }
+
+export { fetchSeoulOpenApi };

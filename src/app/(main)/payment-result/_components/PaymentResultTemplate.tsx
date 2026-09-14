@@ -10,7 +10,7 @@ interface PaymentResultTemplateProps {
   errorMessage: string | null;
 }
 
-export function PaymentResultTemplate({
+function PaymentResultTemplate({
   errorMessage,
 }: PaymentResultTemplateProps) {
   return (
@@ -51,3 +51,5 @@ export function PaymentResultTemplate({
     </div>
   );
 }
+
+export { PaymentResultTemplate };

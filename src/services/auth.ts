@@ -15,7 +15,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { routes } from "@/core/domain/routes";
 
-export type LeanUser = {
+type LeanUser = {
   email: string;
   name: string;
   phone: string;
@@ -33,7 +33,7 @@ type UserFilter = {
   _id?: mongoose.Types.ObjectId;
 };
 
-export const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
+const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
   await dbConnect();
 
   const filter: UserFilter = { deletedAt: null };
@@ -51,9 +51,9 @@ export const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
   return user;
 };
 
-export type AuthResult = AuthSession | null;
+type AuthResult = AuthSession | null;
 
-export async function getAuth(): Promise<AuthResult> {
+async function getAuth(): Promise<AuthResult> {
   const cookie = await getCookie("token");
   if (!cookie?.value) return null;
 
@@ -83,7 +83,7 @@ export async function getAuth(): Promise<AuthResult> {
 
 // 인증이 반드시 필요한 Route Handler/Server Action에서 호출한다 — 세션이 없으면 UNAUTHENTICATED를 throw한다.
 // HTTP status(401)로의 번역은 route.ts 경계(`boundary.ts`)가 담당한다.
-export async function requireAuth(): Promise<AuthSession> {
+async function requireAuth(): Promise<AuthSession> {
   const session = await getAuth();
   if (!session) {
     throw new AppError("UNAUTHENTICATED", "인증이 필요합니다.");
@@ -91,7 +91,7 @@ export async function requireAuth(): Promise<AuthSession> {
   return session;
 }
 
-export async function requireAdmin(): Promise<AuthSession> {
+async function requireAdmin(): Promise<AuthSession> {
   const session = await requireAuth();
   if (session.role !== "ADMIN") {
     throw new AppError("FORBIDDEN", "관리자 권한이 필요합니다.");
@@ -103,15 +103,15 @@ export async function requireAdmin(): Promise<AuthSession> {
  * 로그아웃 처리를 위해 서버의 인증 토큰 쿠키를 삭제합니다.
  */
 
-export async function logoutService() {
+async function logoutService() {
   await deleteCookie("token");
 }
 
-export async function clearUserEmailCookieService() {
+async function clearUserEmailCookieService() {
   await deleteCookie("userEmail");
 }
 
-export async function loginUserService({
+async function loginUserService({
   email,
   password,
   remember,
@@ -143,7 +143,7 @@ export async function loginUserService({
 // 바꾸면 미인증 유저가 role-mismatch(/)로 오분류돼 재로그인 유도(/login)를 못 받는다.
 // cache()로 감싸 같은 렌더 패스 안 반복 호출(page 게이트 + service 재확인)이 세션을
 // 중복 조회하지 않게 한다(docs/security/page-access-control.md 참고).
-export const verifySession = cache(async (requiredRole?: UserRole): Promise<AuthSession> => {
+const verifySession = cache(async (requiredRole?: UserRole): Promise<AuthSession> => {
   const session = await getAuth();
   if (!session) {
     redirect(routes.login);
@@ -153,3 +153,16 @@ export const verifySession = cache(async (requiredRole?: UserRole): Promise<Auth
   }
   return session;
 });
+
+export {
+  getUser,
+  getAuth,
+  requireAuth,
+  requireAdmin,
+  logoutService,
+  clearUserEmailCookieService,
+  loginUserService,
+  verifySession,
+  type LeanUser,
+  type AuthResult,
+};

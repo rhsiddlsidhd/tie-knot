@@ -16,16 +16,16 @@ const imagesSchema = z
   .array(z.string().url("유효한 이미지 URL이어야 합니다."))
   .max(5, "이미지는 최대 5장까지 첨부할 수 있습니다.");
 
-export const createReviewSchema = z.object({
+const createReviewSchema = z.object({
   orderId: z.string().min(1, "주문 정보가 필요합니다."),
   rating: ratingSchema,
   content: contentSchema,
   images: imagesSchema.default([]),
 });
 
-export type CreateReviewDto = z.infer<typeof createReviewSchema>;
+type CreateReviewDto = z.infer<typeof createReviewSchema>;
 
-export const updateReviewSchema = z
+const updateReviewSchema = z
   .object({
     reviewId: z.string().min(1, "리뷰 정보가 필요합니다."),
     rating: ratingSchema.optional(),
@@ -40,4 +40,6 @@ export const updateReviewSchema = z
     { message: "변경할 내용이 없습니다.", path: ["content"] },
   );
 
-export type UpdateReviewDto = z.infer<typeof updateReviewSchema>;
+type UpdateReviewDto = z.infer<typeof updateReviewSchema>;
+
+export { createReviewSchema, updateReviewSchema, type CreateReviewDto, type UpdateReviewDto };

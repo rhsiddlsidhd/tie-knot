@@ -8,7 +8,7 @@ import { routes } from "@/core/domain/routes";
  * Auth && User
  */
 
-export async function proxy(request: NextRequest) {
+async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const tokenCookie = request.cookies.get("token");
 
@@ -68,3 +68,5 @@ export const config = {
     "/payment/:path*",
   ],
 };
+
+export { proxy };

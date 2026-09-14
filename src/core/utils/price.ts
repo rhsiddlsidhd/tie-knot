@@ -1,11 +1,11 @@
-export const formatPriceWithComma = (value: number): string => {
+const formatPriceWithComma = (value: number): string => {
   // Stryker disable next-line ConditionalExpression: (0).toLocaleString()도 "0"이라 이 분기는 결과에 영향 없는 equivalent mutant
   if (value === 0) return "0";
 
   return value.toLocaleString();
 };
 
-export const calculatePrice = (
+const calculatePrice = (
   price: number,
   discount: { discountType: string; value: number },
 ) => {
@@ -23,3 +23,5 @@ export const calculatePrice = (
 
   return price;
 };
+
+export { formatPriceWithComma, calculatePrice };

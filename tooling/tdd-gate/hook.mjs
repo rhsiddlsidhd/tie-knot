@@ -55,7 +55,7 @@ async function main() {
   throw new Error(`unknown mode: ${mode}`);
 }
 
-export function extractPaths(payload) {
+function extractPaths(payload) {
   return payload?.tool_name === "apply_patch"
     ? extractCodexPaths(payload)
     : extractClaudePaths(payload);
@@ -100,3 +100,5 @@ if (isMain) {
     process.stderr.write(`tdd-gate fail-open: ${error?.stack ?? error}\n`);
   });
 }
+
+export { extractPaths };

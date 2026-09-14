@@ -14,7 +14,7 @@ interface DeleteGuestbookFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-export function DeleteGuestbookForm({
+function DeleteGuestbookForm({
   guestbookId,
   publicKey,
   action,
@@ -51,3 +51,5 @@ export function DeleteGuestbookForm({
     </form>
   );
 }
+
+export { DeleteGuestbookForm };

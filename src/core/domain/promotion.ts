@@ -1,4 +1,4 @@
-export interface Promotion {
+interface Promotion {
   id: string;
   label: string;
   title: string;
@@ -11,3 +11,5 @@ export interface Promotion {
   };
   isActive: boolean;
 }
+
+export { type Promotion };

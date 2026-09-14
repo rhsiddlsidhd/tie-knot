@@ -3,12 +3,12 @@ import type { ProductCategory, SubCategory } from "./product-category";
 import type { CursorPage } from "./cursor";
 
 // 0. Home 인기 상품 섹션(좋아요순 Top N) 관련 상수 — service 기본값과 UI 노출 게이트가 같은 값을 본다.
-export const POPULAR_PRODUCTS_LIMIT = 8;
-export const POPULAR_PRODUCTS_MIN_ITEMS = 3;
+const POPULAR_PRODUCTS_LIMIT = 8;
+const POPULAR_PRODUCTS_MIN_ITEMS = 3;
 
-export type ProductStatus = "active" | "inactive" | "soldOut" | "deleted";
+type ProductStatus = "active" | "inactive" | "soldOut" | "deleted";
 
-export interface ProductJSON {
+interface ProductJSON {
   _id: string;
   authorId: string;
   title: string;
@@ -41,14 +41,14 @@ export interface ProductJSON {
   deletedAt: string | null;
 }
 
-export type Product = ProductJSON;
+type Product = ProductJSON;
 
-export type AdminProductListPage = CursorPage<ProductJSON>;
+type AdminProductListPage = CursorPage<ProductJSON>;
 
-export type PublicProductListPage = CursorPage<ProductJSON>;
+type PublicProductListPage = CursorPage<ProductJSON>;
 
 // 1. 필터 키 배열 정의 (UI 노출 순서 보장 및 타입 추출용)
-export const PRODUCT_SORT_KEYS = [
+const PRODUCT_SORT_KEYS = [
   "ALL",
   "POPULAR",
   "RECOMENDED",
@@ -57,7 +57,7 @@ export const PRODUCT_SORT_KEYS = [
   "PRICE_HIGH",
 ] as const;
 
-export const PRODUCT_PRICE_KEYS = [
+const PRODUCT_PRICE_KEYS = [
   "ALL",
   "FREE",
   "UNDER-10k",
@@ -65,7 +65,7 @@ export const PRODUCT_PRICE_KEYS = [
   "OVER-30k",
 ] as const;
 
-export const PREMIUM_FEATURE_KEYS = [
+const PREMIUM_FEATURE_KEYS = [
   "VIDEO",
   "HORIZONTAL_SLIDE",
   "CUSTOM_FONT",
@@ -74,7 +74,7 @@ export const PREMIUM_FEATURE_KEYS = [
 ] as const;
 
 // 2. 각 키에 대응하는 라벨 정의 (Record 활용으로 누락 방지)
-export const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
+const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
   ALL: "모두",
   POPULAR: "인기순",
   RECOMENDED: "추천순",
@@ -83,7 +83,7 @@ export const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
   PRICE_HIGH: "높은 가격순",
 };
 
-export const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
+const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
   ALL: "모두",
   FREE: "무료",
   "UNDER-10k": "1만원 이하",
@@ -91,7 +91,7 @@ export const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
   "OVER-30k": "3만원 이상",
 };
 
-export const PREMIUM_FEATURE_LABELS: Record<PremiumFeatureType, string> = {
+const PREMIUM_FEATURE_LABELS: Record<PremiumFeatureType, string> = {
   VIDEO: "🎬 비디오 추가",
   HORIZONTAL_SLIDE: "➡️ 가로 슬라이드 갤러리",
   CUSTOM_FONT: "✍️ 나만의 폰트",
@@ -100,6 +100,25 @@ export const PREMIUM_FEATURE_LABELS: Record<PremiumFeatureType, string> = {
 };
 
 // 3. 타입은 배열로부터 파생
-export type ProductSortType = (typeof PRODUCT_SORT_KEYS)[number];
-export type ProductPriceType = (typeof PRODUCT_PRICE_KEYS)[number];
-export type PremiumFeatureType = (typeof PREMIUM_FEATURE_KEYS)[number];
+type ProductSortType = (typeof PRODUCT_SORT_KEYS)[number];
+type ProductPriceType = (typeof PRODUCT_PRICE_KEYS)[number];
+type PremiumFeatureType = (typeof PREMIUM_FEATURE_KEYS)[number];
+
+export {
+  POPULAR_PRODUCTS_LIMIT,
+  POPULAR_PRODUCTS_MIN_ITEMS,
+  PRODUCT_SORT_KEYS,
+  PRODUCT_PRICE_KEYS,
+  PREMIUM_FEATURE_KEYS,
+  PRODUCT_SORT_OPTIONS,
+  PRODUCT_PRICE_OPTIONS,
+  PREMIUM_FEATURE_LABELS,
+  type ProductStatus,
+  type ProductJSON,
+  type Product,
+  type AdminProductListPage,
+  type PublicProductListPage,
+  type ProductSortType,
+  type ProductPriceType,
+  type PremiumFeatureType,
+};

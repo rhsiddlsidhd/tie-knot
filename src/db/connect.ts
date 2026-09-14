@@ -47,7 +47,7 @@ if (!cached) {
   };
 }
 
-export const dbConnect = async () => {
+const dbConnect = async () => {
   if (cached.conn) {
     return cached.conn;
   }
@@ -76,6 +76,8 @@ export const dbConnect = async () => {
 };
 
 // 연결 상태 확인 함수
-export const isConnected = () => {
+const isConnected = () => {
   return mongoose.connection.readyState === 1;
 };
+
+export { dbConnect, isConnected };

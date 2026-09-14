@@ -119,7 +119,7 @@ type ProductReviewsQuery = {
   viewerUserId?: string;
 };
 
-export const getProductReviewsPageService = async ({
+const getProductReviewsPageService = async ({
   productId,
   sort = "LATEST",
   cursor,
@@ -190,7 +190,7 @@ type CreateReviewInput = {
   images: string[];
 };
 
-export const createReviewService = async ({
+const createReviewService = async ({
   orderId,
   userId,
   rating,
@@ -248,7 +248,7 @@ export const createReviewService = async ({
   return toReviewJSON(review, maskName(author?.name ?? ""), userId);
 };
 
-export async function createReviewForCurrentUserService(
+async function createReviewForCurrentUserService(
   data: Omit<CreateReviewInput, "userId">,
 ): Promise<ReviewJSON> {
   const { userId } = await requireAuth();
@@ -263,7 +263,7 @@ type UpdateReviewInput = {
   images?: string[];
 };
 
-export const updateReviewService = async ({
+const updateReviewService = async ({
   reviewId,
   userId,
   rating,
@@ -312,14 +312,14 @@ export const updateReviewService = async ({
   return toReviewJSON(updated, maskName(author?.name ?? ""), userId);
 };
 
-export async function updateReviewForCurrentUserService(
+async function updateReviewForCurrentUserService(
   data: Omit<UpdateReviewInput, "userId">,
 ): Promise<ReviewJSON> {
   const { userId } = await requireAuth();
   return updateReviewService({ ...data, userId });
 }
 
-export const deleteReviewService = async ({
+const deleteReviewService = async ({
   reviewId,
   userId,
 }: {
@@ -350,7 +350,7 @@ export const deleteReviewService = async ({
   await recomputeProductRating(existing.productId);
 };
 
-export async function deleteReviewForCurrentUserService(
+async function deleteReviewForCurrentUserService(
   reviewId: string,
 ): Promise<void> {
   const { userId } = await requireAuth();
@@ -359,7 +359,7 @@ export async function deleteReviewForCurrentUserService(
 
 // 어드민 모더레이션 삭제 — 소유권 검사 없이 어떤 리뷰든 삭제한다, 그래서 자체적으로
 // requireAdmin()을 호출해 게이트한다(product.ts의 관리자 전용 함수들과 동일 패턴).
-export const deleteReviewByAdminService = async (
+const deleteReviewByAdminService = async (
   reviewId: string,
 ): Promise<void> => {
   await requireAdmin();
@@ -391,7 +391,7 @@ type LeanAdminReview = Omit<IReview, "userId" | "productId"> & {
 
 type AdminReviewsQuery = { cursor?: string; limit?: number };
 
-export const getAdminReviewsPageService = async ({
+const getAdminReviewsPageService = async ({
   cursor,
   limit,
 }: AdminReviewsQuery): Promise<AdminReviewListPage> => {
@@ -442,4 +442,16 @@ export const getAdminReviewsPageService = async ({
         ? encodeCursor({ createdAt: last.createdAt, id: last._id.toString() })
         : null,
   };
+};
+
+export {
+  getProductReviewsPageService,
+  createReviewService,
+  createReviewForCurrentUserService,
+  updateReviewService,
+  updateReviewForCurrentUserService,
+  deleteReviewService,
+  deleteReviewForCurrentUserService,
+  deleteReviewByAdminService,
+  getAdminReviewsPageService,
 };

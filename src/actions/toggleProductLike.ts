@@ -6,7 +6,7 @@ import { toggleProductLikeForCurrentUserService } from "@/services/product";
 import { actionError } from "@/boundary";
 import { routes } from "@/core/domain/routes";
 
-export const toggleProductLike = async (
+const toggleProductLike = async (
   productId: string,
 ): Promise<APIResponse<{ message: string }>> => {
   try {
@@ -19,3 +19,5 @@ export const toggleProductLike = async (
     return actionError(e);
   }
 };
+
+export { toggleProductLike };

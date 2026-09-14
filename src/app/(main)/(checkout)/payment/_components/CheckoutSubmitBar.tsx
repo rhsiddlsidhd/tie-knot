@@ -10,7 +10,7 @@ interface CheckoutSubmitBarProps {
   paymentStatus: PayStatus | "IDLE";
 }
 
-export function CheckoutSubmitBar({
+function CheckoutSubmitBar({
   disabled,
   pending,
   paymentStatus,
@@ -28,3 +28,5 @@ export function CheckoutSubmitBar({
     </BottomActionBar>
   );
 }
+
+export { CheckoutSubmitBar };

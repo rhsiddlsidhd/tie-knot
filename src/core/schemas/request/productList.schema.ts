@@ -7,7 +7,7 @@ import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-export const productListRequestSchema = z.object({
+const productListRequestSchema = z.object({
   category: z.preprocess(emptyToUndefined, z.enum(PRODUCT_CATEGORIES).optional()),
   // subCategory는 카테고리마다 허용 집합이 달라 여기서 SUB_CATEGORY_MAP까지 교차
   // 검증하지 않는다 — 유효하지 않은 조합은 서비스 쿼리가 그냥 0건으로 떨어뜨린다
@@ -17,4 +17,6 @@ export const productListRequestSchema = z.object({
   cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-export type ProductListRequest = z.infer<typeof productListRequestSchema>;
+type ProductListRequest = z.infer<typeof productListRequestSchema>;
+
+export { productListRequestSchema, type ProductListRequest };

@@ -1,7 +1,7 @@
 import type { SubCategory } from "./product-category";
 import type { MobileInvitationTheme } from "./theme";
 
-export const routes = {
+const routes = {
   home: "/",
   login: "/login",
   signup: "/signup",
@@ -57,3 +57,5 @@ export const routes = {
     },
   },
 } as const;
+
+export { routes };

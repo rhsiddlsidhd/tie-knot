@@ -18,7 +18,7 @@ interface Party {
   contacts: Contact[];
 }
 
-export interface MobileInvitationMessageMappedProps {
+interface MobileInvitationMessageMappedProps {
   parties: Party[];
 }
 
@@ -57,7 +57,7 @@ function getParentNames(parents: CoupleSide): ParentName[] {
  * @param coupleInfoData - 청첩장 콘텐츠
  * @returns MobileInvitationMessage 컴포넌트가 필요로 하는 `parties` 배열을 포함한 객체
  */
-export function mapCoupleInfoToMobileInvitationProps(
+function mapCoupleInfoToMobileInvitationProps(
   coupleInfoData: MobileInvitationContent,
 ): MobileInvitationMessageMappedProps {
   // 1. 신랑측 연락처 배열 생성
@@ -92,3 +92,5 @@ export function mapCoupleInfoToMobileInvitationProps(
 
   return { parties: displayParties };
 }
+
+export { mapCoupleInfoToMobileInvitationProps, type MobileInvitationMessageMappedProps };

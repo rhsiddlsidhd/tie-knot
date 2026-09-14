@@ -1,6 +1,6 @@
 import "client-only";
 
-export interface Coordinates {
+interface Coordinates {
   lat: number;
   lng: number;
 }
@@ -12,7 +12,7 @@ export interface Coordinates {
  * 거부·실패는 throw하지 않고 null로 떨어뜨린다 — 위치는 있으면 좋은 정보지
  * 없으면 화면이 못 뜨는 값이 아니라서, 호출자가 try/catch 대신 분기만 하면 된다.
  */
-export const getCurrentCoordinates = (): Promise<Coordinates | null> =>
+const getCurrentCoordinates = (): Promise<Coordinates | null> =>
   new Promise((resolve) => {
     navigator.geolocation.getCurrentPosition(
       (position) =>
@@ -26,3 +26,5 @@ export const getCurrentCoordinates = (): Promise<Coordinates | null> =>
       },
     );
   });
+
+export { getCurrentCoordinates, type Coordinates };

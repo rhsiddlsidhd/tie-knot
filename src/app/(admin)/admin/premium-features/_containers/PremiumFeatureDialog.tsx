@@ -8,7 +8,7 @@ import { updatePremiumFeature } from "@/actions/updatePremiumFeature";
 import type { APIResponse } from "@/core/domain/error";
 import { hasFieldErrors } from "@/core/utils/error";
 import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "../_components/PremiumFeatureDialog";
-export function PremiumFeatureDialog({
+function PremiumFeatureDialog({
   premiumFeature,
 }: {
   premiumFeature: PremiumFeature;
@@ -38,3 +38,5 @@ export function PremiumFeatureDialog({
     />
   );
 }
+
+export { PremiumFeatureDialog };

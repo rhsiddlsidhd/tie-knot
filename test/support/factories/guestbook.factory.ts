@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import type { GuestbookType } from "@/core/schemas/request/guestbook.schema";
 
-export const buildGuestbookInput = (
+const buildGuestbookInput = (
   overrides?: Partial<GuestbookType>,
 ): GuestbookType => ({
   publicKey: new mongoose.Types.ObjectId().toString(),
@@ -11,3 +11,5 @@ export const buildGuestbookInput = (
   isPrivate: false,
   ...overrides,
 });
+
+export { buildGuestbookInput };

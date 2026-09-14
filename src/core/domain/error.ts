@@ -1,7 +1,7 @@
 /**
  * Success response structure.
  */
-export type SuccessResponse<T> = {
+type SuccessResponse<T> = {
   success: true;
   data: T;
 };
@@ -9,7 +9,7 @@ export type SuccessResponse<T> = {
 /**
  * Unified error response structure — `error`는 `ErrorPayload`(아래 정의)를 그대로 싣는다.
  */
-export type ErrorResponse = {
+type ErrorResponse = {
   success: false;
   error: ErrorPayload;
 };
@@ -17,9 +17,9 @@ export type ErrorResponse = {
 /**
  * Generic API response (success or error).
  */
-export type APIResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
+type APIResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
 
-export const ERROR_CATEGORIES = [
+const ERROR_CATEGORIES = [
   "VALIDATION",
   "UNAUTHENTICATED",
   "FORBIDDEN",
@@ -28,12 +28,12 @@ export const ERROR_CATEGORIES = [
   "EXTERNAL_SERVICE",
 ] as const;
 
-export type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
+type ErrorCategory = (typeof ERROR_CATEGORIES)[number];
 
 /**
  * services가 던지는 앱 고유 에러. HTTP status는 모른다 — route.ts 경계에서만 번역한다.
  */
-export class AppError extends Error {
+class AppError extends Error {
   category: ErrorCategory;
   fieldErrors?: Record<string, string[]>;
 
@@ -53,8 +53,18 @@ export class AppError extends Error {
 /**
  * 클라이언트-facing 에러 표현. 채널 A 리턴과 채널 B Response body가 공유한다.
  */
-export type ErrorPayload = {
+type ErrorPayload = {
   category: ErrorCategory;
   message: string;
   fieldErrors?: Record<string, string[]>;
+};
+
+export {
+  ERROR_CATEGORIES,
+  AppError,
+  type SuccessResponse,
+  type ErrorResponse,
+  type APIResponse,
+  type ErrorCategory,
+  type ErrorPayload,
 };

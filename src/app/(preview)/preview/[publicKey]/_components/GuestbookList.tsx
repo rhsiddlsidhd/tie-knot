@@ -14,7 +14,7 @@ interface GuestbookListProps {
   onDeleteClick: (id: string) => void;
 }
 
-export function GuestbookList({
+function GuestbookList({
   status,
   items,
   hasMore,
@@ -71,3 +71,5 @@ export function GuestbookList({
     </div>
   );
 }
+
+export { GuestbookList };

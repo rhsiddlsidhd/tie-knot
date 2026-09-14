@@ -408,7 +408,7 @@ function BraidStrand({ height, bands, leaves, revealHeight }: BraidStrandProps) 
 
 // 청첩장 테마별 시그니처 앰비언트 연출 — 낙하(blossom)/스크롤 성장(botanical)/반짝임(midnight)로
 // 메커니즘 자체를 다르게 가서 테마 구분력을 준다(파라미터 변주가 아니라 다른 종류의 모션).
-export function ThemeAmbience({ theme }: { theme: string }) {
+function ThemeAmbience({ theme }: { theme: string }) {
   const prefersReducedMotion = useReducedMotion();
   if (prefersReducedMotion) return null;
 
@@ -423,3 +423,5 @@ export function ThemeAmbience({ theme }: { theme: string }) {
       return null;
   }
 }
+
+export { ThemeAmbience };

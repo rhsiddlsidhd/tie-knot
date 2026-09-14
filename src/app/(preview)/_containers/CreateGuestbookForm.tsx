@@ -27,7 +27,7 @@ const isPayload = (payload: unknown): payload is Payload => {
   return false;
 };
 
-export function CreateGuestbookForm({ payload }: { payload: unknown }) {
+function CreateGuestbookForm({ payload }: { payload: unknown }) {
   const publicKey = isPayload(payload) ? payload.publicKey : null;
   const isDemo = publicKey === routes.preview.samplePublicKey;
 
@@ -107,3 +107,5 @@ export function CreateGuestbookForm({ payload }: { payload: unknown }) {
     </>
   );
 }
+
+export { CreateGuestbookForm };

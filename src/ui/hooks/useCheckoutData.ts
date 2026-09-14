@@ -11,7 +11,7 @@ import { routes } from "@/core/domain/routes";
 // OrderSummary(sibling, 서로 다른 컴포넌트) 양쪽이 같은 값으로 가드되게 한다.
 const SKIP_PAYMENT_STATUSES = ["PENDING", "FAILED", "PAID"] as const;
 
-export function useCheckoutData() {
+function useCheckoutData() {
   const router = useRouter();
   const order = useOrderStore((state) => state.order);
   const hasHydrated = useOrderStore((state) => state._hasHydrated);
@@ -38,3 +38,5 @@ export function useCheckoutData() {
     error,
   };
 }
+
+export { useCheckoutData };

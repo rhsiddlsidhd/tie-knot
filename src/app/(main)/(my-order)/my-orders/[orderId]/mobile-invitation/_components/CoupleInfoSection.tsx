@@ -14,7 +14,7 @@ type CoupleInfoSectionProps = {
   banks?: BanksResponse;
 };
 
-export function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
+function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
   return (
     <Card>
       <CardHeader>
@@ -98,3 +98,5 @@ export function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
     </Card>
   );
 }
+
+export { CoupleInfoSection };

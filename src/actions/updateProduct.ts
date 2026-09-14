@@ -15,7 +15,7 @@ import { revalidatePath } from "next/cache";
 const parseOptionalNumber = (raw: FormDataEntryValue | null): number | undefined =>
   raw ? Number(raw) : undefined;
 
-export const updateProduct = async (
+const updateProduct = async (
   productId: string,
   prev: unknown,
   formData: FormData,
@@ -69,3 +69,5 @@ export const updateProduct = async (
     return actionError(e);
   }
 };
+
+export { updateProduct };

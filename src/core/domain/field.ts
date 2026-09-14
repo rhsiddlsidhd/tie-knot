@@ -1,8 +1,10 @@
 import type React from "react";
 
-export interface FieldBase {
+interface FieldBase {
   id: string;
   name: string;
   children: React.ReactNode;
   defaultValue?: string;
 }
+
+export { type FieldBase };

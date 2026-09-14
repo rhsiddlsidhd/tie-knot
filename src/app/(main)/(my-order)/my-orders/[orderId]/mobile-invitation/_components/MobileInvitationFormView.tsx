@@ -12,7 +12,7 @@ type MobileInvitationFormViewProps = ReturnType<typeof useMobileInvitationForm> 
   type: "create" | "edit";
 };
 
-export function MobileInvitationFormView({
+function MobileInvitationFormView({
   type,
   data,
   isLoading,
@@ -61,3 +61,5 @@ export function MobileInvitationFormView({
     </form>
   );
 }
+
+export { MobileInvitationFormView };

@@ -1,6 +1,6 @@
 import type { CursorPage } from "./cursor";
 
-export interface GuestbookEntry {
+interface GuestbookEntry {
   id: string;
   author: string;
   message: string;
@@ -8,4 +8,6 @@ export interface GuestbookEntry {
   createdAt: Date;
 }
 
-export type GuestbookListPage = CursorPage<GuestbookEntry>;
+type GuestbookListPage = CursorPage<GuestbookEntry>;
+
+export { type GuestbookEntry, type GuestbookListPage };

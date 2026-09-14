@@ -12,7 +12,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function deleteProductAsset(publicId: string): Promise<void> {
+async function deleteProductAsset(publicId: string): Promise<void> {
   if (!publicId) return;
   const result = await cloudinary.uploader.destroy(publicId, {
     resource_type: "image",
@@ -22,3 +22,5 @@ export async function deleteProductAsset(publicId: string): Promise<void> {
     throw new AppError("EXTERNAL_SERVICE", `이미지 정리에 실패했습니다: ${publicId}`);
   }
 }
+
+export { deleteProductAsset };

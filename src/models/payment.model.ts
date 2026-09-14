@@ -5,12 +5,10 @@ import mongoose, { Schema } from "mongoose";
 
 // --- Enums --- TRANS 실시간 계좌이체 VBANK 가상 계좌
 
-export type { PayMethod, PayStatus } from "@/core/domain/payment";
-
 // PortOne이 반환하는 PG사 식별자는 동적이므로 string으로 처리
 type PgProvider = string;
 // PortOne 결제수단 판별값(@portone/server-sdk PaymentMethod.type) + 미인식 폴백.
-export type PaymentMethodDetailType =
+type PaymentMethodDetailType =
   | "PaymentMethodCard"
   | "PaymentMethodVirtualAccount"
   | "PaymentMethodTransfer"
@@ -22,7 +20,7 @@ export type PaymentMethodDetailType =
 
 // 필드명은 PortOne 원문 그대로 쓴다(한글 의미 기반 재명명 안 함) — API 응답과
 // 1:1 매핑을 유지해 번역 없이 그대로 소비하기 위함이다.
-export interface PaymentMethodDetail {
+interface PaymentMethodDetail {
   type?: PaymentMethodDetailType;
   card?: {
     publisher?: string;
@@ -73,7 +71,7 @@ export interface PaymentMethodDetail {
   };
 }
 
-export interface IPayment {
+interface IPayment {
   // 식별자
   _id: Types.ObjectId;
   merchantUid: string; // PortOne의 주문번호 (우리 서버에서 생성)
@@ -249,6 +247,15 @@ const paymentSchema = new Schema<IPayment>(
   },
 );
 
-export const PaymentModel =
+const PaymentModel =
   (mongoose.models.Payment as Model<IPayment>) ||
   mongoose.model<IPayment>("Payment", paymentSchema);
+
+export {
+  PaymentModel,
+  type PayMethod,
+  type PayStatus,
+  type PaymentMethodDetailType,
+  type PaymentMethodDetail,
+  type IPayment,
+};

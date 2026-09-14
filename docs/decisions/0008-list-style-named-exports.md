@@ -1,6 +1,6 @@
 # ADR-0008: 컴포넌트 티어 list 스타일 named export 강제
 
-- 상태: Accepted
+- 상태: Superseded by [ADR-0009](0009-project-wide-list-style-named-exports.md)
 - 결정일: 2026-09-14
 - 적용 범위: `src/ui/components/`
 

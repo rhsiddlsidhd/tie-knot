@@ -1,6 +1,6 @@
 import type { PremiumFeatureDto } from "@/core/schemas/request/premiumFeature.schema";
 
-export const buildFeatureInput = (
+const buildFeatureInput = (
   overrides?: Partial<PremiumFeatureDto>,
 ): PremiumFeatureDto => ({
   code: "GUESTBOOK",
@@ -9,3 +9,5 @@ export const buildFeatureInput = (
   additionalPrice: 3000,
   ...overrides,
 });
+
+export { buildFeatureInput };

@@ -3,7 +3,7 @@ import { LayoutDashboard, User, ShoppingBag } from "lucide-react";
 import { routes } from "./routes";
 import { MOBILE_INVITATION_CATEGORY } from "./product-category";
 
-export const MAIN_NAV_ITEMS = [
+const MAIN_NAV_ITEMS = [
   {
     id: MOBILE_INVITATION_CATEGORY,
     label: "모바일 청첩장",
@@ -11,7 +11,7 @@ export const MAIN_NAV_ITEMS = [
   },
 ] as const;
 
-export const userNavItems = [
+const userNavItems = [
   {
     label: "관리자 페이지",
     href: routes.admin.dashboard,
@@ -31,3 +31,5 @@ export const userNavItems = [
     adminOnly: false,
   },
 ] as const;
+
+export { MAIN_NAV_ITEMS, userNavItems };

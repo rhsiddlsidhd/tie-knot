@@ -12,7 +12,7 @@ import { getUserEmail } from "@/services/user";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
-export const findUserEmail = async (
+const findUserEmail = async (
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ email: string }>> => {
@@ -41,3 +41,5 @@ export const findUserEmail = async (
     return actionError(e);
   }
 };
+
+export { findUserEmail };

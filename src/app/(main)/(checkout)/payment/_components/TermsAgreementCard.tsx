@@ -10,7 +10,7 @@ interface TermsAgreementCardProps {
   onAgreedChange: (value: boolean) => void;
 }
 
-export function TermsAgreementCard({ agreed, onAgreedChange }: TermsAgreementCardProps) {
+function TermsAgreementCard({ agreed, onAgreedChange }: TermsAgreementCardProps) {
   return (
     <Card className="border-border">
       <CardContent className="pt-6">
@@ -36,3 +36,5 @@ export function TermsAgreementCard({ agreed, onAgreedChange }: TermsAgreementCar
     </Card>
   );
 }
+
+export { TermsAgreementCard };

@@ -22,7 +22,7 @@ function toGuestbookListResponse(page: GuestbookListPage): GuestbookListResponse
   };
 }
 
-export const GET = async (
+const GET = async (
   req: NextRequest,
 ): Promise<APIRouteResponse<GuestbookListResponse>> => {
   try {
@@ -40,3 +40,5 @@ export const GET = async (
     return routeError(e);
   }
 };
+
+export { GET };

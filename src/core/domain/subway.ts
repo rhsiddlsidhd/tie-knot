@@ -1,6 +1,6 @@
 // 서울교통공사 등 각 운영기관이 공식 지정한 노선 색상 — API가 안 주는 값이라 고정 lookup map으로 관리.
 // LINE_NUM 값은 서울 열린데이터광장 지하철 API(SearchSTNBySubwayLineInfo/SearchInfoBySubwayNameService) 응답 그대로다.
-export const SUBWAY_LINE_COLORS: Record<string, string> = {
+const SUBWAY_LINE_COLORS: Record<string, string> = {
   "01호선": "#0052A4",
   "02호선": "#00A84D",
   "03호선": "#EF7C1C",
@@ -28,4 +28,6 @@ export const SUBWAY_LINE_COLORS: Record<string, string> = {
   의정부경전철: "#FDA600",
 };
 
-export const DEFAULT_SUBWAY_LINE_COLOR = "#6B7280";
+const DEFAULT_SUBWAY_LINE_COLOR = "#6B7280";
+
+export { SUBWAY_LINE_COLORS, DEFAULT_SUBWAY_LINE_COLOR };

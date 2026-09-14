@@ -41,7 +41,7 @@ type RecentOrderLean = {
  * 파라미터 없음, envelope 없음 — Server Component(`page.tsx`)가 직접 await한다.
  * 인증은 여기서 검사하지 않는다(`page.tsx`의 verifySession("ADMIN")가 전담).
  */
-export const getDashboardStatsService = async (): Promise<DashboardStats> => {
+const getDashboardStatsService = async (): Promise<DashboardStats> => {
   await dbConnect();
 
   const { startOfLastMonth, startOfThisMonth, startOfNextMonth } =
@@ -145,3 +145,5 @@ export const getDashboardStatsService = async (): Promise<DashboardStats> => {
     recentOrders,
   };
 };
+
+export { getDashboardStatsService };

@@ -25,7 +25,7 @@ interface CheckoutFormProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-export function CheckoutForm({
+function CheckoutForm({
   loading,
   paymentStatus,
   agreed,
@@ -77,3 +77,5 @@ export function CheckoutForm({
     </div>
   );
 }
+
+export { CheckoutForm };

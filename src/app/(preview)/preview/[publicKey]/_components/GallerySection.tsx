@@ -10,7 +10,7 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";
 import type { GallerySectionProps } from "../_utils/gallerySection.mapper";
 
-export function GallerySection({
+function GallerySection({
   images,
   lightboxEnabled,
 }: GallerySectionProps) {
@@ -97,3 +97,5 @@ export function GallerySection({
     </EyebrowSection>
   );
 }
+
+export { GallerySection };

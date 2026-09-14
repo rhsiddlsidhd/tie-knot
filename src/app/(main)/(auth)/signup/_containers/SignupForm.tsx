@@ -9,7 +9,7 @@ import { hasFieldErrors } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";
 import { SignupForm as PureSignupForm } from "../_components/SignupForm";
 import { routes } from "@/core/domain/routes";
-export function SignupForm() {
+function SignupForm() {
   const router = useRouter();
   const [state, action, pending] = useActionState<
     APIResponse<{ message: string }>,
@@ -30,3 +30,5 @@ export function SignupForm() {
 
   return <PureSignupForm action={action} pending={pending} state={state} />;
 }
+
+export { SignupForm };

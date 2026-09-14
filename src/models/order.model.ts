@@ -6,7 +6,7 @@ import type { ProductCategory } from "@/core/domain/product-category";
 import { PAY_METHOD } from "@/core/domain/payment";
 import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 import { categoryRequiresShipping } from "@/core/utils/category";
-export type { OrderJSON } from "@/core/domain/order";
+import type { OrderJSON } from "@/core/domain/order";
 interface ProductPricing {
   originalPrice: number;
   discountedPrice: number;
@@ -28,7 +28,7 @@ interface ProductSnapShot {
   selectedFeatures: SelectedFeatureSnapShot[];
 }
 
-export interface ShippingInfo {
+interface ShippingInfo {
   receiver: string;
   phone: string;
   address: string;
@@ -96,7 +96,7 @@ const ORDER_STATUS = [
 
 type OrderStatusType = (typeof ORDER_STATUS)[number];
 
-export interface IOrder {
+interface IOrder {
   _id: Types.ObjectId;
   merchantUid: string;
   userId: Types.ObjectId | string;
@@ -214,6 +214,8 @@ orderSchema.index({ createdAt: -1, _id: -1 });
 // 인덱스는 선두가 userId라 소유자 스코프 없는 전역 상태 필터 조회엔 못 쓴다.
 orderSchema.index({ orderStatus: 1, createdAt: -1, _id: -1 });
 
-export const OrderModel =
+const OrderModel =
   (mongoose.models.Order as Model<IOrder>) ||
   mongoose.model<IOrder>("Order", orderSchema);
+
+export { OrderModel, type OrderJSON, type ShippingInfo, type IOrder };

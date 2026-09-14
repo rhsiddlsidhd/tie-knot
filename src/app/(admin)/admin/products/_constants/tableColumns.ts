@@ -1,4 +1,4 @@
-export const TABLE_COLUMNS = [
+const TABLE_COLUMNS = [
   "썸네일",
   "상품명",
   "카테고리",
@@ -9,3 +9,5 @@ export const TABLE_COLUMNS = [
   "우선순위",
   "관리",
 ] as const;
+
+export { TABLE_COLUMNS };

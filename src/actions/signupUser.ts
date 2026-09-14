@@ -6,7 +6,7 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { RegisterSchema } from "@/core/schemas/request/register.schema";
 import { signupUserService } from "@/services/user";
 import { actionError } from "@/boundary";
-export async function signupUser(
+async function signupUser(
   prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> {
@@ -42,3 +42,5 @@ export async function signupUser(
     return actionError(e);
   }
 }
+
+export { signupUser };

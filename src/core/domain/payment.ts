@@ -1,4 +1,4 @@
-export const PAY_METHOD = [
+const PAY_METHOD = [
   "CARD",
   "TRANSFER",
   "VIRTUAL_ACCOUNT",
@@ -7,12 +7,14 @@ export const PAY_METHOD = [
   "EASY_PAY",
 ] as const;
 
-export type PayMethod = (typeof PAY_METHOD)[number];
+type PayMethod = (typeof PAY_METHOD)[number];
 
-export type PayStatus =
+type PayStatus =
   | "PENDING"
   | "PAID"
   | "FAILED"
   | "CANCELLED"
   | "PARTIAL_CANCELLED"
   | "REFUNDED";
+
+export { PAY_METHOD, type PayMethod, type PayStatus };

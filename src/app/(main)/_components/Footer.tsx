@@ -3,7 +3,7 @@ import { TypographyH4, TypographySmall } from "@/ui/components/atoms/typography"
 import { routes } from "@/core/domain/routes";
 import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
 
-export function Footer() {
+function Footer() {
   return (
     <footer className="border-border bg-muted border-t py-12">
       <div className="container mx-auto px-4">
@@ -54,3 +54,5 @@ export function Footer() {
     </footer>
   );
 }
+
+export { Footer };

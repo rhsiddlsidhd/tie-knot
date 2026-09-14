@@ -6,7 +6,7 @@ import type { FieldBase } from "@/core/domain/field";
 import type React from "react";
 import { useState } from "react";
 
-export interface NumberFieldProps extends Omit<FieldBase, "defaultValue"> {
+interface NumberFieldProps extends Omit<FieldBase, "defaultValue"> {
   defaultValue?: string | number;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -87,4 +87,4 @@ const NumberField = ({
   );
 };
 
-export { NumberField };
+export { NumberField, type NumberFieldProps };

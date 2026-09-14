@@ -12,7 +12,7 @@ const BANKS_URL = "https://api.portone.io/banks";
  * 프록시 오류가 200 HTML로 돌아올 수 있는데, 검증 없이 `items`만 꺼내면 그때
  * `undefined`가 성공 응답에 담겨 화면에서야 터진다.
  */
-export async function fetchBanks(): Promise<BanksResponse> {
+async function fetchBanks(): Promise<BanksResponse> {
   let res: Response;
   try {
     res = await fetch(BANKS_URL);
@@ -55,3 +55,5 @@ export async function fetchBanks(): Promise<BanksResponse> {
 
   return parsed.data;
 }
+
+export { fetchBanks };

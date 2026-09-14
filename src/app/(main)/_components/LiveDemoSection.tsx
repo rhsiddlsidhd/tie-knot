@@ -10,7 +10,7 @@ import { routes } from "@/core/domain/routes";
 /**
  * 메인 페이지에서 대표 청첩장 샘플(/preview/sample)을 보여주는 섹션 (Organism)
  */
-export const LiveDemoSection = () => {
+const LiveDemoSection = () => {
   return (
     <section className="bg-muted/30 py-20">
       <div className="container mx-auto px-4">
@@ -71,3 +71,5 @@ export const LiveDemoSection = () => {
     </section>
   );
 };
+
+export { LiveDemoSection };

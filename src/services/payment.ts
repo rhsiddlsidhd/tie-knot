@@ -279,7 +279,7 @@ const portOneErrorContext = (
  * PortOne 결제 정보 동기화 및 검증
  * @param paymentId - merchantUid (주문번호)
  */
-export const syncPayment = async (paymentId: string) => {
+const syncPayment = async (paymentId: string) => {
   await dbConnect();
 
   try {
@@ -579,7 +579,7 @@ export const syncPayment = async (paymentId: string) => {
  * 자동취소(/api/cron/expired-orders 스케줄러 배치, cancelOrdersAwaitingMobileInvitation)에서 사용.
  * @param merchantUid - 우리 서버에서 생성한 주문번호(PortOne paymentId)
  */
-export const cancelPayment = async (
+const cancelPayment = async (
   merchantUid: string,
   reason: string,
 ): Promise<void> => {
@@ -686,7 +686,7 @@ const cancelOrdersAwaitingMobileInvitation = async (
  * coupleInfo 미입력 자동취소(단일 유저) — 스케줄러 이전(GH #82) 이후 제품 코드에서
  * 호출하는 곳은 없다. 관리자 단위 수동 취소 같은 후속 용도를 위해 진입점만 남긴다.
  */
-export const cancelExpiredAwaitingMobileInvitationOrders = async (
+const cancelExpiredAwaitingMobileInvitationOrders = async (
   userId: string,
 ): Promise<void> => {
   const expiredOrders = await findExpiredAwaitingMobileInvitationOrders(userId);
@@ -697,7 +697,7 @@ export const cancelExpiredAwaitingMobileInvitationOrders = async (
  * coupleInfo 미입력 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점.
  * PortOne 실환불을 호출하므로 만료 PENDING 배치(DB-only)와 실행·실패를 분리한다.
  */
-export const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
+const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
   async (): Promise<ExpiredAwaitingMobileInvitationBatchResult> => {
     const expiredOrders =
       await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
@@ -795,7 +795,7 @@ const cancelPendingOrderCandidates = async (
 };
 
 /** 방치 PENDING 주문 자동취소(단일 유저) — 위 청첩장 미입력 함수와 같은 이유로 진입점만 남긴다. */
-export const cancelExpiredPendingOrders = async (
+const cancelExpiredPendingOrders = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<void> => {
   const { orders, deadline } = await findExpiredPendingOrders(userId);
@@ -803,13 +803,13 @@ export const cancelExpiredPendingOrders = async (
 };
 
 /** 방치 PENDING 주문 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점. */
-export const cancelExpiredPendingOrdersForAllUsers =
+const cancelExpiredPendingOrdersForAllUsers =
   async (): Promise<ExpiredPendingOrderBatchResult> => {
     const { orders, deadline } = await findExpiredPendingOrdersForAllUsers();
     return cancelPendingOrderCandidates(orders, deadline);
   };
 
-export async function completePaymentService(
+async function completePaymentService(
   paymentId: string,
 ): Promise<PayStatus> {
   const { userId } = await requireAuth();
@@ -837,3 +837,13 @@ export async function completePaymentService(
   }
   return payment.status;
 }
+
+export {
+  syncPayment,
+  cancelPayment,
+  cancelExpiredAwaitingMobileInvitationOrders,
+  cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+  cancelExpiredPendingOrders,
+  cancelExpiredPendingOrdersForAllUsers,
+  completePaymentService,
+};

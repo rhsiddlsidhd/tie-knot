@@ -13,11 +13,11 @@ import {
 
 import { routes } from "./routes";
 
-export interface BaseNavigateItem {
+interface BaseNavigateItem {
   title: string;
 }
 
-export interface NavigateLinkItem extends BaseNavigateItem {
+interface NavigateLinkItem extends BaseNavigateItem {
   href: string;
   icon: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
@@ -25,7 +25,7 @@ export interface NavigateLinkItem extends BaseNavigateItem {
   submenu?: never;
 }
 
-export interface NavigateGroupItem extends BaseNavigateItem {
+interface NavigateGroupItem extends BaseNavigateItem {
   icon: React.ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
   >;
@@ -33,9 +33,9 @@ export interface NavigateGroupItem extends BaseNavigateItem {
   href?: never;
 }
 
-export type NavigateItem = NavigateLinkItem | NavigateGroupItem;
+type NavigateItem = NavigateLinkItem | NavigateGroupItem;
 
-export type Submenu = {
+type Submenu = {
   title: string;
   href: string;
 };
@@ -108,16 +108,27 @@ const authUserProfileNavigateItems: NavigateItem[] = [
   },
 ];
 
-export const allNavigateItems = {
+const allNavigateItems = {
   ADMIN: adminNavigateItems,
   MY_ORDER: authUserOrderNavigateItems,
   MY_PROFILE: authUserProfileNavigateItems,
 } as const;
 
-export const SUBMENU_PARENT_TITLES = [
+const SUBMENU_PARENT_TITLES = [
   "프리미엄 기능 관리",
   "주문 정보",
   "상품 관리",
 ] as const;
 
-export type SubmenuParentTitle = (typeof SUBMENU_PARENT_TITLES)[number];
+type SubmenuParentTitle = (typeof SUBMENU_PARENT_TITLES)[number];
+
+export {
+  allNavigateItems,
+  SUBMENU_PARENT_TITLES,
+  type BaseNavigateItem,
+  type NavigateLinkItem,
+  type NavigateGroupItem,
+  type NavigateItem,
+  type Submenu,
+  type SubmenuParentTitle,
+};

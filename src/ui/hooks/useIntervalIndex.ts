@@ -15,7 +15,7 @@ interface UseIntervalIndexProps {
  * 주어진 길이를 바탕으로 일정 시간마다 인덱스를 순환시키는 범용 훅
  * 캐러셀, 공지사항 바, 프로모션 배너 등에 사용됩니다.
  */
-export const useIntervalIndex = ({
+const useIntervalIndex = ({
   length,
   isPaused = false,
   interval = 4000,
@@ -49,3 +49,5 @@ export const useIntervalIndex = ({
     next,
   };
 };
+
+export { useIntervalIndex };

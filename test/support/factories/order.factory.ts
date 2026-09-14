@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import type { CreateOrderDto } from "@/core/schemas/request/order.schema";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
-export const buildOrderInput = (
+const buildOrderInput = (
   overrides?: Partial<CreateOrderDto & { userId: string }>,
 ): CreateOrderDto & { userId: string } => ({
   userId: new mongoose.Types.ObjectId().toString(),
@@ -25,3 +25,5 @@ export const buildOrderInput = (
   },
   ...overrides,
 });
+
+export { buildOrderInput };

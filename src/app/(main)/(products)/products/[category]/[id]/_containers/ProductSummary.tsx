@@ -10,7 +10,7 @@ import type { PremiumFeature } from "@/core/domain/premium-feature";
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductSummary as PureProductSummary } from "../_components/ProductSummary";
 import { routes } from "@/core/domain/routes";
-export function ProductSummary({
+function ProductSummary({
   product,
   options,
 }: {
@@ -36,3 +36,5 @@ export function ProductSummary({
     />
   );
 }
+
+export { ProductSummary };

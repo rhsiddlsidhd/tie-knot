@@ -13,7 +13,7 @@ import type { PublicProductListPage } from "@/core/domain/product";
  * 캐싱이 필요해 이 경로를 탄다(rule 3). category/subCategory가 바뀌면 클라이언트가
  * 커서 없이 새 쿼리를 처음부터 다시 보낸다.
  */
-export const GET = async (
+const GET = async (
   request: NextRequest,
 ): Promise<APIRouteResponse<PublicProductListPage>> => {
   try {
@@ -35,3 +35,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

@@ -11,7 +11,7 @@ import type { UserRole } from "@/core/domain/user";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
 import { LoginForm as PureLoginForm } from "../_components/LoginForm";
 import { routes } from "@/core/domain/routes";
-export function LoginForm() {
+function LoginForm() {
   const router = useRouter();
   const [state, action, pending] = useActionState<
     APIResponse<{ role: UserRole; email: string; userId: string }>,
@@ -50,3 +50,5 @@ export function LoginForm() {
     />
   );
 }
+
+export { LoginForm };

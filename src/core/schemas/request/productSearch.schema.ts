@@ -9,8 +9,10 @@ const searchTermSchema = z
   .transform((value) => (value.length === 0 ? undefined : value))
   .optional();
 
-export const productSearchRequestSchema = z.object({
+const productSearchRequestSchema = z.object({
   q: searchTermSchema,
 });
 
-export type ProductSearchRequest = z.infer<typeof productSearchRequestSchema>;
+type ProductSearchRequest = z.infer<typeof productSearchRequestSchema>;
+
+export { productSearchRequestSchema, type ProductSearchRequest };

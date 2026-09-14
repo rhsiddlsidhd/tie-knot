@@ -1,6 +1,6 @@
 import type { ProductFilterAction, ProductFilterState } from "./type";
 
-export const initialFilterState: ProductFilterState = {
+const initialFilterState: ProductFilterState = {
   keyword: "",
   isOpen: false,
   sortBy: "ALL",
@@ -8,7 +8,7 @@ export const initialFilterState: ProductFilterState = {
   premiumFeat: [],
 };
 
-export function filterReducer(
+function filterReducer(
   state: ProductFilterState,
   action: ProductFilterAction,
 ): ProductFilterState {
@@ -62,3 +62,5 @@ export function filterReducer(
       return state;
   }
 }
+
+export { initialFilterState, filterReducer };

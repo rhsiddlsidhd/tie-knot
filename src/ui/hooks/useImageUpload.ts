@@ -6,7 +6,7 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 import type { ImagePayload } from "@/core/domain/image";
 
-export function useImageUpload() {
+function useImageUpload() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -89,3 +89,5 @@ function buildTextData(formData: FormData) {
     guestbookEnabled: formData.get("guestbook_enabled") === "on",
   };
 }
+
+export { useImageUpload };

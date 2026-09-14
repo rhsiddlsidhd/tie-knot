@@ -1,2 +1,4 @@
 import "server-only";
-export type CookieName = "token" | "entry" | "userEmail";
+type CookieName = "token" | "entry" | "userEmail";
+
+export { type CookieName };

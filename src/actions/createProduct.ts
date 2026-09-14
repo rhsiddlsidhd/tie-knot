@@ -14,7 +14,7 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 const parseOptionalNumber = (raw: FormDataEntryValue | null): number | undefined =>
   raw ? Number(raw) : undefined;
 
-export const createProduct = async (
+const createProduct = async (
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
@@ -65,3 +65,5 @@ export const createProduct = async (
     return actionError(e);
   }
 };
+
+export { createProduct };

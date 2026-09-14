@@ -12,7 +12,7 @@ interface ShippingInfoCardProps {
 // 실물 상품(favor/accessory/guestbook/ceremony) 주문일 때만 렌더된다 — 모바일초대장
 // 주문은 배송이 필요 없어 이 카드 자체가 트리에서 빠진다(CheckoutForm organism 참고).
 // 그래서 여기 렌더되면 모든 필드가 항상 필수다.
-export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
+function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
   return (
     <Card className="border-border">
       <CardHeader>
@@ -56,3 +56,5 @@ export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
     </Card>
   );
 }
+
+export { ShippingInfoCard };

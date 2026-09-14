@@ -33,21 +33,21 @@ const getAppBaseUrl = (): string => {
 };
 
 // 유저 생성
-export const createUser = async (user: BaseUser): Promise<IUser> => {
+const createUser = async (user: BaseUser): Promise<IUser> => {
   await dbConnect();
   const newUser = await new UserModel(user).save();
   return newUser;
 };
 
 // 이메일 중복 확인
-export const checkEmailDuplicate = async (email: string): Promise<boolean> => {
+const checkEmailDuplicate = async (email: string): Promise<boolean> => {
   await dbConnect();
   const exists = await UserModel.exists({ email });
   return !!exists;
 };
 
 // 유저 email 찾기
-export const getUserEmail = async ({
+const getUserEmail = async ({
   name,
   phone,
 }: {
@@ -61,7 +61,7 @@ export const getUserEmail = async ({
 };
 
 // 유저 ID로 유저 찾기
-export const getUserById = async (id: string): Promise<IUser> => {
+const getUserById = async (id: string): Promise<IUser> => {
   await dbConnect();
   const user = await UserModel.findById(id).lean<IUser>();
   if (!user) throw new AppError("NOT_FOUND", "유저를 찾을 수가 없습니다.");
@@ -69,7 +69,7 @@ export const getUserById = async (id: string): Promise<IUser> => {
 };
 
 // 비밀번호 변경 함수
-export const changePassword = async (
+const changePassword = async (
   email: string,
   newPassword: string,
 ): Promise<boolean> => {
@@ -93,7 +93,7 @@ export const changePassword = async (
   return !!userBeforeUpdate;
 };
 
-export async function signupUserService({
+async function signupUserService({
   email,
   name,
   phone,
@@ -110,7 +110,7 @@ export async function signupUserService({
   await createUser({ email, name, phone, password: await hashPassword(password) });
 }
 
-export async function requestPasswordResetService(email: string): Promise<void> {
+async function requestPasswordResetService(email: string): Promise<void> {
   if (!(await checkEmailDuplicate(email))) {
     throw new AppError("VALIDATION", "등록되지 않은 이메일입니다.");
   }
@@ -122,7 +122,7 @@ export async function requestPasswordResetService(email: string): Promise<void> 
   await sendEmail({ email, path });
 }
 
-export async function resetUserPasswordService({
+async function resetUserPasswordService({
   token,
   password,
 }: {
@@ -163,7 +163,7 @@ type AdminUserListRow = {
  * tie-break, limit+1)은 주문 목록과 동일하되, 비밀번호·전화번호·인증 관련 필드는
  * select 단계에서부터 제외한다.
  */
-export const getAdminUsersPageService = async ({
+const getAdminUsersPageService = async ({
   role,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
@@ -230,4 +230,16 @@ export const getAdminUsersPageService = async ({
           })
         : null,
   };
+};
+
+export {
+  createUser,
+  checkEmailDuplicate,
+  getUserEmail,
+  getUserById,
+  changePassword,
+  signupUserService,
+  requestPasswordResetService,
+  resetUserPasswordService,
+  getAdminUsersPageService,
 };

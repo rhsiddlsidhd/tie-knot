@@ -7,7 +7,7 @@ import { actionError } from "@/boundary";
 import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
-export const deleteGuestbook = async (
+const deleteGuestbook = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
@@ -37,3 +37,5 @@ export const deleteGuestbook = async (
     return actionError(e);
   }
 };
+
+export { deleteGuestbook };

@@ -11,7 +11,7 @@ interface PopularProductsSectionProps {
   products: Product[];
 }
 
-export function PopularProductsSection({ products }: PopularProductsSectionProps) {
+function PopularProductsSection({ products }: PopularProductsSectionProps) {
   if (products.length < POPULAR_PRODUCTS_MIN_ITEMS) return null;
 
   return (
@@ -44,3 +44,5 @@ export function PopularProductsSection({ products }: PopularProductsSectionProps
     </section>
   );
 }
+
+export { PopularProductsSection };

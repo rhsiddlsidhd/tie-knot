@@ -1,10 +1,10 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
-export interface ThumbnailsProps {
+interface ThumbnailsProps {
   divider: string;
   footer: string;
 }
 
-export const mapCoupleInfoToThumbnails = (
+const mapCoupleInfoToThumbnails = (
   coupleInfo: MobileInvitationContent,
 ): ThumbnailsProps => {
   return {
@@ -12,3 +12,5 @@ export const mapCoupleInfoToThumbnails = (
     footer: coupleInfo.thumbnailImages[2],
   };
 };
+
+export { mapCoupleInfoToThumbnails, type ThumbnailsProps };

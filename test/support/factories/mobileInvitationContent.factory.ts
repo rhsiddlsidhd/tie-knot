@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import type { MobileInvitationContentSchemaDto } from "@/core/schemas/request/mobileInvitationContent.schema";
 
-export const buildMobileInvitationContentInput = (
+const buildMobileInvitationContentInput = (
   overrides?: Partial<MobileInvitationContentSchemaDto & { userId: string }>,
 ): MobileInvitationContentSchemaDto & { userId: string } => ({
   userId: new mongoose.Types.ObjectId().toString(),
@@ -21,3 +21,5 @@ export const buildMobileInvitationContentInput = (
   galleryImages: ["https://example.com/gallery.jpg"],
   ...overrides,
 });
+
+export { buildMobileInvitationContentInput };

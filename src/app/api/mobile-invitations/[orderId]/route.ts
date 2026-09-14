@@ -4,7 +4,7 @@ import type { MobileInvitationEditor } from "@/core/domain/mobile-invitation";
 import { getOwnedMobileInvitationByOrder } from "@/services/mobile-invitation";
 import { requireAuth } from "@/services/auth";
 
-export const GET = async (
+const GET = async (
   _request: Request,
   { params }: { params: Promise<{ orderId: string }> },
 ): Promise<APIRouteResponse<MobileInvitationEditor | null>> => {
@@ -32,3 +32,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

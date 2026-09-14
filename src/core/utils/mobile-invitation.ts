@@ -1,6 +1,6 @@
 import { MOBILE_INVITATION_EXPIRY_DAYS } from "@/core/domain/mobile-invitation";
 
-export const isMobileInvitationExpired = (
+const isMobileInvitationExpired = (
   weddingDate: Date,
   now = new Date(),
 ): boolean => {
@@ -8,3 +8,5 @@ export const isMobileInvitationExpired = (
   expiresAt.setDate(expiresAt.getDate() + MOBILE_INVITATION_EXPIRY_DAYS);
   return now > expiresAt;
 };
+
+export { isMobileInvitationExpired };

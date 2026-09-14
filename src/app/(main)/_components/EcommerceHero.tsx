@@ -13,7 +13,7 @@ import type { Promotion } from "@/core/domain/promotion";
 const promotions = (promotionsData as Promotion[]).filter((p) => p.isActive);
 const AUTOPLAY_INTERVAL = 5000;
 
-export const EcommerceHero = () => {
+const EcommerceHero = () => {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -120,3 +120,5 @@ export const EcommerceHero = () => {
     </section>
   );
 };
+
+export { EcommerceHero };
