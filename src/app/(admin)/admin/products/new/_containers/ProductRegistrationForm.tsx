@@ -9,11 +9,11 @@ import type { APIResponse } from "@/core/domain/error";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { ProductRegistrationForm as PureProductRegistrationForm } from "../_components/ProductRegistrationForm";
 import { routes } from "@/core/domain/routes";
-function ProductRegistrationForm({
+const ProductRegistrationForm = ({
   premiumFeatures,
 }: {
   premiumFeatures: PremiumFeature[];
-}) {
+}) => {
   const router = useRouter();
   const [state, action, pending] = useActionState<
     APIResponse<{ message: string }>,

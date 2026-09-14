@@ -17,11 +17,11 @@ interface PremiumFeatureRegistrationFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-function PremiumFeatureRegistrationForm({
+const PremiumFeatureRegistrationForm = ({
   action,
   pending,
   state,
-}: PremiumFeatureRegistrationFormProps) {
+}: PremiumFeatureRegistrationFormProps) => {
   const codeError = getFieldError(state, "code");
   const labelError = getFieldError(state, "label");
   const descriptionError = getFieldError(state, "description");
