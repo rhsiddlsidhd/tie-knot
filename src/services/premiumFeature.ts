@@ -20,7 +20,7 @@ const mapToPremiumFeature = (doc: IFeature): PremiumFeature => ({
   createdAt: doc.createdAt.toISOString(),
 });
 
-export const createPremiumFeatureService = async (
+const createPremiumFeatureService = async (
   data: PremiumFeatureDto,
 ) => {
   await dbConnect();
@@ -28,7 +28,7 @@ export const createPremiumFeatureService = async (
   return newFeatureModel;
 };
 
-export const getAllPremiumFeatureService = async (): Promise<
+const getAllPremiumFeatureService = async (): Promise<
   PremiumFeature[]
 > => {
   await dbConnect();
@@ -36,7 +36,7 @@ export const getAllPremiumFeatureService = async (): Promise<
   return features.map(mapToPremiumFeature);
 };
 
-export const getPremiumFeatureService = async (ids: string[] | []) => {
+const getPremiumFeatureService = async (ids: string[] | []) => {
   if (ids.length === 0) return [];
   await dbConnect();
   const _ids = ids
@@ -48,7 +48,7 @@ export const getPremiumFeatureService = async (ids: string[] | []) => {
   return features.map(mapToPremiumFeature);
 };
 
-export const updatePremiumFeatureService = async (
+const updatePremiumFeatureService = async (
   id: string,
   data: PremiumFeatureDto,
 ) => {
@@ -63,14 +63,14 @@ export const updatePremiumFeatureService = async (
   return updatedFeature;
 };
 
-export async function createPremiumFeatureAsAdminService(
+async function createPremiumFeatureAsAdminService(
   data: PremiumFeatureDto,
 ): Promise<void> {
   await requireAdmin();
   await createPremiumFeatureService(data);
 }
 
-export async function updatePremiumFeatureAsAdminService(
+async function updatePremiumFeatureAsAdminService(
   id: string,
   data: PremiumFeatureDto,
 ): Promise<void> {
@@ -82,3 +82,12 @@ export async function updatePremiumFeatureAsAdminService(
     );
   }
 }
+
+export {
+  createPremiumFeatureService,
+  getAllPremiumFeatureService,
+  getPremiumFeatureService,
+  updatePremiumFeatureService,
+  createPremiumFeatureAsAdminService,
+  updatePremiumFeatureAsAdminService,
+};

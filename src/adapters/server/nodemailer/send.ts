@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = async ({
+const sendEmail = async ({
   email,
   path,
 }: {
@@ -73,3 +73,5 @@ export const sendEmail = async ({
     `,
   });
 };
+
+export { sendEmail };

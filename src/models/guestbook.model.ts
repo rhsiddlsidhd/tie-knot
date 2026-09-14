@@ -3,7 +3,7 @@ import type { Model, Types } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
 // Guestbook 문서 인터페이스
-export interface IGuestbook {
+interface IGuestbook {
   _id: Types.ObjectId | string;
   mobileInvitationId: Types.ObjectId | string;
   author: string; // 작성자 이름
@@ -45,6 +45,8 @@ const guestbookSchema = new Schema<IGuestbook>(
   },
 );
 
-export const GuestbookModel =
+const GuestbookModel =
   (mongoose.models.Guestbook as Model<IGuestbook>) ||
   mongoose.model<IGuestbook>("Guestbook", guestbookSchema);
+
+export { GuestbookModel, type IGuestbook };

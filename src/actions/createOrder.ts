@@ -13,7 +13,7 @@ import { createOrderSchema } from "@/core/schemas/request/order.schema";
 import type { PayMethod } from "@/core/domain/payment";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { routes } from "@/core/domain/routes";
-export type CreateOrderResult = {
+type CreateOrderResult = {
   merchantUid: string;
   finalPrice: number;
   payMethod: PayMethod;
@@ -26,7 +26,7 @@ export type CreateOrderResult = {
   message: string;
 };
 
-export async function createOrder(
+async function createOrder(
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<CreateOrderResult>> {
@@ -102,3 +102,5 @@ export async function createOrder(
     return actionError(e);
   }
 }
+
+export { createOrder, type CreateOrderResult };

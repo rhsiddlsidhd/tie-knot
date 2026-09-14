@@ -5,7 +5,7 @@ import { AppError } from "@/core/domain/error";
 import type { KakaomapResponse } from "@/core/schemas/response/kakaomap.schema";
 import type { NextRequest } from "next/server";
 
-export const GET = async (
+const GET = async (
   req: NextRequest,
 ): Promise<APIRouteResponse<KakaomapResponse>> => {
   try {
@@ -21,3 +21,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

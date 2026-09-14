@@ -12,7 +12,7 @@ import type { APIResponse, ErrorResponse } from "@/core/domain/error";
  * const emailError = getFieldError(state, 'email');
  * {emailError && <p className="text-red-500">{emailError}</p>}
  */
-export const getFieldError = (
+const getFieldError = (
   state: APIResponse<unknown> | null,
   field: string,
 ): string | undefined => {
@@ -36,8 +36,10 @@ export const getFieldError = (
  * }
  */
 
-export const hasFieldErrors = (error: ErrorResponse["error"]): boolean => {
+const hasFieldErrors = (error: ErrorResponse["error"]): boolean => {
   return Boolean(
     error.fieldErrors && Object.keys(error.fieldErrors).length > 0,
   );
 };
+
+export { getFieldError, hasFieldErrors };

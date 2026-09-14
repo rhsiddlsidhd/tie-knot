@@ -5,5 +5,7 @@ import "client-only";
  * 테스트에서는 전역 navigator를 건드리지 않고 이 모듈만 대체하면 된다.
  * 실패 사유는 그대로 던져 호출자가 UI 문구를 결정한다.
  */
-export const writeText = (text: string): Promise<void> =>
+const writeText = (text: string): Promise<void> =>
   navigator.clipboard.writeText(text);
+
+export { writeText };

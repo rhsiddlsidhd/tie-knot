@@ -7,7 +7,7 @@ import { productSearchRequestSchema } from "@/core/schemas/request/productSearch
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AppError } from "@/core/domain/error";
 
-export const GET = async (
+const GET = async (
   request: NextRequest,
 ): Promise<APIRouteResponse<ProductResponse[]>> => {
   try {
@@ -28,3 +28,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

@@ -17,7 +17,7 @@ interface UseCheckoutFormOptions {
   router: AppRouterInstance;
 }
 
-export function useCheckoutForm({
+function useCheckoutForm({
   order,
   action,
   router,
@@ -93,3 +93,5 @@ export function useCheckoutForm({
 
   return { errors, shippingErrors, requiresShipping, handleSubmit };
 }
+
+export { useCheckoutForm };

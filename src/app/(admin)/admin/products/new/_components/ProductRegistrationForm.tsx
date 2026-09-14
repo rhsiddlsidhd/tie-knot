@@ -34,7 +34,7 @@ interface ProductRegistrationFormProps {
   onSubmitIntentChange: (continueRegistration: boolean) => void;
 }
 
-export function ProductRegistrationForm({
+function ProductRegistrationForm({
   premiumFeatures,
   action,
   pending,
@@ -550,3 +550,5 @@ export function ProductRegistrationForm({
     </form>
   );
 }
+
+export { ProductRegistrationForm };

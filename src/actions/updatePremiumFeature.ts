@@ -8,7 +8,7 @@ import { actionError } from "@/boundary";
 import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
-export const updatePremiumFeature = async (
+const updatePremiumFeature = async (
   _prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
@@ -50,3 +50,5 @@ export const updatePremiumFeature = async (
     return actionError(e);
   }
 };
+
+export { updatePremiumFeature };

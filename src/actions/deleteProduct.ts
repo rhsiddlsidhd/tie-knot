@@ -7,7 +7,7 @@ import { routes } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 
-export const deleteProduct = async (
+const deleteProduct = async (
   productId: string,
 ): Promise<APIResponse<{ message: string }>> => {
   try {
@@ -24,3 +24,5 @@ export const deleteProduct = async (
     return actionError(e);
   }
 };
+
+export { deleteProduct };

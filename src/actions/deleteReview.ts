@@ -6,7 +6,7 @@ import { actionError } from "@/boundary";
 import { routes } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
-export const deleteReview = async (
+const deleteReview = async (
   reviewId: string,
 ): Promise<APIResponse<{ message: string }>> => {
   try {
@@ -19,3 +19,5 @@ export const deleteReview = async (
     return actionError(e);
   }
 };
+
+export { deleteReview };

@@ -1,5 +1,5 @@
 import "server-only";
-export type CloudinaryResource = {
+type CloudinaryResource = {
   asset_folder: string;
   asset_id: string;
   bytes: number;
@@ -22,7 +22,9 @@ export type CloudinaryResource = {
   width: number;
 };
 
-export type UploadedCloudinaryAsset = {
+type UploadedCloudinaryAsset = {
   publicId: string;
   url: string;
 };
+
+export { type CloudinaryResource, type UploadedCloudinaryAsset };

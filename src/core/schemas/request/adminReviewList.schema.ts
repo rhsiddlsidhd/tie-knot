@@ -5,10 +5,12 @@ import * as z from "zod";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-export const adminReviewListRequestSchema = z.object({
+const adminReviewListRequestSchema = z.object({
   cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-export type AdminReviewListRequest = z.infer<
+type AdminReviewListRequest = z.infer<
   typeof adminReviewListRequestSchema
 >;
+
+export { adminReviewListRequestSchema, type AdminReviewListRequest };

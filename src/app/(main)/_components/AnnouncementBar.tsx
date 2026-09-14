@@ -13,7 +13,7 @@ interface AnnouncementBarProps {
   interval?: number;
 }
 
-export const AnnouncementBar = ({
+const AnnouncementBar = ({
   items,
   activeIndex,
   interval = 4000,
@@ -56,3 +56,5 @@ export const AnnouncementBar = ({
     </div>
   );
 };
+
+export { AnnouncementBar };

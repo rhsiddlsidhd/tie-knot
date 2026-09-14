@@ -1,23 +1,23 @@
 import type { MobileInvitationTheme } from "./theme";
 
-export interface CouplePerson {
+interface CouplePerson {
   name: string;
   phone: string;
 }
 
-export interface CoupleParent extends CouplePerson {
+interface CoupleParent extends CouplePerson {
   bankName?: string;
   accountNumber?: string;
 }
 
-export interface CoupleSide extends CouplePerson {
+interface CoupleSide extends CouplePerson {
   bankName?: string;
   accountNumber?: string;
   father?: CoupleParent;
   mother?: CoupleParent;
 }
 
-export interface MobileInvitationContent {
+interface MobileInvitationContent {
   groom: CoupleSide;
   bride: CoupleSide;
   weddingDate: Date;
@@ -31,9 +31,18 @@ export interface MobileInvitationContent {
   theme: MobileInvitationTheme;
 }
 
-export type MobileInvitationEditor = MobileInvitationContent & {
+type MobileInvitationEditor = MobileInvitationContent & {
   publicKey: string;
   status: "draft" | "published";
 };
 
-export const MOBILE_INVITATION_EXPIRY_DAYS = 10;
+const MOBILE_INVITATION_EXPIRY_DAYS = 10;
+
+export {
+  MOBILE_INVITATION_EXPIRY_DAYS,
+  type CouplePerson,
+  type CoupleParent,
+  type CoupleSide,
+  type MobileInvitationContent,
+  type MobileInvitationEditor,
+};

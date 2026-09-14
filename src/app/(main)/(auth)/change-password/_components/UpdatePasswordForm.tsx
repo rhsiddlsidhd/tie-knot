@@ -14,7 +14,7 @@ interface UpdatePasswordFormProps {
   token: string;
 }
 
-export function UpdatePasswordForm({
+function UpdatePasswordForm({
   action,
   pending,
   state,
@@ -57,3 +57,5 @@ export function UpdatePasswordForm({
     </div>
   );
 }
+
+export { UpdatePasswordForm };

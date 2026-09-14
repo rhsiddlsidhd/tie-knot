@@ -7,7 +7,7 @@ import { AppError } from "@/core/domain/error";
 
 interface ExtractedPayload extends JWTPayload, Omit<EncryptProps, "type"> {}
 
-export async function decrypt(
+async function decrypt(
   args: DecryptProps,
 ): Promise<JWTVerifyResult<ExtractedPayload>> {
   const { token, type } = args;
@@ -33,3 +33,5 @@ export async function decrypt(
     throw error;
   }
 }
+
+export { decrypt };

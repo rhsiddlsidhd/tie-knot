@@ -6,7 +6,7 @@ import type { HeroSectionProps } from "../_utils/heroSection.mapper";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ScrollIndicator } from "./ScrollIndicator";
-export function HeroSection({
+function HeroSection({
   groomName,
   brideName,
   weddingDate,
@@ -68,3 +68,5 @@ export function HeroSection({
     </section>
   );
 }
+
+export { HeroSection };

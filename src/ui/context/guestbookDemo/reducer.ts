@@ -3,7 +3,7 @@ import type { GuestbookDemoAction, GuestbookDemoEntry, GuestbookDemoState } from
 // 데모 페이지 새로고침 시 이 목데이터로 복원된다 — DB/localStorage에 저장하지 않는다.
 // DEFAULT_PAGE_SIZE(10) 기준 3페이지 분량(10/10/4)이라 무한스크롤 이어붙임과
 // 마지막 페이지 이후 중단을 모두 데모에서 확인할 수 있다.
-export const INITIAL_GUESTBOOK_DEMO_STATE: GuestbookDemoState = {
+const INITIAL_GUESTBOOK_DEMO_STATE: GuestbookDemoState = {
   entries: [
     { id: "demo-24", author: "박서준", message: "두 분의 새로운 시작을 진심으로 축하드립니다. 늘 행복하세요!", password: "0000" },
     { id: "demo-23", author: "김하은", message: "결혼 축하해! 오늘 정말 예쁘다, 앞으로도 지금처럼 행복하길 바랄게.", password: "0000" },
@@ -44,7 +44,7 @@ function nextDemoId(entries: GuestbookDemoEntry[]): string {
   return `demo-${maxN + 1}`;
 }
 
-export function guestbookDemoReducer(
+function guestbookDemoReducer(
   state: GuestbookDemoState,
   action: GuestbookDemoAction,
 ): GuestbookDemoState {
@@ -69,3 +69,5 @@ export function guestbookDemoReducer(
       return state;
   }
 }
+
+export { INITIAL_GUESTBOOK_DEMO_STATE, guestbookDemoReducer };

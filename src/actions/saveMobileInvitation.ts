@@ -7,7 +7,7 @@ import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 
-export const saveMobileInvitation = async (
+const saveMobileInvitation = async (
   _prev: null,
   formData: FormData,
 ): Promise<APIResponse<{ message: string; publicKey: string }>> => {
@@ -96,3 +96,5 @@ export const saveMobileInvitation = async (
     return actionError(e);
   }
 };
+
+export { saveMobileInvitation };

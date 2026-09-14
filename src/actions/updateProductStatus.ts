@@ -8,7 +8,7 @@ import { routes } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 
-export const updateProductStatus = async (
+const updateProductStatus = async (
   productId: string,
   status: ProductStatus,
 ): Promise<APIResponse<{ message: string }>> => {
@@ -27,3 +27,5 @@ export const updateProductStatus = async (
     return actionError(e);
   }
 };
+
+export { updateProductStatus };

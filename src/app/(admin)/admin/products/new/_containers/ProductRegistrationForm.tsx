@@ -9,7 +9,7 @@ import type { APIResponse } from "@/core/domain/error";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { ProductRegistrationForm as PureProductRegistrationForm } from "../_components/ProductRegistrationForm";
 import { routes } from "@/core/domain/routes";
-export function ProductRegistrationForm({
+function ProductRegistrationForm({
   premiumFeatures,
 }: {
   premiumFeatures: PremiumFeature[];
@@ -47,3 +47,5 @@ export function ProductRegistrationForm({
     />
   );
 }
+
+export { ProductRegistrationForm };

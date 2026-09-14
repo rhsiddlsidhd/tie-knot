@@ -7,7 +7,7 @@ import { resetUserPasswordService } from "@/services/user";
 import { actionError } from "@/boundary";
 
 // 유저가 비밀번호를 기억하지 못할 때 로그인하지 않은 상태에서 이메일로 비밀번호 변경
-export const updateUserPassword = async (
+const updateUserPassword = async (
   prev: unknown,
   formData: FormData,
 ): Promise<APIResponse<{ message: string }>> => {
@@ -40,3 +40,5 @@ export const updateUserPassword = async (
     return actionError(e);
   }
 };
+
+export { updateUserPassword };

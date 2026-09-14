@@ -6,7 +6,7 @@ import { routes } from "@/core/domain/routes";
 import { actionError } from "@/boundary";
 import { cancelPendingOrderForCurrentUser } from "@/services/order";
 
-export const cancelOrder = async (
+const cancelOrder = async (
   orderId: string,
 ): Promise<APIResponse<{ orderId: string }>> => {
   try {
@@ -17,3 +17,5 @@ export const cancelOrder = async (
     return actionError(error);
   }
 };
+
+export { cancelOrder };

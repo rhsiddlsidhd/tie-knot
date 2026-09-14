@@ -32,7 +32,7 @@ import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
-export function ProductSummary({
+function ProductSummary({
   product,
   options,
   onPurchase,
@@ -205,3 +205,5 @@ export function ProductSummary({
     </div>
   );
 }
+
+export { ProductSummary };

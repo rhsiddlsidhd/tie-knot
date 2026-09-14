@@ -26,7 +26,7 @@ type ParentsInfoSectionProps = {
   banks?: BanksResponse;
 };
 
-export function ParentsInfoSection({ data, banks }: ParentsInfoSectionProps) {
+function ParentsInfoSection({ data, banks }: ParentsInfoSectionProps) {
   const [groomParentsOpen, setGroomParentsOpen] = useState(false);
   const [brideParentsOpen, setBrideParentsOpen] = useState(false);
 
@@ -145,3 +145,5 @@ export function ParentsInfoSection({ data, banks }: ParentsInfoSectionProps) {
     </Card>
   );
 }
+
+export { ParentsInfoSection };

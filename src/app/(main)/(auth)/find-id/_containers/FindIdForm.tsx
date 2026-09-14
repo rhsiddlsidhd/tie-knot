@@ -7,7 +7,7 @@ import { findUserEmail } from "@/actions/findUserEmail";
 import { hasFieldErrors } from "@/core/utils/error";
 import type { APIResponse } from "@/core/domain/error";
 import { FindIdForm as PureFindIdForm } from "../_components/FindIdForm";
-export function FindIdForm() {
+function FindIdForm() {
   const [state, action, pending] = useActionState<
     APIResponse<{ email: string }>,
     FormData
@@ -24,3 +24,5 @@ export function FindIdForm() {
 
   return <PureFindIdForm action={action} pending={pending} state={state} />;
 }
+
+export { FindIdForm };

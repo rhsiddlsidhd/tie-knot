@@ -8,12 +8,12 @@ import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
 import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
 import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
 
-export interface ProductTableRowProps {
+interface ProductTableRowProps {
   product: Product;
   view?: "active" | "trash";
 }
 
-export function ProductTableRow({ product, view = "active" }: ProductTableRowProps) {
+function ProductTableRow({ product, view = "active" }: ProductTableRowProps) {
   return (
     <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-4 py-3">
@@ -103,3 +103,5 @@ export function ProductTableRow({ product, view = "active" }: ProductTableRowPro
     </tr>
   );
 }
+
+export { ProductTableRow, type ProductTableRowProps };

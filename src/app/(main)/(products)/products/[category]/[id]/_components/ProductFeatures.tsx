@@ -18,7 +18,7 @@ interface ProductFeaturesProps {
   images: string[];
 }
 
-export function ProductFeatures({ options, images }: ProductFeaturesProps) {
+function ProductFeatures({ options, images }: ProductFeaturesProps) {
   const icons = [Check, Palette, Type, Settings];
   const [isExpanded, setIsExpanded] = useState(false);
   const visibleImages = images.slice(0, VISIBLE_IMAGE_COUNT);
@@ -122,3 +122,5 @@ export function ProductFeatures({ options, images }: ProductFeaturesProps) {
     </div>
   );
 }
+
+export { ProductFeatures };

@@ -3,15 +3,14 @@ import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 import type { UserRole } from "@/core/domain/user";
 
-export type { UserRole } from "@/core/domain/user";
-export interface BaseUser {
+interface BaseUser {
   email: string;
   name: string;
   phone: string;
   password: string;
 }
 
-export interface IUser extends BaseUser {
+interface IUser extends BaseUser {
   _id: Types.ObjectId;
   role: UserRole;
   // 스키마가 default: null이라 모든 문서에 항상 존재한다 — optional이 아니라 nullable.
@@ -40,6 +39,8 @@ userSchema.index({ createdAt: -1, _id: -1 });
 // 관리자 전역 사용자 목록의 역할 필터 조회 전용.
 userSchema.index({ role: 1, createdAt: -1, _id: -1 });
 
-export const UserModel =
+const UserModel =
   (mongoose.models.User as Model<IUser>) ||
   mongoose.model<IUser>("User", userSchema);
+
+export { UserModel, type UserRole, type BaseUser, type IUser };

@@ -16,7 +16,7 @@ interface ForgotPasswordFormProps {
   state: APIResponse<{ message: string; email: string }> | null;
 }
 
-export function ForgotPasswordForm({
+function ForgotPasswordForm({
   action,
   pending,
   state,
@@ -129,3 +129,5 @@ export function ForgotPasswordForm({
     </div>
   );
 }
+
+export { ForgotPasswordForm };

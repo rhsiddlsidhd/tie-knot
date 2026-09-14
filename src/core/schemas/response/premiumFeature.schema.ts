@@ -4,7 +4,7 @@ const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
   message: "ISO date string이 아님",
 });
 
-export const premiumFeatureResponseSchema = z.object({
+const premiumFeatureResponseSchema = z.object({
   _id: z.string(),
   code: z.string(),
   label: z.string(),
@@ -14,8 +14,14 @@ export const premiumFeatureResponseSchema = z.object({
   createdAt: isoDateString,
 });
 
-export const premiumFeaturesResponseSchema = z.object({
+const premiumFeaturesResponseSchema = z.object({
   features: z.array(premiumFeatureResponseSchema),
 });
 
-export type PremiumFeaturesResponse = z.infer<typeof premiumFeaturesResponseSchema>;
+type PremiumFeaturesResponse = z.infer<typeof premiumFeaturesResponseSchema>;
+
+export {
+  premiumFeatureResponseSchema,
+  premiumFeaturesResponseSchema,
+  type PremiumFeaturesResponse,
+};

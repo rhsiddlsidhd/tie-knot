@@ -65,7 +65,7 @@ const transformProduct = (product: LeanProduct, userId?: string): ProductJSON =>
 
 // REQ-5(주문 수량 검증) 전용 — 클라이언트가 보낸 minQuantity/maxQuantity를 신뢰하지 않고
 // order.service가 이 함수로 DB를 재조회한다.
-export const getProductQuantityBoundsService = async (
+const getProductQuantityBoundsService = async (
   productId: string,
 ): Promise<{ minQuantity: number; maxQuantity: number } | null> => {
   await dbConnect();
@@ -87,7 +87,7 @@ export const getProductQuantityBoundsService = async (
 };
 
 // 상품생성
-export const createProductService = async (
+const createProductService = async (
   data: Omit<ProductDto, "thumbnail" | "images"> & {
     thumbnail: string;
     images: string[];
@@ -119,7 +119,7 @@ export const createProductService = async (
 };
 
 // 단일 상품 조회
-export const getProductService = async (
+const getProductService = async (
   productId: string,
   userId?: string,
 ): Promise<ProductJSON | null> => {
@@ -140,7 +140,7 @@ export const getProductService = async (
 // 상품 상세페이지 방문 시 조회수 증가 — getProductService에는 안 넣는다.
 // payment.service.ts(결제 검증용 조회)와 (main)/page.tsx(고정 미리보기)도
 // getProductService를 호출하는데 그 두 호출까지 조회수로 잡히면 안 되기 때문.
-export const incrementProductViewsService = async (
+const incrementProductViewsService = async (
   productId: string,
 ): Promise<boolean> => {
   await dbConnect();
@@ -175,7 +175,7 @@ type AdminProductListQuery = {
  * limit+1)을 쓴다. getPublicProductsPageService와 달리 isFeatured/priority 정렬을 쓰지
  * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
  */
-export const getAdminProductsPageService = async ({
+const getAdminProductsPageService = async ({
   view = "active",
   cursor,
   limit = DEFAULT_PAGE_SIZE,
@@ -278,7 +278,7 @@ type PublicProductListQuery = {
 // active 상품만 노출하고, isFeatured/priority 우선순위 정렬(공개 노출 우선순위 의미)을
 // 유지한 채 cursor 페이징한다. limit+1 조회로 다음 페이지 존재 여부를 판정하는 계약은
 // admin/review와 동일하다.
-export const getPublicProductsPageService = async ({
+const getPublicProductsPageService = async ({
   category,
   subCategory,
   cursor,
@@ -333,7 +333,7 @@ export const getPublicProductsPageService = async ({
 };
 
 // 공개 상품이 하나 이상 있는 유효 pair만 코드 taxonomy 순서로 반환한다.
-export const getAvailableSubCategoriesService = async (
+const getAvailableSubCategoriesService = async (
   category?: ProductCategory,
 ): Promise<AvailableSubCategory[]> => {
   await dbConnect();
@@ -373,7 +373,7 @@ export const getAvailableSubCategoriesService = async (
 
 // 상품 검색 — title 부분일치(대소문자 무시) OR 카테고리/서브카테고리 라벨 부분일치(역조회 후 $in).
 // q가 없거나 공백뿐이면 DB를 치지 않고 즉시 빈 배열을 리턴한다 — 빈 $or는 MongoDB가 reject한다.
-export const searchProductsService = async (
+const searchProductsService = async (
   q?: string,
   userId?: string,
 ): Promise<ProductJSON[]> => {
@@ -410,7 +410,7 @@ export const searchProductsService = async (
 
 // Home 인기 상품 섹션 — 좋아요 수(likes.length) 내림차순 Top N 조회.
 // 배열 길이 정렬은 find().sort()로 불가능해 aggregation을 쓴다(01_db_schema.md §2-1).
-export const getPopularProductsService = async (
+const getPopularProductsService = async (
   limit: number = POPULAR_PRODUCTS_LIMIT,
   userId?: string,
 ): Promise<ProductJSON[]> => {
@@ -446,7 +446,7 @@ export const getPopularProductsService = async (
 };
 
 // 상품 업데이트
-export const updateProductService = async (
+const updateProductService = async (
   productId: string,
   data: Partial<Omit<ProductDto, "thumbnail" | "images">> & {
     thumbnail?: string;
@@ -489,7 +489,7 @@ export const updateProductService = async (
 };
 
 // 상품 삭제
-export const deleteProductService = async (
+const deleteProductService = async (
   productId: string,
 ): Promise<boolean> => {
   await dbConnect();
@@ -515,7 +515,7 @@ export const deleteProductService = async (
 // 상품 복구(휴지통 → 복원) — 항상 status를 "active"로 되돌린다. 삭제 전 상태
 // (inactive/soldOut)는 보존하지 않는다 — 삭제와 복구를 대칭적인 명시 상태 전이로
 // 고정해 "복구했더니 무슨 상태인지" 추측할 필요가 없게 한다(관계 정의 참고).
-export const restoreProductService = async (
+const restoreProductService = async (
   productId: string,
 ): Promise<boolean> => {
   await dbConnect();
@@ -543,7 +543,7 @@ export const restoreProductService = async (
 // 아니라 이 시점에 Cloudinary 이미지 정리를 건다(#135, #136 관계 정의 참고).
 // Cloudinary 정리가 실패하면 DB 문서를 지우지 않는다 — 고아 에셋보다 고아 문서(다시
 // 삭제를 시도할 수 있음)가 낫다.
-export const permanentlyDeleteProductService = async (
+const permanentlyDeleteProductService = async (
   productId: string,
 ): Promise<boolean> => {
   await dbConnect();
@@ -583,7 +583,7 @@ export const permanentlyDeleteProductService = async (
 };
 
 // 상품 좋아요 토글
-export const updateProductLikeService = async (
+const updateProductLikeService = async (
   productId: string,
   userId: string,
 ): Promise<boolean> => {
@@ -620,12 +620,12 @@ export const updateProductLikeService = async (
   return !!updated;
 };
 
-export async function createProductWorkflow(data: ProductUploadInput): Promise<void> {
+async function createProductWorkflow(data: ProductUploadInput): Promise<void> {
   const { userId } = await requireAdmin();
   await createProductService({ ...data, authorId: userId });
 }
 
-export async function updateProductWorkflow(
+async function updateProductWorkflow(
   productId: string,
   data: ProductUploadInput,
 ): Promise<ProductJSON> {
@@ -640,21 +640,21 @@ export async function updateProductWorkflow(
   return updated;
 }
 
-export async function deleteProductAsAdminService(productId: string): Promise<void> {
+async function deleteProductAsAdminService(productId: string): Promise<void> {
   await requireAdmin();
   if (!(await deleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
   }
 }
 
-export async function restoreProductAsAdminService(productId: string): Promise<void> {
+async function restoreProductAsAdminService(productId: string): Promise<void> {
   await requireAdmin();
   if (!(await restoreProductService(productId))) {
     throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
 }
 
-export async function permanentlyDeleteProductAsAdminService(
+async function permanentlyDeleteProductAsAdminService(
   productId: string,
 ): Promise<void> {
   await requireAdmin();
@@ -663,7 +663,7 @@ export async function permanentlyDeleteProductAsAdminService(
   }
 }
 
-export async function updateProductStatusAsAdminService(
+async function updateProductStatusAsAdminService(
   productId: string,
   status: ProductDto["status"],
 ): Promise<ProductJSON> {
@@ -675,7 +675,7 @@ export async function updateProductStatusAsAdminService(
   return updated;
 }
 
-export async function toggleProductLikeForCurrentUserService(
+async function toggleProductLikeForCurrentUserService(
   productId: string,
 ): Promise<void> {
   const { userId } = await requireAuth();
@@ -683,3 +683,27 @@ export async function toggleProductLikeForCurrentUserService(
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없거나 좋아요 업데이트에 실패했습니다.");
   }
 }
+
+export {
+  getProductQuantityBoundsService,
+  createProductService,
+  getProductService,
+  incrementProductViewsService,
+  getAdminProductsPageService,
+  getPublicProductsPageService,
+  getAvailableSubCategoriesService,
+  searchProductsService,
+  getPopularProductsService,
+  updateProductService,
+  deleteProductService,
+  restoreProductService,
+  permanentlyDeleteProductService,
+  updateProductLikeService,
+  createProductWorkflow,
+  updateProductWorkflow,
+  deleteProductAsAdminService,
+  restoreProductAsAdminService,
+  permanentlyDeleteProductAsAdminService,
+  updateProductStatusAsAdminService,
+  toggleProductLikeForCurrentUserService,
+};

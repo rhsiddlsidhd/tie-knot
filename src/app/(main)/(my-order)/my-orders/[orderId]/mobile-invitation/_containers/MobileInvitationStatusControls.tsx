@@ -6,7 +6,7 @@ import { setMobileInvitationStatus } from "@/actions/setMobileInvitationStatus";
 import { routes } from "@/core/domain/routes";
 import { Button } from "@/ui/components/atoms/button";
 
-export function MobileInvitationStatusControls({ orderId, status }: { orderId: string; status?: "draft" | "published" }) {
+function MobileInvitationStatusControls({ orderId, status }: { orderId: string; status?: "draft" | "published" }) {
   const [currentStatus, setCurrentStatus] = useState(status);
   const [isPending, startTransition] = useTransition();
   const nextStatus = currentStatus === "published" ? "draft" : "published";
@@ -32,3 +32,5 @@ export function MobileInvitationStatusControls({ orderId, status }: { orderId: s
     </div>
   );
 }
+
+export { MobileInvitationStatusControls };

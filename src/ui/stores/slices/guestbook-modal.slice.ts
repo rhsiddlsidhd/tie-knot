@@ -1,14 +1,14 @@
 import type { StateCreator } from "zustand";
 import type { AppStore } from "../app.store";
 
-export type GuestbookModalType =
+type GuestbookModalType =
   | "WRITE_GUESTBOOK"
   | "DELETE_GUESTBOOK"
   | "VIEW_CONTACT";
 
 // isOpen/type/closeModal은 admin-modal.slice와 결합 시 충돌해 접두사를 붙였다.
 // payload는 다른 슬라이스와 겹치지 않아 그대로 둔다.
-export interface GuestbookModalSlice {
+interface GuestbookModalSlice {
   guestbookModalIsOpen: boolean;
   guestbookModalType: GuestbookModalType | null;
   payload: unknown;
@@ -30,7 +30,7 @@ const initialGuestbookModalState: Pick<
   payload: null,
 };
 
-export const createGuestbookModalSlice: StateCreator<
+const createGuestbookModalSlice: StateCreator<
   AppStore,
   [],
   [],
@@ -42,3 +42,5 @@ export const createGuestbookModalSlice: StateCreator<
   closeGuestbookModal: () => set({ guestbookModalIsOpen: false }),
   clearIsOpen: () => set({ ...initialGuestbookModalState }),
 });
+
+export { createGuestbookModalSlice, type GuestbookModalType, type GuestbookModalSlice };

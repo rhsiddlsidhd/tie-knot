@@ -9,5 +9,7 @@ function requireEnv(key: string): string {
 
 const JWT_SECRET = requireEnv("JWT_SECRET");
 const ENTRY_JWT_SECRET = requireEnv("ENTRY_JWT_SECRET");
-export const JWT_ENCODED_KEY = new TextEncoder().encode(JWT_SECRET);
-export const ENTRY_ENCODED_KEY = new TextEncoder().encode(ENTRY_JWT_SECRET);
+const JWT_ENCODED_KEY = new TextEncoder().encode(JWT_SECRET);
+const ENTRY_ENCODED_KEY = new TextEncoder().encode(ENTRY_JWT_SECRET);
+
+export { JWT_ENCODED_KEY, ENTRY_ENCODED_KEY };

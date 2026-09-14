@@ -7,9 +7,7 @@ import type { ProductStatus } from "@/core/domain/product";
 import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 
-export { SUB_CATEGORY_MAP };
-
-export type Status = ProductStatus;
+type Status = ProductStatus;
 
 const discountSchema = new Schema(
   {
@@ -33,7 +31,7 @@ const discountSchema = new Schema(
   { _id: false },
 );
 
-export interface ProductDB {
+interface ProductDB {
   authorId: string;
   title: string;
   description: string;
@@ -63,14 +61,14 @@ export interface ProductDB {
   ratingCount: number;
 }
 
-export interface IProduct extends ProductDB {
+interface IProduct extends ProductDB {
   _id: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
 // mobile-invitation 카테고리 전용 필드 — mongoose discriminator로 base(IProduct)에 병합된다.
-export interface IMobileInvitationProduct extends IProduct {
+interface IMobileInvitationProduct extends IProduct {
   previewUrl?: string;
   theme?: MobileInvitationTheme;
 }
@@ -188,7 +186,7 @@ productSchema.index({
 // 커버하는 패턴).
 productSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
 
-export const ProductModel =
+const ProductModel =
   (mongoose.models.Product as Model<IProduct>) ||
   model<IProduct>("Product", productSchema);
 
@@ -200,9 +198,19 @@ const mobileInvitationProductSchema = new Schema<IMobileInvitationProduct>({
 // discriminator 이름("mobile-invitation")이 곧 category 필드에 저장되는 값이다 —
 // 기존 category enum 값과 그대로 일치시킨다. HMR 재컴파일 시 이미 등록된
 // discriminator를 재사용해 "Cannot overwrite discriminator" 에러를 피한다.
-export const MobileInvitationProductModel =
+const MobileInvitationProductModel =
   (ProductModel.discriminators?.["mobile-invitation"] as Model<IMobileInvitationProduct>) ||
   ProductModel.discriminator<IMobileInvitationProduct>(
     "mobile-invitation",
     mobileInvitationProductSchema,
   );
+
+export {
+  SUB_CATEGORY_MAP,
+  ProductModel,
+  MobileInvitationProductModel,
+  type Status,
+  type ProductDB,
+  type IProduct,
+  type IMobileInvitationProduct,
+};

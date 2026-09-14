@@ -1,7 +1,7 @@
 import { openApp } from "@/adapters/browser/deeplink/open-app";
 import type { NullableCoordinates } from "@/core/domain/geo";
 
-export const navigationButtons = [
+const navigationButtons = [
   {
     name: "네이버지도",
     path: "navermap.webp",
@@ -43,3 +43,5 @@ export const navigationButtons = [
       openApp.openKakaoMap({ current, target, address }),
   },
 ] as const;
+
+export { navigationButtons };

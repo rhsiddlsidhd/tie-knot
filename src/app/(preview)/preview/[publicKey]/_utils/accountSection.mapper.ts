@@ -1,13 +1,13 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 // AccountSection 컴포넌트가 받을 props 타입 정의
-export interface AccountInfo {
+interface AccountInfo {
   relation: string;
   name: string;
   bankName: string;
   accountNumber: string;
 }
 
-export interface AccountSectionMappedProps {
+interface AccountSectionMappedProps {
   groomAccounts: AccountInfo[];
   brideAccounts: AccountInfo[];
 }
@@ -37,7 +37,7 @@ function createAccountInfo(
  * @param coupleInfoData - 청첩장 콘텐츠
  * @returns AccountSection 컴포넌트가 필요로 하는 `groomAccounts` 및 `brideAccounts` 배열을 포함한 객체
  */
-export function mapCoupleInfoToAccountProps(
+function mapCoupleInfoToAccountProps(
   coupleInfoData: MobileInvitationContent,
 ): AccountSectionMappedProps {
   // 1. 신랑측 계좌 정보 배열 생성
@@ -56,3 +56,5 @@ export function mapCoupleInfoToAccountProps(
 
   return { groomAccounts, brideAccounts };
 }
+
+export { mapCoupleInfoToAccountProps, type AccountInfo, type AccountSectionMappedProps };

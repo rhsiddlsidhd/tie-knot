@@ -12,7 +12,7 @@ import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 
 // 데모 방명록은 실제 API를 호출하지 않는다 — 목데이터를 로컬에서 페이지 크기만큼
 // 순차로 드러내는 방식으로 LiveGuestbookSection의 커서 무한스크롤 UX를 흉내낸다.
-export function DemoGuestbookSection() {
+function DemoGuestbookSection() {
   const [{ entries }] = useGuestbookDemo();
   const setIsOpen = useGuestbookModalStore((state) => state.setIsOpen);
   const [revealedCount, setRevealedCount] = useState(DEFAULT_PAGE_SIZE);
@@ -81,3 +81,5 @@ export function DemoGuestbookSection() {
     </EyebrowSection>
   );
 }
+
+export { DemoGuestbookSection };

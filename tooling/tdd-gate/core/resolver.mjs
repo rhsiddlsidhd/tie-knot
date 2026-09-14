@@ -24,10 +24,10 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
  * 접두사가 남아 `src/` 판정이 깨진다 — resolveRootFromCwd 로 훅 payload 의 실제
  * cwd 기준 git toplevel 로 덮어써야 한다.
  */
-export let ROOT = path.resolve(HERE, "..", "..", "..");
+let ROOT = path.resolve(HERE, "..", "..", "..");
 
 /** payload.cwd 기준 실제 worktree toplevel 로 ROOT 를 다시 잡는다. 실패하면 그대로 둔다(fail-open). */
-export function resolveRootFromCwd(cwd) {
+function resolveRootFromCwd(cwd) {
   if (typeof cwd !== "string" || !cwd) return;
   const result = spawnSync("git", ["-C", cwd, "rev-parse", "--show-toplevel"], {
     encoding: "utf8",
@@ -46,7 +46,7 @@ function tsconfigPath() {
 function policyFilePath() {
   return path.join(ROOT, "tooling", "tdd-gate", "policy.json");
 }
-export function cacheDir() {
+function cacheDir() {
   return path.join(ROOT, "node_modules", ".cache", "tdd-gate");
 }
 function configCachePath() {
@@ -59,18 +59,18 @@ const GATE_TIERS = ["unit", "component"];
 const TEST_FILE_RE = /\.(unit|component|integration)\.test\.tsx?$/;
 
 /** 이번 턴에 편집된 강제 대상 경로 기록. PostToolUse 가 쓰고 Stop 이 소비한다. */
-export function turnFile(sessionId) {
+function turnFile(sessionId) {
   const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
   return path.join(cacheDir(), `turn-${safe}.txt`);
 }
 
 /** 턴 시작 시점의 src/ dirty 상태 스냅샷. UserPromptSubmit 이 쓰고 Stop 이 소비한다. */
-export function snapshotFile(sessionId) {
+function snapshotFile(sessionId) {
   const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
   return path.join(cacheDir(), `snapshot-${safe}.json`);
 }
 
-export function ensureCacheDir() {
+function ensureCacheDir() {
   fs.mkdirSync(cacheDir(), { recursive: true });
 }
 
@@ -80,13 +80,13 @@ function git(args) {
   return result.stdout;
 }
 
-export function gitHead() {
+function gitHead() {
   const out = git(["rev-parse", "HEAD"]);
   return out ? out.trim() : null;
 }
 
 /** src/ 아래 dirty(수정+untracked) 파일의 relPath → git hash-object 해시. 삭제된 항목은 null. */
-export function gitDirtySrcHashes() {
+function gitDirtySrcHashes() {
   const status = git(["status", "--porcelain", "-uall", "--", "src"]);
   if (status === null) return {};
 
@@ -108,20 +108,20 @@ export function gitDirtySrcHashes() {
 }
 
 /** snapshotHead 이후 커밋된 src/ 변경 경로. */
-export function gitChangedSrcSince(snapshotHead) {
+function gitChangedSrcSince(snapshotHead) {
   if (!snapshotHead) return [];
   const out = git(["diff", "--name-only", `${snapshotHead}..HEAD`, "--", "src"]);
   if (!out) return [];
   return out.split("\n").filter(Boolean).map(toPosix);
 }
 
-export function writeTurnSnapshot(sessionId) {
+function writeTurnSnapshot(sessionId) {
   ensureCacheDir();
   const snapshot = { head: gitHead(), hashes: gitDirtySrcHashes() };
   fs.writeFileSync(snapshotFile(sessionId), JSON.stringify(snapshot));
 }
 
-export function readTurnSnapshot(sessionId) {
+function readTurnSnapshot(sessionId) {
   try {
     return JSON.parse(fs.readFileSync(snapshotFile(sessionId), "utf8"));
   } catch {
@@ -133,7 +133,7 @@ export function readTurnSnapshot(sessionId) {
  * 스냅샷 대비 이번 턴에 실제로 바뀐 src/ 경로.
  * 스냅샷이 없으면(첫 턴 등) null 을 반환해 호출부가 "미커밋 전체"로 fallback 하게 한다.
  */
-export function computeTurnChanges(sessionId) {
+function computeTurnChanges(sessionId) {
   const snapshot = readTurnSnapshot(sessionId);
   if (!snapshot) return null;
 
@@ -151,12 +151,12 @@ export function computeTurnChanges(sessionId) {
   return [...changed];
 }
 
-export function toPosix(p) {
+function toPosix(p) {
   return p.split(path.sep).join("/");
 }
 
 /** 절대경로·상대경로·`@/`·`@test/` 를 전부 repo 루트 기준 posix 상대경로로 정규화한다. */
-export function toRelative(filePath) {
+function toRelative(filePath) {
   if (!filePath) return null;
   const aliased = expandAlias(filePath);
   const abs = path.isAbsolute(aliased) ? aliased : path.resolve(ROOT, aliased);
@@ -202,12 +202,12 @@ function stripJsonComments(raw) {
     .replace(/(^|[^:])\/\/.*$/gm, "$1");
 }
 
-export function isTestFile(relPath) {
+function isTestFile(relPath) {
   return TEST_FILE_RE.test(relPath);
 }
 
 /** tooling/tdd-gate/policy.json — 강제 대상에서 뺄 소스 glob. 없으면 빈 목록(fail-open). */
-export function loadExcludes() {
+function loadExcludes() {
   try {
     const parsed = JSON.parse(fs.readFileSync(policyFilePath(), "utf8"));
     return Array.isArray(parsed?.exclude) ? parsed.exclude : [];
@@ -220,7 +220,7 @@ export function loadExcludes() {
  * vitest.config.ts 의 unit·component project 에서 include/exclude 만 뽑는다.
  * 로드가 196ms 라 mtime 으로 캐시한다.
  */
-export async function loadProjects() {
+async function loadProjects() {
   const vitestConfig = vitestConfigPath();
   const configCache = configCachePath();
   const mtimeMs = fs.statSync(vitestConfig).mtimeMs;
@@ -269,7 +269,7 @@ function matchesAny(globs, relPath) {
  * 소스 경로 하나에 대해 config 가 허용하는 형제 test 후보를 뽑는다.
  * 후보를 만들어 picomatch 에 물을 뿐, tier 규칙을 발명하지 않는다.
  */
-export async function resolveCandidates(relPath) {
+async function resolveCandidates(relPath) {
   const projects = await loadProjects();
   const base = relPath.replace(/\.[^./]+$/, "");
   const suffixes = ["unit.test.ts", "component.test.ts", "component.test.tsx"];
@@ -291,14 +291,14 @@ export async function resolveCandidates(relPath) {
  * 승계한 확장자가 config 에서 허용되지 않으면 허용되는 유일값으로 떨어진다
  * (예: adapters/browser 는 .ts 고정).
  */
-export function recommend(relPath, candidates) {
+function recommend(relPath, candidates) {
   if (candidates.length === 0) return null;
   const ext = path.extname(relPath).replace(".", "");
   return candidates.find((c) => c.suffix.endsWith(`.${ext}`)) ?? candidates[0];
 }
 
 /** `<base>.<suffix>` 와 `<base>.<관점>.<suffix>` 를 둘 다 형제로 인정한다. */
-export function findSiblings(relPath, candidates) {
+function findSiblings(relPath, candidates) {
   const base = relPath.replace(/\.[^./]+$/, "");
   const dir = path.posix.dirname(base);
   const stem = path.posix.basename(base);
@@ -330,7 +330,7 @@ export function findSiblings(relPath, candidates) {
  * 강제 대상 판정. 아래 4조건을 전부 만족해야 게이트가 개입한다.
  *   src/ 안 · test 파일 아님 · policy exclude 아님 · config 가 형제 test 를 허용함
  */
-export async function inspect(filePath) {
+async function inspect(filePath) {
   const relPath = toRelative(filePath);
   if (!relPath)
     return { relPath: null, enforced: false, reason: "outside-repo" };
@@ -359,3 +359,27 @@ export async function inspect(filePath) {
     exists: fs.existsSync(path.join(ROOT, relPath)),
   };
 }
+
+export {
+  ROOT,
+  resolveRootFromCwd,
+  cacheDir,
+  turnFile,
+  snapshotFile,
+  ensureCacheDir,
+  gitHead,
+  gitDirtySrcHashes,
+  gitChangedSrcSince,
+  writeTurnSnapshot,
+  readTurnSnapshot,
+  computeTurnChanges,
+  toPosix,
+  toRelative,
+  isTestFile,
+  loadExcludes,
+  loadProjects,
+  resolveCandidates,
+  recommend,
+  findSiblings,
+  inspect,
+};

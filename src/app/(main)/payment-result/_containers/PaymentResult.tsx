@@ -11,7 +11,7 @@ interface PaymentResultProps {
   paymentId?: string;
 }
 
-export function PaymentResult({ paymentId }: PaymentResultProps) {
+function PaymentResult({ paymentId }: PaymentResultProps) {
   const router = useRouter();
   const clearOrder = useOrderStore((state) => state.clearOrder);
   const setPaymentStatus = useOrderStore((state) => state.setPaymentStatus);
@@ -53,3 +53,5 @@ export function PaymentResult({ paymentId }: PaymentResultProps) {
 
   return <PaymentResultTemplate errorMessage={errorMessage} />;
 }
+
+export { PaymentResult };

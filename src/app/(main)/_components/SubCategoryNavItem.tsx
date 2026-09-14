@@ -8,7 +8,7 @@ interface SubCategoryNavItemProps {
   subCategory: SubCategory;
 }
 
-export function SubCategoryNavItem({
+function SubCategoryNavItem({
   category,
   subCategory,
 }: SubCategoryNavItemProps) {
@@ -23,3 +23,5 @@ export function SubCategoryNavItem({
     </Link>
   );
 }
+
+export { SubCategoryNavItem };

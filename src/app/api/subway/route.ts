@@ -3,7 +3,7 @@ import { routeSuccess, routeError } from "@/boundary";
 import { getAllSubwayStationNames } from "@/services/subway";
 import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";
 
-export const GET = async (): Promise<
+const GET = async (): Promise<
   APIRouteResponse<SubwayStationsResponse>
 > => {
   try {
@@ -21,3 +21,5 @@ export const GET = async (): Promise<
     return routeError(error);
   }
 };
+
+export { GET };

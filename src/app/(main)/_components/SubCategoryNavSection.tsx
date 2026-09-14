@@ -10,7 +10,7 @@ interface SubCategoryNavSectionProps {
   availableSubCategories: readonly AvailableSubCategory[];
 }
 
-export function SubCategoryNavSection({
+function SubCategoryNavSection({
   availableSubCategories,
 }: SubCategoryNavSectionProps) {
   if (availableSubCategories.length === 0) return null;
@@ -48,3 +48,5 @@ export function SubCategoryNavSection({
     </section>
   );
 }
+
+export { SubCategoryNavSection };

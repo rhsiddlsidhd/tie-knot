@@ -10,7 +10,7 @@ type UploadSignatureRequestBody = {
   paramsToSign?: Record<string, unknown>;
 };
 
-export const POST = async (
+const POST = async (
   request: NextRequest,
 ): Promise<APIRouteResponse<UploadSignature>> => {
   try {
@@ -46,3 +46,5 @@ export const POST = async (
     return routeError(error);
   }
 };
+
+export { POST };

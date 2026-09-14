@@ -3,7 +3,7 @@ import { routeSuccess, routeError } from "@/boundary";
 import { getAllPremiumFeatureService } from "@/services/premiumFeature";
 import type { PremiumFeaturesResponse } from "@/core/schemas/response/premiumFeature.schema";
 
-export const GET = async (): Promise<
+const GET = async (): Promise<
   APIRouteResponse<PremiumFeaturesResponse>
 > => {
   try {
@@ -14,3 +14,5 @@ export const GET = async (): Promise<
     return routeError(error);
   }
 };
+
+export { GET };

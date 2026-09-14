@@ -17,7 +17,7 @@ interface PremiumFeatureRegistrationFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-export function PremiumFeatureRegistrationForm({
+function PremiumFeatureRegistrationForm({
   action,
   pending,
   state,
@@ -104,3 +104,5 @@ export function PremiumFeatureRegistrationForm({
     </form>
   );
 }
+
+export { PremiumFeatureRegistrationForm };

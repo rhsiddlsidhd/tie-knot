@@ -26,7 +26,7 @@ interface MobileInvitationTemplateProps {
   theme: string;
 }
 
-export function MobileInvitationTemplate({
+function MobileInvitationTemplate({
   content,
   publicKey,
   features,
@@ -78,3 +78,5 @@ export function MobileInvitationTemplate({
     </div>
   );
 }
+
+export { MobileInvitationTemplate };

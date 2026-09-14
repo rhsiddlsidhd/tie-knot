@@ -4,7 +4,7 @@ import { incrementProductViewsService } from "@/services/product";
 import { actionError } from "@/boundary";
 import type { APIResponse } from "@/core/domain/error";
 
-export const incrementProductViews = async (
+const incrementProductViews = async (
   productId: string,
 ): Promise<APIResponse<{ success: boolean }>> => {
   try {
@@ -14,3 +14,5 @@ export const incrementProductViews = async (
     return actionError(e);
   }
 };
+
+export { incrementProductViews };

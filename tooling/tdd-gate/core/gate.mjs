@@ -11,7 +11,7 @@ import {
 import { runSiblings } from "./run-tests.mjs";
 
 /** @param {{path: string, op: "add"|"update"|"delete"}[]} paths */
-export async function checkBeforeEdit(paths, timeoutMs = 180_000) {
+async function checkBeforeEdit(paths, timeoutMs = 180_000) {
   for (const { path: filePath, op } of paths) {
     if (op === "delete") continue;
 
@@ -74,7 +74,7 @@ export async function checkBeforeEdit(paths, timeoutMs = 180_000) {
 }
 
 /** @param {{path: string, op: "add"|"update"|"delete"}[]} paths */
-export async function recordEdits(paths, sessionId) {
+async function recordEdits(paths, sessionId) {
   const edited = [];
   for (const { path: filePath } of paths) {
     const target = await inspect(filePath);
@@ -86,11 +86,11 @@ export async function recordEdits(paths, sessionId) {
   fs.appendFileSync(turnFile(sessionId), `${edited.join("\n")}\n`);
 }
 
-export function recordTurnStart(sessionId) {
+function recordTurnStart(sessionId) {
   writeTurnSnapshot(sessionId);
 }
 
-export async function checkBeforeStop({ sessionId, stopHookActive }, timeoutMs = 300_000) {
+async function checkBeforeStop({ sessionId, stopHookActive }, timeoutMs = 300_000) {
   const file = turnFile(sessionId);
 
   let recorded;
@@ -172,3 +172,5 @@ function dedupe(siblings) {
   for (const sibling of siblings) seen.set(sibling.path, sibling);
   return [...seen.values()];
 }
+
+export { checkBeforeEdit, recordEdits, recordTurnStart, checkBeforeStop };

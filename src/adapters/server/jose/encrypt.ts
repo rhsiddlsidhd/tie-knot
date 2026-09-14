@@ -3,7 +3,7 @@ import { SignJWT } from "jose";
 import type { EncryptProps } from "./type";
 import { ENTRY_ENCODED_KEY, JWT_ENCODED_KEY } from "./config";
 
-export async function encrypt(payload: EncryptProps) {
+async function encrypt(payload: EncryptProps) {
   return await new SignJWT({
     id:
       payload.type !== "ENTRY"
@@ -18,3 +18,5 @@ export async function encrypt(payload: EncryptProps) {
     .setExpirationTime(payload.type !== "REFRESH" ? "30m" : "7d")
     .sign(payload.type !== "ENTRY" ? JWT_ENCODED_KEY : ENTRY_ENCODED_KEY);
 }
+
+export { encrypt };

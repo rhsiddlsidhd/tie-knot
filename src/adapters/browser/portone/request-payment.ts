@@ -4,7 +4,7 @@ import PortOne from "@portone/browser-sdk/v2";
 
 type RequestPayment = typeof PortOne.requestPayment;
 
-export const requestPayment: RequestPayment = async (request) => {
+const requestPayment: RequestPayment = async (request) => {
   if (
     process.env.NODE_ENV !== "production" &&
     process.env.NEXT_PUBLIC_PORTONE_MANUAL_SMOKE === "enabled"
@@ -33,3 +33,5 @@ export const requestPayment: RequestPayment = async (request) => {
 
   return PortOne.requestPayment(request);
 };
+
+export { requestPayment };

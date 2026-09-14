@@ -6,7 +6,7 @@
 const LINE_PATTERN =
   /^\*\*\* (Add File|Update File|Delete File|Move to): (.+)$/gm;
 
-export function extractCodexPaths(payload) {
+function extractCodexPaths(payload) {
   if (payload?.tool_name !== "apply_patch") return [];
   const command = payload.tool_input?.command;
   if (typeof command !== "string") return [];
@@ -44,3 +44,5 @@ export function extractCodexPaths(payload) {
 
   return results;
 }
+
+export { extractCodexPaths };

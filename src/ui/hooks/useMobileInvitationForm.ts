@@ -14,7 +14,7 @@ import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
 import { routes } from "@/core/domain/routes";
 
-export function useMobileInvitationForm() {
+function useMobileInvitationForm() {
   const router = useRouter();
   const { orderId } = useParams<{ orderId: string }>();
 
@@ -72,3 +72,5 @@ export function useMobileInvitationForm() {
     orderId,
   };
 }
+
+export { useMobileInvitationForm };

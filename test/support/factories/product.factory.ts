@@ -9,7 +9,7 @@ type CreateProductServiceInput = Omit<ProductDto, "thumbnail" | "images"> & {
   previewUrl?: string;
 };
 
-export const buildProductInput = (
+const buildProductInput = (
   overrides?: Partial<CreateProductServiceInput>,
 ): CreateProductServiceInput => ({
   authorId: new mongoose.Types.ObjectId().toString(),
@@ -27,3 +27,5 @@ export const buildProductInput = (
   maxQuantity: 0,
   ...overrides,
 });
+
+export { buildProductInput };

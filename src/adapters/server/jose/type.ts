@@ -17,8 +17,10 @@ interface EntryEncrypt {
   id?: string;
 }
 
-export type EncryptProps = RefreshEncrypt | EntryEncrypt;
+type EncryptProps = RefreshEncrypt | EntryEncrypt;
 
-export interface DecryptProps extends JWTBaseProps {
+interface DecryptProps extends JWTBaseProps {
   token: string;
 }
+
+export { type EncryptProps, type DecryptProps };

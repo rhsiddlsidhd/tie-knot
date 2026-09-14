@@ -5,12 +5,12 @@ import type { NullableCoordinates } from "@/core/domain/geo";
 import { getCurrentCoordinates } from "@/adapters/browser/geolocation/current-position";
 import { useKakaomapGeocode } from "./useKakaomapGeocode";
 
-export interface NavigationGeo {
+interface NavigationGeo {
   current: NullableCoordinates;
   target: NullableCoordinates;
 }
 
-export function useNavigationGeo(address: string): NavigationGeo {
+function useNavigationGeo(address: string): NavigationGeo {
   const [current, setCurrent] = useState<NullableCoordinates>({
     lng: null,
     lat: null,
@@ -31,3 +31,5 @@ export function useNavigationGeo(address: string): NavigationGeo {
 
   return { current, target };
 }
+
+export { useNavigationGeo, type NavigationGeo };

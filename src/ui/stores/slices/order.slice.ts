@@ -4,7 +4,7 @@ import type { PayStatus } from "@/core/domain/payment";
 import type { CreateOrderResult } from "@/actions/createOrder";
 import type { AppStore } from "../app.store";
 
-export interface OrderSlice {
+interface OrderSlice {
   order: CheckoutItem | null;
   setOrder: (orderData: CheckoutItem) => void;
   clearOrder: () => void;
@@ -20,7 +20,7 @@ export interface OrderSlice {
   clearResumePayment: () => void;
 }
 
-export const createOrderSlice: StateCreator<AppStore, [], [], OrderSlice> = (
+const createOrderSlice: StateCreator<AppStore, [], [], OrderSlice> = (
   set,
 ) => ({
   order: null,
@@ -38,3 +38,5 @@ export const createOrderSlice: StateCreator<AppStore, [], [], OrderSlice> = (
   setResumePayment: (data) => set({ resumePayment: data }),
   clearResumePayment: () => set({ resumePayment: null }),
 });
+
+export { createOrderSlice, type OrderSlice };

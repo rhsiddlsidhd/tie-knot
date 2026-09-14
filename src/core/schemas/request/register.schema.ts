@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { PWSchema } from "./pw.schema";
 
-export const RegisterSchema = z
+const RegisterSchema = z
   .object({
     name: z.string(),
     email: z.email("이메일 형식이 올바르지 않습니다."),
@@ -15,3 +15,5 @@ export const RegisterSchema = z
     message: "비밀번호가 일치하지 않습니다.",
     path: ["confirmPassword"],
   });
+
+export { RegisterSchema };

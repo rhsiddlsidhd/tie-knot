@@ -21,7 +21,7 @@ interface PremiumFeatureDialogProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-export function PremiumFeatureDialog({
+function PremiumFeatureDialog({
   premiumFeature: feature,
   action,
   pending,
@@ -121,3 +121,5 @@ export function PremiumFeatureDialog({
     </form>
   );
 }
+
+export { PremiumFeatureDialog };

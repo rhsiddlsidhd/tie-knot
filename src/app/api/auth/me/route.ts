@@ -3,7 +3,7 @@ import { routeSuccess, routeError } from "@/boundary";
 import { getAuth } from "@/services/auth";
 import type { AuthSessionResponse } from "@/core/schemas/response/auth.schema";
 
-export const GET = async (): Promise<
+const GET = async (): Promise<
   APIRouteResponse<AuthSessionResponse>
 > => {
   try {
@@ -13,3 +13,5 @@ export const GET = async (): Promise<
     return routeError(e);
   }
 };
+
+export { GET };

@@ -9,7 +9,7 @@ interface BuyerInfoCardProps {
   errors: Partial<Record<keyof BuyerInfo, string[]>>;
 }
 
-export function BuyerInfoCard({ step, errors }: BuyerInfoCardProps) {
+function BuyerInfoCard({ step, errors }: BuyerInfoCardProps) {
   return (
     <Card className="border-border">
       <CardHeader>
@@ -57,3 +57,5 @@ export function BuyerInfoCard({ step, errors }: BuyerInfoCardProps) {
     </Card>
   );
 }
+
+export { BuyerInfoCard };

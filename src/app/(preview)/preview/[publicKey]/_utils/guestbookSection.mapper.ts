@@ -1,16 +1,16 @@
 import type { GuestbookListResponse } from "@/core/schemas/response/guestbook.schema";
-export interface GuestbookEntryProps {
+interface GuestbookEntryProps {
   id: string;
   author: string;
   message: string;
 }
 
-export interface GuestbookSectionProps {
+interface GuestbookSectionProps {
   id: string;
   data: GuestbookEntryProps[];
 }
 
-export const mapDataToGuestbookProps = (
+const mapDataToGuestbookProps = (
   id: string,
   pages: GuestbookListResponse[],
 ): GuestbookSectionProps => {
@@ -25,3 +25,5 @@ export const mapDataToGuestbookProps = (
       })),
   };
 };
+
+export { mapDataToGuestbookProps, type GuestbookEntryProps, type GuestbookSectionProps };

@@ -18,7 +18,7 @@ const IVY_LEAF_PATH =
 // 달린 잎은 곡선의 접선 방향으로 회전해 덩굴이 빛(커서)을 향해 뻗어가는
 // 것처럼 보이게 한다. x/y는 InteractionOverlay가 주는 실제 clientX/clientY라
 // fixed inset-0 컨테이너 안에서 카드 안팎 어디서든 커서를 정확히 따라간다.
-export function BotanicalInteraction({ x, y }: ThemeInteractionProps) {
+function BotanicalInteraction({ x, y }: ThemeInteractionProps) {
   const tipX = useSpring(x, { stiffness: 220, damping: 20 });
   const tipY = useSpring(y, { stiffness: 220, damping: 20 });
   const anchorX = useSpring(x, { stiffness: 34, damping: 26 });
@@ -58,3 +58,5 @@ export function BotanicalInteraction({ x, y }: ThemeInteractionProps) {
     </svg>
   );
 }
+
+export { BotanicalInteraction };

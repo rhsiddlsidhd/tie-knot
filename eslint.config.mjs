@@ -6,6 +6,10 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   rules: {
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/consistent-type-imports": ["error", { prefer: "type-imports", fixStyle: "separate-type-imports" }],
+    "no-restricted-syntax": ["error", {
+      selector: "ExportNamedDeclaration[declaration!=null]",
+      message: "선언과 export를 분리하라 — 파일 끝에 export { X } 형태로 모아라. docs/decisions/0009-project-wide-list-style-named-exports.md",
+    }],
   },
 }, {
   files: ["src/**/*.{ts,tsx}"],
@@ -118,10 +122,6 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
       "src/ui/components/organisms/*/": "PASCAL_CASE",
       "src/ui/components/templates/*/": "PASCAL_CASE",
     }],
-    "no-restricted-syntax": ["error", {
-      selector: "ExportNamedDeclaration[declaration!=null]",
-      message: "선언과 export를 분리하라 — 파일 끝에 export { X } 형태로 모아라(shadcn/ui 컨벤션). docs/decisions/0008-list-style-named-exports.md",
-    }],
   },
 }, {
   // Next.js 파일 컨벤션이 요구하는 export default만 허용한다 — src/app/AGENTS.md, docs/decisions/0006-named-exports-over-default.md
@@ -147,6 +147,32 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
   ],
   rules: {
     "import/no-default-export": "off",
+  },
+}, {
+  // Next.js는 route segment config를 직접 export한 const 선언에서 정적으로 추출한다.
+  files: [
+    "src/app/**/page.tsx",
+    "src/app/**/layout.tsx",
+    "src/app/**/route.ts",
+    "src/app/**/icon*.tsx",
+    "src/app/**/apple-icon*.tsx",
+    "src/app/**/opengraph-image.tsx",
+    "src/app/**/twitter-image.tsx",
+  ],
+  rules: {
+    "no-restricted-syntax": ["error", {
+      selector: "ExportNamedDeclaration[declaration!=null]:not(:has(VariableDeclarator[id.name=/^(dynamic|dynamicParams|fetchCache|maxDuration|preferredRegion|revalidate|runtime|unstable_instant)$/]))",
+      message: "선언과 export를 분리하라 — Next.js가 정적으로 분석하는 route segment config만 inline export가 허용된다. docs/decisions/0009-project-wide-list-style-named-exports.md",
+    }],
+  },
+}, {
+  // Proxy matcher config도 직접 export한 const 선언이어야 build-time 정적 분석이 가능하다.
+  files: ["src/proxy.ts"],
+  rules: {
+    "no-restricted-syntax": ["error", {
+      selector: "ExportNamedDeclaration[declaration!=null]:not(:has(VariableDeclarator[id.name='config']))",
+      message: "선언과 export를 분리하라 — Next.js가 정적으로 분석하는 proxy config만 inline export가 허용된다. docs/decisions/0009-project-wide-list-style-named-exports.md",
+    }],
   },
 }, {
   ignores: ["node_modules/**", ".next/**", "out/**", "build/**", "next-env.d.ts", "scripts/**", ".claude/hooks/**", ".claude/worktrees/**", "coverage/**", "docs/design/**"]
