@@ -8,7 +8,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { Button } from "@/ui/components/atoms/button";
-export function SidebarNavItem({
+function SidebarNavItem({
   type,
 }: {
   type: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
@@ -94,3 +94,5 @@ export function SidebarNavItem({
     </nav>
   );
 }
+
+export { SidebarNavItem };

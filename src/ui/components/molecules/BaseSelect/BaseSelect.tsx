@@ -3,7 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import React from "react";
 import { cn } from "@/core/utils/cn";
 
-export interface SelectOption {
+interface SelectOption {
   value: string;
   label: string;
 }
@@ -63,3 +63,4 @@ const BaseSelect = ({
 };
 
 export { BaseSelect };
+export type { SelectOption };

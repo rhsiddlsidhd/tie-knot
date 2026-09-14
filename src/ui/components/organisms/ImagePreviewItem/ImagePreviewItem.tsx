@@ -13,7 +13,7 @@ interface ImagePreviewItemProps {
 /**
  * 삭제 버튼이 있는 이미지 미리보기 아이템 (Organism)
  */
-export const ImagePreviewItem = ({
+const ImagePreviewItem = ({
   id,
   preview,
   onRemove,
@@ -33,3 +33,5 @@ export const ImagePreviewItem = ({
     </div>
   );
 };
+
+export { ImagePreviewItem };

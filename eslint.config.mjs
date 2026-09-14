@@ -118,6 +118,10 @@ const eslintConfig = [...nextCoreWebVitals, ...nextTypescript, {
       "src/ui/components/organisms/*/": "PASCAL_CASE",
       "src/ui/components/templates/*/": "PASCAL_CASE",
     }],
+    "no-restricted-syntax": ["error", {
+      selector: "ExportNamedDeclaration[declaration!=null]",
+      message: "선언과 export를 분리하라 — 파일 끝에 export { X } 형태로 모아라(shadcn/ui 컨벤션). docs/decisions/0008-list-style-named-exports.md",
+    }],
   },
 }, {
   // Next.js 파일 컨벤션이 요구하는 export default만 허용한다 — src/app/AGENTS.md, docs/decisions/0006-named-exports-over-default.md

@@ -10,7 +10,7 @@ import { TypographyMuted, TypographyP } from "../../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";
 import type { Dispatch } from "react";
 
-export function ProductGrid({
+function ProductGrid({
   data,
   state,
   dispatch,
@@ -74,3 +74,5 @@ export function ProductGrid({
     </div>
   );
 }
+
+export { ProductGrid };

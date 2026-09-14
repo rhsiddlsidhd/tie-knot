@@ -8,7 +8,7 @@ import type { LucideIcon } from "lucide-react";
 import type { FieldBase } from "@/core/domain/field";
 import { TypographyMuted, TypographySmall } from "../../atoms/typography";
 
-export type RadioFieldOption<T = string> = {
+type RadioFieldOption<T = string> = {
   id: string;
   value: T;
   title: string;
@@ -58,3 +58,4 @@ const RadioField = <T extends string = string>({
 };
 
 export { RadioField };
+export type { RadioFieldOption };

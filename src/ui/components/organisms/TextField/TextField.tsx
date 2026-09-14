@@ -6,7 +6,7 @@ import type { FieldBase } from "@/core/domain/field";
 import type { HTMLInputTypeAttribute} from "react";
 import { useState } from "react";
 
-export interface TextFieldProps extends FieldBase {
+interface TextFieldProps extends FieldBase {
   type?: HTMLInputTypeAttribute;
   placeholder?: string;
   error?: string;
@@ -59,3 +59,4 @@ const TextField = ({
 };
 
 export { TextField };
+export type { TextFieldProps };
