@@ -2,8 +2,8 @@ import { Sparkles } from "lucide-react";
 import Link from "next/link";
 import type { Product } from "@/core/domain/product";
 import type { SubCategory } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
-import { subCategoryLabels } from "@/core/domain/product-category";
+import { ROUTES } from "@/core/domain/routes";
+import { SUB_CATEGORY_LABELS } from "@/core/domain/product-category";
 import { calculatePrice } from "@/core/utils/price";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
@@ -37,7 +37,7 @@ const ProductCard = ({
     : null;
 
   return (
-    <Link href={routes.products.detail(product.category, product._id)}>
+    <Link href={ROUTES.products.detail(product.category, product._id)}>
       <article className="cursor-pointer">
         {/* aspect-ratio는 황금비(1:1.618) 세로 카드 */}
         <Card className="group bg-muted relative aspect-[1/1.618] overflow-hidden rounded-2xl border-0 p-0 shadow-none">
@@ -97,7 +97,7 @@ const ProductCard = ({
           {/* Bottom info — always visible. 카드가 작아지는 브레이크포인트에 맞춰 텍스트/여백도 같이 줄어든다 */}
           <CardFooter className="absolute inset-x-0 bottom-0 flex-col items-stretch px-2.5 py-2.5 transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] sm:px-4 sm:py-4">
             <p className="mb-0.5 text-[8px] font-semibold tracking-[0.2em] text-white/50 uppercase sm:mb-1 sm:text-[9px] sm:tracking-[0.25em]">
-              {subCategoryLabels[product.subCategory as SubCategory] ??
+              {SUB_CATEGORY_LABELS[product.subCategory as SubCategory] ??
                 product.subCategory}
             </p>
             <h3 className="line-clamp-2 text-xs leading-snug font-semibold text-white sm:text-sm">
@@ -125,6 +125,6 @@ const ProductCard = ({
       </article>
     </Link>
   );
-}
+};
 
 export { ProductCard };

@@ -7,15 +7,15 @@ import { toast } from "sonner";
 import { updateUserPassword } from "@/actions/updateUserPassword";
 import { clearUserEmailCookie } from "@/actions/clearUserEmailCookie";
 import { hasFieldErrors } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { UpdatePasswordForm as PureUpdatePasswordForm } from "../_components/UpdatePasswordForm";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 const UpdatePasswordForm = () => {
   const router = useRouter();
   const token = useSearchParams().get("t") ?? "";
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
+    ApiResponse<{ message: string }>,
     FormData
   >(updateUserPassword, null);
 
@@ -23,11 +23,11 @@ const UpdatePasswordForm = () => {
     if (!state) return;
     if (state.success === true) {
       toast.message(state.data.message);
-      return router.push(routes.login);
+      return router.push(ROUTES.login);
     } else {
       if (!hasFieldErrors(state.error)) {
         toast.error(state.error.message);
-        router.push(routes.login);
+        router.push(ROUTES.login);
       }
     }
   }, [state, router]);
@@ -48,6 +48,6 @@ const UpdatePasswordForm = () => {
       token={token}
     />
   );
-}
+};
 
 export { UpdatePasswordForm };

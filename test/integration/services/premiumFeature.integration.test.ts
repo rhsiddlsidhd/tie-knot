@@ -33,10 +33,16 @@ describe("premiumFeature", () => {
   });
 
   describe("getAllPremiumFeatureService", () => {
-    it("IFeature 기반으로 매핑된 PremiumFeature 목록을 리턴한다", async () => {
-      await createPremiumFeatureService(buildFeatureInput({ code: "GUESTBOOK" }));
+    it("FeatureDocument 기반으로 매핑된 PremiumFeature 목록을 리턴한다", async () => {
       await createPremiumFeatureService(
-        buildFeatureInput({ code: "MAP", label: "지도", description: "오시는 길 지도를 추가합니다." }),
+        buildFeatureInput({ code: "GUESTBOOK" }),
+      );
+      await createPremiumFeatureService(
+        buildFeatureInput({
+          code: "MAP",
+          label: "지도",
+          description: "오시는 길 지도를 추가합니다.",
+        }),
       );
 
       const result = await getAllPremiumFeatureService();
@@ -70,7 +76,11 @@ describe("premiumFeature", () => {
     it("id 목록에 해당하는 기능만 리턴한다", async () => {
       const created = await createPremiumFeatureService(buildFeatureInput());
       await createPremiumFeatureService(
-        buildFeatureInput({ code: "OTHER", label: "다른기능", description: "다른 기능 설명입니다." }),
+        buildFeatureInput({
+          code: "OTHER",
+          label: "다른기능",
+          description: "다른 기능 설명입니다.",
+        }),
       );
 
       const result = await getPremiumFeatureService([String(created._id)]);
@@ -95,7 +105,10 @@ describe("premiumFeature", () => {
     it("존재하지 않는 id면 null을 리턴한다", async () => {
       const missingId = new mongoose.Types.ObjectId().toString();
 
-      const result = await updatePremiumFeatureService(missingId, buildFeatureInput());
+      const result = await updatePremiumFeatureService(
+        missingId,
+        buildFeatureInput(),
+      );
 
       expect(result).toBeNull();
     });

@@ -1,36 +1,36 @@
 import * as z from "zod";
 import { REVIEW_RATING_MAX, REVIEW_RATING_MIN } from "@/core/domain/review";
 
-const ratingSchema = z
+const RatingSchema = z
   .number()
   .int("평점은 정수로 입력해주세요.")
   .min(REVIEW_RATING_MIN, `평점은 ${REVIEW_RATING_MIN}점 이상이어야 합니다.`)
   .max(REVIEW_RATING_MAX, `평점은 ${REVIEW_RATING_MAX}점 이하여야 합니다.`);
 
-const contentSchema = z
+const ContentSchema = z
   .string()
   .min(10, "리뷰 내용은 최소 10자 이상 입력해주세요.")
   .max(1000, "리뷰 내용은 1000자 이내로 입력해주세요.");
 
-const imagesSchema = z
+const ImagesSchema = z
   .array(z.string().url("유효한 이미지 URL이어야 합니다."))
   .max(5, "이미지는 최대 5장까지 첨부할 수 있습니다.");
 
-const createReviewSchema = z.object({
+const CreateReviewSchema = z.object({
   orderId: z.string().min(1, "주문 정보가 필요합니다."),
-  rating: ratingSchema,
-  content: contentSchema,
-  images: imagesSchema.default([]),
+  rating: RatingSchema,
+  content: ContentSchema,
+  images: ImagesSchema.default([]),
 });
 
-type CreateReviewDto = z.infer<typeof createReviewSchema>;
+type CreateReviewDto = z.infer<typeof CreateReviewSchema>;
 
-const updateReviewSchema = z
+const UpdateReviewSchema = z
   .object({
     reviewId: z.string().min(1, "리뷰 정보가 필요합니다."),
-    rating: ratingSchema.optional(),
-    content: contentSchema.optional(),
-    images: imagesSchema.optional(),
+    rating: RatingSchema.optional(),
+    content: ContentSchema.optional(),
+    images: ImagesSchema.optional(),
   })
   .refine(
     (data) =>
@@ -40,6 +40,11 @@ const updateReviewSchema = z
     { message: "변경할 내용이 없습니다.", path: ["content"] },
   );
 
-type UpdateReviewDto = z.infer<typeof updateReviewSchema>;
+type UpdateReviewDto = z.infer<typeof UpdateReviewSchema>;
 
-export { createReviewSchema, updateReviewSchema, type CreateReviewDto, type UpdateReviewDto };
+export {
+  CreateReviewSchema,
+  UpdateReviewSchema,
+  type CreateReviewDto,
+  type UpdateReviewDto,
+};

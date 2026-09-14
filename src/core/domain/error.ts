@@ -17,7 +17,7 @@ type ErrorResponse = {
 /**
  * Generic API response (success or error).
  */
-type APIResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
+type ApiResponse<T = unknown> = SuccessResponse<T> | ErrorResponse;
 
 const ERROR_CATEGORIES = [
   "VALIDATION",
@@ -64,7 +64,7 @@ export {
   AppError,
   type SuccessResponse,
   type ErrorResponse,
-  type APIResponse,
+  type ApiResponse,
   type ErrorCategory,
   type ErrorPayload,
 };

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { AdminProductListPage, ProductJSON } from "@/core/domain/product";
+import type { AdminProductListPage, ProductJson } from "@/core/domain/product";
 
 vi.mock("./ProductTableRow", () => ({
   ProductTableRow: ({ product }: { product: { title: string } }) => (
@@ -12,12 +12,12 @@ vi.mock("./ProductTableRow", () => ({
 
 import { AdminProductsTemplate } from "./AdminProductsTemplate";
 
-const buildProduct = (overrides?: Partial<ProductJSON>): ProductJSON =>
+const buildProduct = (overrides?: Partial<ProductJson>): ProductJson =>
   ({
     _id: "product-1",
     title: "봄맞이 청첩장",
     ...overrides,
-  }) as ProductJSON;
+  }) as ProductJson;
 
 const buildPage = (
   overrides?: Partial<AdminProductListPage>,
@@ -31,7 +31,9 @@ describe("AdminProductsTemplate", () => {
   it("상품 목록과 테이블 헤더를 렌더링한다", () => {
     render(<AdminProductsTemplate page={buildPage()} />);
 
-    expect(screen.getByText("등록된 템플릿 상품을 관리합니다.")).toBeInTheDocument();
+    expect(
+      screen.getByText("등록된 템플릿 상품을 관리합니다."),
+    ).toBeInTheDocument();
     expect(screen.getByText("썸네일")).toBeInTheDocument();
     expect(screen.getByText("봄맞이 청첩장")).toBeInTheDocument();
   });
@@ -62,6 +64,8 @@ describe("AdminProductsTemplate", () => {
   it("nextCursor가 있으면 다음 페이지 버튼이 활성화된다", () => {
     render(<AdminProductsTemplate page={buildPage({ nextCursor: "abc" })} />);
 
-    expect(screen.getByRole("link", { name: "다음 페이지" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "다음 페이지" }),
+    ).toBeInTheDocument();
   });
 });

@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
 
 type Props = React.ComponentProps<typeof DeleteGuestbookForm>;
@@ -41,7 +41,11 @@ describe("DeleteGuestbookForm (프레젠테이션)", () => {
   it("비밀번호와 hidden guestbookId/publicKey를 FormData에 담아 action을 호출한다", async () => {
     const action = vi.fn();
     const user = userEvent.setup();
-    renderForm({ action, guestbookId: "entry-42", publicKey: "invitation-key" });
+    renderForm({
+      action,
+      guestbookId: "entry-42",
+      publicKey: "invitation-key",
+    });
 
     await user.type(screen.getByLabelText("비밀번호"), "1234");
     await user.click(screen.getByRole("button", { name: "전송" }));
@@ -68,7 +72,7 @@ describe("DeleteGuestbookForm (프레젠테이션)", () => {
   });
 
   it("password 필드 에러가 있으면 에러 메시지를 표시한다", () => {
-    const state: APIResponse<{ message: string }> = {
+    const state: ApiResponse<{ message: string }> = {
       success: false,
       error: {
         category: "VALIDATION",

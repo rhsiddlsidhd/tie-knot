@@ -1,19 +1,31 @@
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
-import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 import type { Product } from "@/core/domain/product";
 import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
 import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
-import { productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
+import {
+  PRODUCT_CATEGORY_LABELS,
+  SUB_CATEGORY_LABELS,
+} from "@/core/domain/product-category";
 
 interface ProductTableRowProps {
   product: Product;
   view?: "active" | "trash";
 }
 
-const ProductTableRow = ({ product, view = "active" }: ProductTableRowProps) => {
+const ProductTableRow = ({
+  product,
+  view = "active",
+}: ProductTableRowProps) => {
   return (
     <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-4 py-3">
@@ -27,7 +39,9 @@ const ProductTableRow = ({ product, view = "active" }: ProductTableRowProps) => 
       </td>
       <td className="px-4 py-3">
         <div className="max-w-xs">
-          <TypographySmall className="truncate font-medium">{product.title}</TypographySmall>
+          <TypographySmall className="truncate font-medium">
+            {product.title}
+          </TypographySmall>
           <TypographyMuted className="truncate">
             {product.description}
           </TypographyMuted>
@@ -36,10 +50,12 @@ const ProductTableRow = ({ product, view = "active" }: ProductTableRowProps) => 
       <td className="px-4 py-3">
         <div className="flex flex-col gap-1">
           <Badge variant="outline" className="w-fit">
-            {productCategoryLabels[product.category as ProductCategory] || product.category}
+            {PRODUCT_CATEGORY_LABELS[product.category as ProductCategory] ||
+              product.category}
           </Badge>
           <TypographyMuted className="px-1">
-            {subCategoryLabels[product.subCategory as SubCategory] || product.subCategory}
+            {SUB_CATEGORY_LABELS[product.subCategory as SubCategory] ||
+              product.subCategory}
           </TypographyMuted>
         </div>
       </td>
@@ -102,6 +118,6 @@ const ProductTableRow = ({ product, view = "active" }: ProductTableRowProps) => 
       </td>
     </tr>
   );
-}
+};
 
 export { ProductTableRow, type ProductTableRowProps };

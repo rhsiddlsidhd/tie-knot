@@ -2,7 +2,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain/error";
 
 vi.mock("@/services/auth", () => ({ getAuth: vi.fn() }));
-vi.mock("@/services/order", () => ({ createOrderForCurrentUserService: vi.fn() }));
+vi.mock("@/services/order", () => ({
+  createOrderForCurrentUserService: vi.fn(),
+}));
 vi.mock("next/navigation", () => ({
   redirect: vi.fn(() => {
     throw new Error("NEXT_REDIRECT");
@@ -12,7 +14,7 @@ vi.mock("next/navigation", () => ({
 import { getAuth } from "@/services/auth";
 import { createOrderForCurrentUserService } from "@/services/order";
 import { redirect } from "next/navigation";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { createOrder } from "./createOrder";
 
 const buildFormData = (overrides: Record<string, string> = {}): FormData => {
@@ -61,14 +63,19 @@ describe("createOrder", () => {
   it("로그인하지 않았으면 로그인 페이지로 redirect하고 주문을 생성하지 않는다", async () => {
     vi.mocked(getAuth).mockResolvedValue(null);
 
-    await expect(createOrder(null, buildFormData())).rejects.toThrow("NEXT_REDIRECT");
+    await expect(createOrder(null, buildFormData())).rejects.toThrow(
+      "NEXT_REDIRECT",
+    );
 
-    expect(redirect).toHaveBeenCalledWith(routes.login);
+    expect(redirect).toHaveBeenCalledWith(ROUTES.login);
     expect(createOrderForCurrentUserService).not.toHaveBeenCalled();
   });
 
   it("입력값이 유효하지 않으면 VALIDATION 오류를 반환하고 서비스를 호출하지 않는다", async () => {
-    const result = await createOrder(null, buildFormData({ buyerEmail: "invalid-email" }));
+    const result = await createOrder(
+      null,
+      buildFormData({ buyerEmail: "invalid-email" }),
+    );
 
     expect(result).toEqual({
       success: false,
@@ -84,7 +91,10 @@ describe("createOrder", () => {
   });
 
   it("실물 카테고리인데 배송 정보가 없으면 VALIDATION 오류를 반환하고 서비스를 호출하지 않는다", async () => {
-    const result = await createOrder(null, buildFormData({ productCategory: "favor" }));
+    const result = await createOrder(
+      null,
+      buildFormData({ productCategory: "favor" }),
+    );
 
     expect(result).toMatchObject({
       success: false,
@@ -94,7 +104,9 @@ describe("createOrder", () => {
   });
 
   it("모바일초대장 카테고리는 배송 정보 없이도 통과해 정규화한 입력을 서비스에 전달한다", async () => {
-    vi.mocked(createOrderForCurrentUserService).mockResolvedValue(buildOrder() as never);
+    vi.mocked(createOrderForCurrentUserService).mockResolvedValue(
+      buildOrder() as never,
+    );
 
     await createOrder(null, buildFormData());
 
@@ -116,7 +128,9 @@ describe("createOrder", () => {
   });
 
   it("실물 카테고리에 배송 정보를 채우면 shipping을 그대로 서비스에 전달한다", async () => {
-    vi.mocked(createOrderForCurrentUserService).mockResolvedValue(buildOrder() as never);
+    vi.mocked(createOrderForCurrentUserService).mockResolvedValue(
+      buildOrder() as never,
+    );
 
     await createOrder(
       null,
@@ -142,7 +156,9 @@ describe("createOrder", () => {
   });
 
   it("정상 입력이면 서비스 결과를 반환 계약으로 변환한다", async () => {
-    vi.mocked(createOrderForCurrentUserService).mockResolvedValue(buildOrder() as never);
+    vi.mocked(createOrderForCurrentUserService).mockResolvedValue(
+      buildOrder() as never,
+    );
 
     const result = await createOrder(null, buildFormData());
 

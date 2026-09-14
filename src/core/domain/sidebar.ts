@@ -1,5 +1,4 @@
-import type {
-  LucideProps} from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import {
   HelpCircle,
   LayoutDashboard,
@@ -11,7 +10,7 @@ import {
   Users,
 } from "lucide-react";
 
-import { routes } from "./routes";
+import { ROUTES } from "./routes";
 
 interface BaseNavigateItem {
   title: string;
@@ -43,43 +42,43 @@ type Submenu = {
 const adminNavigateItems: NavigateItem[] = [
   {
     title: "대시보드",
-    href: routes.admin.dashboard,
+    href: ROUTES.admin.dashboard,
     icon: LayoutDashboard,
   },
   {
     title: "상품 관리",
     icon: Package,
     submenu: [
-      { title: "상품 목록", href: routes.admin.products.root },
-      { title: "상품 등록", href: routes.admin.products.new },
+      { title: "상품 목록", href: ROUTES.admin.products.root },
+      { title: "상품 등록", href: ROUTES.admin.products.new },
     ],
   },
   {
     title: "프리미엄 기능 관리",
     icon: Star,
     submenu: [
-      { title: "프리미엄 기능 목록", href: routes.admin.premiumFeatures.root },
-      { title: "프리미엄 기능 등록", href: routes.admin.premiumFeatures.new },
+      { title: "프리미엄 기능 목록", href: ROUTES.admin.premiumFeatures.root },
+      { title: "프리미엄 기능 등록", href: ROUTES.admin.premiumFeatures.new },
     ],
   },
   {
     title: "주문 관리",
-    href: routes.admin.orders,
+    href: ROUTES.admin.orders,
     icon: ShoppingCart,
   },
   {
     title: "리뷰 관리",
-    href: routes.admin.reviews,
+    href: ROUTES.admin.reviews,
     icon: MessageSquareText,
   },
   {
     title: "회원 관리",
-    href: routes.admin.users,
+    href: ROUTES.admin.users,
     icon: Users,
   },
   {
     title: "설정",
-    href: routes.admin.settings,
+    href: ROUTES.admin.settings,
     icon: Settings,
   },
 ];
@@ -89,13 +88,13 @@ const authUserOrderNavigateItems: NavigateItem[] = [
     title: "주문 정보",
     icon: ShoppingCart,
     submenu: [
-      { title: "주문 목록", href: routes.myOrders.root },
-      { title: "취소/환불", href: routes.myOrders.refund },
+      { title: "주문 목록", href: ROUTES.myOrders.root },
+      { title: "취소/환불", href: ROUTES.myOrders.refund },
     ],
   },
   {
     title: "고객 센터",
-    href: routes.support,
+    href: ROUTES.support,
     icon: HelpCircle,
   },
 ];
@@ -103,12 +102,12 @@ const authUserOrderNavigateItems: NavigateItem[] = [
 const authUserProfileNavigateItems: NavigateItem[] = [
   {
     title: "프로필",
-    href: routes.profile,
+    href: ROUTES.profile,
     icon: LayoutDashboard,
   },
 ];
 
-const allNavigateItems = {
+const ALL_NAVIGATE_ITEMS = {
   ADMIN: adminNavigateItems,
   MY_ORDER: authUserOrderNavigateItems,
   MY_PROFILE: authUserProfileNavigateItems,
@@ -123,7 +122,7 @@ const SUBMENU_PARENT_TITLES = [
 type SubmenuParentTitle = (typeof SUBMENU_PARENT_TITLES)[number];
 
 export {
-  allNavigateItems,
+  ALL_NAVIGATE_ITEMS,
   SUBMENU_PARENT_TITLES,
   type BaseNavigateItem,
   type NavigateLinkItem,

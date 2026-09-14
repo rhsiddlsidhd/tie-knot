@@ -6,7 +6,7 @@ const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
   message: "ISO date string이 아님",
 });
 
-const productResponseSchema = z.object({
+const ProductResponseSchema = z.object({
   _id: z.string(),
   authorId: z.string(),
   title: z.string(),
@@ -41,8 +41,8 @@ const productResponseSchema = z.object({
   maxQuantity: z.number(),
 });
 
-const productsResponseSchema = z.array(productResponseSchema);
+const ProductsResponseSchema = z.array(ProductResponseSchema);
 
-type ProductResponse = z.infer<typeof productResponseSchema>;
+type ProductResponse = z.infer<typeof ProductResponseSchema>;
 
-export { productResponseSchema, productsResponseSchema, type ProductResponse };
+export { ProductResponseSchema, ProductsResponseSchema, type ProductResponse };

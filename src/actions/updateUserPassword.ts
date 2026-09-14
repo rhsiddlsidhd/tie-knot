@@ -2,7 +2,7 @@
 
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { PWConfirmSchema } from "@/core/schemas/request/pwConfirm.schema";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { resetUserPasswordService } from "@/services/user";
 import { actionError } from "@/boundary";
 
@@ -10,7 +10,7 @@ import { actionError } from "@/boundary";
 const updateUserPassword = async (
   prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   const data = {
     token: formData.get("token") as string,
     password: formData.get("password") as string,

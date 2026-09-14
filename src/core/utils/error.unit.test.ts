@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { getFieldError, hasFieldErrors } from "./error";
-import type { APIResponse, ErrorResponse } from "@/core/domain/error";
+import type { ApiResponse, ErrorResponse } from "@/core/domain/error";
 
 describe("getFieldError", () => {
   it("state가 null이면 undefined를 반환한다", () => {
@@ -8,7 +8,7 @@ describe("getFieldError", () => {
   });
 
   it("state가 성공이면 undefined를 반환한다", () => {
-    const state: APIResponse<{ message: string }> = {
+    const state: ApiResponse<{ message: string }> = {
       success: true,
       data: { message: "ok" },
     };
@@ -17,7 +17,7 @@ describe("getFieldError", () => {
   });
 
   it("해당 필드의 첫 번째 에러 메시지를 반환한다", () => {
-    const state: APIResponse<unknown> = {
+    const state: ApiResponse<unknown> = {
       success: false,
       error: {
         category: "VALIDATION",
@@ -32,7 +32,7 @@ describe("getFieldError", () => {
   });
 
   it("해당 필드에 에러가 없으면 undefined를 반환한다", () => {
-    const state: APIResponse<unknown> = {
+    const state: ApiResponse<unknown> = {
       success: false,
       error: { category: "VALIDATION", message: "입력값을 확인해주세요." },
     };

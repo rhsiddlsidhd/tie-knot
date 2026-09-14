@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminOrdersPageService } from "@/services/order";
-import { adminOrderListRequestSchema } from "@/core/schemas/request/adminOrderList.schema";
+import { AdminOrderListRequestSchema } from "@/core/schemas/request/adminOrderList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminOrdersTemplate } from "@/app/(admin)/admin/orders/_components/AdminOrdersTemplate";
@@ -13,9 +13,11 @@ import { AdminOrdersTemplate } from "@/app/(admin)/admin/orders/_components/Admi
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(adminOrderListRequestSchema, {
-    status: typeof searchParams.status === "string" ? searchParams.status : null,
-    cursor: typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+  const parsed = validateAndFlatten(AdminOrderListRequestSchema, {
+    status:
+      typeof searchParams.status === "string" ? searchParams.status : null,
+    cursor:
+      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};

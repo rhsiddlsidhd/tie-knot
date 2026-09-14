@@ -5,22 +5,22 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createOrder, type CreateOrderResult } from "@/actions/createOrder";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { useOrderStore } from "@/ui/stores/use-app-store";
 import { usePortOnePayment } from "@/ui/hooks/usePortOnePayment";
 import { useCheckoutData } from "@/ui/hooks/useCheckoutData";
 import { useCheckoutForm } from "@/ui/hooks/useCheckoutForm";
 import { CheckoutForm as PureCheckoutForm } from "../_components/CheckoutForm";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { RetryPaymentCard } from "../_components/RetryPaymentCard";
 const CheckoutForm = () => {
   const router = useRouter();
   const clearOrder = useOrderStore((state) => state.clearOrder);
 
-  const [state, action, pending] = useActionState<APIResponse<CreateOrderResult>, FormData>(
-    createOrder,
-    null,
-  );
+  const [state, action, pending] = useActionState<
+    ApiResponse<CreateOrderResult>,
+    FormData
+  >(createOrder, null);
   const [agreed, setAgreed] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -28,7 +28,7 @@ const CheckoutForm = () => {
     (merchantUid: string) => {
       clearOrder();
       toast.success("결제가 완료되었습니다!");
-      router.push(`${routes.payment.success}?orderId=${merchantUid}`);
+      router.push(`${ROUTES.payment.success}?orderId=${merchantUid}`);
     },
     [clearOrder, router],
   );
@@ -42,16 +42,19 @@ const CheckoutForm = () => {
   // 직접 참조해 "주문 없음" 오탐 리다이렉트를 알아서 가드한다(OrderSummary도 동일).
   const { data: order, loading } = useCheckoutData();
 
-  const { errors, shippingErrors, requiresShipping, handleSubmit } = useCheckoutForm({
-    order,
-    action,
-    router,
-  });
+  const { errors, shippingErrors, requiresShipping, handleSubmit } =
+    useCheckoutForm({
+      order,
+      action,
+      router,
+    });
 
   const [prevActionState, setPrevActionState] = useState(state);
   if (state !== prevActionState) {
     setPrevActionState(state);
-    setErrorMessage(state && state.success === false ? state.error.message : null);
+    setErrorMessage(
+      state && state.success === false ? state.error.message : null,
+    );
   }
 
   useEffect(() => {
@@ -100,6 +103,6 @@ const CheckoutForm = () => {
       onSubmit={handleFormSubmit}
     />
   );
-}
+};
 
 export { CheckoutForm };

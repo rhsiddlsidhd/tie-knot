@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse } from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getOrdersPageForUser } from "@/services/order";
 import { requireAuth } from "@/services/auth";
-import { orderListRequestSchema } from "@/core/schemas/request/orderList.schema";
+import { OrderListRequestSchema } from "@/core/schemas/request/orderList.schema";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import type { OrderListPage } from "@/core/domain/order";
 import { AppError } from "@/core/domain/error";
@@ -18,12 +18,12 @@ import { AppError } from "@/core/domain/error";
  */
 const GET = async (
   request: NextRequest,
-): Promise<APIRouteResponse<OrderListPage>> => {
+): Promise<ApiRouteResponse<OrderListPage>> => {
   try {
     const { userId } = await requireAuth();
 
     const { searchParams } = new URL(request.url);
-    const parsed = validateAndFlatten(orderListRequestSchema, {
+    const parsed = validateAndFlatten(OrderListRequestSchema, {
       status: searchParams.get("status"),
       category: searchParams.get("category"),
       cursor: searchParams.get("cursor"),

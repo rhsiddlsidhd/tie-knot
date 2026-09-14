@@ -1,6 +1,6 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { LoginSchema } from "@/core/schemas/request/login.schema";
@@ -11,7 +11,7 @@ import { actionError } from "@/boundary";
 const loginUser = async (
   _prev: null,
   formData: FormData,
-): Promise<APIResponse<{ role: UserRole; email: string; userId: string }>> => {
+): Promise<ApiResponse<{ role: UserRole; email: string; userId: string }>> => {
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -21,7 +21,10 @@ const loginUser = async (
   if (!data.email || !data.password) {
     return {
       success: false,
-      error: { category: "VALIDATION", message: "아이디와 비밀번호를 확인해주세요." },
+      error: {
+        category: "VALIDATION",
+        message: "아이디와 비밀번호를 확인해주세요.",
+      },
     };
   }
 

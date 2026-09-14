@@ -9,7 +9,7 @@ vi.mock("@/core/utils/validate-and-flatten", () => ({
   validateAndFlatten: validateAndFlattenMock,
 }));
 vi.mock("@/core/schemas/request/mobileInvitationContent.schema", () => ({
-  mobileInvitationContentSchema: {},
+  MobileInvitationContentSchema: {},
 }));
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 

@@ -1,16 +1,19 @@
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 import { TextField } from "@/ui/components/organisms/TextField";
 import Link from "next/link";
 import { getFieldError } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
-import { routes } from "@/core/domain/routes";
+import type { ApiResponse } from "@/core/domain/error";
+import { ROUTES } from "@/core/domain/routes";
 
 interface UpdatePasswordFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
   token: string;
 }
 
@@ -26,18 +29,34 @@ const UpdatePasswordForm = ({
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">비밀번호 변경</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-[var(--font-NotoSerif)] font-bold">
+          비밀번호 변경
+        </TypographyH1>
         <TypographyMuted>변경할 비밀번호를 입력해주세요.</TypographyMuted>
       </div>
 
       <form action={action} className="space-y-4">
         <input name="token" defaultValue={token} hidden />
 
-        <TextField id="password" name="password" type="password" placeholder="••••••••" required error={passwordError}>
+        <TextField
+          id="password"
+          name="password"
+          type="password"
+          placeholder="••••••••"
+          required
+          error={passwordError}
+        >
           비밀번호
         </TextField>
 
-        <TextField id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required error={confirmPasswordError}>
+        <TextField
+          id="confirmPassword"
+          name="confirmPassword"
+          type="password"
+          placeholder="••••••••"
+          required
+          error={confirmPasswordError}
+        >
           비밀번호 확인
         </TextField>
 
@@ -48,7 +67,7 @@ const UpdatePasswordForm = ({
 
       <div className="space-y-2 text-center">
         <Link
-          href={routes.login}
+          href={ROUTES.login}
           className="text-muted-foreground hover:text-foreground inline-block text-sm transition-colors"
         >
           로그인으로 돌아가기
@@ -56,6 +75,6 @@ const UpdatePasswordForm = ({
       </div>
     </div>
   );
-}
+};
 
 export { UpdatePasswordForm };

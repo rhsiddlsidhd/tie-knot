@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminUsersPageService } from "@/services/user";
-import { adminUserListRequestSchema } from "@/core/schemas/request/adminUserList.schema";
+import { AdminUserListRequestSchema } from "@/core/schemas/request/adminUserList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminUsersTemplate } from "@/app/(admin)/admin/users/_components/AdminUsersTemplate";
@@ -13,9 +13,10 @@ import { AdminUsersTemplate } from "@/app/(admin)/admin/users/_components/AdminU
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(adminUserListRequestSchema, {
+  const parsed = validateAndFlatten(AdminUserListRequestSchema, {
     role: typeof searchParams.role === "string" ? searchParams.role : null,
-    cursor: typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+    cursor:
+      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};

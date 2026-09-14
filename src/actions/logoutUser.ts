@@ -2,9 +2,9 @@
 
 import { logoutService } from "@/services/auth";
 import { actionError } from "@/boundary";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
-const logoutUser = async (): Promise<APIResponse<null>> => {
+const logoutUser = async (): Promise<ApiResponse<null>> => {
   try {
     await logoutService();
     return { success: true, data: null };

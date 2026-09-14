@@ -4,12 +4,15 @@ import Link from "next/link";
 import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH3,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { fetcher } from "@/ui/fetcher";
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { OrderCard } from "./OrderCard";
 
@@ -81,7 +84,7 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
               다른 상태나 카테고리를 선택해보세요.
             </TypographyMuted>
             <Button asChild className="mt-6" variant="outline">
-              <Link href={routes.myOrders.root}>필터 초기화</Link>
+              <Link href={ROUTES.myOrders.root}>필터 초기화</Link>
             </Button>
           </>
         ) : (
@@ -93,7 +96,9 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
               아직 주문한 상품이 없어요. 상품을 구경하고 첫 주문을 해보세요.
             </TypographyMuted>
             <Button asChild className="mt-6">
-              <Link href={routes.products.byCategory(MOBILE_INVITATION_CATEGORY)}>
+              <Link
+                href={ROUTES.products.byCategory(MOBILE_INVITATION_CATEGORY)}
+              >
                 청첩장 보러가기
               </Link>
             </Button>

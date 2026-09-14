@@ -3,18 +3,21 @@ import { Mail } from "lucide-react";
 
 import { Card } from "@/ui/components/atoms/card";
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
-
+import {
+  TypographyH1,
+  TypographyLarge,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 import { TextField } from "@/ui/components/organisms/TextField";
 import { getFieldError } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
-import { routes } from "@/core/domain/routes";
+import type { ApiResponse } from "@/core/domain/error";
+import { ROUTES } from "@/core/domain/routes";
 
 interface FindIdFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ email: string }> | null;
+  state: ApiResponse<{ email: string }> | null;
 }
 
 const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
@@ -25,7 +28,7 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
     return (
       <div className="space-y-6">
         <div className="space-y-2 text-center">
-          <TypographyH1 className="text-3xl font-bold font-[var(--font-NotoSerif)]">
+          <TypographyH1 className="text-3xl font-[var(--font-NotoSerif)] font-bold">
             아이디 찾기 완료
           </TypographyH1>
           <TypographyMuted>
@@ -42,14 +45,16 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
               <TypographyMuted className="mb-1">
                 회원님의 이메일
               </TypographyMuted>
-              <TypographyLarge className="font-semibold">{state.data.email}</TypographyLarge>
+              <TypographyLarge className="font-semibold">
+                {state.data.email}
+              </TypographyLarge>
             </div>
           </div>
         </Card>
 
         <div className="space-y-3">
           <Button asChild className="w-full" size="lg">
-            <Link href={routes.login}>로그인하기</Link>
+            <Link href={ROUTES.login}>로그인하기</Link>
           </Button>
           <Button
             asChild
@@ -57,7 +62,7 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
             className="w-full bg-transparent"
             size="lg"
           >
-            <Link href={routes.findPw}>비밀번호 찾기</Link>
+            <Link href={ROUTES.findPw}>비밀번호 찾기</Link>
           </Button>
         </div>
       </div>
@@ -67,18 +72,32 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">아이디 찾기</TypographyH1>
-        <TypographyMuted>
-          가입 시 등록한 정보를 입력해주세요
-        </TypographyMuted>
+        <TypographyH1 className="text-left text-3xl font-[var(--font-NotoSerif)] font-bold">
+          아이디 찾기
+        </TypographyH1>
+        <TypographyMuted>가입 시 등록한 정보를 입력해주세요</TypographyMuted>
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField id="name" name="name" type="text" placeholder="홍길동" required error={nameError}>
+        <TextField
+          id="name"
+          name="name"
+          type="text"
+          placeholder="홍길동"
+          required
+          error={nameError}
+        >
           이름
         </TextField>
 
-        <TextField id="phone" name="phone" type="tel" placeholder="010-1234-5678" required error={phoneError}>
+        <TextField
+          id="phone"
+          name="phone"
+          type="tel"
+          placeholder="010-1234-5678"
+          required
+          error={phoneError}
+        >
           전화번호
         </TextField>
 
@@ -91,14 +110,14 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
         <TypographyMuted>
           비밀번호가 기억나지 않으신가요?
           <Link
-            href={routes.findPw}
+            href={ROUTES.findPw}
             className="text-primary font-medium hover:underline"
           >
             비밀번호 찾기
           </Link>
         </TypographyMuted>
         <Link
-          href={routes.login}
+          href={ROUTES.login}
           className="text-muted-foreground hover:text-foreground inline-block text-sm transition-colors"
         >
           로그인으로 돌아가기
@@ -106,6 +125,6 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
       </div>
     </div>
   );
-}
+};
 
 export { FindIdForm };

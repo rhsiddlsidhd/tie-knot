@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { completePayment } from "@/actions/completePayment";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { useOrderStore } from "@/ui/stores/use-app-store";
 import { PaymentResultTemplate } from "../_components/PaymentResultTemplate";
 
@@ -42,7 +42,7 @@ const PaymentResult = ({ paymentId }: PaymentResultProps) => {
         setPaymentStatus("PAID");
         clearOrder();
         router.replace(
-          `${routes.payment.success}?orderId=${encodeURIComponent(paymentId)}`,
+          `${ROUTES.payment.success}?orderId=${encodeURIComponent(paymentId)}`,
         );
       } catch (error) {
         console.error("Payment completion error:", error);
@@ -52,6 +52,6 @@ const PaymentResult = ({ paymentId }: PaymentResultProps) => {
   }, [clearOrder, paymentId, router, setPaymentStatus]);
 
   return <PaymentResultTemplate errorMessage={errorMessage} />;
-}
+};
 
 export { PaymentResult };

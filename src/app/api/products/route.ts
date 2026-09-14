@@ -1,8 +1,8 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse } from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getPublicProductsPageService } from "@/services/product";
-import { productListRequestSchema } from "@/core/schemas/request/productList.schema";
+import { ProductListRequestSchema } from "@/core/schemas/request/productList.schema";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AppError } from "@/core/domain/error";
 import type { PublicProductListPage } from "@/core/domain/product";
@@ -15,10 +15,10 @@ import type { PublicProductListPage } from "@/core/domain/product";
  */
 const GET = async (
   request: NextRequest,
-): Promise<APIRouteResponse<PublicProductListPage>> => {
+): Promise<ApiRouteResponse<PublicProductListPage>> => {
   try {
     const { searchParams } = new URL(request.url);
-    const parsed = validateAndFlatten(productListRequestSchema, {
+    const parsed = validateAndFlatten(ProductListRequestSchema, {
       category: searchParams.get("category"),
       subCategory: searchParams.get("subCategory"),
       cursor: searchParams.get("cursor"),

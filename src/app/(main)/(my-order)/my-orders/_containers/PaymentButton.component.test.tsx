@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { OrderJSON } from "@/core/domain/order";
+import type { OrderJson } from "@/core/domain/order";
 
 const { pushMock, setOrderMock, setResumePaymentMock, completePaymentMock } =
   vi.hoisted(() => ({
@@ -21,7 +21,11 @@ vi.mock("@/ui/stores/use-app-store", () => ({
       setOrder: (item: unknown) => void;
       setResumePayment: (data: unknown) => void;
     }) => unknown,
-  ) => selector({ setOrder: setOrderMock, setResumePayment: setResumePaymentMock }),
+  ) =>
+    selector({
+      setOrder: setOrderMock,
+      setResumePayment: setResumePaymentMock,
+    }),
 }));
 
 vi.mock("@/actions/completePayment", () => ({
@@ -30,7 +34,7 @@ vi.mock("@/actions/completePayment", () => ({
 
 import { PaymentButton } from "./PaymentButton";
 
-const buildOrder = (): OrderJSON =>
+const buildOrder = (): OrderJson =>
   ({
     _id: "order-1",
     merchantUid: "order-merchant-1",
@@ -48,7 +52,7 @@ const buildOrder = (): OrderJSON =>
       quantity: 1,
       selectedFeatures: [],
     },
-  }) as unknown as OrderJSON;
+  }) as unknown as OrderJson;
 
 describe("PaymentButton (컨테이너)", () => {
   beforeEach(() => {

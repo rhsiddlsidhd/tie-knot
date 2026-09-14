@@ -1,8 +1,13 @@
 import "server-only";
 import mongoose from "mongoose";
 import * as PortOne from "@portone/server-sdk";
-import type { PayStatus, PayMethod, PaymentMethodDetail, IPayment } from "@/models/payment.model";
-import type { IOrder } from "@/models/order.model";
+import type {
+  PayStatus,
+  PayMethod,
+  PaymentMethodDetail,
+  PaymentDocument,
+} from "@/models/payment.model";
+import type { OrderDocument } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
@@ -17,7 +22,10 @@ import {
   PENDING_ORDER_CANCEL_REASONS,
 } from "./order";
 import { AppError } from "@/core/domain/error";
-import type { ExpiredPendingOrderBatchResult, ExpiredAwaitingMobileInvitationBatchResult } from "@/core/domain/order";
+import type {
+  ExpiredPendingOrderBatchResult,
+  ExpiredAwaitingMobileInvitationBatchResult,
+} from "@/core/domain/order";
 import { dbConnect } from "@/db/connect";
 import { requireAuth } from "./auth";
 
@@ -82,7 +90,7 @@ const mapPortOneStatus = (status: unknown): PayStatus => {
   }
 
   return statusMap[status];
-}
+};
 
 type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
 
@@ -94,7 +102,9 @@ type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
  * - 미인식 값은 Unrecognized로 폴백해 methodDetail에 흔적을 남긴다(silent
  *   failure 방지 — mapPortOneStatus와 같은 원칙).
  */
-const mapPortOnePaymentMethod = (method: SdkPaymentMethod | undefined): {
+const mapPortOnePaymentMethod = (
+  method: SdkPaymentMethod | undefined,
+): {
   payMethod?: PayMethod;
   methodDetail?: PaymentMethodDetail;
 } => {
@@ -188,7 +198,7 @@ const mapPortOnePaymentMethod = (method: SdkPaymentMethod | undefined): {
     default:
       return { methodDetail: { type: "Unrecognized" } };
   }
-}
+};
 
 /**
  * 결제 데이터 검증 (위변조 방지)
@@ -251,7 +261,7 @@ const verifyPayment = async (payment: PaidPayment): Promise<boolean> => {
     console.error("[verifyPayment] Error:", e);
     return false;
   }
-}
+};
 
 /**
  * PortOne 에러의 로그용 컨텍스트 문자열 — AppError.message에 실려 boundary.ts의
@@ -309,14 +319,15 @@ const syncPayment = async (paymentId: string) => {
       // 4~6. Payment 저장 + Order 상태 전이 + Product salesCount 증가는 하나의
       // 논리적 단위라 트랜잭션으로 묶는다 — 중간에 하나라도 실패하면 전부
       // 롤백된다(services/AGENTS.md "트랜잭션" 섹션 참고).
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
 
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
           merchantUid: paymentId,
         }).session(session);
         const alreadyApplied =
-          existing?.status === "PAID" && isPaymentAppliedStatus(order.orderStatus);
+          existing?.status === "PAID" &&
+          isPaymentAppliedStatus(order.orderStatus);
 
         const { payMethod, methodDetail } = mapPortOnePaymentMethod(
           actualPayment.method,
@@ -379,7 +390,7 @@ const syncPayment = async (paymentId: string) => {
     if (actualPayment.status === "FAILED") {
       const failedPayment = actualPayment as FailedPayment;
 
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
 
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
@@ -444,13 +455,14 @@ const syncPayment = async (paymentId: string) => {
         latest?.cancelledAt ?? cancelledPayment.cancelledAt,
       );
 
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
           merchantUid: paymentId,
         }).session(session);
         const wasFullyApplied =
-          existing?.status === "PAID" && isPaymentAppliedStatus(order.orderStatus);
+          existing?.status === "PAID" &&
+          isPaymentAppliedStatus(order.orderStatus);
         const paymentData = {
           merchantUid: paymentId,
           impUid: cancelledPayment.transactionId,
@@ -502,7 +514,7 @@ const syncPayment = async (paymentId: string) => {
     if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
       const issuedPayment = actualPayment as VirtualAccountIssuedPayment;
 
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
 
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
@@ -657,7 +669,7 @@ const cancelPayment = async (
  * CONFIRMED로 남아 있기 때문).
  */
 const cancelOrdersAwaitingMobileInvitation = async (
-  expiredOrders: IOrder[],
+  expiredOrders: OrderDocument[],
 ): Promise<ExpiredAwaitingMobileInvitationBatchResult> => {
   const outcomes = await Promise.allSettled(
     expiredOrders.map((order) =>
@@ -717,7 +729,7 @@ const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
  * 다른 주문 처리를 막지 않도록 격리한다.
  */
 const cancelPendingOrderCandidates = async (
-  candidates: IOrder[],
+  candidates: OrderDocument[],
   deadline: Date,
 ): Promise<ExpiredPendingOrderBatchResult> => {
   const empty: ExpiredPendingOrderBatchResult = {
@@ -746,7 +758,10 @@ const cancelPendingOrderCandidates = async (
       }
 
       const reason = outcome.reason;
-      if (reason instanceof AppError && reason.category === "EXTERNAL_SERVICE") {
+      if (
+        reason instanceof AppError &&
+        reason.category === "EXTERNAL_SERVICE"
+      ) {
         return true;
       }
 
@@ -836,7 +851,7 @@ const completePaymentService = async (
     throw new AppError("INTERNAL", "결제 동기화에 실패했습니다.");
   }
   return payment.status;
-}
+};
 
 export {
   syncPayment,

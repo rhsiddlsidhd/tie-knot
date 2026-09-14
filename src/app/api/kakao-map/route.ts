@@ -1,4 +1,4 @@
-import type { APIRouteResponse} from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { geocodeAddress } from "@/adapters/server/kakao/geocode";
 import { AppError } from "@/core/domain/error";
@@ -7,7 +7,7 @@ import type { NextRequest } from "next/server";
 
 const GET = async (
   req: NextRequest,
-): Promise<APIRouteResponse<KakaomapResponse>> => {
+): Promise<ApiRouteResponse<KakaomapResponse>> => {
   try {
     const { searchParams } = new URL(req.url);
     const address = searchParams.get("address")?.trim();

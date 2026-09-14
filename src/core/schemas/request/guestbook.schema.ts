@@ -20,12 +20,12 @@ const GuestbookSchema = z.object({
 
 type GuestbookType = z.infer<typeof GuestbookSchema>;
 
-const deleteGuestbookSchema = GuestbookSchema.pick({ password: true }).extend({
+const DeleteGuestbookSchema = GuestbookSchema.pick({ password: true }).extend({
   guestbookId: z.string().min(1, "게시글 ID가 필요합니다."),
   publicKey: z.string().min(1, "청첩장 공개 키가 필요합니다."),
 });
 
-type DeleteGuestbookType = z.infer<typeof deleteGuestbookSchema>;
+type DeleteGuestbookType = z.infer<typeof DeleteGuestbookSchema>;
 
 // createGuestbook 실제 Server Action과 데모(로컬 상태) 작성 경로가 같은 FormData
 // shape을 공유하므로, 파싱+검증을 여기 한 곳에 모아 두 경로가 어긋나지 않게 한다.
@@ -41,7 +41,7 @@ const parseGuestbookFormData = (formData: FormData) =>
 // deleteGuestbook 실제 Server Action과 데모 삭제 경로가 같은 FormData shape을
 // 공유하므로, 파싱+검증을 여기 한 곳에 모아 둔다.
 const parseDeleteGuestbookFormData = (formData: FormData) =>
-  validateAndFlatten(deleteGuestbookSchema, {
+  validateAndFlatten(DeleteGuestbookSchema, {
     password: formData.get("password") as string,
     guestbookId: formData.get("guestbookId") as string,
     publicKey: formData.get("publicKey") as string,
@@ -49,7 +49,7 @@ const parseDeleteGuestbookFormData = (formData: FormData) =>
 
 export {
   GuestbookSchema,
-  deleteGuestbookSchema,
+  DeleteGuestbookSchema,
   parseGuestbookFormData,
   parseDeleteGuestbookFormData,
   type GuestbookType,

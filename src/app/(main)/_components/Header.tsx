@@ -3,8 +3,11 @@ import { MobileNav } from "./MobileNav";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
-import { routes } from "@/core/domain/routes";
-import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
+import { ROUTES } from "@/core/domain/routes";
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_CATEGORY_LABELS,
+} from "@/core/domain/product-category";
 import { Button } from "@/ui/components/atoms/button";
 import { TypographyH4 } from "@/ui/components/atoms/typography";
 const Header = () => {
@@ -17,15 +20,18 @@ const Header = () => {
           </div>
 
           {/* Logo */}
-          <Link href={routes.home}>
+          <Link href={ROUTES.home}>
             <TypographyH4 className="m-0">Tie Knot</TypographyH4>
           </Link>
 
-          <nav aria-label="카테고리" className="hidden items-center gap-1 md:flex">
+          <nav
+            aria-label="카테고리"
+            className="hidden items-center gap-1 md:flex"
+          >
             {PRODUCT_CATEGORIES.map((category) => (
               <Button key={category} asChild variant="ghost" size="sm">
-                <Link href={routes.products.byCategory(category)}>
-                  {productCategoryLabels[category]}
+                <Link href={ROUTES.products.byCategory(category)}>
+                  {PRODUCT_CATEGORY_LABELS[category]}
                 </Link>
               </Button>
             ))}
@@ -35,7 +41,7 @@ const Header = () => {
         {/* Auth / Action Buttons */}
         <div className="flex items-center gap-2">
           <Button asChild variant="ghost" size="icon" aria-label="상품 검색">
-            <Link href={routes.search}>
+            <Link href={ROUTES.search}>
               <Search className="h-5 w-5" strokeWidth={1.5} />
             </Link>
           </Button>

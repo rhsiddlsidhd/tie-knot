@@ -5,11 +5,11 @@ import { toast } from "sonner";
 
 import { requestPasswordReset } from "@/actions/requestPasswordReset";
 import { hasFieldErrors } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { ForgotPasswordForm as PureForgotPasswordForm } from "../_components/ForgotPasswordForm";
 const ForgotPasswordForm = () => {
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string; email: string }>,
+    ApiResponse<{ message: string; email: string }>,
     FormData
   >(requestPasswordReset, null);
 
@@ -24,6 +24,6 @@ const ForgotPasswordForm = () => {
   return (
     <PureForgotPasswordForm action={action} pending={pending} state={state} />
   );
-}
+};
 
 export { ForgotPasswordForm };

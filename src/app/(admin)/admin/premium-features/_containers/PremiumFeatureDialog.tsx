@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { updatePremiumFeature } from "@/actions/updatePremiumFeature";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { hasFieldErrors } from "@/core/utils/error";
 import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "../_components/PremiumFeatureDialog";
 const PremiumFeatureDialog = ({
@@ -14,7 +14,7 @@ const PremiumFeatureDialog = ({
   premiumFeature: PremiumFeature;
 }) => {
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
+    ApiResponse<{ message: string }>,
     FormData
   >(updatePremiumFeature, null);
 
@@ -37,6 +37,6 @@ const PremiumFeatureDialog = ({
       state={state}
     />
   );
-}
+};
 
 export { PremiumFeatureDialog };

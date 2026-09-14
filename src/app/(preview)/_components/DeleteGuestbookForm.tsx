@@ -1,9 +1,15 @@
 import { Alert } from "@/ui/components/molecules/Alert";
 import { TextField } from "@/ui/components/organisms/TextField";
 import { Button } from "@/ui/components/atoms/button";
-import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import {
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/atoms/dialog";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
 
 interface DeleteGuestbookFormProps {
@@ -11,7 +17,7 @@ interface DeleteGuestbookFormProps {
   publicKey: string;
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
 }
 
 const DeleteGuestbookForm = ({
@@ -50,6 +56,6 @@ const DeleteGuestbookForm = ({
       </DialogFooter>
     </form>
   );
-}
+};
 
 export { DeleteGuestbookForm };

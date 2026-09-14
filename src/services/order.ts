@@ -1,6 +1,6 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IOrder } from "@/models/order.model";
+import type { OrderDocument } from "@/models/order.model";
 import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
@@ -8,14 +8,30 @@ import { ProductModel } from "@/models/product.model";
 import { ReviewModel } from "@/models/review.model";
 import type { CreateOrderDto } from "@/core/schemas/request/order.schema";
 import { categoryRequiresShipping } from "@/core/utils/category";
-import { encodeCursor, decodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import {
+  encodeCursor,
+  decodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
 import { generateUid } from "@/core/utils/id";
 import { dbConnect } from "@/db/connect";
-import type { AdminOrderListPage, OrderDetail, OrderListItem, OrderListPage, OrderStatus } from "@/core/domain/order";
+import type {
+  AdminOrderListPage,
+  OrderDetail,
+  OrderListItem,
+  OrderListPage,
+  OrderStatus,
+} from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import { EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_INPUT_DEADLINE_DAYS, ORDER_PAGE_SIZE, ORDER_STATUSES, PENDING_ORDER_EXPIRE_HOURS } from "@/core/domain/order";
+import {
+  EXPIRED_ORDER_BATCH_LIMIT,
+  MOBILE_INVITATION_INPUT_DEADLINE_DAYS,
+  ORDER_PAGE_SIZE,
+  ORDER_STATUSES,
+  PENDING_ORDER_EXPIRE_HOURS,
+} from "@/core/domain/order";
 import { getProductQuantityBoundsService } from "./product";
 import { requireAuth } from "./auth";
 
@@ -27,7 +43,7 @@ const assertObjectIdLike = (id: string, label: string): void => {
 
 const createOrderService = async (
   data: CreateOrderDto & { userId: string },
-): Promise<IOrder> => {
+): Promise<OrderDocument> => {
   await dbConnect();
 
   assertObjectIdLike(data.userId, "사용자 ID");
@@ -112,10 +128,10 @@ const createOrderService = async (
 
 const createOrderForCurrentUserService = async (
   data: CreateOrderDto,
-): Promise<IOrder> => {
+): Promise<OrderDocument> => {
   const { userId } = await requireAuth();
   return createOrderService({ ...data, userId });
-}
+};
 
 /**
  * 결제완료(CONFIRMED)됐지만 MobileInvitation을 만들지 않은 채 기한을 넘긴
@@ -126,7 +142,7 @@ const createOrderForCurrentUserService = async (
  */
 const findExpiredAwaitingMobileInvitationOrders = async (
   userId: string | mongoose.Types.ObjectId,
-): Promise<IOrder[]> => {
+): Promise<OrderDocument[]> => {
   await dbConnect();
 
   const deadline = new Date();
@@ -144,7 +160,7 @@ const findExpiredAwaitingMobileInvitationOrders = async (
     orderStatus: "CONFIRMED",
     _id: { $nin: invitationOrderIds },
     confirmedAt: { $lt: deadline },
-  }).lean<IOrder[]>();
+  }).lean<OrderDocument[]>();
 };
 
 /**
@@ -165,7 +181,7 @@ const findExpiredAwaitingMobileInvitationOrders = async (
  * 상한 없이 조회해도 무제한 증가하지 않는다.
  */
 const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
-  IOrder[]
+  OrderDocument[]
 > => {
   await dbConnect();
 
@@ -177,7 +193,7 @@ const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
     confirmedAt: { $lt: deadline },
   })
     .sort({ confirmedAt: 1 })
-    .lean<IOrder[]>();
+    .lean<OrderDocument[]>();
 
   if (candidates.length === 0) return [];
 
@@ -198,10 +214,10 @@ const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
 
 const getOrderSeviceByMerchantUid = async (
   merchantUid: string,
-): Promise<IOrder | null> => {
+): Promise<OrderDocument | null> => {
   await dbConnect();
 
-  const order = await OrderModel.findOne({ merchantUid }).lean<IOrder>();
+  const order = await OrderModel.findOne({ merchantUid }).lean<OrderDocument>();
 
   return order;
 };
@@ -216,7 +232,7 @@ const getOrderSeviceByMerchantUid = async (
  * 인스턴스가 하나라도 남으면 "Only plain objects..." 에러가 난다.
  */
 const toOrderListItems = async (
-  orders: IOrder[],
+  orders: OrderDocument[],
 ): Promise<OrderListItem[]> => {
   if (orders.length === 0) return [];
 
@@ -326,7 +342,7 @@ const getOrdersPageForUser = async ({
 }: OrderListQuery): Promise<OrderListPage> => {
   await dbConnect();
 
-  const filter: mongoose.FilterQuery<IOrder> = { userId };
+  const filter: mongoose.FilterQuery<OrderDocument> = { userId };
 
   if (status) {
     filter.orderStatus = status;
@@ -361,7 +377,7 @@ const getOrdersPageForUser = async ({
   const found = await OrderModel.find(filter)
     .sort({ createdAt: -1, _id: -1 })
     .limit(limit + 1)
-    .lean<IOrder[]>();
+    .lean<OrderDocument[]>();
 
   const hasMore = found.length > limit;
   const orders = hasMore ? found.slice(0, limit) : found;
@@ -416,7 +432,7 @@ const getAdminOrdersPageService = async ({
     throw new AppError("VALIDATION", "잘못된 주문 상태입니다.");
   }
 
-  const filter: mongoose.FilterQuery<IOrder> = {};
+  const filter: mongoose.FilterQuery<OrderDocument> = {};
 
   if (status) {
     filter.orderStatus = status;
@@ -437,7 +453,9 @@ const getAdminOrdersPageService = async ({
   }
 
   const found = await OrderModel.find(filter)
-    .select("merchantUid buyerName product.title orderStatus finalPrice createdAt")
+    .select(
+      "merchantUid buyerName product.title orderStatus finalPrice createdAt",
+    )
     .sort({ createdAt: -1, _id: -1 })
     .limit(limit + 1)
     .lean<AdminOrderListRow[]>()
@@ -513,12 +531,12 @@ const getOwnedOrderDetail = async (
 const requireOwnedOrder = async (
   orderId: string,
   userId: string,
-): Promise<IOrder> => {
+): Promise<OrderDocument> => {
   if (!mongoose.isObjectIdOrHexString(orderId)) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
 
-  const order = await OrderModel.findById(orderId).lean<IOrder>();
+  const order = await OrderModel.findById(orderId).lean<OrderDocument>();
   if (!order) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
@@ -589,7 +607,7 @@ const cancelPendingOrderForCurrentUser = async (
  */
 const findExpiredPendingOrders = async (
   userId: string | mongoose.Types.ObjectId,
-): Promise<{ orders: IOrder[]; deadline: Date }> => {
+): Promise<{ orders: OrderDocument[]; deadline: Date }> => {
   await dbConnect();
 
   const deadline = new Date(
@@ -604,7 +622,7 @@ const findExpiredPendingOrders = async (
     // 사용자가 창을 닫아 아직 동기화되지 않은 주문까지 덮으려면 결제수단도 본다.
     payMethod: { $ne: "VIRTUAL_ACCOUNT" },
     createdAt: { $lt: deadline },
-  }).lean<IOrder[]>();
+  }).lean<OrderDocument[]>();
 
   return { orders, deadline };
 };
@@ -616,7 +634,7 @@ const findExpiredPendingOrders = async (
  * 실행부가 두 진입점을 그대로 공유한다.
  */
 const findExpiredPendingOrdersForAllUsers = async (): Promise<{
-  orders: IOrder[];
+  orders: OrderDocument[];
   deadline: Date;
 }> => {
   await dbConnect();
@@ -633,7 +651,7 @@ const findExpiredPendingOrdersForAllUsers = async (): Promise<{
   })
     .sort({ createdAt: 1 })
     .limit(EXPIRED_ORDER_BATCH_LIMIT)
-    .lean<IOrder[]>();
+    .lean<OrderDocument[]>();
 
   return { orders, deadline };
 };

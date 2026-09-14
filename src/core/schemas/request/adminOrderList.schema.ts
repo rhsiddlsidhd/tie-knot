@@ -6,11 +6,11 @@ import { ORDER_STATUSES } from "@/core/domain/order";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-const adminOrderListRequestSchema = z.object({
+const AdminOrderListRequestSchema = z.object({
   status: z.preprocess(emptyToUndefined, z.enum(ORDER_STATUSES).optional()),
   cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-type AdminOrderListRequest = z.infer<typeof adminOrderListRequestSchema>;
+type AdminOrderListRequest = z.infer<typeof AdminOrderListRequestSchema>;
 
-export { adminOrderListRequestSchema, type AdminOrderListRequest };
+export { AdminOrderListRequestSchema, type AdminOrderListRequest };

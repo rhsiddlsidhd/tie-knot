@@ -7,7 +7,7 @@ import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import { AppError } from "@/core/domain/error";
 import type { MobileInvitationContentSchemaDto } from "@/core/schemas/request/mobileInvitationContent.schema";
-import type { IMobileInvitation } from "@/models/mobile-invitation.model";
+import type { MobileInvitationDocument } from "@/models/mobile-invitation.model";
 import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { dbConnect } from "@/db/connect";
@@ -26,7 +26,9 @@ const toInternalError = (error: unknown, fallbackMessage: string): AppError =>
     error instanceof Error ? error.message : fallbackMessage,
   );
 
-const toContent = (invitation: IMobileInvitation): MobileInvitationContent => ({
+const toContent = (
+  invitation: MobileInvitationDocument,
+): MobileInvitationContent => ({
   groom: invitation.groom,
   bride: invitation.bride,
   weddingDate: invitation.weddingDate,
@@ -83,7 +85,7 @@ const saveMobileInvitationForOrder = async (
   orderId: string,
   userId: string,
   data: MobileInvitationContentSchemaDto,
-): Promise<IMobileInvitation> => {
+): Promise<MobileInvitationDocument> => {
   await dbConnect();
   if (
     data.subwayStation &&
@@ -132,7 +134,7 @@ const saveMobileInvitationForOrder = async (
 const saveMobileInvitationForCurrentUser = async (
   orderId: string,
   data: MobileInvitationContentSchemaDto,
-): Promise<IMobileInvitation> => {
+): Promise<MobileInvitationDocument> => {
   const { userId } = await requireAuth();
   return saveMobileInvitationForOrder(orderId, userId, data);
 };
@@ -140,7 +142,7 @@ const saveMobileInvitationForCurrentUser = async (
 const getOwnedMobileInvitationByOrder = async (
   orderId: string,
   userId: string,
-): Promise<IMobileInvitation | null> => {
+): Promise<MobileInvitationDocument | null> => {
   await dbConnect();
   await requireOwnedEligibleOrder(orderId, userId);
   if (!mongoose.isObjectIdOrHexString(orderId)) return null;
@@ -152,10 +154,10 @@ const getOwnedMobileInvitationByOrder = async (
 const getOwnedMobileInvitationPreviewByOrder = async (
   orderId: string,
   userId: string,
-): Promise<
-  | { invitation: IMobileInvitation; features: string[] }
-  | null
-> => {
+): Promise<{
+  invitation: MobileInvitationDocument;
+  features: string[];
+} | null> => {
   await dbConnect();
   const order = await requireOwnedEligibleOrder(orderId, userId);
   const invitation = await MobileInvitationModel.findOne({
@@ -191,7 +193,8 @@ const findPublishedMobileInvitationByPublicKey = async (
     status: "published",
     content: toContent(invitation),
     productId: invitation.productId.toString(),
-    features: order?.product.selectedFeatures.map((feature) => feature.code) ?? [],
+    features:
+      order?.product.selectedFeatures.map((feature) => feature.code) ?? [],
   };
 };
 

@@ -42,7 +42,7 @@ const ProductSnapshotSchema = z.object({
   selectedFeatures: z.array(SelectedFeatureSchema).default([]),
 });
 
-const createOrderSchema = BuyerInfoSchema.extend({
+const CreateOrderSchema = BuyerInfoSchema.extend({
   // 결제 이후 my-orders 흐름에서 채워지는 콘텐츠라 주문 생성 시점엔 없을 수 있다.
   buyerName: z.string().min(2, "이름은 2자 이상 입력해주세요."),
   buyerEmail: z.email("유효한 이메일을 입력해주세요."),
@@ -66,12 +66,12 @@ const createOrderSchema = BuyerInfoSchema.extend({
 type SelectFeatureDto = z.infer<typeof SelectedFeatureSchema>;
 type BuyerInfo = z.infer<typeof BuyerInfoSchema>;
 type ShippingInfo = z.infer<typeof ShippingInfoSchema>;
-type CreateOrderDto = z.infer<typeof createOrderSchema>;
+type CreateOrderDto = z.infer<typeof CreateOrderSchema>;
 
 export {
   ShippingInfoSchema,
   BuyerInfoSchema,
-  createOrderSchema,
+  CreateOrderSchema,
   type SelectFeatureDto,
   type BuyerInfo,
   type ShippingInfo,

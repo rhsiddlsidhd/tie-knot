@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/ui/components/atoms/button";
-import { navigationButtons } from "@/app/(preview)/preview/[publicKey]/_constants/navigation";
+import { NAVIGATION_BUTTONS } from "@/app/(preview)/preview/[publicKey]/_constants/navigation";
 import type { NavigationGeo } from "@/ui/hooks/useNavigationGeo";
 import Image from "next/image";
 import React from "react";
@@ -18,7 +18,7 @@ const Navigation = ({ address, geoState }: NavigationProps) => {
         원하시는 앱을 선택하시면 길안내가 시작됩니다.
       </p>
       <div className="flex flex-col gap-2">
-        {navigationButtons.map((nav, i) => {
+        {NAVIGATION_BUTTONS.map((nav, i) => {
           return (
             <Button
               variant="outline"

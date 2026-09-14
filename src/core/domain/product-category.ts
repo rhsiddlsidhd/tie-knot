@@ -10,7 +10,8 @@ const PRODUCT_CATEGORIES = [
 // 카테고리 값 자체는 항상 이 상수를 참조한다 — "invitation"이라는 이름만으론 실물
 // 청첩장과 구분이 안 돼서 "mobile-invitation"으로 지었다(디지털 상품, 배송 불필요
 // 판단의 기준이 되는 값이라 리터럴 재입력 대신 이 상수를 쓴다).
-const MOBILE_INVITATION_CATEGORY = "mobile-invitation" satisfies ProductCategory;
+const MOBILE_INVITATION_CATEGORY =
+  "mobile-invitation" satisfies ProductCategory;
 
 const SUB_CATEGORY_MAP = {
   "mobile-invitation": ["wedding", "first-birthday"],
@@ -28,7 +29,7 @@ const SUB_CATEGORY_MAP = {
   ],
 } as const satisfies Record<ProductCategory, readonly string[]>;
 
-const productCategoryLabels: Record<ProductCategory, string> = {
+const PRODUCT_CATEGORY_LABELS: Record<ProductCategory, string> = {
   "mobile-invitation": "모바일초대장",
   favor: "답례품",
   accessory: "웨딩소품",
@@ -36,7 +37,7 @@ const productCategoryLabels: Record<ProductCategory, string> = {
   ceremony: "예식 용품",
 };
 
-const subCategoryLabels: Record<SubCategory, string> = {
+const SUB_CATEGORY_LABELS: Record<SubCategory, string> = {
   wedding: "청첩장",
   "first-birthday": "돌잔치",
   candle: "캔들",
@@ -72,15 +73,16 @@ interface AvailableSubCategory {
 const CUSTOMER_INPUT_ROUTES: Partial<
   Record<ProductCategory, (orderId: string) => string>
 > = {
-  "mobile-invitation": (orderId: string) => `/my-orders/${orderId}/mobile-invitation`,
+  "mobile-invitation": (orderId: string) =>
+    `/my-orders/${orderId}/mobile-invitation`,
 };
 
 export {
   PRODUCT_CATEGORIES,
   MOBILE_INVITATION_CATEGORY,
   SUB_CATEGORY_MAP,
-  productCategoryLabels,
-  subCategoryLabels,
+  PRODUCT_CATEGORY_LABELS,
+  SUB_CATEGORY_LABELS,
   CUSTOMER_INPUT_ROUTES,
   type ProductCategory,
   type SubCategory,

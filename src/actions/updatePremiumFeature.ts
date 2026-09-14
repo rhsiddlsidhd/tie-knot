@@ -1,17 +1,17 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { premiumFeatureSchema } from "@/core/schemas/request/premiumFeature.schema";
+import { PremiumFeatureSchema } from "@/core/schemas/request/premiumFeature.schema";
 import { updatePremiumFeatureAsAdminService } from "@/services/premiumFeature";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
 const updatePremiumFeature = async (
   _prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   const featureId = formData.get("featureId") as string;
 
   if (!featureId) {
@@ -28,19 +28,23 @@ const updatePremiumFeature = async (
     additionalPrice: Number(formData.get("additionalPrice")),
   };
 
-  const parsed = validateAndFlatten(premiumFeatureSchema, data);
+  const parsed = validateAndFlatten(PremiumFeatureSchema, data);
 
   if (!parsed.success) {
     return {
       success: false,
-      error: { category: "VALIDATION", message: "입력값을 확인해주세요", fieldErrors: parsed.error },
+      error: {
+        category: "VALIDATION",
+        message: "입력값을 확인해주세요",
+        fieldErrors: parsed.error,
+      },
     };
   }
 
   try {
     await updatePremiumFeatureAsAdminService(featureId, parsed.data);
 
-    revalidatePath(routes.admin.premiumFeatures.root);
+    revalidatePath(ROUTES.admin.premiumFeatures.root);
 
     return {
       success: true,

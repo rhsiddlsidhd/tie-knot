@@ -21,7 +21,7 @@ interface MobileInvitationSide extends MobileInvitationPerson {
   mother?: MobileInvitationParent;
 }
 
-interface IMobileInvitation {
+interface MobileInvitationDocument {
   _id: Types.ObjectId;
   publicKey: string;
   userId: Types.ObjectId;
@@ -43,7 +43,7 @@ interface IMobileInvitation {
   updatedAt: Date;
 }
 
-const parentSchema = new Schema<MobileInvitationParent>(
+const ParentSchema = new Schema<MobileInvitationParent>(
   {
     name: { type: String, required: true },
     phone: { type: String, required: true },
@@ -53,28 +53,48 @@ const parentSchema = new Schema<MobileInvitationParent>(
   { _id: false },
 );
 
-const sideSchema = new Schema<MobileInvitationSide>(
+const SideSchema = new Schema<MobileInvitationSide>(
   {
     name: { type: String, required: true },
     phone: { type: String, required: true },
     bankName: String,
     accountNumber: String,
-    father: parentSchema,
-    mother: parentSchema,
+    father: ParentSchema,
+    mother: ParentSchema,
   },
   { _id: false },
 );
 
-const mobileInvitationSchema = new Schema<IMobileInvitation>(
+const MobileInvitationSchema = new Schema<MobileInvitationDocument>(
   {
     publicKey: { type: String, required: true, unique: true, immutable: true },
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
-    orderId: { type: Schema.Types.ObjectId, ref: "Order", required: true, unique: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
+    orderId: {
+      type: Schema.Types.ObjectId,
+      ref: "Order",
+      required: true,
+      unique: true,
+    },
     productId: { type: Schema.Types.ObjectId, ref: "Product", required: true },
-    status: { type: String, enum: ["draft", "published"], default: "draft", required: true },
-    theme: { type: String, enum: MOBILE_INVITATION_THEMES, default: "default", required: true },
-    groom: { type: sideSchema, required: true },
-    bride: { type: sideSchema, required: true },
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "draft",
+      required: true,
+    },
+    theme: {
+      type: String,
+      enum: MOBILE_INVITATION_THEMES,
+      default: "default",
+      required: true,
+    },
+    groom: { type: SideSchema, required: true },
+    bride: { type: SideSchema, required: true },
     weddingDate: { type: Date, required: true },
     venue: { type: String, required: true },
     address: { type: String, required: true },
@@ -88,13 +108,16 @@ const mobileInvitationSchema = new Schema<IMobileInvitation>(
 );
 
 const MobileInvitationModel =
-  (mongoose.models.MobileInvitation as Model<IMobileInvitation>) ||
-  mongoose.model<IMobileInvitation>("MobileInvitation", mobileInvitationSchema);
+  (mongoose.models.MobileInvitation as Model<MobileInvitationDocument>) ||
+  mongoose.model<MobileInvitationDocument>(
+    "MobileInvitation",
+    MobileInvitationSchema,
+  );
 
 export {
   MobileInvitationModel,
   type MobileInvitationPerson,
   type MobileInvitationParent,
   type MobileInvitationSide,
-  type IMobileInvitation,
+  type MobileInvitationDocument,
 };

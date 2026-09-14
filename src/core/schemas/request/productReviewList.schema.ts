@@ -6,13 +6,11 @@ import { REVIEW_SORT_KEYS } from "@/core/domain/review";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-const productReviewListRequestSchema = z.object({
+const ProductReviewListRequestSchema = z.object({
   sort: z.preprocess(emptyToUndefined, z.enum(REVIEW_SORT_KEYS).optional()),
   reviewCursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-type ProductReviewListRequest = z.infer<
-  typeof productReviewListRequestSchema
->;
+type ProductReviewListRequest = z.infer<typeof ProductReviewListRequestSchema>;
 
-export { productReviewListRequestSchema, type ProductReviewListRequest };
+export { ProductReviewListRequestSchema, type ProductReviewListRequest };

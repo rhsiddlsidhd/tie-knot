@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { CreateGuestbookForm } from "./CreateGuestbookForm";
 
 type Props = React.ComponentProps<typeof CreateGuestbookForm>;
@@ -89,7 +89,7 @@ describe("CreateGuestbookForm (프레젠테이션)", () => {
   });
 
   it("author/password 필드 에러가 있으면 각 필드 아래에 에러 메시지를 표시한다", () => {
-    const state: APIResponse<{ message: string }> = {
+    const state: ApiResponse<{ message: string }> = {
       success: false,
       error: {
         category: "VALIDATION",
@@ -106,7 +106,10 @@ describe("CreateGuestbookForm (프레젠테이션)", () => {
     expect(
       screen.getByText("비밀번호는 최소 4자 이상이어야 합니다"),
     ).toBeInTheDocument();
-    expect(screen.getByLabelText("이름")).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText("이름")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
     expect(screen.getByLabelText("비밀번호")).toHaveAttribute(
       "aria-invalid",
       "true",

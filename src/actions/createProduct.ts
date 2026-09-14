@@ -1,23 +1,24 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { createProductWorkflow } from "@/services/product";
 import { actionError } from "@/boundary";
-import { productSchema } from "@/core/schemas/request/product.schema";
-import { routes } from "@/core/domain/routes";
+import { ProductSchema } from "@/core/schemas/request/product.schema";
+import { ROUTES } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
 // 빈 문자열/null이면 undefined를 넘겨 zod .default()가 동작하게 한다 —
 // Number(null)===0 / Number("")===0으로 파싱되면 min(1) 검증에 걸린다.
-const parseOptionalNumber = (raw: FormDataEntryValue | null): number | undefined =>
-  raw ? Number(raw) : undefined;
+const parseOptionalNumber = (
+  raw: FormDataEntryValue | null,
+): number | undefined => (raw ? Number(raw) : undefined);
 
 const createProduct = async (
   _prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   const data = {
     title: formData.get("title") as string,
     description: formData.get("description") as string,
@@ -39,12 +40,16 @@ const createProduct = async (
     maxQuantity: parseOptionalNumber(formData.get("maxQuantity")),
   };
 
-  const parsed = validateAndFlatten(productSchema, data);
+  const parsed = validateAndFlatten(ProductSchema, data);
 
   if (!parsed.success) {
     return {
       success: false,
-      error: { category: "VALIDATION", message: "입력값을 확인해주세요", fieldErrors: parsed.error },
+      error: {
+        category: "VALIDATION",
+        message: "입력값을 확인해주세요",
+        fieldErrors: parsed.error,
+      },
     };
   }
 
@@ -54,8 +59,8 @@ const createProduct = async (
       previewUrl: (formData.get("previewUrl") as string) || undefined,
     });
 
-    revalidatePath(routes.admin.products.root);
-    revalidatePath(routes.products.root);
+    revalidatePath(ROUTES.admin.products.root);
+    revalidatePath(ROUTES.products.root);
 
     return {
       success: true,

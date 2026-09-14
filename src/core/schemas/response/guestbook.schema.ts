@@ -7,7 +7,7 @@ const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
 // password는 응답에 포함되지 않는다(getGuestbookService의 select 제외) — z.strictObject로 막아서
 // 나중에 password 같은 필드가 실수로 다시 새면 파싱 단계에서 걸리게 한다.
 // (.strict()는 Zod 4에서 deprecated, z.strictObject()가 공식 대체)
-const guestbookEntryResponseSchema = z.strictObject({
+const GuestbookEntryResponseSchema = z.strictObject({
   _id: z.string(),
   author: z.string(),
   message: z.string(),
@@ -15,15 +15,15 @@ const guestbookEntryResponseSchema = z.strictObject({
   createdAt: isoDateString,
 });
 
-const guestbookListPageResponseSchema = z.object({
-  items: z.array(guestbookEntryResponseSchema),
+const GuestbookListPageResponseSchema = z.object({
+  items: z.array(GuestbookEntryResponseSchema),
   nextCursor: z.string().nullable(),
 });
 
-type GuestbookListResponse = z.infer<typeof guestbookListPageResponseSchema>;
+type GuestbookListResponse = z.infer<typeof GuestbookListPageResponseSchema>;
 
 export {
-  guestbookEntryResponseSchema,
-  guestbookListPageResponseSchema,
+  GuestbookEntryResponseSchema,
+  GuestbookListPageResponseSchema,
   type GuestbookListResponse,
 };

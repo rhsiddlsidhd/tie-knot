@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { Badge } from "@/ui/components/atoms/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import type { DashboardRecentOrder } from "@/core/domain/dashboard";
-import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
-import { routes } from "@/core/domain/routes";
+import {
+  ORDER_STATUS_BADGE_VARIANTS,
+  ORDER_STATUS_LABELS,
+} from "@/core/domain/order";
+import { ROUTES } from "@/core/domain/routes";
 import { formatPriceWithComma } from "@/core/utils/price";
 import { formatRelativeTime } from "@/core/utils/date";
 
@@ -18,7 +26,7 @@ const RecentOrdersCard = ({ orders }: RecentOrdersCardProps) => {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>최근 주문</CardTitle>
         <Link
-          href={routes.admin.orders}
+          href={ROUTES.admin.orders}
           className="text-muted-foreground text-sm hover:underline"
         >
           전체 보기
@@ -69,7 +77,9 @@ const RecentOrdersCard = ({ orders }: RecentOrdersCardProps) => {
                       {order.productTitle}
                     </td>
                     <td className="px-4 py-3">
-                      <Badge variant={ORDER_STATUS_BADGE_VARIANTS[order.orderStatus]}>
+                      <Badge
+                        variant={ORDER_STATUS_BADGE_VARIANTS[order.orderStatus]}
+                      >
                         {ORDER_STATUS_LABELS[order.orderStatus]}
                       </Badge>
                     </td>

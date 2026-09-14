@@ -5,16 +5,13 @@ import { Label } from "@/ui/components/atoms/label";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 
-
-
-
 import { getFieldError } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
 interface PremiumFeatureRegistrationFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
 }
 
 const PremiumFeatureRegistrationForm = ({
@@ -52,9 +49,7 @@ const PremiumFeatureRegistrationForm = ({
           required
         />
         {labelError && <Alert type="error">{labelError}</Alert>}
-        <TypographyMuted>
-          고객에게 표시될 기능의 이름입니다.
-        </TypographyMuted>
+        <TypographyMuted>고객에게 표시될 기능의 이름입니다.</TypographyMuted>
       </div>
 
       <div className="space-y-2">
@@ -103,6 +98,6 @@ const PremiumFeatureRegistrationForm = ({
       </div>
     </form>
   );
-}
+};
 
 export { PremiumFeatureRegistrationForm };

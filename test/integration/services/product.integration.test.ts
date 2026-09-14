@@ -4,9 +4,14 @@ import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
 import { AppError } from "@/core/domain/error";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
-import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
+import {
+  ProductModel,
+  MobileInvitationProductModel,
+} from "@/models/product.model";
 
-const { deleteProductAsset } = vi.hoisted(() => ({ deleteProductAsset: vi.fn() }));
+const { deleteProductAsset } = vi.hoisted(() => ({
+  deleteProductAsset: vi.fn(),
+}));
 vi.mock("@/adapters/server/cloudinary/cleanup", () => ({ deleteProductAsset }));
 
 import {
@@ -61,7 +66,9 @@ describe("product", () => {
     });
 
     it("필수 필드 누락으로 mongoose 검증 실패 시 AppError(INTERNAL)를 던진다", async () => {
-      const input = buildProductInput({ title: undefined as unknown as string });
+      const input = buildProductInput({
+        title: undefined as unknown as string,
+      });
 
       await expect(createProductService(input)).rejects.toBeInstanceOf(
         AppError,
@@ -72,11 +79,15 @@ describe("product", () => {
     });
 
     it("invitation 카테고리는 previewUrl이 discriminator 스키마에 실제로 저장된다", async () => {
-      const input = buildProductInput({ previewUrl: "https://example.com/preview.jpg" });
+      const input = buildProductInput({
+        previewUrl: "https://example.com/preview.jpg",
+      });
 
       await createProductService(input);
 
-      const saved = await MobileInvitationProductModel.findOne({ title: input.title }).lean();
+      const saved = await MobileInvitationProductModel.findOne({
+        title: input.title,
+      }).lean();
       expect(saved?.previewUrl).toBe("https://example.com/preview.jpg");
     });
 
@@ -85,7 +96,9 @@ describe("product", () => {
 
       await createProductService(input);
 
-      const saved = await MobileInvitationProductModel.findOne({ title: input.title }).lean();
+      const saved = await MobileInvitationProductModel.findOne({
+        title: input.title,
+      }).lean();
       expect(saved?.theme).toBe("default");
     });
 
@@ -94,7 +107,9 @@ describe("product", () => {
 
       await createProductService(input);
 
-      const saved = await MobileInvitationProductModel.findOne({ title: input.title }).lean();
+      const saved = await MobileInvitationProductModel.findOne({
+        title: input.title,
+      }).lean();
       expect(saved?.theme).toBe("blossom");
     });
   });
@@ -181,7 +196,9 @@ describe("product", () => {
       await createProductService(input);
       const saved = await ProductModel.findOne({ title: input.title }).lean();
 
-      const result = await getProductQuantityBoundsService(saved!._id.toString());
+      const result = await getProductQuantityBoundsService(
+        saved!._id.toString(),
+      );
 
       expect(result).toEqual({ minQuantity: 2, maxQuantity: 5 });
     });
@@ -206,7 +223,9 @@ describe("product", () => {
       const saved = await ProductModel.findOne({ title: input.title }).lean();
       await deleteProductService(saved!._id.toString());
 
-      const result = await getProductQuantityBoundsService(saved!._id.toString());
+      const result = await getProductQuantityBoundsService(
+        saved!._id.toString(),
+      );
 
       expect(result).toBeNull();
     });
@@ -295,7 +314,9 @@ describe("product", () => {
 
       const result = await getAdminProductsPageService({});
 
-      expect(result.items.map((p) => p._id)).toEqual([...created].sort().reverse());
+      expect(result.items.map((p) => p._id)).toEqual(
+        [...created].sort().reverse(),
+      );
     });
 
     it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
@@ -330,8 +351,12 @@ describe("product", () => {
       const activeResult = await getAdminProductsPageService({});
       const trashResult = await getAdminProductsPageService({ view: "trash" });
 
-      expect(activeResult.items.map((p) => p._id)).toEqual([active!._id.toString()]);
-      expect(trashResult.items.map((p) => p._id)).toEqual([trashed!._id.toString()]);
+      expect(activeResult.items.map((p) => p._id)).toEqual([
+        active!._id.toString(),
+      ]);
+      expect(trashResult.items.map((p) => p._id)).toEqual([
+        trashed!._id.toString(),
+      ]);
     });
 
     it("view 필터와 cursor를 동시에 적용한다", async () => {
@@ -352,7 +377,9 @@ describe("product", () => {
 
       expect(secondPage.items).toHaveLength(1);
       expect(
-        [...firstPage.items, ...secondPage.items].some((p) => p.title === "삭제될상품"),
+        [...firstPage.items, ...secondPage.items].some(
+          (p) => p.title === "삭제될상품",
+        ),
       ).toBe(false);
     });
 
@@ -421,7 +448,9 @@ describe("product", () => {
       const publicPage = await getPublicProductsPageService({});
       const adminProducts = (await getAdminProductsPageService({})).items;
 
-      expect(publicPage.items.map((product) => product.title)).toEqual(["공개상품"]);
+      expect(publicPage.items.map((product) => product.title)).toEqual([
+        "공개상품",
+      ]);
       expect(publicPage.nextCursor).toBeNull();
       expect(adminProducts.map((product) => product.status).sort()).toEqual([
         "active",
@@ -433,11 +462,17 @@ describe("product", () => {
     it("category를 지정하면 해당 카테고리 공개 상품만 반환한다", async () => {
       await createProductService(buildProductInput({ title: "초대장" }));
       await createProductService(
-        buildProductInput({ title: "캔들", category: "favor", subCategory: "candle" }),
+        buildProductInput({
+          title: "캔들",
+          category: "favor",
+          subCategory: "candle",
+        }),
       );
 
       const result = await getPublicProductsPageService({ category: "favor" });
-      const noMatch = await getPublicProductsPageService({ category: "nonexistent" });
+      const noMatch = await getPublicProductsPageService({
+        category: "nonexistent",
+      });
 
       expect(result.items.map((product) => product.title)).toEqual(["캔들"]);
       expect(noMatch.items).toEqual([]);
@@ -448,7 +483,10 @@ describe("product", () => {
         buildProductInput({ title: "청첩장", subCategory: "wedding" }),
       );
       await createProductService(
-        buildProductInput({ title: "돌잔치 초대장", subCategory: "first-birthday" }),
+        buildProductInput({
+          title: "돌잔치 초대장",
+          subCategory: "first-birthday",
+        }),
       );
 
       const result = await getPublicProductsPageService({
@@ -490,9 +528,11 @@ describe("product", () => {
       expect(thirdPage.items).toHaveLength(1);
       expect(thirdPage.nextCursor).toBeNull();
 
-      const allIds = [...firstPage.items, ...secondPage.items, ...thirdPage.items].map(
-        (product) => product._id,
-      );
+      const allIds = [
+        ...firstPage.items,
+        ...secondPage.items,
+        ...thirdPage.items,
+      ].map((product) => product._id);
       expect(new Set(allIds).size).toBe(5);
       expect(allIds.sort()).toEqual([...created].sort());
     });
@@ -529,12 +569,24 @@ describe("product", () => {
     });
 
     it("isFeatured가 다르면 priority/createdAt이 낮아도 isFeatured=true가 항상 먼저이고, 페이지 경계를 넘어도 순서가 흔들리지 않는다", async () => {
-      const featuredA = await createAndFetch("추천A", { isFeatured: true, priority: 1 });
-      const featuredB = await createAndFetch("추천B", { isFeatured: true, priority: 1 });
-      const notFeatured = await createAndFetch("일반", { isFeatured: false, priority: 99 });
+      const featuredA = await createAndFetch("추천A", {
+        isFeatured: true,
+        priority: 1,
+      });
+      const featuredB = await createAndFetch("추천B", {
+        isFeatured: true,
+        priority: 1,
+      });
+      const notFeatured = await createAndFetch("일반", {
+        isFeatured: false,
+        priority: 99,
+      });
       await setCreatedAt(featuredA!._id, new Date("2026-01-01T00:00:00.000Z"));
       await setCreatedAt(featuredB!._id, new Date("2026-01-02T00:00:00.000Z"));
-      await setCreatedAt(notFeatured!._id, new Date("2026-01-03T00:00:00.000Z"));
+      await setCreatedAt(
+        notFeatured!._id,
+        new Date("2026-01-03T00:00:00.000Z"),
+      );
 
       const firstPage = await getPublicProductsPageService({
         category: MOBILE_INVITATION_CATEGORY,
@@ -553,13 +605,25 @@ describe("product", () => {
 
     it("isFeatured/priority 우선순위 정렬을 유지한다", async () => {
       await createProductService(
-        buildProductInput({ title: "일반-낮은우선순위", isFeatured: false, priority: 0 }),
+        buildProductInput({
+          title: "일반-낮은우선순위",
+          isFeatured: false,
+          priority: 0,
+        }),
       );
       await createProductService(
-        buildProductInput({ title: "추천-낮은우선순위", isFeatured: true, priority: 0 }),
+        buildProductInput({
+          title: "추천-낮은우선순위",
+          isFeatured: true,
+          priority: 0,
+        }),
       );
       await createProductService(
-        buildProductInput({ title: "추천-높은우선순위", isFeatured: true, priority: 10 }),
+        buildProductInput({
+          title: "추천-높은우선순위",
+          isFeatured: true,
+          priority: 10,
+        }),
       );
 
       const page = await getPublicProductsPageService({
@@ -593,7 +657,11 @@ describe("product", () => {
         buildProductInput({ title: "돌잔치", subCategory: "first-birthday" }),
       );
       await createProductService(
-        buildProductInput({ title: "비누", category: "favor", subCategory: "soap" }),
+        buildProductInput({
+          title: "비누",
+          category: "favor",
+          subCategory: "soap",
+        }),
       );
       await createProductService(buildProductInput({ title: "청첩장1" }));
       await createProductService(buildProductInput({ title: "청첩장2" }));
@@ -620,10 +688,17 @@ describe("product", () => {
           subCategory: "magnet",
         }),
       );
-      const deleted = await ProductModel.findOne({ title: "삭제마그넷" }).lean();
+      const deleted = await ProductModel.findOne({
+        title: "삭제마그넷",
+      }).lean();
       await deleteProductService(deleted!._id.toString());
       await ProductModel.collection.insertMany([
-        { category: "favor", subCategory: "wedding", status: "active", deletedAt: null },
+        {
+          category: "favor",
+          subCategory: "wedding",
+          status: "active",
+          deletedAt: null,
+        },
         {
           category: "legacy-category",
           subCategory: "legacy-sub-category",
@@ -645,7 +720,11 @@ describe("product", () => {
     it("category를 지정하면 해당 카테고리의 pair만 반환한다", async () => {
       await createProductService(buildProductInput({ title: "청첩장" }));
       await createProductService(
-        buildProductInput({ title: "비누", category: "favor", subCategory: "soap" }),
+        buildProductInput({
+          title: "비누",
+          category: "favor",
+          subCategory: "soap",
+        }),
       );
 
       const result = await getAvailableSubCategoriesService("favor");
@@ -679,7 +758,9 @@ describe("product", () => {
 
       const a = await ProductModel.findOne({ title: "A-3좋아요" }).lean();
       const b = await ProductModel.findOne({ title: "B-2좋아요-일반" }).lean();
-      const c = await ProductModel.findOne({ title: "C-2좋아요-featured" }).lean();
+      const c = await ProductModel.findOne({
+        title: "C-2좋아요-featured",
+      }).lean();
       const d = await ProductModel.findOne({ title: "D-1좋아요" }).lean();
       await likeNTimes(a!._id.toString(), 3);
       await likeNTimes(b!._id.toString(), 2);
@@ -749,7 +830,9 @@ describe("product", () => {
       await createProductService(
         buildProductInput({ title: "품절인기", status: "soldOut" }),
       );
-      const inactive = await ProductModel.findOne({ title: "비활성인기" }).lean();
+      const inactive = await ProductModel.findOne({
+        title: "비활성인기",
+      }).lean();
       const soldOut = await ProductModel.findOne({ title: "품절인기" }).lean();
       await likeNTimes(inactive!._id.toString(), 2);
       await likeNTimes(soldOut!._id.toString(), 1);
@@ -885,7 +968,9 @@ describe("product", () => {
         previewUrl: "https://example.com/updated-preview.jpg",
       });
 
-      expect(result?.previewUrl).toBe("https://example.com/updated-preview.jpg");
+      expect(result?.previewUrl).toBe(
+        "https://example.com/updated-preview.jpg",
+      );
     });
   });
 
@@ -920,7 +1005,10 @@ describe("product", () => {
 
   describe("restoreProductService", () => {
     it("삭제된 상품을 복구하면 true를 리턴하고 status를 active로, deletedAt을 null로 되돌린다", async () => {
-      const input = buildProductInput({ title: "복구될상품", status: "soldOut" });
+      const input = buildProductInput({
+        title: "복구될상품",
+        status: "soldOut",
+      });
       await createProductService(input);
       const saved = await ProductModel.findOne({ title: input.title }).lean();
       await deleteProductService(saved!._id.toString());
@@ -973,11 +1061,15 @@ describe("product", () => {
       const saved = await ProductModel.findOne({ title: input.title }).lean();
       await deleteProductService(saved!._id.toString());
 
-      const result = await permanentlyDeleteProductService(saved!._id.toString());
+      const result = await permanentlyDeleteProductService(
+        saved!._id.toString(),
+      );
 
       expect(result).toBe(true);
       expect(await ProductModel.findById(saved!._id).lean()).toBeNull();
-      expect(deleteProductAsset).toHaveBeenCalledWith("products/thumbnails/thumb1");
+      expect(deleteProductAsset).toHaveBeenCalledWith(
+        "products/thumbnails/thumb1",
+      );
       expect(deleteProductAsset).toHaveBeenCalledWith("products/images/img1");
     });
 
@@ -986,7 +1078,9 @@ describe("product", () => {
       await createProductService(input);
       const saved = await ProductModel.findOne({ title: input.title }).lean();
 
-      const result = await permanentlyDeleteProductService(saved!._id.toString());
+      const result = await permanentlyDeleteProductService(
+        saved!._id.toString(),
+      );
 
       expect(result).toBe(false);
       expect(await ProductModel.findById(saved!._id).lean()).not.toBeNull();
@@ -1101,10 +1195,16 @@ describe("product", () => {
 
     it("title에 부분일치(대소문자 무시)하는 상품을 리턴한다", async () => {
       await createProductService(
-        buildProductInput({ title: "Spring Wedding Card", subCategory: "first-birthday" }),
+        buildProductInput({
+          title: "Spring Wedding Card",
+          subCategory: "first-birthday",
+        }),
       );
       await createProductService(
-        buildProductInput({ title: "가을 청첩장", subCategory: "first-birthday" }),
+        buildProductInput({
+          title: "가을 청첩장",
+          subCategory: "first-birthday",
+        }),
       );
 
       const result = await searchProductsService("wedding");
@@ -1125,7 +1225,10 @@ describe("product", () => {
 
     it("카테고리 라벨 부분일치로 역조회해 매칭한다 ('초대' -> '모바일초대장' -> mobile-invitation)", async () => {
       await createProductService(
-        buildProductInput({ title: "무관한 제목", category: MOBILE_INVITATION_CATEGORY }),
+        buildProductInput({
+          title: "무관한 제목",
+          category: MOBILE_INVITATION_CATEGORY,
+        }),
       );
 
       const result = await searchProductsService("초대");
@@ -1135,7 +1238,10 @@ describe("product", () => {
 
     it("서브카테고리 라벨 부분일치로 역조회해 매칭한다 ('돌잔' -> '돌잔치' -> first-birthday)", async () => {
       await createProductService(
-        buildProductInput({ title: "무관한 제목1", subCategory: "first-birthday" }),
+        buildProductInput({
+          title: "무관한 제목1",
+          subCategory: "first-birthday",
+        }),
       );
       await createProductService(
         buildProductInput({ title: "무관한 제목2", subCategory: "wedding" }),
@@ -1155,14 +1261,16 @@ describe("product", () => {
 
       const result = await searchProductsService("장");
 
-      // "장"은 subCategoryLabels.wedding === "청첩장"과 productCategoryLabels["mobile-invitation"] === "모바일초대장"에
+      // "장"은 SUB_CATEGORY_LABELS.wedding === "청첩장"과 PRODUCT_CATEGORY_LABELS["mobile-invitation"] === "모바일초대장"에
       // 모두 포함되지만, 2글자 미만이라 라벨 역조회가 스킵된다.
       // title("가을맞이 카드")에도 "장"이 없으므로 빈 배열이어야 한다.
       expect(result).toEqual([]);
     });
 
     it("어떤 라벨과도 안 겹치는 검색어는 title 조건만으로 정상 조회된다 (에러 아님)", async () => {
-      await createProductService(buildProductInput({ title: "웨딩드레스 특가" }));
+      await createProductService(
+        buildProductInput({ title: "웨딩드레스 특가" }),
+      );
 
       const result = await searchProductsService("웨딩드레스");
 
@@ -1170,8 +1278,12 @@ describe("product", () => {
     });
 
     it("삭제된 상품(deletedAt 존재)은 결과에서 제외한다", async () => {
-      await createProductService(buildProductInput({ title: "청첩장 매칭 대상" }));
-      const saved = await ProductModel.findOne({ title: "청첩장 매칭 대상" }).lean();
+      await createProductService(
+        buildProductInput({ title: "청첩장 매칭 대상" }),
+      );
+      const saved = await ProductModel.findOne({
+        title: "청첩장 매칭 대상",
+      }).lean();
       await deleteProductService(saved!._id.toString());
 
       const result = await searchProductsService("청첩장");
@@ -1199,8 +1311,12 @@ describe("product", () => {
     });
 
     it("userId를 넘기면 좋아요 여부(isLiked)를 반영한다", async () => {
-      await createProductService(buildProductInput({ title: "좋아요 테스트 청첩장" }));
-      const saved = await ProductModel.findOne({ title: "좋아요 테스트 청첩장" }).lean();
+      await createProductService(
+        buildProductInput({ title: "좋아요 테스트 청첩장" }),
+      );
+      const saved = await ProductModel.findOne({
+        title: "좋아요 테스트 청첩장",
+      }).lean();
       const userId = new mongoose.Types.ObjectId().toString();
       await updateProductLikeService(saved!._id.toString(), userId);
 

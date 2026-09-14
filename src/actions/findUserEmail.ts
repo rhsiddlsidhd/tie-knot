@@ -4,7 +4,7 @@
  * DB에서 아이디 가져오기
  */
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
 import { UserEmailSchema } from "@/core/schemas/request/userEmail.schema";
 
@@ -15,7 +15,7 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 const findUserEmail = async (
   _prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ email: string }>> => {
+): Promise<ApiResponse<{ email: string }>> => {
   const data = {
     name: formData.get("name"),
     phone: formData.get("phone"),

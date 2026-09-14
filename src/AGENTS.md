@@ -1,6 +1,6 @@
 # src/
 
-> Last updated: 2026-09-02
+> Last updated: 2026-09-15
 
 ## Overview
 
@@ -8,10 +8,10 @@
 
 ## Key Files
 
-| File          | Purpose                                                                                              |
-| ------------- | ----------------------------------------------------------------------------------------------------- |
+| File          | Purpose                                                                                             |
+| ------------- | --------------------------------------------------------------------------------------------------- |
 | `proxy.ts`    | 인증/권한 기반 라우트 접근 제어(로그인 필요 경로, 어드민 role 체크, 로그인 유저의 auth 페이지 차단) |
-| `boundary.ts` | Route Handler/Server Action 공용 에러 응답 경계 — AppError를 HTTP status로 매핑, 민감 메시지 마스킹  |
+| `boundary.ts` | Route Handler/Server Action 공용 에러 응답 경계 — AppError를 HTTP status로 매핑, 민감 메시지 마스킹 |
 
 ## Critical Convention
 
@@ -27,6 +27,12 @@
 - 로컬 상태로 충분한 걸 곧바로 Context나 Zustand로 확장하지 않는다 — 클라이언트 상태 범위는 로컬 → Context API(`src/ui/context/`) → Zustand(`src/ui/stores/`) 순으로만 넓힌다.
 - 서버에서 온 데이터를 Context/Zustand로 직접 옮기지 않는다 — 캐싱·중복 호출 방지는 `useSWR`(주로 `src/ui/hooks/`의 훅 안에서 Zustand 구독과 함께 조합)이 전담한다.
 - **구현체 하나가 2곳 이상의 구체적 소비처에서 쓰이면, 이름에 그 소비처 중 하나를 특정하지 않는다** — 특정하면 그 이름이 다른 소비처 입장에선 의미가 맞지 않게 된다.
-- **식별자 케이스**: 타입/인터페이스는 PascalCase, 함수/변수는 camelCase다. `export const`의 값을 재귀적으로 뜯어봤을 때 문자열/숫자/불리언 리터럴(또는 그 배열/lookup map)로만 이루어져 있으면 SCREAMING_SNAKE_CASE로 export한다 — 단일 값이든 여러 값 나열이든 키→리터럴 값 lookup map이든 "값이 끝까지 리터럴이냐"가 기준이다. 값 안에 함수·컴포넌트 참조·이종 필드 객체가 하나라도 섞이면 camelCase다. **위치가 `constants/`든 파일 내부 로컬이든 무관하게 적용한다** — 컴포넌트/훅 안 로컬 상수도 대상이다.
+- **식별자 케이스는 역할을 먼저 판정한다** — 타입/인터페이스/클래스와 컴포넌트·Context·Provider·Schema·Model은 PascalCase, 함수와 훅은 camelCase다. 훅은 `use` 바로 다음 문자를 대문자로 짓는다(`useAuth`). 더 구체적인 역할 규칙이 있는 하위 `AGENTS.md`가 이 공통 규칙보다 우선한다.
+  - Next.js·React 등 프레임워크가 이름으로 API를 인식하는 export는 프레임워크가 요구한 원형을 유지하고 일반 케이스 규칙에서 제외한다(`dynamic`, `revalidate`, `maxDuration`, `GET`, `POST` 등).
+  - 그 밖의 `const` 중 **선언 위치와 관계없이 실행 흐름·입력에 따라 달라지지 않고, 소비자가 변경하지 않는 설정·정책·기준값과 그 결정적 파생값**은 SCREAMING_SNAKE_CASE로 짓는다. 리터럴·계산식·환경변수 참조·함수 호출 중 어떤 초기화식을 썼는지는 상수 판정 기준이 아니다.
+  - SCREAMING_SNAKE_CASE 객체·배열은 바인딩뿐 아니라 내부 값도 변경하지 않는다. 가능한 경우 `as const` 또는 `Readonly` 타입으로 불변성을 구조적으로 표현하고, 속성 대입·`push` 등 mutation을 금지한다.
+  - 실행 흐름·입력과 무관하게 UI의 선택지·필드·라벨·표시 방식을 정의하는 정적 구성 데이터는 SCREAMING_SNAKE_CASE로 짓는다. props·API·권한·locale 등에 따라 계산한 UI 데이터는 camelCase로 짓는다.
+  - 요청·사용자·함수 호출마다 달라지는 결과, 지역 계산값, 런타임 상태의 초기값·seed·template, 테스트 fixture·mock·sample·expected 데이터, 가변 상태, accumulator, 캐시 및 런타임 리소스는 `const`로 선언해도 camelCase로 짓는다. 테스트 timeout·고정 경로·환경 설정처럼 테스트 실행 자체의 정책인 값만 SCREAMING_SNAKE_CASE로 짓는다.
+  - 판정할 때는 "이 값을 바꾸면 애플리케이션의 공통 설정·정책·판단 기준이 바뀌는가"를 확인한다. 맞으면 상수 후보이고, 현재 실행의 결과나 작업 상태만 바뀌면 일반 변수다. 상세 판정 기준과 예시는 `docs/conventions/identifier-naming.md`를 따른다.
 - 같은 아티팩트 타입끼리 파일명 케이스가 겹치지 않게 짓는다 — 파일명만 보고 컴포넌트인지 훅인지 유틸인지 구분할 수 있어야 한다.
 - `{목적}` 기반 파일(도메인 무관 범용 카테고리 — `utils/`, `constants/{목적}.ts`, `hooks/use{목적}.ts`, `services/{목적}.ts`, `schemas/{목적}.schema.ts` 등)에는 도메인/라우트가 드러나는 이름을 쓰지 않는다 — 이름이 도메인에 종속되면 재사용 가능 범위를 파일명만으로 오판하게 된다(예: `postsFormatter.ts` 금지).

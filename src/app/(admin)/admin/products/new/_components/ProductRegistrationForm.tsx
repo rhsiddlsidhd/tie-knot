@@ -6,29 +6,41 @@ import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { Alert } from "@/ui/components/molecules/Alert";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { SelectField } from "@/ui/components/organisms/SelectField";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { Input } from "@/ui/components/atoms/input";
 import { Button } from "@/ui/components/atoms/button";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { Switch } from "@/ui/components/atoms/switch";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { Label } from "@/ui/components/atoms/label";
-import { TypographyMuted, TypographyH4 } from "@/ui/components/atoms/typography";
+import {
+  TypographyMuted,
+  TypographyH4,
+} from "@/ui/components/atoms/typography";
 
 import { useImageList } from "@/ui/hooks/useImageList";
 
-import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
+import {
+  getCategoryOptions,
+  getSubCategoryOptions,
+} from "@/core/utils/category";
 import { getFieldError } from "@/core/utils/error";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
 interface ProductRegistrationFormProps {
   premiumFeatures: PremiumFeature[];
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
   onCancel: () => void;
   // 등록 성공 시 목록으로 이동할지(false) 폼에 남아 계속 등록할지(true) 컨테이너에 알린다.
   onSubmitIntentChange: (continueRegistration: boolean) => void;
@@ -43,8 +55,9 @@ const ProductRegistrationForm = ({
   onSubmitIntentChange,
 }: ProductRegistrationFormProps) => {
   const [isPremium, setIsPremium] = useState(false);
-  const [selectedCategory, setSelectedCategory] =
-    useState<ProductCategory>(MOBILE_INVITATION_CATEGORY);
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>(
+    MOBILE_INVITATION_CATEGORY,
+  );
   // 연속 등록 시 유지되는 필드 — category와 마찬가지로 SelectField에 defaultValue로
   // 넘겨 외부 상태와 동기화한다(SelectField는 defaultValue prop 변경을 감지해 재동기화한다).
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
@@ -53,7 +66,9 @@ const ProductRegistrationForm = ({
   const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
   const [discountType, setDiscountType] = useState<"rate" | "amount">("rate");
   const [priceInputError, setPriceInputError] = useState<string | null>(null);
-  const [discountInputError, setDiscountInputError] = useState<string | null>(null);
+  const [discountInputError, setDiscountInputError] = useState<string | null>(
+    null,
+  );
 
   const thumbnail = useImageList();
   const preview = useImageList();
@@ -130,17 +145,23 @@ const ProductRegistrationForm = ({
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* Left Column */}
         <div className="space-y-8 lg:col-span-2">
-
           {/* 기본 정보 */}
           <Card>
             <CardHeader>
               <CardTitle>기본 정보</CardTitle>
-              <CardDescription>상품의 이름, 설명, 분류 정보를 입력합니다.</CardDescription>
+              <CardDescription>
+                상품의 이름, 설명, 분류 정보를 입력합니다.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="title">상품명 *</Label>
-                <Input id="title" name="title" placeholder="예: 엘레강트 로즈 청첩장" required />
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="예: 엘레강트 로즈 청첩장"
+                  required
+                />
                 {titleError && <Alert type="error">{titleError}</Alert>}
               </div>
 
@@ -153,7 +174,9 @@ const ProductRegistrationForm = ({
                   rows={4}
                   required
                 />
-                {descriptionError && <Alert type="error">{descriptionError}</Alert>}
+                {descriptionError && (
+                  <Alert type="error">{descriptionError}</Alert>
+                )}
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -161,7 +184,9 @@ const ProductRegistrationForm = ({
                   id="category"
                   name="category"
                   defaultValue={selectedCategory}
-                  onValueChange={(value) => setSelectedCategory(value as ProductCategory)}
+                  onValueChange={(value) =>
+                    setSelectedCategory(value as ProductCategory)
+                  }
                   placeholder="카테고리를 선택하세요"
                   data={getCategoryOptions()}
                   error={categoryError}
@@ -204,7 +229,9 @@ const ProductRegistrationForm = ({
           <Card>
             <CardHeader>
               <CardTitle>가격 정보</CardTitle>
-              <CardDescription>상품의 가격 및 할인, 프리미엄 옵션을 설정합니다.</CardDescription>
+              <CardDescription>
+                상품의 가격 및 할인, 프리미엄 옵션을 설정합니다.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -229,7 +256,9 @@ const ProductRegistrationForm = ({
                         );
                       }}
                     />
-                    <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">원</span>
+                    <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+                      원
+                    </span>
                   </div>
                   {(priceInputError || priceError) && (
                     <Alert type="error">{priceInputError || priceError}</Alert>
@@ -283,16 +312,24 @@ const ProductRegistrationForm = ({
                     </div>
                   </div>
                   <TypographyMuted>
-                    {discountType === "rate" ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)" : "차감 금액 입력"}
+                    {discountType === "rate"
+                      ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
+                      : "차감 금액 입력"}
                   </TypographyMuted>
-                  {discountInputError && <Alert type="error">{discountInputError}</Alert>}
+                  {discountInputError && (
+                    <Alert type="error">{discountInputError}</Alert>
+                  )}
                 </div>
               </div>
 
               <div className="border-border flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <Label htmlFor="isPremium" className="text-base">프리미엄 상품</Label>
-                  <TypographyMuted>추가 유료 옵션을 제공하는 상품입니다.</TypographyMuted>
+                  <Label htmlFor="isPremium" className="text-base">
+                    프리미엄 상품
+                  </Label>
+                  <TypographyMuted>
+                    추가 유료 옵션을 제공하는 상품입니다.
+                  </TypographyMuted>
                 </div>
                 <Switch
                   id="isPremium"
@@ -306,10 +343,15 @@ const ProductRegistrationForm = ({
 
               {isPremium && (
                 <div className="space-y-4 rounded-lg border border-dashed p-4">
-                  <TypographyH4 className="text-foreground font-medium">프리미엄 기능 선택</TypographyH4>
+                  <TypographyH4 className="text-foreground font-medium">
+                    프리미엄 기능 선택
+                  </TypographyH4>
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                     {premiumFeatures.map((feature) => (
-                      <div key={feature.code} className="flex items-center space-x-2">
+                      <div
+                        key={feature.code}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={`feature-${feature.code}`}
                           checked={selectedFeatureIds.includes(feature._id)}
@@ -326,7 +368,9 @@ const ProductRegistrationForm = ({
                       </div>
                     ))}
                   </div>
-                  {featureIdsError && <Alert type="error">{featureIdsError}</Alert>}
+                  {featureIdsError && (
+                    <Alert type="error">{featureIdsError}</Alert>
+                  )}
                 </div>
               )}
             </CardContent>
@@ -336,15 +380,25 @@ const ProductRegistrationForm = ({
           <Card>
             <CardHeader>
               <CardTitle>노출 설정</CardTitle>
-              <CardDescription>상품 노출 및 정렬 순서를 관리합니다.</CardDescription>
+              <CardDescription>
+                상품 노출 및 정렬 순서를 관리합니다.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="border-border flex items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <Label htmlFor="isFeatured" className="text-base">추천 상품</Label>
-                  <TypographyMuted>메인 페이지에 추천 상품으로 노출됩니다.</TypographyMuted>
+                  <Label htmlFor="isFeatured" className="text-base">
+                    추천 상품
+                  </Label>
+                  <TypographyMuted>
+                    메인 페이지에 추천 상품으로 노출됩니다.
+                  </TypographyMuted>
                 </div>
-                <Switch id="isFeatured" checked={isFeature} onCheckedChange={setIsFeature} />
+                <Switch
+                  id="isFeatured"
+                  checked={isFeature}
+                  onCheckedChange={setIsFeature}
+                />
               </div>
 
               <div className="space-y-2">
@@ -360,7 +414,9 @@ const ProductRegistrationForm = ({
                   defaultValue="0"
                 />
                 {priorityError && <Alert type="error">{priorityError}</Alert>}
-                <TypographyMuted>높은 숫자일수록 상단에 노출됩니다 (0-100)</TypographyMuted>
+                <TypographyMuted>
+                  높은 숫자일수록 상단에 노출됩니다 (0-100)
+                </TypographyMuted>
               </div>
             </CardContent>
           </Card>
@@ -368,12 +424,13 @@ const ProductRegistrationForm = ({
 
         {/* Right Column */}
         <div className="space-y-8 lg:col-span-1">
-
           {/* 썸네일 */}
           <Card>
             <CardHeader>
               <CardTitle>썸네일 이미지 *</CardTitle>
-              <CardDescription>상품 목록에 표시될 대표 이미지입니다.</CardDescription>
+              <CardDescription>
+                상품 목록에 표시될 대표 이미지입니다.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -428,7 +485,8 @@ const ProductRegistrationForm = ({
           <Card>
             <CardHeader>
               <CardTitle>
-                상세 이미지{selectedCategory !== MOBILE_INVITATION_CATEGORY && " *"}
+                상세 이미지
+                {selectedCategory !== MOBILE_INVITATION_CATEGORY && " *"}
               </CardTitle>
               <CardDescription>
                 {selectedCategory === MOBILE_INVITATION_CATEGORY
@@ -481,14 +539,21 @@ const ProductRegistrationForm = ({
                   value={Number.isNaN(minQuantity) ? "" : minQuantity}
                   onChange={handleMinQuantityChange}
                 />
-                {minQuantityError && <Alert type="error">{minQuantityError}</Alert>}
+                {minQuantityError && (
+                  <Alert type="error">{minQuantityError}</Alert>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="maxQuantity">최대 구매 수량 *</Label>
                 {isUnlimitedMax ? (
                   <>
-                    <Input id="maxQuantity-display" type="number" disabled placeholder="무제한" />
+                    <Input
+                      id="maxQuantity-display"
+                      type="number"
+                      disabled
+                      placeholder="무제한"
+                    />
                     <input type="hidden" name="maxQuantity" value="0" />
                   </>
                 ) : (
@@ -499,7 +564,9 @@ const ProductRegistrationForm = ({
                     min={1}
                     step={1}
                     required
-                    defaultValue={Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity)}
+                    defaultValue={
+                      Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity)
+                    }
                   />
                 )}
                 <div className="flex items-center gap-2 pt-1">
@@ -508,11 +575,16 @@ const ProductRegistrationForm = ({
                     checked={isUnlimitedMax}
                     onCheckedChange={(checked) => setIsUnlimitedMax(!!checked)}
                   />
-                  <Label htmlFor="isUnlimitedMax" className="cursor-pointer text-sm font-normal">
+                  <Label
+                    htmlFor="isUnlimitedMax"
+                    className="cursor-pointer text-sm font-normal"
+                  >
                     무제한
                   </Label>
                 </div>
-                {maxQuantityError && <Alert type="error">{maxQuantityError}</Alert>}
+                {maxQuantityError && (
+                  <Alert type="error">{maxQuantityError}</Alert>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -549,6 +621,6 @@ const ProductRegistrationForm = ({
       </div>
     </form>
   );
-}
+};
 
 export { ProductRegistrationForm };

@@ -1,35 +1,35 @@
 import { LayoutDashboard, User, ShoppingBag } from "lucide-react";
 
-import { routes } from "./routes";
+import { ROUTES } from "./routes";
 import { MOBILE_INVITATION_CATEGORY } from "./product-category";
 
 const MAIN_NAV_ITEMS = [
   {
     id: MOBILE_INVITATION_CATEGORY,
     label: "모바일 청첩장",
-    href: routes.products.byCategory(MOBILE_INVITATION_CATEGORY),
+    href: ROUTES.products.byCategory(MOBILE_INVITATION_CATEGORY),
   },
 ] as const;
 
-const userNavItems = [
+const USER_NAV_ITEMS = [
   {
     label: "관리자 페이지",
-    href: routes.admin.dashboard,
+    href: ROUTES.admin.dashboard,
     icon: LayoutDashboard,
     adminOnly: true,
   },
   {
     label: "마이 프로필",
-    href: routes.profile,
+    href: ROUTES.profile,
     icon: User,
     adminOnly: false,
   },
   {
     label: "마이 주문",
-    href: routes.myOrders.root,
+    href: ROUTES.myOrders.root,
     icon: ShoppingBag,
     adminOnly: false,
   },
 ] as const;
 
-export { MAIN_NAV_ITEMS, userNavItems };
+export { MAIN_NAV_ITEMS, USER_NAV_ITEMS };

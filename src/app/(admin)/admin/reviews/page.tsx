@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminReviewsPageService } from "@/services/review";
-import { adminReviewListRequestSchema } from "@/core/schemas/request/adminReviewList.schema";
+import { AdminReviewListRequestSchema } from "@/core/schemas/request/adminReviewList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminReviewsTable } from "@/app/(admin)/admin/reviews/_containers/AdminReviewsTable";
@@ -12,8 +12,9 @@ import { AdminReviewsTable } from "@/app/(admin)/admin/reviews/_containers/Admin
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(adminReviewListRequestSchema, {
-    cursor: typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+  const parsed = validateAndFlatten(AdminReviewListRequestSchema, {
+    cursor:
+      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};

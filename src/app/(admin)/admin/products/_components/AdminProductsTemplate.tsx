@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
 import type { AdminProductListPage } from "@/core/domain/product";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { TABLE_COLUMNS } from "@/app/(admin)/admin/products/_constants/tableColumns";
 import { ProductTableRow } from "./ProductTableRow";
 
@@ -26,7 +29,7 @@ const AdminProductsTemplate = ({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <TypographyH1 className="text-left mb-2 text-3xl font-bold">
+          <TypographyH1 className="mb-2 text-left text-3xl font-bold">
             {isTrash ? "휴지통" : "상품 목록"}
           </TypographyH1>
           <TypographyMuted>
@@ -36,7 +39,7 @@ const AdminProductsTemplate = ({
           </TypographyMuted>
         </div>
         {!isTrash && (
-          <Link href={routes.admin.products.new}>
+          <Link href={ROUTES.admin.products.new}>
             <Button size="lg">
               <Plus className="mr-2 h-5 w-5" />
               상품 등록
@@ -46,12 +49,12 @@ const AdminProductsTemplate = ({
       </div>
 
       <div className="flex gap-2">
-        <Link href={routes.admin.products.root}>
+        <Link href={ROUTES.admin.products.root}>
           <Button variant={isTrash ? "outline" : "default"} size="sm">
             상품 목록
           </Button>
         </Link>
-        <Link href={`${routes.admin.products.root}?view=trash`}>
+        <Link href={`${ROUTES.admin.products.root}?view=trash`}>
           <Button variant={isTrash ? "default" : "outline"} size="sm">
             휴지통
           </Button>
@@ -75,7 +78,11 @@ const AdminProductsTemplate = ({
             </thead>
             <tbody className="divide-y">
               {products.map((product) => (
-                <ProductTableRow key={product._id} product={product} view={view} />
+                <ProductTableRow
+                  key={product._id}
+                  product={product}
+                  view={view}
+                />
               ))}
             </tbody>
           </table>
@@ -91,7 +98,7 @@ const AdminProductsTemplate = ({
       </div>
 
       <CursorPagination
-        basePath={routes.admin.products.root}
+        basePath={ROUTES.admin.products.root}
         query={isTrash ? { view: "trash" } : {}}
         hasCursor={!!cursor}
         nextCursor={page.nextCursor}

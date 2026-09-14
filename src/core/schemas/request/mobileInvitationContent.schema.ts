@@ -18,7 +18,7 @@ const CoupleSideSchema = z.object({
 
 // 서버·클라이언트가 동일하게 검증한다 — 이중 스키마로 나뉘어 서버가 더 느슨해지는
 // 구조를 두지 않는다.
-const mobileInvitationContentSchema = z.object({
+const MobileInvitationContentSchema = z.object({
   groom: CoupleSideSchema,
   bride: CoupleSideSchema,
   weddingDate: z.string().min(1, "결혼식 날짜를 입력해주세요."),
@@ -35,7 +35,7 @@ const mobileInvitationContentSchema = z.object({
 });
 
 type MobileInvitationContentSchemaDto = z.infer<
-  typeof mobileInvitationContentSchema
+  typeof MobileInvitationContentSchema
 >;
 
-export { mobileInvitationContentSchema, type MobileInvitationContentSchemaDto };
+export { MobileInvitationContentSchema, type MobileInvitationContentSchemaDto };

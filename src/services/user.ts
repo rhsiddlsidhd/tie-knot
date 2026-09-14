@@ -5,7 +5,7 @@ import type { AdminUserListPage, UserRole } from "@/core/domain/user";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
 import { USER_ROLES } from "@/core/domain/user";
-import type { BaseUser, IUser } from "@/models/user.model";
+import type { BaseUser, UserDocument } from "@/models/user.model";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
 import { hashPassword } from "@/adapters/server/bcrypt/hash";
@@ -13,8 +13,12 @@ import { decrypt } from "@/adapters/server/jose/decrypt";
 import { encrypt } from "@/adapters/server/jose/encrypt";
 import { deleteCookie } from "@/adapters/server/cookies/delete";
 import { sendEmail } from "@/adapters/server/nodemailer/send";
-import { routes } from "@/core/domain/routes";
-import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import { ROUTES } from "@/core/domain/routes";
+import {
+  decodeCursor,
+  encodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
 
 const getAppBaseUrl = (): string => {
   const baseUrl =
@@ -33,7 +37,7 @@ const getAppBaseUrl = (): string => {
 };
 
 // 유저 생성
-const createUser = async (user: BaseUser): Promise<IUser> => {
+const createUser = async (user: BaseUser): Promise<UserDocument> => {
   await dbConnect();
   const newUser = await new UserModel(user).save();
   return newUser;
@@ -61,9 +65,9 @@ const getUserEmail = async ({
 };
 
 // 유저 ID로 유저 찾기
-const getUserById = async (id: string): Promise<IUser> => {
+const getUserById = async (id: string): Promise<UserDocument> => {
   await dbConnect();
-  const user = await UserModel.findById(id).lean<IUser>();
+  const user = await UserModel.findById(id).lean<UserDocument>();
   if (!user) throw new AppError("NOT_FOUND", "유저를 찾을 수가 없습니다.");
   return user;
 };
@@ -107,8 +111,13 @@ const signupUserService = async ({
   if (await checkEmailDuplicate(email)) {
     throw new AppError("VALIDATION", "이미 존재하는 이메일 입니다.");
   }
-  await createUser({ email, name, phone, password: await hashPassword(password) });
-}
+  await createUser({
+    email,
+    name,
+    phone,
+    password: await hashPassword(password),
+  });
+};
 
 const requestPasswordResetService = async (email: string): Promise<void> => {
   if (!(await checkEmailDuplicate(email))) {
@@ -116,11 +125,11 @@ const requestPasswordResetService = async (email: string): Promise<void> => {
   }
   const token = await encrypt({ id: email, type: "ENTRY" });
   const path = new URL(
-    `${routes.changePw}?t=${encodeURIComponent(token)}`,
+    `${ROUTES.changePw}?t=${encodeURIComponent(token)}`,
     getAppBaseUrl(),
   ).toString();
   await sendEmail({ email, path });
-}
+};
 
 const resetUserPasswordService = async ({
   token,
@@ -137,10 +146,13 @@ const resetUserPasswordService = async ({
     );
   }
   if (!(await changePassword(payload.id, password))) {
-    throw new AppError("NOT_FOUND", "해당 계정을 찾을 수 없습니다. 이메일 주소를 확인해주세요.");
+    throw new AppError(
+      "NOT_FOUND",
+      "해당 계정을 찾을 수 없습니다. 이메일 주소를 확인해주세요.",
+    );
   }
   await deleteCookie("userEmail");
-}
+};
 
 type AdminUserListQuery = {
   role?: UserRole;
@@ -177,7 +189,7 @@ const getAdminUsersPageService = async ({
     throw new AppError("VALIDATION", "잘못된 사용자 역할입니다.");
   }
 
-  const filter: mongoose.FilterQuery<IUser> = {};
+  const filter: mongoose.FilterQuery<UserDocument> = {};
 
   if (role) {
     filter.role = role;

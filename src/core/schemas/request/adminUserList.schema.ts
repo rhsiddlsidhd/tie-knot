@@ -6,11 +6,11 @@ import { USER_ROLES } from "@/core/domain/user";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-const adminUserListRequestSchema = z.object({
+const AdminUserListRequestSchema = z.object({
   role: z.preprocess(emptyToUndefined, z.enum(USER_ROLES).optional()),
   cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-type AdminUserListRequest = z.infer<typeof adminUserListRequestSchema>;
+type AdminUserListRequest = z.infer<typeof AdminUserListRequestSchema>;
 
-export { adminUserListRequestSchema, type AdminUserListRequest };
+export { AdminUserListRequestSchema, type AdminUserListRequest };

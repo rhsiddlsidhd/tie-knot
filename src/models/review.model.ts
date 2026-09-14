@@ -2,7 +2,7 @@ import "server-only";
 import type { Model, Types } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
-interface ReviewDB {
+interface ReviewDb {
   productId: Types.ObjectId;
   userId: Types.ObjectId;
   orderId: Types.ObjectId;
@@ -11,13 +11,13 @@ interface ReviewDB {
   images: string[];
 }
 
-interface IReview extends ReviewDB {
+interface ReviewDocument extends ReviewDb {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const reviewSchema = new Schema<IReview>(
+const ReviewSchema = new Schema<ReviewDocument>(
   {
     productId: {
       type: Schema.Types.ObjectId,
@@ -43,13 +43,13 @@ const reviewSchema = new Schema<IReview>(
 );
 
 // 상품 상세의 리뷰 목록(최신순) 조회 전용.
-reviewSchema.index({ productId: 1, createdAt: -1 });
+ReviewSchema.index({ productId: 1, createdAt: -1 });
 
 // 주문 하나당 리뷰 1개만 허용 — 중복 작성 방지 + "이 주문 이미 리뷰 썼는지" 조회도 겸한다.
-reviewSchema.index({ orderId: 1 }, { unique: true });
+ReviewSchema.index({ orderId: 1 }, { unique: true });
 
 const ReviewModel =
-  (mongoose.models.Review as Model<IReview>) ||
-  mongoose.model<IReview>("Review", reviewSchema);
+  (mongoose.models.Review as Model<ReviewDocument>) ||
+  mongoose.model<ReviewDocument>("Review", ReviewSchema);
 
-export { ReviewModel, type ReviewDB, type IReview };
+export { ReviewModel, type ReviewDb, type ReviewDocument };

@@ -1,5 +1,5 @@
 import "server-only";
-import type { IFeature } from "@/models/feature.model";
+import type { FeatureDocument } from "@/models/feature.model";
 import { FeatureModel } from "@/models/feature.model";
 import type { PremiumFeatureDto } from "@/core/schemas/request/premiumFeature.schema";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
@@ -10,7 +10,7 @@ import mongoose from "mongoose";
 import { requireAdmin } from "./auth";
 // FeatureJSON을 재사용
 // Mapper 함수: DB 결과를 PremiumFeature로 변환
-const mapToPremiumFeature = (doc: IFeature): PremiumFeature => ({
+const mapToPremiumFeature = (doc: FeatureDocument): PremiumFeature => ({
   _id: String(doc._id),
   code: doc.code,
   label: doc.label,
@@ -20,19 +20,15 @@ const mapToPremiumFeature = (doc: IFeature): PremiumFeature => ({
   createdAt: doc.createdAt.toISOString(),
 });
 
-const createPremiumFeatureService = async (
-  data: PremiumFeatureDto,
-) => {
+const createPremiumFeatureService = async (data: PremiumFeatureDto) => {
   await dbConnect();
   const newFeatureModel = await new FeatureModel(data).save();
   return newFeatureModel;
 };
 
-const getAllPremiumFeatureService = async (): Promise<
-  PremiumFeature[]
-> => {
+const getAllPremiumFeatureService = async (): Promise<PremiumFeature[]> => {
   await dbConnect();
-  const features = await FeatureModel.find().lean<IFeature[]>();
+  const features = await FeatureModel.find().lean<FeatureDocument[]>();
   return features.map(mapToPremiumFeature);
 };
 
@@ -43,7 +39,7 @@ const getPremiumFeatureService = async (ids: string[] | []) => {
     .filter((id) => mongoose.isObjectIdOrHexString(id))
     .map((id) => new mongoose.Types.ObjectId(id));
   const features = await FeatureModel.find({ _id: { $in: _ids } }).lean<
-    IFeature[]
+    FeatureDocument[]
   >();
   return features.map(mapToPremiumFeature);
 };
@@ -68,7 +64,7 @@ const createPremiumFeatureAsAdminService = async (
 ): Promise<void> => {
   await requireAdmin();
   await createPremiumFeatureService(data);
-}
+};
 
 const updatePremiumFeatureAsAdminService = async (
   id: string,
@@ -76,12 +72,9 @@ const updatePremiumFeatureAsAdminService = async (
 ): Promise<void> => {
   await requireAdmin();
   if (!(await updatePremiumFeatureService(id, data))) {
-    throw new AppError(
-      "NOT_FOUND",
-      "프리미엄 기능을 찾을 수 없습니다.",
-    );
+    throw new AppError("NOT_FOUND", "프리미엄 기능을 찾을 수 없습니다.");
   }
-}
+};
 
 export {
   createPremiumFeatureService,
