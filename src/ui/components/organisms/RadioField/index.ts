@@ -1,2 +1,1 @@
-export { RadioField } from "./RadioField";
-export type { RadioFieldOption } from "./RadioField";
+export { RadioField, type RadioFieldOption } from "./RadioField";

@@ -14,7 +14,7 @@
 
 ## 결정
 
-컴포넌트별 디렉토리 안에서는 `index.ts`를 예외로 허용한다. 이 배럴은 같은 디렉토리의 동일한 이름을 가진 컴포넌트 파일 하나만 `export { X } from "./X"` 형태로 재수출한다. 값과 타입을 분리해야 하면(`@typescript-eslint/consistent-type-exports`) `export type { Y } from "./X"` 문을 추가로 둘 수 있지만, 모든 문장이 같은 파일 하나만 가리켜야 하며 `export *`나 다른 경로로의 재수출, 그 밖의 로직은 담지 않는다. 이 불변식은 `scripts/check-no-barrels.mjs`가 배럴 내용을 파싱해 기계적으로 검사하고 위반 시 CI를 실패시킨다 — ADR-0004가 요구한 "도구로 강제되는 경계 하나"를 그대로 만족한다.
+컴포넌트별 디렉토리 안에서는 `index.ts`를 예외로 허용한다. 이 배럴은 같은 디렉토리의 동일한 이름을 가진 컴포넌트 파일 하나만, 정확히 한 문장으로 `export { X } from "./X"` 형태로 재수출한다. 값과 타입을 같이 내보내야 하면(`@typescript-eslint/consistent-type-exports`) 인라인 `type` 한정자로 같은 문장에 묶는다 — `export { X, type Y } from "./X"`(ADR-0008). 문장을 두 개로 쪼개는 것(`export {}`와 `export type {}` 분리), `export *`, 다른 경로로의 재수출, 그 밖의 로직은 담지 않는다. 이 불변식은 `scripts/check-no-barrels.mjs`가 배럴 내용을 파싱해 기계적으로 검사하고 위반 시 CI를 실패시킨다 — ADR-0004가 요구한 "도구로 강제되는 경계 하나"를 그대로 만족한다.
 
 컴포넌트별 디렉토리 레이어 자체는 `scripts/check-component-tier-shape.mjs`가 강제한다 — molecules/organisms/templates 티어 루트에 `.ts`/`.tsx` 파일이 서브디렉토리 없이 직접 있으면 실패한다. 배럴 예외와 디렉토리 레이어 강제는 서로 다른 불변식이라 별도 스크립트로 분리했다.
 

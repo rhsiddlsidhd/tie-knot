@@ -1,2 +1,1 @@
-export { BaseSelect } from "./BaseSelect";
-export type { SelectOption } from "./BaseSelect";
+export { BaseSelect, type SelectOption } from "./BaseSelect";

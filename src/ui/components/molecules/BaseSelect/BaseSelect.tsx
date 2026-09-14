@@ -62,5 +62,4 @@ const BaseSelect = ({
   );
 };
 
-export { BaseSelect };
-export type { SelectOption };
+export { BaseSelect, type SelectOption };

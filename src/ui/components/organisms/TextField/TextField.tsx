@@ -58,5 +58,4 @@ const TextField = ({
   );
 };
 
-export { TextField };
-export type { TextFieldProps };
+export { TextField, type TextFieldProps };

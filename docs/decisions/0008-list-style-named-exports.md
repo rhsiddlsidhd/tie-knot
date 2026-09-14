@@ -14,7 +14,9 @@ shadcn/Radix CLI 산출물(`atoms/`)은 export 개수와 무관하게 항상 lis
 
 ## 결정
 
-`src/ui/components/` 안의 모든 `.ts`/`.tsx` 파일은 named export를 선언과 분리해서 파일 하단에 `export { X };`(값), `export type { Y };`(타입) 형태로 모은다. `eslint.config.mjs`의 `no-restricted-syntax` 규칙(`ExportNamedDeclaration[declaration!=null]`)이 이를 강제한다. 배럴(`index.ts`)의 `export { X } from "./X"`는 `declaration`이 없는 별개 AST 노드라 이 규칙과 무관하게 항상 허용된다.
+`src/ui/components/` 안의 모든 `.ts`/`.tsx` 파일은 named export를 선언과 분리해서 파일 하단에 모은다. `eslint.config.mjs`의 `no-restricted-syntax` 규칙(`ExportNamedDeclaration[declaration!=null]`)이 이를 강제한다. 배럴(`index.ts`)의 `export { X } from "./X"`는 `declaration`이 없는 별개 AST 노드라 이 규칙과 무관하게 항상 허용된다.
+
+같은 파일이 값과 타입을 함께 export하면 인라인 `type` 한정자로 한 문장에 묶는다 — `export { X, type Y };`. `export { X }; export type { Y };`처럼 문장을 쪼개지 않는다. `@typescript-eslint/consistent-type-exports`는 이 둘 중 어느 쪽도 강제하지 않는다(둘 다 통과) — 순수 스타일 선택이며, 배럴 쪽 동일 결정(ADR-0007)과 일관성을 맞추기 위해 여기서 명시한다.
 
 ## 검토한 대안
 

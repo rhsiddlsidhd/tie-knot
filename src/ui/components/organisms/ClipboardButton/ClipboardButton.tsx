@@ -41,5 +41,4 @@ function ClipboardButton({
   );
 }
 
-export { ClipboardButton };
-export type { ClipboardButtonProps };
+export { ClipboardButton, type ClipboardButtonProps };

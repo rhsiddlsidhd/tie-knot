@@ -20,9 +20,9 @@ const walk = (dir, out = []) => {
   return out;
 };
 
-// ADR-0007 불변식: `export { X } from "./{dirName}";` / `export type { Y } from "./{dirName}";`
-// 형태의 문만 존재해야 한다 — 전부 같은 파일 하나만 가리키면 여러 문장(예: 값/타입 분리)도 허용한다.
-// `export *`나 다른 경로로의 재수출, 그 밖의 문(import, 로직)은 허용하지 않는다.
+// ADR-0007 불변식: `export { X, type Y } from "./{dirName}";` 형태의 문 정확히 하나만
+// 존재해야 한다 — 값/타입을 같은 파일에서 재수출하더라도 한 문장으로 묶는다(ADR-0008).
+// `export *`나 다른 경로로의 재수출, 그 밖의 문(import, 로직), 여러 문장은 허용하지 않는다.
 const isValidComponentBarrel = (file) => {
   const dir = path.dirname(file);
   const parentDir = path.dirname(dir);
@@ -37,10 +37,10 @@ const isValidComponentBarrel = (file) => {
     .split("\n")
     .map((line) => line.trim())
     .filter((line) => line.length > 0);
-  if (statements.length === 0) return false;
+  if (statements.length !== 1) return false;
 
-  const pattern = new RegExp(`^export\\s+(type\\s+)?\\{[^}]*\\}\\s*from\\s*["']\\./${componentName}["'];?$`);
-  return statements.every((statement) => pattern.test(statement));
+  const pattern = new RegExp(`^export\\s*\\{[^}]*\\}\\s*from\\s*["']\\./${componentName}["'];?$`);
+  return pattern.test(statements[0]);
 };
 
 const found = walk(SRC).filter((file) => !isValidComponentBarrel(file)).sort();

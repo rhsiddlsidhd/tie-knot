@@ -1,2 +1,1 @@
-export { ClipboardButton } from "./ClipboardButton";
-export type { ClipboardButtonProps } from "./ClipboardButton";
+export { ClipboardButton, type ClipboardButtonProps } from "./ClipboardButton";

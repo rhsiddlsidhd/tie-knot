@@ -57,5 +57,4 @@ const RadioField = <T extends string = string>({
   );
 };
 
-export { RadioField };
-export type { RadioFieldOption };
+export { RadioField, type RadioFieldOption };
