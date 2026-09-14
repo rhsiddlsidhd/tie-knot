@@ -5,10 +5,9 @@ import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { ROOT } from "./resolver.mjs";
 
-const VITEST_BIN = path.join(ROOT, "node_modules", ".bin", "vitest");
-
 /** @param {{path: string, tier: string}[]} siblings */
 export function runSiblings(siblings, timeout = 180_000) {
+  const vitestBin = path.join(ROOT, "node_modules", ".bin", "vitest");
   const byTier = new Map();
   for (const s of siblings) {
     if (!byTier.has(s.tier)) byTier.set(s.tier, []);
@@ -18,7 +17,7 @@ export function runSiblings(siblings, timeout = 180_000) {
   const failures = [];
   for (const [tier, paths] of byTier) {
     const result = spawnSync(
-      VITEST_BIN,
+      vitestBin,
       ["run", "--project", tier, "--reporter=dot", ...paths],
       {
         cwd: ROOT,

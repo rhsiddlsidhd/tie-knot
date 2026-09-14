@@ -16,14 +16,42 @@ import { spawnSync } from "node:child_process";
 import picomatch from "picomatch";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-export const ROOT = path.resolve(HERE, "..", "..", "..");
 
-const VITEST_CONFIG = path.join(ROOT, "vitest.config.ts");
-const TSCONFIG = path.join(ROOT, "tsconfig.json");
-const POLICY_FILE = path.join(ROOT, "tooling", "tdd-gate", "policy.json");
+/**
+ * 스크립트 자기 위치 기준 ROOT는 기본값일 뿐이다. `.claude/worktrees/**`에서
+ * 편집이 일어나면 훅이 메인 저장소 스크립트로 실행돼도 이 기본값은 메인
+ * 저장소를 가리켜, 워크트리 절대경로를 relPath로 바꿨을 때 `.claude/worktrees/...`
+ * 접두사가 남아 `src/` 판정이 깨진다 — resolveRootFromCwd 로 훅 payload 의 실제
+ * cwd 기준 git toplevel 로 덮어써야 한다.
+ */
+export let ROOT = path.resolve(HERE, "..", "..", "..");
 
-export const CACHE_DIR = path.join(ROOT, "node_modules", ".cache", "tdd-gate");
-const CONFIG_CACHE = path.join(CACHE_DIR, "projects.json");
+/** payload.cwd 기준 실제 worktree toplevel 로 ROOT 를 다시 잡는다. 실패하면 그대로 둔다(fail-open). */
+export function resolveRootFromCwd(cwd) {
+  if (typeof cwd !== "string" || !cwd) return;
+  const result = spawnSync("git", ["-C", cwd, "rev-parse", "--show-toplevel"], {
+    encoding: "utf8",
+  });
+  if (result.status === 0 && result.stdout.trim()) {
+    ROOT = result.stdout.trim();
+  }
+}
+
+function vitestConfigPath() {
+  return path.join(ROOT, "vitest.config.ts");
+}
+function tsconfigPath() {
+  return path.join(ROOT, "tsconfig.json");
+}
+function policyFilePath() {
+  return path.join(ROOT, "tooling", "tdd-gate", "policy.json");
+}
+export function cacheDir() {
+  return path.join(ROOT, "node_modules", ".cache", "tdd-gate");
+}
+function configCachePath() {
+  return path.join(cacheDir(), "projects.json");
+}
 
 /** 게이트가 다루는 tier. integration 은 test/ 아래 별도 트리라 형제 매핑 밖이다. */
 const GATE_TIERS = ["unit", "component"];
@@ -33,17 +61,17 @@ const TEST_FILE_RE = /\.(unit|component|integration)\.test\.tsx?$/;
 /** 이번 턴에 편집된 강제 대상 경로 기록. PostToolUse 가 쓰고 Stop 이 소비한다. */
 export function turnFile(sessionId) {
   const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
-  return path.join(CACHE_DIR, `turn-${safe}.txt`);
+  return path.join(cacheDir(), `turn-${safe}.txt`);
 }
 
 /** 턴 시작 시점의 src/ dirty 상태 스냅샷. UserPromptSubmit 이 쓰고 Stop 이 소비한다. */
 export function snapshotFile(sessionId) {
   const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
-  return path.join(CACHE_DIR, `snapshot-${safe}.json`);
+  return path.join(cacheDir(), `snapshot-${safe}.json`);
 }
 
 export function ensureCacheDir() {
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
+  fs.mkdirSync(cacheDir(), { recursive: true });
 }
 
 function git(args) {
@@ -144,7 +172,7 @@ function loadAliases() {
   if (aliasCache) return aliasCache;
   const entries = [];
   try {
-    const raw = fs.readFileSync(TSCONFIG, "utf8");
+    const raw = fs.readFileSync(tsconfigPath(), "utf8");
     const paths =
       JSON.parse(stripJsonComments(raw))?.compilerOptions?.paths ?? {};
     for (const [pattern, targets] of Object.entries(paths)) {
@@ -181,7 +209,7 @@ export function isTestFile(relPath) {
 /** tooling/tdd-gate/policy.json — 강제 대상에서 뺄 소스 glob. 없으면 빈 목록(fail-open). */
 export function loadExcludes() {
   try {
-    const parsed = JSON.parse(fs.readFileSync(POLICY_FILE, "utf8"));
+    const parsed = JSON.parse(fs.readFileSync(policyFilePath(), "utf8"));
     return Array.isArray(parsed?.exclude) ? parsed.exclude : [];
   } catch {
     return [];
@@ -193,10 +221,12 @@ export function loadExcludes() {
  * 로드가 196ms 라 mtime 으로 캐시한다.
  */
 export async function loadProjects() {
-  const mtimeMs = fs.statSync(VITEST_CONFIG).mtimeMs;
+  const vitestConfig = vitestConfigPath();
+  const configCache = configCachePath();
+  const mtimeMs = fs.statSync(vitestConfig).mtimeMs;
 
   try {
-    const cached = JSON.parse(fs.readFileSync(CONFIG_CACHE, "utf8"));
+    const cached = JSON.parse(fs.readFileSync(configCache, "utf8"));
     if (cached.mtimeMs === mtimeMs) return cached.projects;
   } catch {
     // 캐시 부재·손상은 정상 경로다. 다시 읽는다.
@@ -205,7 +235,7 @@ export async function loadProjects() {
   const { loadConfigFromFile } = await import("vite");
   const loaded = await loadConfigFromFile(
     { command: "serve", mode: "test" },
-    VITEST_CONFIG,
+    vitestConfig,
     ROOT,
     "silent",
   );
@@ -223,7 +253,7 @@ export async function loadProjects() {
 
   try {
     ensureCacheDir();
-    fs.writeFileSync(CONFIG_CACHE, JSON.stringify({ mtimeMs, projects }));
+    fs.writeFileSync(configCache, JSON.stringify({ mtimeMs, projects }));
   } catch {
     // 캐시 저장 실패는 판정에 영향이 없다.
   }
