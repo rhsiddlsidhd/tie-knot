@@ -17,7 +17,7 @@ const useCounterValue = (initialValue: number): CounterState => {
 
 const [CounterProvider, useCounter] = createStateContext(useCounterValue);
 
-function CounterDisplay() {
+const CounterDisplay = () => {
   const { count, increment } = useCounter();
   return (
     <div>

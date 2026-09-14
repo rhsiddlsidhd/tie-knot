@@ -36,7 +36,7 @@ const DEMO_ID_PATTERN = /^demo-(\d+)$/;
 
 // 삭제 뒤 재추가되는 항목이 id 충돌 없이 이어지도록, entries.length가 아니라
 // 현재 존재하는 demo-N의 최댓값에서 다음 id를 결정한다.
-function nextDemoId(entries: GuestbookDemoEntry[]): string {
+const nextDemoId = (entries: GuestbookDemoEntry[]): string => {
   const maxN = entries.reduce((max, entry) => {
     const matched = DEMO_ID_PATTERN.exec(entry.id);
     return matched ? Math.max(max, Number(matched[1])) : max;
@@ -44,10 +44,10 @@ function nextDemoId(entries: GuestbookDemoEntry[]): string {
   return `demo-${maxN + 1}`;
 }
 
-function guestbookDemoReducer(
+const guestbookDemoReducer = (
   state: GuestbookDemoState,
   action: GuestbookDemoAction,
-): GuestbookDemoState {
+): GuestbookDemoState => {
   switch (action.type) {
     case "ADD_ENTRY": {
       const newEntry: GuestbookDemoEntry = {

@@ -17,13 +17,13 @@ import {
 import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 
-function ProductCard({
+const ProductCard = ({
   product,
   rank,
 }: {
   product: Product;
   rank?: number;
-}) {
+}) => {
   const finalPrice =
     product.discount?.value > 0
       ? calculatePrice(product.price, product.discount)

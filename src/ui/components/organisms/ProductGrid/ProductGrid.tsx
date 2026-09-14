@@ -10,7 +10,7 @@ import { TypographyMuted, TypographyP } from "../../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";
 import type { Dispatch } from "react";
 
-function ProductGrid({
+const ProductGrid = ({
   data,
   state,
   dispatch,
@@ -18,7 +18,7 @@ function ProductGrid({
   data: Product[];
   state: ProductFilterState;
   dispatch: Dispatch<ProductFilterAction>;
-}) {
+}) => {
   const { visibleProducts } = useVisibleProducts({
     state,
     data,
