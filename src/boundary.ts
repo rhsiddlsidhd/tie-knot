@@ -1,10 +1,16 @@
 import { NextResponse } from "next/server";
-import type { ErrorCategory, ErrorPayload, SuccessResponse, ErrorResponse, APIResponse } from "@/core/domain/error";
+import type {
+  ErrorCategory,
+  ErrorPayload,
+  SuccessResponse,
+  ErrorResponse,
+  ApiResponse,
+} from "@/core/domain/error";
 import { AppError } from "@/core/domain/error";
 import { ERROR_SAFE_MESSAGES } from "@/core/domain/error-messages";
 
 // Re-export types for convenience
-type APIRouteResponse<T = unknown> = NextResponse<APIResponse<T>>;
+type ApiRouteResponse<T = unknown> = NextResponse<ApiResponse<T>>;
 
 // 분류→HTTP status 매핑 — services/AppError는 HTTP를 모르므로 이 경계에서만 번역한다(src/AGENTS.md 참고).
 const ERROR_STATUS_MAP: Record<ErrorCategory, number> = {
@@ -71,6 +77,6 @@ export {
   actionError,
   type SuccessResponse,
   type ErrorResponse,
-  type APIResponse,
-  type APIRouteResponse,
+  type ApiResponse,
+  type ApiRouteResponse,
 };

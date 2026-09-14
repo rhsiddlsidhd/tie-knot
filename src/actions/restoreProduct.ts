@@ -1,20 +1,20 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { restoreProductAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 
 const restoreProduct = async (
   productId: string,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   try {
     await restoreProductAsAdminService(productId);
 
-    revalidatePath(routes.admin.products.root);
-    revalidatePath(routes.products.root);
+    revalidatePath(ROUTES.admin.products.root);
+    revalidatePath(ROUTES.products.root);
 
     return {
       success: true,

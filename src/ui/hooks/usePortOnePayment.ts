@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { requestPayment } from "@/adapters/browser/portone/request-payment";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { type PayStatus } from "@/core/domain/payment";
 import type { CreateOrderResult } from "@/actions/createOrder";
 import { completePayment } from "@/actions/completePayment";
@@ -14,7 +14,10 @@ interface UsePortOnePaymentOptions {
   onError?: (message: string) => void;
 }
 
-const usePortOnePayment = ({ onSuccess, onError }: UsePortOnePaymentOptions) => {
+const usePortOnePayment = ({
+  onSuccess,
+  onError,
+}: UsePortOnePaymentOptions) => {
   // OrderSummary(sibling)도 같은 결제 진행 상태를 봐야 "주문 없음" 오탐 리다이렉트를 막을 수
   // 있어 로컬 state가 아니라 order.store에 둔다(useCheckoutData.ts 참고).
   const paymentStatus = useOrderStore((state) => state.paymentStatus);
@@ -54,7 +57,7 @@ const usePortOnePayment = ({ onSuccess, onError }: UsePortOnePaymentOptions) => 
           storeId,
           channelKey,
           paymentId: merchantUid,
-          redirectUrl: `${location.origin}${routes.payment.result}`,
+          redirectUrl: `${location.origin}${ROUTES.payment.result}`,
           orderName: `${title} 모바일 청첩장`,
           totalAmount: finalPrice,
           currency: "CURRENCY_KRW",
@@ -65,7 +68,9 @@ const usePortOnePayment = ({ onSuccess, onError }: UsePortOnePaymentOptions) => 
               ? { accountExpiry: { validHours: 24 } }
               : undefined,
           easyPay:
-            payMethod === "EASY_PAY" ? { easyPayProvider: "KAKAOPAY" } : undefined,
+            payMethod === "EASY_PAY"
+              ? { easyPayProvider: "KAKAOPAY" }
+              : undefined,
           customer: {
             customerId: userId,
             fullName: buyerName,
@@ -112,6 +117,6 @@ const usePortOnePayment = ({ onSuccess, onError }: UsePortOnePaymentOptions) => 
   );
 
   return { paymentStatus, triggerPayment };
-}
+};
 
 export { usePortOnePayment };

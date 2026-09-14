@@ -1,6 +1,6 @@
 "use client";
 import type { SubmenuParentTitle } from "@/core/domain/sidebar";
-import { allNavigateItems } from "@/core/domain/sidebar";
+import { ALL_NAVIGATE_ITEMS } from "@/core/domain/sidebar";
 import { cn } from "@/core/utils/cn";
 import { isSubmenuParentTitle } from "@/core/utils/sidebar";
 import { ChevronDown } from "lucide-react";
@@ -26,7 +26,7 @@ const SidebarNavItem = ({
     );
   };
 
-  const data = allNavigateItems[type];
+  const data = ALL_NAVIGATE_ITEMS[type];
 
   return (
     <nav className="flex-1 overflow-y-auto">
@@ -42,7 +42,7 @@ const SidebarNavItem = ({
                   type="button"
                   variant="ghost"
                   onClick={() => toggleMenu(menuTitle)}
-                  className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex w-full items-center justify-between px-6 py-3 text-sm transition-colors h-auto rounded-none"
+                  className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex h-auto w-full items-center justify-between rounded-none px-6 py-3 text-sm transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <item.icon className="h-5 w-5" />
@@ -93,6 +93,6 @@ const SidebarNavItem = ({
       })}
     </nav>
   );
-}
+};
 
 export { SidebarNavItem };

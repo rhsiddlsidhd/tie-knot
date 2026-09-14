@@ -62,7 +62,7 @@ const ORDER_STATUS_BADGE_VARIANTS: Record<
   CANCELLED: "destructive",
 };
 
-type OrderJSON = {
+type OrderJson = {
   _id: string;
   merchantUid: string;
   mobileInvitationStatus?: "draft" | "published";
@@ -118,7 +118,7 @@ type OrderReviewSummary = {
 
 // 목록 한 행이 실제로 그리는 데 필요한 것까지 합친 형태 — 주문 문서 자체에는 없고
 // 다른 컬렉션(MobileInvitation/Payment/Review)에서 채워지는 값이 붙는다.
-type OrderListItem = OrderJSON & {
+type OrderListItem = OrderJson & {
   mobileInvitationPublicKey?: string;
   virtualAccount?: OrderVirtualAccount;
   // 이 주문에 이미 작성된 리뷰 — 없으면 null. orderStatus===COMPLETED와 이 값의
@@ -178,7 +178,7 @@ export {
   type ExpiredPendingOrderBatchResult,
   type ExpiredAwaitingMobileInvitationBatchResult,
   type OrderStatus,
-  type OrderJSON,
+  type OrderJson,
   type OrderVirtualAccount,
   type OrderReviewSummary,
   type OrderListItem,

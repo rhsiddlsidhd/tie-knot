@@ -9,15 +9,23 @@ import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
 import { Button } from "@/ui/components/atoms/button";
 import { Card, CardContent, CardHeader } from "@/ui/components/atoms/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
-import { TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/atoms/dropdown-menu";
+import {
+  TypographyH3,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { Alert } from "@/ui/components/molecules/Alert";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { useCopy } from "@/ui/hooks/useCopy";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
 import type { OrderListItem, OrderStatus } from "@/core/domain/order";
 import { CUSTOMER_INPUT_ROUTES } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { cancelOrder } from "@/actions/cancelOrder";
 import { PAY_METHOD_LABEL } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
 import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
@@ -67,8 +75,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
   // 확인한 뒤에 붙으므로 그 전 구간은 결제수단으로 판별한다.
   const isVirtualAccount =
     Boolean(order.paymentId) || order.payMethod === "VIRTUAL_ACCOUNT";
-  const isAwaitingDeposit =
-    order.orderStatus === "PENDING" && isVirtualAccount;
+  const isAwaitingDeposit = order.orderStatus === "PENDING" && isVirtualAccount;
   const isAbandonedPending =
     order.orderStatus === "PENDING" && !isVirtualAccount;
 
@@ -125,7 +132,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
               주문번호 복사
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href={routes.myOrders.detail(order._id)}>상세보기</Link>
+              <Link href={ROUTES.myOrders.detail(order._id)}>상세보기</Link>
             </DropdownMenuItem>
             {isAbandonedPending && (
               <DropdownMenuItem
@@ -210,7 +217,7 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
                 variant="outline"
                 onClick={() =>
                   copyToClipboard(
-                    `${window.location.origin}${routes.preview.detail(order.mobileInvitationPublicKey!)}`,
+                    `${window.location.origin}${ROUTES.preview.detail(order.mobileInvitationPublicKey!)}`,
                   )
                 }
               >

@@ -1,23 +1,23 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import type { ProductStatus } from "@/core/domain/product";
 import { updateProductStatusAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 
 const updateProductStatus = async (
   productId: string,
   status: ProductStatus,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   try {
     const updated = await updateProductStatusAsAdminService(productId, status);
 
-    revalidatePath(routes.admin.products.root);
-    revalidatePath(routes.products.root);
-    revalidatePath(routes.products.detail(updated.category, productId));
+    revalidatePath(ROUTES.admin.products.root);
+    revalidatePath(ROUTES.products.root);
+    revalidatePath(ROUTES.products.detail(updated.category, productId));
 
     return {
       success: true,

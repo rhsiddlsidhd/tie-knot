@@ -1,6 +1,6 @@
 # AGENTS.md — src/ui/components/atoms/
 
-> Last updated: 2026-08-31
+> Last updated: 2026-09-15
 
 ## Overview
 
@@ -32,7 +32,7 @@ src/ui/components/atoms/
 ## Critical Convention
 
 - 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
-- export 이름은 PascalCase를 사용한다.
+- React 컴포넌트 export는 PascalCase를 사용한다. shadcn/Radix 산출물이 컴포넌트와 함께 노출하는 variant 함수·스타일 유틸·내부 훅은 역할별 공통 규칙을 따라 camelCase 또는 `use` + PascalCase로 짓는다(`buttonVariants`, `navigationMenuTriggerStyle`, `useSidebar`). 이 예외를 프로젝트 작성 atom의 임의 유틸 export로 확장하지 않는다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다.
 - 프로젝트 UI 컴포넌트를 하나라도 조합하면 동작 수를 다시 센 뒤 molecule 또는 organism으로 이동한다.
 - 공간 배치만 추상화하는 wrapper를 만들지 않는다. 배치 클래스는 소비처가 소유한다.

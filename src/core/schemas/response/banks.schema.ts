@@ -1,12 +1,12 @@
 import * as z from "zod";
 
-const banksResponseSchema = z.array(
+const BanksResponseSchema = z.array(
   z.object({
     bank: z.string(),
     name: z.object({ ko: z.string() }),
   }),
 );
 
-type BanksResponse = z.infer<typeof banksResponseSchema>;
+type BanksResponse = z.infer<typeof BanksResponseSchema>;
 
-export { banksResponseSchema, type BanksResponse };
+export { BanksResponseSchema, type BanksResponse };

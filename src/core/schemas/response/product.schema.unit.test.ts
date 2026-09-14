@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { productResponseSchema } from "./product.schema";
+import { ProductResponseSchema } from "./product.schema";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildValidProduct = (overrides?: Record<string, unknown>) => ({
@@ -31,16 +31,20 @@ const buildValidProduct = (overrides?: Record<string, unknown>) => ({
   ...overrides,
 });
 
-describe("productResponseSchema", () => {
+describe("ProductResponseSchema", () => {
   it("deletedAt이 null이면 통과한다", () => {
-    const result = productResponseSchema.safeParse(buildValidProduct({ deletedAt: null }));
+    const result = ProductResponseSchema.safeParse(
+      buildValidProduct({ deletedAt: null }),
+    );
 
     expect(result.success).toBe(true);
   });
 
   it("deletedAt이 ISO date string이면 통과한다", () => {
     const iso = new Date().toISOString();
-    const result = productResponseSchema.safeParse(buildValidProduct({ deletedAt: iso }));
+    const result = ProductResponseSchema.safeParse(
+      buildValidProduct({ deletedAt: iso }),
+    );
 
     expect(result.success).toBe(true);
     expect(result.data?.deletedAt).toBe(iso);
@@ -50,13 +54,13 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { deletedAt?: unknown }).deletedAt;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(false);
   });
 
   it("deletedAt이 ISO date string이 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({ deletedAt: "not-a-date" }),
     );
 
@@ -64,7 +68,7 @@ describe("productResponseSchema", () => {
   });
 
   it("category가 invitation이 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({ category: "business-card" }),
     );
 
@@ -72,13 +76,17 @@ describe("productResponseSchema", () => {
   });
 
   it("theme이 blossom/default가 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(buildValidProduct({ theme: "sunset" }));
+    const result = ProductResponseSchema.safeParse(
+      buildValidProduct({ theme: "sunset" }),
+    );
 
     expect(result.success).toBe(false);
   });
 
   it("theme이 blossom이면 통과한다", () => {
-    const result = productResponseSchema.safeParse(buildValidProduct({ theme: "blossom" }));
+    const result = ProductResponseSchema.safeParse(
+      buildValidProduct({ theme: "blossom" }),
+    );
 
     expect(result.success).toBe(true);
   });
@@ -87,7 +95,7 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { theme?: unknown }).theme;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(true);
   });
@@ -96,13 +104,13 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { discount?: unknown }).discount;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(false);
   });
 
   it("discount.discountType이 rate/amount가 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({ discount: { discountType: "percent", value: 0 } }),
     );
 
@@ -110,7 +118,9 @@ describe("productResponseSchema", () => {
   });
 
   it("status가 허용된 값이 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(buildValidProduct({ status: "unknown" }));
+    const result = ProductResponseSchema.safeParse(
+      buildValidProduct({ status: "unknown" }),
+    );
 
     expect(result.success).toBe(false);
   });
@@ -119,13 +129,13 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { status?: unknown }).status;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(false);
   });
 
   it("likes 원소가 문자열이 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({ likes: [123] }),
     );
 
@@ -133,7 +143,7 @@ describe("productResponseSchema", () => {
   });
 
   it("previewUrl이 문자열이 아니면 실패한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({ previewUrl: 123 }),
     );
 
@@ -144,7 +154,7 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { previewUrl?: unknown }).previewUrl;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(true);
   });
@@ -154,7 +164,7 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { images?: unknown }).images;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(false);
   });
@@ -163,7 +173,7 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { minQuantity?: unknown }).minQuantity;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(false);
   });
@@ -172,13 +182,13 @@ describe("productResponseSchema", () => {
     const data = buildValidProduct();
     delete (data as { maxQuantity?: unknown }).maxQuantity;
 
-    const result = productResponseSchema.safeParse(data);
+    const result = ProductResponseSchema.safeParse(data);
 
     expect(result.success).toBe(false);
   });
 
   it("images는 문자열 배열이어야 한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({ images: [123] }),
     );
 
@@ -186,7 +196,7 @@ describe("productResponseSchema", () => {
   });
 
   it("images/minQuantity/maxQuantity가 정상 값이면 통과한다", () => {
-    const result = productResponseSchema.safeParse(
+    const result = ProductResponseSchema.safeParse(
       buildValidProduct({
         images: ["https://example.com/a.jpg", "https://example.com/b.jpg"],
         minQuantity: 2,

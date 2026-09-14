@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { productSchema } from "./product.schema";
+import { ProductSchema } from "./product.schema";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 const buildValidInput = (overrides?: Record<string, unknown>) => ({
@@ -15,15 +15,15 @@ const buildValidInput = (overrides?: Record<string, unknown>) => ({
   ...overrides,
 });
 
-describe("productSchema", () => {
+describe("ProductSchema", () => {
   it("정상 입력은 통과한다", () => {
-    const result = productSchema.safeParse(buildValidInput());
+    const result = ProductSchema.safeParse(buildValidInput());
 
     expect(result.success).toBe(true);
   });
 
   it("category가 invitation이 아니면 실패한다 (business-card는 더 이상 허용되지 않음)", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ category: "business-card" }),
     );
 
@@ -31,7 +31,7 @@ describe("productSchema", () => {
   });
 
   it("theme을 생략하면 통과한다 (optional)", () => {
-    const result = productSchema.safeParse(buildValidInput());
+    const result = ProductSchema.safeParse(buildValidInput());
 
     expect(result.success).toBe(true);
     if (result.success) {
@@ -40,7 +40,7 @@ describe("productSchema", () => {
   });
 
   it("theme이 blossom/default가 아니면 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ theme: "sunset" }),
     );
 
@@ -48,7 +48,7 @@ describe("productSchema", () => {
   });
 
   it("카테고리에 허용되지 않는 subCategory면 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ subCategory: "store" }),
     );
 
@@ -56,7 +56,7 @@ describe("productSchema", () => {
   });
 
   it("isPremium인데 featureIds가 비어있으면 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ isPremium: true, featureIds: [] }),
     );
 
@@ -64,7 +64,7 @@ describe("productSchema", () => {
   });
 
   it("isPremium이고 featureIds가 채워져 있으면 통과한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ isPremium: true, featureIds: ["feature-1"] }),
     );
 
@@ -72,7 +72,7 @@ describe("productSchema", () => {
   });
 
   it("title이 비어있으면 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ title: "" }));
+    const result = ProductSchema.safeParse(buildValidInput({ title: "" }));
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -81,7 +81,7 @@ describe("productSchema", () => {
   });
 
   it("description이 10자 미만이면 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ description: "짧음" }),
     );
 
@@ -94,7 +94,7 @@ describe("productSchema", () => {
   });
 
   it("subCategory가 비어있으면 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ subCategory: "" }),
     );
 
@@ -107,7 +107,7 @@ describe("productSchema", () => {
   });
 
   it("허용되지 않는 subCategory면 전용 안내 메시지를 반환한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ subCategory: "store" }),
     );
 
@@ -121,7 +121,7 @@ describe("productSchema", () => {
   });
 
   it("price가 음수면 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ price: -1 }));
+    const result = ProductSchema.safeParse(buildValidInput({ price: -1 }));
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -132,13 +132,13 @@ describe("productSchema", () => {
   });
 
   it("price가 0이면 통과한다 (경계값)", () => {
-    const result = productSchema.safeParse(buildValidInput({ price: 0 }));
+    const result = ProductSchema.safeParse(buildValidInput({ price: 0 }));
 
     expect(result.success).toBe(true);
   });
 
   it("price가 소수면 원 단위 정수 안내와 함께 실패한다", () => {
-    const result = productSchema.safeParse(buildValidInput({ price: 9900.5 }));
+    const result = ProductSchema.safeParse(buildValidInput({ price: 9900.5 }));
 
     expect(result.success).toBe(false);
     if (!result.success) {
@@ -149,7 +149,7 @@ describe("productSchema", () => {
   });
 
   it("discount.value가 음수면 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ discount: { discountType: "rate", value: -1 } }),
     );
 
@@ -158,11 +158,11 @@ describe("productSchema", () => {
 
   it("rate 할인율은 1(100%)이면 통과하고 1을 초과하면 실패한다", () => {
     expect(
-      productSchema.safeParse(
+      ProductSchema.safeParse(
         buildValidInput({ discount: { discountType: "rate", value: 1 } }),
       ).success,
     ).toBe(true);
-    const overLimit = productSchema.safeParse(
+    const overLimit = ProductSchema.safeParse(
       buildValidInput({ discount: { discountType: "rate", value: 1.01 } }),
     );
     expect(overLimit.success).toBe(false);
@@ -174,7 +174,7 @@ describe("productSchema", () => {
   });
 
   it("amount 할인은 가격보다 큰 값도 허용한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ discount: { discountType: "amount", value: 100_000 } }),
     );
 
@@ -182,7 +182,7 @@ describe("productSchema", () => {
   });
 
   it("amount 할인액이 소수면 원 단위 정수 안내와 함께 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ discount: { discountType: "amount", value: 1000.5 } }),
     );
 
@@ -195,7 +195,7 @@ describe("productSchema", () => {
   });
 
   it("discount.discountType이 rate/amount가 아니면 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ discount: { discountType: "percent", value: 0 } }),
     );
 
@@ -203,13 +203,13 @@ describe("productSchema", () => {
   });
 
   it("discount를 생략하면 통과한다 (optional)", () => {
-    const result = productSchema.safeParse(buildValidInput());
+    const result = ProductSchema.safeParse(buildValidInput());
 
     expect(result.success).toBe(true);
   });
 
   it("status가 허용된 값이 아니면 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ status: "unknown" }),
     );
 
@@ -217,13 +217,13 @@ describe("productSchema", () => {
   });
 
   it("status를 생략하면 통과한다 (optional)", () => {
-    const result = productSchema.safeParse(buildValidInput());
+    const result = ProductSchema.safeParse(buildValidInput());
 
     expect(result.success).toBe(true);
   });
 
   it("thumbnail 문자열이 유효한 URL이 아니면 URL 안내 메시지와 함께 실패한다", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ thumbnail: "not-a-file" }),
     );
 
@@ -237,18 +237,18 @@ describe("productSchema", () => {
 
   it("수정 흐름의 기존 thumbnail URL은 허용하고 잘못된 URL은 거부한다", () => {
     expect(
-      productSchema.safeParse(
+      ProductSchema.safeParse(
         buildValidInput({ thumbnail: "https://cdn.example.com/thumb.png" }),
       ).success,
     ).toBe(true);
     expect(
-      productSchema.safeParse(buildValidInput({ thumbnail: "not-a-url" }))
+      ProductSchema.safeParse(buildValidInput({ thumbnail: "not-a-url" }))
         .success,
     ).toBe(false);
   });
 
   it("isPremium이고 featureIds를 아예 생략하면 실패한다 (옵션을 선택해주세요)", () => {
-    const result = productSchema.safeParse(
+    const result = ProductSchema.safeParse(
       buildValidInput({ isPremium: true }),
     );
 
@@ -262,7 +262,7 @@ describe("productSchema", () => {
   // ── REQ-2/REQ-3: images/minQuantity/maxQuantity ──────────────────────
   describe("images/minQuantity/maxQuantity", () => {
     it("images/minQuantity/maxQuantity를 생략해도 통과한다 (default: []/1/0, invitation)", () => {
-      const result = productSchema.safeParse(buildValidInput());
+      const result = ProductSchema.safeParse(buildValidInput());
 
       expect(result.success).toBe(true);
       if (result.success) {
@@ -273,15 +273,18 @@ describe("productSchema", () => {
     });
 
     it("invitation은 images 없이 통과한다 (previewUrl이 대신함)", () => {
-      const result = productSchema.safeParse(
-        buildValidInput({ category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" }),
+      const result = ProductSchema.safeParse(
+        buildValidInput({
+          category: MOBILE_INVITATION_CATEGORY,
+          subCategory: "wedding",
+        }),
       );
 
       expect(result.success).toBe(true);
     });
 
     it("물리 상품(favor 등)은 images가 비어있으면 실패한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ category: "favor", subCategory: "candle" }),
       );
 
@@ -295,7 +298,7 @@ describe("productSchema", () => {
     });
 
     it("물리 상품은 업로드된 URL이 있으면 통과한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({
           category: "favor",
           subCategory: "candle",
@@ -307,7 +310,7 @@ describe("productSchema", () => {
     });
 
     it("물리 상품은 유효하지 않은 이미지 URL이면 실패한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({
           category: "accessory",
           subCategory: "ring-pillow",
@@ -319,7 +322,7 @@ describe("productSchema", () => {
     });
 
     it("maxQuantity가 minQuantity보다 작으면 실패한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ minQuantity: 5, maxQuantity: 3 }),
       );
 
@@ -333,7 +336,7 @@ describe("productSchema", () => {
     });
 
     it("maxQuantity가 minQuantity 이상이면 통과한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ minQuantity: 3, maxQuantity: 5 }),
       );
 
@@ -341,7 +344,7 @@ describe("productSchema", () => {
     });
 
     it("maxQuantity가 0(무제한)이면 minQuantity와 무관하게 통과한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ minQuantity: 5, maxQuantity: 0 }),
       );
 
@@ -349,7 +352,7 @@ describe("productSchema", () => {
     });
 
     it("minQuantity가 0이면 실패한다 (1 이상)", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ minQuantity: 0 }),
       );
 
@@ -357,7 +360,7 @@ describe("productSchema", () => {
     });
 
     it("minQuantity가 정수가 아니면 실패한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ minQuantity: 1.5 }),
       );
 
@@ -365,7 +368,7 @@ describe("productSchema", () => {
     });
 
     it("maxQuantity가 음수면 실패한다", () => {
-      const result = productSchema.safeParse(
+      const result = ProductSchema.safeParse(
         buildValidInput({ maxQuantity: -1 }),
       );
 

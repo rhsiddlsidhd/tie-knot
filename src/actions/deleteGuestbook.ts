@@ -1,16 +1,16 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { parseDeleteGuestbookFormData } from "@/core/schemas/request/guestbook.schema";
 import { deleteGuestbookWithPasswordService } from "@/services/guestbook";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
 const deleteGuestbook = async (
   _prev: null,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   const parsed = parseDeleteGuestbookFormData(formData);
 
   if (!parsed.success) {
@@ -27,7 +27,7 @@ const deleteGuestbook = async (
   try {
     await deleteGuestbookWithPasswordService(parsed.data);
 
-    revalidatePath(routes.preview.detail(parsed.data.publicKey));
+    revalidatePath(ROUTES.preview.detail(parsed.data.publicKey));
 
     return {
       success: true,

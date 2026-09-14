@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse } from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { createUploadSignatureForCurrentUser } from "@/services/upload";
 import type { UploadSignature } from "@/adapters/server/cloudinary/sign";
@@ -12,7 +12,7 @@ type UploadSignatureRequestBody = {
 
 const POST = async (
   request: NextRequest,
-): Promise<APIRouteResponse<UploadSignature>> => {
+): Promise<ApiRouteResponse<UploadSignature>> => {
   try {
     let parsedBody: unknown;
     try {

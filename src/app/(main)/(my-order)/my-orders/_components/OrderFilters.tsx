@@ -1,13 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/atoms/select";
 import { Tabs, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
 import type { OrderStatus } from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { ORDER_STATUSES } from "@/core/domain/order";
-import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_CATEGORY_LABELS,
+} from "@/core/domain/product-category";
+import { ROUTES } from "@/core/domain/routes";
 import { ORDER_STATUS_TAB_LABELS } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
 import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
 
@@ -34,7 +43,9 @@ const OrderFilters = ({ status, category }: OrderFiltersProps) => {
     if (next.category) params.set("category", next.category);
 
     const query = params.toString();
-    router.push(query ? `${routes.myOrders.root}?${query}` : routes.myOrders.root);
+    router.push(
+      query ? `${ROUTES.myOrders.root}?${query}` : ROUTES.myOrders.root,
+    );
   };
 
   // 카테고리를 하나로 좁혔으면 그 카테고리의 구체어를, "전체"면 중립어를 쓴다.
@@ -81,7 +92,7 @@ const OrderFilters = ({ status, category }: OrderFiltersProps) => {
           <SelectItem value={ALL_VALUE}>전체 카테고리</SelectItem>
           {PRODUCT_CATEGORIES.map((value) => (
             <SelectItem key={value} value={value}>
-              {productCategoryLabels[value]}
+              {PRODUCT_CATEGORY_LABELS[value]}
             </SelectItem>
           ))}
         </SelectContent>

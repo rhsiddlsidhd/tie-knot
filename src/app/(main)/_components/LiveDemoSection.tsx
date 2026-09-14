@@ -5,7 +5,7 @@ import { Eye, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import Image from "next/image";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 /**
  * 메인 페이지에서 대표 청첩장 샘플(/preview/sample)을 보여주는 섹션 (Organism)
@@ -28,7 +28,7 @@ const LiveDemoSection = () => {
               경험해보세요.
             </p>
             <div className="flex flex-wrap justify-center gap-4 lg:justify-start">
-              <Link href={routes.preview.sample} target="_blank">
+              <Link href={ROUTES.preview.sample} target="_blank">
                 <Button size="lg" className="h-12 px-8 text-base">
                   <Eye className="mr-2 h-5 w-5" />
                   샘플 미리보기
@@ -53,7 +53,7 @@ const LiveDemoSection = () => {
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <Link
-                      href={routes.preview.sample}
+                      href={ROUTES.preview.sample}
                       target="_blank"
                       className="scale-95 transform transition-transform duration-300 group-hover:scale-100"
                     >

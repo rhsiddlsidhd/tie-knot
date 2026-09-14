@@ -5,20 +5,17 @@ import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { Label } from "@/ui/components/atoms/label";
 
-
-
-
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { Alert } from "@/ui/components/molecules/Alert";
 import { TextField } from "@/ui/components/organisms/TextField";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
 
 interface PremiumFeatureDialogProps {
   premiumFeature: PremiumFeature;
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
 }
 
 const PremiumFeatureDialog = ({
@@ -36,36 +33,34 @@ const PremiumFeatureDialog = ({
     <form action={action}>
       <div className="space-y-4 py-4">
         <TextField
-            id="code"
-            name="code"
-            type="text"
-            placeholder="예: ANIMATION"
-            defaultValue={feature.code}
-            required
-            error={codeError}
-          >
-            기능 코드 *
-          </TextField>
-          <TypographyMuted>
-            영문 대문자와 언더스코어만 사용 가능합니다.
-          </TypographyMuted>
+          id="code"
+          name="code"
+          type="text"
+          placeholder="예: ANIMATION"
+          defaultValue={feature.code}
+          required
+          error={codeError}
+        >
+          기능 코드 *
+        </TextField>
+        <TypographyMuted>
+          영문 대문자와 언더스코어만 사용 가능합니다.
+        </TypographyMuted>
 
         <TextField
-            id="label"
-            name="label"
-            type="text"
-            placeholder="예: 애니메이션 효과"
-            defaultValue={feature.label}
-            required
-            error={labelError}
-          >
-            기능 이름 *
-          </TextField>
+          id="label"
+          name="label"
+          type="text"
+          placeholder="예: 애니메이션 효과"
+          defaultValue={feature.label}
+          required
+          error={labelError}
+        >
+          기능 이름 *
+        </TextField>
 
         <div className="space-y-2">
-          <Label htmlFor="description">
-            기능 설명 *
-          </Label>
+          <Label htmlFor="description">기능 설명 *</Label>
           <Textarea
             id="description"
             name="description"
@@ -78,9 +73,7 @@ const PremiumFeatureDialog = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="additionalPrice">
-            추가 비용 *
-          </Label>
+          <Label htmlFor="additionalPrice">추가 비용 *</Label>
           <div className="relative">
             <Input
               id="additionalPrice"
@@ -120,6 +113,6 @@ const PremiumFeatureDialog = ({
       </DialogFooter>
     </form>
   );
-}
+};
 
 export { PremiumFeatureDialog };

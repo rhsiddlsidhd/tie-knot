@@ -6,7 +6,7 @@ import { GuestbookList } from "./GuestbookList";
 import { PenLine } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { useGuestbookDemo } from "@/ui/context/guestbookDemo/provider";
 import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 
@@ -57,7 +57,7 @@ const DemoGuestbookSection = () => {
               setIsOpen({
                 isOpen: true,
                 type: "DELETE_GUESTBOOK",
-                payload: { id, publicKey: routes.preview.samplePublicKey },
+                payload: { id, publicKey: ROUTES.preview.samplePublicKey },
               })
             }
           />
@@ -69,7 +69,7 @@ const DemoGuestbookSection = () => {
             setIsOpen({
               isOpen: true,
               type: "WRITE_GUESTBOOK",
-              payload: { publicKey: routes.preview.samplePublicKey },
+              payload: { publicKey: ROUTES.preview.samplePublicKey },
             })
           }
           className="w-full gap-2 px-8 py-6 sm:w-auto"
@@ -80,6 +80,6 @@ const DemoGuestbookSection = () => {
       </div>
     </EyebrowSection>
   );
-}
+};
 
 export { DemoGuestbookSection };

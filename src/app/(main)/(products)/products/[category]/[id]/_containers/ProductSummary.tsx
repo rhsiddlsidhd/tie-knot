@@ -9,7 +9,7 @@ import type { PremiumFeature } from "@/core/domain/premium-feature";
 
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductSummary as PureProductSummary } from "../_components/ProductSummary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 const ProductSummary = ({
   product,
   options,
@@ -23,7 +23,7 @@ const ProductSummary = ({
   const handlePurchase = useCallback(
     (checkoutData: CheckoutItem) => {
       setOrder(checkoutData);
-      router.push(routes.payment.root);
+      router.push(ROUTES.payment.root);
     },
     [setOrder, router],
   );
@@ -35,6 +35,6 @@ const ProductSummary = ({
       onPurchase={handlePurchase}
     />
   );
-}
+};
 
 export { ProductSummary };

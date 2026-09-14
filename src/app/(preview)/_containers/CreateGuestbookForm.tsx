@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createGuestbook } from "@/actions/createGuestbook";
-import type { APIResponse } from "@/core/domain/error";
-import { routes } from "@/core/domain/routes";
+import type { ApiResponse } from "@/core/domain/error";
+import { ROUTES } from "@/core/domain/routes";
 import { parseGuestbookFormData } from "@/core/schemas/request/guestbook.schema";
 import { hasFieldErrors } from "@/core/utils/error";
 import { useGuestbookDemo } from "@/ui/context/guestbookDemo/provider";
@@ -29,7 +29,7 @@ const isPayload = (payload: unknown): payload is Payload => {
 
 const CreateGuestbookForm = ({ payload }: { payload: unknown }) => {
   const publicKey = isPayload(payload) ? payload.publicKey : null;
-  const isDemo = publicKey === routes.preview.samplePublicKey;
+  const isDemo = publicKey === ROUTES.preview.samplePublicKey;
 
   // 아래 hook 4개는 payload 유효성과 무관하게 항상 호출된다 — 유효성 검사(throw)는
   // 맨 아래로 미뤄, 렌더마다 호출되는 hook 개수가 달라지는 걸 막는다.
@@ -43,7 +43,7 @@ const CreateGuestbookForm = ({ payload }: { payload: unknown }) => {
   const createDemoGuestbook = async (
     _prev: null,
     formData: FormData,
-  ): Promise<APIResponse<{ message: string }>> => {
+  ): Promise<ApiResponse<{ message: string }>> => {
     const parsed = parseGuestbookFormData(formData);
     if (!parsed.success) {
       return {
@@ -72,7 +72,7 @@ const CreateGuestbookForm = ({ payload }: { payload: unknown }) => {
   };
 
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
+    ApiResponse<{ message: string }>,
     FormData
   >(isDemo ? createDemoGuestbook : createGuestbook, null);
 
@@ -106,6 +106,6 @@ const CreateGuestbookForm = ({ payload }: { payload: unknown }) => {
       )}
     </>
   );
-}
+};
 
 export { CreateGuestbookForm };

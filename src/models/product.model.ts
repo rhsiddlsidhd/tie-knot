@@ -1,15 +1,21 @@
 import "server-only";
 import type { Model } from "mongoose";
 import mongoose, { model, Schema } from "mongoose";
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import type { ProductStatus } from "@/core/domain/product";
-import { SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
+import {
+  SUB_CATEGORY_MAP,
+  PRODUCT_CATEGORIES,
+} from "@/core/domain/product-category";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 
 type Status = ProductStatus;
 
-const discountSchema = new Schema(
+const DiscountSchema = new Schema(
   {
     discountType: {
       type: String,
@@ -31,7 +37,7 @@ const discountSchema = new Schema(
   { _id: false },
 );
 
-interface ProductDB {
+interface ProductDb {
   authorId: string;
   title: string;
   description: string;
@@ -61,19 +67,19 @@ interface ProductDB {
   ratingCount: number;
 }
 
-interface IProduct extends ProductDB {
+interface ProductDocument extends ProductDb {
   _id: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// mobile-invitation 카테고리 전용 필드 — mongoose discriminator로 base(IProduct)에 병합된다.
-interface IMobileInvitationProduct extends IProduct {
+// mobile-invitation 카테고리 전용 필드 — mongoose discriminator로 base(ProductDocument)에 병합된다.
+interface MobileInvitationProductDocument extends ProductDocument {
   previewUrl?: string;
   theme?: MobileInvitationTheme;
 }
 
-const productSchema = new Schema<IProduct>(
+const ProductSchema = new Schema<ProductDocument>(
   {
     authorId: { type: String, required: true },
     title: { type: String, required: true },
@@ -90,12 +96,16 @@ const productSchema = new Schema<IProduct>(
       required: true,
       validate: {
         validator: async function (
-          this: mongoose.Document<unknown, unknown, IProduct> | mongoose.Query<unknown, IProduct>,
+          this:
+            | mongoose.Document<unknown, unknown, ProductDocument>
+            | mongoose.Query<unknown, ProductDocument>,
           value: string,
         ) {
           let category = this.get("category") as ProductCategory | undefined;
           if (!category && "getQuery" in this) {
-            const existing = await (this.model as mongoose.Model<IProduct>)
+            const existing = await (
+              this.model as mongoose.Model<ProductDocument>
+            )
               .findOne(this.getQuery())
               .select("category")
               .lean();
@@ -126,7 +136,7 @@ const productSchema = new Schema<IProduct>(
     views: { type: Number, default: 0 },
     salesCount: { type: Number, default: 0 },
     discount: {
-      type: discountSchema,
+      type: DiscountSchema,
       default: () => ({ discountType: "rate", value: 0 }),
     },
     isPremium: { type: Boolean, required: true },
@@ -160,7 +170,7 @@ const productSchema = new Schema<IProduct>(
 // 쿼리에 있을 때만 equality로 쓰여 아래 index만으로는 커버되지 않아, subCategory
 // 포함/미포함 두 쿼리 모양을 각각 커버하는 index 두 개를 둔다(order.model.ts가 이미
 // 같은 방식으로 쿼리 모양별 index를 여러 개 두고 있다).
-productSchema.index({
+ProductSchema.index({
   deletedAt: 1,
   status: 1,
   category: 1,
@@ -169,7 +179,7 @@ productSchema.index({
   createdAt: -1,
   _id: -1,
 });
-productSchema.index({
+ProductSchema.index({
   deletedAt: 1,
   status: 1,
   category: 1,
@@ -184,25 +194,28 @@ productSchema.index({
 // /trash(deletedAt:{$ne:null}) 두 view 모두 deletedAt이 leading field라 index 하나로
 // 커버된다(order.model.ts/user.model.ts와 동일하게 admin cursor 정렬을 인덱스로 전부
 // 커버하는 패턴).
-productSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
+ProductSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
 
 const ProductModel =
-  (mongoose.models.Product as Model<IProduct>) ||
-  model<IProduct>("Product", productSchema);
+  (mongoose.models.Product as Model<ProductDocument>) ||
+  model<ProductDocument>("Product", ProductSchema);
 
-const mobileInvitationProductSchema = new Schema<IMobileInvitationProduct>({
-  previewUrl: { type: String },
-  theme: { type: String, enum: MOBILE_INVITATION_THEMES, default: "default" },
-});
+const MobileInvitationProductSchema =
+  new Schema<MobileInvitationProductDocument>({
+    previewUrl: { type: String },
+    theme: { type: String, enum: MOBILE_INVITATION_THEMES, default: "default" },
+  });
 
 // discriminator 이름("mobile-invitation")이 곧 category 필드에 저장되는 값이다 —
 // 기존 category enum 값과 그대로 일치시킨다. HMR 재컴파일 시 이미 등록된
 // discriminator를 재사용해 "Cannot overwrite discriminator" 에러를 피한다.
 const MobileInvitationProductModel =
-  (ProductModel.discriminators?.["mobile-invitation"] as Model<IMobileInvitationProduct>) ||
-  ProductModel.discriminator<IMobileInvitationProduct>(
+  (ProductModel.discriminators?.[
+    "mobile-invitation"
+  ] as Model<MobileInvitationProductDocument>) ||
+  ProductModel.discriminator<MobileInvitationProductDocument>(
     "mobile-invitation",
-    mobileInvitationProductSchema,
+    MobileInvitationProductSchema,
   );
 
 export {
@@ -210,7 +223,7 @@ export {
   ProductModel,
   MobileInvitationProductModel,
   type Status,
-  type ProductDB,
-  type IProduct,
-  type IMobileInvitationProduct,
+  type ProductDb,
+  type ProductDocument,
+  type MobileInvitationProductDocument,
 };

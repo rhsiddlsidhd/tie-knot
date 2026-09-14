@@ -1,7 +1,16 @@
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { Button } from "@/ui/components/atoms/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms/card";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -10,7 +19,7 @@ import { PremiumFeatureRegistrationForm } from "@/app/(admin)/admin/premium-feat
 const NewPremiumFeatureTemplate = () => (
   <div className="space-y-6">
     <div className="flex items-center gap-4">
-      <Link href={routes.admin.premiumFeatures.root}>
+      <Link href={ROUTES.admin.premiumFeatures.root}>
         <Button variant="ghost" size="icon">
           <ArrowLeft className="h-5 w-5" />
         </Button>

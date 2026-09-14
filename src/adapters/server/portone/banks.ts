@@ -1,6 +1,6 @@
 import "server-only";
 import { AppError } from "@/core/domain/error";
-import { banksResponseSchema } from "@/core/schemas/response/banks.schema";
+import { BanksResponseSchema } from "@/core/schemas/response/banks.schema";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 
 const BANKS_URL = "https://api.portone.io/banks";
@@ -42,7 +42,7 @@ const fetchBanks = async (): Promise<BanksResponse> => {
     );
   }
 
-  const parsed = banksResponseSchema.safeParse(
+  const parsed = BanksResponseSchema.safeParse(
     (json as { items?: unknown })?.items,
   );
 
@@ -54,6 +54,6 @@ const fetchBanks = async (): Promise<BanksResponse> => {
   }
 
   return parsed.data;
-}
+};
 
 export { fetchBanks };

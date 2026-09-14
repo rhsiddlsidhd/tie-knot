@@ -2,14 +2,15 @@ import Link from "next/link";
 import { Globe } from "lucide-react";
 
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { Label } from "@/ui/components/atoms/label";
 
-
-
 import { TextField } from "@/ui/components/organisms/TextField";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 interface LoginFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
@@ -26,7 +27,9 @@ const LoginForm = ({
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">로그인</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-[var(--font-NotoSerif)] font-bold">
+          로그인
+        </TypographyH1>
         <TypographyMuted className="text-sm">
           계정에 로그인하여 청첩장을 만들어보세요
         </TypographyMuted>
@@ -98,7 +101,7 @@ const LoginForm = ({
         <TypographyMuted>
           아직 계정이 없으신가요?{" "}
           <Link
-            href={routes.signup}
+            href={ROUTES.signup}
             className="text-primary font-medium hover:underline"
           >
             회원가입
@@ -106,14 +109,14 @@ const LoginForm = ({
         </TypographyMuted>
         <div className="flex items-center justify-center gap-2 text-sm">
           <Link
-            href={routes.findId}
+            href={ROUTES.findId}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             아이디 찾기
           </Link>
           <span className="text-muted-foreground">·</span>
           <Link
-            href={routes.findPw}
+            href={ROUTES.findPw}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             비밀번호 찾기
@@ -122,6 +125,6 @@ const LoginForm = ({
       </div>
     </div>
   );
-}
+};
 
 export { LoginForm };

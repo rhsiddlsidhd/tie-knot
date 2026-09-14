@@ -1,6 +1,12 @@
 "use client";
 
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarProvider } from "@/ui/components/atoms/sidebar";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarProvider,
+} from "@/ui/components/atoms/sidebar";
 import { SidebarToggle } from "@/ui/components/organisms/SidebarToggle";
 import type React from "react";
 import { Toaster } from "sonner";
@@ -9,7 +15,7 @@ import { AdminModal } from "@/app/(admin)/admin/_components/AdminModal";
 import { useAuth } from "@/ui/hooks/useAuth";
 import { Skeleton } from "@/ui/components/atoms/skeleton";
 import { TypographyH4 } from "@/ui/components/atoms/typography";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import Link from "next/link";
 export default function AdminLayout({
   children,
@@ -23,7 +29,7 @@ export default function AdminLayout({
       <div className="bg-background flex min-h-screen w-screen pt-16">
         <Sidebar className="bg-card border-border fixed top-0 left-0 z-50 h-screen w-64 border-r pt-16">
           <SidebarHeader className="border-border border-b">
-            <Link href={routes.home}>
+            <Link href={ROUTES.home}>
               <TypographyH4 className="m-0">Tie Knot</TypographyH4>
             </Link>
           </SidebarHeader>

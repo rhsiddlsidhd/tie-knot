@@ -6,20 +6,20 @@ import { toast } from "sonner";
 
 import { saveMobileInvitation } from "@/actions/saveMobileInvitation";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { useImageUpload } from "./useImageUpload";
 import { useImageList } from "./useImageList";
 import { useFetchMobileInvitation } from "./useFetchMobileInvitation";
 import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 const useMobileInvitationForm = () => {
   const router = useRouter();
   const { orderId } = useParams<{ orderId: string }>();
 
   const [state, action] = useActionState<
-    APIResponse<Record<string, string>>,
+    ApiResponse<Record<string, string>>,
     FormData
   >(saveMobileInvitation, null);
 
@@ -55,7 +55,7 @@ const useMobileInvitationForm = () => {
     // my-orders로 돌아간다(payment로 다시 보내지 않는다).
     if (state && state.success === true && state.data.publicKey) {
       toast.success(state.data.message);
-      router.push(routes.myOrders.root);
+      router.push(ROUTES.myOrders.root);
     }
   }, [state, router]);
 
@@ -71,6 +71,6 @@ const useMobileInvitationForm = () => {
     handleSubmit,
     orderId,
   };
-}
+};
 
 export { useMobileInvitationForm };

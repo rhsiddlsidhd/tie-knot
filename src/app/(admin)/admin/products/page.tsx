@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminProductsPageService } from "@/services/product";
-import { adminProductListRequestSchema } from "@/core/schemas/request/adminProductList.schema";
+import { AdminProductListRequestSchema } from "@/core/schemas/request/adminProductList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminProductsTemplate } from "@/app/(admin)/admin/products/_components/AdminProductsTemplate";
@@ -13,9 +13,10 @@ import { AdminProductsTemplate } from "@/app/(admin)/admin/products/_components/
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(adminProductListRequestSchema, {
+  const parsed = validateAndFlatten(AdminProductListRequestSchema, {
     view: typeof searchParams.view === "string" ? searchParams.view : null,
-    cursor: typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+    cursor:
+      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};

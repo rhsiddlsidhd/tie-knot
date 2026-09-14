@@ -4,7 +4,7 @@ import { useOrderStore } from "@/ui/stores/use-app-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 // 결제 진행/실패/완료 중엔 order가 곧 클리어되므로(성공 시 clearOrder) "주문 없음"
 // 오탐 리다이렉트를 막아야 한다 — paymentStatus를 store에서 직접 읽어 CheckoutForm/
@@ -17,7 +17,9 @@ const useCheckoutData = () => {
   const hasHydrated = useOrderStore((state) => state._hasHydrated);
   const paymentStatus = useOrderStore((state) => state.paymentStatus);
 
-  const skip = (SKIP_PAYMENT_STATUSES as readonly string[]).includes(paymentStatus);
+  const skip = (SKIP_PAYMENT_STATUSES as readonly string[]).includes(
+    paymentStatus,
+  );
 
   // hydration 완료 후에만 order 유무 체크
   const error =
@@ -28,7 +30,7 @@ const useCheckoutData = () => {
   useEffect(() => {
     if (error) {
       toast.error(error);
-      router.replace(routes.products.root);
+      router.replace(ROUTES.products.root);
     }
   }, [error, router]);
 
@@ -37,6 +39,6 @@ const useCheckoutData = () => {
     loading: !hasHydrated,
     error,
   };
-}
+};
 
 export { useCheckoutData };

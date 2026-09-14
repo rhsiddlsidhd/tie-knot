@@ -1,15 +1,24 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IReview } from "@/models/review.model";
-import type { IOrder } from "@/models/order.model";
+import type { ReviewDocument } from "@/models/review.model";
+import type { OrderDocument } from "@/models/order.model";
 import { ReviewModel } from "@/models/review.model";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
 import { dbConnect } from "@/db/connect";
-import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import {
+  decodeCursor,
+  encodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
 import { maskName } from "@/core/utils/mask";
 import { AppError } from "@/core/domain/error";
-import type { AdminReviewListPage, ReviewJSON, ReviewListPage, ReviewSortType } from "@/core/domain/review";
+import type {
+  AdminReviewListPage,
+  ReviewJson,
+  ReviewListPage,
+  ReviewSortType,
+} from "@/core/domain/review";
 import { REVIEW_PAGE_SIZE } from "@/core/domain/review";
 import { getUser, requireAdmin, requireAuth } from "./auth";
 
@@ -69,7 +78,7 @@ const toReviewJSON = (
   review: ReviewCore,
   authorName: string,
   viewerUserId?: string,
-): ReviewJSON => ({
+): ReviewJson => ({
   _id: review._id.toString(),
   productId: review.productId.toString(),
   authorName,
@@ -93,7 +102,13 @@ const recomputeProductRating = async (
 
   const [result] = await ReviewModel.aggregate<{ avg: number; count: number }>([
     { $match: { productId: objectId } },
-    { $group: { _id: "$productId", avg: { $avg: "$rating" }, count: { $sum: 1 } } },
+    {
+      $group: {
+        _id: "$productId",
+        avg: { $avg: "$rating" },
+        count: { $sum: 1 },
+      },
+    },
   ]);
 
   await ProductModel.findByIdAndUpdate(objectId, {
@@ -109,7 +124,9 @@ const recomputeProductRating = async (
 
 type PopulatedAuthor = { _id: mongoose.Types.ObjectId; name: string } | null;
 
-type LeanReviewWithAuthor = Omit<IReview, "userId"> & { userId: PopulatedAuthor };
+type LeanReviewWithAuthor = Omit<ReviewDocument, "userId"> & {
+  userId: PopulatedAuthor;
+};
 
 type ProductReviewsQuery = {
   productId: string;
@@ -196,14 +213,14 @@ const createReviewService = async ({
   rating,
   content,
   images,
-}: CreateReviewInput): Promise<ReviewJSON> => {
+}: CreateReviewInput): Promise<ReviewJson> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(orderId)) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
 
-  const order = await OrderModel.findById(orderId).lean<IOrder>();
+  const order = await OrderModel.findById(orderId).lean<OrderDocument>();
   if (!order) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
@@ -250,10 +267,10 @@ const createReviewService = async ({
 
 const createReviewForCurrentUserService = async (
   data: Omit<CreateReviewInput, "userId">,
-): Promise<ReviewJSON> => {
+): Promise<ReviewJson> => {
   const { userId } = await requireAuth();
   return createReviewService({ ...data, userId });
-}
+};
 
 type UpdateReviewInput = {
   reviewId: string;
@@ -269,14 +286,14 @@ const updateReviewService = async ({
   rating,
   content,
   images,
-}: UpdateReviewInput): Promise<ReviewJSON> => {
+}: UpdateReviewInput): Promise<ReviewJson> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(reviewId)) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
 
-  const existing = await ReviewModel.findById(reviewId).lean<IReview>();
+  const existing = await ReviewModel.findById(reviewId).lean<ReviewDocument>();
   if (!existing) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
@@ -284,7 +301,8 @@ const updateReviewService = async ({
     throw new AppError("FORBIDDEN", "본인이 작성한 리뷰만 수정할 수 있습니다.");
   }
 
-  const update: Partial<Pick<IReview, "rating" | "content" | "images">> = {};
+  const update: Partial<Pick<ReviewDocument, "rating" | "content" | "images">> =
+    {};
   if (rating !== undefined) update.rating = rating;
   if (content !== undefined) update.content = content;
   if (images !== undefined) update.images = images;
@@ -293,7 +311,7 @@ const updateReviewService = async ({
     new: true,
     runValidators: true,
   })
-    .lean<IReview>()
+    .lean<ReviewDocument>()
     .catch((err) => {
       throw new AppError(
         "INTERNAL",
@@ -314,10 +332,10 @@ const updateReviewService = async ({
 
 const updateReviewForCurrentUserService = async (
   data: Omit<UpdateReviewInput, "userId">,
-): Promise<ReviewJSON> => {
+): Promise<ReviewJson> => {
   const { userId } = await requireAuth();
   return updateReviewService({ ...data, userId });
-}
+};
 
 const deleteReviewService = async ({
   reviewId,
@@ -332,7 +350,7 @@ const deleteReviewService = async ({
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
 
-  const existing = await ReviewModel.findById(reviewId).lean<IReview>();
+  const existing = await ReviewModel.findById(reviewId).lean<ReviewDocument>();
   if (!existing) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
@@ -355,13 +373,11 @@ const deleteReviewForCurrentUserService = async (
 ): Promise<void> => {
   const { userId } = await requireAuth();
   return deleteReviewService({ reviewId, userId });
-}
+};
 
 // 어드민 모더레이션 삭제 — 소유권 검사 없이 어떤 리뷰든 삭제한다, 그래서 자체적으로
 // requireAdmin()을 호출해 게이트한다(product.ts의 관리자 전용 함수들과 동일 패턴).
-const deleteReviewByAdminService = async (
-  reviewId: string,
-): Promise<void> => {
+const deleteReviewByAdminService = async (reviewId: string): Promise<void> => {
   await requireAdmin();
   await dbConnect();
 
@@ -369,7 +385,7 @@ const deleteReviewByAdminService = async (
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
 
-  const existing = await ReviewModel.findById(reviewId).lean<IReview>();
+  const existing = await ReviewModel.findById(reviewId).lean<ReviewDocument>();
   if (!existing) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
@@ -384,7 +400,7 @@ const deleteReviewByAdminService = async (
   await recomputeProductRating(existing.productId);
 };
 
-type LeanAdminReview = Omit<IReview, "userId" | "productId"> & {
+type LeanAdminReview = Omit<ReviewDocument, "userId" | "productId"> & {
   userId: { name: string } | null;
   productId: { title: string } | null;
 };

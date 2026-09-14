@@ -1,7 +1,7 @@
 import { openApp } from "@/adapters/browser/deeplink/open-app";
 import type { NullableCoordinates } from "@/core/domain/geo";
 
-const navigationButtons = [
+const NAVIGATION_BUTTONS = [
   {
     name: "네이버지도",
     path: "navermap.webp",
@@ -44,4 +44,4 @@ const navigationButtons = [
   },
 ] as const;
 
-export { navigationButtons };
+export { NAVIGATION_BUTTONS };

@@ -17,7 +17,7 @@ const REVIEW_SORT_OPTIONS: Record<ReviewSortType, string> = {
 // 상품 상세의 리뷰 목록 한 페이지 크기 — RSC 첫 페이지와 더보기(searchParams)가 같은 값을 쓴다.
 const REVIEW_PAGE_SIZE = DEFAULT_PAGE_SIZE;
 
-interface ReviewJSON {
+interface ReviewJson {
   _id: string;
   productId: string;
   // 실명이 아니라 마스킹된 표시용 이름("김*준") — services/review.ts가 채운다.
@@ -25,13 +25,13 @@ interface ReviewJSON {
   rating: number;
   content: string;
   images: string[];
-  // 현재 로그인 유저가 작성자인지 — ProductJSON.isLiked와 같은 패턴(요청자 기준으로 서비스가 계산).
+  // 현재 로그인 유저가 작성자인지 — ProductJson.isLiked와 같은 패턴(요청자 기준으로 서비스가 계산).
   isOwner: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
 
-type ReviewListPage = CursorPage<ReviewJSON>;
+type ReviewListPage = CursorPage<ReviewJson>;
 
 // 어드민 리뷰 관리 목록 한 행 — 모더레이션 목적이라 작성자명은 마스킹하지 않는다.
 type AdminReviewListItem = {
@@ -52,7 +52,7 @@ export {
   REVIEW_SORT_OPTIONS,
   REVIEW_PAGE_SIZE,
   type ReviewSortType,
-  type ReviewJSON,
+  type ReviewJson,
   type ReviewListPage,
   type AdminReviewListItem,
   type AdminReviewListPage,

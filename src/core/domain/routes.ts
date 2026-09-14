@@ -1,7 +1,7 @@
 import type { SubCategory } from "./product-category";
 import type { MobileInvitationTheme } from "./theme";
 
-const routes = {
+const ROUTES = {
   home: "/",
   login: "/login",
   signup: "/signup",
@@ -22,7 +22,8 @@ const routes = {
     root: "/my-orders",
     refund: "/my-orders/refund",
     detail: (orderId: string) => `/my-orders/${orderId}`,
-    mobileInvitation: (orderId: string) => `/my-orders/${orderId}/mobile-invitation`,
+    mobileInvitation: (orderId: string) =>
+      `/my-orders/${orderId}/mobile-invitation`,
     mobileInvitationPreview: (orderId: string) =>
       `/my-orders/${orderId}/mobile-invitation/preview`,
   },
@@ -58,4 +59,4 @@ const routes = {
   },
 } as const;
 
-export { routes };
+export { ROUTES };

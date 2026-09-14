@@ -1,5 +1,5 @@
 import "server-only";
-import type { IGuestbook } from "@/models/guestbook.model";
+import type { GuestbookDocument } from "@/models/guestbook.model";
 import { GuestbookModel } from "@/models/guestbook.model";
 import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import type { GuestbookType } from "@/core/schemas/request/guestbook.schema";
@@ -12,11 +12,7 @@ import { decodeCursor, encodeCursor } from "@/core/utils/cursor";
 
 import mongoose from "mongoose";
 
-const createGuestbookService = async ({
-  data,
-}: {
-  data: GuestbookType;
-}) => {
+const createGuestbookService = async ({ data }: { data: GuestbookType }) => {
   await dbConnect();
 
   const invitation = await MobileInvitationModel.findOne({
@@ -107,7 +103,7 @@ const getGuestbookService = async (
 
 const getPrivateGuestbookService = async (
   id: string,
-): Promise<IGuestbook | null> => {
+): Promise<GuestbookDocument | null> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(id)) {
@@ -147,7 +143,7 @@ const createGuestbookWithPasswordService = async (
   await createGuestbookService({
     data: { ...data, password: await hashPassword(data.password) },
   });
-}
+};
 
 const deleteGuestbookWithPasswordService = async ({
   guestbookId,
@@ -167,7 +163,7 @@ const deleteGuestbookWithPasswordService = async ({
   if (!result.acknowledged || result.deletedCount === 0) {
     throw new AppError("INTERNAL", "게시글 삭제에 실패했습니다.");
   }
-}
+};
 
 export {
   createGuestbookService,

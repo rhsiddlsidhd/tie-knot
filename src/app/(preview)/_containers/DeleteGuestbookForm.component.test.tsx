@@ -14,12 +14,15 @@ import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
 import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
 import { StoreProvider } from "@/ui/stores/provider";
-import { GuestbookDemoProvider, useGuestbookDemo } from "@/ui/context/guestbookDemo/provider";
-import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
+import {
+  GuestbookDemoProvider,
+  useGuestbookDemo,
+} from "@/ui/context/guestbookDemo/provider";
+import { initialGuestbookDemoState } from "@/ui/context/guestbookDemo/reducer";
 import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
 
-const TARGET_ID = INITIAL_GUESTBOOK_DEMO_STATE.entries[0].id;
-const TARGET_PASSWORD = INITIAL_GUESTBOOK_DEMO_STATE.entries[0].password;
+const TARGET_ID = initialGuestbookDemoState.entries[0].id;
+const TARGET_PASSWORD = initialGuestbookDemoState.entries[0].password;
 
 const EntryExistsProbe = () => {
   const [{ entries }] = useGuestbookDemo();
@@ -34,7 +37,7 @@ let testStore: AppStoreApi;
 const renderForm = (payload: unknown) =>
   render(
     <StoreProvider store={testStore}>
-      <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
+      <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
         <Dialog open>
           <DialogContent>
             <DeleteGuestbookForm payload={payload} />
@@ -103,7 +106,9 @@ describe("DeleteGuestbookForm (컨테이너)", () => {
       await submitPassword("wrong-password");
 
       await waitFor(() =>
-        expect(toast.error).toHaveBeenCalledWith("비밀번호가 일치하지 않습니다."),
+        expect(toast.error).toHaveBeenCalledWith(
+          "비밀번호가 일치하지 않습니다.",
+        ),
       );
       expect(screen.getByText("대상항목:존재")).toBeInTheDocument();
       expect(deleteGuestbook).not.toHaveBeenCalled();

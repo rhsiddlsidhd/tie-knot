@@ -23,10 +23,10 @@ import { calculatePrice } from "@/core/utils/price";
 import type { SubCategory } from "@/core/domain/product-category";
 import {
   MOBILE_INVITATION_CATEGORY,
-  productCategoryLabels,
-  subCategoryLabels,
+  PRODUCT_CATEGORY_LABELS,
+  SUB_CATEGORY_LABELS,
 } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
@@ -62,7 +62,7 @@ const ProductSummary = ({
 
             {product.category === MOBILE_INVITATION_CATEGORY && (
               <Link
-                href={routes.preview.sampleTheme(product.theme ?? "default")}
+                href={ROUTES.preview.sampleTheme(product.theme ?? "default")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute inset-0 cursor-pointer"
@@ -103,10 +103,10 @@ const ProductSummary = ({
               <div className="flex gap-2">
                 <Badge variant="outline">
                   {isProductCategory(product.category) &&
-                    productCategoryLabels[product.category]}
+                    PRODUCT_CATEGORY_LABELS[product.category]}
                 </Badge>
                 <Badge variant="outline">
-                  {subCategoryLabels[product.subCategory as SubCategory] ??
+                  {SUB_CATEGORY_LABELS[product.subCategory as SubCategory] ??
                     product.subCategory}
                 </Badge>
               </div>
@@ -204,6 +204,6 @@ const ProductSummary = ({
       </div>
     </div>
   );
-}
+};
 
 export { ProductSummary };

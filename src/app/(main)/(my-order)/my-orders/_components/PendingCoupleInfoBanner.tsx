@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Edit } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
 import { Alert } from "@/ui/components/molecules/Alert";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 interface PendingCoupleInfoBannerProps {
   orderId: string;
@@ -31,7 +31,7 @@ const PendingCoupleInfoBanner = ({
         )}
       </Alert>
       <Button size="lg" variant="outline" asChild>
-        <Link href={routes.myOrders.mobileInvitation(orderId)}>
+        <Link href={ROUTES.myOrders.mobileInvitation(orderId)}>
           <Edit className="mr-1 h-4 w-4" />
           정보 입력하기
         </Link>

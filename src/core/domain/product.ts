@@ -8,7 +8,7 @@ const POPULAR_PRODUCTS_MIN_ITEMS = 3;
 
 type ProductStatus = "active" | "inactive" | "soldOut" | "deleted";
 
-interface ProductJSON {
+interface ProductJson {
   _id: string;
   authorId: string;
   title: string;
@@ -41,11 +41,11 @@ interface ProductJSON {
   deletedAt: string | null;
 }
 
-type Product = ProductJSON;
+type Product = ProductJson;
 
-type AdminProductListPage = CursorPage<ProductJSON>;
+type AdminProductListPage = CursorPage<ProductJson>;
 
-type PublicProductListPage = CursorPage<ProductJSON>;
+type PublicProductListPage = CursorPage<ProductJson>;
 
 // 1. 필터 키 배열 정의 (UI 노출 순서 보장 및 타입 추출용)
 const PRODUCT_SORT_KEYS = [
@@ -114,7 +114,7 @@ export {
   PRODUCT_PRICE_OPTIONS,
   PREMIUM_FEATURE_LABELS,
   type ProductStatus,
-  type ProductJSON,
+  type ProductJson,
   type Product,
   type AdminProductListPage,
   type PublicProductListPage,

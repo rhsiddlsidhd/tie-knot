@@ -1,10 +1,13 @@
 import Link from "next/link";
 import { X } from "lucide-react";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { Button } from "@/ui/components/atoms/button";
 import { Card, CardContent } from "@/ui/components/atoms/card";
 import { Spinner } from "@/ui/components/atoms/spinner";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 interface PaymentResultTemplateProps {
   errorMessage: string | null;
@@ -20,7 +23,10 @@ const PaymentResultTemplate = ({
           {errorMessage ? (
             <>
               <div className="bg-destructive flex h-16 w-16 items-center justify-center rounded-full">
-                <X className="text-destructive-foreground h-8 w-8" strokeWidth={3} />
+                <X
+                  className="text-destructive-foreground h-8 w-8"
+                  strokeWidth={3}
+                />
               </div>
               <TypographyH1 className="text-2xl">
                 결제 확인에 실패했습니다
@@ -32,7 +38,7 @@ const PaymentResultTemplate = ({
                   같은 종류의 위험). 그래서 mockup의 "다시 시도하기" 버튼은 넣지 않고
                   주문 내역에서 실제 상태를 확인하도록만 안내한다. */}
               <Button asChild>
-                <Link href={routes.myOrders.root}>주문 내역 확인</Link>
+                <Link href={ROUTES.myOrders.root}>주문 내역 확인</Link>
               </Button>
             </>
           ) : (
@@ -50,6 +56,6 @@ const PaymentResultTemplate = ({
       </Card>
     </div>
   );
-}
+};
 
 export { PaymentResultTemplate };

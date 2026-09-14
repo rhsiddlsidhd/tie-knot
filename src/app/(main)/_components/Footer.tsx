@@ -1,7 +1,13 @@
 import Link from "next/link";
-import { TypographyH4, TypographySmall } from "@/ui/components/atoms/typography";
-import { routes } from "@/core/domain/routes";
-import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
+import {
+  TypographyH4,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
+import { ROUTES } from "@/core/domain/routes";
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_CATEGORY_LABELS,
+} from "@/core/domain/product-category";
 
 const Footer = () => {
   return (
@@ -23,10 +29,10 @@ const Footer = () => {
               {PRODUCT_CATEGORIES.map((category) => (
                 <li key={category}>
                   <Link
-                    href={routes.products.byCategory(category)}
+                    href={ROUTES.products.byCategory(category)}
                     className="hover:text-foreground"
                   >
-                    {productCategoryLabels[category]}
+                    {PRODUCT_CATEGORY_LABELS[category]}
                   </Link>
                 </li>
               ))}
@@ -39,7 +45,7 @@ const Footer = () => {
             </TypographySmall>
             <ul className="text-muted-foreground space-y-2 text-sm">
               <li>
-                <Link href={routes.support} className="hover:text-foreground">
+                <Link href={ROUTES.support} className="hover:text-foreground">
                   고객센터
                 </Link>
               </li>
@@ -53,6 +59,6 @@ const Footer = () => {
       </div>
     </footer>
   );
-}
+};
 
 export { Footer };

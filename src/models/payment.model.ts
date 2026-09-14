@@ -71,7 +71,7 @@ interface PaymentMethodDetail {
   };
 }
 
-interface IPayment {
+interface PaymentDocument {
   // 식별자
   _id: Types.ObjectId;
   merchantUid: string; // PortOne의 주문번호 (우리 서버에서 생성)
@@ -118,7 +118,7 @@ interface IPayment {
 // "고정 목록 | string"인 open union이다(PG가 계속 값을 추가) — 위 pgProvider와
 // 같은 이유로 enum을 걸지 않는다. type만 예외 — SDK가 정의한 7종 판별값 +
 // Unrecognized 폴백은 고정된 닫힌 집합이라 다르다.
-const methodDetailSchema = new Schema<PaymentMethodDetail>(
+const MethodDetailSchema = new Schema<PaymentMethodDetail>(
   {
     type: {
       type: String,
@@ -184,7 +184,7 @@ const methodDetailSchema = new Schema<PaymentMethodDetail>(
   { _id: false },
 );
 
-const paymentSchema = new Schema<IPayment>(
+const PaymentSchema = new Schema<PaymentDocument>(
   {
     // 식별자
     merchantUid: { type: String, required: true, unique: true }, // 우리 서버에서 생성, 필수, 고유
@@ -205,7 +205,14 @@ const paymentSchema = new Schema<IPayment>(
     // PG 결제 정보
     payMethod: {
       type: String,
-      enum: ["CARD", "TRANSFER", "VIRTUAL_ACCOUNT", "MOBILE", "GIFT_CERTIFICATE", "EASY_PAY"],
+      enum: [
+        "CARD",
+        "TRANSFER",
+        "VIRTUAL_ACCOUNT",
+        "MOBILE",
+        "GIFT_CERTIFICATE",
+        "EASY_PAY",
+      ],
     },
     pgProvider: {
       type: String,
@@ -213,7 +220,7 @@ const paymentSchema = new Schema<IPayment>(
       // 예: "INICIS_V2", "INICIS", "HTML5_INICIS", "NICE_V2", "TOSSPAYMENTS" 등
     },
     pgTid: { type: String },
-    methodDetail: { type: methodDetailSchema },
+    methodDetail: { type: MethodDetailSchema },
 
     // 결제 상태
     status: {
@@ -248,8 +255,8 @@ const paymentSchema = new Schema<IPayment>(
 );
 
 const PaymentModel =
-  (mongoose.models.Payment as Model<IPayment>) ||
-  mongoose.model<IPayment>("Payment", paymentSchema);
+  (mongoose.models.Payment as Model<PaymentDocument>) ||
+  mongoose.model<PaymentDocument>("Payment", PaymentSchema);
 
 export {
   PaymentModel,
@@ -257,5 +264,5 @@ export {
   type PayStatus,
   type PaymentMethodDetailType,
   type PaymentMethodDetail,
-  type IPayment,
+  type PaymentDocument,
 };

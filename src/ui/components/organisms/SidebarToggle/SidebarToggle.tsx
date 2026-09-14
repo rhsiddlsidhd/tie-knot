@@ -1,13 +1,19 @@
 "use client";
 
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from "@/ui/components/atoms/breadcrumb";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from "@/ui/components/atoms/breadcrumb";
 import { SidebarTrigger } from "@/ui/components/atoms/sidebar";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, useMemo } from "react";
 
-const HIDDEN_SEGMENTS = new Set(["admin"]);
+const HIDDEN_SEGMENTS = ["admin"] as const;
 
 const SidebarToggle = () => {
   const pathName = usePathname();
@@ -15,7 +21,9 @@ const SidebarToggle = () => {
   const breadcrumbs = useMemo(() => {
     const segments = pathName.split("/").filter(Boolean);
 
-    const visible = segments.filter((seg) => !HIDDEN_SEGMENTS.has(seg));
+    const visible = segments.filter(
+      (segment) => !HIDDEN_SEGMENTS.some((hidden) => hidden === segment),
+    );
 
     return [
       ...visible.map((seg) => ({

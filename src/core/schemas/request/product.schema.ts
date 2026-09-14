@@ -1,8 +1,12 @@
 import * as z from "zod";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
-import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
+import {
+  MOBILE_INVITATION_CATEGORY,
+  SUB_CATEGORY_MAP,
+  PRODUCT_CATEGORIES,
+} from "@/core/domain/product-category";
 
-const productSchema = z
+const ProductSchema = z
   .object({
     title: z.string().min(1, "상품명을 입력해주세요."),
     description: z.string().min(10, "상품 설명은 최소 10자 이상이어야 합니다."),
@@ -47,7 +51,10 @@ const productSchema = z
   })
   .refine(
     (data) => {
-      if (data.isPremium && (!data.featureIds || data.featureIds.length === 0)) {
+      if (
+        data.isPremium &&
+        (!data.featureIds || data.featureIds.length === 0)
+      ) {
         return false;
       }
       return true;
@@ -74,10 +81,14 @@ const productSchema = z
   )
   // mobile-invitation은 previewUrl이 상세 확인을 대신하므로 images 없이도 판매 성립.
   // 물리 상품 4종(favor/accessory/guestbook/ceremony)은 최소 1장 필요.
-  .refine((data) => data.category === MOBILE_INVITATION_CATEGORY || data.images.length > 0, {
-    message: "상세 이미지를 1장 이상 등록해주세요.",
-    path: ["images"],
-  })
+  .refine(
+    (data) =>
+      data.category === MOBILE_INVITATION_CATEGORY || data.images.length > 0,
+    {
+      message: "상세 이미지를 1장 이상 등록해주세요.",
+      path: ["images"],
+    },
+  )
   // maxQuantity 0(무제한)은 하한 비교 대상이 아니다.
   .refine(
     (data) => data.maxQuantity === 0 || data.maxQuantity >= data.minQuantity,
@@ -87,6 +98,6 @@ const productSchema = z
     },
   );
 
-type ProductDto = z.infer<typeof productSchema>;
+type ProductDto = z.infer<typeof ProductSchema>;
 
-export { productSchema, type ProductDto };
+export { ProductSchema, type ProductDto };
