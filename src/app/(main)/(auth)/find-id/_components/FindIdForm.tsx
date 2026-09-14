@@ -17,7 +17,7 @@ interface FindIdFormProps {
   state: APIResponse<{ email: string }> | null;
 }
 
-function FindIdForm({ action, pending, state }: FindIdFormProps) {
+const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
   const nameError = getFieldError(state, "name");
   const phoneError = getFieldError(state, "phone");
 

@@ -11,7 +11,7 @@ interface PopularProductsSectionProps {
   products: Product[];
 }
 
-function PopularProductsSection({ products }: PopularProductsSectionProps) {
+const PopularProductsSection = ({ products }: PopularProductsSectionProps) => {
   if (products.length < POPULAR_PRODUCTS_MIN_ITEMS) return null;
 
   return (

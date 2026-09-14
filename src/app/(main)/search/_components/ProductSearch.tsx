@@ -14,7 +14,7 @@ import { initialFilterState } from "@/ui/context/productFilter/reducer";
 // 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/AGENTS.md)
 const SEARCH_DEBOUNCE_MS = 300;
 
-function ProductSearch() {
+const ProductSearch = () => {
   const [input, setInput] = useState("");
   const debouncedQuery = useDebouncedValue(input, SEARCH_DEBOUNCE_MS);
   const { products, error, isLoading, isValidating, isIdle } =

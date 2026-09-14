@@ -8,10 +8,10 @@ interface SubCategoryNavItemProps {
   subCategory: SubCategory;
 }
 
-function SubCategoryNavItem({
+const SubCategoryNavItem = ({
   category,
   subCategory,
-}: SubCategoryNavItemProps) {
+}: SubCategoryNavItemProps) => {
   return (
     <Link
       href={routes.products.byCategory(category, subCategory)}

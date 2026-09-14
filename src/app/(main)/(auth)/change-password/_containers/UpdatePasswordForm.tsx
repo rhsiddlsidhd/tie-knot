@@ -11,7 +11,7 @@ import type { APIResponse } from "@/core/domain/error";
 import { UpdatePasswordForm as PureUpdatePasswordForm } from "../_components/UpdatePasswordForm";
 import { routes } from "@/core/domain/routes";
 
-function UpdatePasswordForm() {
+const UpdatePasswordForm = () => {
   const router = useRouter();
   const token = useSearchParams().get("t") ?? "";
   const [state, action, pending] = useActionState<

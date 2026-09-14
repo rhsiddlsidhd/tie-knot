@@ -13,7 +13,7 @@ import { useCheckoutForm } from "@/ui/hooks/useCheckoutForm";
 import { CheckoutForm as PureCheckoutForm } from "../_components/CheckoutForm";
 import { routes } from "@/core/domain/routes";
 import { RetryPaymentCard } from "../_components/RetryPaymentCard";
-function CheckoutForm() {
+const CheckoutForm = () => {
   const router = useRouter();
   const clearOrder = useOrderStore((state) => state.clearOrder);
 

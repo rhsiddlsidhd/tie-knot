@@ -10,7 +10,7 @@ interface TermsAgreementCardProps {
   onAgreedChange: (value: boolean) => void;
 }
 
-function TermsAgreementCard({ agreed, onAgreedChange }: TermsAgreementCardProps) {
+const TermsAgreementCard = ({ agreed, onAgreedChange }: TermsAgreementCardProps) => {
   return (
     <Card className="border-border">
       <CardContent className="pt-6">

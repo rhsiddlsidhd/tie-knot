@@ -32,7 +32,7 @@ import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
-function ProductSummary({
+const ProductSummary = ({
   product,
   options,
   onPurchase,
@@ -40,7 +40,7 @@ function ProductSummary({
   product: Product;
   options: PremiumFeature[];
   onPurchase: (checkoutData: CheckoutItem) => void;
-}) {
+}) => {
   const discountedPrice = useMemo(() => {
     return calculatePrice(product.price, product.discount);
   }, [product.price, product.discount]);

@@ -31,7 +31,7 @@ import { subCategoryLabels } from "@/core/domain/product-category";
  * 다시 렌더하고, 목록의 더보기 누적분도 함께 리셋된다. availableSubCategories도 로드된
  * 일부 데이터가 아니라 서버가 카테고리 전체를 조회해 내려준 값을 그대로 쓴다.
  */
-function ProductFilters({
+const ProductFilters = ({
   data,
   category,
   subCategory,
@@ -47,7 +47,7 @@ function ProductFilters({
   premiumFeatures: PremiumFeature[];
   state: ProductFilterState;
   dispatch: Dispatch<ProductFilterAction>;
-}) {
+}) => {
   const router = useRouter();
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const { suggestions } = useSuggestProducts({

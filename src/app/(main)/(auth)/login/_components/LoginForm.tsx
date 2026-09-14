@@ -17,12 +17,12 @@ interface LoginFormProps {
   passwordError?: string;
 }
 
-function LoginForm({
+const LoginForm = ({
   action,
   pending,
   emailError,
   passwordError,
-}: LoginFormProps) {
+}: LoginFormProps) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">

@@ -10,9 +10,9 @@ interface SubCategoryNavSectionProps {
   availableSubCategories: readonly AvailableSubCategory[];
 }
 
-function SubCategoryNavSection({
+const SubCategoryNavSection = ({
   availableSubCategories,
-}: SubCategoryNavSectionProps) {
+}: SubCategoryNavSectionProps) => {
   if (availableSubCategories.length === 0) return null;
 
   return (

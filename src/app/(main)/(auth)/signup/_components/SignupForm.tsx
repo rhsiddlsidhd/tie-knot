@@ -23,7 +23,7 @@ interface SignupFormProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-function SignupForm({ action, pending, state }: SignupFormProps) {
+const SignupForm = ({ action, pending, state }: SignupFormProps) => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 

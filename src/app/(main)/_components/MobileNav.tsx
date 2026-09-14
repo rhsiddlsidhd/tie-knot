@@ -7,7 +7,7 @@ import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/ui/components/atoms/sheet";
 import { Button } from "@/ui/components/atoms/button";
 
-function MobileNav() {
+const MobileNav = () => {
   const [open, setOpen] = useState(false);
 
   return (

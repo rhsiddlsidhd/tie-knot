@@ -11,7 +11,7 @@ interface PaymentResultProps {
   paymentId?: string;
 }
 
-function PaymentResult({ paymentId }: PaymentResultProps) {
+const PaymentResult = ({ paymentId }: PaymentResultProps) => {
   const router = useRouter();
   const clearOrder = useOrderStore((state) => state.clearOrder);
   const setPaymentStatus = useOrderStore((state) => state.setPaymentStatus);

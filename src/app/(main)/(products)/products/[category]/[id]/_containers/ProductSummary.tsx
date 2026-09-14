@@ -10,13 +10,13 @@ import type { PremiumFeature } from "@/core/domain/premium-feature";
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductSummary as PureProductSummary } from "../_components/ProductSummary";
 import { routes } from "@/core/domain/routes";
-function ProductSummary({
+const ProductSummary = ({
   product,
   options,
 }: {
   product: Product;
   options: PremiumFeature[];
-}) {
+}) => {
   const router = useRouter();
   const setOrder = useOrderStore((state) => state.setOrder);
 

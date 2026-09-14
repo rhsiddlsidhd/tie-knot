@@ -26,7 +26,7 @@ type ParentsInfoSectionProps = {
   banks?: BanksResponse;
 };
 
-function ParentsInfoSection({ data, banks }: ParentsInfoSectionProps) {
+const ParentsInfoSection = ({ data, banks }: ParentsInfoSectionProps) => {
   const [groomParentsOpen, setGroomParentsOpen] = useState(false);
   const [brideParentsOpen, setBrideParentsOpen] = useState(false);
 

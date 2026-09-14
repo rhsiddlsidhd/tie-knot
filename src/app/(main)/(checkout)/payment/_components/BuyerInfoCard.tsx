@@ -9,7 +9,7 @@ interface BuyerInfoCardProps {
   errors: Partial<Record<keyof BuyerInfo, string[]>>;
 }
 
-function BuyerInfoCard({ step, errors }: BuyerInfoCardProps) {
+const BuyerInfoCard = ({ step, errors }: BuyerInfoCardProps) => {
   return (
     <Card className="border-border">
       <CardHeader>

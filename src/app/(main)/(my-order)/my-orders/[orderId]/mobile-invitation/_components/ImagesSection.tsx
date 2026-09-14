@@ -12,7 +12,7 @@ interface ImagesSectionProps {
   gallery: ReturnType<typeof useImageList>;
 }
 
-function ImagesSection({ thumbnail, gallery }: ImagesSectionProps) {
+const ImagesSection = ({ thumbnail, gallery }: ImagesSectionProps) => {
   return (
     <Card>
       <CardHeader>
