@@ -1,6 +1,6 @@
 # ADR-0006: src/ 전역 named export 강제와 Next.js 파일 컨벤션 예외
 
-- 상태: Proposed
+- 상태: Accepted
 - 결정일: 2026-09-14
 - 적용 범위: `src/**/*.{ts,tsx}`
 
@@ -36,4 +36,4 @@
 
 ## 관련 이력
 
-- (구현 PR 링크는 병합 후 추가)
+- [#280](https://github.com/rhsiddlsidhd/tie-knot/pull/280)
