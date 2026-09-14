@@ -6,7 +6,7 @@ import { RadioGroup, RadioGroupItem } from "@/ui/components/atoms/radio-group";
 import React, { useState } from "react";
 import type { LucideIcon } from "lucide-react";
 import type { FieldBase } from "@/core/domain/field";
-import { TypographyMuted, TypographySmall } from "../atoms/typography";
+import { TypographyMuted, TypographySmall } from "../../atoms/typography";
 
 export type RadioFieldOption<T = string> = {
   id: string;

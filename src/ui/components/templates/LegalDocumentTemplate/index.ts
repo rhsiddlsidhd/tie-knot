@@ -1,0 +1,1 @@
+export { LegalDocumentTemplate } from "./LegalDocumentTemplate";

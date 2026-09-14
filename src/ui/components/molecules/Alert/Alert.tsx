@@ -1,6 +1,6 @@
 import React from "react";
 import type { AlertProps, AlertType } from "@/core/domain/alert";
-import { TypographyP } from "../atoms/typography";
+import { TypographyP } from "../../atoms/typography";
 const Alert = ({ type = "info", children }: AlertProps) => {
   const config: { [key in AlertType]: string } = {
     error: "bg-destructive/10 text-destructive",
