@@ -23,6 +23,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run lint:barrels
+      - run: npm run lint:component-shape
 
   tsc:
     runs-on: ubuntu-latest
