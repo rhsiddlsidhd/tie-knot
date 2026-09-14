@@ -17,11 +17,11 @@ interface UseCheckoutFormOptions {
   router: AppRouterInstance;
 }
 
-function useCheckoutForm({
+const useCheckoutForm = ({
   order,
   action,
   router,
-}: UseCheckoutFormOptions) {
+}: UseCheckoutFormOptions) => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof BuyerInfo, string[]>>
   >({});

@@ -14,7 +14,7 @@ import { useBanks } from "./useBanks";
 import { useSubwayStations } from "./useSubwayStations";
 import { routes } from "@/core/domain/routes";
 
-function useMobileInvitationForm() {
+const useMobileInvitationForm = () => {
   const router = useRouter();
   const { orderId } = useParams<{ orderId: string }>();
 

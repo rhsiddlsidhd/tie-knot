@@ -10,7 +10,7 @@ interface NavigationGeo {
   target: NullableCoordinates;
 }
 
-function useNavigationGeo(address: string): NavigationGeo {
+const useNavigationGeo = (address: string): NavigationGeo => {
   const [current, setCurrent] = useState<NullableCoordinates>({
     lng: null,
     lat: null,

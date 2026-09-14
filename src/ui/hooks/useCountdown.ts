@@ -6,7 +6,7 @@ import { calculateCountdown, updateCountdownMessage } from "@/core/utils/date";
 /**
  * 특정 날짜까지의 카운트다운 정보와 상태 메시지를 관리하는 커스텀 훅
  */
-function useCountdown(targetDate: Date) {
+const useCountdown = (targetDate: Date) => {
   const [countdown, setCountdown] = useState({
     days: 0,
     hour: 0,

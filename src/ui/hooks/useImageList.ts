@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 
 type ImageItem = { id: string; preview: string; url: string };
 
-function useImageList(defaultUrls?: string[]) {
+const useImageList = (defaultUrls?: string[]) => {
   // 훅 인스턴스별로 격리된 단조 증가 카운터. render 중이 아니라 add()가
   // 실제로 호출되는 시점(이벤트 핸들러)에만 읽고 증가시킨다 — render 중 ref
   // 접근은 react-hooks/refs 위반이라 아래 초기화 분기에서는 쓰지 않는다.
