@@ -22,10 +22,10 @@ type SeoulOpenApiResult<T> = SeoulOpenApiSuccess<T> | SeoulOpenApiFailure;
 // 결과 0건(INFO-200)도 실패가 아니라 "정상, 빈 배열"로 취급한다 — 실제 에러(인증키 무효/파라미터 오류 등)만 실패로 분류한다.
 const EMPTY_RESULT_CODE = "INFO-200";
 
-function parseSeoulOpenApiResponse<T>(
+const parseSeoulOpenApiResponse = <T>(
   serviceName: string,
   json: unknown,
-): SeoulOpenApiResult<T> {
+): SeoulOpenApiResult<T> => {
   const body = json as Record<string, unknown>;
   const service = body[serviceName] as
     | { list_total_count: number; RESULT: { CODE: string; MESSAGE: string }; row?: T[] }

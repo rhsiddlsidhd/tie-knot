@@ -53,7 +53,7 @@ const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
 
 type AuthResult = AuthSession | null;
 
-async function getAuth(): Promise<AuthResult> {
+const getAuth = async (): Promise<AuthResult> => {
   const cookie = await getCookie("token");
   if (!cookie?.value) return null;
 
@@ -83,7 +83,7 @@ async function getAuth(): Promise<AuthResult> {
 
 // 인증이 반드시 필요한 Route Handler/Server Action에서 호출한다 — 세션이 없으면 UNAUTHENTICATED를 throw한다.
 // HTTP status(401)로의 번역은 route.ts 경계(`boundary.ts`)가 담당한다.
-async function requireAuth(): Promise<AuthSession> {
+const requireAuth = async (): Promise<AuthSession> => {
   const session = await getAuth();
   if (!session) {
     throw new AppError("UNAUTHENTICATED", "인증이 필요합니다.");
@@ -91,7 +91,7 @@ async function requireAuth(): Promise<AuthSession> {
   return session;
 }
 
-async function requireAdmin(): Promise<AuthSession> {
+const requireAdmin = async (): Promise<AuthSession> => {
   const session = await requireAuth();
   if (session.role !== "ADMIN") {
     throw new AppError("FORBIDDEN", "관리자 권한이 필요합니다.");
@@ -103,15 +103,15 @@ async function requireAdmin(): Promise<AuthSession> {
  * 로그아웃 처리를 위해 서버의 인증 토큰 쿠키를 삭제합니다.
  */
 
-async function logoutService() {
+const logoutService = async () => {
   await deleteCookie("token");
 }
 
-async function clearUserEmailCookieService() {
+const clearUserEmailCookieService = async () => {
   await deleteCookie("userEmail");
 }
 
-async function loginUserService({
+const loginUserService = async ({
   email,
   password,
   remember,
@@ -119,7 +119,7 @@ async function loginUserService({
   email: string;
   password: string;
   remember: boolean;
-}): Promise<AuthSession> {
+}): Promise<AuthSession> => {
   const user = await getUser({ email });
   if (!user || !(await comparePasswords(password, user.password))) {
     throw new AppError(

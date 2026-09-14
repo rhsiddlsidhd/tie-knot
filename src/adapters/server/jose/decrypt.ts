@@ -7,9 +7,9 @@ import { AppError } from "@/core/domain/error";
 
 interface ExtractedPayload extends JWTPayload, Omit<EncryptProps, "type"> {}
 
-async function decrypt(
+const decrypt = async (
   args: DecryptProps,
-): Promise<JWTVerifyResult<ExtractedPayload>> {
+): Promise<JWTVerifyResult<ExtractedPayload>> => {
   const { token, type } = args;
 
   const key = type !== "ENTRY" ? JWT_ENCODED_KEY : ENTRY_ENCODED_KEY;

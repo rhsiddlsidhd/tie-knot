@@ -8,10 +8,10 @@ const initialFilterState: ProductFilterState = {
   premiumFeat: [],
 };
 
-function filterReducer(
+const filterReducer = (
   state: ProductFilterState,
   action: ProductFilterAction,
-): ProductFilterState {
+): ProductFilterState => {
   switch (action.type) {
     case "CHANGE_KEYWORD":
       return {

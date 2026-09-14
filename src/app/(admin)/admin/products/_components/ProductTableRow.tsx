@@ -13,7 +13,7 @@ interface ProductTableRowProps {
   view?: "active" | "trash";
 }
 
-function ProductTableRow({ product, view = "active" }: ProductTableRowProps) {
+const ProductTableRow = ({ product, view = "active" }: ProductTableRowProps) => {
   return (
     <tr className="hover:bg-muted/50 transition-colors">
       <td className="px-4 py-3">

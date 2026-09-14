@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import { createContext, useContext } from "react";
 
-function createStateContext<State, InitialValue>(
+const createStateContext = <State, InitialValue>(
   useValue: (initialValue: InitialValue) => State,
-) {
+) => {
   const StateContext = createContext<State | null>(null);
 
   const StateProvider = ({

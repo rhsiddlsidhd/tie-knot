@@ -8,11 +8,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { Button } from "@/ui/components/atoms/button";
-function SidebarNavItem({
+const SidebarNavItem = ({
   type,
 }: {
   type: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
-}) {
+}) => {
   const pathname = usePathname();
   const [expandedMenus, setExpandedMenus] = useState<SubmenuParentTitle[]>([
     "상품 관리",

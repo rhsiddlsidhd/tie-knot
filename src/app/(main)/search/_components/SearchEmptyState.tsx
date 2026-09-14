@@ -4,7 +4,7 @@ import { TypographyP, TypographyMuted } from "@/ui/components/atoms/typography";
 import { routes } from "@/core/domain/routes";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
-function SearchEmptyState({ query }: { query: string }) {
+const SearchEmptyState = ({ query }: { query: string }) => {
   return (
     <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-2xl border border-dashed py-20 text-center">
       <div className="bg-muted mb-6 flex h-20 w-20 items-center justify-center rounded-full">

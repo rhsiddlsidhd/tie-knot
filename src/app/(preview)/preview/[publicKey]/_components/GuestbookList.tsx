@@ -14,14 +14,14 @@ interface GuestbookListProps {
   onDeleteClick: (id: string) => void;
 }
 
-function GuestbookList({
+const GuestbookList = ({
   status,
   items,
   hasMore,
   scrollContainerRef,
   sentinelRef,
   onDeleteClick,
-}: GuestbookListProps) {
+}: GuestbookListProps) => {
   return (
     <div ref={scrollContainerRef} className="scrollbar-hide max-h-[480px] overflow-y-auto">
       <ul className="space-y-4 py-2">

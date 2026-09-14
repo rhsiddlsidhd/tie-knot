@@ -110,9 +110,9 @@ const createOrderService = async (
   return order.toObject();
 };
 
-async function createOrderForCurrentUserService(
+const createOrderForCurrentUserService = async (
   data: CreateOrderDto,
-): Promise<IOrder> {
+): Promise<IOrder> => {
   const { userId } = await requireAuth();
   return createOrderService({ ...data, userId });
 }

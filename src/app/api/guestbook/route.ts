@@ -9,7 +9,7 @@ import type { NextRequest } from "next/server";
 
 // getGuestbookService가 이미 password/__v/updatedAt은 select에서 제외한다 —
 // 여기선 응답 계약(GuestbookListResponse)에 맞춰 createdAt만 ISO 문자열로 명시 변환한다.
-function toGuestbookListResponse(page: GuestbookListPage): GuestbookListResponse {
+const toGuestbookListResponse = (page: GuestbookListPage): GuestbookListResponse => {
   return {
     items: page.items.map(({ id, author, message, isPrivate, createdAt }) => ({
       _id: id,

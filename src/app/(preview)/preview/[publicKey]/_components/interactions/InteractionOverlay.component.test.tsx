@@ -5,7 +5,7 @@ import { InteractionOverlay } from "./InteractionOverlay";
 // InteractionOverlay의 리스너는 React 합성 이벤트가 아니라 window에 직접
 // 붙은 네이티브 리스너라 dispatchEvent가 트리거하는 setState를 act()로
 // 감싸야 커밋된 결과를 곧바로 단언할 수 있다.
-function firePointerMove(x: number, y: number) {
+const firePointerMove = (x: number, y: number) => {
   act(() => {
     window.dispatchEvent(new MouseEvent("pointermove", { clientX: x, clientY: y }));
   });

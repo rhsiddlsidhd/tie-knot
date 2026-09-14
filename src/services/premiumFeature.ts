@@ -63,17 +63,17 @@ const updatePremiumFeatureService = async (
   return updatedFeature;
 };
 
-async function createPremiumFeatureAsAdminService(
+const createPremiumFeatureAsAdminService = async (
   data: PremiumFeatureDto,
-): Promise<void> {
+): Promise<void> => {
   await requireAdmin();
   await createPremiumFeatureService(data);
 }
 
-async function updatePremiumFeatureAsAdminService(
+const updatePremiumFeatureAsAdminService = async (
   id: string,
   data: PremiumFeatureDto,
-): Promise<void> {
+): Promise<void> => {
   await requireAdmin();
   if (!(await updatePremiumFeatureService(id, data))) {
     throw new AppError(

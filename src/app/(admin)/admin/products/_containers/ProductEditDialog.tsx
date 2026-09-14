@@ -33,7 +33,7 @@ interface ProductEditDialogProps {
   product: Product;
 }
 
-function ProductEditDialog({ product }: ProductEditDialogProps) {
+const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
   const [state, action, pending] = useActionState(
     updateProduct.bind(null, product._id),
     null,

@@ -20,7 +20,7 @@ const BLOSSOM_PETALS = [
 // sticky + h-screen + grid-area(MobileInvitationTemplate의 grid cell 공유)로
 // "카드 폭 안에서, 매 스크롤 위치의 현재 화면 한 장 분량"에 항상 렌더되게
 // 하면서도 문서 흐름에 추가 높이를 얹지 않는다.
-function BlossomAmbience() {
+const BlossomAmbience = () => {
   return (
     <div
       className="pointer-events-none sticky top-0 z-30 h-screen overflow-hidden [grid-area:1/1]"
@@ -79,7 +79,7 @@ const MIDNIGHT_STARS = [
 ] as const;
 
 // 4%~92% 범위로 제한해 별이 화면 가장자리에서 잘려 보이는 걸 막는다.
-function randomStarPosition() {
+const randomStarPosition = () => {
   return { top: `${(Math.random() * 88 + 4).toFixed(1)}%`, left: `${(Math.random() * 88 + 4).toFixed(1)}%` };
 }
 
@@ -89,7 +89,7 @@ function randomStarPosition() {
 // 으로 계산하는 순수함수로 시드를 고정해 최초 위치를 서버·클라이언트가
 // 동일하게 렌더하게 하고, 진짜 랜덤 순간이동은 마운트 이후 useEffect에서만
 // 시작한다.
-function seededStarPosition(duration: number, delay: number) {
+const seededStarPosition = (duration: number, delay: number) => {
   const seed = duration * 1000 + delay * 97;
   const top = (Math.abs(Math.sin(seed)) * 88 + 4).toFixed(1);
   const left = (Math.abs(Math.sin(seed * 1.37)) * 88 + 4).toFixed(1);
@@ -110,7 +110,7 @@ interface StarProps {
 // 한 사이클(opacity가 0으로 꺼지는 순간)이 끝날 때마다 다른 랜덤 좌표로
 // 순간이동시켜, 별이 이곳저곳에서 새로 뜨는 느낌을 준다. top/left는 motion이
 // 아니라 React state로만 바꿔 CSS 트랜지션 없이 즉시 점프하게 한다.
-function MidnightStar({ size, duration, delay, z, brightness, drift, scrollYProgress }: StarProps) {
+const MidnightStar = ({ size, duration, delay, z, brightness, drift, scrollYProgress }: StarProps) => {
   const [position, setPosition] = useState(() => seededStarPosition(duration, delay));
   // 별마다 z깊이에 비례한 drift를 스크롤에 물려 별마다 다른 속도로 움직이게
   // 한다 — 그룹 전체를 한 속도로 미는 것보다, 가까운 별이 훨씬 빨리 흐르고
@@ -147,7 +147,7 @@ function MidnightStar({ size, duration, delay, z, brightness, drift, scrollYProg
   );
 }
 
-function ShootingStar() {
+const ShootingStar = () => {
   return (
     <motion.span
       className="absolute top-[10%] left-[-10%] h-px w-24 rounded-full"
@@ -180,7 +180,7 @@ function ShootingStar() {
 // 알아서 더 작게 그린다. 스크롤에는 별 무리 전체를 한 속도로 미는 대신 별마다
 // z깊이에 비례한 drift를 물려(MidnightStar 내부) 카메라가 우주를 관통해
 // 지나가는 듯한 입체 패럴랙스를 낸다.
-function MidnightAmbience() {
+const MidnightAmbience = () => {
   const { scrollYProgress } = useScroll();
 
   return (
@@ -237,12 +237,12 @@ interface BraidSegment {
 // 같은 y 구간에서 depth 오름차순으로 그리면(painter's algorithm) 뒤 줄기가
 // 먼저 칠해지고 앞 줄기가 그 위를 덮어, 교차점마다 실제로 위/아래를 넘나드는
 // 매듭처럼 보인다.
-function strandAt(y: number, phase: number) {
+const strandAt = (y: number, phase: number) => {
   const theta = (y / VINE_WAVELENGTH) * Math.PI * 2 + phase;
   return { x: VINE_WIDTH / 2 + VINE_AMPLITUDE * Math.sin(theta), depth: Math.cos(theta) };
 }
 
-function generateBraid(height: number) {
+const generateBraid = (height: number) => {
   if (height <= 0) return { bands: [] as BraidSegment[][], leaves: [] as { x: number; y: number; flip: boolean }[] };
 
   const bands: BraidSegment[][] = [];
@@ -271,7 +271,7 @@ function generateBraid(height: number) {
   return { bands, leaves };
 }
 
-function BotanicalAmbience() {
+const BotanicalAmbience = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 
@@ -325,7 +325,7 @@ interface BraidStrandProps {
 // 구간만 clipPath로 선명하게 덧그린다 — 청첩장을 읽어 내려가는 만큼 덩굴이
 // 실제로 자라나 보이는 스크롤 진행 표시다. 자라는 끝 지점엔 펄스하는
 // 새싹 하나를 얹어 "지금 여기까지 읽었다"는 지점을 짚어준다.
-function BraidStrand({ height, bands, leaves, revealHeight }: BraidStrandProps) {
+const BraidStrand = ({ height, bands, leaves, revealHeight }: BraidStrandProps) => {
   const clipId = "botanical-braid-reveal";
   const tip = useTransform(revealHeight, (ry) => {
     const front = STRAND_PHASES.map((phase) => strandAt(ry, phase)).reduce((a, b) =>
@@ -408,7 +408,7 @@ function BraidStrand({ height, bands, leaves, revealHeight }: BraidStrandProps) 
 
 // 청첩장 테마별 시그니처 앰비언트 연출 — 낙하(blossom)/스크롤 성장(botanical)/반짝임(midnight)로
 // 메커니즘 자체를 다르게 가서 테마 구분력을 준다(파라미터 변주가 아니라 다른 종류의 모션).
-function ThemeAmbience({ theme }: { theme: string }) {
+const ThemeAmbience = ({ theme }: { theme: string }) => {
   const prefersReducedMotion = useReducedMotion();
   if (prefersReducedMotion) return null;
 

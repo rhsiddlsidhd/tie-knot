@@ -8,7 +8,7 @@ import { routes } from "@/core/domain/routes";
  * Auth && User
  */
 
-async function proxy(request: NextRequest) {
+const proxy = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;
   const tokenCookie = request.cookies.get("token");
 

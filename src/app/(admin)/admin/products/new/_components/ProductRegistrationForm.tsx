@@ -34,14 +34,14 @@ interface ProductRegistrationFormProps {
   onSubmitIntentChange: (continueRegistration: boolean) => void;
 }
 
-function ProductRegistrationForm({
+const ProductRegistrationForm = ({
   premiumFeatures,
   action,
   pending,
   state,
   onCancel,
   onSubmitIntentChange,
-}: ProductRegistrationFormProps) {
+}: ProductRegistrationFormProps) => {
   const [isPremium, setIsPremium] = useState(false);
   const [selectedCategory, setSelectedCategory] =
     useState<ProductCategory>(MOBILE_INVITATION_CATEGORY);

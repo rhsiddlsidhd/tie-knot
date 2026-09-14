@@ -10,11 +10,11 @@ interface CheckoutSubmitBarProps {
   paymentStatus: PayStatus | "IDLE";
 }
 
-function CheckoutSubmitBar({
+const CheckoutSubmitBar = ({
   disabled,
   pending,
   paymentStatus,
-}: CheckoutSubmitBarProps) {
+}: CheckoutSubmitBarProps) => {
   const isProcessing = pending || paymentStatus === "PENDING";
 
   return (

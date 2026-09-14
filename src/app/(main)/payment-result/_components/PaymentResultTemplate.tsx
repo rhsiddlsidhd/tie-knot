@@ -10,9 +10,9 @@ interface PaymentResultTemplateProps {
   errorMessage: string | null;
 }
 
-function PaymentResultTemplate({
+const PaymentResultTemplate = ({
   errorMessage,
-}: PaymentResultTemplateProps) {
+}: PaymentResultTemplateProps) => {
   return (
     <div className="container mx-auto flex min-h-[60vh] items-center px-4 py-12">
       <Card className="mx-auto w-full max-w-lg">

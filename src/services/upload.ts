@@ -13,10 +13,10 @@ import { requireAuth } from "./auth";
  * JSON, null 본문)은 route.ts 경계에서 이미 400으로 걸러지므로 이 함수에 도달하지
  * 않는다.
  */
-async function createUploadSignatureForCurrentUser(
+const createUploadSignatureForCurrentUser = async (
   folder: string | undefined,
   paramsToSign?: Record<string, unknown>,
-): Promise<UploadSignature> {
+): Promise<UploadSignature> => {
   await requireAuth();
 
   if (!folder) {

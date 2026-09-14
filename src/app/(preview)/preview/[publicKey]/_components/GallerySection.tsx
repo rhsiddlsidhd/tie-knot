@@ -10,10 +10,10 @@ import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";
 import type { GallerySectionProps } from "../_utils/gallerySection.mapper";
 
-function GallerySection({
+const GallerySection = ({
   images,
   lightboxEnabled,
-}: GallerySectionProps) {
+}: GallerySectionProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 

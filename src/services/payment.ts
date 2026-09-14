@@ -60,7 +60,7 @@ const isPaymentAppliedStatus = (orderStatus: string): boolean =>
  * - 알 수 없는 상태는 에러를 던져 즉시 감지
  * - 결제는 민감한 영역이므로 silent failure 방지
  */
-function mapPortOneStatus(status: unknown): PayStatus {
+const mapPortOneStatus = (status: unknown): PayStatus => {
   if (typeof status !== "string") {
     throw new AppError(
       "EXTERNAL_SERVICE",
@@ -94,10 +94,10 @@ type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
  * - 미인식 값은 Unrecognized로 폴백해 methodDetail에 흔적을 남긴다(silent
  *   failure 방지 — mapPortOneStatus와 같은 원칙).
  */
-function mapPortOnePaymentMethod(method: SdkPaymentMethod | undefined): {
+const mapPortOnePaymentMethod = (method: SdkPaymentMethod | undefined): {
   payMethod?: PayMethod;
   methodDetail?: PaymentMethodDetail;
-} {
+} => {
   if (!method) return {};
 
   switch (method.type) {
@@ -193,7 +193,7 @@ function mapPortOnePaymentMethod(method: SdkPaymentMethod | undefined): {
 /**
  * 결제 데이터 검증 (위변조 방지)
  */
-async function verifyPayment(payment: PaidPayment): Promise<boolean> {
+const verifyPayment = async (payment: PaidPayment): Promise<boolean> => {
   try {
     // 1. customData 존재 확인 및 파싱
     if (!payment.customData) {
@@ -809,9 +809,9 @@ const cancelExpiredPendingOrdersForAllUsers =
     return cancelPendingOrderCandidates(orders, deadline);
   };
 
-async function completePaymentService(
+const completePaymentService = async (
   paymentId: string,
-): Promise<PayStatus> {
+): Promise<PayStatus> => {
   const { userId } = await requireAuth();
   if (!paymentId) {
     throw new AppError("VALIDATION", "올바르지 않은 요청입니다.");

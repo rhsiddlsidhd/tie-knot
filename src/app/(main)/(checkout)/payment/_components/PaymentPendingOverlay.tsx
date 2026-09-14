@@ -4,7 +4,7 @@ interface PaymentPendingOverlayProps {
   visible: boolean;
 }
 
-function PaymentPendingOverlay({ visible }: PaymentPendingOverlayProps) {
+const PaymentPendingOverlay = ({ visible }: PaymentPendingOverlayProps) => {
   if (!visible) return null;
 
   return (

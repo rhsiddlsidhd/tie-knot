@@ -1,7 +1,7 @@
 import type { ErrorResponse, SuccessResponse } from "@/core/domain/error";
 
 // useSWR 전용 — (url: string) => Promise<T>. 인증 쿠키는 동일 origin이라 브라우저가 자동으로 실어준다.
-async function fetcher<T>(url: string): Promise<T> {
+const fetcher = async <T>(url: string): Promise<T> => {
   const res = await fetch(url);
 
   if (res.ok) {

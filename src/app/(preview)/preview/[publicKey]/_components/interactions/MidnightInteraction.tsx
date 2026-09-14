@@ -15,7 +15,7 @@ interface TrailPoint {
 }
 
 // 커서/터치 궤적을 따라 금빛 파티클을 흩뿌리고 개별적으로 사라지게 한다.
-function MidnightInteraction({ x, y }: ThemeInteractionProps) {
+const MidnightInteraction = ({ x, y }: ThemeInteractionProps) => {
   const [points, setPoints] = useState<TrailPoint[]>([]);
   const lastSpawnRef = useRef(0);
   const nextIdRef = useRef(0);

@@ -17,12 +17,12 @@ type ClipboardButtonProps = ComponentProps<"button"> &
     onCopy: () => void;
   };
 
-function ClipboardButton({
+const ClipboardButton = ({
   isCopied,
   onCopy,
   className,
   ...props
-}: ClipboardButtonProps) {
+}: ClipboardButtonProps) => {
   return (
     <Button
       variant="ghost"

@@ -14,7 +14,7 @@ interface UsePortOnePaymentOptions {
   onError?: (message: string) => void;
 }
 
-function usePortOnePayment({ onSuccess, onError }: UsePortOnePaymentOptions) {
+const usePortOnePayment = ({ onSuccess, onError }: UsePortOnePaymentOptions) => {
   // OrderSummary(sibling)도 같은 결제 진행 상태를 봐야 "주문 없음" 오탐 리다이렉트를 막을 수
   // 있어 로컬 state가 아니라 order.store에 둔다(useCheckoutData.ts 참고).
   const paymentStatus = useOrderStore((state) => state.paymentStatus);

@@ -21,12 +21,12 @@ interface PremiumFeatureDialogProps {
   state: APIResponse<{ message: string }> | null;
 }
 
-function PremiumFeatureDialog({
+const PremiumFeatureDialog = ({
   premiumFeature: feature,
   action,
   pending,
   state,
-}: PremiumFeatureDialogProps) {
+}: PremiumFeatureDialogProps) => {
   const codeError = getFieldError(state, "code");
   const labelError = getFieldError(state, "label");
   const descriptionError = getFieldError(state, "description");

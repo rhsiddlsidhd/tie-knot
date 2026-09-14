@@ -36,12 +36,12 @@ interface ProductCatalogProps {
  * 누적분이 자동으로 리셋된다(OrderList.tsx와 동일 패턴). 더보기는 버튼이 아니라 목록
  * 하단 sentinel의 IntersectionObserver로 트리거한다(LiveGuestbookSection.tsx 패턴).
  */
-function ProductCatalog({
+const ProductCatalog = ({
   firstPage,
   category,
   availableSubCategories,
   initialSubCategory,
-}: ProductCatalogProps) {
+}: ProductCatalogProps) => {
   const subCategory =
     initialSubCategory === "all" ? undefined : initialSubCategory;
 

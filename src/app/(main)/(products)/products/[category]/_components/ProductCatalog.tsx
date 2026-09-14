@@ -22,7 +22,7 @@ interface ProductCatalogProps {
   sentinelRef: RefObject<HTMLDivElement | null>;
 }
 
-function ProductCatalogBody({
+const ProductCatalogBody = ({
   products,
   category,
   premiumFeatures,
@@ -31,7 +31,7 @@ function ProductCatalogBody({
   hasMore,
   isLoadingMore,
   sentinelRef,
-}: ProductCatalogProps) {
+}: ProductCatalogProps) => {
   const [state, dispatch] = useProductFilter();
 
   return (

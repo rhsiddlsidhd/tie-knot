@@ -26,12 +26,12 @@ interface MobileInvitationTemplateProps {
   theme: string;
 }
 
-function MobileInvitationTemplate({
+const MobileInvitationTemplate = ({
   content,
   publicKey,
   features,
   theme,
-}: MobileInvitationTemplateProps) {
+}: MobileInvitationTemplateProps) => {
   const thumbnails = mapCoupleInfoToThumbnails(content);
   return (
     <div className="relative" data-theme={theme}>

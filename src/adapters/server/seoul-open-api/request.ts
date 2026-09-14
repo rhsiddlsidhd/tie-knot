@@ -2,10 +2,10 @@ import "server-only";
 import { AppError } from "@/core/domain/error";
 import { parseSeoulOpenApiResponse } from "@/core/utils/seoul-open-api-parser";
 
-async function fetchSeoulOpenApi<T>(
+const fetchSeoulOpenApi = async <T>(
   serviceName: string,
   pathParams: (string | number)[],
-): Promise<T[]> {
+): Promise<T[]> => {
   const path = [serviceName, ...pathParams.map((p) => encodeURIComponent(p))].join("/");
   const url = `${process.env.SUBWAY_SEOUL_BASE_URL}/${process.env.SEOUL_PUBLIC_API_KEY}/json/${path}/`;
 

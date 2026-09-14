@@ -16,11 +16,11 @@ interface ForgotPasswordFormProps {
   state: APIResponse<{ message: string; email: string }> | null;
 }
 
-function ForgotPasswordForm({
+const ForgotPasswordForm = ({
   action,
   pending,
   state,
-}: ForgotPasswordFormProps) {
+}: ForgotPasswordFormProps) => {
   const emailError = getFieldError(state, "email");
 
   if (state && state.success === true) {

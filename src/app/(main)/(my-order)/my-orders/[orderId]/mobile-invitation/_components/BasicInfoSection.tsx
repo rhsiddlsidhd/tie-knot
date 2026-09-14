@@ -16,7 +16,7 @@ type BasicInfoSectionProps = {
   subwayStations?: SubwayStationsResponse;
 };
 
-function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps) {
+const BasicInfoSection = ({ data, subwayStations }: BasicInfoSectionProps) => {
   return (
     <Card>
       <CardHeader>

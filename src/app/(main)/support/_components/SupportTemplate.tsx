@@ -12,7 +12,7 @@ import { ChevronDown } from "lucide-react";
 import clsx from "clsx";
 import { MOCK_FAQS } from "../_constants/faqs";
 
-function FaqItem({ question, answer }: { question: string; answer: string }) {
+const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

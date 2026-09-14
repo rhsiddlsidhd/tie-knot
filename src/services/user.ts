@@ -93,7 +93,7 @@ const changePassword = async (
   return !!userBeforeUpdate;
 };
 
-async function signupUserService({
+const signupUserService = async ({
   email,
   name,
   phone,
@@ -103,14 +103,14 @@ async function signupUserService({
   name: string;
   phone: string;
   password: string;
-}): Promise<void> {
+}): Promise<void> => {
   if (await checkEmailDuplicate(email)) {
     throw new AppError("VALIDATION", "이미 존재하는 이메일 입니다.");
   }
   await createUser({ email, name, phone, password: await hashPassword(password) });
 }
 
-async function requestPasswordResetService(email: string): Promise<void> {
+const requestPasswordResetService = async (email: string): Promise<void> => {
   if (!(await checkEmailDuplicate(email))) {
     throw new AppError("VALIDATION", "등록되지 않은 이메일입니다.");
   }
@@ -122,13 +122,13 @@ async function requestPasswordResetService(email: string): Promise<void> {
   await sendEmail({ email, path });
 }
 
-async function resetUserPasswordService({
+const resetUserPasswordService = async ({
   token,
   password,
 }: {
   token: string;
   password: string;
-}): Promise<void> {
+}): Promise<void> => {
   const { payload } = await decrypt({ token, type: "ENTRY" });
   if (!payload.id) {
     throw new AppError(

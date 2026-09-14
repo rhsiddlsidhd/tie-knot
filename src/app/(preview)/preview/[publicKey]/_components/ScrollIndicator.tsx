@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 
-function ScrollIndicator() {
+const ScrollIndicator = () => {
   return (
     <motion.div
       className="absolute -bottom-24 left-1/2 -translate-x-1/2"

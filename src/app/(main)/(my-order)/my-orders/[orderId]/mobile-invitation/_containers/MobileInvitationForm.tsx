@@ -3,7 +3,7 @@
 import { useMobileInvitationForm } from "@/ui/hooks/useMobileInvitationForm";
 import { MobileInvitationFormView } from "../_components/MobileInvitationFormView";
 
-function MobileInvitationForm() {
+const MobileInvitationForm = () => {
   const formState = useMobileInvitationForm();
   return <MobileInvitationFormView type={formState.data ? "edit" : "create"} {...formState} />;
 }

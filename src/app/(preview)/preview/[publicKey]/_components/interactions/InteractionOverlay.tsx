@@ -32,7 +32,7 @@ interface InteractionOverlayProps {
 // 청첩장 테마별로 포인터/터치 입력에 반응하는 연출을 얹는다. 오버레이는 좌표만
 // 관찰하고(passive) pointer-events:none이라 아래 콘텐츠·Radix Dialog 클릭을
 // 절대 가로채지 않는다 — prefers-reduced-motion이면 리스너 자체를 안 붙인다.
-function InteractionOverlay({ theme }: InteractionOverlayProps) {
+const InteractionOverlay = ({ theme }: InteractionOverlayProps) => {
   const shouldReduceMotion = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);

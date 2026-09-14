@@ -6,7 +6,7 @@ import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 import type { ImagePayload } from "@/core/domain/image";
 
-function useImageUpload() {
+const useImageUpload = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -50,7 +50,7 @@ function useImageUpload() {
   return { upload, uploadProgress, isUploading };
 }
 
-function buildTextData(formData: FormData) {
+const buildTextData = (formData: FormData) => {
   const buildParent = (prefix: string) => {
     const name = (formData.get(`${prefix}_name`) as string) || "";
     const phone = (formData.get(`${prefix}_phone`) as string) || "";

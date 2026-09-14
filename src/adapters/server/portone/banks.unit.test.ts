@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { fetchBanks } from "./banks";
 import { AppError } from "@/core/domain/error";
 
-function mockResponse(status: number, ok: boolean, body: string): Response {
+const mockResponse = (status: number, ok: boolean, body: string): Response => {
   return {
     ok,
     status,

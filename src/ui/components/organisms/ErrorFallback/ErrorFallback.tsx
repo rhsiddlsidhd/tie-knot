@@ -17,14 +17,14 @@ interface ErrorFallbackProps {
   backLabel?: string;
 }
 
-function ErrorFallback({
+const ErrorFallback = ({
   error,
   retry,
   title = "오류가 발생했습니다",
   description = "요청을 처리하는 중 문제가 발생했습니다.",
   backPath = "/",
   backLabel = "홈으로 돌아가기",
-}: ErrorFallbackProps) {
+}: ErrorFallbackProps) => {
   return (
     <div className="flex h-screen items-center justify-center p-4">
       <Card className="border-destructive/20 w-full max-w-lg shadow-lg">

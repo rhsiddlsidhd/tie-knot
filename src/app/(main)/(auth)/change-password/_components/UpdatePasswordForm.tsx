@@ -14,12 +14,12 @@ interface UpdatePasswordFormProps {
   token: string;
 }
 
-function UpdatePasswordForm({
+const UpdatePasswordForm = ({
   action,
   pending,
   state,
   token,
-}: UpdatePasswordFormProps) {
+}: UpdatePasswordFormProps) => {
   const passwordError = getFieldError(state, "password");
   const confirmPasswordError = getFieldError(state, "confirmPassword");
 

@@ -14,7 +14,7 @@ type CoupleInfoSectionProps = {
   banks?: BanksResponse;
 };
 
-function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
+const CoupleInfoSection = ({ data, banks }: CoupleInfoSectionProps) => {
   return (
     <Card>
       <CardHeader>

@@ -19,12 +19,12 @@ interface RetryPaymentCardProps {
 // (checkout)/layout.tsx가 이미 렌더하는 OrderSummary와 중복돼 확인 문구만 둔다.
 // PortOne 팝업(triggerPayment)은 반드시 이 버튼의 onClick에서 직접 호출돼야
 // 한다 — 마운트 시 자동 트리거하면 사용자 제스처 없이 팝업이 열려 차단될 수 있다.
-function RetryPaymentCard({
+const RetryPaymentCard = ({
   order,
   paymentStatus,
   errorMessage,
   onConfirm,
-}: RetryPaymentCardProps) {
+}: RetryPaymentCardProps) => {
   const isProcessing = paymentStatus === "PENDING";
 
   return (
