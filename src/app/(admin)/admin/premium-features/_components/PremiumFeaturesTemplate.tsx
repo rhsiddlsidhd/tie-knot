@@ -1,62 +1,104 @@
-import type { PremiumFeature } from "@/core/domain/premium-feature";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { Badge } from "@/ui/components/atoms/badge";
-import { Card, CardContent } from "@/ui/components/atoms/card";
-import { TypographyH1, TypographyH3, TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
+import { Button } from "@/ui/components/atoms/button";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/ui/components/atoms/empty";
+import { TableRow, TableCell } from "@/ui/components/atoms/table";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
+import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
+import type { AdminPremiumFeatureListPage } from "@/core/domain/premium-feature";
+import { formatKstDate } from "@/core/utils/date";
+import { ROUTES } from "@/core/domain/routes";
+import { PremiumFeatureRowAction } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureRowAction";
 
-import { PremiumFeatureCardAction } from "./PremiumFeatureCardAction";
+const TABLE_HEADINGS = [
+  "기능 코드",
+  "기능 이름",
+  "설명",
+  "추가 비용",
+  "상태",
+  "등록일",
+  "관리",
+];
 
 interface PremiumFeaturesTemplateProps {
-  features: PremiumFeature[];
+  page: AdminPremiumFeatureListPage;
+  cursor?: string;
 }
 
 const PremiumFeaturesTemplate = ({
-  features,
+  page,
+  cursor,
 }: PremiumFeaturesTemplateProps) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
-      <div>
-        <TypographyH1 className="mb-2 text-left text-3xl font-bold">
-          프리미엄 기능 관리
-        </TypographyH1>
-        <TypographyMuted>
-          상품에 추가할 수 있는 유료 기능을 관리합니다.
-        </TypographyMuted>
-      </div>
+      <AdminListHeading
+        title="프리미엄 기능 관리"
+        subtitle="상품에 추가할 수 있는 유료 기능을 관리합니다."
+      />
+      <Link href={ROUTES.admin.premiumFeatures.new}>
+        <Button size="lg">
+          <Plus className="mr-2 h-5 w-5" />
+          기능 등록
+        </Button>
+      </Link>
     </div>
 
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {features.map((feature) => (
-        <Card key={feature.code}>
-          <CardContent className="space-y-4 p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-2">
-                  <TypographyH3 className="text-foreground text-lg font-semibold">
-                    {feature.label}
-                  </TypographyH3>
-                  <Badge variant="outline" className="text-xs">
-                    {feature.code}
-                  </Badge>
-                </div>
-                <TypographyMuted>{feature.description}</TypographyMuted>
-              </div>
-            </div>
-
-            <div className="border-border flex items-center justify-between border-t pt-4">
-              <div>
-                <TypographyMuted className="mb-1">추가 비용</TypographyMuted>
-                <TypographyLarge className="text-primary font-bold">
-                  +{feature.additionalPrice.toLocaleString()}원
-                </TypographyLarge>
-              </div>
-              <div className="flex gap-2">
-                <PremiumFeatureCardAction premiumFeature={feature} />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </section>
+    <PaginatedTable
+      headings={TABLE_HEADINGS}
+      basePath={ROUTES.admin.premiumFeatures.root}
+      hasCursor={!!cursor}
+      nextCursor={page.nextCursor}
+    >
+      {page.items.length === 0 ? (
+        <TableRow>
+          <TableCell colSpan={TABLE_HEADINGS.length}>
+            <Empty>
+              <EmptyHeader>
+                <EmptyTitle>등록된 기능이 없습니다</EmptyTitle>
+                <EmptyDescription>
+                  기능을 등록하면 상품에 추가 옵션으로 붙일 수 있습니다.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
+          </TableCell>
+        </TableRow>
+      ) : (
+        page.items.map((feature) => (
+          <TableRow key={feature._id}>
+            <TableCell>
+              <Badge variant="outline" className="font-mono text-xs">
+                {feature.code}
+              </Badge>
+            </TableCell>
+            <TableCell className="font-medium">{feature.label}</TableCell>
+            <TableCell className="max-w-xs">
+              <TypographyMuted className="line-clamp-2">
+                {feature.description}
+              </TypographyMuted>
+            </TableCell>
+            <TableCell className="text-primary font-semibold">
+              +{feature.additionalPrice.toLocaleString()}원
+            </TableCell>
+            <TableCell>
+              <Badge variant={feature.isActive ? "default" : "secondary"}>
+                {feature.isActive ? "활성" : "비활성"}
+              </Badge>
+            </TableCell>
+            <TableCell>{formatKstDate(feature.createdAt)}</TableCell>
+            <TableCell>
+              <PremiumFeatureRowAction premiumFeature={feature} />
+            </TableCell>
+          </TableRow>
+        ))
+      )}
+    </PaginatedTable>
   </div>
 );
 
