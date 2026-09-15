@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
-import {
-  TypographyH1,
-  TypographyMuted,
-} from "@/ui/components/atoms/typography";
-import { CursorPagination } from "@/ui/components/molecules/CursorPagination";
+import { TableRow, TableCell } from "@/ui/components/atoms/table";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
+import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import type { AdminProductListPage } from "@/core/domain/product";
 import { ROUTES } from "@/core/domain/routes";
 import { TABLE_COLUMNS } from "@/app/(admin)/admin/products/_constants/tableColumns";
@@ -28,16 +27,14 @@ const AdminProductsTemplate = ({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <TypographyH1 className="mb-2 text-left text-3xl font-bold">
-            {isTrash ? "휴지통" : "상품 목록"}
-          </TypographyH1>
-          <TypographyMuted>
-            {isTrash
+        <AdminListHeading
+          title={isTrash ? "휴지통" : "상품 목록"}
+          subtitle={
+            isTrash
               ? "삭제된 상품을 조회하고 복구합니다."
-              : "등록된 템플릿 상품을 관리합니다."}
-          </TypographyMuted>
-        </div>
+              : "등록된 템플릿 상품을 관리합니다."
+          }
+        />
         {!isTrash && (
           <Link href={ROUTES.admin.products.new}>
             <Button size="lg">
@@ -61,48 +58,30 @@ const AdminProductsTemplate = ({
         </Link>
       </div>
 
-      <div className="bg-card overflow-hidden rounded-lg border">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted border-b">
-              <tr>
-                {TABLE_COLUMNS.map((col) => (
-                  <th
-                    key={col}
-                    className="px-4 py-3 text-left text-sm font-semibold"
-                  >
-                    {col}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {products.map((product) => (
-                <ProductTableRow
-                  key={product._id}
-                  product={product}
-                  view={view}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {products.length === 0 && (
-          <div className="py-12 text-center">
-            <TypographyMuted>
-              {isTrash ? "삭제된 상품이 없습니다." : "등록된 상품이 없습니다."}
-            </TypographyMuted>
-          </div>
-        )}
-      </div>
-
-      <CursorPagination
+      <PaginatedTable
+        headings={[...TABLE_COLUMNS]}
         basePath={ROUTES.admin.products.root}
         query={isTrash ? { view: "trash" } : {}}
         hasCursor={!!cursor}
         nextCursor={page.nextCursor}
-      />
+      >
+        {products.length === 0 ? (
+          <TableRow>
+            <TableCell
+              colSpan={TABLE_COLUMNS.length}
+              className="py-12 text-center"
+            >
+              <TypographyMuted>
+                {isTrash ? "삭제된 상품이 없습니다." : "등록된 상품이 없습니다."}
+              </TypographyMuted>
+            </TableCell>
+          </TableRow>
+        ) : (
+          products.map((product) => (
+            <ProductTableRow key={product._id} product={product} view={view} />
+          ))
+        )}
+      </PaginatedTable>
     </div>
   );
 };
