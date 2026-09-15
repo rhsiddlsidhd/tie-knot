@@ -1,15 +1,25 @@
 import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
-import { buildFeatureInput, clearCollections } from "@test/support";
+import {
+  buildFeatureInput,
+  buildProductInput,
+  clearCollections,
+} from "@test/support";
 import { FeatureModel } from "@/models/feature.model";
+import { ProductModel } from "@/models/product.model";
 import {
   createPremiumFeatureService,
+  deletePremiumFeatureService,
   getAdminPremiumFeaturesPageService,
   getAllPremiumFeatureService,
   getPremiumFeatureService,
   updatePremiumFeatureService,
 } from "@/services/premiumFeature";
+import {
+  createProductService,
+  deleteProductService,
+} from "@/services/product";
 
 describe("premiumFeature", () => {
   beforeEach(async () => {
@@ -191,6 +201,89 @@ describe("premiumFeature", () => {
       await expect(
         getAdminPremiumFeaturesPageService({ limit: 0 }),
       ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+  });
+  describe("deletePremiumFeatureService", () => {
+    const createReferencingProduct = async (
+      featureId: string,
+      title: string,
+    ) =>
+      createProductService(
+        buildProductInput({ title, isPremium: true, featureIds: [featureId] }),
+      );
+
+    it("참조하는 상품이 없으면 문서를 삭제한다", async () => {
+      const created = await createPremiumFeatureService(buildFeatureInput());
+
+      const result = await deletePremiumFeatureService(String(created._id));
+
+      expect(result).toBe(true);
+      expect(await FeatureModel.findById(created._id).lean()).toBeNull();
+    });
+
+    it("존재하지 않는 id면 false를 리턴한다", async () => {
+      const missingId = new mongoose.Types.ObjectId().toString();
+
+      expect(await deletePremiumFeatureService(missingId)).toBe(false);
+    });
+
+    it("ObjectId 형식이 아니면 false를 리턴한다", async () => {
+      expect(await deletePremiumFeatureService("not-an-object-id")).toBe(false);
+    });
+
+    it("참조 중인 상품이 있으면 VALIDATION을 던지고 기능을 남긴다", async () => {
+      const created = await createPremiumFeatureService(buildFeatureInput());
+      await createReferencingProduct(String(created._id), "봄맞이 청첩장");
+
+      await expect(
+        deletePremiumFeatureService(String(created._id)),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+      expect(await FeatureModel.findById(created._id).lean()).not.toBeNull();
+    });
+
+    it("차단 메시지에 막고 있는 상품명을 담는다", async () => {
+      const created = await createPremiumFeatureService(buildFeatureInput());
+      await createReferencingProduct(String(created._id), "봄맞이 청첩장");
+
+      await expect(
+        deletePremiumFeatureService(String(created._id)),
+      ).rejects.toMatchObject({
+        message: expect.stringContaining("봄맞이 청첩장"),
+      });
+    });
+
+    it("참조 상품이 미리보기 개수를 넘으면 나머지를 건수로 요약한다", async () => {
+      const created = await createPremiumFeatureService(buildFeatureInput());
+      for (const title of ["청첩장1", "청첩장2", "청첩장3", "청첩장4"]) {
+        await createReferencingProduct(String(created._id), title);
+      }
+
+      await expect(
+        deletePremiumFeatureService(String(created._id)),
+      ).rejects.toMatchObject({ message: expect.stringContaining("외 1건") });
+    });
+
+    it("휴지통에 있는 상품이 참조해도 삭제를 막는다", async () => {
+      const created = await createPremiumFeatureService(buildFeatureInput());
+      await createReferencingProduct(String(created._id), "휴지통 청첩장");
+      const product = await ProductModel.findOne({
+        title: "휴지통 청첩장",
+      }).lean<{ _id: mongoose.Types.ObjectId }>();
+      await deleteProductService(String(product!._id));
+
+      await expect(
+        deletePremiumFeatureService(String(created._id)),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("다른 기능을 참조하는 상품은 삭제를 막지 않는다", async () => {
+      const referenced = await createPremiumFeatureService(buildFeatureInput());
+      const orphan = await createPremiumFeatureService(
+        buildFeatureInput({ code: "MAP", label: "지도" }),
+      );
+      await createReferencingProduct(String(referenced._id), "봄맞이 청첩장");
+
+      expect(await deletePremiumFeatureService(String(orphan._id))).toBe(true);
     });
   });
 });

@@ -1,6 +1,7 @@
 import "server-only";
 import type { FeatureDocument } from "@/models/feature.model";
 import { FeatureModel } from "@/models/feature.model";
+import { ProductModel } from "@/models/product.model";
 import type { PremiumFeatureDto } from "@/core/schemas/request/premiumFeature.schema";
 import type {
   AdminPremiumFeatureListPage,
@@ -133,6 +134,61 @@ const updatePremiumFeatureService = async (
   return updatedFeature;
 };
 
+// 차단 메시지에 상품명을 몇 개까지 나열할지 — 나머지는 건수로 요약한다.
+const REFERENCING_PRODUCT_PREVIEW_LIMIT = 3;
+
+/**
+ * 프리미엄 기능 하드 삭제. 주문은 `selectedFeatures`에 code/label/price를 스냅샷으로
+ * 갖고 있어 과거 이력은 삭제에 영향받지 않는다.
+ *
+ * 참조하는 상품이 하나라도 있으면 지우지 않는다 — 어떤 상품의 마지막 기능을 지우면
+ * 그 상품은 `isPremium`인데 `featureIds`가 비어 `product.schema`의 refine을 통과하지
+ * 못해 이후 수정 저장이 전부 막힌다. 휴지통(deletedAt) 상품도 참조로 센다 — 복구하면
+ * 같은 상태로 되살아나기 때문이다.
+ */
+const deletePremiumFeatureService = async (
+  featureId: string,
+): Promise<boolean> => {
+  await dbConnect();
+
+  if (!mongoose.isObjectIdOrHexString(featureId)) {
+    return false;
+  }
+
+  const referencingCount = await ProductModel.countDocuments({
+    featureIds: featureId,
+  });
+
+  if (referencingCount > 0) {
+    const preview = await ProductModel.find({ featureIds: featureId })
+      .select("title")
+      .limit(REFERENCING_PRODUCT_PREVIEW_LIMIT)
+      .lean<{ title: string }[]>();
+    const titles = preview.map((product) => `"${product.title}"`).join(", ");
+    const rest = referencingCount - preview.length;
+
+    throw new AppError(
+      "VALIDATION",
+      `이 기능을 사용 중인 상품이 있어 삭제할 수 없습니다: ${titles}${
+        rest > 0 ? ` 외 ${rest}건` : ""
+      }`,
+    );
+  }
+
+  const deletedFeature = await FeatureModel.findByIdAndDelete(featureId).catch(
+    (err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error
+          ? err.message
+          : "프리미엄 기능 삭제에 실패했습니다.",
+      );
+    },
+  );
+
+  return !!deletedFeature;
+};
+
 const createPremiumFeatureAsAdminService = async (
   data: PremiumFeatureDto,
 ): Promise<void> => {
@@ -150,12 +206,23 @@ const updatePremiumFeatureAsAdminService = async (
   }
 };
 
+const deletePremiumFeatureAsAdminService = async (
+  featureId: string,
+): Promise<void> => {
+  await requireAdmin();
+  if (!(await deletePremiumFeatureService(featureId))) {
+    throw new AppError("NOT_FOUND", "프리미엄 기능을 찾을 수 없습니다.");
+  }
+};
+
 export {
   createPremiumFeatureService,
+  deletePremiumFeatureService,
   getAdminPremiumFeaturesPageService,
   getAllPremiumFeatureService,
   getPremiumFeatureService,
   updatePremiumFeatureService,
   createPremiumFeatureAsAdminService,
   updatePremiumFeatureAsAdminService,
+  deletePremiumFeatureAsAdminService,
 };
