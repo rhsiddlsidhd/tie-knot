@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { cn } from "@/core/utils/cn"
 import { ChevronDownIcon } from "lucide-react"
