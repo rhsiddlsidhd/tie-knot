@@ -15,4 +15,8 @@ const ProductSearchRequestSchema = z.object({
 
 type ProductSearchRequest = z.infer<typeof ProductSearchRequestSchema>;
 
-export { ProductSearchRequestSchema, type ProductSearchRequest };
+export {
+  SearchTermSchema,
+  ProductSearchRequestSchema,
+  type ProductSearchRequest,
+};

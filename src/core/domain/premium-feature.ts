@@ -1,4 +1,5 @@
 import type { CursorPage } from "./cursor";
+import type { ProductStatus } from "./product";
 
 /**
  * 청첩장 템플릿이 실제로 렌더 분기를 구현한 기능 code 목록. 기능의 동작은 코드가
@@ -28,8 +29,24 @@ type PremiumFeature = {
 
 type AdminPremiumFeatureListPage = CursorPage<PremiumFeature>;
 
+/**
+ * 기능 하나를 어떤 상품에 붙일지 고르는 화면의 행. 상품 전체(ProductJson)를 내리지
+ * 않는다 — 이 화면이 쓰는 건 식별·표시용 네 값과 현재 연결 여부뿐이다.
+ */
+type FeatureProductBinding = {
+  _id: string;
+  title: string;
+  price: number;
+  status: ProductStatus;
+  attached: boolean;
+};
+
+type FeatureProductBindingPage = CursorPage<FeatureProductBinding>;
+
 export {
   IMPLEMENTED_PREMIUM_FEATURE_CODES,
+  type FeatureProductBinding,
+  type FeatureProductBindingPage,
   type ImplementedPremiumFeatureCode,
   type PremiumFeature,
   type AdminPremiumFeatureListPage,

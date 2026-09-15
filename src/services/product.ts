@@ -1,6 +1,8 @@
 import "server-only";
 import type { ProductDb, ProductDocument } from "@/models/product.model";
-import type { ProductJson } from "@/core/domain/product";
+import type { ProductJson, ProductStatus } from "@/core/domain/product";
+import type { FeatureProductBindingPage } from "@/core/domain/premium-feature";
+import { FeatureModel } from "@/models/feature.model";
 import {
   ProductModel,
   MobileInvitationProductModel,
@@ -254,6 +256,180 @@ const getAdminProductsPageService = async ({
           })
         : null,
   };
+};
+
+type FeatureProductBindingsQuery = {
+  featureId: string;
+  q?: string;
+  cursor?: string;
+  limit?: number;
+};
+
+type LeanBindableProduct = {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  price: number;
+  status: ProductStatus;
+  featureIds?: mongoose.Types.ObjectId[];
+  createdAt: Date;
+};
+
+/**
+ * 기능 하나를 붙일 상품 후보 한 페이지 — 정렬·커서 계약은 다른 admin 목록과 같다.
+ *
+ * `isPremium: true`, `deletedAt: null`만 후보다. 프리미엄이 아닌 상품은 create/update
+ * 서비스가 featureIds를 강제로 비우므로 붙여도 조용히 사라지고, 휴지통 상품에 붙이는
+ * 것은 복구 시점에 결정할 일이다.
+ */
+const getFeatureProductBindingsPageService = async ({
+  featureId,
+  q,
+  cursor,
+  limit = DEFAULT_PAGE_SIZE,
+}: FeatureProductBindingsQuery): Promise<FeatureProductBindingPage> => {
+  await dbConnect();
+
+  if (!isValidPageLimit(limit)) {
+    throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+
+  const filter: mongoose.FilterQuery<ProductDocument> = {
+    isPremium: true,
+    deletedAt: null,
+  };
+
+  const term = q?.trim();
+  if (term) {
+    // 관리자가 입력한 문자열이 그대로 정규식이 되면 쿼리가 깨지거나 의도치 않게
+    // 매칭된다 — 반드시 이스케이프한다(#309 규약).
+    filter.title = { $regex: escapeRegExp(term), $options: "i" };
+  }
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) {
+      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    }
+    filter.$or = [
+      { createdAt: { $lt: decoded.createdAt } },
+      {
+        createdAt: decoded.createdAt,
+        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+      },
+    ];
+  }
+
+  const found = await ProductModel.find(filter)
+    .select("title price status featureIds createdAt")
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(limit + 1)
+    .lean<LeanBindableProduct[]>()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+      );
+    });
+
+  const hasMore = found.length > limit;
+  const products = hasMore ? found.slice(0, limit) : found;
+  const lastProduct = products.at(-1);
+
+  return {
+    items: products.map((product) => ({
+      _id: product._id.toString(),
+      title: product.title,
+      price: product.price,
+      status: product.status,
+      attached: (product.featureIds ?? []).some(
+        (id) => id.toString() === featureId,
+      ),
+    })),
+    nextCursor:
+      hasMore && lastProduct
+        ? encodeCursor({
+            createdAt: lastProduct.createdAt,
+            id: lastProduct._id.toString(),
+          })
+        : null,
+  };
+};
+
+// 연결/해제는 상품 문서 하나만 쓴다 — MongoDB가 문서 단위 원자성을 보장하므로
+// 트랜잭션이 필요 없다(src/services/AGENTS.md 트랜잭션 절).
+const findBindableProduct = async (productId: string) => {
+  if (!mongoose.isObjectIdOrHexString(productId)) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+
+  const product = await ProductModel.findOne({
+    _id: productId,
+    deletedAt: null,
+  }).lean<LeanBindableProduct & { isPremium: boolean }>();
+
+  if (!product) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+
+  return product;
+};
+
+const attachPremiumFeatureToProductService = async (
+  productId: string,
+  featureId: string,
+): Promise<void> => {
+  await dbConnect();
+
+  if (!mongoose.isObjectIdOrHexString(featureId)) {
+    throw new AppError("NOT_FOUND", "프리미엄 기능을 찾을 수 없습니다.");
+  }
+  if (!(await FeatureModel.exists({ _id: featureId }))) {
+    throw new AppError("NOT_FOUND", "프리미엄 기능을 찾을 수 없습니다.");
+  }
+
+  const product = await findBindableProduct(productId);
+
+  // 프리미엄이 아닌 상품은 create/update 서비스가 featureIds를 비운다 — 붙여도
+  // 조용히 사라지므로 성공으로 처리하지 않는다.
+  if (!product.isPremium) {
+    throw new AppError(
+      "VALIDATION",
+      `"${product.title}"은(는) 프리미엄 상품이 아니라 기능을 붙일 수 없습니다.`,
+    );
+  }
+
+  await ProductModel.updateOne(
+    { _id: productId },
+    { $addToSet: { featureIds: new mongoose.Types.ObjectId(featureId) } },
+    { runValidators: true },
+  );
+};
+
+const detachPremiumFeatureFromProductService = async (
+  productId: string,
+  featureId: string,
+): Promise<void> => {
+  await dbConnect();
+
+  const product = await findBindableProduct(productId);
+  const featureIds = (product.featureIds ?? []).map(String);
+
+  if (!featureIds.includes(featureId)) return;
+
+  // 마지막 기능을 빼면 isPremium인데 featureIds가 비어 product.schema의 refine을
+  // 통과하지 못해 그 상품은 이후 수정 저장이 전부 막힌다.
+  if (product.isPremium && featureIds.length === 1) {
+    throw new AppError(
+      "VALIDATION",
+      `"${product.title}"의 마지막 프리미엄 기능이라 뗄 수 없습니다. 상품을 일반 상품으로 바꾸거나 다른 기능을 먼저 붙이세요.`,
+    );
+  }
+
+  await ProductModel.updateOne(
+    { _id: productId },
+    { $pull: { featureIds: new mongoose.Types.ObjectId(featureId) } },
+    { runValidators: true },
+  );
 };
 
 const PUBLIC_PRODUCT_SORT_SPEC = {
@@ -734,6 +910,9 @@ export {
   getPublicProductsPageService,
   getAvailableSubCategoriesService,
   searchProductsService,
+  getFeatureProductBindingsPageService,
+  attachPremiumFeatureToProductService,
+  detachPremiumFeatureFromProductService,
   getPopularProductsService,
   updateProductService,
   deleteProductService,
