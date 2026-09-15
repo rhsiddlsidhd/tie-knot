@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useReducer } from "react";
 import { updateProduct } from "@/actions/updateProduct";
 import type { Product } from "@/core/domain/product";
 import { Spinner } from "@/ui/components/atoms/spinner";
@@ -27,15 +27,15 @@ import {
   getSubCategoryOptions,
 } from "@/core/utils/category";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
-import type { MobileInvitationTheme } from "@/core/domain/theme";
-import type {
-  ProductCategory,
-  SubCategory,
-} from "@/core/domain/product-category";
+import type { ProductCategory } from "@/core/domain/product-category";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import { toast } from "sonner";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
+import {
+  createProductEditFormState,
+  productEditFormReducer,
+} from "../_utils/productEditFormReducer";
 interface ProductEditDialogProps {
   product: Product;
 }
@@ -47,36 +47,20 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
   );
   const closeModal = useAdminModalStore((state) => state.closeModal);
   const { premiumFeatures, loading } = usePremiumFeature();
-  const [isPremium, setIsPremium] = useState(product.isPremium);
-  const [isFeature, setIsFeature] = useState(product.isFeatured);
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(
-    product.featureIds || [],
-  );
-  const [status, setStatus] = useState(product.status);
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>(
-    product.category as ProductCategory,
-  );
-  const [selectedSubCategory, setSelectedSubCategory] = useState<
-    SubCategory | ""
-  >(product.subCategory as SubCategory);
-  const [selectedTheme, setSelectedTheme] = useState<MobileInvitationTheme>(
-    product.theme ?? "default",
+  const [form, dispatch] = useReducer(
+    productEditFormReducer,
+    product,
+    createProductEditFormState,
   );
   const thumbnail = useImageList([product.thumbnail]);
   const images = useImageList(product.images);
-  const [minQuantity, setMinQuantity] = useState<number>(product.minQuantity);
-  const [isUnlimitedMax, setIsUnlimitedMax] = useState(
-    product.maxQuantity === 0,
-  );
-  // 무제한 Input이 마운트될 때 쓸 defaultValue — 최초엔 기존 상품 값(product.maxQuantity)을
-  // 보존하고, 체크박스를 다시 해제할 때만 minQuantity 기반 제안값으로 갱신한다.
-  const [maxQuantityDefault, setMaxQuantityDefault] = useState(
-    product.maxQuantity > 0 ? product.maxQuantity : 1,
-  );
 
   const handleMinQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setMinQuantity(raw === "" ? NaN : Number(raw));
+    dispatch({
+      type: "CHANGE_MIN_QUANTITY",
+      payload: raw === "" ? NaN : Number(raw),
+    });
   };
 
   const thumbnailError = getFieldError(state, "thumbnail");
@@ -95,19 +79,6 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
       toast.error(state.error.message);
     }
   }, [state, closeModal]);
-
-  const handlePremiumChange = (checked: boolean) => {
-    setIsPremium(checked);
-    if (!checked) {
-      setSelectedFeatures([]);
-    }
-  };
-
-  const handleFeatureChange = (checked: boolean, id: string) => {
-    setSelectedFeatures((prev) =>
-      checked ? [...prev, id] : prev.filter((item) => item !== id),
-    );
-  };
 
   if (loading) {
     return (
@@ -129,7 +100,7 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
 
   return (
     <form action={action} className="space-y-6">
-      {selectedFeatures.map((featureId) => (
+      {form.featureIds.map((featureId) => (
         <input
           key={featureId}
           type="hidden"
@@ -185,11 +156,13 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
           <SelectField
             id="edit-category"
             name="category"
-            defaultValue={selectedCategory}
-            onValueChange={(value) => {
-              setSelectedCategory(value as ProductCategory);
-              setSelectedSubCategory("");
-            }}
+            defaultValue={form.category}
+            onValueChange={(value) =>
+              dispatch({
+                type: "CHANGE_CATEGORY",
+                payload: value as ProductCategory,
+              })
+            }
             placeholder="카테고리를 선택하세요"
             data={getCategoryOptions()}
             error={getFieldError(state, "category")}
@@ -201,25 +174,25 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
           <SelectField
             id="edit-subCategory"
             name="subCategory"
-            defaultValue={selectedSubCategory}
+            defaultValue={form.subCategory}
             onValueChange={(value) =>
-              setSelectedSubCategory(value as SubCategory)
+              dispatch({ type: "CHANGE_SUB_CATEGORY", payload: value })
             }
             placeholder="서브 카테고리를 선택하세요"
-            data={getSubCategoryOptions(selectedCategory)}
+            data={getSubCategoryOptions(form.category)}
             error={getFieldError(state, "subCategory")}
             required
           >
             서브 카테고리
           </SelectField>
 
-          {selectedCategory === MOBILE_INVITATION_CATEGORY && (
+          {form.category === MOBILE_INVITATION_CATEGORY && (
             <SelectField
               id="edit-theme"
               name="theme"
-              defaultValue={selectedTheme}
+              defaultValue={form.theme}
               onValueChange={(value) =>
-                setSelectedTheme(value as MobileInvitationTheme)
+                dispatch({ type: "CHANGE_THEME", payload: value })
               }
               placeholder="테마를 선택하세요"
               data={getMobileInvitationThemeOptions()}
@@ -233,9 +206,12 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
           <SelectField
             id="edit-status"
             name="status"
-            defaultValue={status}
+            defaultValue={form.status}
             onValueChange={(value) =>
-              setStatus(value as "active" | "inactive" | "soldOut")
+              dispatch({
+                type: "CHANGE_STATUS",
+                payload: value as "active" | "inactive" | "soldOut",
+              })
             }
             placeholder="판매 상태를 선택하세요"
             data={statusOptions}
@@ -273,17 +249,19 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
         <input
           type="hidden"
           name="isPremium"
-          value={isPremium ? "true" : "false"}
+          value={form.isPremium ? "true" : "false"}
         />
         <SwitchField
           id="edit-isPremium"
           label="프리미엄 상품"
           description="추가 유료 옵션을 제공하는 상품입니다."
-          checked={isPremium}
-          onCheckedChange={handlePremiumChange}
+          checked={form.isPremium}
+          onCheckedChange={(checked) =>
+            dispatch({ type: "TOGGLE_PREMIUM", payload: checked })
+          }
         />
 
-        {isPremium && (
+        {form.isPremium && (
           <div className="space-y-4 rounded-lg border border-dashed p-4">
             <TypographyH4 className="font-medium">
               프리미엄 기능 선택
@@ -297,9 +275,12 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
                 >
                   <Checkbox
                     id={`edit-feature-${feature.code}`}
-                    checked={selectedFeatures.includes(feature._id)}
+                    checked={form.featureIds.includes(feature._id)}
                     onCheckedChange={(checked) =>
-                      handleFeatureChange(!!checked, feature._id)
+                      dispatch({
+                        type: "TOGGLE_PREMIUM_FEATURE",
+                        payload: { id: feature._id, checked: !!checked },
+                      })
                     }
                   />
                   <FieldLabel
@@ -319,14 +300,16 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
         <input
           type="hidden"
           name="isFeatured"
-          value={isFeature ? "true" : "false"}
+          value={form.isFeature ? "true" : "false"}
         />
         <SwitchField
           id="edit-feature"
           label="추천 상품"
           description="메인 페이지에 추천 상품으로 노출됩니다."
-          checked={isFeature}
-          onCheckedChange={setIsFeature}
+          checked={form.isFeature}
+          onCheckedChange={(checked) =>
+            dispatch({ type: "TOGGLE_FEATURED", payload: checked })
+          }
         />
 
         <InputField
@@ -345,7 +328,7 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
 
       <FormSectionCard
         title="상세 이미지"
-        required={selectedCategory !== MOBILE_INVITATION_CATEGORY}
+        required={form.category !== MOBILE_INVITATION_CATEGORY}
       >
         <ImageField
           id="edit-images-upload"
@@ -370,13 +353,13 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
             min={1}
             step={1}
             required
-            value={Number.isNaN(minQuantity) ? "" : minQuantity}
+            value={Number.isNaN(form.minQuantity) ? "" : form.minQuantity}
             onChange={handleMinQuantityChange}
             error={minQuantityError}
           />
 
           <div className="space-y-2">
-            {isUnlimitedMax ? (
+            {form.isUnlimitedMax ? (
               <FieldFrame id="edit-maxQuantity-display" label="최대 구매 수량">
                 <Input
                   id="edit-maxQuantity-display"
@@ -395,21 +378,19 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
                 min={1}
                 step={1}
                 required
-                defaultValue={maxQuantityDefault}
+                defaultValue={form.maxQuantityDefault}
               />
             )}
             <Field orientation="horizontal" className="gap-2 pt-1">
               <Checkbox
                 id="edit-isUnlimitedMax"
-                checked={isUnlimitedMax}
-                onCheckedChange={(checked) => {
-                  setIsUnlimitedMax(!!checked);
-                  if (!checked) {
-                    setMaxQuantityDefault(
-                      Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity),
-                    );
-                  }
-                }}
+                checked={form.isUnlimitedMax}
+                onCheckedChange={(checked) =>
+                  dispatch({
+                    type: "TOGGLE_UNLIMITED_MAX",
+                    payload: !!checked,
+                  })
+                }
               />
               <FieldLabel
                 htmlFor="edit-isUnlimitedMax"
