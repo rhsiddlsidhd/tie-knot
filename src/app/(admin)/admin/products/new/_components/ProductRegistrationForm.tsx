@@ -1,6 +1,5 @@
 "use client";
 
-import type React from "react";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { DiscountField } from "@/ui/components/organisms/DiscountField";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
@@ -31,7 +30,6 @@ import {
 } from "@/core/utils/category";
 import { getFieldError } from "@/core/utils/error";
 import type { ProductCategory } from "@/core/domain/product-category";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import type { ApiResponse } from "@/core/domain/error";
 import { ProductFormSlideCard } from "./ProductFormSlideCard";
@@ -62,6 +60,7 @@ const ProductRegistrationForm = ({
     preview,
     images,
     visibleSteps,
+    isMobileInvitation,
     formRef,
     setCarouselApi,
     openNextStep,
@@ -184,7 +183,7 @@ const ProductRegistrationForm = ({
                   서브 카테고리
                 </SelectField>
 
-                {form.category === MOBILE_INVITATION_CATEGORY && (
+                {isMobileInvitation && (
                   <SelectField
                     id="theme"
                     name="theme"
@@ -354,7 +353,7 @@ const ProductRegistrationForm = ({
               required
               previousLabel="노출 설정"
               nextLabel={
-                form.category === MOBILE_INVITATION_CATEGORY
+                isMobileInvitation
                   ? "미리보기 이미지"
                   : "상세 이미지"
               }
@@ -362,7 +361,7 @@ const ProductRegistrationForm = ({
               onNext={() =>
                 openNextStep(
                   "thumbnail",
-                  form.category === MOBILE_INVITATION_CATEGORY
+                  isMobileInvitation
                     ? "preview"
                     : "images",
                 )
@@ -396,7 +395,7 @@ const ProductRegistrationForm = ({
           </CarouselItem>
 
           {/* 미리보기 URL — invitation 전용(REQ-6). */}
-          {form.category === MOBILE_INVITATION_CATEGORY && (
+          {isMobileInvitation && (
             <CarouselItem
               className="pl-0"
               aria-label="5단계: 미리보기 이미지"
@@ -441,20 +440,20 @@ const ProductRegistrationForm = ({
               step="images"
               title="상세 이미지"
               description={
-                form.category === MOBILE_INVITATION_CATEGORY
+                isMobileInvitation
                   ? "선택사항입니다. 등록하지 않아도 됩니다."
                   : "상품 상세 페이지에 표시될 이미지를 최소 1장 등록해주세요."
               }
-              required={form.category !== MOBILE_INVITATION_CATEGORY}
+              required={!isMobileInvitation}
               previousLabel={
-                form.category === MOBILE_INVITATION_CATEGORY
+                isMobileInvitation
                   ? "미리보기 이미지"
                   : "썸네일 이미지"
               }
               nextLabel="구매 수량"
               onPrevious={() =>
                 openPreviousStep(
-                  form.category === MOBILE_INVITATION_CATEGORY
+                  isMobileInvitation
                     ? "preview"
                     : "thumbnail",
                 )

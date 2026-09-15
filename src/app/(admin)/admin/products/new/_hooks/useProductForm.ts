@@ -37,10 +37,11 @@ const useProductForm = ({
   const preview = useImageList();
   const images = useImageList();
 
-  const visibleSteps =
-    form.category === MOBILE_INVITATION_CATEGORY
-      ? MOBILE_PRODUCT_FORM_STEPS
-      : PHYSICAL_PRODUCT_FORM_STEPS;
+  // 모바일 청첩장만 미리보기 단계를 갖고 상세 이미지가 선택사항이다.
+  const isMobileInvitation = form.category === MOBILE_INVITATION_CATEGORY;
+  const visibleSteps = isMobileInvitation
+    ? MOBILE_PRODUCT_FORM_STEPS
+    : PHYSICAL_PRODUCT_FORM_STEPS;
 
   const formRef = useRef<HTMLFormElement>(null);
   // 마지막으로 클릭된 제출 버튼 종류. 두 버튼 모두 같은 action을 호출하므로
@@ -188,6 +189,7 @@ const useProductForm = ({
     preview,
     images,
     visibleSteps,
+    isMobileInvitation,
     formRef,
     setCarouselApi,
     openNextStep,
