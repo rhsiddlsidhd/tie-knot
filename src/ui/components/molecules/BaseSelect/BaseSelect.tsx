@@ -1,5 +1,11 @@
 "use client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui/components/atoms/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/ui/components/atoms/select";
 import React from "react";
 import { cn } from "@/core/utils/cn";
 
@@ -19,6 +25,8 @@ interface BaseSelectProps {
   className?: string;
   contentClassName?: string;
   disabled?: boolean;
+  required?: boolean;
+  "aria-label"?: string;
   /** 트리거에 그대로 전달한다 — atoms/select가 aria-invalid로 테두리를 붉게 바꾼다. */
   "aria-invalid"?: boolean;
 }
@@ -37,6 +45,8 @@ const BaseSelect = ({
   className,
   contentClassName,
   disabled,
+  required,
+  "aria-label": ariaLabel,
   "aria-invalid": ariaInvalid,
 }: BaseSelectProps) => {
   return (
@@ -46,9 +56,11 @@ const BaseSelect = ({
       defaultValue={defaultValue}
       onValueChange={onValueChange}
       disabled={disabled}
+      required={required}
     >
       <SelectTrigger
         id={id}
+        aria-label={ariaLabel}
         aria-invalid={ariaInvalid}
         className={cn("w-full", className)}
       >

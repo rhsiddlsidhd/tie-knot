@@ -15,6 +15,14 @@ describe("BaseSelect", () => {
     expect(screen.getByText("골라주세요")).toBeInTheDocument();
   });
 
+  it("aria-label로 선택 상자의 접근 가능한 이름을 제공한다", () => {
+    render(<BaseSelect options={options} aria-label="할인 방식" />);
+
+    expect(
+      screen.getByRole("combobox", { name: "할인 방식" }),
+    ).toBeInTheDocument();
+  });
+
   it("옵션 선택 시 onValueChange를 선택한 값으로 호출한다", async () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
