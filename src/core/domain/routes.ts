@@ -55,6 +55,8 @@ const ROUTES = {
     premiumFeatures: {
       root: "/admin/premium-features",
       new: "/admin/premium-features/new",
+      products: (featureId: string) =>
+        `/admin/premium-features/${featureId}/products`,
     },
   },
 } as const;

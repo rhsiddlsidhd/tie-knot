@@ -128,4 +128,12 @@ describe("PremiumFeatureRowAction", () => {
     expect(screen.getByRole("alertdialog")).toBeInTheDocument();
     expect(refreshMock).not.toHaveBeenCalled();
   });
+  it("상품 연결 화면으로 가는 링크를 제공한다", () => {
+    render(<PremiumFeatureRowAction premiumFeature={feature} />);
+
+    expect(screen.getByRole("link", { name: "연결 상품" })).toHaveAttribute(
+      "href",
+      "/admin/premium-features/feature-1/products",
+    );
+  });
 });

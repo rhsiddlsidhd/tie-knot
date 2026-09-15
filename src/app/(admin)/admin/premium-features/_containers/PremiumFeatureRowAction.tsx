@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Link2, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -9,6 +10,7 @@ import { deletePremiumFeature } from "@/actions/deletePremiumFeature";
 import { Button } from "@/ui/components/atoms/button";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
+import { ROUTES } from "@/core/domain/routes";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 
 const PremiumFeatureRowAction = ({
@@ -53,6 +55,12 @@ const PremiumFeatureRowAction = ({
         onClick={() => openModal("EDIT-PREMIUMFEATURE", { premiumFeature })}
       >
         <Edit className="h-4 w-4" />
+      </Button>
+      <Button size="sm" variant="outline" asChild>
+        <Link href={ROUTES.admin.premiumFeatures.products(premiumFeature._id)}>
+          <Link2 className="h-4 w-4" />
+          연결 상품
+        </Link>
       </Button>
       <Button
         size="sm"
