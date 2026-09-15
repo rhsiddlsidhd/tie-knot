@@ -13,7 +13,9 @@ describe("PremiumFeatureRegistrationForm", () => {
       />,
     );
 
-    expect(screen.getByLabelText(/기능 코드/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: /기능 코드/ }),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText(/기능 이름/)).toBeInTheDocument();
     expect(screen.getByLabelText(/기능 설명/)).toBeInTheDocument();
     expect(screen.getByLabelText(/추가 비용/)).toBeInTheDocument();
@@ -30,7 +32,7 @@ describe("PremiumFeatureRegistrationForm", () => {
             category: "VALIDATION",
             message: "입력값을 확인해주세요",
             fieldErrors: {
-              code: ["영문 대문자와 언더스코어만 사용 가능합니다."],
+              code: ["지원하지 않는 기능 코드입니다."],
               label: ["기능 이름을 입력해주세요."],
               description: ["설명은 최소 20자 이상이어야 합니다."],
               additionalPrice: ["추가 비용은 0 이상이어야 합니다."],
@@ -41,7 +43,7 @@ describe("PremiumFeatureRegistrationForm", () => {
     );
 
     expect(
-      screen.getByText("영문 대문자와 언더스코어만 사용 가능합니다."),
+      screen.getByText("지원하지 않는 기능 코드입니다."),
     ).toBeInTheDocument();
     expect(screen.getByText("기능 이름을 입력해주세요.")).toBeInTheDocument();
     expect(
@@ -105,7 +107,10 @@ describe("PremiumFeatureRegistrationForm", () => {
       />,
     );
 
-    await user.type(screen.getByLabelText(/기능 코드/), "ANIMATION");
+    await user.click(screen.getByRole("combobox", { name: /기능 코드/ }));
+    await user.click(
+      await screen.findByRole("option", { name: "GALLERY_LIGHTBOX" }),
+    );
     await user.type(screen.getByLabelText(/기능 이름/), "애니메이션 효과");
     await user.type(
       screen.getByLabelText(/기능 설명/),
@@ -115,5 +120,22 @@ describe("PremiumFeatureRegistrationForm", () => {
     await user.click(screen.getByRole("button", { name: "등록하기" }));
 
     expect(action).toHaveBeenCalledTimes(1);
+  });
+  it("기능 코드는 구현된 코드 목록에서만 고를 수 있다", async () => {
+    const user = userEvent.setup();
+    render(
+      <PremiumFeatureRegistrationForm
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    await user.click(screen.getByRole("combobox", { name: /기능 코드/ }));
+
+    const options = await screen.findAllByRole("option");
+    expect(options.map((option) => option.textContent)).toEqual([
+      "GALLERY_LIGHTBOX",
+    ]);
   });
 });

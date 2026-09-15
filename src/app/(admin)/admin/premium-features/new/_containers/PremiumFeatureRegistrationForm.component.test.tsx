@@ -13,7 +13,10 @@ const fillAndSubmit = async () => {
   const user = userEvent.setup();
   render(<PremiumFeatureRegistrationForm />);
 
-  await user.type(screen.getByLabelText(/기능 코드/), "ANIMATION");
+  await user.click(screen.getByRole("combobox", { name: /기능 코드/ }));
+  await user.click(
+    await screen.findByRole("option", { name: "GALLERY_LIGHTBOX" }),
+  );
   await user.type(screen.getByLabelText(/기능 이름/), "애니메이션 효과");
   await user.type(
     screen.getByLabelText(/기능 설명/),

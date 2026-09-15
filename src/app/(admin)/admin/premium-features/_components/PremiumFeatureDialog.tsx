@@ -35,19 +35,18 @@ const PremiumFeatureDialog = ({
   return (
     <form action={action}>
       <div className="space-y-4 py-4">
-        <InputField
-          id="code"
-          name="code"
-          label="기능 코드 *"
-          type="text"
-          placeholder="예: ANIMATION"
-          defaultValue={feature.code}
-          required
-          error={codeError}
-        />
-        <TypographyMuted>
-          영문 대문자와 언더스코어만 사용 가능합니다.
-        </TypographyMuted>
+        {/* 기능 코드는 수정할 수 없다 — 코드는 청첩장 렌더 분기의 키이고, 바꾸면
+            같은 문서가 판매 시점에 따라 다른 동작을 갖게 된다(이미 팔린 주문은
+            스냅샷으로 옛 코드를 유지한다). 다른 기능이 필요하면 새로 등록한다. */}
+        <Field data-invalid={!!codeError}>
+          <FieldLabel>기능 코드</FieldLabel>
+          <p className="font-mono text-sm">{feature.code}</p>
+          <input type="hidden" name="code" value={feature.code} />
+          <FieldError>{codeError}</FieldError>
+          <TypographyMuted>
+            기능 코드는 등록 후 변경할 수 없습니다.
+          </TypographyMuted>
+        </Field>
 
         <InputField
           id="label"

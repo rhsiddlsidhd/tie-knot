@@ -65,14 +65,6 @@ const PRODUCT_PRICE_KEYS = [
   "OVER-30k",
 ] as const;
 
-const PREMIUM_FEATURE_KEYS = [
-  "VIDEO",
-  "GALLERY_LIGHTBOX",
-  "CUSTOM_FONT",
-  "SAVE_MOBILE_INVITATION",
-  "SAVE_GUESTBOOK",
-] as const;
-
 // 2. 각 키에 대응하는 라벨 정의 (Record 활용으로 누락 방지)
 const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
   ALL: "모두",
@@ -91,28 +83,17 @@ const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
   "OVER-30k": "3만원 이상",
 };
 
-const PREMIUM_FEATURE_LABELS: Record<PremiumFeatureType, string> = {
-  VIDEO: "🎬 비디오 추가",
-  GALLERY_LIGHTBOX: "🔍 갤러리 확대 보기",
-  CUSTOM_FONT: "✍️ 나만의 폰트",
-  SAVE_MOBILE_INVITATION: "💌 영원히 간직하는 청첩장",
-  SAVE_GUESTBOOK: "📝 방명록 추억 저장",
-};
-
 // 3. 타입은 배열로부터 파생
 type ProductSortType = (typeof PRODUCT_SORT_KEYS)[number];
 type ProductPriceType = (typeof PRODUCT_PRICE_KEYS)[number];
-type PremiumFeatureType = (typeof PREMIUM_FEATURE_KEYS)[number];
 
 export {
   POPULAR_PRODUCTS_LIMIT,
   POPULAR_PRODUCTS_MIN_ITEMS,
   PRODUCT_SORT_KEYS,
   PRODUCT_PRICE_KEYS,
-  PREMIUM_FEATURE_KEYS,
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
-  PREMIUM_FEATURE_LABELS,
   type ProductStatus,
   type ProductJson,
   type Product,
@@ -120,5 +101,4 @@ export {
   type PublicProductListPage,
   type ProductSortType,
   type ProductPriceType,
-  type PremiumFeatureType,
 };

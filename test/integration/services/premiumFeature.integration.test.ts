@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterAll } from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
 import {
+  buildFeatureDocumentInput,
   buildFeatureInput,
   buildProductInput,
   clearCollections,
@@ -45,11 +46,11 @@ describe("premiumFeature", () => {
 
   describe("getAllPremiumFeatureService", () => {
     it("FeatureDocument 기반으로 매핑된 PremiumFeature 목록을 리턴한다", async () => {
-      await createPremiumFeatureService(
-        buildFeatureInput({ code: "GUESTBOOK" }),
+      await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "GUESTBOOK" }),
       );
-      await createPremiumFeatureService(
-        buildFeatureInput({
+      await FeatureModel.create(
+        buildFeatureDocumentInput({
           code: "MAP",
           label: "지도",
           description: "오시는 길 지도를 추가합니다.",
@@ -86,8 +87,8 @@ describe("premiumFeature", () => {
 
     it("id 목록에 해당하는 기능만 리턴한다", async () => {
       const created = await createPremiumFeatureService(buildFeatureInput());
-      await createPremiumFeatureService(
-        buildFeatureInput({
+      await FeatureModel.create(
+        buildFeatureDocumentInput({
           code: "OTHER",
           label: "다른기능",
           description: "다른 기능 설명입니다.",
@@ -143,7 +144,7 @@ describe("premiumFeature", () => {
       const ids: string[] = [];
       for (let i = 0; i < count; i += 1) {
         const feature = await FeatureModel.create(
-          buildFeatureInput({ code: `FEATURE_${i}` }),
+          buildFeatureDocumentInput({ code: `FEATURE_${i}` }),
         );
         await setCreatedAt(feature._id, new Date(2026, 0, i + 1));
         ids.push(feature._id.toString());
@@ -278,8 +279,8 @@ describe("premiumFeature", () => {
 
     it("다른 기능을 참조하는 상품은 삭제를 막지 않는다", async () => {
       const referenced = await createPremiumFeatureService(buildFeatureInput());
-      const orphan = await createPremiumFeatureService(
-        buildFeatureInput({ code: "MAP", label: "지도" }),
+      const orphan = await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "MAP", label: "지도" }),
       );
       await createReferencingProduct(String(referenced._id), "봄맞이 청첩장");
 
