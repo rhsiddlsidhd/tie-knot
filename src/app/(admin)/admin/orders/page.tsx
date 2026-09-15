@@ -14,6 +14,7 @@ const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
   const parsed = validateAndFlatten(AdminOrderListRequestSchema, {
+    q: typeof searchParams.q === "string" ? searchParams.q : null,
     status:
       typeof searchParams.status === "string" ? searchParams.status : null,
     cursor:
@@ -22,11 +23,11 @@ const resolveFilters = (
 
   if (!parsed.success) return {};
 
-  const { status, cursor } = parsed.data;
+  const { q, status, cursor } = parsed.data;
   if (cursor && !decodeCursor(cursor)) {
-    return { status };
+    return { q, status };
   }
-  return { status, cursor };
+  return { q, status, cursor };
 };
 
 const OrdersPage = async ({
@@ -36,10 +37,17 @@ const OrdersPage = async ({
 }) => {
   await verifySession("ADMIN");
 
-  const { status, cursor } = resolveFilters(await searchParams);
-  const page = await getAdminOrdersPageService({ status, cursor });
+  const { q, status, cursor } = resolveFilters(await searchParams);
+  const page = await getAdminOrdersPageService({ q, status, cursor });
 
-  return <AdminOrdersTemplate page={page} status={status} cursor={cursor} />;
+  return (
+    <AdminOrdersTemplate
+      page={page}
+      q={q}
+      status={status}
+      cursor={cursor}
+    />
+  );
 };
 
 export default OrdersPage;

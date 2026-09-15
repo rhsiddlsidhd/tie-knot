@@ -9,6 +9,7 @@ import { TableRow, TableCell } from "@/ui/components/atoms/table";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import { QueryFilterSelect } from "@/ui/components/organisms/QueryFilterSelect";
+import { QuerySearchInput } from "@/ui/components/organisms/QuerySearchInput";
 import type { AdminOrderListPage, OrderStatus } from "@/core/domain/order";
 import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
 import { formatKstDate } from "@/core/utils/date";
@@ -26,11 +27,17 @@ const STATUS_FILTER_OPTIONS: Array<{ value: OrderStatus | "ALL"; label: string }
 
 interface AdminOrdersTemplateProps {
   page: AdminOrderListPage;
+  q?: string;
   status?: OrderStatus;
   cursor?: string;
 }
 
-const AdminOrdersTemplate = ({ page, status, cursor }: AdminOrdersTemplateProps) => (
+const AdminOrdersTemplate = ({
+  page,
+  q,
+  status,
+  cursor,
+}: AdminOrdersTemplateProps) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
       <AdminListHeading title="주문 관리" />
@@ -39,13 +46,25 @@ const AdminOrdersTemplate = ({ page, status, cursor }: AdminOrdersTemplateProps)
         paramName="status"
         value={status}
         options={STATUS_FILTER_OPTIONS}
+        preserved={{ q }}
       />
     </div>
+
+    <QuerySearchInput
+      basePath={ROUTES.admin.orders}
+      label="주문 검색"
+      value={q}
+      placeholder="주문번호, 고객명, 이메일, 전화번호"
+      preserved={{ status }}
+    />
 
     <PaginatedTable
       headings={TABLE_HEADINGS}
       basePath={ROUTES.admin.orders}
-      query={status ? { status } : {}}
+      query={{
+        ...(status ? { status } : {}),
+        ...(q ? { q } : {}),
+      }}
       hasCursor={!!cursor}
       nextCursor={page.nextCursor}
     >
@@ -54,9 +73,13 @@ const AdminOrdersTemplate = ({ page, status, cursor }: AdminOrdersTemplateProps)
           <TableCell colSpan={TABLE_HEADINGS.length}>
             <Empty>
               <EmptyHeader>
-                <EmptyTitle>조건에 해당하는 주문이 없습니다</EmptyTitle>
+                <EmptyTitle>
+                  {q ? "검색 결과가 없습니다" : "조건에 해당하는 주문이 없습니다"}
+                </EmptyTitle>
                 <EmptyDescription>
-                  다른 상태 필터를 선택해보세요.
+                  {q
+                    ? "검색어를 지우면 전체 주문을 볼 수 있습니다."
+                    : "다른 상태 필터를 선택해보세요."}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>

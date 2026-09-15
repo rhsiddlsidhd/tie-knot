@@ -66,4 +66,59 @@ describe("QueryFilterSelect", () => {
 
     expect(screen.getByText("전체 상태")).toBeInTheDocument();
   });
+  // q가 생기면서 필터 변경이 검색어를 날리면 안 된다.
+  it("보존할 파라미터를 함께 싣는다", async () => {
+    const user = userEvent.setup();
+    render(
+      <QueryFilterSelect
+        basePath="/admin/orders"
+        paramName="status"
+        options={options}
+        preserved={{ q: "김철수" }}
+      />,
+    );
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "결제완료" }));
+
+    expect(pushMock).toHaveBeenCalledWith(
+      "/admin/orders?q=%EA%B9%80%EC%B2%A0%EC%88%98&status=CONFIRMED",
+    );
+  });
+
+  it("필터를 전체로 되돌려도 보존할 파라미터는 남는다", async () => {
+    const user = userEvent.setup();
+    render(
+      <QueryFilterSelect
+        basePath="/admin/orders"
+        paramName="status"
+        value="PENDING"
+        options={options}
+        preserved={{ q: "kim" }}
+      />,
+    );
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "전체 상태" }));
+
+    expect(pushMock).toHaveBeenCalledWith("/admin/orders?q=kim");
+  });
+
+  // 필터를 바꾸면 이전 페이지 위치는 의미가 없다.
+  it("cursor는 보존하지 않는다", async () => {
+    const user = userEvent.setup();
+    render(
+      <QueryFilterSelect
+        basePath="/admin/orders"
+        paramName="status"
+        options={options}
+        preserved={{ cursor: "abc" }}
+      />,
+    );
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "결제완료" }));
+
+    expect(pushMock).toHaveBeenCalledWith("/admin/orders?status=CONFIRMED");
+  });
 });

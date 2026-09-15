@@ -962,6 +962,150 @@ describe("order", () => {
   });
 
   describe("getAdminOrdersPageService", () => {
+    describe("검색(q)", () => {
+      const createOrderWithBuyer = async (
+        overrides: Record<string, string>,
+      ) =>
+        createOrderService(
+          buildOrderInputForTest({
+            buyerName: "김철수",
+            buyerEmail: "chulsoo@example.com",
+            buyerPhone: "010-1234-5678",
+            ...overrides,
+          }),
+        );
+
+      it("고객명 부분일치로 찾는다", async () => {
+        await createOrderWithBuyer({ buyerName: "김철수" });
+        await createOrderWithBuyer({
+          buyerName: "박영희",
+          buyerEmail: "young@example.com",
+        });
+
+        const result = await getAdminOrdersPageService({ q: "철수" });
+
+        expect(result.items.map((o) => o.buyerName)).toEqual(["김철수"]);
+      });
+
+      it("이메일 부분일치로 찾는다", async () => {
+        await createOrderWithBuyer({ buyerEmail: "chulsoo@example.com" });
+        await createOrderWithBuyer({
+          buyerName: "박영희",
+          buyerEmail: "young@example.com",
+        });
+
+        const result = await getAdminOrdersPageService({ q: "chulsoo" });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      it("전화번호 부분일치로 찾는다", async () => {
+        await createOrderWithBuyer({ buyerPhone: "010-1234-5678" });
+        await createOrderWithBuyer({
+          buyerName: "박영희",
+          buyerEmail: "young@example.com",
+          buyerPhone: "010-9999-0000",
+        });
+
+        const result = await getAdminOrdersPageService({ q: "1234" });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      it("대소문자를 무시한다", async () => {
+        await createOrderWithBuyer({ buyerEmail: "ChulSoo@example.com" });
+
+        const result = await getAdminOrdersPageService({ q: "chulsoo" });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      // 주문번호는 유일 식별자라 부분일치로 흩뿌리지 않는다(#309 규약).
+      it("주문번호는 완전일치로만 찾는다", async () => {
+        const order = await createOrderWithBuyer({});
+        const saved = await OrderModel.findById(order._id).lean();
+        const merchantUid = saved!.merchantUid;
+
+        const exact = await getAdminOrdersPageService({ q: merchantUid });
+        expect(exact.items.map((o) => o.id)).toEqual([order._id.toString()]);
+
+        const partial = await getAdminOrdersPageService({
+          q: merchantUid.slice(0, 5),
+        });
+        expect(partial.items).toHaveLength(0);
+      });
+
+      it("정규식 특수문자를 글자 그대로 찾는다", async () => {
+        await createOrderWithBuyer({ buyerName: "김(철수)" });
+        await createOrderWithBuyer({
+          buyerName: "김철수",
+          buyerEmail: "young@example.com",
+        });
+
+        const result = await getAdminOrdersPageService({ q: "(철수)" });
+
+        expect(result.items.map((o) => o.buyerName)).toEqual(["김(철수)"]);
+      });
+
+      it("조건에 맞는 주문이 없으면 빈 배열을 리턴한다", async () => {
+        await createOrderWithBuyer({});
+
+        const result = await getAdminOrdersPageService({ q: "없는고객" });
+
+        expect(result.items).toEqual([]);
+      });
+
+      // 검색·상태 필터·커서가 각자 $or를 쓰면 서로를 덮어쓴다 — 셋이 동시에
+      // 걸렸을 때 전부 적용되는지가 이 계약의 핵심이다.
+      it("검색어와 상태 필터를 함께 적용한다", async () => {
+        const target = await createOrderWithBuyer({});
+        await OrderModel.updateOne(
+          { _id: target._id },
+          { orderStatus: "CONFIRMED" },
+        );
+        const other = await createOrderWithBuyer({});
+        await OrderModel.updateOne(
+          { _id: other._id },
+          { orderStatus: "PENDING" },
+        );
+
+        const result = await getAdminOrdersPageService({
+          q: "철수",
+          status: "CONFIRMED",
+        });
+
+        expect(result.items.map((o) => o.id)).toEqual([target._id.toString()]);
+      });
+
+      it("검색어와 커서를 함께 적용한다", async () => {
+        for (let i = 0; i < 3; i += 1) {
+          await createOrderWithBuyer({});
+        }
+        await createOrderWithBuyer({
+          buyerName: "박영희",
+          buyerEmail: "young@example.com",
+        });
+
+        const first = await getAdminOrdersPageService({ q: "철수", limit: 2 });
+        expect(first.items).toHaveLength(2);
+        expect(first.nextCursor).not.toBeNull();
+
+        const second = await getAdminOrdersPageService({
+          q: "철수",
+          limit: 2,
+          cursor: first.nextCursor!,
+        });
+
+        expect(second.items).toHaveLength(1);
+        expect(second.nextCursor).toBeNull();
+        expect(
+          [...first.items, ...second.items].every(
+            (o) => o.buyerName === "김철수",
+          ),
+        ).toBe(true);
+      });
+    });
+
     it("createdAt 내림차순으로 정렬한다", async () => {
       const older = await createOrderService(buildOrderInputForTest());
       const newer = await createOrderService(buildOrderInputForTest());

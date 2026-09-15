@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowLeft, Search } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/ui/components/atoms/button";
 import {
@@ -8,11 +8,10 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from "@/ui/components/atoms/empty";
-import { Input } from "@/ui/components/atoms/input";
-import { Label } from "@/ui/components/atoms/label";
 import { TableRow, TableCell } from "@/ui/components/atoms/table";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
+import { QuerySearchInput } from "@/ui/components/organisms/QuerySearchInput";
 import type { FeatureProductBindingPage } from "@/core/domain/premium-feature";
 import { ROUTES } from "@/core/domain/routes";
 import { FeatureProductBindingRow } from "@/app/(admin)/admin/premium-features/[id]/products/_containers/FeatureProductBindingRow";
@@ -48,29 +47,12 @@ const FeatureProductBindingTemplate = ({
       />
     </div>
 
-    {/*
-      검색은 GET 폼이라 제출하면 q만 실린다 — cursor가 자동으로 떨어져 새 검색이
-      항상 첫 페이지에서 시작한다(#309 규약).
-    */}
-    <form
-      action={ROUTES.admin.premiumFeatures.products(featureId)}
-      className="flex items-end gap-2"
-    >
-      <div className="flex-1 space-y-2">
-        <Label htmlFor="q">상품 검색</Label>
-        <Input
-          id="q"
-          name="q"
-          type="search"
-          defaultValue={q ?? ""}
-          placeholder="상품명으로 검색"
-        />
-      </div>
-      <Button type="submit" variant="outline">
-        <Search className="mr-1 h-4 w-4" />
-        검색
-      </Button>
-    </form>
+    <QuerySearchInput
+      basePath={ROUTES.admin.premiumFeatures.products(featureId)}
+      label="상품 검색"
+      value={q}
+      placeholder="상품명으로 검색"
+    />
 
     <PaginatedTable
       headings={TABLE_HEADINGS}
