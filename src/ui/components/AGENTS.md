@@ -25,7 +25,7 @@
 | 우리 코드, 조합 1개 이상, 동작 1종 | molecule |
 | 우리 코드, 동작 2종 이상           | organism |
 
-props로 받은 핸들러를 그대로 전달하는 상호작용도 동작으로 센다. 예를 들어 라벨 표시와 `onChange` 전달을 함께 하는 `TextField`는 표시와 입력 두 종류의 동작을 가지므로 organism이다. 반대로 CSS grid처럼 무엇을 조합하는지가 아니라 배치 방식만 반복하는 코드는 티어 컴포넌트로 만들지 않고 소비처에 배치 클래스를 둔다.
+props로 받은 핸들러를 그대로 전달하는 상호작용도 동작으로 센다. 예를 들어 라벨 표시와 `onChange` 전달을 함께 하는 `InputField`는 표시와 입력 두 종류의 동작을 가지므로 organism이다. 반대로 CSS grid처럼 무엇을 조합하는지가 아니라 배치 방식만 반복하는 코드는 티어 컴포넌트로 만들지 않고 소비처에 배치 클래스를 둔다.
 
 ## 축 B — 공용 여부
 
@@ -44,7 +44,7 @@ atoms, molecules, organisms, templates는 모두 props 기반의 순수한 표�
 | --------------------------- | ------------------------------------- | -------- |
 | `app-image.tsx`             | 프로젝트 UI 조합 0개, 이미지 표시 1종 | atom     |
 | `AdminListHeading.tsx`      | Typography 조합, 제목 표시 1종        | molecule |
-| `TextField.tsx`             | 라벨·오류 표시와 입력 전달            | organism |
+| `InputField.tsx`            | 라벨·오류 표시와 입력 전달            | organism |
 | `RatingStars.tsx`           | 별점 표시와 입력                      | organism |
 | `LegalDocumentTemplate.tsx` | terms/privacy 페이지 몸통 전체 위임   | template |
 
