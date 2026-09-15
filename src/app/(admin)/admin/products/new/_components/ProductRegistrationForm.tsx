@@ -39,36 +39,14 @@ import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import type { ApiResponse } from "@/core/domain/error";
 import { ProductFormSlideCard } from "./ProductFormSlideCard";
-
-type ProductFormStep =
-  | "basic"
-  | "pricing"
-  | "visibility"
-  | "thumbnail"
-  | "preview"
-  | "images"
-  | "quantity";
-
-type StepErrors = Partial<Record<ProductFormStep, string>>;
-
-const MOBILE_PRODUCT_FORM_STEPS: readonly ProductFormStep[] = [
-  "basic",
-  "pricing",
-  "visibility",
-  "thumbnail",
-  "preview",
-  "images",
-  "quantity",
-];
-
-const PHYSICAL_PRODUCT_FORM_STEPS: readonly ProductFormStep[] = [
-  "basic",
-  "pricing",
-  "visibility",
-  "thumbnail",
-  "images",
-  "quantity",
-];
+import {
+  MOBILE_PRODUCT_FORM_STEPS,
+  PHYSICAL_PRODUCT_FORM_STEPS,
+} from "../_constants/productForm";
+import type {
+  ProductFormStep,
+  StepErrors,
+} from "../_types/productForm";
 
 interface ProductRegistrationFormProps {
   premiumFeatures: PremiumFeature[];
