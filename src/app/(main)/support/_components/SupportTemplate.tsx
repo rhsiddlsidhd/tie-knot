@@ -5,7 +5,11 @@ import { Button } from "@/ui/components/atoms/button";
 import { Card, CardContent } from "@/ui/components/atoms/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/components/atoms/collapsible";
 import { Input } from "@/ui/components/atoms/input";
-import { Label } from "@/ui/components/atoms/label";
+import {
+  Field,
+  FieldGroup,
+  FieldLabel,
+} from "@/ui/components/atoms/field";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { TypographyH1, TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ChevronDown } from "lucide-react";
@@ -76,22 +80,27 @@ const SupportTemplate = () => {
         </TypographyH2>
         <Card>
           <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit}>
-              <div className="space-y-2">
-                <Label htmlFor="inquiryTitle">제목</Label>
-                <Input id="inquiryTitle" placeholder="문의 제목을 입력해주세요" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="inquiryContent">문의 내용</Label>
-                <Textarea
-                  id="inquiryContent"
-                  rows={4}
-                  placeholder="문의하실 내용을 자세히 적어주세요."
-                />
-              </div>
-              <Button type="submit" className="w-full">
-                문의 등록하기
-              </Button>
+            <form onSubmit={handleSubmit}>
+              <FieldGroup className="gap-4">
+                <Field>
+                  <FieldLabel htmlFor="inquiryTitle">제목</FieldLabel>
+                  <Input
+                    id="inquiryTitle"
+                    placeholder="문의 제목을 입력해주세요"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="inquiryContent">문의 내용</FieldLabel>
+                  <Textarea
+                    id="inquiryContent"
+                    rows={4}
+                    placeholder="문의하실 내용을 자세히 적어주세요."
+                  />
+                </Field>
+                <Button type="submit" className="w-full">
+                  문의 등록하기
+                </Button>
+              </FieldGroup>
             </form>
           </CardContent>
         </Card>

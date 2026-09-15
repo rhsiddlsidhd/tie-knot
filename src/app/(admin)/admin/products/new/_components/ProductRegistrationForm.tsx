@@ -3,7 +3,6 @@
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
-import { Alert } from "@/ui/components/molecules/Alert";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { SelectField } from "@/ui/components/organisms/SelectField";
 import {
@@ -18,11 +17,19 @@ import { Button } from "@/ui/components/atoms/button";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { Switch } from "@/ui/components/atoms/switch";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Label } from "@/ui/components/atoms/label";
 import {
-  TypographyMuted,
-  TypographyH4,
-} from "@/ui/components/atoms/typography";
+  Field,
+  FieldContent,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from "@/ui/components/atoms/field";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+} from "@/ui/components/atoms/input-group";
+import { TypographyH4 } from "@/ui/components/atoms/typography";
 
 import { useImageList } from "@/ui/hooks/useImageList";
 
@@ -154,30 +161,30 @@ const ProductRegistrationForm = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">상품명 *</Label>
+              <Field data-invalid={!!titleError}>
+                <FieldLabel htmlFor="title">상품명 *</FieldLabel>
                 <Input
                   id="title"
                   name="title"
                   placeholder="예: 엘레강트 로즈 청첩장"
                   required
+                  aria-invalid={!!titleError}
                 />
-                {titleError && <Alert type="error">{titleError}</Alert>}
-              </div>
+                <FieldError>{titleError}</FieldError>
+              </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">상품 설명 *</Label>
+              <Field data-invalid={!!descriptionError}>
+                <FieldLabel htmlFor="description">상품 설명 *</FieldLabel>
                 <Textarea
                   id="description"
                   name="description"
                   placeholder="상품에 대한 자세한 설명을 입력하세요."
                   rows={4}
                   required
+                  aria-invalid={!!descriptionError}
                 />
-                {descriptionError && (
-                  <Alert type="error">{descriptionError}</Alert>
-                )}
-              </div>
+                <FieldError>{descriptionError}</FieldError>
+              </Field>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <SelectField
@@ -235,10 +242,10 @@ const ProductRegistrationForm = ({
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="price">기본 가격 *</Label>
-                  <div className="relative">
-                    <Input
+                <Field data-invalid={!!(priceInputError || priceError)}>
+                  <FieldLabel htmlFor="price">기본 가격 *</FieldLabel>
+                  <InputGroup>
+                    <InputGroupInput
                       id="price"
                       name="price"
                       type="number"
@@ -246,7 +253,7 @@ const ProductRegistrationForm = ({
                       min="0"
                       step="1"
                       required
-                      className="pr-12"
+                      aria-invalid={!!(priceInputError || priceError)}
                       onChange={(event) => {
                         const value = event.target.value;
                         setPriceInputError(
@@ -256,17 +263,13 @@ const ProductRegistrationForm = ({
                         );
                       }}
                     />
-                    <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-                      원
-                    </span>
-                  </div>
-                  {(priceInputError || priceError) && (
-                    <Alert type="error">{priceInputError || priceError}</Alert>
-                  )}
-                </div>
+                    <InputGroupAddon align="inline-end">원</InputGroupAddon>
+                  </InputGroup>
+                  <FieldError>{priceInputError || priceError}</FieldError>
+                </Field>
 
-                <div className="space-y-2">
-                  <Label htmlFor="discountValue">할인</Label>
+                <Field data-invalid={!!discountInputError}>
+                  <FieldLabel htmlFor="discountValue">할인</FieldLabel>
                   <div className="flex gap-2">
                     <SelectField
                       id="discountType"
@@ -284,8 +287,8 @@ const ProductRegistrationForm = ({
                     >
                       {""}
                     </SelectField>
-                    <div className="relative flex-1">
-                      <Input
+                    <InputGroup className="flex-1">
+                      <InputGroupInput
                         id="discountValue"
                         name="discount.value"
                         type="number"
@@ -294,7 +297,7 @@ const ProductRegistrationForm = ({
                         step={discountType === "rate" ? "0.01" : "1"}
                         max={discountType === "rate" ? "1" : undefined}
                         defaultValue="0"
-                        className="pr-12"
+                        aria-invalid={!!discountInputError}
                         onChange={(event) => {
                           const value = event.target.value;
                           setDiscountInputError(
@@ -306,31 +309,32 @@ const ProductRegistrationForm = ({
                           );
                         }}
                       />
-                      <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
+                      <InputGroupAddon align="inline-end">
                         {discountType === "rate" ? "율" : "원"}
-                      </span>
-                    </div>
+                      </InputGroupAddon>
+                    </InputGroup>
                   </div>
-                  <TypographyMuted>
+                  <FieldDescription>
                     {discountType === "rate"
                       ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
                       : "차감 금액 입력"}
-                  </TypographyMuted>
-                  {discountInputError && (
-                    <Alert type="error">{discountInputError}</Alert>
-                  )}
-                </div>
+                  </FieldDescription>
+                  <FieldError>{discountInputError}</FieldError>
+                </Field>
               </div>
 
-              <div className="border-border flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label htmlFor="isPremium" className="text-base">
+              <Field
+                orientation="horizontal"
+                className="border-border rounded-lg border p-4"
+              >
+                <FieldContent>
+                  <FieldLabel htmlFor="isPremium" className="text-base">
                     프리미엄 상품
-                  </Label>
-                  <TypographyMuted>
+                  </FieldLabel>
+                  <FieldDescription>
                     추가 유료 옵션을 제공하는 상품입니다.
-                  </TypographyMuted>
-                </div>
+                  </FieldDescription>
+                </FieldContent>
                 <Switch
                   id="isPremium"
                   checked={isPremium}
@@ -339,7 +343,7 @@ const ProductRegistrationForm = ({
                     if (!checked) setSelectedFeatureIds([]);
                   }}
                 />
-              </div>
+              </Field>
 
               {isPremium && (
                 <div className="space-y-4 rounded-lg border border-dashed p-4">
@@ -348,9 +352,10 @@ const ProductRegistrationForm = ({
                   </TypographyH4>
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                     {premiumFeatures.map((feature) => (
-                      <div
+                      <Field
                         key={feature.code}
-                        className="flex items-center space-x-2"
+                        orientation="horizontal"
+                        className="gap-2"
                       >
                         <Checkbox
                           id={`feature-${feature.code}`}
@@ -359,18 +364,16 @@ const ProductRegistrationForm = ({
                             handleFeatureChange(!!checked, feature._id)
                           }
                         />
-                        <Label
+                        <FieldLabel
                           htmlFor={`feature-${feature.code}`}
                           className="cursor-pointer text-sm leading-none font-medium"
                         >
                           {feature.label}
-                        </Label>
-                      </div>
+                        </FieldLabel>
+                      </Field>
                     ))}
                   </div>
-                  {featureIdsError && (
-                    <Alert type="error">{featureIdsError}</Alert>
-                  )}
+                  <FieldError>{featureIdsError}</FieldError>
                 </div>
               )}
             </CardContent>
@@ -385,24 +388,27 @@ const ProductRegistrationForm = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="border-border flex items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <Label htmlFor="isFeatured" className="text-base">
+              <Field
+                orientation="horizontal"
+                className="border-border rounded-lg border p-4"
+              >
+                <FieldContent>
+                  <FieldLabel htmlFor="isFeatured" className="text-base">
                     추천 상품
-                  </Label>
-                  <TypographyMuted>
+                  </FieldLabel>
+                  <FieldDescription>
                     메인 페이지에 추천 상품으로 노출됩니다.
-                  </TypographyMuted>
-                </div>
+                  </FieldDescription>
+                </FieldContent>
                 <Switch
                   id="isFeatured"
                   checked={isFeature}
                   onCheckedChange={setIsFeature}
                 />
-              </div>
+              </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="priority">추천 우선순위</Label>
+              <Field data-invalid={!!priorityError}>
+                <FieldLabel htmlFor="priority">추천 우선순위</FieldLabel>
                 <Input
                   id="priority"
                   name="priority"
@@ -412,12 +418,13 @@ const ProductRegistrationForm = ({
                   max="100"
                   step="1"
                   defaultValue="0"
+                  aria-invalid={!!priorityError}
                 />
-                {priorityError && <Alert type="error">{priorityError}</Alert>}
-                <TypographyMuted>
+                <FieldError>{priorityError}</FieldError>
+                <FieldDescription>
                   높은 숫자일수록 상단에 노출됩니다 (0-100)
-                </TypographyMuted>
-              </div>
+                </FieldDescription>
+              </Field>
             </CardContent>
           </Card>
         </div>
@@ -447,7 +454,7 @@ const ProductRegistrationForm = ({
                   name="thumbnail"
                   value={thumbnail.getUrls()[0] ?? ""}
                 />
-                {thumbnailError && <Alert type="error">{thumbnailError}</Alert>}
+                <FieldError>{thumbnailError}</FieldError>
               </div>
             </CardContent>
           </Card>
@@ -510,11 +517,7 @@ const ProductRegistrationForm = ({
                   value={item.url}
                 />
               ))}
-              {imagesError && (
-                <Alert type="error" className="mt-2">
-                  {imagesError}
-                </Alert>
-              )}
+              <FieldError className="mt-2">{imagesError}</FieldError>
             </CardContent>
           </Card>
 
@@ -527,8 +530,8 @@ const ProductRegistrationForm = ({
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="minQuantity">최소 구매 수량 *</Label>
+              <Field data-invalid={!!minQuantityError}>
+                <FieldLabel htmlFor="minQuantity">최소 구매 수량 *</FieldLabel>
                 <Input
                   id="minQuantity"
                   name="minQuantity"
@@ -538,14 +541,13 @@ const ProductRegistrationForm = ({
                   required
                   value={Number.isNaN(minQuantity) ? "" : minQuantity}
                   onChange={handleMinQuantityChange}
+                  aria-invalid={!!minQuantityError}
                 />
-                {minQuantityError && (
-                  <Alert type="error">{minQuantityError}</Alert>
-                )}
-              </div>
+                <FieldError>{minQuantityError}</FieldError>
+              </Field>
 
-              <div className="space-y-2">
-                <Label htmlFor="maxQuantity">최대 구매 수량 *</Label>
+              <Field data-invalid={!!maxQuantityError}>
+                <FieldLabel htmlFor="maxQuantity">최대 구매 수량 *</FieldLabel>
                 {isUnlimitedMax ? (
                   <>
                     <Input
@@ -569,23 +571,21 @@ const ProductRegistrationForm = ({
                     }
                   />
                 )}
-                <div className="flex items-center gap-2 pt-1">
+                <Field orientation="horizontal" className="gap-2 pt-1">
                   <Checkbox
                     id="isUnlimitedMax"
                     checked={isUnlimitedMax}
                     onCheckedChange={(checked) => setIsUnlimitedMax(!!checked)}
                   />
-                  <Label
+                  <FieldLabel
                     htmlFor="isUnlimitedMax"
                     className="cursor-pointer text-sm font-normal"
                   >
                     무제한
-                  </Label>
-                </div>
-                {maxQuantityError && (
-                  <Alert type="error">{maxQuantityError}</Alert>
-                )}
-              </div>
+                  </FieldLabel>
+                </Field>
+                <FieldError>{maxQuantityError}</FieldError>
+              </Field>
             </CardContent>
           </Card>
         </div>
