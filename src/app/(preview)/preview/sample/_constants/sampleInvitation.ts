@@ -32,7 +32,7 @@ const sampleInvitation = {
   theme: "blossom",
 } satisfies MobileInvitationContent;
 
-const SAMPLE_FEATURES = ["HORIZONTAL_SLIDE"] as const;
+const SAMPLE_FEATURES = ["GALLERY_LIGHTBOX"] as const;
 const SAMPLE_THEME = "blossom";
 
 export { sampleInvitation, SAMPLE_FEATURES, SAMPLE_THEME };

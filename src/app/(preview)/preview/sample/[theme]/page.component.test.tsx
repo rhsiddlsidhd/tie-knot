@@ -60,7 +60,7 @@ describe("sample/[theme] 프리뷰 페이지", () => {
 
     expect(
       screen.getByText(
-        "Template:theme=botanical:publicKey=sample:features=HORIZONTAL_SLIDE:venue=타이노트 웨딩홀",
+        "Template:theme=botanical:publicKey=sample:features=GALLERY_LIGHTBOX:venue=타이노트 웨딩홀",
       ),
     ).toBeInTheDocument();
   });

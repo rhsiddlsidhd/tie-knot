@@ -67,7 +67,7 @@ const PRODUCT_PRICE_KEYS = [
 
 const PREMIUM_FEATURE_KEYS = [
   "VIDEO",
-  "HORIZONTAL_SLIDE",
+  "GALLERY_LIGHTBOX",
   "CUSTOM_FONT",
   "SAVE_MOBILE_INVITATION",
   "SAVE_GUESTBOOK",
@@ -93,7 +93,7 @@ const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
 
 const PREMIUM_FEATURE_LABELS: Record<PremiumFeatureType, string> = {
   VIDEO: "🎬 비디오 추가",
-  HORIZONTAL_SLIDE: "➡️ 가로 슬라이드 갤러리",
+  GALLERY_LIGHTBOX: "🔍 갤러리 확대 보기",
   CUSTOM_FONT: "✍️ 나만의 폰트",
   SAVE_MOBILE_INVITATION: "💌 영원히 간직하는 청첩장",
   SAVE_GUESTBOOK: "📝 방명록 추억 저장",
