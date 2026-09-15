@@ -164,12 +164,12 @@ describe("MobileInvitationTemplate", () => {
     expect(screen.queryByTestId("guestbook-section")).not.toBeInTheDocument();
   });
 
-  it("features에 HORIZONTAL_SLIDE가 포함되면 갤러리 라이트박스를 활성화한다", () => {
+  it("features에 GALLERY_LIGHTBOX가 포함되면 갤러리 라이트박스를 활성화한다", () => {
     render(
       <MobileInvitationTemplate
         content={baseContent}
         publicKey="public-key-1"
-        features={["HORIZONTAL_SLIDE"]}
+        features={["GALLERY_LIGHTBOX"]}
         theme="default"
       />,
     );
@@ -177,7 +177,7 @@ describe("MobileInvitationTemplate", () => {
     expect(screen.getByTestId("gallery-section")).toHaveAttribute("data-lightbox", "true");
   });
 
-  it("features에 HORIZONTAL_SLIDE가 없으면 갤러리 라이트박스를 비활성화한다", () => {
+  it("features에 GALLERY_LIGHTBOX가 없으면 갤러리 라이트박스를 비활성화한다", () => {
     render(
       <MobileInvitationTemplate
         content={baseContent}

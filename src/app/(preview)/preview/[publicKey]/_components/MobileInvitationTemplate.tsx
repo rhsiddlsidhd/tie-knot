@@ -53,7 +53,7 @@ const MobileInvitationTemplate = ({
           <GallerySection
             {...mapCoupleInfoToGalleryProps(
               content,
-              features.includes("HORIZONTAL_SLIDE"),
+              features.includes("GALLERY_LIGHTBOX"),
             )}
           />
           <LocationSection {...mapCoupleInfoToLocationProps(content)} />
