@@ -51,6 +51,7 @@ export default defineConfig({
           exclude: [
             ...configDefaults.exclude,
             "src/app/api/**",
+            "src/app/**/_utils/**",
             "src/ui/stores/slices/**",
             "src/ui/context/**/reducer.*",
           ],
