@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/ui/components/atoms/button";
 import { Card, CardContent } from "@/ui/components/atoms/card";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/ui/components/atoms/collapsible";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/ui/components/atoms/accordion";
 import { Input } from "@/ui/components/atoms/input";
 import {
   Field,
@@ -12,39 +16,7 @@ import {
 } from "@/ui/components/atoms/field";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { TypographyH1, TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
-import { ChevronDown } from "lucide-react";
-import clsx from "clsx";
 import { MOCK_FAQS } from "../_constants/faqs";
-
-const FaqItem = ({ question, answer }: { question: string; answer: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <Card className="gap-0 py-0">
-        <CollapsibleTrigger asChild>
-          <button
-            type="button"
-            className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm font-medium"
-          >
-            <span>{question}</span>
-            <ChevronDown
-              className={clsx(
-                "text-muted-foreground h-4 w-4 shrink-0 transition-transform",
-                isOpen && "rotate-180",
-              )}
-            />
-          </button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <p className="text-muted-foreground border-t px-4 py-3 text-sm leading-relaxed">
-            {answer}
-          </p>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
-  );
-}
 
 const SupportTemplate = () => {
   const handleSubmit = (e: React.FormEvent) => {
@@ -67,11 +39,22 @@ const SupportTemplate = () => {
         <TypographyH2 className="border-none text-xl font-bold">
           자주 묻는 질문
         </TypographyH2>
-        <div className="space-y-2">
+        <Accordion type="single" collapsible className="space-y-2">
           {MOCK_FAQS.map((faq) => (
-            <FaqItem key={faq.question} question={faq.question} answer={faq.answer} />
+            <AccordionItem
+              key={faq.question}
+              value={faq.question}
+              asChild
+            >
+              <Card className="gap-0 px-4 py-0">
+                <AccordionTrigger>{faq.question}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground border-t pt-3 leading-relaxed">
+                  {faq.answer}
+                </AccordionContent>
+              </Card>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
 
       <div className="space-y-4">

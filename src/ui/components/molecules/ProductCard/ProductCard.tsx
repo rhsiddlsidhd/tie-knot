@@ -15,7 +15,10 @@ import {
   CardHeader,
 } from "@/ui/components/atoms/card";
 import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
-import { TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH3,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 const ProductCard = ({
   product,
@@ -100,9 +103,9 @@ const ProductCard = ({
               {SUB_CATEGORY_LABELS[product.subCategory as SubCategory] ??
                 product.subCategory}
             </p>
-            <h3 className="line-clamp-2 text-xs leading-snug font-semibold text-white sm:text-sm">
+            <TypographyH3 className="line-clamp-2 text-xs leading-snug font-semibold text-white sm:text-sm">
               {product.title}
-            </h3>
+            </TypographyH3>
             <div className="mt-1 flex w-full items-center justify-between sm:mt-2">
               <div className="flex items-baseline gap-1 sm:gap-1.5">
                 {hasDiscount && (
