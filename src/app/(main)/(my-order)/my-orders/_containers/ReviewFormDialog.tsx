@@ -15,7 +15,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/ui/components/atoms/dialog";
-import { Textarea } from "@/ui/components/atoms/textarea";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
@@ -137,22 +137,15 @@ const ReviewFormDialog = ({
             )}
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="content" className="text-sm font-medium">
-              리뷰 내용
-            </label>
-            <Textarea
-              id="content"
-              name="content"
-              rows={5}
-              defaultValue={review?.content}
-              placeholder="상품에 대한 솔직한 후기를 남겨주세요. (최소 10자)"
-              aria-invalid={Boolean(contentError)}
-            />
-            {contentError && (
-              <p className="text-destructive text-sm">{contentError}</p>
-            )}
-          </div>
+          <TextareaField
+            id="content"
+            name="content"
+            label="리뷰 내용"
+            rows={5}
+            defaultValue={review?.content}
+            placeholder="상품에 대한 솔직한 후기를 남겨주세요. (최소 10자)"
+            error={contentError ?? undefined}
+          />
 
           <div className="space-y-2">
             <span className="text-sm font-medium">사진 (선택, 최대 5장)</span>

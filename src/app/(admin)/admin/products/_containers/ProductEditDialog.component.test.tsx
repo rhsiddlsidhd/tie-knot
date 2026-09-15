@@ -92,11 +92,17 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
 describe("ProductEditDialog (컨테이너)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    usePremiumFeatureMock.mockReturnValue({ premiumFeatures: [], loading: false });
+    usePremiumFeatureMock.mockReturnValue({
+      premiumFeatures: [],
+      loading: false,
+    });
   });
 
   it("프리미엄 기능 목록을 불러오는 중이면 폼 대신 스피너를 렌더링한다", () => {
-    usePremiumFeatureMock.mockReturnValue({ premiumFeatures: [], loading: true });
+    usePremiumFeatureMock.mockReturnValue({
+      premiumFeatures: [],
+      loading: true,
+    });
 
     render(<ProductEditDialog product={buildProduct()} />);
 
@@ -104,13 +110,22 @@ describe("ProductEditDialog (컨테이너)", () => {
   });
 
   it("로딩이 끝나면 상품 값을 각 필드의 기본값으로 렌더링한다", () => {
-    render(<ProductEditDialog product={buildProduct()} />);
+    const { container } = render(
+      <ProductEditDialog product={buildProduct()} />,
+    );
 
     expect(screen.getByLabelText(/상품명/)).toHaveValue("봄맞이 청첩장");
     expect(screen.getByLabelText(/상품 설명/)).toHaveValue(
       "봄 느낌 가득한 모바일 청첩장입니다.",
     );
     expect(screen.getByLabelText(/기본 가격/)).toHaveValue(29000);
+    expect(screen.getByLabelText("할인")).toHaveValue(0);
+    expect(
+      screen.getByRole("combobox", { name: "할인 방식" }),
+    ).toBeInTheDocument();
+    expect(
+      container.querySelectorAll('[name="discount.discountType"]'),
+    ).toHaveLength(1);
   });
 
   it("취소 버튼을 클릭하면 모달을 닫는다", async () => {
@@ -128,7 +143,9 @@ describe("ProductEditDialog (컨테이너)", () => {
       loading: false,
     });
     const user = userEvent.setup();
-    const { container } = render(<ProductEditDialog product={buildProduct()} />);
+    const { container } = render(
+      <ProductEditDialog product={buildProduct()} />,
+    );
 
     await user.click(screen.getByRole("switch", { name: /프리미엄 상품/ }));
     expect(screen.getByText("프리미엄 기능 선택")).toBeInTheDocument();
@@ -205,7 +222,10 @@ describe("ProductEditDialog (컨테이너)", () => {
   it("필드 에러 없는 실패면 에러 메시지를 toast로 표시하고 모달을 닫지 않는다", async () => {
     vi.mocked(updateProduct).mockResolvedValue({
       success: false,
-      error: { category: "INTERNAL", message: "알 수 없는 오류가 발생했습니다." },
+      error: {
+        category: "INTERNAL",
+        message: "알 수 없는 오류가 발생했습니다.",
+      },
     });
     const user = userEvent.setup();
     render(<ProductEditDialog product={buildProduct()} />);
@@ -213,7 +233,9 @@ describe("ProductEditDialog (컨테이너)", () => {
     await user.click(screen.getByRole("button", { name: "상품 수정" }));
 
     await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith("알 수 없는 오류가 발생했습니다."),
+      expect(toast.error).toHaveBeenCalledWith(
+        "알 수 없는 오류가 발생했습니다.",
+      ),
     );
     expect(closeModalMock).not.toHaveBeenCalled();
   });

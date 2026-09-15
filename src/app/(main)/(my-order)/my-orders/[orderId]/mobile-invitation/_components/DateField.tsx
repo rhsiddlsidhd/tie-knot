@@ -6,12 +6,14 @@ import { ko } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
 import { Calendar } from "@/ui/components/atoms/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/ui/components/atoms/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/ui/components/atoms/popover";
 import { Input } from "@/ui/components/atoms/input";
 
-
-
-import { FormField } from "@/ui/components/organisms/FormField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import type { FieldBase } from "@/core/domain/field";
 import { cn } from "@/core/utils/cn";
 
@@ -39,7 +41,7 @@ const DateField = ({
   }
 
   return (
-    <FormField id={id} label={children} required={required}>
+    <FieldFrame id={id} label={children}>
       {/* 폼 제출을 위한 hidden input */}
       <Input
         type="hidden"
@@ -73,7 +75,7 @@ const DateField = ({
           />
         </PopoverContent>
       </Popover>
-    </FormField>
+    </FieldFrame>
   );
 };
 

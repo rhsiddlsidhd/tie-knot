@@ -1,5 +1,10 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
-import { TextField } from "@/ui/components/organisms/TextField";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
+import { InputField } from "@/ui/components/organisms/InputField";
 import type { BuyerInfo } from "@/core/schemas/request/order.schema";
 
 interface BuyerInfoCardProps {
@@ -20,40 +25,37 @@ const BuyerInfoCard = ({ step, errors }: BuyerInfoCardProps) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
-          <TextField
+          <InputField
             id="name"
             name="buyerName"
+            label="이름"
             type="text"
             placeholder="홍길동"
             required
             error={errors.buyerName?.[0]}
-          >
-            이름
-          </TextField>
-          <TextField
+          />
+          <InputField
             id="phone"
             name="buyerPhone"
+            label="연락처"
             type="tel"
             placeholder="010-1234-5678"
             required
             error={errors.buyerPhone?.[0]}
-          >
-            연락처
-          </TextField>
+          />
         </div>
-        <TextField
+        <InputField
           id="email"
           name="buyerEmail"
+          label="이메일"
           type="email"
           placeholder="your@email.com"
           required
           error={errors.buyerEmail?.[0]}
-        >
-          이메일
-        </TextField>
+        />
       </CardContent>
     </Card>
   );
-}
+};
 
 export { BuyerInfoCard };

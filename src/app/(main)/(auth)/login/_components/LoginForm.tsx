@@ -9,7 +9,7 @@ import {
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { Field, FieldLabel } from "@/ui/components/atoms/field";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { ROUTES } from "@/core/domain/routes";
 interface LoginFormProps {
   action: (formData: FormData) => void;
@@ -36,27 +36,25 @@ const LoginForm = ({
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField
+        <InputField
           id="email"
           name="email"
+          label="이메일"
           type="email"
           placeholder="your@email.com"
           required
           error={emailError}
-        >
-          이메일
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="password"
           name="password"
+          label="비밀번호"
           type="password"
           placeholder="••••••••"
           required
           error={passwordError}
-        >
-          비밀번호
-        </TextField>
+        />
 
         <Field orientation="horizontal" className="gap-2">
           <Checkbox id="remember" name="remember" />

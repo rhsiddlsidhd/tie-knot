@@ -10,7 +10,7 @@ import {
   TypographySmall,
 } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
 import { ROUTES } from "@/core/domain/routes";
@@ -98,16 +98,15 @@ const ForgotPasswordForm = ({
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField
+        <InputField
           id="email"
           type="email"
           name="email"
+          label="이메일"
           placeholder="your@email.com"
           required
           error={emailError}
-        >
-          이메일
-        </TextField>
+        />
 
         <TypographyMuted>
           입력하신 이메일로 비밀번호 재설정 링크를 보내드립니다

@@ -13,7 +13,7 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
 import { ROUTES } from "@/core/domain/routes";
@@ -44,60 +44,55 @@ const SignupForm = ({ action, pending, state }: SignupFormProps) => {
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField
+        <InputField
           id="name"
           name="name"
+          label="이름"
           type="text"
           placeholder="홍길동"
           required
           error={nameError}
-        >
-          이름
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="email"
           name="email"
+          label="이메일"
           type="email"
           placeholder="your@email.com"
           required
           error={emailError}
-        >
-          이메일
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="phone"
           name="phone"
+          label="전화번호"
           type="tel"
           placeholder="010-1234-5678"
           required
           error={phoneError}
-        >
-          전화번호
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="password"
           name="password"
+          label="비밀번호"
           type="password"
           placeholder="••••••••"
           required
           error={passwordError}
-        >
-          비밀번호
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="confirmPassword"
           name="confirmPassword"
+          label="비밀번호 확인"
           type="password"
           placeholder="••••••••"
           required
           error={confirmPasswordError}
-        >
-          비밀번호 확인
-        </TextField>
+        />
 
         <div className="space-y-3 pt-2">
           <Field orientation="horizontal" className="gap-2">

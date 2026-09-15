@@ -1,8 +1,8 @@
 "use client";
 
 import { Input } from "@/ui/components/atoms/input";
-import { FormField } from "@/ui/components/organisms/FormField";
-import { TextField } from "@/ui/components/organisms/TextField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { useDaumPopup } from "@/adapters/browser/daum/useDaumPopup";
 import { useState } from "react";
 
@@ -48,7 +48,7 @@ const AddressField = ({
   const fieldId = `${name}_address`;
 
   return (
-    <FormField id={fieldId} label={label} error={error} required={required}>
+    <FieldFrame id={fieldId} label={label} error={error}>
       <Input
         id={fieldId}
         name={fieldId}
@@ -60,18 +60,17 @@ const AddressField = ({
         aria-invalid={!!error}
       />
 
-      <TextField
+      <InputField
         id={`${name}AddressDetail`}
         name={`${name}_address_detail`}
+        label="상세 주소"
         type="text"
         placeholder="예: 3층 그랜드볼룸"
         required={required}
         defaultValue={addressDetailDefaultValue}
         error={addressDetailError}
-      >
-        상세 주소
-      </TextField>
-    </FormField>
+      />
+    </FieldFrame>
   );
 };
 

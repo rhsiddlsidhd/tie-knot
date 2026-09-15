@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import type React from "react";
 import { Switch } from "@/ui/components/atoms/switch";
 import {
   Field,
@@ -9,22 +9,21 @@ import {
   FieldDescription,
 } from "@/ui/components/atoms/field";
 
-import type { FieldBase } from "@/core/domain/field";
-
-type SwitchFieldProps = Omit<FieldBase, "defaultValue"> & {
-  message?: string;
-  defaultValue?: boolean;
-};
+interface SwitchFieldProps extends Omit<
+  React.ComponentProps<typeof Switch>,
+  "id" | "children"
+> {
+  id: string;
+  label: React.ReactNode;
+  description?: React.ReactNode;
+}
 
 const SwitchField = ({
   id,
-  name,
-  children,
-  message,
-  defaultValue,
+  label,
+  description,
+  ...switchProps
 }: SwitchFieldProps) => {
-  const [info, setInfo] = useState<boolean>(defaultValue ?? false);
-
   return (
     <Field
       orientation="horizontal"
@@ -32,18 +31,14 @@ const SwitchField = ({
     >
       <FieldContent>
         <FieldLabel htmlFor={id} className="cursor-pointer text-base">
-          {children}
+          {label}
         </FieldLabel>
-        <FieldDescription>{message}</FieldDescription>
+        {description && <FieldDescription>{description}</FieldDescription>}
       </FieldContent>
-      <Switch
-        id={id}
-        name={name}
-        checked={info}
-        onCheckedChange={(checked) => setInfo(checked)}
-      />
+      <Switch id={id} {...switchProps} />
     </Field>
   );
 };
 
 export { SwitchField };
+export type { SwitchFieldProps };

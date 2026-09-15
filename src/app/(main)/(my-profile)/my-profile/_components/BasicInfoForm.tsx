@@ -1,9 +1,15 @@
 "use client";
 import { Button } from "@/ui/components/atoms/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import clsx from "clsx";
 
 import { Save } from "lucide-react";
@@ -53,48 +59,48 @@ const BasicInfoForm = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <TextField
+            <InputField
               id="email"
               name="email"
+              label="이메일"
               type="email"
               defaultValue={email}
               readOnly
               className="bg-muted"
-            >
-              이메일
-            </TextField>
+            />
 
             <TypographyMuted className="pt-2">
               이메일은 변경할 수 없습니다
             </TypographyMuted>
           </div>
 
-          <TextField
+          <InputField
             id="name"
             name="name"
+            label="이름"
             type="text"
             defaultValue={name}
             readOnly={!basicInfoToggle}
             className={!basicInfoToggle ? "bg-muted" : ""}
-          >
-            이름
-          </TextField>
+          />
 
-          <TextField
+          <InputField
             id="phone"
             name="phone"
+            label="전화번호"
             type="tel"
             defaultValue={phone}
             readOnly={!basicInfoToggle}
             className={!basicInfoToggle ? "bg-muted" : ""}
-          >
-            전화번호
-          </TextField>
+          />
 
           {basicInfoToggle && (
-            <TextField id="password" name="password" type="password">
-              비밀번호
-            </TextField>
+            <InputField
+              id="password"
+              name="password"
+              label="비밀번호"
+              type="password"
+            />
           )}
         </CardContent>
       </Card>

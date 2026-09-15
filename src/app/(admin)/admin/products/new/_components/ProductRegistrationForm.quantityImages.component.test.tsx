@@ -84,7 +84,7 @@ describe("ProductRegistrationForm — REQ-6 invitation 전용 필드 조건부 �
     const user = userEvent.setup();
     renderForm();
 
-    expect(screen.getByText("상세 이미지")).toBeInTheDocument(); // invitation: 선택사항, asterisk 없음
+    expect(screen.getByText("상세 이미지").querySelector("svg")).toBeNull();
 
     const categoryTrigger = screen
       .getAllByRole("combobox")
@@ -96,7 +96,9 @@ describe("ProductRegistrationForm — REQ-6 invitation 전용 필드 조건부 �
     await user.click(categoryTrigger!);
     await user.click(await screen.findByRole("option", { name: "답례품" }));
 
-    expect(screen.getByText("상세 이미지 *")).toBeInTheDocument();
+    expect(
+      screen.getByText("상세 이미지").querySelector("svg"),
+    ).toBeInTheDocument();
   });
 });
 
@@ -139,7 +141,7 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
   it("초기값은 최소 1 / 무제한 체크됨(maxQuantity hidden=0)이다", () => {
     const { container } = renderForm();
 
-    expect(screen.getByLabelText("최소 구매 수량 *")).toHaveValue(1);
+    expect(screen.getByLabelText("최소 구매 수량")).toHaveValue(1);
     expect(screen.getByPlaceholderText("무제한")).toBeDisabled();
 
     const hidden = container.querySelector(
@@ -156,9 +158,7 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
 
     await user.click(screen.getByLabelText("무제한"));
 
-    const active = screen.getByLabelText(
-      "최대 구매 수량 *",
-    ) as HTMLInputElement;
+    const active = screen.getByLabelText("최대 구매 수량") as HTMLInputElement;
     expect(active).not.toBeDisabled();
     expect(active.value).toBe("1");
     expect(container.querySelectorAll('[name="maxQuantity"]')).toHaveLength(1);
@@ -171,13 +171,13 @@ describe("ProductRegistrationForm — 구매 수량(REQ-2/3, §3-4 무제한 체
     const user = userEvent.setup();
     renderForm();
 
-    const min = screen.getByLabelText("최소 구매 수량 *");
+    const min = screen.getByLabelText("최소 구매 수량");
     await user.clear(min);
     await user.type(min, "5");
 
     await user.click(screen.getByLabelText("무제한"));
 
-    expect(screen.getByLabelText("최대 구매 수량 *")).toHaveValue(5);
+    expect(screen.getByLabelText("최대 구매 수량")).toHaveValue(5);
   });
 
   it("minQuantity/maxQuantity 필드 에러가 각각 렌더된다", () => {

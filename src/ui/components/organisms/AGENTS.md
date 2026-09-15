@@ -10,13 +10,14 @@ props로 주입받은 핸들러를 하위 요소에 전달하기만 해도 해�
 
 ## 현재 예시
 
-| 파일                  | 동작 근거                    |
-| --------------------- | ---------------------------- |
-| `TextField.tsx`       | 라벨·오류 표시와 입력 전달   |
-| `ClipboardButton.tsx` | 아이콘 표시와 복사 클릭 전달 |
-| `RatingStars.tsx`     | 별점 표시와 별점 입력        |
-| `BankField.tsx`       | 은행 선택과 계좌번호 입력    |
-| `BottomActionBar.tsx` | 가시성 표시와 제출 전달      |
+| 파일                  | 동작 근거                     |
+| --------------------- | ----------------------------- |
+| `DiscountField.tsx`   | 할인 방식 선택과 값 입력·검증 |
+| `InputField.tsx`      | 라벨·오류 표시와 입력 전달    |
+| `ClipboardButton.tsx` | 아이콘 표시와 복사 클릭 전달  |
+| `RatingStars.tsx`     | 별점 표시와 별점 입력         |
+| `BankField.tsx`       | 은행 선택과 계좌번호 입력     |
+| `BottomActionBar.tsx` | 가시성 표시와 제출 전달       |
 
 `RatingStars.tsx`처럼 프로젝트 UI 조합이 0개여도 동작이 두 종류면 atom이 아니라 organism이다.
 
@@ -31,9 +32,9 @@ src/ui/components/organisms/
 ├── ClipboardButton/
 │   ├── ClipboardButton.tsx
 │   └── index.ts
-├── FormField/
-│   ├── FormField.tsx
-│   ├── FormField.component.test.tsx
+├── FieldFrame/
+│   ├── FieldFrame.tsx
+│   ├── FieldFrame.component.test.tsx
 │   └── index.ts
 └── ...
 ```
