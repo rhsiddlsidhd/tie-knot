@@ -2,7 +2,7 @@
 import { Input } from "@/ui/components/atoms/input";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
-import { FormField } from "@/ui/components/organisms/FormField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { useState } from "react";
 
 interface BankAccountInfo {
@@ -37,8 +37,10 @@ const BankField = ({
     bankName: defaultBankName,
     accountNumber: defaultAccountNumber,
   });
-  const [prevDefaultBankName, setPrevDefaultBankName] = useState(defaultBankName);
-  const [prevDefaultAccountNumber, setPrevDefaultAccountNumber] = useState(defaultAccountNumber);
+  const [prevDefaultBankName, setPrevDefaultBankName] =
+    useState(defaultBankName);
+  const [prevDefaultAccountNumber, setPrevDefaultAccountNumber] =
+    useState(defaultAccountNumber);
 
   // defaultValue 변경 시 state 업데이트 (부모 폼에서 데이터 초기화 시 필요)
   if (
@@ -61,7 +63,7 @@ const BankField = ({
     })) ?? [];
 
   return (
-    <FormField id={id} label={label} error={error} required={required}>
+    <FieldFrame id={id} label={label} error={error}>
       <div className="grid grid-cols-[120px_1fr] gap-2 max-sm:grid-cols-1">
         <BaseSelect
           name={`${id}_bank_name`}
@@ -74,6 +76,7 @@ const BankField = ({
           }
           placeholder="은행 선택"
           options={bankOptions}
+          required={required}
           aria-invalid={!!error}
         />
         <Input
@@ -86,10 +89,11 @@ const BankField = ({
             }))
           }
           value={info.accountNumber}
+          required={required}
           aria-invalid={!!error}
         />
       </div>
-    </FormField>
+    </FieldFrame>
   );
 };
 

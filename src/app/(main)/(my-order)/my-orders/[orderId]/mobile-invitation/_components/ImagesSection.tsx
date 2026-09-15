@@ -1,8 +1,13 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { FormField } from "@/ui/components/organisms/FormField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 
 import type { useImageList } from "@/ui/hooks/useImageList";
@@ -19,7 +24,7 @@ const ImagesSection = ({ thumbnail, gallery }: ImagesSectionProps) => {
         <CardTitle>이미지 설정</CardTitle>
       </CardHeader>
       <CardContent className="space-y-8">
-        <FormField label="메인 이미지" required>
+        <FieldFrame label="메인 이미지">
           <TypographyMuted>
             청첩장에 표시될 메인 이미지를 업로드하세요. (3장)
           </TypographyMuted>
@@ -31,9 +36,9 @@ const ImagesSection = ({ thumbnail, gallery }: ImagesSectionProps) => {
             onRemove={thumbnail.remove}
             maxCount={3}
           />
-        </FormField>
+        </FieldFrame>
 
-        <FormField label="갤러리">
+        <FieldFrame label="갤러리">
           <TypographyMuted>
             청첩장 갤러리에 표시될 이미지를 업로드하세요.
           </TypographyMuted>
@@ -44,10 +49,10 @@ const ImagesSection = ({ thumbnail, gallery }: ImagesSectionProps) => {
             onAdd={gallery.add}
             onRemove={gallery.remove}
           />
-        </FormField>
+        </FieldFrame>
       </CardContent>
     </Card>
   );
-}
+};
 
 export { ImagesSection };

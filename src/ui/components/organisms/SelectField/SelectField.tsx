@@ -2,7 +2,7 @@
 
 import type { SelectOption } from "@/ui/components/molecules/BaseSelect";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
-import { FormField } from "@/ui/components/organisms/FormField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { useState } from "react";
 import type { FieldBase } from "@/core/domain/field";
 
@@ -49,7 +49,7 @@ const SelectField = ({
   };
 
   return (
-    <FormField id={id} label={children} required={required} error={error}>
+    <FieldFrame id={id} label={children} error={error}>
       <BaseSelect
         id={id}
         name={name}
@@ -57,9 +57,10 @@ const SelectField = ({
         onValueChange={handleChange}
         placeholder={placeholder}
         options={finalOptions}
+        required={required}
         aria-invalid={!!error}
       />
-    </FormField>
+    </FieldFrame>
   );
 };
 

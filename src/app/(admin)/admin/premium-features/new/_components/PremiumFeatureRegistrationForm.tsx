@@ -1,6 +1,5 @@
 import { Button } from "@/ui/components/atoms/button";
 import { Input } from "@/ui/components/atoms/input";
-import { Textarea } from "@/ui/components/atoms/textarea";
 import {
   Field,
   FieldGroup,
@@ -16,6 +15,7 @@ import {
 
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
 
 interface PremiumFeatureRegistrationFormProps {
   action: (formData: FormData) => void;
@@ -61,25 +61,26 @@ const PremiumFeatureRegistrationForm = ({
             aria-invalid={!!labelError}
           />
           <FieldError>{labelError}</FieldError>
-          <FieldDescription>고객에게 표시될 기능의 이름입니다.</FieldDescription>
+          <FieldDescription>
+            고객에게 표시될 기능의 이름입니다.
+          </FieldDescription>
         </Field>
 
-        <Field data-invalid={!!descriptionError}>
-          <FieldLabel htmlFor="description">기능 설명 *</FieldLabel>
-          <Textarea
+        <div className="space-y-2">
+          <TextareaField
             id="description"
             name="description"
+            label="기능 설명 *"
             placeholder="기능에 대한 자세한 설명을 입력하세요."
             rows={5}
             required
             className="resize-none"
-            aria-invalid={!!descriptionError}
+            error={descriptionError}
           />
-          <FieldError>{descriptionError}</FieldError>
           <FieldDescription>
             기능의 특징과 장점을 상세하게 작성해주세요. (최소 20자 이상)
           </FieldDescription>
-        </Field>
+        </div>
 
         <Field data-invalid={!!additionalPriceError}>
           <FieldLabel htmlFor="additionalPrice">추가 비용 *</FieldLabel>

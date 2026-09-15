@@ -1,4 +1,4 @@
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { Button } from "@/ui/components/atoms/button";
 import {
   DialogClose,
@@ -40,14 +40,13 @@ const DeleteGuestbookForm = ({
         </DialogDescription>
       </DialogHeader>
 
-      <TextField
+      <InputField
         id="password"
         name="password"
+        label="비밀번호"
         type="password"
         error={passwordError}
-      >
-        비밀번호
-      </TextField>
+      />
 
       <DialogFooter>
         <DialogClose asChild>

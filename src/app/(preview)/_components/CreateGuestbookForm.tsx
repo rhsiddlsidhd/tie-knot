@@ -8,9 +8,9 @@ import {
 } from "@/ui/components/atoms/dialog";
 
 import { SwitchField } from "@/ui/components/organisms/SwitchField";
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
 
-import { cn } from "@/core/utils/cn";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
 
@@ -39,48 +39,35 @@ const CreateGuestbookForm = ({
 
       <input type="hidden" name="publicKey" value={publicKey} />
 
-      <TextField
+      <InputField
         name="author"
         placeholder="이름을 입력하세요."
         id="author"
+        label="이름"
         type="text"
         required
         error={authorError}
-      >
-        이름
-      </TextField>
+      />
 
-      <TextField
+      <InputField
         type="password"
         name="password"
         id="password"
+        label="비밀번호"
         placeholder="비밀번호를 입력하세요."
         error={passwordError}
-      >
-        비밀번호
-      </TextField>
+      />
 
-      <div className="space-y-2">
-        <label htmlFor="message" className="text-sm font-medium">
-          메시지
-        </label>
-        <textarea
-          name="message"
-          id="message"
-          placeholder="메시지를 입력하세요."
-          rows={5}
-          required
-          className={cn(
-            "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input w-full min-w-0 rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-            "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-          )}
-        />
-      </div>
+      <TextareaField
+        id="message"
+        name="message"
+        label="메시지"
+        placeholder="메시지를 입력하세요."
+        rows={5}
+        required
+      />
 
-      <SwitchField id="isPrivate" name="isPrivate">
-        비밀글
-      </SwitchField>
+      <SwitchField id="isPrivate" name="isPrivate" label="비밀글" />
 
       <DialogFooter>
         <DialogClose asChild>

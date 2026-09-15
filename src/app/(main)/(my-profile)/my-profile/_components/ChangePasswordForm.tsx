@@ -1,8 +1,14 @@
 "use client";
 import { Button } from "@/ui/components/atoms/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import clsx from "clsx";
 import { Save } from "lucide-react";
 import React, { useState } from "react";
@@ -74,15 +80,14 @@ const ChangePasswordForm = () => {
         {passwordToggle && (
           <CardContent className="space-y-4">
             {passwordFields.map((field) => (
-              <TextField
+              <InputField
                 key={field.id}
                 id={field.id}
                 name={field.name}
+                label={field.title}
                 type={field.type}
                 placeholder={field.placeholder}
-              >
-                {field.title}
-              </TextField>
+              />
             ))}
           </CardContent>
         )}

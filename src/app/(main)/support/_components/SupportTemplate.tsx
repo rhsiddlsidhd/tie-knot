@@ -9,13 +9,13 @@ import {
   AccordionContent,
 } from "@/ui/components/atoms/accordion";
 import { Input } from "@/ui/components/atoms/input";
+import { Field, FieldGroup, FieldLabel } from "@/ui/components/atoms/field";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import {
-  Field,
-  FieldGroup,
-  FieldLabel,
-} from "@/ui/components/atoms/field";
-import { Textarea } from "@/ui/components/atoms/textarea";
-import { TypographyH1, TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
+  TypographyH1,
+  TypographyH2,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { MOCK_FAQS } from "../_constants/faqs";
 
 const SupportTemplate = () => {
@@ -27,7 +27,7 @@ const SupportTemplate = () => {
   return (
     <div className="max-w-2xl space-y-10">
       <div>
-        <TypographyH1 className="text-left mb-2 text-3xl font-bold">
+        <TypographyH1 className="mb-2 text-left text-3xl font-bold">
           고객센터
         </TypographyH1>
         <TypographyMuted>
@@ -41,11 +41,7 @@ const SupportTemplate = () => {
         </TypographyH2>
         <Accordion type="single" collapsible className="space-y-2">
           {MOCK_FAQS.map((faq) => (
-            <AccordionItem
-              key={faq.question}
-              value={faq.question}
-              asChild
-            >
+            <AccordionItem key={faq.question} value={faq.question} asChild>
               <Card className="gap-0 px-4 py-0">
                 <AccordionTrigger>{faq.question}</AccordionTrigger>
                 <AccordionContent className="text-muted-foreground border-t pt-3 leading-relaxed">
@@ -72,14 +68,13 @@ const SupportTemplate = () => {
                     placeholder="문의 제목을 입력해주세요"
                   />
                 </Field>
-                <Field>
-                  <FieldLabel htmlFor="inquiryContent">문의 내용</FieldLabel>
-                  <Textarea
-                    id="inquiryContent"
-                    rows={4}
-                    placeholder="문의하실 내용을 자세히 적어주세요."
-                  />
-                </Field>
+                <TextareaField
+                  id="inquiryContent"
+                  name="inquiryContent"
+                  label="문의 내용"
+                  rows={4}
+                  placeholder="문의하실 내용을 자세히 적어주세요."
+                />
                 <Button type="submit" className="w-full">
                   문의 등록하기
                 </Button>

@@ -4,7 +4,7 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import Link from "next/link";
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
@@ -38,27 +38,25 @@ const UpdatePasswordForm = ({
       <form action={action} className="space-y-4">
         <input name="token" defaultValue={token} hidden />
 
-        <TextField
+        <InputField
           id="password"
           name="password"
+          label="비밀번호"
           type="password"
           placeholder="••••••••"
           required
           error={passwordError}
-        >
-          비밀번호
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="confirmPassword"
           name="confirmPassword"
+          label="비밀번호 확인"
           type="password"
           placeholder="••••••••"
           required
           error={confirmPasswordError}
-        >
-          비밀번호 확인
-        </TextField>
+        />
 
         <Button type="submit" className="w-full" size="lg">
           비밀번호 변경 {pending ? "중" : "완료"}

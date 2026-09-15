@@ -5,31 +5,33 @@ import { useActionState, useEffect, useState } from "react";
 import { updateProduct } from "@/actions/updateProduct";
 import type { Product } from "@/core/domain/product";
 import { Spinner } from "@/ui/components/atoms/spinner";
+import { DiscountField } from "@/ui/components/organisms/DiscountField";
 import { ImageField } from "@/ui/components/organisms/ImageField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { SelectField } from "@/ui/components/organisms/SelectField";
-import { NumberField } from "../_components/NumberField";
+import { SwitchField } from "@/ui/components/organisms/SwitchField";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
+import { FormSectionCard } from "@/ui/components/molecules/FormSectionCard";
 import { Input } from "@/ui/components/atoms/input";
 import { Button } from "@/ui/components/atoms/button";
-import { Textarea } from "@/ui/components/atoms/textarea";
-import { Switch } from "@/ui/components/atoms/switch";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
-import {
-  Field,
-  FieldContent,
-  FieldLabel,
-  FieldDescription,
-  FieldError,
-} from "@/ui/components/atoms/field";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
-import { TypographyH4, TypographyMuted } from "@/ui/components/atoms/typography";
+import { Field, FieldLabel, FieldError } from "@/ui/components/atoms/field";
+import { TypographyH4 } from "@/ui/components/atoms/typography";
 
 import { usePremiumFeature } from "@/ui/hooks/usePremiumFeatures";
 import { useImageList } from "@/ui/hooks/useImageList";
 
-import { getCategoryOptions, getSubCategoryOptions } from "@/core/utils/category";
+import {
+  getCategoryOptions,
+  getSubCategoryOptions,
+} from "@/core/utils/category";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import { toast } from "sonner";
@@ -60,13 +62,6 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
   const [selectedTheme, setSelectedTheme] = useState<MobileInvitationTheme>(
     product.theme ?? "default",
   );
-  const [discountType, setDiscountType] = useState<"rate" | "amount">(
-    product.discount.discountType,
-  );
-  const [discountInputError, setDiscountInputError] = useState<string | null>(
-    null,
-  );
-
   const thumbnail = useImageList([product.thumbnail]);
   const images = useImageList(product.images);
   const [minQuantity, setMinQuantity] = useState<number>(product.minQuantity);
@@ -143,398 +138,290 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
         />
       ))}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>썸네일 이미지 *</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ImageField
-            id="edit-thumbnail-input"
-            folder="products/thumbnails"
-            items={thumbnail.items}
-            onAdd={(urls) => {
-              thumbnail.items.forEach((item) => thumbnail.remove(item.id));
-              thumbnail.add(urls);
+      <FormSectionCard title="썸네일 이미지" required>
+        <ImageField
+          id="edit-thumbnail-input"
+          folder="products/thumbnails"
+          items={thumbnail.items}
+          onAdd={(urls) => {
+            thumbnail.items.forEach((item) => thumbnail.remove(item.id));
+            thumbnail.add(urls);
+          }}
+          onRemove={thumbnail.remove}
+          maxCount={1}
+          sizes="490px"
+        />
+        <input
+          type="hidden"
+          name="thumbnail"
+          value={thumbnail.getUrls()[0] ?? ""}
+        />
+        <FieldError className="mt-2">{thumbnailError}</FieldError>
+      </FormSectionCard>
+
+      <FormSectionCard title="기본 정보" contentClassName="space-y-6" required>
+        <InputField
+          id="edit-title"
+          name="title"
+          label="상품명"
+          defaultValue={product.title}
+          placeholder="예: 엘레강트 로즈 청첩장"
+          required
+          error={titleError}
+        />
+
+        <TextareaField
+          id="edit-description"
+          name="description"
+          label="상품 설명"
+          defaultValue={product.description}
+          placeholder="상품에 대한 자세한 설명을 입력하세요."
+          rows={3}
+          required
+          error={descriptionError}
+        />
+
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <SelectField
+            id="edit-category"
+            name="category"
+            defaultValue={selectedCategory}
+            onValueChange={(value) => {
+              setSelectedCategory(value as ProductCategory);
+              setSelectedSubCategory("");
             }}
-            onRemove={thumbnail.remove}
-            maxCount={1}
-            sizes="490px"
-          />
-          <input
-            type="hidden"
-            name="thumbnail"
-            value={thumbnail.getUrls()[0] ?? ""}
-          />
-          <FieldError className="mt-2">{thumbnailError}</FieldError>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>기본 정보</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <Field data-invalid={!!titleError}>
-            <FieldLabel htmlFor="edit-title">상품명 *</FieldLabel>
-            <Input
-              id="edit-title"
-              name="title"
-              defaultValue={product.title}
-              placeholder="예: 엘레강트 로즈 청첩장"
-              required
-              aria-invalid={!!titleError}
-            />
-            <FieldError>{titleError}</FieldError>
-          </Field>
-
-          <Field data-invalid={!!descriptionError}>
-            <FieldLabel htmlFor="edit-description">상품 설명 *</FieldLabel>
-            <Textarea
-              id="edit-description"
-              name="description"
-              defaultValue={product.description}
-              placeholder="상품에 대한 자세한 설명을 입력하세요."
-              rows={3}
-              required
-              aria-invalid={!!descriptionError}
-            />
-            <FieldError>{descriptionError}</FieldError>
-          </Field>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <SelectField
-              id="edit-category"
-              name="category"
-              defaultValue={selectedCategory}
-              onValueChange={(value) => {
-                setSelectedCategory(value as ProductCategory);
-                setSelectedSubCategory("");
-              }}
-              placeholder="카테고리를 선택하세요"
-              data={getCategoryOptions()}
-              error={getFieldError(state, "category")}
-              required
-            >
-              카테고리(대분류)
-            </SelectField>
-
-            <SelectField
-              id="edit-subCategory"
-              name="subCategory"
-              defaultValue={selectedSubCategory}
-              onValueChange={(value) =>
-                setSelectedSubCategory(value as SubCategory)
-              }
-              placeholder="서브 카테고리를 선택하세요"
-              data={getSubCategoryOptions(selectedCategory)}
-              error={getFieldError(state, "subCategory")}
-              required
-            >
-              서브 카테고리
-            </SelectField>
-
-            {selectedCategory === MOBILE_INVITATION_CATEGORY && (
-              <SelectField
-                id="edit-theme"
-                name="theme"
-                defaultValue={selectedTheme}
-                onValueChange={(value) =>
-                  setSelectedTheme(value as MobileInvitationTheme)
-                }
-                placeholder="테마를 선택하세요"
-                data={getMobileInvitationThemeOptions()}
-              >
-                테마
-              </SelectField>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <SelectField
-              id="edit-status"
-              name="status"
-              defaultValue={status}
-              onValueChange={(value) =>
-                setStatus(value as "active" | "inactive" | "soldOut")
-              }
-              placeholder="판매 상태를 선택하세요"
-              data={statusOptions}
-              required
-            >
-              판매 상태
-            </SelectField>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>가격 정보</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex flex-col gap-6">
-            <NumberField
-              id="edit-price"
-              name="price"
-              defaultValue={product.price}
-              placeholder="0"
-              min={0}
-              step={1}
-              unit="원"
-              required
-              error={getFieldError(state, "price")}
-            >
-              기본 가격
-            </NumberField>
-
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <div className="w-32 shrink-0">
-                  <SelectField
-                    id="edit-discountType"
-                    name="discount.discountType"
-                    defaultValue={discountType}
-                    onValueChange={(v) => {
-                      setDiscountType(v as "rate" | "amount");
-                      setDiscountInputError(null);
-                    }}
-                    placeholder=""
-                    data={[
-                      { value: "rate", label: "비율 (%)" },
-                      { value: "amount", label: "금액 (원)" },
-                    ]}
-                  >
-                    <span className="sr-only">할인 방식</span>
-                  </SelectField>
-                </div>
-                <div className="flex-1">
-                  <NumberField
-                    id="edit-discountValue"
-                    name="discount.value"
-                    placeholder="0"
-                    min={0}
-                    step={discountType === "rate" ? "0.01" : "1"}
-                    max={discountType === "rate" ? 1 : undefined}
-                    defaultValue={product.discount.value}
-                    unit={discountType === "rate" ? "율" : "원"}
-                    error={
-                      discountInputError || getFieldError(state, "discount")
-                    }
-                    onChange={(event) => {
-                      const value = event.target.value;
-                      setDiscountInputError(
-                        discountType === "amount" &&
-                          value !== "" &&
-                          !Number.isInteger(Number(value))
-                          ? "할인액은 원 단위 정수로 입력해주세요."
-                          : null,
-                      );
-                    }}
-                  >
-                    할인
-                  </NumberField>
-                </div>
-              </div>
-              <TypographyMuted>
-                {discountType === "rate"
-                  ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
-                  : "차감 금액 입력"}
-              </TypographyMuted>
-            </div>
-          </div>
-
-          <input
-            type="hidden"
-            name="isPremium"
-            value={isPremium ? "true" : "false"}
-          />
-          <Field
-            orientation="horizontal"
-            className="border-border rounded-lg border p-4"
+            placeholder="카테고리를 선택하세요"
+            data={getCategoryOptions()}
+            error={getFieldError(state, "category")}
+            required
           >
-            <FieldContent>
-              <FieldLabel htmlFor="edit-isPremium" className="text-base">
-                프리미엄 상품
-              </FieldLabel>
-              <FieldDescription>
-                추가 유료 옵션을 제공하는 상품입니다.
-              </FieldDescription>
-            </FieldContent>
-            <Switch
-              id="edit-isPremium"
-              checked={isPremium}
-              onCheckedChange={handlePremiumChange}
-            />
-          </Field>
+            카테고리(대분류)
+          </SelectField>
 
-          {isPremium && (
-            <div className="space-y-4 rounded-lg border border-dashed p-4">
-              <TypographyH4 className="font-medium">
-                프리미엄 기능 선택
-              </TypographyH4>
-              <div className="grid grid-cols-2 gap-3">
-                {premiumFeatures.map((feature) => (
-                  <Field
-                    key={feature.code}
-                    orientation="horizontal"
-                    className="gap-2"
-                  >
-                    <Checkbox
-                      id={`edit-feature-${feature.code}`}
-                      checked={selectedFeatures.includes(feature._id)}
-                      onCheckedChange={(checked) =>
-                        handleFeatureChange(!!checked, feature._id)
-                      }
-                    />
-                    <FieldLabel
-                      htmlFor={`edit-feature-${feature.code}`}
-                      className="cursor-pointer text-sm leading-none font-medium"
-                    >
-                      {feature.label}
-                    </FieldLabel>
-                  </Field>
-                ))}
-              </div>
-            </div>
+          <SelectField
+            id="edit-subCategory"
+            name="subCategory"
+            defaultValue={selectedSubCategory}
+            onValueChange={(value) =>
+              setSelectedSubCategory(value as SubCategory)
+            }
+            placeholder="서브 카테고리를 선택하세요"
+            data={getSubCategoryOptions(selectedCategory)}
+            error={getFieldError(state, "subCategory")}
+            required
+          >
+            서브 카테고리
+          </SelectField>
+
+          {selectedCategory === MOBILE_INVITATION_CATEGORY && (
+            <SelectField
+              id="edit-theme"
+              name="theme"
+              defaultValue={selectedTheme}
+              onValueChange={(value) =>
+                setSelectedTheme(value as MobileInvitationTheme)
+              }
+              placeholder="테마를 선택하세요"
+              data={getMobileInvitationThemeOptions()}
+            >
+              테마
+            </SelectField>
           )}
-        </CardContent>
-      </Card>
+        </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>노출 설정</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <input
-            type="hidden"
-            name="isFeatured"
-            value={isFeature ? "true" : "false"}
-          />
-          <Field
-            orientation="horizontal"
-            className="border-border rounded-lg border p-4"
+        <div className="space-y-2">
+          <SelectField
+            id="edit-status"
+            name="status"
+            defaultValue={status}
+            onValueChange={(value) =>
+              setStatus(value as "active" | "inactive" | "soldOut")
+            }
+            placeholder="판매 상태를 선택하세요"
+            data={statusOptions}
+            required
           >
-            <FieldContent>
-              <FieldLabel htmlFor="edit-feature" className="text-base">
-                추천 상품
-              </FieldLabel>
-              <FieldDescription>
-                메인 페이지에 추천 상품으로 노출됩니다.
-              </FieldDescription>
-            </FieldContent>
-            <Switch
-              id="edit-feature"
-              checked={isFeature}
-              onCheckedChange={setIsFeature}
-            />
-          </Field>
+            판매 상태
+          </SelectField>
+        </div>
+      </FormSectionCard>
 
-          <NumberField
-            id="edit-priority"
-            name="priority"
-            defaultValue={product.priority}
+      <FormSectionCard title="가격 정보" contentClassName="space-y-6" required>
+        <div className="flex flex-col gap-6">
+          <InputField
+            id="edit-price"
+            name="price"
+            label="기본 가격"
+            type="number"
+            defaultValue={product.price}
             placeholder="0"
             min={0}
-            max={100}
             step={1}
-            error={getFieldError(state, "priority")}
-          >
-            추천 우선순위
-          </NumberField>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>
-            상세 이미지{selectedCategory !== MOBILE_INVITATION_CATEGORY && " *"}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ImageField
-            id="edit-images-upload"
-            folder="products/images"
-            items={images.items}
-            onAdd={images.add}
-            onRemove={images.remove}
+            suffix="원"
+            required
+            error={getFieldError(state, "price")}
           />
-          {images.items.map((item) => (
-            <input key={item.id} type="hidden" name="images" value={item.url} />
-          ))}
-          <FieldError className="mt-2">{imagesError}</FieldError>
-        </CardContent>
-      </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>구매 수량</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <NumberField
-              id="edit-minQuantity"
-              name="minQuantity"
-              min={1}
-              step={1}
-              required
-              value={Number.isNaN(minQuantity) ? "" : minQuantity}
-              onChange={handleMinQuantityChange}
-              error={minQuantityError}
-            >
-              최소 구매 수량
-            </NumberField>
+          <DiscountField
+            idPrefix="edit-product-discount"
+            defaultType={product.discount.discountType}
+            defaultValue={product.discount.value}
+            error={getFieldError(state, "discount")}
+          />
+        </div>
 
-            <div className="space-y-2">
-              {isUnlimitedMax ? (
-                <Field>
-                  <FieldLabel htmlFor="edit-maxQuantity-display">
-                    최대 구매 수량 *
-                  </FieldLabel>
-                  <Input
-                    id="edit-maxQuantity-display"
-                    type="number"
-                    disabled
-                    placeholder="무제한"
-                  />
-                  <input type="hidden" name="maxQuantity" value="0" />
-                </Field>
-              ) : (
-                <NumberField
-                  id="edit-maxQuantity"
-                  name="maxQuantity"
-                  min={1}
-                  step={1}
-                  required
-                  defaultValue={maxQuantityDefault}
+        <input
+          type="hidden"
+          name="isPremium"
+          value={isPremium ? "true" : "false"}
+        />
+        <SwitchField
+          id="edit-isPremium"
+          label="프리미엄 상품"
+          description="추가 유료 옵션을 제공하는 상품입니다."
+          checked={isPremium}
+          onCheckedChange={handlePremiumChange}
+        />
+
+        {isPremium && (
+          <div className="space-y-4 rounded-lg border border-dashed p-4">
+            <TypographyH4 className="font-medium">
+              프리미엄 기능 선택
+            </TypographyH4>
+            <div className="grid grid-cols-2 gap-3">
+              {premiumFeatures.map((feature) => (
+                <Field
+                  key={feature.code}
+                  orientation="horizontal"
+                  className="gap-2"
                 >
-                  최대 구매 수량
-                </NumberField>
-              )}
-              <Field orientation="horizontal" className="gap-2 pt-1">
-                <Checkbox
-                  id="edit-isUnlimitedMax"
-                  checked={isUnlimitedMax}
-                  onCheckedChange={(checked) => {
-                    setIsUnlimitedMax(!!checked);
-                    if (!checked) {
-                      setMaxQuantityDefault(
-                        Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity),
-                      );
+                  <Checkbox
+                    id={`edit-feature-${feature.code}`}
+                    checked={selectedFeatures.includes(feature._id)}
+                    onCheckedChange={(checked) =>
+                      handleFeatureChange(!!checked, feature._id)
                     }
-                  }}
-                />
-                <FieldLabel
-                  htmlFor="edit-isUnlimitedMax"
-                  className="cursor-pointer text-sm font-normal"
-                >
-                  무제한
-                </FieldLabel>
-              </Field>
-              <FieldError className="mt-2">{maxQuantityError}</FieldError>
+                  />
+                  <FieldLabel
+                    htmlFor={`edit-feature-${feature.code}`}
+                    className="cursor-pointer text-sm leading-none font-medium"
+                  >
+                    {feature.label}
+                  </FieldLabel>
+                </Field>
+              ))}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        )}
+      </FormSectionCard>
+
+      <FormSectionCard title="노출 설정" contentClassName="space-y-6">
+        <input
+          type="hidden"
+          name="isFeatured"
+          value={isFeature ? "true" : "false"}
+        />
+        <SwitchField
+          id="edit-feature"
+          label="추천 상품"
+          description="메인 페이지에 추천 상품으로 노출됩니다."
+          checked={isFeature}
+          onCheckedChange={setIsFeature}
+        />
+
+        <InputField
+          id="edit-priority"
+          name="priority"
+          label="추천 우선순위"
+          type="number"
+          defaultValue={product.priority}
+          placeholder="0"
+          min={0}
+          max={100}
+          step={1}
+          error={getFieldError(state, "priority")}
+        />
+      </FormSectionCard>
+
+      <FormSectionCard
+        title="상세 이미지"
+        required={selectedCategory !== MOBILE_INVITATION_CATEGORY}
+      >
+        <ImageField
+          id="edit-images-upload"
+          folder="products/images"
+          items={images.items}
+          onAdd={images.add}
+          onRemove={images.remove}
+        />
+        {images.items.map((item) => (
+          <input key={item.id} type="hidden" name="images" value={item.url} />
+        ))}
+        <FieldError className="mt-2">{imagesError}</FieldError>
+      </FormSectionCard>
+
+      <FormSectionCard title="구매 수량" required>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <InputField
+            id="edit-minQuantity"
+            name="minQuantity"
+            label="최소 구매 수량"
+            type="number"
+            min={1}
+            step={1}
+            required
+            value={Number.isNaN(minQuantity) ? "" : minQuantity}
+            onChange={handleMinQuantityChange}
+            error={minQuantityError}
+          />
+
+          <div className="space-y-2">
+            {isUnlimitedMax ? (
+              <FieldFrame id="edit-maxQuantity-display" label="최대 구매 수량">
+                <Input
+                  id="edit-maxQuantity-display"
+                  type="number"
+                  disabled
+                  placeholder="무제한"
+                />
+                <input type="hidden" name="maxQuantity" value="0" />
+              </FieldFrame>
+            ) : (
+              <InputField
+                id="edit-maxQuantity"
+                name="maxQuantity"
+                label="최대 구매 수량"
+                type="number"
+                min={1}
+                step={1}
+                required
+                defaultValue={maxQuantityDefault}
+              />
+            )}
+            <Field orientation="horizontal" className="gap-2 pt-1">
+              <Checkbox
+                id="edit-isUnlimitedMax"
+                checked={isUnlimitedMax}
+                onCheckedChange={(checked) => {
+                  setIsUnlimitedMax(!!checked);
+                  if (!checked) {
+                    setMaxQuantityDefault(
+                      Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity),
+                    );
+                  }
+                }}
+              />
+              <FieldLabel
+                htmlFor="edit-isUnlimitedMax"
+                className="cursor-pointer text-sm font-normal"
+              >
+                무제한
+              </FieldLabel>
+            </Field>
+            <FieldError className="mt-2">{maxQuantityError}</FieldError>
+          </div>
+        </div>
+      </FormSectionCard>
 
       <div className="bg-background sticky bottom-0 -mx-6 -mb-6 flex justify-end gap-4 border-t px-6 py-4">
         <Button type="button" variant="outline" onClick={closeModal}>
@@ -546,6 +433,6 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
       </div>
     </form>
   );
-}
+};
 
 export { ProductEditDialog };

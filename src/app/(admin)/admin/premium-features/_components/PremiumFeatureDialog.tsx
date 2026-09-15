@@ -1,12 +1,7 @@
 import { Button } from "@/ui/components/atoms/button";
 import { DialogFooter } from "@/ui/components/atoms/dialog";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { Textarea } from "@/ui/components/atoms/textarea";
-import {
-  Field,
-  FieldLabel,
-  FieldError,
-} from "@/ui/components/atoms/field";
+import { Field, FieldLabel, FieldError } from "@/ui/components/atoms/field";
 import {
   InputGroup,
   InputGroupInput,
@@ -14,7 +9,8 @@ import {
 } from "@/ui/components/atoms/input-group";
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
 
@@ -39,46 +35,41 @@ const PremiumFeatureDialog = ({
   return (
     <form action={action}>
       <div className="space-y-4 py-4">
-        <TextField
+        <InputField
           id="code"
           name="code"
+          label="기능 코드 *"
           type="text"
           placeholder="예: ANIMATION"
           defaultValue={feature.code}
           required
           error={codeError}
-        >
-          기능 코드 *
-        </TextField>
+        />
         <TypographyMuted>
           영문 대문자와 언더스코어만 사용 가능합니다.
         </TypographyMuted>
 
-        <TextField
+        <InputField
           id="label"
           name="label"
+          label="기능 이름 *"
           type="text"
           placeholder="예: 애니메이션 효과"
           defaultValue={feature.label}
           required
           error={labelError}
-        >
-          기능 이름 *
-        </TextField>
+        />
 
-        <Field data-invalid={!!descriptionError}>
-          <FieldLabel htmlFor="description">기능 설명 *</FieldLabel>
-          <Textarea
-            id="description"
-            name="description"
-            placeholder="기능에 대한 자세한 설명을 입력하세요."
-            rows={3}
-            defaultValue={feature.description}
-            required
-            aria-invalid={!!descriptionError}
-          />
-          <FieldError>{descriptionError}</FieldError>
-        </Field>
+        <TextareaField
+          id="description"
+          name="description"
+          label="기능 설명 *"
+          placeholder="기능에 대한 자세한 설명을 입력하세요."
+          rows={3}
+          defaultValue={feature.description}
+          required
+          error={descriptionError}
+        />
 
         <Field data-invalid={!!additionalPriceError}>
           <FieldLabel htmlFor="additionalPrice">추가 비용 *</FieldLabel>

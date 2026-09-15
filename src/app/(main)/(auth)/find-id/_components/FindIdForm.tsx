@@ -9,7 +9,7 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
 import { ROUTES } from "@/core/domain/routes";
@@ -79,27 +79,25 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField
+        <InputField
           id="name"
           name="name"
+          label="이름"
           type="text"
           placeholder="홍길동"
           required
           error={nameError}
-        >
-          이름
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="phone"
           name="phone"
+          label="전화번호"
           type="tel"
           placeholder="010-1234-5678"
           required
           error={phoneError}
-        >
-          전화번호
-        </TextField>
+        />
 
         <Button type="submit" className="w-full" size="lg">
           아이디 찾기 {pending ? "중" : ""}
