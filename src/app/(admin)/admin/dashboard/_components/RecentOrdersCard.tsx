@@ -6,7 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/ui/components/atoms/card";
-import { TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/ui/components/atoms/empty";
+import { TableRow, TableCell } from "@/ui/components/atoms/table";
+import { TableShell } from "@/ui/components/molecules/TableShell";
 import type { DashboardRecentOrder } from "@/core/domain/dashboard";
 import {
   ORDER_STATUS_BADGE_VARIANTS,
@@ -15,6 +22,8 @@ import {
 import { ROUTES } from "@/core/domain/routes";
 import { formatPriceWithComma } from "@/core/utils/price";
 import { formatRelativeTime } from "@/core/utils/date";
+
+const TABLE_HEADINGS = ["주문번호", "고객명", "상품", "상태", "금액", "시간"];
 
 interface RecentOrdersCardProps {
   orders: DashboardRecentOrder[];
@@ -34,66 +43,39 @@ const RecentOrdersCard = ({ orders }: RecentOrdersCardProps) => {
       </CardHeader>
       <CardContent>
         {orders.length === 0 ? (
-          <div className="flex flex-col items-center gap-1 py-12 text-center">
-            <p className="text-sm font-medium">아직 주문이 없습니다</p>
-            <TypographyMuted>
-              첫 주문이 들어오면 여기에 표시됩니다.
-            </TypographyMuted>
-          </div>
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>아직 주문이 없습니다</EmptyTitle>
+              <EmptyDescription>
+                첫 주문이 들어오면 여기에 표시됩니다.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-muted border-b">
-                <tr>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    주문번호
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    고객명
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    상품
-                  </th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold">
-                    상태
-                  </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold">
-                    금액
-                  </th>
-                  <th className="px-4 py-3 text-right text-sm font-semibold">
-                    시간
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {orders.map((order) => (
-                  <tr
-                    key={order.merchantUid}
-                    className="hover:bg-muted/50 transition-colors"
+          <TableShell headings={TABLE_HEADINGS}>
+            {orders.map((order) => (
+              <TableRow key={order.merchantUid}>
+                <TableCell>{order.merchantUid}</TableCell>
+                <TableCell>{order.buyerName}</TableCell>
+                <TableCell className="max-w-[16rem] truncate">
+                  {order.productTitle}
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={ORDER_STATUS_BADGE_VARIANTS[order.orderStatus]}
                   >
-                    <td className="px-4 py-3 text-sm">{order.merchantUid}</td>
-                    <td className="px-4 py-3 text-sm">{order.buyerName}</td>
-                    <td className="max-w-[16rem] truncate px-4 py-3 text-sm">
-                      {order.productTitle}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Badge
-                        variant={ORDER_STATUS_BADGE_VARIANTS[order.orderStatus]}
-                      >
-                        {ORDER_STATUS_LABELS[order.orderStatus]}
-                      </Badge>
-                    </td>
-                    <td className="px-4 py-3 text-right text-sm font-semibold">
-                      {formatPriceWithComma(order.finalPrice)}원
-                    </td>
-                    <td className="text-muted-foreground px-4 py-3 text-right text-sm">
-                      {formatRelativeTime(order.createdAt)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    {ORDER_STATUS_LABELS[order.orderStatus]}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right font-semibold">
+                  {formatPriceWithComma(order.finalPrice)}원
+                </TableCell>
+                <TableCell className="text-muted-foreground text-right">
+                  {formatRelativeTime(order.createdAt)}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableShell>
         )}
       </CardContent>
     </Card>

@@ -1,5 +1,10 @@
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/ui/components/atoms/empty";
 import { TableRow, TableCell } from "@/ui/components/atoms/table";
-import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
@@ -27,14 +32,15 @@ const AdminReviewsTemplate = ({ page, cursor }: AdminReviewsTemplateProps) => (
     >
       {page.items.length === 0 ? (
         <TableRow>
-          <TableCell
-            colSpan={TABLE_HEADINGS.length}
-            className="py-16 text-center"
-          >
-            <p className="text-sm font-medium">등록된 리뷰가 없습니다</p>
-            <TypographyMuted>
-              구매자가 리뷰를 작성하면 여기 표시됩니다.
-            </TypographyMuted>
+          <TableCell colSpan={TABLE_HEADINGS.length}>
+            <Empty>
+              <EmptyHeader>
+                <EmptyTitle>등록된 리뷰가 없습니다</EmptyTitle>
+                <EmptyDescription>
+                  구매자가 리뷰를 작성하면 여기 표시됩니다.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           </TableCell>
         </TableRow>
       ) : (

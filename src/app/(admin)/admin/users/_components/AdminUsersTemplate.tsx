@@ -1,6 +1,11 @@
 import { Badge } from "@/ui/components/atoms/badge";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+  EmptyDescription,
+} from "@/ui/components/atoms/empty";
 import { TableRow, TableCell } from "@/ui/components/atoms/table";
-import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import { QueryFilterSelect } from "@/ui/components/organisms/QueryFilterSelect";
@@ -45,12 +50,15 @@ const AdminUsersTemplate = ({ page, role, cursor }: AdminUsersTemplateProps) => 
     >
       {page.items.length === 0 ? (
         <TableRow>
-          <TableCell
-            colSpan={TABLE_HEADINGS.length}
-            className="py-16 text-center"
-          >
-            <p className="text-sm font-medium">해당 역할의 사용자가 없습니다</p>
-            <TypographyMuted>다른 역할 필터를 선택해보세요.</TypographyMuted>
+          <TableCell colSpan={TABLE_HEADINGS.length}>
+            <Empty>
+              <EmptyHeader>
+                <EmptyTitle>해당 역할의 사용자가 없습니다</EmptyTitle>
+                <EmptyDescription>
+                  다른 역할 필터를 선택해보세요.
+                </EmptyDescription>
+              </EmptyHeader>
+            </Empty>
           </TableCell>
         </TableRow>
       ) : (

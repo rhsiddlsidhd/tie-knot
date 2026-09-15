@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/ui/components/atoms/empty";
 import { TableRow, TableCell } from "@/ui/components/atoms/table";
-import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import type { AdminProductListPage } from "@/core/domain/product";
@@ -67,13 +71,16 @@ const AdminProductsTemplate = ({
       >
         {products.length === 0 ? (
           <TableRow>
-            <TableCell
-              colSpan={TABLE_COLUMNS.length}
-              className="py-12 text-center"
-            >
-              <TypographyMuted>
-                {isTrash ? "삭제된 상품이 없습니다." : "등록된 상품이 없습니다."}
-              </TypographyMuted>
+            <TableCell colSpan={TABLE_COLUMNS.length}>
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>
+                    {isTrash
+                      ? "삭제된 상품이 없습니다."
+                      : "등록된 상품이 없습니다."}
+                  </EmptyTitle>
+                </EmptyHeader>
+              </Empty>
             </TableCell>
           </TableRow>
         ) : (
