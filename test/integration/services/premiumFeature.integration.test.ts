@@ -4,10 +4,12 @@ import { dbConnect } from "@/db/connect";
 import {
   buildFeatureDocumentInput,
   buildFeatureInput,
+  buildOrderInput,
   buildProductInput,
   clearCollections,
 } from "@test/support";
 import { FeatureModel } from "@/models/feature.model";
+import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
 import {
   createPremiumFeatureService,
@@ -22,6 +24,7 @@ import {
   createProductService,
   deleteProductService,
 } from "@/services/product";
+import { createOrderService } from "@/services/order";
 
 describe("premiumFeature", () => {
   beforeEach(async () => {
@@ -276,6 +279,45 @@ describe("premiumFeature", () => {
       await expect(
         deletePremiumFeatureService(String(created._id)),
       ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    // 삭제 가드는 ProductModel만 센다 — OrderModel은 세지 않는다. 주문이
+    // code/label/price를 스냅샷으로 복사해 두어 원본이 사라져도 과거 주문과
+    // 발행된 청첩장이 그대로 동작하기 때문이다(order.model의 featureId는 살아
+    // 있는 외래키가 아니라 그때의 식별자 기록이다).
+    it("과거 주문만 참조하는 기능은 삭제되고 주문 스냅샷은 그대로 남는다", async () => {
+      const feature = await createPremiumFeatureService(buildFeatureInput());
+      await createProductService(
+        buildProductInput({ title: "주문된 청첩장" }),
+      );
+      const product = await ProductModel.findOne({
+        title: "주문된 청첩장",
+      }).lean<{ _id: mongoose.Types.ObjectId }>();
+      const baseInput = buildOrderInput();
+      const order = await createOrderService({
+        ...baseInput,
+        product: {
+          ...baseInput.product,
+          productId: String(product!._id),
+          selectedFeatures: [
+            {
+              featureId: String(feature._id),
+              code: feature.code,
+              label: feature.label,
+              price: feature.additionalPrice,
+            },
+          ],
+        },
+      });
+
+      expect(await deletePremiumFeatureService(String(feature._id))).toBe(true);
+
+      const saved = await OrderModel.findById(order._id).lean();
+      expect(saved?.product.selectedFeatures[0]).toMatchObject({
+        code: "GALLERY_LIGHTBOX",
+        label: "갤러리 확대 보기",
+        price: 3000,
+      });
     });
 
     it("다른 기능을 참조하는 상품은 삭제를 막지 않는다", async () => {
