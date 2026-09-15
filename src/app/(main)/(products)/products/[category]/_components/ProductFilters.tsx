@@ -40,7 +40,6 @@ import type { ProductSortType } from "@/core/domain/product";
 import {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
-  PREMIUM_FEATURE_LABELS,
   PRODUCT_SORT_KEYS,
   PRODUCT_PRICE_KEYS,
 } from "@/core/domain/product";
@@ -220,9 +219,7 @@ const ProductFilters = ({
                     })
                   }
                 >
-                  {PREMIUM_FEATURE_LABELS[
-                    value.code as keyof typeof PREMIUM_FEATURE_LABELS
-                  ] || value.label}
+                  {value.label}
                 </Badge>
               ))}
             </div>

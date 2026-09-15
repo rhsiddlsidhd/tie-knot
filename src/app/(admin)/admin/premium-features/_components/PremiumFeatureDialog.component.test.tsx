@@ -6,7 +6,7 @@ import { PremiumFeatureDialog } from "./PremiumFeatureDialog";
 
 const buildFeature = (overrides?: Partial<PremiumFeature>): PremiumFeature => ({
   _id: "feature-1",
-  code: "GUESTBOOK",
+  code: "GALLERY_LIGHTBOX",
   label: "방명록",
   description: "방명록 기능",
   additionalPrice: 3000,
@@ -26,7 +26,6 @@ describe("PremiumFeatureDialog", () => {
       />,
     );
 
-    expect(screen.getByLabelText(/기능 코드/)).toHaveValue("GUESTBOOK");
     expect(screen.getByLabelText(/기능 이름/)).toHaveValue("방명록");
     expect(screen.getByLabelText(/기능 설명/)).toHaveValue("방명록 기능");
     expect(screen.getByLabelText(/추가 비용/)).toHaveValue(3000);
@@ -110,5 +109,33 @@ describe("PremiumFeatureDialog", () => {
     await user.click(screen.getByRole("button", { name: "수정" }));
 
     expect(action).toHaveBeenCalledTimes(1);
+  });
+  it("기능 코드는 수정할 수 없고 현재 값을 표시만 한다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByText("GALLERY_LIGHTBOX")).toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: /기능 코드/ })).toBeNull();
+    expect(screen.queryByRole("combobox", { name: /기능 코드/ })).toBeNull();
+  });
+
+  it("수정해도 기존 기능 코드가 그대로 제출된다", () => {
+    const { container } = render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    const hidden = container.querySelector('input[name="code"]');
+    expect(hidden).toHaveValue("GALLERY_LIGHTBOX");
   });
 });

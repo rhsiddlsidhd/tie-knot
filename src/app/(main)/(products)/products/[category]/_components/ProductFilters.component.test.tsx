@@ -250,7 +250,7 @@ describe("ProductFilters", () => {
     });
   });
 
-  it("특별 옵션 배지를 클릭하면 dispatch로 SELECT_PREMIUM_FEAT를 전달한다(라벨 매핑 사용)", async () => {
+  it("특별 옵션 배지를 클릭하면 dispatch로 SELECT_PREMIUM_FEAT를 전달한다", async () => {
     const user = userEvent.setup();
     const dispatch = vi.fn();
 
@@ -274,7 +274,7 @@ describe("ProductFilters", () => {
     );
 
     await user.click(screen.getByText("상세 필터"));
-    await user.click(screen.getByText("🎬 비디오 추가"));
+    await user.click(screen.getByText("비디오"));
 
     expect(dispatch).toHaveBeenCalledWith({
       type: "SELECT_PREMIUM_FEAT",
@@ -282,7 +282,7 @@ describe("ProductFilters", () => {
     });
   });
 
-  it("PREMIUM_FEATURE_LABELS에 없는 code는 value.label로 폴백한다", async () => {
+  it("배지 문구로 등록된 기능 이름을 그대로 쓴다", async () => {
     const user = userEvent.setup();
 
     render(
