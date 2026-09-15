@@ -17,6 +17,7 @@ import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
 import { IMPLEMENTED_PREMIUM_FEATURE_CODES } from "@/core/domain/premium-feature";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
+import { SwitchField } from "@/ui/components/organisms/SwitchField";
 import { TextareaField } from "@/ui/components/organisms/TextareaField";
 
 interface PremiumFeatureRegistrationFormProps {
@@ -110,6 +111,14 @@ const PremiumFeatureRegistrationForm = ({
             이 기능을 추가할 때 부과되는 추가 비용입니다.
           </FieldDescription>
         </Field>
+
+        <SwitchField
+          id="isActive"
+          name="isActive"
+          label="등록 가능"
+          description="끄면 새 상품에 이 기능을 붙일 수 없습니다. 이미 이 기능을 쓰는 상품은 그대로 판매됩니다."
+          defaultChecked
+        />
 
         <div className="flex justify-end gap-3 pt-4">
           <Button type="submit">등록{`${!pending ? "하기" : "중"}`}</Button>

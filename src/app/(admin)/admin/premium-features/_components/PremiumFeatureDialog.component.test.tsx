@@ -138,4 +138,29 @@ describe("PremiumFeatureDialog", () => {
     const hidden = container.querySelector('input[name="code"]');
     expect(hidden).toHaveValue("GALLERY_LIGHTBOX");
   });
+  it("등록 가능 토글이 기존 isActive 값을 따른다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature({ isActive: false })}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /등록 가능/ })).not.toBeChecked();
+  });
+
+  it("isActive가 true면 토글이 켜져 있다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature({ isActive: true })}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /등록 가능/ })).toBeChecked();
+  });
 });

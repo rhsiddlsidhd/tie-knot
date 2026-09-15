@@ -16,6 +16,7 @@ const createPremiumFeature = async (
     label: formData.get("label"),
     description: formData.get("description"),
     additionalPrice: Number(formData.get("additionalPrice")),
+    isActive: formData.get("isActive") === "on",
   };
 
   const parsed = validateAndFlatten(PremiumFeatureSchema, data);

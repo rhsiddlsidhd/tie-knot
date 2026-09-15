@@ -6,6 +6,7 @@ const validInput = {
   label: "갤러리 확대 보기",
   description: "사진을 눌러 전체화면으로 크게 볼 수 있습니다.",
   additionalPrice: 3000,
+  isActive: true,
 };
 
 describe("PremiumFeatureSchema", () => {
@@ -55,6 +56,23 @@ describe("PremiumFeatureSchema", () => {
       ...validInput,
       description: "짧은 설명",
     });
+
+    expect(result.success).toBe(false);
+  });
+  it("isActive가 false여도 통과한다", () => {
+    const result = PremiumFeatureSchema.safeParse({
+      ...validInput,
+      isActive: false,
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it("isActive가 없으면 거부한다", () => {
+    const withoutIsActive = { ...validInput } as Partial<typeof validInput>;
+    delete withoutIsActive.isActive;
+
+    const result = PremiumFeatureSchema.safeParse(withoutIsActive);
 
     expect(result.success).toBe(false);
   });

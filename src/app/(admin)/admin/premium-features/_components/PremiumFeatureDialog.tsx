@@ -10,6 +10,7 @@ import {
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { InputField } from "@/ui/components/organisms/InputField";
+import { SwitchField } from "@/ui/components/organisms/SwitchField";
 import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
@@ -94,6 +95,14 @@ const PremiumFeatureDialog = ({
           id="featureId"
           name="featureId"
           value={feature._id}
+        />
+
+        <SwitchField
+          id="isActive"
+          name="isActive"
+          label="등록 가능"
+          description="끄면 새 상품에 이 기능을 붙일 수 없습니다. 이미 이 기능을 쓰는 상품은 그대로 판매됩니다."
+          defaultChecked={feature.isActive}
         />
       </div>
 
