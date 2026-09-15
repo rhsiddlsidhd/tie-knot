@@ -1,4 +1,3 @@
-import { Alert } from "@/ui/components/molecules/Alert";
 import { TextField } from "@/ui/components/organisms/TextField";
 import { Button } from "@/ui/components/atoms/button";
 import {
@@ -41,10 +40,14 @@ const DeleteGuestbookForm = ({
         </DialogDescription>
       </DialogHeader>
 
-      <TextField id="password" name="password" type="password">
+      <TextField
+        id="password"
+        name="password"
+        type="password"
+        error={passwordError}
+      >
         비밀번호
       </TextField>
-      {passwordError && <Alert type="error">{passwordError}</Alert>}
 
       <DialogFooter>
         <DialogClose asChild>

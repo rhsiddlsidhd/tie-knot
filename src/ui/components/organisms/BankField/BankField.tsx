@@ -74,6 +74,7 @@ const BankField = ({
           }
           placeholder="은행 선택"
           options={bankOptions}
+          aria-invalid={!!error}
         />
         <Input
           placeholder="계좌번호"
@@ -85,6 +86,7 @@ const BankField = ({
             }))
           }
           value={info.accountNumber}
+          aria-invalid={!!error}
         />
       </div>
     </FormField>

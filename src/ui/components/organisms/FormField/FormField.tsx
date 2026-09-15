@@ -1,7 +1,10 @@
-import { Alert } from "@/ui/components/molecules/Alert";
-import { Label } from "@/ui/components/atoms/label";
 import React from "react";
 import { Asterisk } from "lucide-react";
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+} from "@/ui/components/atoms/field";
 
 interface FormFieldProps {
   id?: string;
@@ -22,13 +25,13 @@ const FormField = ({
   children,
 }: FormFieldProps) => {
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id} className="cursor-pointer">
+    <Field data-invalid={!!error}>
+      <FieldLabel htmlFor={id} className="cursor-pointer">
         {label} {required && <Asterisk size={12} />}
-      </Label>
+      </FieldLabel>
       {children}
-      {error && <Alert type="error">{error}</Alert>}
-    </div>
+      {error && <FieldError>{error}</FieldError>}
+    </Field>
   );
 };
 

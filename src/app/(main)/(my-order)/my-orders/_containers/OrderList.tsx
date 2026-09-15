@@ -5,9 +5,16 @@ import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
 import {
-  TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from "@/ui/components/atoms/empty";
 import { fetcher } from "@/ui/fetcher";
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";
@@ -71,40 +78,36 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
 
   if (orders.length === 0) {
     return (
-      <div className="border-border flex flex-col items-center justify-center rounded-lg border-2 border-dashed p-12 text-center">
-        <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-full">
-          <Inbox className="text-muted-foreground h-8 w-8" />
-        </div>
-        {isFiltered ? (
-          <>
-            <TypographyH3 className="mt-4 text-xl font-semibold">
-              조건에 맞는 주문이 없습니다.
-            </TypographyH3>
-            <TypographyMuted className="mt-2">
-              다른 상태나 카테고리를 선택해보세요.
-            </TypographyMuted>
-            <Button asChild className="mt-6" variant="outline">
+      <Empty className="border-border rounded-lg border-2 border-dashed">
+        <EmptyHeader>
+          <EmptyMedia variant="icon" className="size-16 rounded-full">
+            <Inbox className="text-muted-foreground size-8" />
+          </EmptyMedia>
+          <EmptyTitle className="text-xl">
+            {isFiltered ? "조건에 맞는 주문이 없습니다." : "주문 내역이 없습니다."}
+          </EmptyTitle>
+          <EmptyDescription>
+            {isFiltered
+              ? "다른 상태나 카테고리를 선택해보세요."
+              : "아직 주문한 상품이 없어요. 상품을 구경하고 첫 주문을 해보세요."}
+          </EmptyDescription>
+        </EmptyHeader>
+        <EmptyContent>
+          {isFiltered ? (
+            <Button asChild variant="outline">
               <Link href={ROUTES.myOrders.root}>필터 초기화</Link>
             </Button>
-          </>
-        ) : (
-          <>
-            <TypographyH3 className="mt-4 text-xl font-semibold">
-              주문 내역이 없습니다.
-            </TypographyH3>
-            <TypographyMuted className="mt-2">
-              아직 주문한 상품이 없어요. 상품을 구경하고 첫 주문을 해보세요.
-            </TypographyMuted>
-            <Button asChild className="mt-6">
+          ) : (
+            <Button asChild>
               <Link
                 href={ROUTES.products.byCategory(MOBILE_INVITATION_CATEGORY)}
               >
                 청첩장 보러가기
               </Link>
             </Button>
-          </>
-        )}
-      </div>
+          )}
+        </EmptyContent>
+      </Empty>
     );
   }
 

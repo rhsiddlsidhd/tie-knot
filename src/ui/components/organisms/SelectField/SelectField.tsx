@@ -57,6 +57,7 @@ const SelectField = ({
         onValueChange={handleChange}
         placeholder={placeholder}
         options={finalOptions}
+        aria-invalid={!!error}
       />
     </FormField>
   );

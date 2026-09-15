@@ -1,6 +1,7 @@
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
+import { TableRow, TableCell } from "@/ui/components/atoms/table";
 import {
   TypographyMuted,
   TypographySmall,
@@ -27,8 +28,8 @@ const ProductTableRow = ({
   view = "active",
 }: ProductTableRowProps) => {
   return (
-    <tr className="hover:bg-muted/50 transition-colors">
-      <td className="px-4 py-3">
+    <TableRow>
+      <TableCell>
         <div className="relative h-16 w-16 overflow-hidden rounded">
           <AppImage
             src={product.thumbnail}
@@ -36,8 +37,8 @@ const ProductTableRow = ({
             alt={`${product.title} 이미지`}
           />
         </div>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <div className="max-w-xs">
           <TypographySmall className="truncate font-medium">
             {product.title}
@@ -46,8 +47,8 @@ const ProductTableRow = ({
             {product.description}
           </TypographyMuted>
         </div>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <div className="flex flex-col gap-1">
           <Badge variant="outline" className="w-fit">
             {PRODUCT_CATEGORY_LABELS[product.category as ProductCategory] ||
@@ -58,13 +59,13 @@ const ProductTableRow = ({
               product.subCategory}
           </TypographyMuted>
         </div>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <span className="font-semibold">
           {product.price.toLocaleString()}원
         </span>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <div className="flex flex-col gap-1">
           {product.isPremium && (
             <Badge className="bg-accent text-accent-foreground w-fit">
@@ -77,8 +78,8 @@ const ProductTableRow = ({
             </Badge>
           )}
         </div>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         {view === "trash" ? (
           <div className="flex flex-col gap-1">
             <Badge variant="outline" className="w-fit">
@@ -93,8 +94,8 @@ const ProductTableRow = ({
         ) : (
           <ProductTableRowSelect product={product} />
         )}
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <div className="text-muted-foreground flex flex-col gap-1 text-sm">
           <div className="flex items-center gap-1">
             <Eye className="h-3 w-3" />
@@ -109,14 +110,14 @@ const ProductTableRow = ({
             <span>{product.salesCount}</span>
           </div>
         </div>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <span className="font-mono text-sm">{product.priority}</span>
-      </td>
-      <td className="px-4 py-3">
+      </TableCell>
+      <TableCell>
         <ProductTableRowAction product={product} view={view} />
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
 };
 

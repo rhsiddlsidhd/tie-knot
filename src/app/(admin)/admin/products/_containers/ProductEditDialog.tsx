@@ -5,7 +5,6 @@ import { useActionState, useEffect, useState } from "react";
 import { updateProduct } from "@/actions/updateProduct";
 import type { Product } from "@/core/domain/product";
 import { Spinner } from "@/ui/components/atoms/spinner";
-import { Alert } from "@/ui/components/molecules/Alert";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { SelectField } from "@/ui/components/organisms/SelectField";
 import { NumberField } from "../_components/NumberField";
@@ -14,7 +13,13 @@ import { Button } from "@/ui/components/atoms/button";
 import { Textarea } from "@/ui/components/atoms/textarea";
 import { Switch } from "@/ui/components/atoms/switch";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Label } from "@/ui/components/atoms/label";
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+  FieldDescription,
+  FieldError,
+} from "@/ui/components/atoms/field";
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
 import { TypographyH4, TypographyMuted } from "@/ui/components/atoms/typography";
 
@@ -160,11 +165,7 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
             name="thumbnail"
             value={thumbnail.getUrls()[0] ?? ""}
           />
-          {thumbnailError && (
-            <Alert type="error" className="mt-2">
-              {thumbnailError}
-            </Alert>
-          )}
+          <FieldError className="mt-2">{thumbnailError}</FieldError>
         </CardContent>
       </Card>
 
@@ -173,24 +174,21 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
           <CardTitle>기본 정보</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="edit-title">상품명 *</Label>
+          <Field data-invalid={!!titleError}>
+            <FieldLabel htmlFor="edit-title">상품명 *</FieldLabel>
             <Input
               id="edit-title"
               name="title"
               defaultValue={product.title}
               placeholder="예: 엘레강트 로즈 청첩장"
               required
+              aria-invalid={!!titleError}
             />
-            {titleError && (
-              <Alert type="error" className="mt-2">
-                {titleError}
-              </Alert>
-            )}
-          </div>
+            <FieldError>{titleError}</FieldError>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="edit-description">상품 설명 *</Label>
+          <Field data-invalid={!!descriptionError}>
+            <FieldLabel htmlFor="edit-description">상품 설명 *</FieldLabel>
             <Textarea
               id="edit-description"
               name="description"
@@ -198,13 +196,10 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
               placeholder="상품에 대한 자세한 설명을 입력하세요."
               rows={3}
               required
+              aria-invalid={!!descriptionError}
             />
-            {descriptionError && (
-              <Alert type="error" className="mt-2">
-                {descriptionError}
-              </Alert>
-            )}
-          </div>
+            <FieldError>{descriptionError}</FieldError>
+          </Field>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <SelectField
@@ -353,21 +348,24 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
             name="isPremium"
             value={isPremium ? "true" : "false"}
           />
-          <div className="border-border flex items-center justify-between rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <Label htmlFor="edit-isPremium" className="text-base">
+          <Field
+            orientation="horizontal"
+            className="border-border rounded-lg border p-4"
+          >
+            <FieldContent>
+              <FieldLabel htmlFor="edit-isPremium" className="text-base">
                 프리미엄 상품
-              </Label>
-              <TypographyMuted>
+              </FieldLabel>
+              <FieldDescription>
                 추가 유료 옵션을 제공하는 상품입니다.
-              </TypographyMuted>
-            </div>
+              </FieldDescription>
+            </FieldContent>
             <Switch
               id="edit-isPremium"
               checked={isPremium}
               onCheckedChange={handlePremiumChange}
             />
-          </div>
+          </Field>
 
           {isPremium && (
             <div className="space-y-4 rounded-lg border border-dashed p-4">
@@ -376,7 +374,11 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
               </TypographyH4>
               <div className="grid grid-cols-2 gap-3">
                 {premiumFeatures.map((feature) => (
-                  <div key={feature.code} className="flex items-center space-x-2">
+                  <Field
+                    key={feature.code}
+                    orientation="horizontal"
+                    className="gap-2"
+                  >
                     <Checkbox
                       id={`edit-feature-${feature.code}`}
                       checked={selectedFeatures.includes(feature._id)}
@@ -384,13 +386,13 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
                         handleFeatureChange(!!checked, feature._id)
                       }
                     />
-                    <Label
+                    <FieldLabel
                       htmlFor={`edit-feature-${feature.code}`}
                       className="cursor-pointer text-sm leading-none font-medium"
                     >
                       {feature.label}
-                    </Label>
-                  </div>
+                    </FieldLabel>
+                  </Field>
                 ))}
               </div>
             </div>
@@ -408,21 +410,24 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
             name="isFeatured"
             value={isFeature ? "true" : "false"}
           />
-          <div className="border-border flex items-center justify-between rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <Label htmlFor="edit-feature" className="text-base">
+          <Field
+            orientation="horizontal"
+            className="border-border rounded-lg border p-4"
+          >
+            <FieldContent>
+              <FieldLabel htmlFor="edit-feature" className="text-base">
                 추천 상품
-              </Label>
-              <TypographyMuted>
+              </FieldLabel>
+              <FieldDescription>
                 메인 페이지에 추천 상품으로 노출됩니다.
-              </TypographyMuted>
-            </div>
+              </FieldDescription>
+            </FieldContent>
             <Switch
               id="edit-feature"
               checked={isFeature}
               onCheckedChange={setIsFeature}
             />
-          </div>
+          </Field>
 
           <NumberField
             id="edit-priority"
@@ -456,11 +461,7 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
           {images.items.map((item) => (
             <input key={item.id} type="hidden" name="images" value={item.url} />
           ))}
-          {imagesError && (
-            <Alert type="error" className="mt-2">
-              {imagesError}
-            </Alert>
-          )}
+          <FieldError className="mt-2">{imagesError}</FieldError>
         </CardContent>
       </Card>
 
@@ -485,10 +486,10 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
 
             <div className="space-y-2">
               {isUnlimitedMax ? (
-                <>
-                  <Label htmlFor="edit-maxQuantity-display">
+                <Field>
+                  <FieldLabel htmlFor="edit-maxQuantity-display">
                     최대 구매 수량 *
-                  </Label>
+                  </FieldLabel>
                   <Input
                     id="edit-maxQuantity-display"
                     type="number"
@@ -496,7 +497,7 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
                     placeholder="무제한"
                   />
                   <input type="hidden" name="maxQuantity" value="0" />
-                </>
+                </Field>
               ) : (
                 <NumberField
                   id="edit-maxQuantity"
@@ -509,7 +510,7 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
                   최대 구매 수량
                 </NumberField>
               )}
-              <div className="flex items-center gap-2 pt-1">
+              <Field orientation="horizontal" className="gap-2 pt-1">
                 <Checkbox
                   id="edit-isUnlimitedMax"
                   checked={isUnlimitedMax}
@@ -522,18 +523,14 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
                     }
                   }}
                 />
-                <Label
+                <FieldLabel
                   htmlFor="edit-isUnlimitedMax"
                   className="cursor-pointer text-sm font-normal"
                 >
                   무제한
-                </Label>
-              </div>
-              {maxQuantityError && (
-                <Alert type="error" className="mt-2">
-                  {maxQuantityError}
-                </Alert>
-              )}
+                </FieldLabel>
+              </Field>
+              <FieldError className="mt-2">{maxQuantityError}</FieldError>
             </div>
           </div>
         </CardContent>

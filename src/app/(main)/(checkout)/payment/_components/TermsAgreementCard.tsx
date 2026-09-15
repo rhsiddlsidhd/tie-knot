@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/ui/components/atoms/card";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Label } from "@/ui/components/atoms/label";
+import { Field, FieldLabel } from "@/ui/components/atoms/field";
 
 
 interface TermsAgreementCardProps {
@@ -14,13 +14,13 @@ const TermsAgreementCard = ({ agreed, onAgreedChange }: TermsAgreementCardProps)
   return (
     <Card className="border-border">
       <CardContent className="pt-6">
-        <div className="flex items-start gap-3">
+        <Field orientation="horizontal" className="items-start">
           <Checkbox
             id="terms"
             checked={agreed}
             onCheckedChange={(checked) => onAgreedChange(checked as boolean)}
           />
-          <Label
+          <FieldLabel
             htmlFor="terms"
             className="cursor-pointer text-sm leading-relaxed font-normal"
           >
@@ -30,8 +30,8 @@ const TermsAgreementCard = ({ agreed, onAgreedChange }: TermsAgreementCardProps)
               (전자상거래법 제 8조 2항) 주문 내용을 확인하였으며, 구매에
               동의하시겠습니까?
             </span>
-          </Label>
-        </div>
+          </FieldLabel>
+        </Field>
       </CardContent>
     </Card>
   );

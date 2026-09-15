@@ -1,12 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { AdminReviewListPage } from "@/core/domain/review";
 
 const refreshMock = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
-  usePathname: () => "/admin/reviews",
 }));
 
 const deleteReviewByAdmin = vi.fn();
@@ -14,24 +12,7 @@ vi.mock("@/actions/deleteReviewByAdmin", () => ({
   deleteReviewByAdmin: (...args: unknown[]) => deleteReviewByAdmin(...args),
 }));
 
-import { AdminReviewsTable } from "./AdminReviewsTable";
-
-const buildPage = (
-  overrides?: Partial<AdminReviewListPage>,
-): AdminReviewListPage => ({
-  items: [
-    {
-      id: "review-1",
-      productTitle: "봄빛 청첩장 세트",
-      authorName: "김민준",
-      rating: 5,
-      content: "아주 만족스러운 상품이었어요.",
-      createdAt: new Date("2026-08-19T15:30:00.000Z"), // KST 2026-08-20
-    },
-  ],
-  nextCursor: null,
-  ...overrides,
-});
+import { ReviewDeleteButton } from "./ReviewDeleteButton";
 
 const createDeferred = <T,>() => {
   let resolve!: (value: T) => void;
@@ -41,27 +22,10 @@ const createDeferred = <T,>() => {
   return { promise, resolve };
 };
 
-describe("AdminReviewsTable", () => {
+describe("ReviewDeleteButton", () => {
   beforeEach(() => {
     refreshMock.mockClear();
     deleteReviewByAdmin.mockClear();
-  });
-
-  it("리뷰 행을 실제 props 기준으로 렌더링하고 작성일을 KST로 표시한다", () => {
-    render(<AdminReviewsTable page={buildPage()} />);
-
-    expect(screen.getByText("봄빛 청첩장 세트")).toBeInTheDocument();
-    expect(screen.getByText("김민준")).toBeInTheDocument();
-    expect(
-      screen.getByText("아주 만족스러운 상품이었어요."),
-    ).toBeInTheDocument();
-    expect(screen.getByText("2026.8.20")).toBeInTheDocument();
-  });
-
-  it("항목이 없으면 빈 상태 UI를 보여준다", () => {
-    render(<AdminReviewsTable page={buildPage({ items: [] })} />);
-
-    expect(screen.getByText("등록된 리뷰가 없습니다")).toBeInTheDocument();
   });
 
   it("삭제 확인창은 대상 리뷰와 복구 불가를 알리고, 확인하면 삭제 후 새로고침한다", async () => {
@@ -70,7 +34,13 @@ describe("AdminReviewsTable", () => {
       data: { message: "리뷰가 삭제되었습니다." },
     });
     const user = userEvent.setup();
-    render(<AdminReviewsTable page={buildPage()} />);
+    render(
+      <ReviewDeleteButton
+        reviewId="review-1"
+        authorName="김민준"
+        productTitle="봄빛 청첩장 세트"
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "삭제" }));
 
@@ -88,7 +58,13 @@ describe("AdminReviewsTable", () => {
 
   it("삭제를 취소하면 deleteReviewByAdmin을 호출하지 않는다", async () => {
     const user = userEvent.setup();
-    render(<AdminReviewsTable page={buildPage()} />);
+    render(
+      <ReviewDeleteButton
+        reviewId="review-1"
+        authorName="김민준"
+        productTitle="봄빛 청첩장 세트"
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "삭제" }));
     await user.click(
@@ -107,7 +83,13 @@ describe("AdminReviewsTable", () => {
       error: { category: "INTERNAL", message: "삭제에 실패했습니다." },
     });
     const user = userEvent.setup();
-    render(<AdminReviewsTable page={buildPage()} />);
+    render(
+      <ReviewDeleteButton
+        reviewId="review-1"
+        authorName="김민준"
+        productTitle="봄빛 청첩장 세트"
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "삭제" }));
     await user.click(
@@ -124,7 +106,13 @@ describe("AdminReviewsTable", () => {
     const deferred = createDeferred<{ success: true; data: { message: string } }>();
     deleteReviewByAdmin.mockReturnValue(deferred.promise);
     const user = userEvent.setup();
-    render(<AdminReviewsTable page={buildPage()} />);
+    render(
+      <ReviewDeleteButton
+        reviewId="review-1"
+        authorName="김민준"
+        productTitle="봄빛 청첩장 세트"
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "삭제" }));
     const dialog = screen.getByRole("alertdialog");
@@ -136,11 +124,5 @@ describe("AdminReviewsTable", () => {
     await act(async () => {
       deferred.resolve({ success: true, data: { message: "삭제되었습니다." } });
     });
-  });
-
-  it("nextCursor가 없으면 다음 페이지 버튼이 비활성화된다", () => {
-    render(<AdminReviewsTable page={buildPage({ nextCursor: null })} />);
-
-    expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });
 });

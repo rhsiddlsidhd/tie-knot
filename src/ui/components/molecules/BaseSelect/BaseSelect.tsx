@@ -19,6 +19,8 @@ interface BaseSelectProps {
   className?: string;
   contentClassName?: string;
   disabled?: boolean;
+  /** 트리거에 그대로 전달한다 — atoms/select가 aria-invalid로 테두리를 붉게 바꾼다. */
+  "aria-invalid"?: boolean;
 }
 
 /**
@@ -35,6 +37,7 @@ const BaseSelect = ({
   className,
   contentClassName,
   disabled,
+  "aria-invalid": ariaInvalid,
 }: BaseSelectProps) => {
   return (
     <Select
@@ -44,7 +47,11 @@ const BaseSelect = ({
       onValueChange={onValueChange}
       disabled={disabled}
     >
-      <SelectTrigger id={id} className={cn("w-full", className)}>
+      <SelectTrigger
+        id={id}
+        aria-invalid={ariaInvalid}
+        className={cn("w-full", className)}
+      >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent

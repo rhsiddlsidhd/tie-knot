@@ -7,7 +7,7 @@ import { Globe } from "lucide-react";
 
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { Button } from "@/ui/components/atoms/button";
-import { Label } from "@/ui/components/atoms/label";
+import { Field, FieldLabel } from "@/ui/components/atoms/field";
 import {
   TypographyH1,
   TypographyMuted,
@@ -100,7 +100,7 @@ const SignupForm = ({ action, pending, state }: SignupFormProps) => {
         </TextField>
 
         <div className="space-y-3 pt-2">
-          <div className="flex items-center gap-2">
+          <Field orientation="horizontal" className="gap-2">
             <Checkbox
               id="terms"
               checked={agreedToTerms}
@@ -108,7 +108,7 @@ const SignupForm = ({ action, pending, state }: SignupFormProps) => {
                 setAgreedToTerms(checked as boolean)
               }
             />
-            <Label
+            <FieldLabel
               htmlFor="terms"
               className="cursor-pointer text-sm font-normal"
             >
@@ -121,10 +121,10 @@ const SignupForm = ({ action, pending, state }: SignupFormProps) => {
                 이용약관
               </Link>
               에 동의합니다 (필수)
-            </Label>
-          </div>
+            </FieldLabel>
+          </Field>
 
-          <div className="flex items-center gap-2">
+          <Field orientation="horizontal" className="gap-2">
             <Checkbox
               id="privacy"
               checked={agreedToPrivacy}
@@ -132,7 +132,7 @@ const SignupForm = ({ action, pending, state }: SignupFormProps) => {
                 setAgreedToPrivacy(checked as boolean)
               }
             />
-            <Label
+            <FieldLabel
               htmlFor="privacy"
               className="cursor-pointer text-sm font-normal"
             >
@@ -145,8 +145,8 @@ const SignupForm = ({ action, pending, state }: SignupFormProps) => {
                 개인정보 처리방침
               </Link>
               에 동의합니다 (필수)
-            </Label>
-          </div>
+            </FieldLabel>
+          </Field>
         </div>
 
         <Button

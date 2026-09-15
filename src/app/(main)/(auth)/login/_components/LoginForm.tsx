@@ -7,7 +7,7 @@ import {
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Label } from "@/ui/components/atoms/label";
+import { Field, FieldLabel } from "@/ui/components/atoms/field";
 
 import { TextField } from "@/ui/components/organisms/TextField";
 import { ROUTES } from "@/core/domain/routes";
@@ -58,15 +58,15 @@ const LoginForm = ({
           비밀번호
         </TextField>
 
-        <div className="flex items-center gap-2">
+        <Field orientation="horizontal" className="gap-2">
           <Checkbox id="remember" name="remember" />
-          <Label
+          <FieldLabel
             htmlFor="remember"
             className="cursor-pointer text-sm font-normal"
           >
             로그인 상태 유지
-          </Label>
-        </div>
+          </FieldLabel>
+        </Field>
 
         <Button type="submit" className="w-full" size="lg" disabled={pending}>
           {pending ? "로그인 중..." : "로그인"}

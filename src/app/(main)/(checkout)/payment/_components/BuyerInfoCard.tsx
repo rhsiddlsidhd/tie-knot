@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
 import { TextField } from "@/ui/components/organisms/TextField";
 import type { BuyerInfo } from "@/core/schemas/request/order.schema";

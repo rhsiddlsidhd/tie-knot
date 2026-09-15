@@ -1,5 +1,3 @@
-"use client";
-
 import { BottomActionBar } from "@/ui/components/organisms/BottomActionBar";
 import { Spinner } from "@/ui/components/atoms/spinner";
 import { Save } from "lucide-react";

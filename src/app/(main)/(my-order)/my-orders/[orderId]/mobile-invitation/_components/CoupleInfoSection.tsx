@@ -1,5 +1,3 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
 import { TypographyH3 } from "@/ui/components/atoms/typography";
 

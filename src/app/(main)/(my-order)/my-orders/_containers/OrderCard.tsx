@@ -19,7 +19,11 @@ import {
   TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
-import { Alert } from "@/ui/components/molecules/Alert";
+import {
+  Alert,
+  AlertTitle,
+  AlertDescription,
+} from "@/ui/components/atoms/alert";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { useCopy } from "@/ui/hooks/useCopy";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
@@ -229,28 +233,26 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
         </div>
 
         {isAwaitingDeposit && order.virtualAccount && (
-          // Alert는 children을 <p>로 감싸므로 블록 요소를 중첩하지 않는다 —
-          // <p> 안의 <div>는 SSR 하이드레이션 불일치를 만든다.
-          <Alert type="warning">
-            <span className="block font-semibold">입금 대기 중입니다.</span>
-            <span className="block">
-              {order.virtualAccount.bank ?? "가상계좌"}{" "}
-              {order.virtualAccount.accountNumber}
-              {order.virtualAccount.remitteeName &&
-                ` (예금주 ${order.virtualAccount.remitteeName})`}
-            </span>
-            <span className="block">
-              입금액 {order.finalPrice.toLocaleString()}원
-            </span>
-            {order.virtualAccount.expiredAt && (
-              <span className="block">
-                입금기한{" "}
-                {format(
-                  new Date(order.virtualAccount.expiredAt),
-                  "yyyy.MM.dd HH:mm",
-                )}
-              </span>
-            )}
+          <Alert variant="warning">
+            <AlertTitle>입금 대기 중입니다.</AlertTitle>
+            <AlertDescription>
+              <p>
+                {order.virtualAccount.bank ?? "가상계좌"}{" "}
+                {order.virtualAccount.accountNumber}
+                {order.virtualAccount.remitteeName &&
+                  ` (예금주 ${order.virtualAccount.remitteeName})`}
+              </p>
+              <p>입금액 {order.finalPrice.toLocaleString()}원</p>
+              {order.virtualAccount.expiredAt && (
+                <p>
+                  입금기한{" "}
+                  {format(
+                    new Date(order.virtualAccount.expiredAt),
+                    "yyyy.MM.dd HH:mm",
+                  )}
+                </p>
+              )}
+            </AlertDescription>
           </Alert>
         )}
 

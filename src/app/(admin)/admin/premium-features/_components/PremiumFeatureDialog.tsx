@@ -1,12 +1,19 @@
 import { Button } from "@/ui/components/atoms/button";
 import { DialogFooter } from "@/ui/components/atoms/dialog";
-import { Input } from "@/ui/components/atoms/input";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { Textarea } from "@/ui/components/atoms/textarea";
-import { Label } from "@/ui/components/atoms/label";
+import {
+  Field,
+  FieldLabel,
+  FieldError,
+} from "@/ui/components/atoms/field";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+} from "@/ui/components/atoms/input-group";
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
-import { Alert } from "@/ui/components/molecules/Alert";
 import { TextField } from "@/ui/components/organisms/TextField";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
@@ -59,8 +66,8 @@ const PremiumFeatureDialog = ({
           기능 이름 *
         </TextField>
 
-        <div className="space-y-2">
-          <Label htmlFor="description">기능 설명 *</Label>
+        <Field data-invalid={!!descriptionError}>
+          <FieldLabel htmlFor="description">기능 설명 *</FieldLabel>
           <Textarea
             id="description"
             name="description"
@@ -68,14 +75,15 @@ const PremiumFeatureDialog = ({
             rows={3}
             defaultValue={feature.description}
             required
+            aria-invalid={!!descriptionError}
           />
-          {descriptionError && <Alert type="error">{descriptionError}</Alert>}
-        </div>
+          <FieldError>{descriptionError}</FieldError>
+        </Field>
 
-        <div className="space-y-2">
-          <Label htmlFor="additionalPrice">추가 비용 *</Label>
-          <div className="relative">
-            <Input
+        <Field data-invalid={!!additionalPriceError}>
+          <FieldLabel htmlFor="additionalPrice">추가 비용 *</FieldLabel>
+          <InputGroup>
+            <InputGroupInput
               id="additionalPrice"
               name="additionalPrice"
               type="number"
@@ -84,16 +92,12 @@ const PremiumFeatureDialog = ({
               step={1000}
               defaultValue={feature.additionalPrice}
               required
-              className="pr-12"
+              aria-invalid={!!additionalPriceError}
             />
-            <span className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2 text-sm">
-              원
-            </span>
-          </div>
-          {additionalPriceError && (
-            <Alert type="error">{additionalPriceError}</Alert>
-          )}
-        </div>
+            <InputGroupAddon align="inline-end">원</InputGroupAddon>
+          </InputGroup>
+          <FieldError>{additionalPriceError}</FieldError>
+        </Field>
 
         <input
           type="hidden"

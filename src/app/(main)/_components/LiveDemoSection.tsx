@@ -1,5 +1,6 @@
 import { Button } from "@/ui/components/atoms/button";
 import { Card, CardContent } from "@/ui/components/atoms/card";
+import { TypographyH2 } from "@/ui/components/atoms/typography";
 
 import { Eye, ExternalLink } from "lucide-react";
 import Link from "next/link";
@@ -17,10 +18,10 @@ const LiveDemoSection = () => {
         <div className="flex flex-col items-center gap-12 lg:flex-row lg:items-stretch">
           {/* 설명 영역 */}
           <div className="flex flex-1 flex-col justify-center text-center lg:text-left">
-            <h2 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
+            <TypographyH2 className="mb-4 border-none text-3xl font-bold tracking-tight sm:text-4xl">
               대표 청첩장 샘플을 <br className="hidden sm:block" />
               지금 바로 확인해보세요
-            </h2>
+            </TypographyH2>
             <p className="text-muted-foreground mb-8 text-lg">
               실제 청첩장에 담기는 구성 그대로 만든 샘플입니다.
               <br className="hidden sm:block" />
