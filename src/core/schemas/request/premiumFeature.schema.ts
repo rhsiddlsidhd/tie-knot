@@ -11,6 +11,9 @@ const PremiumFeatureSchema = z.object({
   label: z.string(),
   description: z.string().min(20, "최소 20자 이상 입력해주세요."),
   additionalPrice: z.number(),
+  // 등록 가능 여부. false면 신규 상품에 새로 붙일 수 없을 뿐, 이미 그 기능을 쓰는
+  // 상품과 고객 필터·과거 주문은 그대로다(docs 기준 결정).
+  isActive: z.boolean(),
 });
 
 type PremiumFeatureDto = z.infer<typeof PremiumFeatureSchema>;

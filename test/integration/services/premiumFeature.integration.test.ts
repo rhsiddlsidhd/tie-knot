@@ -14,6 +14,7 @@ import {
   deletePremiumFeatureService,
   getAdminPremiumFeaturesPageService,
   getAllPremiumFeatureService,
+  getSelectablePremiumFeatureService,
   getPremiumFeatureService,
   updatePremiumFeatureService,
 } from "@/services/premiumFeature";
@@ -285,6 +286,44 @@ describe("premiumFeature", () => {
       await createReferencingProduct(String(referenced._id), "봄맞이 청첩장");
 
       expect(await deletePremiumFeatureService(String(orphan._id))).toBe(true);
+    });
+  });
+  describe("getSelectablePremiumFeatureService", () => {
+    it("등록 가능(isActive: true) 기능만 리턴한다", async () => {
+      await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "ACTIVE_ONE", isActive: true }),
+      );
+      await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "STOPPED_ONE", isActive: false }),
+      );
+
+      const result = await getSelectablePremiumFeatureService();
+
+      expect(result.map((feature) => feature.code)).toEqual(["ACTIVE_ONE"]);
+    });
+
+    it("전체 조회는 등록 중단 기능도 함께 리턴한다", async () => {
+      await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "ACTIVE_ONE", isActive: true }),
+      );
+      await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "STOPPED_ONE", isActive: false }),
+      );
+
+      const all = await getAllPremiumFeatureService();
+
+      expect(all.map((feature) => feature.code).sort()).toEqual([
+        "ACTIVE_ONE",
+        "STOPPED_ONE",
+      ]);
+    });
+
+    it("등록 가능한 기능이 없으면 빈 배열을 리턴한다", async () => {
+      await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "STOPPED_ONE", isActive: false }),
+      );
+
+      expect(await getSelectablePremiumFeatureService()).toEqual([]);
     });
   });
 });

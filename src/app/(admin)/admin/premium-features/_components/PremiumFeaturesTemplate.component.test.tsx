@@ -42,7 +42,7 @@ describe("PremiumFeaturesTemplate", () => {
     expect(screen.getByText("2026.8.20")).toBeInTheDocument();
   });
 
-  it("isActive에 따라 활성/비활성 상태를 표시한다", () => {
+  it("isActive에 따라 등록 가능/등록 중단 상태를 표시한다", () => {
     const page = buildPage();
     render(
       <PremiumFeaturesTemplate
@@ -61,8 +61,8 @@ describe("PremiumFeaturesTemplate", () => {
       />,
     );
 
-    expect(screen.getByText("활성")).toBeInTheDocument();
-    expect(screen.getByText("비활성")).toBeInTheDocument();
+    expect(screen.getByText("등록 가능")).toBeInTheDocument();
+    expect(screen.getByText("등록 중단")).toBeInTheDocument();
   });
 
   it("항목이 없으면 빈 상태 UI를 보여준다", () => {

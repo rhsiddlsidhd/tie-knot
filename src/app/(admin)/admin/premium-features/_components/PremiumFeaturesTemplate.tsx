@@ -88,7 +88,7 @@ const PremiumFeaturesTemplate = ({
             </TableCell>
             <TableCell>
               <Badge variant={feature.isActive ? "default" : "secondary"}>
-                {feature.isActive ? "활성" : "비활성"}
+                {feature.isActive ? "등록 가능" : "등록 중단"}
               </Badge>
             </TableCell>
             <TableCell>{formatKstDate(feature.createdAt)}</TableCell>

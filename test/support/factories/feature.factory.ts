@@ -11,6 +11,7 @@ const buildFeatureInput = (
   label: "갤러리 확대 보기",
   description: "사진을 눌러 전체화면으로 크게 볼 수 있습니다.",
   additionalPrice: 3000,
+  isActive: true,
   ...overrides,
 });
 

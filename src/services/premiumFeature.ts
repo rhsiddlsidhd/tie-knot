@@ -42,6 +42,24 @@ const getAllPremiumFeatureService = async (): Promise<PremiumFeature[]> => {
   return features.map(mapToPremiumFeature);
 };
 
+/**
+ * 신규 상품에 붙일 수 있는 기능만 — `isActive: false`는 "더 이상 새로 붙이지 않는다"는
+ * 뜻이다. 이 필터는 상품 등록 폼 경로에만 쓴다. `getAllPremiumFeatureService`와
+ * `/api/premium-features`는 전체를 그대로 돌려줘야 한다 — 고객 "특별 옵션" 필터에서
+ * 배지가 사라지면 등록 중단된 기능을 가진 상품(계속 팔리는 중)을 걸러낼 수 없고,
+ * 관리자 상품 수정 다이얼로그에서 목록이 좁아지면 이미 붙어 있던 기능이 저장 시
+ * 조용히 빠진다.
+ */
+const getSelectablePremiumFeatureService = async (): Promise<
+  PremiumFeature[]
+> => {
+  await dbConnect();
+  const features = await FeatureModel.find({ isActive: true }).lean<
+    FeatureDocument[]
+  >();
+  return features.map(mapToPremiumFeature);
+};
+
 type AdminPremiumFeatureListQuery = {
   cursor?: string;
   limit?: number;
@@ -221,6 +239,7 @@ export {
   getAdminPremiumFeaturesPageService,
   getAllPremiumFeatureService,
   getPremiumFeatureService,
+  getSelectablePremiumFeatureService,
   updatePremiumFeatureService,
   createPremiumFeatureAsAdminService,
   updatePremiumFeatureAsAdminService,

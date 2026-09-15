@@ -138,4 +138,30 @@ describe("PremiumFeatureRegistrationForm", () => {
       "GALLERY_LIGHTBOX",
     ]);
   });
+  it("등록 가능 토글을 기본으로 켜서 렌더링한다", () => {
+    render(
+      <PremiumFeatureRegistrationForm
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /등록 가능/ })).toBeChecked();
+  });
+
+  it("등록 가능 토글을 끄면 체크가 해제된다", async () => {
+    const user = userEvent.setup();
+    render(
+      <PremiumFeatureRegistrationForm
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    await user.click(screen.getByRole("switch", { name: /등록 가능/ }));
+
+    expect(screen.getByRole("switch", { name: /등록 가능/ })).not.toBeChecked();
+  });
 });
