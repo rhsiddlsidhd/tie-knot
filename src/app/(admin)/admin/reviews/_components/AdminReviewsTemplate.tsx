@@ -55,7 +55,7 @@ const AdminReviewsTemplate = ({ page, cursor }: AdminReviewsTemplateProps) => (
               <p className="line-clamp-2">{review.content}</p>
             </TableCell>
             <TableCell>{formatKstDate(review.createdAt)}</TableCell>
-            <TableCell className="text-right">
+            <TableCell>
               <ReviewDeleteButton
                 reviewId={review.id}
                 authorName={review.authorName}
