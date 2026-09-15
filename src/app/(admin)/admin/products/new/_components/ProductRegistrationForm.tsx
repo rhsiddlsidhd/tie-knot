@@ -45,10 +45,9 @@ const ProductRegistrationForm = ({
     isMobileInvitation,
     formRef,
     setCarouselApi,
-    openNextStep,
-    openPreviousStep,
     handleInvalid,
     handleSubmitIntent,
+    slideHandlers,
   } = useProductForm({ state, onSubmitIntentChange });
 
   const activeStepNumber = visibleSteps.indexOf(form.activeStep) + 1;
@@ -102,7 +101,7 @@ const ProductRegistrationForm = ({
               isMobileInvitation={isMobileInvitation}
               stepError={form.stepErrors.basic}
               dispatch={dispatch}
-              onNext={() => openNextStep("basic", "pricing")}
+              {...slideHandlers.basic}
             />
           </CarouselItem>
 
@@ -115,8 +114,7 @@ const ProductRegistrationForm = ({
               priceInputError={form.priceError}
               stepError={form.stepErrors.pricing}
               dispatch={dispatch}
-              onPrevious={() => openPreviousStep("basic")}
-              onNext={() => openNextStep("pricing", "visibility")}
+              {...slideHandlers.pricing}
             />
           </CarouselItem>
 
@@ -125,8 +123,7 @@ const ProductRegistrationForm = ({
               state={state}
               isFeature={form.isFeature}
               dispatch={dispatch}
-              onPrevious={() => openPreviousStep("pricing")}
-              onNext={() => openNextStep("visibility", "thumbnail")}
+              {...slideHandlers.visibility}
             />
           </CarouselItem>
 
@@ -136,18 +133,7 @@ const ProductRegistrationForm = ({
               items={thumbnail.items}
               stepError={form.stepErrors.thumbnail}
               isMobileInvitation={isMobileInvitation}
-              onAdd={(urls) => {
-                dispatch({ type: "CLEAR_STEP_ERROR", payload: "thumbnail" });
-                thumbnail.add(urls);
-              }}
-              onRemove={thumbnail.remove}
-              onPrevious={() => openPreviousStep("visibility")}
-              onNext={() =>
-                openNextStep(
-                  "thumbnail",
-                  isMobileInvitation ? "preview" : "images",
-                )
-              }
+              {...slideHandlers.thumbnail}
             />
           </CarouselItem>
 
@@ -155,10 +141,7 @@ const ProductRegistrationForm = ({
             <CarouselItem {...slideProps("preview", "5단계: 미리보기 이미지")}>
               <PreviewImageSlide
                 items={preview.items}
-                onAdd={preview.add}
-                onRemove={preview.remove}
-                onPrevious={() => openPreviousStep("thumbnail")}
-                onNext={() => openNextStep("preview", "images")}
+                {...slideHandlers.preview}
               />
             </CarouselItem>
           )}
@@ -169,15 +152,7 @@ const ProductRegistrationForm = ({
               items={images.items}
               stepError={form.stepErrors.images}
               isMobileInvitation={isMobileInvitation}
-              onAdd={(urls) => {
-                dispatch({ type: "CLEAR_STEP_ERROR", payload: "images" });
-                images.add(urls);
-              }}
-              onRemove={images.remove}
-              onPrevious={() =>
-                openPreviousStep(isMobileInvitation ? "preview" : "thumbnail")
-              }
-              onNext={() => openNextStep("images", "quantity")}
+              {...slideHandlers.images}
             />
           </CarouselItem>
 
@@ -187,7 +162,7 @@ const ProductRegistrationForm = ({
               minQuantity={form.minQuantity}
               isUnlimitedMax={form.isUnlimitedMax}
               dispatch={dispatch}
-              onPrevious={() => openPreviousStep("images")}
+              {...slideHandlers.quantity}
             />
           </CarouselItem>
         </CarouselContent>
