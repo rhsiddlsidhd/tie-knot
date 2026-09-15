@@ -1,4 +1,8 @@
 import type { ProductCategory } from "@/core/domain/product-category";
+import type {
+  ProductFormFields,
+  ProductFormFieldsAction,
+} from "@/core/domain/product-form";
 
 type ProductFormStep =
   | "basic"
@@ -11,33 +15,16 @@ type ProductFormStep =
 
 type StepErrors = Partial<Record<ProductFormStep, string>>;
 
-interface ProductFormState {
-  category: ProductCategory;
-  subCategory: string;
-  theme: string;
-  isPremium: boolean;
-  isFeature: boolean;
-  featureIds: string[];
+/** 공용 상품 속성에 등록 폼 전용 단계 상태를 더한 것이 등록 폼의 상태다. */
+interface ProductFormState extends ProductFormFields {
   priceError: string | null;
-  minQuantity: number;
-  isUnlimitedMax: boolean;
   activeStep: ProductFormStep;
   stepErrors: StepErrors;
 }
 
 type ProductFormAction =
-  | { type: "CHANGE_CATEGORY"; payload: ProductCategory }
-  | { type: "CHANGE_SUB_CATEGORY"; payload: string }
-  | { type: "CHANGE_THEME"; payload: string }
-  | { type: "TOGGLE_PREMIUM"; payload: boolean }
-  | { type: "TOGGLE_FEATURED"; payload: boolean }
-  | {
-      type: "TOGGLE_PREMIUM_FEATURE";
-      payload: { id: string; checked: boolean };
-    }
+  | ProductFormFieldsAction
   | { type: "SET_PRICE_ERROR"; payload: string | null }
-  | { type: "CHANGE_MIN_QUANTITY"; payload: number }
-  | { type: "TOGGLE_UNLIMITED_MAX"; payload: boolean }
   | { type: "OPEN_STEP"; payload: ProductFormStep }
   | { type: "FAIL_STEP"; payload: { step: ProductFormStep; message: string } }
   | { type: "CLEAR_STEP_ERROR"; payload: ProductFormStep }

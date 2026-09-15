@@ -1,4 +1,5 @@
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import { productFormFieldsReducer } from "@/core/utils/product-form";
 import type {
   ProductFormAction,
   ProductFormState,
@@ -36,59 +37,24 @@ const productFormReducer = (
   action: ProductFormAction,
 ): ProductFormState => {
   switch (action.type) {
+    // 기본 정보 스텝 입력이 바뀌면 그 스텝에 남아있던 오류도 함께 지운다.
     case "CHANGE_CATEGORY":
-      return {
-        ...state,
-        category: action.payload,
-        subCategory: "",
-        stepErrors: withoutStepError(state, "basic"),
-      };
-
     case "CHANGE_SUB_CATEGORY":
       return {
-        ...state,
-        subCategory: action.payload,
+        ...productFormFieldsReducer(state, action),
         stepErrors: withoutStepError(state, "basic"),
       };
 
-    case "CHANGE_THEME":
-      return { ...state, theme: action.payload };
-
-    // 프리미엄을 끄면 선택한 옵션도 의미가 없어지므로 함께 비운다.
+    // 가격 스텝 입력이 바뀌면 그 스텝에 남아있던 오류도 함께 지운다.
     case "TOGGLE_PREMIUM":
+    case "TOGGLE_PREMIUM_FEATURE":
       return {
-        ...state,
-        isPremium: action.payload,
-        featureIds: action.payload ? state.featureIds : [],
+        ...productFormFieldsReducer(state, action),
         stepErrors: withoutStepError(state, "pricing"),
       };
-
-    case "TOGGLE_FEATURED":
-      return { ...state, isFeature: action.payload };
-
-    case "TOGGLE_PREMIUM_FEATURE": {
-      const { id, checked } = action.payload;
-      const featureIds = checked
-        ? state.featureIds.includes(id)
-          ? state.featureIds
-          : [...state.featureIds, id]
-        : state.featureIds.filter((featureId) => featureId !== id);
-
-      return {
-        ...state,
-        featureIds,
-        stepErrors: withoutStepError(state, "pricing"),
-      };
-    }
 
     case "SET_PRICE_ERROR":
       return { ...state, priceError: action.payload };
-
-    case "CHANGE_MIN_QUANTITY":
-      return { ...state, minQuantity: action.payload };
-
-    case "TOGGLE_UNLIMITED_MAX":
-      return { ...state, isUnlimitedMax: action.payload };
 
     case "OPEN_STEP":
       return { ...state, activeStep: action.payload };
@@ -120,7 +86,7 @@ const productFormReducer = (
       };
 
     default:
-      return state;
+      return productFormFieldsReducer(state, action);
   }
 };
 
