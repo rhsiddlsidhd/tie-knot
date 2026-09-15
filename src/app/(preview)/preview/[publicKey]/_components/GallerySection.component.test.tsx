@@ -19,13 +19,30 @@ describe("GallerySection", () => {
     expect(screen.getByAltText("Gallery image 2")).toBeInTheDocument();
   });
 
+  // 라이트박스를 구매하지 않은 청첩장에서 썸네일이 버튼처럼 보이면 "유료 기능"이
+  // 아니라 "고장"으로 읽힌다. 눌러도 아무 일이 없다면 누를 수 있게 보이면 안 된다.
+  it("lightboxEnabled가 false면 썸네일이 버튼이 아니다", () => {
+    render(<GallerySection images={["/gallery-1.jpg"]} lightboxEnabled={false} />);
+
+    expect(screen.getByAltText("Gallery image 1").closest("button")).toBeNull();
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
+  });
+
   it("lightboxEnabled가 false면 썸네일을 클릭해도 라이트박스가 열리지 않는다", async () => {
     const user = userEvent.setup();
     render(<GallerySection images={["/gallery-1.jpg"]} lightboxEnabled={false} />);
 
-    await user.click(screen.getByAltText("Gallery image 1").closest("button")!);
+    await user.click(screen.getByAltText("Gallery image 1"));
 
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
+  it("lightboxEnabled가 true면 썸네일이 누를 수 있는 버튼이다", () => {
+    render(<GallerySection images={["/gallery-1.jpg"]} lightboxEnabled={true} />);
+
+    expect(
+      screen.getByAltText("Gallery image 1").closest("button"),
+    ).toBeInTheDocument();
   });
 
   it("lightboxEnabled가 true면 클릭한 이미지로 라이트박스를 연다", async () => {
