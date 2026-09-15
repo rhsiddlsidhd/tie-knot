@@ -5,6 +5,7 @@ import { buildFeatureInput, clearCollections } from "@test/support";
 import { FeatureModel } from "@/models/feature.model";
 import {
   createPremiumFeatureService,
+  getAdminPremiumFeaturesPageService,
   getAllPremiumFeatureService,
   getPremiumFeatureService,
   updatePremiumFeatureService,
@@ -111,6 +112,85 @@ describe("premiumFeature", () => {
       );
 
       expect(result).toBeNull();
+    });
+  });
+
+  describe("getAdminPremiumFeaturesPageService", () => {
+    // createdAt은 timestamps가 자동으로 채우고 immutable로 잠그므로, 순서 검증을
+    // 위해 덮어쓰려면 두 보호를 모두 풀어야 한다(user.integration.test.ts와 동일 패턴).
+    const setCreatedAt = async (
+      featureId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
+      await FeatureModel.updateOne(
+        { _id: featureId },
+        { $set: { createdAt } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+    };
+
+    const createFeatures = async (count: number) => {
+      const ids: string[] = [];
+      for (let i = 0; i < count; i += 1) {
+        const feature = await FeatureModel.create(
+          buildFeatureInput({ code: `FEATURE_${i}` }),
+        );
+        await setCreatedAt(feature._id, new Date(2026, 0, i + 1));
+        ids.push(feature._id.toString());
+      }
+      return ids;
+    };
+
+    it("createdAt 내림차순으로 정렬한다", async () => {
+      const [older, newer] = await createFeatures(2);
+
+      const result = await getAdminPremiumFeaturesPageService({});
+
+      expect(result.items.map((feature) => feature._id)).toEqual([
+        newer,
+        older,
+      ]);
+    });
+
+    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+      const created = await createFeatures(3);
+
+      const firstPage = await getAdminPremiumFeaturesPageService({ limit: 2 });
+      expect(firstPage.items).toHaveLength(2);
+      expect(firstPage.nextCursor).not.toBe(null);
+
+      const secondPage = await getAdminPremiumFeaturesPageService({
+        limit: 2,
+        cursor: firstPage.nextCursor!,
+      });
+      expect(secondPage.items).toHaveLength(1);
+      expect(secondPage.nextCursor).toBe(null);
+
+      const paged = [...firstPage.items, ...secondPage.items].map(
+        (feature) => feature._id,
+      );
+      expect(new Set(paged).size).toBe(3);
+      expect(paged.sort()).toEqual([...created].sort());
+    });
+
+    it("마지막 페이지는 nextCursor가 null이다", async () => {
+      await createFeatures(1);
+
+      const result = await getAdminPremiumFeaturesPageService({});
+
+      expect(result.nextCursor).toBe(null);
+    });
+
+    it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminPremiumFeaturesPageService({ cursor: "!!!broken!!!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+
+    it("limit이 허용 범위를 벗어나면 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminPremiumFeaturesPageService({ limit: 0 }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
     });
   });
 });

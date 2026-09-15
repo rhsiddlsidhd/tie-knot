@@ -1,11 +1,12 @@
 "use client";
-import React from "react";
+
+import { Edit } from "lucide-react";
 
 import { Button } from "@/ui/components/atoms/button";
-import { Edit, Trash2 } from "lucide-react";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
-const PremiumFeatureCardAction = ({
+
+const PremiumFeatureRowAction = ({
   premiumFeature,
 }: {
   premiumFeature: PremiumFeature;
@@ -13,20 +14,17 @@ const PremiumFeatureCardAction = ({
   const openModal = useAdminModalStore((state) => state.openModal);
 
   return (
-    <div className="flex gap-2">
+    <div className="flex items-center gap-2">
       <Button
         size="sm"
         variant="outline"
+        aria-label="기능 수정"
         onClick={() => openModal("EDIT-PREMIUMFEATURE", { premiumFeature })}
       >
-        <Edit className="mr-1 h-4 w-4" />
-        수정
-      </Button>
-      <Button size="sm" variant="outline">
-        <Trash2 className="h-4 w-4" />
+        <Edit className="h-4 w-4" />
       </Button>
     </div>
   );
 };
 
-export { PremiumFeatureCardAction };
+export { PremiumFeatureRowAction };

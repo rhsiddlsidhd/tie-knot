@@ -20,9 +20,8 @@ const PaginatedTable = ({
   nextCursor,
 }: PaginatedTableProps) => (
   <div className="space-y-4">
-    <div className="bg-card overflow-hidden rounded-lg border">
-      <TableShell headings={headings}>{children}</TableShell>
-    </div>
+    <TableShell headings={headings}>{children}</TableShell>
+
     <CursorPagination
       basePath={basePath}
       query={query}
