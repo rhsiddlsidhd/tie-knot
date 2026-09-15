@@ -10,6 +10,9 @@ const alertVariants = cva(
         default: "bg-card text-card-foreground",
         destructive:
           "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+        // 프로젝트 추가 — globals.css의 warning 토큰을 쓴다(shadcn 원본엔 없다).
+        warning:
+          "bg-warning/10 border-warning/20 text-warning *:data-[slot=alert-description]:text-warning/90 [&>svg]:text-current",
       },
     },
     defaultVariants: {

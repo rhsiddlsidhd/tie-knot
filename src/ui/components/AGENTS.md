@@ -43,7 +43,7 @@ atoms, molecules, organisms, templates는 모두 props 기반의 순수한 표�
 | 컴포넌트                    | 실측 근거                             | 판정     |
 | --------------------------- | ------------------------------------- | -------- |
 | `app-image.tsx`             | 프로젝트 UI 조합 0개, 이미지 표시 1종 | atom     |
-| `Alert.tsx`                 | Typography 조합, 상태 메시지 표시 1종 | molecule |
+| `AdminListHeading.tsx`      | Typography 조합, 제목 표시 1종        | molecule |
 | `TextField.tsx`             | 라벨·오류 표시와 입력 전달            | organism |
 | `RatingStars.tsx`           | 별점 표시와 입력                      | organism |
 | `LegalDocumentTemplate.tsx` | terms/privacy 페이지 몸통 전체 위임   | template |
@@ -58,7 +58,7 @@ src/ui/components/
 └── templates/   # 페이지 몸통 전체 구조
 ```
 
-`atoms/`는 flat 구조로 소비자가 파일을 직접 지정해 import한다(`@/ui/components/atoms/button`). `molecules/`·`organisms/`·`templates/`는 컴포넌트마다 동일 이름 디렉토리를 두고 소비자는 그 디렉토리를 지정해 import한다(`@/ui/components/molecules/Alert`). 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
+`atoms/`는 flat 구조로 소비자가 파일을 직접 지정해 import한다(`@/ui/components/atoms/button`). `molecules/`·`organisms/`·`templates/`는 컴포넌트마다 동일 이름 디렉토리를 두고 소비자는 그 디렉토리를 지정해 import한다(`@/ui/components/molecules/TableShell`). 파일명 규칙과 세부 예시는 각 티어의 `AGENTS.md`를 따른다.
 
 ## 관련 문서
 

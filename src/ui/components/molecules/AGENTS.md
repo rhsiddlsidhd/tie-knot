@@ -10,10 +10,11 @@ props로 받은 핸들러를 전달하는 상호작용도 동작으로 센다. �
 
 ## 현재 예시
 
-| 파일              | 조합                        | 동작             |
-| ----------------- | --------------------------- | ---------------- |
-| `Alert.tsx`       | Typography                  | 상태 메시지 표시 |
-| `ProductCard.tsx` | AppImage, Badge, Typography | 상품 요약 표시   |
+| 파일                     | 조합                        | 동작           |
+| ------------------------ | --------------------------- | -------------- |
+| `AdminListHeading.tsx`   | Typography                  | 제목 표시      |
+| `TableShell.tsx`         | Table                       | 표 헤더 표시   |
+| `ProductCard.tsx`        | AppImage, Badge, Typography | 상품 요약 표시 |
 
 `TextField`와 `FormField`는 현재 `organisms/`에 있다. 이름에 `Field`가 붙었는지, 바로 사용할 수 있는지는 molecule 판정 근거가 아니다.
 
@@ -21,9 +22,9 @@ props로 받은 핸들러를 전달하는 상호작용도 동작으로 센다. �
 
 ```text
 src/ui/components/molecules/
-├── Alert/
-│   ├── Alert.tsx
-│   ├── Alert.component.test.tsx
+├── AdminListHeading/
+│   ├── AdminListHeading.tsx
+│   ├── AdminListHeading.component.test.tsx
 │   └── index.ts
 ├── AutoCompleteList/
 │   ├── AutoCompleteList.tsx
