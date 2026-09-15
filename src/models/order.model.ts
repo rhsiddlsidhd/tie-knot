@@ -37,9 +37,11 @@ interface ShippingInfo {
 
 const SelectedFeatureSnapShotSchema = new Schema<SelectedFeatureSnapShot>(
   {
+    // ref를 두지 않는다 — 이 id는 결제 시점의 식별자 기록이지 살아 있는 외래키가
+    // 아니다. Feature 문서는 참조 상품이 없으면 하드 삭제되므로 populate하면
+    // 지워진 기능에서 null이 나온다. 주문이 읽어야 할 값은 옆의 code/label/price다.
     featureId: {
       type: Schema.Types.ObjectId,
-      ref: "Feature",
       required: true,
     },
     code: { type: String, required: true },
