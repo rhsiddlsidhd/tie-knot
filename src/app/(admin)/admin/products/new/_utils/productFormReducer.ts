@@ -54,10 +54,19 @@ const productFormReducer = (
     case "CHANGE_THEME":
       return { ...state, theme: action.payload };
 
+    // 프리미엄을 끄면 선택한 옵션도 의미가 없어지므로 함께 비운다.
     case "TOGGLE_PREMIUM":
-      return { ...state, isPremium: action.payload };
+      return {
+        ...state,
+        isPremium: action.payload,
+        featureIds: action.payload ? state.featureIds : [],
+        stepErrors: withoutStepError(state, "pricing"),
+      };
 
-    case "TOGGLE_FEATURE": {
+    case "TOGGLE_FEATURED":
+      return { ...state, isFeature: action.payload };
+
+    case "TOGGLE_PREMIUM_FEATURE": {
       const { id, checked } = action.payload;
       const featureIds = checked
         ? state.featureIds.includes(id)
@@ -65,7 +74,11 @@ const productFormReducer = (
           : [...state.featureIds, id]
         : state.featureIds.filter((featureId) => featureId !== id);
 
-      return { ...state, featureIds };
+      return {
+        ...state,
+        featureIds,
+        stepErrors: withoutStepError(state, "pricing"),
+      };
     }
 
     case "SET_PRICE_ERROR":

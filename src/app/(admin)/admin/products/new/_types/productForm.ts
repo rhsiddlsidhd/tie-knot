@@ -30,7 +30,11 @@ type ProductFormAction =
   | { type: "CHANGE_SUB_CATEGORY"; payload: string }
   | { type: "CHANGE_THEME"; payload: string }
   | { type: "TOGGLE_PREMIUM"; payload: boolean }
-  | { type: "TOGGLE_FEATURE"; payload: { id: string; checked: boolean } }
+  | { type: "TOGGLE_FEATURED"; payload: boolean }
+  | {
+      type: "TOGGLE_PREMIUM_FEATURE";
+      payload: { id: string; checked: boolean };
+    }
   | { type: "SET_PRICE_ERROR"; payload: string | null }
   | { type: "CHANGE_MIN_QUANTITY"; payload: number }
   | { type: "TOGGLE_UNLIMITED_MAX"; payload: boolean }

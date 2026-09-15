@@ -1,7 +1,6 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useRef, useState } from "react";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { DiscountField } from "@/ui/components/organisms/DiscountField";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
@@ -24,10 +23,7 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  type CarouselApi,
 } from "@/ui/components/atoms/carousel";
-
-import { useImageList } from "@/ui/hooks/useImageList";
 
 import {
   getCategoryOptions,
@@ -39,14 +35,7 @@ import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { getMobileInvitationThemeOptions } from "@/core/utils/theme";
 import type { ApiResponse } from "@/core/domain/error";
 import { ProductFormSlideCard } from "./ProductFormSlideCard";
-import {
-  MOBILE_PRODUCT_FORM_STEPS,
-  PHYSICAL_PRODUCT_FORM_STEPS,
-} from "../_constants/productForm";
-import type {
-  ProductFormStep,
-  StepErrors,
-} from "../_types/productForm";
+import { useProductForm } from "../_hooks/useProductForm";
 
 interface ProductRegistrationFormProps {
   premiumFeatures: PremiumFeature[];
@@ -66,208 +55,20 @@ const ProductRegistrationForm = ({
   onCancel,
   onSubmitIntentChange,
 }: ProductRegistrationFormProps) => {
-  const [isPremium, setIsPremium] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory>(
-    MOBILE_INVITATION_CATEGORY,
-  );
-  // 연속 등록 시 유지되는 필드 — category와 마찬가지로 SelectField에 defaultValue로
-  // 넘겨 외부 상태와 동기화한다(SelectField는 defaultValue prop 변경을 감지해 재동기화한다).
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
-  const [selectedTheme, setSelectedTheme] = useState("default");
-  const [isFeature, setIsFeature] = useState(false);
-  const [selectedFeatureIds, setSelectedFeatureIds] = useState<string[]>([]);
-  const [priceInputError, setPriceInputError] = useState<string | null>(null);
-
-  const thumbnail = useImageList();
-  const preview = useImageList();
-  const images = useImageList();
-  // 등록 폼 초기값 1 — 서버 defaultValue와 일치.
-  const [minQuantity, setMinQuantity] = useState<number>(1);
-  // 등록 폼 초기값 true — mongoose default(maxQuantity: 0)와 일치.
-  const [isUnlimitedMax, setIsUnlimitedMax] = useState(true);
-  const [activeStep, setActiveStep] = useState<ProductFormStep>("basic");
-  const [stepErrors, setStepErrors] = useState<StepErrors>({});
-  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-  const visibleSteps =
-    selectedCategory === MOBILE_INVITATION_CATEGORY
-      ? MOBILE_PRODUCT_FORM_STEPS
-      : PHYSICAL_PRODUCT_FORM_STEPS;
-
-  const formRef = useRef<HTMLFormElement>(null);
-  // 마지막으로 클릭된 제출 버튼 종류. 두 버튼 모두 같은 action을 호출하므로
-  // 성공 이후 어떤 버튼이었는지는 클릭 시점에 기록해뒀다가 state 변화 시 읽는다.
-  const isContinueSubmitRef = useRef(false);
-
-  // "등록 후 계속 작성"으로 성공한 경우에만 category/subCategory/theme을 제외한
-  // 나머지 필드를 초기화한다 — uncontrolled 필드는 form.reset(), controlled 필드는
-  // 각각의 setState로 되돌린다. category/subCategory/theme은 React state이므로
-  // form.reset()의 영향을 받지 않아 그대로 유지된다.
-  useEffect(() => {
-    if (!state?.success) return;
-    if (!isContinueSubmitRef.current) return;
-
-    formRef.current?.reset();
-    setIsPremium(false);
-    setIsFeature(false);
-    setSelectedFeatureIds([]);
-    setPriceInputError(null);
-    setMinQuantity(1);
-    setIsUnlimitedMax(true);
-    setActiveStep("basic");
-    setStepErrors({});
-    carouselApi?.scrollTo(0, true);
-    thumbnail.reset();
-    preview.reset();
-    images.reset();
-    // thumbnail/preview/images는 매 렌더 새로 생성되는 객체라 deps에 넣으면 매 렌더 실행된다.
-    // 제출 성공(state 변화)에만 반응하면 충분하므로 의도적으로 제외한다.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
-
-  useEffect(() => {
-    if (!carouselApi) return;
-
-    const viewport = formRef.current?.querySelector<HTMLElement>(
-      '[data-slot="carousel-content"]',
-    );
-    const slide = carouselApi.slideNodes()[visibleSteps.indexOf(activeStep)];
-    if (!viewport || !slide) return;
-
-    const updateHeight = () => {
-      viewport.style.height = `${slide.scrollHeight}px`;
-    };
-    const frame = requestAnimationFrame(updateHeight);
-    const resizeObserver =
-      typeof ResizeObserver === "undefined"
-        ? undefined
-        : new ResizeObserver(updateHeight);
-    resizeObserver?.observe(slide);
-
-    return () => {
-      cancelAnimationFrame(frame);
-      resizeObserver?.disconnect();
-    };
-  }, [
-    activeStep,
-    carouselApi,
-    images.items.length,
-    isPremium,
-    isUnlimitedMax,
-    preview.items.length,
-    selectedFeatureIds.length,
-    thumbnail.items.length,
+  const {
+    form,
+    dispatch,
+    thumbnail,
+    preview,
+    images,
     visibleSteps,
-  ]);
-
-  const handleFeatureChange = (checked: boolean, id: string) => {
-    setSelectedFeatureIds((prev) =>
-      checked ? [...prev, id] : prev.filter((item) => item !== id),
-    );
-  };
-
-  const handleMinQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value;
-    setMinQuantity(raw === "" ? NaN : Number(raw));
-  };
-
-  const clearStepError = (step: ProductFormStep) => {
-    setStepErrors((current) => {
-      if (!current[step]) return current;
-      const next = { ...current };
-      delete next[step];
-      return next;
-    });
-  };
-
-  const openStep = (step: ProductFormStep) => {
-    setActiveStep(step);
-    carouselApi?.scrollTo(visibleSteps.indexOf(step));
-  };
-
-  const validateStep = (step: ProductFormStep) => {
-    const stepElement = formRef.current?.querySelector<HTMLElement>(
-      `[data-product-form-step="${step}"]`,
-    );
-    const controls = stepElement?.querySelectorAll<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >("input, textarea, select");
-    const invalidControl = controls
-      ? Array.from(controls).find(
-          (control) => control.willValidate && !control.checkValidity(),
-        )
-      : undefined;
-
-    if (invalidControl) {
-      openStep(step);
-      requestAnimationFrame(() => {
-        invalidControl.reportValidity();
-        invalidControl.focus();
-      });
-      return false;
-    }
-
-    let message: string | undefined;
-    if (step === "basic" && !selectedSubCategory) {
-      message = "서브 카테고리를 선택해주세요.";
-    } else if (step === "pricing" && priceInputError) {
-      message = priceInputError;
-    } else if (
-      step === "pricing" &&
-      isPremium &&
-      selectedFeatureIds.length === 0
-    ) {
-      message = "옵션을 선택해주세요.";
-    } else if (step === "thumbnail" && thumbnail.items.length === 0) {
-      message = "썸네일 이미지를 등록해주세요.";
-    } else if (
-      step === "images" &&
-      selectedCategory !== MOBILE_INVITATION_CATEGORY &&
-      images.items.length === 0
-    ) {
-      message = "상세 이미지를 1장 이상 등록해주세요.";
-    }
-
-    if (message) {
-      openStep(step);
-      setStepErrors((current) => ({ ...current, [step]: message }));
-      return false;
-    }
-
-    clearStepError(step);
-    return true;
-  };
-
-  const openNextStep = (current: ProductFormStep, next: ProductFormStep) => {
-    if (!validateStep(current)) return;
-
-    openStep(next);
-  };
-
-  const openPreviousStep = (previous: ProductFormStep) => {
-    openStep(previous);
-  };
-
-  const handleInvalid = (event: React.InvalidEvent<HTMLFormElement>) => {
-    const step = (event.target as HTMLElement).closest<HTMLElement>(
-      "[data-product-form-step]",
-    )?.dataset.productFormStep as ProductFormStep | undefined;
-    if (!step) return;
-
-    openStep(step);
-  };
-
-  const handleSubmitIntent = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    continueRegistration: boolean,
-  ) => {
-    if (visibleSteps.some((step) => !validateStep(step))) {
-      event.preventDefault();
-      return;
-    }
-
-    isContinueSubmitRef.current = continueRegistration;
-    onSubmitIntentChange(continueRegistration);
-  };
+    formRef,
+    setCarouselApi,
+    openNextStep,
+    openPreviousStep,
+    handleInvalid,
+    handleSubmitIntent,
+  } = useProductForm({ state, onSubmitIntentChange });
 
   const titleError = getFieldError(state, "title");
   const descriptionError = getFieldError(state, "description");
@@ -281,7 +82,7 @@ const ProductRegistrationForm = ({
   const imagesError = getFieldError(state, "images");
   const minQuantityError = getFieldError(state, "minQuantity");
   const maxQuantityError = getFieldError(state, "maxQuantity");
-  const activeStepNumber = visibleSteps.indexOf(activeStep) + 1;
+  const activeStepNumber = visibleSteps.indexOf(form.activeStep) + 1;
 
   return (
     <form
@@ -291,11 +92,11 @@ const ProductRegistrationForm = ({
       onInvalid={handleInvalid}
     >
       {/* featureIds — 선택된 것만 전송 */}
-      {selectedFeatureIds.map((id) => (
+      {form.featureIds.map((id) => (
         <input key={id} type="hidden" name="featureIds" value={id} />
       ))}
-      <input type="hidden" name="isFeatured" value={isFeature.toString()} />
-      <input type="hidden" name="isPremium" value={isPremium.toString()} />
+      <input type="hidden" name="isFeatured" value={form.isFeature.toString()} />
+      <input type="hidden" name="isPremium" value={form.isPremium.toString()} />
 
       <div className="flex items-center justify-between">
         <p className="text-muted-foreground text-sm">
@@ -319,8 +120,8 @@ const ProductRegistrationForm = ({
           <CarouselItem
             className="pl-0"
             aria-label="1단계: 기본 정보"
-            aria-hidden={activeStep !== "basic"}
-            inert={activeStep !== "basic"}
+            aria-hidden={form.activeStep !== "basic"}
+            inert={form.activeStep !== "basic"}
           >
             <ProductFormSlideCard
               step="basic"
@@ -353,12 +154,12 @@ const ProductRegistrationForm = ({
                 <SelectField
                   id="category"
                   name="category"
-                  defaultValue={selectedCategory}
+                  defaultValue={form.category}
                   onValueChange={(value) => {
-                    const category = value as ProductCategory;
-                    setSelectedCategory(category);
-                    setSelectedSubCategory("");
-                    clearStepError("basic");
+                    dispatch({
+                      type: "CHANGE_CATEGORY",
+                      payload: value as ProductCategory,
+                    });
                   }}
                   placeholder="카테고리를 선택하세요"
                   data={getCategoryOptions()}
@@ -371,25 +172,26 @@ const ProductRegistrationForm = ({
                 <SelectField
                   id="subCategory"
                   name="subCategory"
-                  defaultValue={selectedSubCategory}
+                  defaultValue={form.subCategory}
                   onValueChange={(value) => {
-                    setSelectedSubCategory(value);
-                    clearStepError("basic");
+                    dispatch({ type: "CHANGE_SUB_CATEGORY", payload: value });
                   }}
                   placeholder="서브 카테고리를 선택하세요"
-                  data={getSubCategoryOptions(selectedCategory)}
-                  error={subCategoryError || stepErrors.basic}
+                  data={getSubCategoryOptions(form.category)}
+                  error={subCategoryError || form.stepErrors.basic}
                   required
                 >
                   서브 카테고리
                 </SelectField>
 
-                {selectedCategory === MOBILE_INVITATION_CATEGORY && (
+                {form.category === MOBILE_INVITATION_CATEGORY && (
                   <SelectField
                     id="theme"
                     name="theme"
-                    defaultValue={selectedTheme}
-                    onValueChange={setSelectedTheme}
+                    defaultValue={form.theme}
+                    onValueChange={(value) =>
+                      dispatch({ type: "CHANGE_THEME", payload: value })
+                    }
                     placeholder="테마를 선택하세요"
                     data={getMobileInvitationThemeOptions()}
                     error={themeError}
@@ -404,8 +206,8 @@ const ProductRegistrationForm = ({
           <CarouselItem
             className="pl-0"
             aria-label="2단계: 가격 정보"
-            aria-hidden={activeStep !== "pricing"}
-            inert={activeStep !== "pricing"}
+            aria-hidden={form.activeStep !== "pricing"}
+            inert={form.activeStep !== "pricing"}
           >
             <ProductFormSlideCard
               step="pricing"
@@ -427,15 +229,17 @@ const ProductRegistrationForm = ({
                 step={1}
                 suffix="원"
                 required
-                error={priceInputError || priceError}
+                error={form.priceError || priceError}
                 onChange={(event) => {
                   const value = event.target.value;
-                  clearStepError("pricing");
-                  setPriceInputError(
-                    value !== "" && !Number.isInteger(Number(value))
-                      ? "가격은 원 단위 정수로 입력해주세요."
-                      : null,
-                  );
+                  dispatch({ type: "CLEAR_STEP_ERROR", payload: "pricing" });
+                  dispatch({
+                    type: "SET_PRICE_ERROR",
+                    payload:
+                      value !== "" && !Number.isInteger(Number(value))
+                        ? "가격은 원 단위 정수로 입력해주세요."
+                        : null,
+                  });
                 }}
               />
 
@@ -450,15 +254,13 @@ const ProductRegistrationForm = ({
                 id="isPremium"
                 label="프리미엄 상품"
                 description="추가 유료 옵션을 제공하는 상품입니다."
-                checked={isPremium}
+                checked={form.isPremium}
                 onCheckedChange={(checked) => {
-                  clearStepError("pricing");
-                  setIsPremium(checked);
-                  if (!checked) setSelectedFeatureIds([]);
+                  dispatch({ type: "TOGGLE_PREMIUM", payload: checked });
                 }}
               />
 
-              {isPremium && (
+              {form.isPremium && (
                 <div className="space-y-4 rounded-lg border border-dashed p-4">
                   <TypographyH4 className="text-foreground font-medium">
                     프리미엄 기능 선택
@@ -472,10 +274,12 @@ const ProductRegistrationForm = ({
                       >
                         <Checkbox
                           id={`feature-${feature.code}`}
-                          checked={selectedFeatureIds.includes(feature._id)}
+                          checked={form.featureIds.includes(feature._id)}
                           onCheckedChange={(checked) => {
-                            clearStepError("pricing");
-                            handleFeatureChange(!!checked, feature._id);
+                            dispatch({
+                              type: "TOGGLE_PREMIUM_FEATURE",
+                              payload: { id: feature._id, checked: !!checked },
+                            });
                           }}
                         />
                         <FieldLabel
@@ -488,7 +292,7 @@ const ProductRegistrationForm = ({
                     ))}
                   </div>
                   <FieldError>
-                    {featureIdsError || stepErrors.pricing}
+                    {featureIdsError || form.stepErrors.pricing}
                   </FieldError>
                 </div>
               )}
@@ -498,8 +302,8 @@ const ProductRegistrationForm = ({
           <CarouselItem
             className="pl-0"
             aria-label="3단계: 노출 설정"
-            aria-hidden={activeStep !== "visibility"}
-            inert={activeStep !== "visibility"}
+            aria-hidden={form.activeStep !== "visibility"}
+            inert={form.activeStep !== "visibility"}
           >
             <ProductFormSlideCard
               step="visibility"
@@ -514,8 +318,10 @@ const ProductRegistrationForm = ({
                 id="isFeatured"
                 label="추천 상품"
                 description="메인 페이지에 추천 상품으로 노출됩니다."
-                checked={isFeature}
-                onCheckedChange={setIsFeature}
+                checked={form.isFeature}
+                onCheckedChange={(checked) =>
+                  dispatch({ type: "TOGGLE_FEATURED", payload: checked })
+                }
               />
               <InputField
                 id="priority"
@@ -538,8 +344,8 @@ const ProductRegistrationForm = ({
           <CarouselItem
             className="pl-0"
             aria-label="4단계: 썸네일 이미지"
-            aria-hidden={activeStep !== "thumbnail"}
-            inert={activeStep !== "thumbnail"}
+            aria-hidden={form.activeStep !== "thumbnail"}
+            inert={form.activeStep !== "thumbnail"}
           >
             <ProductFormSlideCard
               step="thumbnail"
@@ -548,7 +354,7 @@ const ProductRegistrationForm = ({
               required
               previousLabel="노출 설정"
               nextLabel={
-                selectedCategory === MOBILE_INVITATION_CATEGORY
+                form.category === MOBILE_INVITATION_CATEGORY
                   ? "미리보기 이미지"
                   : "상세 이미지"
               }
@@ -556,7 +362,7 @@ const ProductRegistrationForm = ({
               onNext={() =>
                 openNextStep(
                   "thumbnail",
-                  selectedCategory === MOBILE_INVITATION_CATEGORY
+                  form.category === MOBILE_INVITATION_CATEGORY
                     ? "preview"
                     : "images",
                 )
@@ -568,7 +374,10 @@ const ProductRegistrationForm = ({
                   folder="products/thumbnails"
                   items={thumbnail.items}
                   onAdd={(urls) => {
-                    clearStepError("thumbnail");
+                    dispatch({
+                      type: "CLEAR_STEP_ERROR",
+                      payload: "thumbnail",
+                    });
                     thumbnail.add(urls);
                   }}
                   onRemove={thumbnail.remove}
@@ -580,19 +389,19 @@ const ProductRegistrationForm = ({
                   value={thumbnail.getUrls()[0] ?? ""}
                 />
                 <FieldError>
-                  {thumbnailError || stepErrors.thumbnail}
+                  {thumbnailError || form.stepErrors.thumbnail}
                 </FieldError>
               </div>
             </ProductFormSlideCard>
           </CarouselItem>
 
           {/* 미리보기 URL — invitation 전용(REQ-6). */}
-          {selectedCategory === MOBILE_INVITATION_CATEGORY && (
+          {form.category === MOBILE_INVITATION_CATEGORY && (
             <CarouselItem
               className="pl-0"
               aria-label="5단계: 미리보기 이미지"
-              aria-hidden={activeStep !== "preview"}
-              inert={activeStep !== "preview"}
+              aria-hidden={form.activeStep !== "preview"}
+              inert={form.activeStep !== "preview"}
             >
               <ProductFormSlideCard
                 step="preview"
@@ -625,27 +434,27 @@ const ProductRegistrationForm = ({
           <CarouselItem
             className="pl-0"
             aria-label="상세 이미지 단계"
-            aria-hidden={activeStep !== "images"}
-            inert={activeStep !== "images"}
+            aria-hidden={form.activeStep !== "images"}
+            inert={form.activeStep !== "images"}
           >
             <ProductFormSlideCard
               step="images"
               title="상세 이미지"
               description={
-                selectedCategory === MOBILE_INVITATION_CATEGORY
+                form.category === MOBILE_INVITATION_CATEGORY
                   ? "선택사항입니다. 등록하지 않아도 됩니다."
                   : "상품 상세 페이지에 표시될 이미지를 최소 1장 등록해주세요."
               }
-              required={selectedCategory !== MOBILE_INVITATION_CATEGORY}
+              required={form.category !== MOBILE_INVITATION_CATEGORY}
               previousLabel={
-                selectedCategory === MOBILE_INVITATION_CATEGORY
+                form.category === MOBILE_INVITATION_CATEGORY
                   ? "미리보기 이미지"
                   : "썸네일 이미지"
               }
               nextLabel="구매 수량"
               onPrevious={() =>
                 openPreviousStep(
-                  selectedCategory === MOBILE_INVITATION_CATEGORY
+                  form.category === MOBILE_INVITATION_CATEGORY
                     ? "preview"
                     : "thumbnail",
                 )
@@ -657,7 +466,7 @@ const ProductRegistrationForm = ({
                 folder="products/images"
                 items={images.items}
                 onAdd={(urls) => {
-                  clearStepError("images");
+                  dispatch({ type: "CLEAR_STEP_ERROR", payload: "images" });
                   images.add(urls);
                 }}
                 onRemove={images.remove}
@@ -671,7 +480,7 @@ const ProductRegistrationForm = ({
                 />
               ))}
               <FieldError className="mt-2">
-                {imagesError || stepErrors.images}
+                {imagesError || form.stepErrors.images}
               </FieldError>
             </ProductFormSlideCard>
           </CarouselItem>
@@ -679,8 +488,8 @@ const ProductRegistrationForm = ({
           <CarouselItem
             className="pl-0"
             aria-label="마지막 단계: 구매 수량"
-            aria-hidden={activeStep !== "quantity"}
-            inert={activeStep !== "quantity"}
+            aria-hidden={form.activeStep !== "quantity"}
+            inert={form.activeStep !== "quantity"}
           >
             <ProductFormSlideCard
               step="quantity"
@@ -698,17 +507,23 @@ const ProductRegistrationForm = ({
                 min={1}
                 step={1}
                 required
-                value={Number.isNaN(minQuantity) ? "" : minQuantity}
-                onChange={handleMinQuantityChange}
+                value={Number.isNaN(form.minQuantity) ? "" : form.minQuantity}
+                onChange={(event) => {
+                  const raw = event.target.value;
+                  dispatch({
+                    type: "CHANGE_MIN_QUANTITY",
+                    payload: raw === "" ? NaN : Number(raw),
+                  });
+                }}
                 error={minQuantityError}
               />
 
               <FieldFrame
-                id={isUnlimitedMax ? "maxQuantity-display" : "maxQuantity"}
+                id={form.isUnlimitedMax ? "maxQuantity-display" : "maxQuantity"}
                 label="최대 구매 수량"
                 error={maxQuantityError}
               >
-                {isUnlimitedMax ? (
+                {form.isUnlimitedMax ? (
                   <>
                     <Input
                       id="maxQuantity-display"
@@ -727,15 +542,20 @@ const ProductRegistrationForm = ({
                     step={1}
                     required
                     defaultValue={
-                      Number.isNaN(minQuantity) ? 1 : Math.max(1, minQuantity)
+                      Number.isNaN(form.minQuantity) ? 1 : Math.max(1, form.minQuantity)
                     }
                   />
                 )}
                 <Field orientation="horizontal" className="gap-2 pt-1">
                   <Checkbox
                     id="isUnlimitedMax"
-                    checked={isUnlimitedMax}
-                    onCheckedChange={(checked) => setIsUnlimitedMax(!!checked)}
+                    checked={form.isUnlimitedMax}
+                    onCheckedChange={(checked) =>
+                      dispatch({
+                        type: "TOGGLE_UNLIMITED_MAX",
+                        payload: !!checked,
+                      })
+                    }
                   />
                   <FieldLabel
                     htmlFor="isUnlimitedMax"
@@ -754,7 +574,7 @@ const ProductRegistrationForm = ({
         <Button type="button" variant="outline" onClick={onCancel}>
           취소
         </Button>
-        {activeStep === "quantity" && (
+        {form.activeStep === "quantity" && (
           <>
             <Button
               type="submit"

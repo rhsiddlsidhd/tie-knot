@@ -53,13 +53,13 @@ describe("productFormReducer", () => {
 
   it("옵션을 체크하면 추가하고 해제하면 제거한다", () => {
     const added = productFormReducer(initialProductFormState, {
-      type: "TOGGLE_FEATURE",
+      type: "TOGGLE_PREMIUM_FEATURE",
       payload: { id: "feature-1", checked: true },
     });
     expect(added.featureIds).toEqual(["feature-1"]);
 
     const removed = productFormReducer(added, {
-      type: "TOGGLE_FEATURE",
+      type: "TOGGLE_PREMIUM_FEATURE",
       payload: { id: "feature-1", checked: false },
     });
     expect(removed.featureIds).toEqual([]);
@@ -67,16 +67,58 @@ describe("productFormReducer", () => {
 
   it("같은 옵션을 다시 체크해도 중복으로 쌓지 않는다", () => {
     const added = productFormReducer(initialProductFormState, {
-      type: "TOGGLE_FEATURE",
+      type: "TOGGLE_PREMIUM_FEATURE",
       payload: { id: "feature-1", checked: true },
     });
 
     const again = productFormReducer(added, {
-      type: "TOGGLE_FEATURE",
+      type: "TOGGLE_PREMIUM_FEATURE",
       payload: { id: "feature-1", checked: true },
     });
 
     expect(again.featureIds).toEqual(["feature-1"]);
+  });
+
+  it("프리미엄을 끄면 선택한 옵션과 가격 스텝 오류를 비운다", () => {
+    const state = stateWith({
+      isPremium: true,
+      featureIds: ["feature-1"],
+      stepErrors: { pricing: "옵션을 선택해주세요." },
+    });
+
+    const next = productFormReducer(state, {
+      type: "TOGGLE_PREMIUM",
+      payload: false,
+    });
+
+    expect(next.isPremium).toBe(false);
+    expect(next.featureIds).toEqual([]);
+    expect(next.stepErrors.pricing).toBeUndefined();
+  });
+
+  it("프리미엄을 켜면 이미 고른 옵션은 유지한다", () => {
+    const state = stateWith({ featureIds: ["feature-1"] });
+
+    const next = productFormReducer(state, {
+      type: "TOGGLE_PREMIUM",
+      payload: true,
+    });
+
+    expect(next.featureIds).toEqual(["feature-1"]);
+  });
+
+  it("옵션을 바꾸면 가격 스텝 오류를 지운다", () => {
+    const state = stateWith({
+      isPremium: true,
+      stepErrors: { pricing: "옵션을 선택해주세요." },
+    });
+
+    const next = productFormReducer(state, {
+      type: "TOGGLE_PREMIUM_FEATURE",
+      payload: { id: "feature-1", checked: true },
+    });
+
+    expect(next.stepErrors.pricing).toBeUndefined();
   });
 
   it("스텝을 열면 활성 스텝만 바꾼다", () => {
