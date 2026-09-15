@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 type ImageItem = { id: string; preview: string; url: string };
 
@@ -27,22 +27,32 @@ const useImageList = (defaultUrls?: string[]) => {
     );
   }
 
-  const add = (urls: string[]) =>
-    setItems((prev) => [
-      ...prev,
-      ...urls.map((url) => ({
-        id: String(nextId.current++),
-        preview: url,
-        url,
-      })),
-    ]);
+  // 소비처가 memo된 자식에 그대로 내려보내므로 참조를 고정한다.
+  const add = useCallback(
+    (urls: string[]) =>
+      setItems((prev) => [
+        ...prev,
+        ...urls.map((url) => ({
+          id: String(nextId.current++),
+          preview: url,
+          url,
+        })),
+      ]),
+    [],
+  );
 
-  const remove = (id: string) =>
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const remove = useCallback(
+    (id: string) => setItems((prev) => prev.filter((item) => item.id !== id)),
+    [],
+  );
 
-  const getUrls = (): string[] => items.map((item) => item.url);
+  // items를 읽으므로 목록이 바뀌면 참조도 함께 바뀐다 — 호출 시점 값이 최신이어야 한다.
+  const getUrls = useCallback(
+    (): string[] => items.map((item) => item.url),
+    [items],
+  );
 
-  const reset = () => setItems([]);
+  const reset = useCallback(() => setItems([]), []);
 
   return { items, add, remove, getUrls, reset };
 }
