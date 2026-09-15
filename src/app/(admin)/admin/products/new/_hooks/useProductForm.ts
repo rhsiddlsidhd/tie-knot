@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useMemo, useReducer, useRef, useState } from "react";
 import type { CarouselApi } from "@/ui/components/atoms/carousel";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import type { ApiResponse } from "@/core/domain/error";
@@ -16,6 +16,7 @@ import {
   productFormReducer,
 } from "../_utils/productFormReducer";
 import { getStepErrorMessage } from "../_utils/productFormValidation";
+import { useEvent } from "./useEvent";
 
 interface UseProductFormParams {
   state: ApiResponse<{ message: string }> | null;
@@ -51,20 +52,23 @@ const useProductForm = ({
   // "등록 후 계속 작성"으로 성공한 경우에만 category/subCategory/theme을 제외한
   // 나머지 필드를 초기화한다 — uncontrolled 필드는 form.reset(), 나머지는
   // RESET_AFTER_CONTINUE와 이미지 목록 reset이 담당한다.
-  useEffect(() => {
-    if (!state?.success) return;
-    if (!isContinueSubmitRef.current) return;
-
+  // carouselApi처럼 초기화에만 쓰이는 값은 useEvent로 감싸 호출 시점에 읽는다 —
+  // effect를 제출 성공(state 변화)에만 반응시키면서도 deps를 빠짐없이 적을 수 있다.
+  const resetAfterContinue = useEvent(() => {
     formRef.current?.reset();
     dispatch({ type: "RESET_AFTER_CONTINUE" });
     carouselApi?.scrollTo(0, true);
     thumbnail.reset();
     preview.reset();
     images.reset();
-    // thumbnail/preview/images는 매 렌더 새로 생성되는 객체라 deps에 넣으면 매 렌더 실행된다.
-    // 제출 성공(state 변화)에만 반응하면 충분하므로 의도적으로 제외한다.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  });
+
+  useEffect(() => {
+    if (!state?.success) return;
+    if (!isContinueSubmitRef.current) return;
+
+    resetAfterContinue();
+  }, [resetAfterContinue, state]);
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -150,37 +154,107 @@ const useProductForm = ({
     return true;
   };
 
-  const openNextStep = (current: ProductFormStep, next: ProductFormStep) => {
-    if (!validateStep(current)) return;
+  // memo된 슬라이드에 내려가는 핸들러는 전부 useEvent로 참조를 고정한다.
+  const openNextStep = useEvent(
+    (current: ProductFormStep, next: ProductFormStep) => {
+      if (!validateStep(current)) return;
 
-    openStep(next);
-  };
+      openStep(next);
+    },
+  );
 
-  const openPreviousStep = (previous: ProductFormStep) => {
+  const openPreviousStep = useEvent((previous: ProductFormStep) => {
     openStep(previous);
-  };
+  });
 
-  const handleInvalid = (event: React.InvalidEvent<HTMLFormElement>) => {
-    const step = (event.target as HTMLElement).closest<HTMLElement>(
-      "[data-product-form-step]",
-    )?.dataset.productFormStep as ProductFormStep | undefined;
-    if (!step) return;
+  const handleInvalid = useEvent(
+    (event: React.InvalidEvent<HTMLFormElement>) => {
+      const step = (event.target as HTMLElement).closest<HTMLElement>(
+        "[data-product-form-step]",
+      )?.dataset.productFormStep as ProductFormStep | undefined;
+      if (!step) return;
 
-    openStep(step);
-  };
+      openStep(step);
+    },
+  );
 
-  const handleSubmitIntent = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    continueRegistration: boolean,
-  ) => {
-    if (visibleSteps.some((step) => !validateStep(step))) {
-      event.preventDefault();
-      return;
-    }
+  const handleSubmitIntent = useEvent(
+    (
+      event: React.MouseEvent<HTMLButtonElement>,
+      continueRegistration: boolean,
+    ) => {
+      if (visibleSteps.some((step) => !validateStep(step))) {
+        event.preventDefault();
+        return;
+      }
 
-    isContinueSubmitRef.current = continueRegistration;
-    onSubmitIntentChange(continueRegistration);
-  };
+      isContinueSubmitRef.current = continueRegistration;
+      onSubmitIntentChange(continueRegistration);
+    },
+  );
+
+  // 이미지를 추가하면 해당 단계의 오류 표시도 함께 지운다.
+  const handleThumbnailAdd = useEvent((urls: string[]) => {
+    dispatch({ type: "CLEAR_STEP_ERROR", payload: "thumbnail" });
+    thumbnail.add(urls);
+  });
+
+  const handleImagesAdd = useEvent((urls: string[]) => {
+    dispatch({ type: "CLEAR_STEP_ERROR", payload: "images" });
+    images.add(urls);
+  });
+
+  // 슬라이드별 콜백 묶음. 부모가 인라인 화살표로 만들면 매 렌더 참조가 바뀌어
+  // memo가 무력화되므로 여기서 한 번 만들어 그대로 스프레드하게 한다.
+  const slideHandlers = useMemo(
+    () => ({
+      basic: {
+        onNext: () => openNextStep("basic", "pricing"),
+      },
+      pricing: {
+        onPrevious: () => openPreviousStep("basic"),
+        onNext: () => openNextStep("pricing", "visibility"),
+      },
+      visibility: {
+        onPrevious: () => openPreviousStep("pricing"),
+        onNext: () => openNextStep("visibility", "thumbnail"),
+      },
+      thumbnail: {
+        onAdd: handleThumbnailAdd,
+        onRemove: thumbnail.remove,
+        onPrevious: () => openPreviousStep("visibility"),
+        onNext: () =>
+          openNextStep("thumbnail", isMobileInvitation ? "preview" : "images"),
+      },
+      preview: {
+        onAdd: preview.add,
+        onRemove: preview.remove,
+        onPrevious: () => openPreviousStep("thumbnail"),
+        onNext: () => openNextStep("preview", "images"),
+      },
+      images: {
+        onAdd: handleImagesAdd,
+        onRemove: images.remove,
+        onPrevious: () =>
+          openPreviousStep(isMobileInvitation ? "preview" : "thumbnail"),
+        onNext: () => openNextStep("images", "quantity"),
+      },
+      quantity: {
+        onPrevious: () => openPreviousStep("images"),
+      },
+    }),
+    [
+      handleImagesAdd,
+      handleThumbnailAdd,
+      images.remove,
+      isMobileInvitation,
+      openNextStep,
+      openPreviousStep,
+      preview.add,
+      preview.remove,
+      thumbnail.remove,
+    ],
+  );
 
   return {
     form,
@@ -196,6 +270,7 @@ const useProductForm = ({
     openPreviousStep,
     handleInvalid,
     handleSubmitIntent,
+    slideHandlers,
   };
 };
 
