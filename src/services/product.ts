@@ -193,6 +193,7 @@ const incrementProductViewsService = async (
 
 type AdminProductListQuery = {
   view?: "active" | "trash";
+  q?: string;
   cursor?: string;
   limit?: number;
 };
@@ -205,6 +206,7 @@ type AdminProductListQuery = {
  */
 const getAdminProductsPageService = async ({
   view = "active",
+  q,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
 }: AdminProductListQuery): Promise<AdminProductListPage> => {
@@ -217,18 +219,44 @@ const getAdminProductsPageService = async ({
   const filter: Record<string, unknown> =
     view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
 
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: Record<string, unknown>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    const or: Record<string, unknown>[] = [
+      { title: { $regex: escapeRegExp(term), $options: "i" } },
+    ];
+    const categoryKeys = findProductCategoriesByTerm(term);
+    if (categoryKeys.length > 0) {
+      or.push({ category: { $in: categoryKeys } });
+    }
+    const subCategoryKeys = findSubCategoriesByTerm(term);
+    if (subCategoryKeys.length > 0) {
+      or.push({ subCategory: { $in: subCategoryKeys } });
+    }
+    conditions.push({ $or: or });
+  }
+
   if (cursor) {
     const decoded = decodeCursor(cursor);
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
+    conditions.push({
+      $or: [
+        { createdAt: { $lt: decoded.createdAt } },
+        {
+          createdAt: decoded.createdAt,
+          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+        },
+      ],
+    });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await ProductModel.find(filter)

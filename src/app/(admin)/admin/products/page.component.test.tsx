@@ -27,15 +27,17 @@ vi.mock(
     AdminProductsTemplate: ({
       page,
       view,
+      q,
       cursor,
     }: {
       page: { items: unknown[]; nextCursor: string | null };
       view?: string;
+      q?: string;
       cursor?: string;
     }) => (
       <div>
-        템플릿:items={page.items.length}:view={view ?? "없음"}:cursor=
-        {cursor ?? "없음"}
+        템플릿:items={page.items.length}:view={view ?? "없음"}:q=
+        {q ?? "없음"}:cursor={cursor ?? "없음"}
       </div>
     ),
   }),
@@ -144,7 +146,50 @@ describe("관리자 상품 목록 페이지", () => {
     );
 
     expect(
-      screen.getByText(`템플릿:items=1:view=trash:cursor=${validCursor}`),
+      screen.getByText(`템플릿:items=1:view=trash:q=없음:cursor=${validCursor}`),
     ).toBeInTheDocument();
+  });
+
+  it("검색어를 서비스에 넘기고 Template에 전달한다", async () => {
+    render(
+      await ProductsPage({
+        searchParams: Promise.resolve({ q: "청첩장" }),
+      }),
+    );
+
+    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: "청첩장" }),
+    );
+    expect(screen.getByText(/q=청첩장/)).toBeInTheDocument();
+  });
+
+  it("빈 검색어는 조건 없음으로 정규화한다", async () => {
+    await ProductsPage({ searchParams: Promise.resolve({ q: "   " }) });
+
+    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
+  });
+
+  it("검색어와 view 필터를 함께 넘긴다", async () => {
+    await ProductsPage({
+      searchParams: Promise.resolve({ q: "청첩장", view: "trash" }),
+    });
+
+    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: "청첩장", view: "trash" }),
+    );
+  });
+
+  // 검색어가 100자를 넘으면 스키마가 통째로 거부한다 — 필터/커서 없음으로 떨어뜨려
+  // 페이지가 throw하지 않게 한다(URL이 소유하는 값이라 어떤 입력도 올 수 있다).
+  it("지나치게 긴 검색어는 조건 없이 조회한다", async () => {
+    await ProductsPage({
+      searchParams: Promise.resolve({ q: "가".repeat(101) }),
+    });
+
+    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
   });
 });
