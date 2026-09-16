@@ -1,12 +1,10 @@
 "use client";
-import type { SubmenuParentTitle } from "@/core/domain/sidebar";
-import { ALL_NAVIGATE_ITEMS } from "@/core/domain/sidebar";
+import { ALL_NAVIGATE_ITEMS } from "@/core/domain/navigation";
 import { cn } from "@/core/utils/cn";
-import { isSubmenuParentTitle } from "@/core/utils/sidebar";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/ui/components/atoms/button";
 const SidebarNavItem = ({
   type,
@@ -14,48 +12,45 @@ const SidebarNavItem = ({
   type: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
 }) => {
   const pathname = usePathname();
-  const [expandedMenus, setExpandedMenus] = useState<SubmenuParentTitle[]>([
-    "상품 관리",
-    "프리미엄 기능 관리",
-    "주문 정보",
-  ]);
+  const data = ALL_NAVIGATE_ITEMS[type];
 
-  const toggleMenu = (title: SubmenuParentTitle) => {
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(() =>
+    data.filter((item) => item.submenu).map((item) => item.label),
+  );
+
+  const toggleMenu = (label: string) => {
     setExpandedMenus((prev) =>
-      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],
+      prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label],
     );
   };
-
-  const data = ALL_NAVIGATE_ITEMS[type];
 
   return (
     <nav className="flex-1 overflow-y-auto">
       {data.map((item) => {
-        const menuTitle =
-          item.submenu && isSubmenuParentTitle(item.title) ? item.title : null;
+        const menuLabel = item.submenu ? item.label : null;
 
         return (
-          <div key={item.title}>
-            {menuTitle ? (
+          <div key={item.label}>
+            {menuLabel ? (
               <div>
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => toggleMenu(menuTitle)}
+                  onClick={() => toggleMenu(menuLabel)}
                   className="text-muted-foreground hover:text-foreground hover:bg-accent/50 flex h-auto w-full items-center justify-between rounded-none px-6 py-3 text-sm transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <item.icon className="h-5 w-5" />
-                    <span>{item.title}</span>
+                    {item.icon && <item.icon className="h-5 w-5" />}
+                    <span>{item.label}</span>
                   </div>
                   <ChevronDown
                     className={cn(
                       "h-4 w-4 transition-transform",
-                      expandedMenus.includes(menuTitle) && "rotate-180",
+                      expandedMenus.includes(menuLabel) && "rotate-180",
                     )}
                   />
                 </Button>
-                {expandedMenus.includes(menuTitle) && item.submenu && (
+                {expandedMenus.includes(menuLabel) && item.submenu && (
                   <div className="bg-accent/30">
                     {item.submenu.map((subItem) => (
                       <Link
@@ -68,7 +63,7 @@ const SidebarNavItem = ({
                             : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
                         )}
                       >
-                        {subItem.title}
+                        {subItem.label}
                       </Link>
                     ))}
                   </div>
@@ -84,8 +79,8 @@ const SidebarNavItem = ({
                     : "text-muted-foreground hover:text-foreground hover:bg-accent/50",
                 )}
               >
-                <item.icon className="h-5 w-5" />
-                <span>{item.title}</span>
+                {item.icon && <item.icon className="h-5 w-5" />}
+                <span>{item.label}</span>
               </Link>
             )}
           </div>

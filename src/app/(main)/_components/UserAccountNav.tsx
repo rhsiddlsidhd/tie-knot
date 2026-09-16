@@ -51,11 +51,11 @@ const UserAccountNav = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
         {USER_NAV_ITEMS.filter((item) =>
-          item.adminOnly ? session?.role === "ADMIN" : true,
+          item.href?.startsWith("/admin") ? session?.role === "ADMIN" : true,
         ).map((item) => (
           <DropdownMenuItem key={item.href} asChild>
-            <Link href={item.href} className="flex w-full items-center">
-              <item.icon className="mr-2 size-4" />
+            <Link href={item.href ?? "#"} className="flex w-full items-center">
+              {item.icon && <item.icon className="mr-2 size-4" />}
               {item.label}
             </Link>
           </DropdownMenuItem>
