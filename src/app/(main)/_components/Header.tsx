@@ -1,10 +1,10 @@
 import { AuthButtons } from "./AuthButtons";
+import { DesktopNav } from "./DesktopNav";
 import { MobileNav } from "./MobileNav";
 import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
 import { ROUTES } from "@/core/domain/routes";
-import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
 import { Button } from "@/ui/components/atoms/button";
 import { TypographyH4 } from "@/ui/components/atoms/typography";
 const Header = () => {
@@ -21,16 +21,7 @@ const Header = () => {
             <TypographyH4 className="m-0">Tie Knot</TypographyH4>
           </Link>
 
-          <nav
-            aria-label="카테고리"
-            className="hidden items-center gap-1 md:flex"
-          >
-            {MAIN_NAV_ITEMS.map((item) => (
-              <Button key={item.id} asChild variant="ghost" size="sm">
-                <Link href={item.href}>{item.label}</Link>
-              </Button>
-            ))}
-          </nav>
+          <DesktopNav />
         </div>
 
         {/* Auth / Action Buttons */}
