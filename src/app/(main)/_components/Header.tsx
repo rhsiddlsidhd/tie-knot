@@ -4,10 +4,7 @@ import Link from "next/link";
 import React from "react";
 import { Search } from "lucide-react";
 import { ROUTES } from "@/core/domain/routes";
-import {
-  PRODUCT_CATEGORIES,
-  PRODUCT_CATEGORY_LABELS,
-} from "@/core/domain/product-category";
+import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
 import { Button } from "@/ui/components/atoms/button";
 import { TypographyH4 } from "@/ui/components/atoms/typography";
 const Header = () => {
@@ -28,11 +25,9 @@ const Header = () => {
             aria-label="카테고리"
             className="hidden items-center gap-1 md:flex"
           >
-            {PRODUCT_CATEGORIES.map((category) => (
-              <Button key={category} asChild variant="ghost" size="sm">
-                <Link href={ROUTES.products.byCategory(category)}>
-                  {PRODUCT_CATEGORY_LABELS[category]}
-                </Link>
+            {MAIN_NAV_ITEMS.map((item) => (
+              <Button key={item.id} asChild variant="ghost" size="sm">
+                <Link href={item.href}>{item.label}</Link>
               </Button>
             ))}
           </nav>
