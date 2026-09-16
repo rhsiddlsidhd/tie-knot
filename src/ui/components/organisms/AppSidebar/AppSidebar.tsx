@@ -1,0 +1,76 @@
+import Link from "next/link";
+import { Gem, X } from "lucide-react";
+import { Sidebar, useSidebar } from "@/ui/components/atoms/sidebar";
+import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
+import { ROUTES } from "@/core/domain/routes";
+
+interface AppSidebarProps {
+  navType: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
+}
+
+interface SidebarPanelProps {
+  navType: "MAIN" | AppSidebarProps["navType"];
+  onClose: () => void;
+  onNavigate?: () => void;
+}
+
+const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
+  return (
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="px-6 pt-6 pb-0">
+        <div className="flex items-center justify-between">
+          <Link
+            href={ROUTES.home}
+            onClick={onNavigate}
+            className="text-foreground flex items-center gap-2 text-base font-semibold tracking-widest uppercase"
+          >
+            <Gem className="text-muted-foreground h-4 w-4" strokeWidth={1.5} />
+            Tie Knot
+          </Link>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground -mr-1 p-1 transition-colors"
+            aria-label="메뉴 닫기"
+          >
+            <X className="h-4 w-4" strokeWidth={1.5} />
+          </button>
+        </div>
+
+        <div className="mt-5 flex items-center gap-3">
+          <div className="bg-border/60 h-px flex-1" />
+          <span className="text-muted-foreground/50 text-[10px] font-medium tracking-[0.25em] uppercase">
+            Menu
+          </span>
+          <div className="bg-border/60 h-px flex-1" />
+        </div>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <SidebarNavItem type={navType} onNavigate={onNavigate} />
+      </div>
+
+      <div className="border-border/40 border-t px-6 py-5">
+        <p className="text-muted-foreground/40 text-center text-[10px] tracking-[0.15em] uppercase">
+          모바일 청첩장 &amp; 명함 서비스
+        </p>
+      </div>
+    </div>
+  );
+};
+
+const AppSidebar = ({ navType }: AppSidebarProps) => {
+  const { toggleSidebar } = useSidebar();
+
+  return (
+    <Sidebar className="border-border/50 fixed top-0 left-0 z-50 h-screen w-72 border-r p-0">
+      <SidebarPanel
+        navType={navType}
+        onClose={toggleSidebar}
+        onNavigate={toggleSidebar}
+      />
+    </Sidebar>
+  );
+};
+
+export { AppSidebar, SidebarPanel };

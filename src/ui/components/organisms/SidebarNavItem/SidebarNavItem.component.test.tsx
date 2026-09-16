@@ -18,21 +18,23 @@ describe("SidebarNavItem", () => {
     );
   });
 
-  it("그룹 메뉴는 기본으로 펼쳐져 하위 항목을 표시한다", () => {
+  it("그룹 메뉴는 기본으로 접혀 있다", () => {
     render(<SidebarNavItem type="ADMIN" />);
 
-    expect(screen.getByRole("link", { name: "상품 목록" })).toHaveAttribute(
-      "href",
-      "/admin/products",
-    );
+    expect(
+      screen.queryByRole("link", { name: "상품 목록" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("그룹 메뉴를 클릭하면 하위 항목을 접는다", async () => {
+  it("그룹 메뉴를 클릭하면 하위 항목을 펼친다", async () => {
     const user = userEvent.setup();
     render(<SidebarNavItem type="ADMIN" />);
 
     await user.click(screen.getByRole("button", { name: /상품 관리/ }));
 
-    expect(screen.queryByRole("link", { name: "상품 목록" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "상품 목록" })).toHaveAttribute(
+      "href",
+      "/admin/products",
+    );
   });
 });

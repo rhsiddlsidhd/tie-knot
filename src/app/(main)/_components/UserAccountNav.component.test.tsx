@@ -34,6 +34,14 @@ describe("UserAccountNav", () => {
     });
   });
 
+  it("사용자 메뉴 버튼에 접근 가능한 이름을 제공한다", () => {
+    render(<UserAccountNav />);
+
+    expect(
+      screen.getByRole("button", { name: "사용자 메뉴" }),
+    ).toBeInTheDocument();
+  });
+
   it("로그아웃 클릭 시 logoutUser 액션 호출 후 세션 캐시를 비운다", async () => {
     vi.mocked(logoutUser).mockResolvedValue({ success: true, data: null });
 
@@ -53,7 +61,10 @@ describe("UserAccountNav", () => {
   it("로그아웃 실패 시 에러 토스트를 띄우고 홈으로 이동하지 않는다", async () => {
     vi.mocked(logoutUser).mockResolvedValue({
       success: false,
-      error: { category: "INTERNAL", message: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요." },
+      error: {
+        category: "INTERNAL",
+        message: "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",
+      },
     });
 
     const user = userEvent.setup();
