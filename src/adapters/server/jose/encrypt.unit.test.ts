@@ -21,7 +21,7 @@ describe("encrypt", () => {
     expect(payload.exp! - payload.iat!).toBeCloseTo(7 * 24 * 60 * 60, -1);
   });
 
-  it("ENTRY 토큰에 id가 있으면 그대로 사용하고 role은 담지 않으며 30분 만료로 서명한다", async () => {
+  it("ENTRY 토큰에 id가 있으면 그대로 사용하고 role은 담지 않으며 10분 만료로 서명한다", async () => {
     const token = await encrypt({ type: "ENTRY", id: "guest-1" });
 
     const { payload } = await jwtVerify(token, ENTRY_ENCODED_KEY, {
@@ -30,7 +30,21 @@ describe("encrypt", () => {
 
     expect(payload.id).toBe("guest-1");
     expect(payload.role).toBeUndefined();
-    expect(payload.exp! - payload.iat!).toBeCloseTo(30 * ONE_MINUTE, -1);
+    expect(payload.exp! - payload.iat!).toBeCloseTo(10 * ONE_MINUTE, -1);
+  });
+
+  it("ENTRY 토큰에 jti가 주어지면 페이로드에 그대로 담긴다", async () => {
+    const token = await encrypt({
+      type: "ENTRY",
+      id: "guest-1",
+      jti: "token-id-1",
+    });
+
+    const { payload } = await jwtVerify(token, ENTRY_ENCODED_KEY, {
+      algorithms: ["HS256"],
+    });
+
+    expect(payload.jti).toBe("token-id-1");
   });
 
   it("ENTRY 토큰에 id가 없으면 기본값 entryToken을 id로 사용한다", async () => {

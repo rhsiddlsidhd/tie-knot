@@ -3,8 +3,13 @@ import { SignJWT } from "jose";
 import type { EncryptProps } from "./type";
 import { ENTRY_ENCODED_KEY, JWT_ENCODED_KEY } from "./config";
 
+const EXPIRATION_BY_TYPE = {
+  REFRESH: "7d",
+  ENTRY: "10m",
+} as const satisfies Record<EncryptProps["type"], string>;
+
 const encrypt = async (payload: EncryptProps) => {
-  return await new SignJWT({
+  const jwt = new SignJWT({
     id:
       payload.type !== "ENTRY"
         ? payload.id
@@ -15,8 +20,15 @@ const encrypt = async (payload: EncryptProps) => {
   })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(payload.type !== "REFRESH" ? "30m" : "7d")
-    .sign(payload.type !== "ENTRY" ? JWT_ENCODED_KEY : ENTRY_ENCODED_KEY);
-}
+    .setExpirationTime(EXPIRATION_BY_TYPE[payload.type]);
+
+  if (payload.type === "ENTRY" && payload.jti) {
+    jwt.setJti(payload.jti);
+  }
+
+  return await jwt.sign(
+    payload.type !== "ENTRY" ? JWT_ENCODED_KEY : ENTRY_ENCODED_KEY,
+  );
+};
 
 export { encrypt };
