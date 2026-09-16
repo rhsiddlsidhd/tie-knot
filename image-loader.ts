@@ -7,7 +7,7 @@ export default function imageLoader({ src, width, quality }: ImageLoaderProps) {
     return src;
   }
 
-  const params = [`f_auto`, quality ? `q_${quality}` : `q_auto`, `w_${width}`];
+  const params = [`f_auto`, quality ? `q_${quality}` : `q_auto`, `w_${width}`, `c_scale`];
 
   return src.replace("/upload/", `/upload/${params.join(",")}/`);
 }
