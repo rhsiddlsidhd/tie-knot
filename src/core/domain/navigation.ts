@@ -15,6 +15,8 @@ import { ROUTES } from "./routes";
 import {
   PRODUCT_CATEGORIES,
   PRODUCT_CATEGORY_LABELS,
+  SUB_CATEGORY_LABELS,
+  SUB_CATEGORY_MAP,
 } from "./product-category";
 
 type NavIcon = React.ForwardRefExoticComponent<
@@ -36,18 +38,23 @@ interface NavItem {
   submenu?: Submenu[];
 }
 
-const MAIN_NAV_ITEMS = [
+const MAIN_NAV_ITEMS: NavItem[] = [
   ...PRODUCT_CATEGORIES.map((category) => ({
     id: category,
     label: PRODUCT_CATEGORY_LABELS[category],
     href: ROUTES.products.byCategory(category),
+    submenu: SUB_CATEGORY_MAP[category].map((subCategory) => ({
+      id: subCategory,
+      label: SUB_CATEGORY_LABELS[subCategory],
+      href: ROUTES.products.byCategory(category, subCategory),
+    })),
   })),
   {
     id: "support",
     label: "고객 센터",
     href: ROUTES.support,
   },
-] as const satisfies readonly NavItem[];
+];
 
 const adminNavigateItems: NavItem[] = [
   {

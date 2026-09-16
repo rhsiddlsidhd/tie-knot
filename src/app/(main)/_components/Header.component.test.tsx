@@ -4,6 +4,9 @@ import { render, screen } from "@testing-library/react";
 vi.mock("@/ui/hooks/useAuth", () => ({
   useAuth: () => ({ session: null as unknown, isLoading: false }),
 }));
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/",
+}));
 
 import { Header } from "./Header";
 
