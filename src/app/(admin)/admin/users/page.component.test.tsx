@@ -24,13 +24,15 @@ vi.mock("@/app/(admin)/admin/users/_components/AdminUsersTemplate", () => ({
     page,
     role,
     cursor,
+    q,
   }: {
     page: { items: unknown[]; nextCursor: string | null };
     role?: string;
     cursor?: string;
+    q?: string;
   }) => (
     <div>
-      템플릿:items={page.items.length}:role={role ?? "없음"}:cursor={cursor ?? "없음"}
+      템플릿:items={page.items.length}:role={role ?? "없음"}:cursor={cursor ?? "없음"}:q={q ?? "없음"}
     </div>
   ),
 }));
@@ -113,7 +115,52 @@ describe("관리자 사용자 목록 페이지", () => {
     );
 
     expect(
-      screen.getByText(`템플릿:items=1:role=ADMIN:cursor=${validCursor}`),
+      screen.getByText(
+        `템플릿:items=1:role=ADMIN:cursor=${validCursor}:q=없음`,
+      ),
     ).toBeInTheDocument();
+  });
+
+  it("검색어를 서비스에 넘기고 Template에 전달한다", async () => {
+    render(
+      await UsersPage({
+        searchParams: Promise.resolve({ q: "김철수" }),
+      }),
+    );
+
+    expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: "김철수" }),
+    );
+    expect(screen.getByText(/q=김철수/)).toBeInTheDocument();
+  });
+
+  it("빈 검색어는 조건 없음으로 정규화한다", async () => {
+    await UsersPage({ searchParams: Promise.resolve({ q: "   " }) });
+
+    expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
+  });
+
+  it("검색어와 역할 필터를 함께 넘긴다", async () => {
+    await UsersPage({
+      searchParams: Promise.resolve({ q: "김철수", role: "ADMIN" }),
+    });
+
+    expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: "김철수", role: "ADMIN" }),
+    );
+  });
+
+  // 검색어가 100자를 넘으면 스키마가 통째로 거부한다 — 필터/커서 없음으로 떨어뜨려
+  // 페이지가 throw하지 않게 한다(URL이 소유하는 값이라 어떤 입력도 올 수 있다).
+  it("지나치게 긴 검색어는 조건 없이 조회한다", async () => {
+    await UsersPage({
+      searchParams: Promise.resolve({ q: "가".repeat(101) }),
+    });
+
+    expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
   });
 });

@@ -8,6 +8,7 @@ import { USER_ROLES } from "@/core/domain/user";
 import type { BaseUser, UserDocument } from "@/models/user.model";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { hashPassword } from "@/adapters/server/bcrypt/hash";
 import { decrypt } from "@/adapters/server/jose/decrypt";
 import { encrypt } from "@/adapters/server/jose/encrypt";
@@ -155,6 +156,7 @@ const resetUserPasswordService = async ({
 };
 
 type AdminUserListQuery = {
+  q?: string;
   role?: UserRole;
   cursor?: string;
   limit?: number;
@@ -173,9 +175,11 @@ type AdminUserListRow = {
  * 관리자 전역 사용자 목록 한 페이지 — 활동/탈퇴 여부와 무관하게 전체 사용자를
  * 대상으로 한다(deletedAt으로 걸러내지 않는다). 정렬·커서 계약(createdAt desc, _id
  * tie-break, limit+1)은 주문 목록과 동일하되, 비밀번호·전화번호·인증 관련 필드는
- * select 단계에서부터 제외한다.
+ * select 단계에서부터 제외한다. 검색(q)은 이름/이메일 부분일치를 하나의 $or로
+ * 묶는다(#309).
  */
 const getAdminUsersPageService = async ({
+  q,
   role,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
@@ -195,18 +199,38 @@ const getAdminUsersPageService = async ({
     filter.role = role;
   }
 
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: mongoose.FilterQuery<UserDocument>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    conditions.push({
+      $or: [
+        { name: { $regex: escapeRegExp(term), $options: "i" } },
+        { email: { $regex: escapeRegExp(term), $options: "i" } },
+      ],
+    });
+  }
+
   if (cursor) {
     const decoded = decodeCursor(cursor);
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
+    conditions.push({
+      $or: [
+        { createdAt: { $lt: decoded.createdAt } },
+        {
+          createdAt: decoded.createdAt,
+          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+        },
+      ],
+    });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await UserModel.find(filter)

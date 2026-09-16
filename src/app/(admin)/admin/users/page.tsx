@@ -14,6 +14,7 @@ const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
   const parsed = validateAndFlatten(AdminUserListRequestSchema, {
+    q: typeof searchParams.q === "string" ? searchParams.q : null,
     role: typeof searchParams.role === "string" ? searchParams.role : null,
     cursor:
       typeof searchParams.cursor === "string" ? searchParams.cursor : null,
@@ -21,11 +22,11 @@ const resolveFilters = (
 
   if (!parsed.success) return {};
 
-  const { role, cursor } = parsed.data;
+  const { q, role, cursor } = parsed.data;
   if (cursor && !decodeCursor(cursor)) {
-    return { role };
+    return { q, role };
   }
-  return { role, cursor };
+  return { q, role, cursor };
 };
 
 const UsersPage = async ({
@@ -35,10 +36,12 @@ const UsersPage = async ({
 }) => {
   await verifySession("ADMIN");
 
-  const { role, cursor } = resolveFilters(await searchParams);
-  const page = await getAdminUsersPageService({ role, cursor });
+  const { q, role, cursor } = resolveFilters(await searchParams);
+  const page = await getAdminUsersPageService({ q, role, cursor });
 
-  return <AdminUsersTemplate page={page} role={role} cursor={cursor} />;
+  return (
+    <AdminUsersTemplate page={page} q={q} role={role} cursor={cursor} />
+  );
 };
 
 export default UsersPage;
