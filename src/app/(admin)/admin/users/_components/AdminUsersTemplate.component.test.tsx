@@ -81,6 +81,35 @@ describe("AdminUsersTemplate", () => {
     expect(screen.getByText("해당 역할의 사용자가 없습니다")).toBeInTheDocument();
   });
 
+  it("검색어가 있는데 결과가 없으면 검색 전용 빈 상태 문구를 보여준다", () => {
+    render(
+      <AdminUsersTemplate page={buildPage({ items: [] })} q="없는사용자" />,
+    );
+
+    expect(screen.getByText("검색 결과가 없습니다")).toBeInTheDocument();
+    expect(
+      screen.getByText("검색어를 지우면 전체 사용자를 볼 수 있습니다."),
+    ).toBeInTheDocument();
+  });
+
+  it("역할 필터를 바꿔도 현재 검색어를 유지한다", async () => {
+    const user = userEvent.setup();
+    render(<AdminUsersTemplate page={buildPage()} q="김철수" />);
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "관리자" }));
+
+    expect(pushMock).toHaveBeenCalledWith(
+      "/admin/users?q=%EA%B9%80%EC%B2%A0%EC%88%98&role=ADMIN",
+    );
+  });
+
+  it("검색어 입력의 현재 값과 place holder를 채운다", () => {
+    render(<AdminUsersTemplate page={buildPage()} q="김철수" />);
+
+    expect(screen.getByRole("searchbox")).toHaveValue("김철수");
+  });
+
   it("현재 role 필터를 Pagination 링크에 그대로 전달한다(cursor는 제거)", () => {
     render(
       <AdminUsersTemplate

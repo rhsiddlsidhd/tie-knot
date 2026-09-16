@@ -9,6 +9,7 @@ import { TableRow, TableCell } from "@/ui/components/atoms/table";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import { QueryFilterSelect } from "@/ui/components/organisms/QueryFilterSelect";
+import { QuerySearchInput } from "@/ui/components/organisms/QuerySearchInput";
 import type { AdminUserListPage, UserRole } from "@/core/domain/user";
 import { formatKstDate } from "@/core/utils/date";
 import { ROUTES } from "@/core/domain/routes";
@@ -25,11 +26,17 @@ const ROLE_FILTER_OPTIONS: Array<{ value: UserRole | "ALL"; label: string }> = [
 
 interface AdminUsersTemplateProps {
   page: AdminUserListPage;
+  q?: string;
   role?: UserRole;
   cursor?: string;
 }
 
-const AdminUsersTemplate = ({ page, role, cursor }: AdminUsersTemplateProps) => (
+const AdminUsersTemplate = ({
+  page,
+  q,
+  role,
+  cursor,
+}: AdminUsersTemplateProps) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
       <AdminListHeading title="사용자 관리" />
@@ -38,13 +45,25 @@ const AdminUsersTemplate = ({ page, role, cursor }: AdminUsersTemplateProps) => 
         paramName="role"
         value={role}
         options={ROLE_FILTER_OPTIONS}
+        preserved={{ q }}
       />
     </div>
+
+    <QuerySearchInput
+      basePath={ROUTES.admin.users}
+      label="사용자 검색"
+      value={q}
+      placeholder="이름, 이메일"
+      preserved={{ role }}
+    />
 
     <PaginatedTable
       headings={TABLE_HEADINGS}
       basePath={ROUTES.admin.users}
-      query={role ? { role } : {}}
+      query={{
+        ...(role ? { role } : {}),
+        ...(q ? { q } : {}),
+      }}
       hasCursor={!!cursor}
       nextCursor={page.nextCursor}
     >
@@ -53,9 +72,13 @@ const AdminUsersTemplate = ({ page, role, cursor }: AdminUsersTemplateProps) => 
           <TableCell colSpan={TABLE_HEADINGS.length}>
             <Empty>
               <EmptyHeader>
-                <EmptyTitle>해당 역할의 사용자가 없습니다</EmptyTitle>
+                <EmptyTitle>
+                  {q ? "검색 결과가 없습니다" : "해당 역할의 사용자가 없습니다"}
+                </EmptyTitle>
                 <EmptyDescription>
-                  다른 역할 필터를 선택해보세요.
+                  {q
+                    ? "검색어를 지우면 전체 사용자를 볼 수 있습니다."
+                    : "다른 역할 필터를 선택해보세요."}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
