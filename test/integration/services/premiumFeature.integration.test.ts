@@ -207,6 +207,117 @@ describe("premiumFeature", () => {
         getAdminPremiumFeaturesPageService({ limit: 0 }),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
+
+    describe("검색(q)", () => {
+      it("code 부분일치로 찾는다", async () => {
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "GUESTBOOK", label: "방명록" }),
+        );
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "MAP", label: "지도" }),
+        );
+
+        const result = await getAdminPremiumFeaturesPageService({
+          q: "GUEST",
+        });
+
+        expect(result.items.map((f) => f.code)).toEqual(["GUESTBOOK"]);
+      });
+
+      it("label 부분일치로 찾는다", async () => {
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "GUESTBOOK", label: "방명록" }),
+        );
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "MAP", label: "지도" }),
+        );
+
+        const result = await getAdminPremiumFeaturesPageService({
+          q: "방명",
+        });
+
+        expect(result.items.map((f) => f.code)).toEqual(["GUESTBOOK"]);
+      });
+
+      it("대소문자를 무시한다", async () => {
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "GUESTBOOK", label: "방명록" }),
+        );
+
+        const result = await getAdminPremiumFeaturesPageService({
+          q: "guestbook",
+        });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      it("정규식 특수문자를 글자 그대로 찾는다", async () => {
+        await FeatureModel.create(
+          buildFeatureDocumentInput({
+            code: "MAP_V2",
+            label: "지도(구버전)",
+          }),
+        );
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "MAP_V3", label: "지도" }),
+        );
+
+        const result = await getAdminPremiumFeaturesPageService({
+          q: "(구버전)",
+        });
+
+        expect(result.items.map((f) => f.code)).toEqual(["MAP_V2"]);
+      });
+
+      it("조건에 맞는 기능이 없으면 빈 배열을 리턴한다", async () => {
+        await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "GUESTBOOK", label: "방명록" }),
+        );
+
+        const result = await getAdminPremiumFeaturesPageService({
+          q: "없는기능",
+        });
+
+        expect(result.items).toEqual([]);
+      });
+
+      // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이
+      // 조용히 무시된다 — 둘이 동시에 걸렸을 때 전부 적용되는지가 이 계약의 핵심이다.
+      it("검색어와 커서를 함께 적용한다", async () => {
+        for (let i = 0; i < 3; i += 1) {
+          const feature = await FeatureModel.create(
+            buildFeatureDocumentInput({
+              code: `GUESTBOOK_${i}`,
+              label: "방명록",
+            }),
+          );
+          await setCreatedAt(feature._id, new Date(2026, 0, i + 1));
+        }
+        const other = await FeatureModel.create(
+          buildFeatureDocumentInput({ code: "MAP", label: "지도" }),
+        );
+        await setCreatedAt(other._id, new Date(2026, 1, 1));
+
+        const first = await getAdminPremiumFeaturesPageService({
+          q: "방명록",
+          limit: 2,
+        });
+        expect(first.items).toHaveLength(2);
+        expect(first.nextCursor).not.toBeNull();
+
+        const second = await getAdminPremiumFeaturesPageService({
+          q: "방명록",
+          limit: 2,
+          cursor: first.nextCursor!,
+        });
+
+        expect(second.items).toHaveLength(1);
+        expect(second.nextCursor).toBeNull();
+        expect(
+          [...first.items, ...second.items].every((f) => f.label === "방명록"),
+        ).toBe(true);
+      });
+    });
   });
   describe("deletePremiumFeatureService", () => {
     const createReferencingProduct = async (

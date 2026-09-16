@@ -14,6 +14,7 @@ import {
   encodeCursor,
   isValidPageLimit,
 } from "@/core/utils/cursor";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { dbConnect } from "@/db/connect";
 
 import mongoose from "mongoose";
@@ -61,6 +62,7 @@ const getSelectablePremiumFeatureService = async (): Promise<
 };
 
 type AdminPremiumFeatureListQuery = {
+  q?: string;
   cursor?: string;
   limit?: number;
 };
@@ -71,6 +73,7 @@ type AdminPremiumFeatureListQuery = {
  * 소비처(상품 등록 폼, `/api/premium-features`)는 페이징 없는 getAllPremiumFeatureService를 쓴다.
  */
 const getAdminPremiumFeaturesPageService = async ({
+  q,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
 }: AdminPremiumFeatureListQuery): Promise<AdminPremiumFeatureListPage> => {
@@ -82,18 +85,38 @@ const getAdminPremiumFeaturesPageService = async ({
 
   const filter: mongoose.FilterQuery<FeatureDocument> = {};
 
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: mongoose.FilterQuery<FeatureDocument>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    conditions.push({
+      $or: [
+        { code: { $regex: escapeRegExp(term), $options: "i" } },
+        { label: { $regex: escapeRegExp(term), $options: "i" } },
+      ],
+    });
+  }
+
   if (cursor) {
     const decoded = decodeCursor(cursor);
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
+    conditions.push({
+      $or: [
+        { createdAt: { $lt: decoded.createdAt } },
+        {
+          createdAt: decoded.createdAt,
+          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+        },
+      ],
+    });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await FeatureModel.find(filter)
