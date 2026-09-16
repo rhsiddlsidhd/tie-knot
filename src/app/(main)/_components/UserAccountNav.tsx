@@ -45,7 +45,7 @@ const UserAccountNav = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" aria-label="사용자 메뉴">
           <UserIcon className="size-4" />
         </Button>
       </DropdownMenuTrigger>

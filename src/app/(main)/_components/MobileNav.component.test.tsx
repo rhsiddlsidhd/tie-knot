@@ -9,6 +9,18 @@ const leafItem = MAIN_NAV_ITEMS.find((item) => !item.submenu)!;
 const groupItem = MAIN_NAV_ITEMS.find((item) => item.submenu)!;
 
 describe("MobileNav", () => {
+  it("로고는 홈으로 이동하는 링크다", async () => {
+    const user = userEvent.setup();
+    render(<MobileNav />);
+
+    await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
+
+    expect(screen.getByRole("link", { name: "Tie Knot" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+  });
+
   it("메뉴 버튼 클릭 시 서브카테고리 없는 항목은 바로 링크로 보여준다", async () => {
     const user = userEvent.setup();
     render(<MobileNav />);

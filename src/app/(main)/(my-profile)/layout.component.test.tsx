@@ -1,27 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type * as SidebarModule from "@/ui/components/atoms/sidebar";
 
-const { useAuthMock } = vi.hoisted(() => ({ useAuthMock: vi.fn() }));
-
-vi.mock("@/ui/hooks/useAuth", () => ({
-  useAuth: useAuthMock,
-}));
-vi.mock("@/ui/components/atoms/sidebar", async (importOriginal) => {
-  const actual = await importOriginal<typeof SidebarModule>();
-  const Passthrough = ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  );
-  return {
-    ...actual,
-    SidebarProvider: Passthrough,
-    Sidebar: Passthrough,
-    SidebarContent: Passthrough,
-    SidebarFooter: Passthrough,
-  };
-});
-vi.mock("@/ui/components/organisms/SidebarNavItem", () => ({
-  SidebarNavItem: (): null => null,
+vi.mock("next/navigation", () => ({
+  usePathname: () => "/my-profile",
 }));
 vi.mock("@/ui/components/organisms/SidebarToggle", () => ({
   SidebarToggle: (): null => null,
@@ -30,36 +11,14 @@ vi.mock("@/ui/components/organisms/SidebarToggle", () => ({
 import Layout from "./layout";
 
 describe("(my-profile) Layout", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  it("공통 사이드바에 프로필 메뉴와 페이지 내용을 표시한다", () => {
+    render(<Layout>프로필 페이지</Layout>);
 
-  it("세션의 email/role을 사이드바 푸터에 렌더한다", () => {
-    useAuthMock.mockReturnValue({
-      session: { role: "ADMIN", email: "a@b.com", userId: "user-1" },
-      isLoading: false,
-    });
-
-    render(<Layout>children</Layout>);
-
-    expect(screen.getByText("a@b.com")).toBeInTheDocument();
-    expect(screen.getByText("관리자 계정")).toBeInTheDocument();
-  });
-
-  it("세션이 없으면 일반 계정으로 표시한다", () => {
-    useAuthMock.mockReturnValue({ session: null, isLoading: false });
-
-    render(<Layout>children</Layout>);
-
-    expect(screen.getByText("일반 계정")).toBeInTheDocument();
-  });
-
-  it("로딩 중이면 관리자/일반 계정 어느 쪽도 표시하지 않는다", () => {
-    useAuthMock.mockReturnValue({ session: null, isLoading: true });
-
-    render(<Layout>children</Layout>);
-
-    expect(screen.queryByText("관리자 계정")).not.toBeInTheDocument();
-    expect(screen.queryByText("일반 계정")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Tie Knot" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.getByRole("link", { name: /프로필/ })).toBeInTheDocument();
+    expect(screen.getByText("프로필 페이지")).toBeInTheDocument();
   });
 });

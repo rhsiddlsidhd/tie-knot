@@ -1,6 +1,5 @@
 import type { LucideProps } from "lucide-react";
 import {
-  HelpCircle,
   LayoutDashboard,
   MessageSquareText,
   Package,
@@ -138,12 +137,6 @@ const authUserOrderNavigateItems: NavItem[] = [
       },
     ],
   },
-  {
-    id: "support",
-    label: "고객 센터",
-    href: ROUTES.support,
-    icon: HelpCircle,
-  },
 ];
 
 const authUserProfileNavigateItems: NavItem[] = [
@@ -156,6 +149,7 @@ const authUserProfileNavigateItems: NavItem[] = [
 ];
 
 const ALL_NAVIGATE_ITEMS = {
+  MAIN: MAIN_NAV_ITEMS,
   ADMIN: adminNavigateItems,
   MY_ORDER: authUserOrderNavigateItems,
   MY_PROFILE: authUserProfileNavigateItems,
