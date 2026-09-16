@@ -289,6 +289,135 @@ describe("product", () => {
       return ProductModel.findOne({ title }).lean();
     };
 
+    describe("검색(q)", () => {
+      // 기본 subCategory("wedding")는 SUB_CATEGORY_LABELS.wedding === "청첩장"이자
+      // key 자체이기도 해서, 검색어가 우연히 그 라벨/key와 겹치면 title이 무관해도
+      // 라벨 역조회로 함께 걸린다. 순수 title 매칭만 검증할 때는 그 충돌을 피하려고
+      // 라벨/key와 안 겹치는 subCategory("first-birthday")로 고정해 만든다.
+      const createTitled = async (title: string) => {
+        await createProductService(
+          buildProductInput({ title, subCategory: "first-birthday" }),
+        );
+        return ProductModel.findOne({ title }).lean();
+      };
+
+      it("상품명 부분일치로 찾는다", async () => {
+        await createTitled("Spring Wedding Card");
+        await createTitled("가을 청첩장");
+
+        const result = await getAdminProductsPageService({ q: "wedding" });
+
+        expect(result.items.map((p) => p.title)).toEqual([
+          "Spring Wedding Card",
+        ]);
+      });
+
+      it("대소문자를 무시한다", async () => {
+        await createTitled("Spring Wedding Card");
+
+        const result = await getAdminProductsPageService({ q: "WEDDING" });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      it("정규식 특수문자를 글자 그대로 찾는다", async () => {
+        await createAndFetch("a.b(c)");
+        await createAndFetch("axbc");
+
+        const result = await getAdminProductsPageService({ q: "a.b(c)" });
+
+        expect(result.items.map((p) => p.title)).toEqual(["a.b(c)"]);
+      });
+
+      it("카테고리 라벨로 검색한다 ('답례품' -> favor)", async () => {
+        await createProductService(
+          buildProductInput({
+            title: "무관한 제목1",
+            category: "favor",
+            subCategory: "candle",
+            images: ["https://example.com/1.jpg"],
+          }),
+        );
+        await createAndFetch("무관한 제목2");
+
+        const result = await getAdminProductsPageService({ q: "답례품" });
+
+        expect(result.items.map((p) => p.title)).toEqual(["무관한 제목1"]);
+      });
+
+      it("서브카테고리 라벨로 검색한다 ('돌잔' -> first-birthday)", async () => {
+        await createProductService(
+          buildProductInput({
+            title: "무관한 제목1",
+            subCategory: "first-birthday",
+          }),
+        );
+        await createProductService(
+          buildProductInput({ title: "무관한 제목2", subCategory: "wedding" }),
+        );
+
+        const result = await getAdminProductsPageService({ q: "돌잔" });
+
+        expect(result.items.map((p) => p.title)).toEqual(["무관한 제목1"]);
+      });
+
+      it("조건에 맞는 상품이 없으면 빈 배열을 리턴한다", async () => {
+        await createAndFetch("봄맞이 청첩장");
+
+        const result = await getAdminProductsPageService({ q: "없는상품" });
+
+        expect(result.items).toEqual([]);
+      });
+
+      // 검색과 view(trash)가 각자 $or를 쓰면 서로를 덮어쓴다 — 둘이 동시에 걸렸을
+      // 때 전부 적용되는지가 이 계약의 핵심이다.
+      it("검색어와 view(trash)를 함께 적용한다", async () => {
+        const target = await createTitled("삭제될 청첩장");
+        await deleteProductService(target!._id.toString());
+        await createTitled("삭제안된 청첩장");
+        const otherTrashed = await createTitled("삭제될 카드");
+        await deleteProductService(otherTrashed!._id.toString());
+
+        const result = await getAdminProductsPageService({
+          q: "청첩장",
+          view: "trash",
+        });
+
+        expect(result.items.map((p) => p.title)).toEqual(["삭제될 청첩장"]);
+      });
+
+      it("검색어와 커서를 함께 적용한다", async () => {
+        const created: string[] = [];
+        for (let i = 0; i < 3; i += 1) {
+          const product = await createTitled(`청첩장${i}`);
+          await setCreatedAt(product!._id, new Date(2026, 0, i + 1));
+          created.push(product!._id.toString());
+        }
+        await createTitled("무관한 카드");
+
+        const first = await getAdminProductsPageService({
+          q: "청첩장",
+          limit: 2,
+        });
+        expect(first.items).toHaveLength(2);
+        expect(first.nextCursor).not.toBeNull();
+
+        const second = await getAdminProductsPageService({
+          q: "청첩장",
+          limit: 2,
+          cursor: first.nextCursor!,
+        });
+
+        expect(second.items).toHaveLength(1);
+        expect(second.nextCursor).toBeNull();
+        expect(
+          [...first.items, ...second.items].every((p) =>
+            p.title.startsWith("청첩장"),
+          ),
+        ).toBe(true);
+      });
+    });
+
     it("createdAt 내림차순으로 정렬한다", async () => {
       const older = await createAndFetch("older");
       const newer = await createAndFetch("newer");
