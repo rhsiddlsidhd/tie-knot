@@ -36,4 +36,49 @@ describe("AdminPremiumFeatureListRequestSchema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("검색어 앞뒤 공백을 제거한다", () => {
+    const result = AdminPremiumFeatureListRequestSchema.safeParse({
+      q: "  갤러리  ",
+    });
+
+    expect(result.success && result.data.q).toBe("갤러리");
+  });
+
+  it("빈 검색어는 조건 없음으로 정규화한다", () => {
+    expect(
+      AdminPremiumFeatureListRequestSchema.safeParse({ q: "" }).data?.q,
+    ).toBeUndefined();
+    expect(
+      AdminPremiumFeatureListRequestSchema.safeParse({ q: "   " }).data?.q,
+    ).toBeUndefined();
+  });
+
+  it("null 검색어는 조건 없음으로 정규화한다", () => {
+    const result = AdminPremiumFeatureListRequestSchema.safeParse({
+      q: null,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data?.q).toBeUndefined();
+  });
+
+  it("검색어가 100자를 넘으면 거부한다", () => {
+    expect(
+      AdminPremiumFeatureListRequestSchema.safeParse({ q: "가".repeat(101) })
+        .success,
+    ).toBe(false);
+  });
+
+  it("검색어와 커서를 함께 통과시킨다", () => {
+    const result = AdminPremiumFeatureListRequestSchema.safeParse({
+      q: "갤러리",
+      cursor: "encoded-cursor",
+    });
+
+    expect(result.success && result.data).toMatchObject({
+      q: "갤러리",
+      cursor: "encoded-cursor",
+    });
+  });
 });

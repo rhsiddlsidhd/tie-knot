@@ -20,13 +20,16 @@ vi.mock(
   () => ({
     PremiumFeaturesTemplate: ({
       page,
+      q,
       cursor,
     }: {
       page: AdminPremiumFeatureListPage;
+      q?: string;
       cursor?: string;
     }) => (
       <div>
-        템플릿:features={page.items.length}:cursor={cursor ?? "none"}
+        템플릿:features={page.items.length}:q={q ?? "none"}:cursor=
+        {cursor ?? "none"}
       </div>
     ),
   }),
@@ -88,7 +91,7 @@ describe("프리미엄 기능 목록 페이지", () => {
     render(await PremiumFeaturesPage({ searchParams: buildSearchParams() }));
 
     expect(
-      screen.getByText("템플릿:features=1:cursor=none"),
+      screen.getByText("템플릿:features=1:q=none:cursor=none"),
     ).toBeInTheDocument();
   });
 
@@ -105,10 +108,11 @@ describe("프리미엄 기능 목록 페이지", () => {
     );
 
     expect(getAdminPremiumFeaturesPageServiceMock).toHaveBeenCalledWith({
+      q: undefined,
       cursor,
     });
     expect(
-      screen.getByText(`템플릿:features=0:cursor=${cursor}`),
+      screen.getByText(`템플릿:features=0:q=none:cursor=${cursor}`),
     ).toBeInTheDocument();
   });
 
@@ -118,7 +122,59 @@ describe("프리미엄 기능 목록 페이지", () => {
     });
 
     expect(getAdminPremiumFeaturesPageServiceMock).toHaveBeenCalledWith({
+      q: undefined,
       cursor: undefined,
     });
+  });
+
+  it("검색어를 서비스에 넘기고 Template에 전달한다", async () => {
+    render(
+      await PremiumFeaturesPage({
+        searchParams: buildSearchParams({ q: "갤러리" }),
+      }),
+    );
+
+    expect(getAdminPremiumFeaturesPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: "갤러리" }),
+    );
+    expect(screen.getByText(/q=갤러리/)).toBeInTheDocument();
+  });
+
+  it("빈 검색어는 조건 없음으로 정규화한다", async () => {
+    await PremiumFeaturesPage({
+      searchParams: buildSearchParams({ q: "   " }),
+    });
+
+    expect(getAdminPremiumFeaturesPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
+  });
+
+  it("검색어와 커서를 함께 넘긴다", async () => {
+    const cursor = btoa("2026-08-01T00:00:00.000Z|507f1f77bcf86cd799439011")
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+
+    await PremiumFeaturesPage({
+      searchParams: buildSearchParams({ q: "갤러리", cursor }),
+    });
+
+    expect(getAdminPremiumFeaturesPageServiceMock).toHaveBeenCalledWith({
+      q: "갤러리",
+      cursor,
+    });
+  });
+
+  // 검색어가 100자를 넘으면 스키마가 통째로 거부한다 — 필터/커서 없음으로 떨어뜨려
+  // 페이지가 throw하지 않게 한다(URL이 소유하는 값이라 어떤 입력도 올 수 있다).
+  it("지나치게 긴 검색어는 조건 없이 조회한다", async () => {
+    await PremiumFeaturesPage({
+      searchParams: buildSearchParams({ q: "가".repeat(101) }),
+    });
+
+    expect(getAdminPremiumFeaturesPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
   });
 });
