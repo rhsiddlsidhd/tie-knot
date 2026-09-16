@@ -18,7 +18,7 @@ const DesktopNav = () => {
   const pathname = usePathname();
 
   return (
-    <NavigationMenu className="hidden md:flex">
+    <NavigationMenu className="hidden md:flex" viewport={false}>
       <NavigationMenuList aria-label="카테고리">
         {MAIN_NAV_ITEMS.map((item) => {
           const isActive = pathname === item.href;
