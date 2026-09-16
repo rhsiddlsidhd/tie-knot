@@ -15,6 +15,7 @@ interface RefreshEncrypt {
 interface EntryEncrypt {
   type: "ENTRY";
   id?: string;
+  jti?: string;
 }
 
 type EncryptProps = RefreshEncrypt | EntryEncrypt;

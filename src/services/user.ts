@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import type { Types } from "mongoose";
 import mongoose from "mongoose";
 import type { AdminUserListPage, UserRole } from "@/core/domain/user";
@@ -20,6 +21,8 @@ import {
   encodeCursor,
   isValidPageLimit,
 } from "@/core/utils/cursor";
+
+const PASSWORD_RESET_COOLDOWN_MS = 60_000;
 
 const getAppBaseUrl = (): string => {
   const baseUrl =
@@ -120,11 +123,53 @@ const signupUserService = async ({
   });
 };
 
+const consumePasswordResetToken = async ({
+  email,
+  tokenId,
+  newPassword,
+}: {
+  email: string;
+  tokenId: string;
+  newPassword: string;
+}): Promise<boolean> => {
+  await dbConnect();
+  const hashedNewPassword = await hashPassword(newPassword);
+  const updated = await UserModel.findOneAndUpdate(
+    { email, passwordResetTokenId: tokenId },
+    { password: hashedNewPassword, passwordResetTokenId: null },
+    { runValidators: true },
+  );
+  return !!updated;
+};
+
 const requestPasswordResetService = async (email: string): Promise<void> => {
   if (!(await checkEmailDuplicate(email))) {
     throw new AppError("VALIDATION", "등록되지 않은 이메일입니다.");
   }
-  const token = await encrypt({ id: email, type: "ENTRY" });
+
+  await dbConnect();
+  const cutoff = new Date(Date.now() - PASSWORD_RESET_COOLDOWN_MS);
+  const cooldownPassed = await UserModel.findOneAndUpdate(
+    {
+      email,
+      $or: [
+        { lastPasswordResetRequestedAt: null },
+        { lastPasswordResetRequestedAt: { $lt: cutoff } },
+      ],
+    },
+    { $set: { lastPasswordResetRequestedAt: new Date() } },
+  );
+  if (!cooldownPassed) {
+    throw new AppError("VALIDATION", "잠시 후 다시 시도해주세요.");
+  }
+
+  const jti = randomUUID();
+  const token = await encrypt({ id: email, type: "ENTRY", jti });
+  await UserModel.findOneAndUpdate(
+    { email },
+    { passwordResetTokenId: jti },
+    { runValidators: true },
+  );
   const path = new URL(
     `${ROUTES.changePw}?t=${encodeURIComponent(token)}`,
     getAppBaseUrl(),
@@ -140,16 +185,22 @@ const resetUserPasswordService = async ({
   password: string;
 }): Promise<void> => {
   const { payload } = await decrypt({ token, type: "ENTRY" });
-  if (!payload.id) {
+  if (!payload.id || !payload.jti) {
     throw new AppError(
       "UNAUTHENTICATED",
       "유효하지 않거나 만료된 토큰입니다. 비밀번호 재설정을 다시 시도해주세요.",
     );
   }
-  if (!(await changePassword(payload.id, password))) {
+  if (
+    !(await consumePasswordResetToken({
+      email: payload.id,
+      tokenId: payload.jti,
+      newPassword: password,
+    }))
+  ) {
     throw new AppError(
-      "NOT_FOUND",
-      "해당 계정을 찾을 수 없습니다. 이메일 주소를 확인해주세요.",
+      "UNAUTHENTICATED",
+      "유효하지 않거나 만료된 토큰입니다. 비밀번호 재설정을 다시 시도해주세요.",
     );
   }
   await deleteCookie("userEmail");

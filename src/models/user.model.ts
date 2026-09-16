@@ -15,6 +15,8 @@ interface UserDocument extends BaseUser {
   role: UserRole;
   // 스키마가 default: null이라 모든 문서에 항상 존재한다 — optional이 아니라 nullable.
   deletedAt: Date | null;
+  passwordResetTokenId: string | null;
+  lastPasswordResetRequestedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +29,8 @@ const UserSchema = new Schema<UserDocument>(
     password: { type: String, required: true },
     role: { type: String, enum: ["USER", "ADMIN"], default: "USER" },
     deletedAt: { type: Date, default: null },
+    passwordResetTokenId: { type: String, default: null },
+    lastPasswordResetRequestedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
