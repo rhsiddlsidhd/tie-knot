@@ -49,7 +49,7 @@ const ProductCard = ({
               src={product.thumbnail}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
               alt={`${product.title} 썸네일`}
-              preload={true}
+              loading="eager"
               zoomOnHover
             />
 

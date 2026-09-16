@@ -23,7 +23,7 @@ const HeroSection = ({
           src={thumbnailImage}
           alt="inivitation main Thumbnail"
           sizes="(max-width: 768px) 100vw, 512px"
-          preload={true}
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black/40" />
       </div>
