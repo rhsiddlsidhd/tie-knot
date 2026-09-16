@@ -5,12 +5,14 @@ import type { OrderDocument } from "@/models/order.model";
 import { ReviewModel } from "@/models/review.model";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
+import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
 import {
   decodeCursor,
   encodeCursor,
   isValidPageLimit,
 } from "@/core/utils/cursor";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { maskName } from "@/core/utils/mask";
 import { AppError } from "@/core/domain/error";
 import type {
@@ -405,9 +407,10 @@ type LeanAdminReview = Omit<ReviewDocument, "userId" | "productId"> & {
   productId: { title: string } | null;
 };
 
-type AdminReviewsQuery = { cursor?: string; limit?: number };
+type AdminReviewsQuery = { q?: string; cursor?: string; limit?: number };
 
 const getAdminReviewsPageService = async ({
+  q,
   cursor,
   limit,
 }: AdminReviewsQuery): Promise<AdminReviewListPage> => {
@@ -419,12 +422,39 @@ const getAdminReviewsPageService = async ({
   }
 
   const filter: Record<string, unknown> = {};
+
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: Record<string, unknown>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    // userId/productId가 ref라 리뷰 문서 자체엔 이메일·상품명이 없다 — 먼저
+    // User/Product에서 부분일치하는 id를 모은 뒤 $in으로 건다(2단계 역조회).
+    const regex = { $regex: escapeRegExp(term), $options: "i" };
+    const [matchedUsers, matchedProducts] = await Promise.all([
+      UserModel.find({ email: regex }).select("_id").lean(),
+      ProductModel.find({ title: regex }).select("_id").lean(),
+    ]);
+
+    conditions.push({
+      $or: [
+        { userId: { $in: matchedUsers.map((u) => u._id) } },
+        { productId: { $in: matchedProducts.map((p) => p._id) } },
+      ],
+    });
+  }
+
   if (cursor) {
     const decoded = decodeCursor(cursor);
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = buildReviewCursorOr("LATEST", decoded);
+    conditions.push({ $or: buildReviewCursorOr("LATEST", decoded) });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await ReviewModel.find(filter)

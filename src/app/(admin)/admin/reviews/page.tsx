@@ -13,15 +13,16 @@ const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
   const parsed = validateAndFlatten(AdminReviewListRequestSchema, {
+    q: typeof searchParams.q === "string" ? searchParams.q : null,
     cursor:
       typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};
 
-  const { cursor } = parsed.data;
-  if (cursor && !decodeCursor(cursor)) return {};
-  return { cursor };
+  const { q, cursor } = parsed.data;
+  if (cursor && !decodeCursor(cursor)) return { q };
+  return { q, cursor };
 };
 
 const ReviewsPage = async ({
@@ -31,10 +32,10 @@ const ReviewsPage = async ({
 }) => {
   await verifySession("ADMIN");
 
-  const { cursor } = resolveFilters(await searchParams);
-  const page = await getAdminReviewsPageService({ cursor });
+  const { q, cursor } = resolveFilters(await searchParams);
+  const page = await getAdminReviewsPageService({ q, cursor });
 
-  return <AdminReviewsTemplate page={page} cursor={cursor} />;
+  return <AdminReviewsTemplate page={page} q={q} cursor={cursor} />;
 };
 
 export default ReviewsPage;

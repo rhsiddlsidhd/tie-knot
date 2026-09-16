@@ -22,13 +22,15 @@ vi.mock("@/services/review", () => ({
 vi.mock("@/app/(admin)/admin/reviews/_components/AdminReviewsTemplate", () => ({
   AdminReviewsTemplate: ({
     page,
+    q,
     cursor,
   }: {
     page: { items: unknown[]; nextCursor: string | null };
+    q?: string;
     cursor?: string;
   }) => (
     <div>
-      테이블:items={page.items.length}:cursor={cursor ?? "없음"}
+      테이블:items={page.items.length}:q={q ?? "없음"}:cursor={cursor ?? "없음"}
     </div>
   ),
 }));
@@ -92,7 +94,49 @@ describe("관리자 리뷰 목록 페이지", () => {
     );
 
     expect(
-      screen.getByText(`테이블:items=1:cursor=${validCursor}`),
+      screen.getByText(`테이블:items=1:q=없음:cursor=${validCursor}`),
     ).toBeInTheDocument();
+  });
+
+  it("검색어를 서비스에 넘기고 Template에 전달한다", async () => {
+    render(
+      await ReviewsPage({ searchParams: Promise.resolve({ q: "김철수" }) }),
+    );
+
+    expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: "김철수" }),
+    );
+    expect(screen.getByText(/q=김철수/)).toBeInTheDocument();
+  });
+
+  it("빈 검색어는 조건 없음으로 정규화한다", async () => {
+    await ReviewsPage({ searchParams: Promise.resolve({ q: "   " }) });
+
+    expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
+  });
+
+  it("검색어와 커서를 함께 넘긴다", async () => {
+    await ReviewsPage({
+      searchParams: Promise.resolve({ q: "김철수", cursor: validCursor }),
+    });
+
+    expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith({
+      q: "김철수",
+      cursor: validCursor,
+    });
+  });
+
+  // 검색어가 100자를 넘으면 스키마가 통째로 거부한다 — 필터/커서 없음으로 떨어뜨려
+  // 페이지가 throw하지 않게 한다.
+  it("지나치게 긴 검색어는 조건 없이 조회한다", async () => {
+    await ReviewsPage({
+      searchParams: Promise.resolve({ q: "가".repeat(101) }),
+    });
+
+    expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({ q: undefined }),
+    );
   });
 });

@@ -48,4 +48,17 @@ describe("AdminReviewsTemplate", () => {
 
     expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });
+  it("검색 입력은 현재 검색어를 기본값으로 갖는다", () => {
+    render(<AdminReviewsTemplate page={buildPage()} q="봄빛" />);
+
+    expect(screen.getByRole("searchbox", { name: /리뷰 검색/ })).toHaveValue(
+      "봄빛",
+    );
+  });
+
+  it("검색 결과가 없으면 검색어를 지우라는 안내를 보여준다", () => {
+    render(<AdminReviewsTemplate page={buildPage({ items: [] })} q="없는사람" />);
+
+    expect(screen.getByText(/검색어를 지우면/)).toBeInTheDocument();
+  });
 });
