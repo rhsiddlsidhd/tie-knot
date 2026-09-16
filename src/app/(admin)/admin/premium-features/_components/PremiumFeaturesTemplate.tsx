@@ -12,6 +12,7 @@ import { TableRow, TableCell } from "@/ui/components/atoms/table";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
+import { QuerySearchInput } from "@/ui/components/organisms/QuerySearchInput";
 import type { AdminPremiumFeatureListPage } from "@/core/domain/premium-feature";
 import { formatKstDate } from "@/core/utils/date";
 import { ROUTES } from "@/core/domain/routes";
@@ -29,11 +30,13 @@ const TABLE_HEADINGS = [
 
 interface PremiumFeaturesTemplateProps {
   page: AdminPremiumFeatureListPage;
+  q?: string;
   cursor?: string;
 }
 
 const PremiumFeaturesTemplate = ({
   page,
+  q,
   cursor,
 }: PremiumFeaturesTemplateProps) => (
   <div className="space-y-6">
@@ -50,9 +53,17 @@ const PremiumFeaturesTemplate = ({
       </Link>
     </div>
 
+    <QuerySearchInput
+      basePath={ROUTES.admin.premiumFeatures.root}
+      label="기능 검색"
+      value={q}
+      placeholder="기능 코드, 기능 이름"
+    />
+
     <PaginatedTable
       headings={TABLE_HEADINGS}
       basePath={ROUTES.admin.premiumFeatures.root}
+      query={q ? { q } : {}}
       hasCursor={!!cursor}
       nextCursor={page.nextCursor}
     >
@@ -61,9 +72,13 @@ const PremiumFeaturesTemplate = ({
           <TableCell colSpan={TABLE_HEADINGS.length}>
             <Empty>
               <EmptyHeader>
-                <EmptyTitle>등록된 기능이 없습니다</EmptyTitle>
+                <EmptyTitle>
+                  {q ? "검색 결과가 없습니다" : "등록된 기능이 없습니다"}
+                </EmptyTitle>
                 <EmptyDescription>
-                  기능을 등록하면 상품에 추가 옵션으로 붙일 수 있습니다.
+                  {q
+                    ? "검색어를 지우면 전체 기능을 볼 수 있습니다."
+                    : "기능을 등록하면 상품에 추가 옵션으로 붙일 수 있습니다."}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>

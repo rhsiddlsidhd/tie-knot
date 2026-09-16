@@ -85,4 +85,24 @@ describe("PremiumFeaturesTemplate", () => {
       "/admin/premium-features/new",
     );
   });
+
+  it("검색 입력을 렌더링하고 현재 검색어를 기본값으로 채운다", () => {
+    render(<PremiumFeaturesTemplate page={buildPage()} q="방명록" />);
+
+    expect(screen.getByLabelText("기능 검색")).toHaveValue("방명록");
+  });
+
+  it("검색어가 있을 때 결과가 없으면 검색 전용 빈 상태 문구를 보여준다", () => {
+    render(
+      <PremiumFeaturesTemplate page={buildPage({ items: [] })} q="없는기능" />,
+    );
+
+    expect(screen.getByText("검색 결과가 없습니다")).toBeInTheDocument();
+  });
+
+  it("검색어가 없을 때 결과가 없으면 기본 빈 상태 문구를 보여준다", () => {
+    render(<PremiumFeaturesTemplate page={buildPage({ items: [] })} />);
+
+    expect(screen.getByText("등록된 기능이 없습니다")).toBeInTheDocument();
+  });
 });
