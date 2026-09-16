@@ -1,0 +1,4 @@
+interface:
+  display_name: "Physical Product Thumbnail"
+  short_description: "물리 상품 외형과 연출을 승인받아 썸네일을 생성"
+  default_prompt: "$physical-product-thumbnail을 사용해 이 물리 상품의 외형과 연출안을 확정하고 Tie Knot 상품 썸네일을 생성해 주세요."
