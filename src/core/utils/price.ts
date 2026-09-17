@@ -24,9 +24,12 @@ const calculatePrice = (price: number, discount: Discount) => {
   return price;
 };
 
-const formatDiscountLabel = (discount: Discount): string => {
+const formatDiscountLabel = (
+  discount: Discount,
+  { rateSuffix = "" }: { rateSuffix?: string } = {},
+): string => {
   if (discount.discountType === DISCOUNT_TYPE.RATE) {
-    return `${Math.round(discount.value * 100)}%`;
+    return `${Math.round(discount.value * 100)}%${rateSuffix}`;
   }
 
   return `${discount.value.toLocaleString()}원 할인`;

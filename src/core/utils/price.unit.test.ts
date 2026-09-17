@@ -72,4 +72,22 @@ describe("formatDiscountLabel", () => {
 
     expect(formatDiscountLabel(invalidDiscount)).toBe("500원 할인");
   });
+
+  it("rateSuffix를 넘기면 rate 할인 뒤에 붙인다", () => {
+    expect(
+      formatDiscountLabel(
+        { discountType: "rate", value: 0.3 },
+        { rateSuffix: " OFF" },
+      ),
+    ).toBe("30% OFF");
+  });
+
+  it("rateSuffix는 amount 할인엔 영향을 주지 않는다", () => {
+    expect(
+      formatDiscountLabel(
+        { discountType: "amount", value: 3000 },
+        { rateSuffix: " OFF" },
+      ),
+    ).toBe("3,000원 할인");
+  });
 });
