@@ -1,0 +1,4 @@
+interface:
+  display_name: "Physical Product Detail Image"
+  short_description: "물리 상품 촬영 소스와 상세 이미지 패널을 실제 제작"
+  default_prompt: "$physical-product-detail-image를 사용해 이 물리 상품의 촬영 소스와 모바일용 상세 이미지 패널을 실제 파일로 제작해 주세요."
