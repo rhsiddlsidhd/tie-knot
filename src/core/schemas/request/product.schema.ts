@@ -5,7 +5,10 @@ import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES,
 } from "@/core/domain/product-category";
-import { EDITABLE_PRODUCT_STATUSES } from "@/core/domain/product";
+import {
+  DISCOUNT_TYPE,
+  EDITABLE_PRODUCT_STATUSES,
+} from "@/core/domain/product";
 
 const EditableProductStatusSchema = z.enum(EDITABLE_PRODUCT_STATUSES);
 
@@ -27,11 +30,11 @@ const ProductSchema = z
     discount: z
       .discriminatedUnion("discountType", [
         z.object({
-          discountType: z.literal("rate"),
+          discountType: z.literal(DISCOUNT_TYPE.RATE),
           value: z.number().min(0).max(1, "할인율은 100% 이하여야 합니다."),
         }),
         z.object({
-          discountType: z.literal("amount"),
+          discountType: z.literal(DISCOUNT_TYPE.AMOUNT),
           value: z.number().int("할인액은 원 단위 정수로 입력해주세요.").min(0),
         }),
       ])
