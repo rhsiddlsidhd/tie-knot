@@ -114,6 +114,7 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 
 ### Phase 5: 정리 + PR
 
+0. **진입 게이트** — `_workspace/feat/{name}/04_test_report.md`가 실제 파일로 존재하는지 확인한다. 없으면 Phase5로 넘어가지 않는다: test-suite가 반환값만 주고 파일을 안 남긴 경우이므로 재호출해 파일부터 받는다(과거 실행 6건 중 1건이 이 파일 없이 종료됐다). 반환값 요약을 리더가 대신 옮겨 적어 게이트를 통과시키지 않는다 — 실행 명령과 결과는 테스트를 실제로 돌린 쪽만 안다.
 1. `_workspace/feat/{name}/` 보존(삭제하지 않음 — 브랜치는 나중에 머지되면 삭제돼도 이 디렉토리는 남는다. 재실행 시 Phase0 3번 분기가 처리)
 2. **모든 REQ의 acceptance가 충족됐다면(Phase4 통과), 확인질문 없이 `gh pr create --base dev`로 PR을 생성한다.** PR 본문에 `04_integration_report.md` 요약과 `MANUAL_INTERVENTION_REQUIRED` 항목(있다면 반드시)을 포함시킨다. **Merge는 항상 사람이 직접 한다** — 하네스는 merge를 실행하지 않고, auto-merge 설정도 걸지 않는다.
    - **PR 제목은 프로젝트 `AGENTS.md`의 한국어 규칙을 따른다**: `feat: {한국어 서술형}` 또는 `feat({scope}): {한국어 서술형}`, 72자 이내, 마침표 없음, squash merge 결과로 써도 의미가 완전할 것. 로컬 커밋 메시지는 영문 그대로다
