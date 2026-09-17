@@ -6,12 +6,15 @@ import {
   navigationMenuTriggerStyle,
 } from "@/ui/components/atoms/navigation-menu";
 
-interface GeneralNavProps {
+interface GeneralNavigationLinksProps {
   items: NavLinkItem[];
   pathname: string;
 }
 
-const GeneralNav = ({ items, pathname }: GeneralNavProps) => {
+const GeneralNavigationLinks = ({
+  items,
+  pathname,
+}: GeneralNavigationLinksProps) => {
   return items.map((item) => (
     <NavigationMenuItem key={item.id}>
       <NavigationMenuLink
@@ -25,4 +28,4 @@ const GeneralNav = ({ items, pathname }: GeneralNavProps) => {
   ));
 };
 
-export { GeneralNav };
+export { GeneralNavigationLinks };
