@@ -37,7 +37,7 @@ describe("SubCategoryNavSection", () => {
     );
 
     expect(
-      screen.getByRole("region", { name: "서브카테고리 바로가기" }),
+      screen.getByRole("region", { name: "카테고리 둘러보기" }),
     ).toBeInTheDocument();
   });
 
@@ -46,7 +46,7 @@ describe("SubCategoryNavSection", () => {
 
     expect(screen.queryByText("카테고리 둘러보기")).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("region", { name: "서브카테고리 바로가기" }),
+      screen.queryByRole("region", { name: "카테고리 둘러보기" }),
     ).not.toBeInTheDocument();
   });
 });
