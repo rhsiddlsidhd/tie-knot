@@ -52,7 +52,7 @@ describe("ProductCard", () => {
       />,
     );
 
-    expect(screen.getByText("30%")).toBeInTheDocument();
+    expect(screen.getByText("30% OFF")).toBeInTheDocument();
     expect(screen.getByText("7,000원")).toBeInTheDocument();
     expect(screen.getByText("10,000원")).toBeInTheDocument();
   });

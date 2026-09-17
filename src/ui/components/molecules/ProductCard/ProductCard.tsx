@@ -34,7 +34,7 @@ const ProductCard = ({
 
   const hasDiscount = product.discount?.value > 0;
   const discountLabel = hasDiscount
-    ? formatDiscountLabel(product.discount)
+    ? formatDiscountLabel(product.discount, { rateSuffix: " OFF" })
     : null;
 
   return (
