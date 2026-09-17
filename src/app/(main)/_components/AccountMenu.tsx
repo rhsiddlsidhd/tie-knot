@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import React from "react";
-import { mutate } from "swr";
 import { useAuth } from "@/ui/hooks/useAuth";
+import { useLogout } from "../_hooks/useLogout";
 import { Button } from "@/ui/components/atoms/button";
 import {
   DropdownMenu,
@@ -14,33 +14,16 @@ import {
 } from "@/ui/components/atoms/dropdown-menu";
 
 import { UserIcon, LogOut } from "lucide-react";
-import { USER_NAV_ITEMS } from "@/core/domain/navigation";
-import { ROUTES } from "@/core/domain/routes";
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports -- layout 셸 조각은 도메인 로직을 가져도 _components에 둔다(src/app/AGENTS.md §Critical Conventions). (main)/_components는 그룹 셸과 홈 라우트를 겸해서 폴더 단위로는 분리할 수 없다.
-import { logoutUser } from "@/actions/logoutUser";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { ADMIN_NAV_ITEMS, USER_NAV_ITEMS } from "@/core/domain/navigation";
 
-const UserAccountNav = () => {
+const AccountMenu = () => {
   const { session } = useAuth();
-  const router = useRouter();
+  const { logout } = useLogout();
 
-  const handleLogout = async () => {
-    const result = await logoutUser();
-
-    if (result.success === false) {
-      toast.error(
-        result.error.message || "로그아웃 처리 중 오류가 발생했습니다.",
-      );
-      return;
-    }
-
-    mutate("/api/auth/me", null, false);
-    toast.success("로그아웃되었습니다.");
-
-    router.push(ROUTES.home);
-    router.refresh();
-  };
+  const navItems =
+    session?.role === "ADMIN"
+      ? [...ADMIN_NAV_ITEMS, ...USER_NAV_ITEMS]
+      : USER_NAV_ITEMS;
 
   return (
     <DropdownMenu>
@@ -50,9 +33,7 @@ const UserAccountNav = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {USER_NAV_ITEMS.filter((item) =>
-          item.href?.startsWith("/admin") ? session?.role === "ADMIN" : true,
-        ).map((item) => (
+        {navItems.map((item) => (
           <DropdownMenuItem key={item.href} asChild>
             <Link href={item.href ?? "#"} className="flex w-full items-center">
               {item.icon && <item.icon className="mr-2 size-4" />}
@@ -64,7 +45,7 @@ const UserAccountNav = () => {
         <DropdownMenuSeparator />
 
         <DropdownMenuItem
-          onClick={handleLogout}
+          onClick={logout}
           className="text-destructive focus:text-destructive flex w-full cursor-pointer items-center"
         >
           <LogOut className="mr-2 size-4" />
@@ -75,4 +56,4 @@ const UserAccountNav = () => {
   );
 };
 
-export { UserAccountNav };
+export { AccountMenu };

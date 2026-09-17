@@ -1,55 +1,38 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { renderHook, act } from "@testing-library/react";
 
-const { mutateMock, pushMock, refreshMock, useAuthMock } = vi.hoisted(() => ({
+const { mutateMock, pushMock, refreshMock } = vi.hoisted(() => ({
   mutateMock: vi.fn(),
   pushMock: vi.fn(),
   refreshMock: vi.fn(),
-  useAuthMock: vi.fn(),
 }));
 
 vi.mock("swr", () => ({ mutate: mutateMock }));
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock, refresh: refreshMock }),
 }));
-vi.mock("@/ui/hooks/useAuth", () => ({
-  useAuth: useAuthMock,
-}));
 vi.mock("@/actions/logoutUser", () => ({
-  logoutUser: vi.fn().mockResolvedValue({ success: true, data: null }),
+  logoutUser: vi.fn(),
 }));
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
 
 import { logoutUser } from "@/actions/logoutUser";
 import { toast } from "sonner";
-import { UserAccountNav } from "./UserAccountNav";
+import { useLogout } from "./useLogout";
 
-describe("UserAccountNav", () => {
+describe("useLogout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useAuthMock.mockReturnValue({
-      session: { role: "USER", email: "a@b.com", userId: "user-1" },
-      isLoading: false,
-    });
   });
 
-  it("사용자 메뉴 버튼에 접근 가능한 이름을 제공한다", () => {
-    render(<UserAccountNav />);
-
-    expect(
-      screen.getByRole("button", { name: "사용자 메뉴" }),
-    ).toBeInTheDocument();
-  });
-
-  it("로그아웃 클릭 시 logoutUser 액션 호출 후 세션 캐시를 비운다", async () => {
+  it("로그아웃 성공 시 세션 캐시를 비우고 홈으로 이동한다", async () => {
     vi.mocked(logoutUser).mockResolvedValue({ success: true, data: null });
 
-    const user = userEvent.setup();
-    render(<UserAccountNav />);
+    const { result } = renderHook(() => useLogout());
 
-    await user.click(screen.getByRole("button"));
-    await user.click(screen.getByText("로그아웃"));
+    await act(async () => {
+      await result.current.logout();
+    });
 
     expect(logoutUser).toHaveBeenCalledOnce();
     expect(mutateMock).toHaveBeenCalledWith("/api/auth/me", null, false);
@@ -58,7 +41,7 @@ describe("UserAccountNav", () => {
     expect(refreshMock).toHaveBeenCalledOnce();
   });
 
-  it("로그아웃 실패 시 에러 토스트를 띄우고 홈으로 이동하지 않는다", async () => {
+  it("로그아웃 실패 시 에러 토스트만 띄우고 이동하지 않는다", async () => {
     vi.mocked(logoutUser).mockResolvedValue({
       success: false,
       error: {
@@ -67,11 +50,11 @@ describe("UserAccountNav", () => {
       },
     });
 
-    const user = userEvent.setup();
-    render(<UserAccountNav />);
+    const { result } = renderHook(() => useLogout());
 
-    await user.click(screen.getByRole("button"));
-    await user.click(screen.getByText("로그아웃"));
+    await act(async () => {
+      await result.current.logout();
+    });
 
     expect(toast.error).toHaveBeenCalledWith(
       "서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.",

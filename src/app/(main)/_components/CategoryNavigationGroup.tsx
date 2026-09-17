@@ -8,12 +8,15 @@ import {
   NavigationMenuTrigger,
 } from "@/ui/components/atoms/navigation-menu";
 
-interface CategoryNavProps {
+interface CategoryNavigationGroupProps {
   items: NavGroupItem[];
   pathname: string;
 }
 
-const CategoryNav = ({ items, pathname }: CategoryNavProps) => {
+const CategoryNavigationGroup = ({
+  items,
+  pathname,
+}: CategoryNavigationGroupProps) => {
   return items.map((item) => {
     const isActive = item.submenu.some((sub) => sub.href === pathname);
 
@@ -40,4 +43,4 @@ const CategoryNav = ({ items, pathname }: CategoryNavProps) => {
   });
 };
 
-export { CategoryNav };
+export { CategoryNavigationGroup };

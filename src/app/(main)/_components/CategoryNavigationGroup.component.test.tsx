@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import type { NavGroupItem } from "@/core/domain/navigation";
-import { CategoryNav } from "./CategoryNav";
+import { CategoryNavigationGroup } from "./CategoryNavigationGroup";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -31,18 +31,18 @@ const items: NavGroupItem[] = [
   },
 ];
 
-const renderCategoryNav = (pathname = "/") =>
+const renderCategoryNavigationGroup = (pathname = "/") =>
   render(
     <NavigationMenu viewport={false}>
       <NavigationMenuList>
-        <CategoryNav items={items} pathname={pathname} />
+        <CategoryNavigationGroup items={items} pathname={pathname} />
       </NavigationMenuList>
     </NavigationMenu>,
   );
 
-describe("CategoryNav", () => {
+describe("CategoryNavigationGroup", () => {
   it("카테고리 트리거만 보이고 서브메뉴 링크는 숨겨져 있다", () => {
-    renderCategoryNav();
+    renderCategoryNavigationGroup();
 
     expect(
       screen.getByRole("button", { name: "모바일초대장" }),
@@ -54,7 +54,7 @@ describe("CategoryNav", () => {
 
   it("트리거를 클릭하면 전체보기·서브카테고리 링크가 나타난다", async () => {
     const user = userEvent.setup();
-    renderCategoryNav();
+    renderCategoryNavigationGroup();
 
     await user.click(screen.getByRole("button", { name: "모바일초대장" }));
 

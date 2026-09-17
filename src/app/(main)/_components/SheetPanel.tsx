@@ -31,14 +31,11 @@ const SheetPanel = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+      <SheetTrigger asChild className={cn(`${hiddenFrom}:hidden`)}>
         <Button
           variant="ghost"
           size="icon"
-          className={cn(
-            "text-foreground hover:text-foreground/70 transition-colors hover:bg-transparent",
-            `${hiddenFrom}:hidden`,
-          )}
+          className='text-foreground hover:text-foreground/70 transition-colors hover:bg-transparent'
           aria-label="메뉴 열기"
         >
           <Menu className="h-5 w-5" strokeWidth={1.5} />
@@ -47,7 +44,7 @@ const SheetPanel = ({
 
       <SheetContent
         side={side}
-        className="border-border/50 flex w-72 flex-col border-r p-0 [&>button:last-of-type]:hidden"
+        className="border-border/50 flex w-2/3 flex-col border-r p-0 [&>button:last-of-type]:hidden"
       >
         <SheetHeader className="sr-only">
           <SheetTitle>메뉴</SheetTitle>

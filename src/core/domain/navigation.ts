@@ -188,13 +188,16 @@ const ALL_NAVIGATE_ITEMS: Readonly<
   MY_PROFILE: { groups: [], links: authUserProfileLinkItems },
 };
 
-const USER_NAV_ITEMS: NavLinkItem[] = [
+const ADMIN_NAV_ITEMS: NavLinkItem[] = [
   {
     id: "dashboard",
     label: "대시보드",
     href: ROUTES.admin.dashboard,
     icon: LayoutDashboard,
   },
+];
+
+const USER_NAV_ITEMS: NavLinkItem[] = [
   { id: "profile", label: "프로필", href: ROUTES.profile, icon: User },
   {
     id: "orders",
@@ -207,6 +210,7 @@ const USER_NAV_ITEMS: NavLinkItem[] = [
 export {
   CATEGORY_NAV_ITEMS,
   GENERAL_NAV_ITEMS,
+  ADMIN_NAV_ITEMS,
   USER_NAV_ITEMS,
   ALL_NAVIGATE_ITEMS,
   type NavSection,
