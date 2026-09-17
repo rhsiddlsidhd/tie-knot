@@ -24,4 +24,12 @@ const calculatePrice = (price: number, discount: Discount) => {
   return price;
 };
 
-export { formatPriceWithComma, calculatePrice };
+const formatDiscountLabel = (discount: Discount): string => {
+  if (discount.discountType === DISCOUNT_TYPE.RATE) {
+    return `${Math.round(discount.value * 100)}%`;
+  }
+
+  return `${discount.value.toLocaleString()}원 할인`;
+};
+
+export { formatPriceWithComma, calculatePrice, formatDiscountLabel };

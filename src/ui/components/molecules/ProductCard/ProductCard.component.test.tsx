@@ -41,7 +41,7 @@ describe("ProductCard", () => {
     render(<ProductCard product={buildProduct({ price: 10000, discount: { discountType: "rate", value: 0 } })} />);
 
     expect(screen.getByText("10,000원")).toBeInTheDocument();
-    expect(screen.queryByText(/OFF/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument();
     expect(screen.queryByText(/할인/)).not.toBeInTheDocument();
   });
 
@@ -52,7 +52,7 @@ describe("ProductCard", () => {
       />,
     );
 
-    expect(screen.getByText("30% OFF")).toBeInTheDocument();
+    expect(screen.getByText("30%")).toBeInTheDocument();
     expect(screen.getByText("7,000원")).toBeInTheDocument();
     expect(screen.getByText("10,000원")).toBeInTheDocument();
   });
