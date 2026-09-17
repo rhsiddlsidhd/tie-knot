@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -9,24 +9,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/ui/components/atoms/sheet";
+import { Button } from "@/ui/components/atoms/button";
 import { Logo } from "@/ui/components/atoms/logo";
 import { cn } from "@/core/utils/cn";
 
+type Breakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
+
 interface SheetPanelProps {
-  title: string;
   side?: "top" | "right" | "bottom" | "left";
-  trigger: ReactNode;
-  triggerClassName?: string;
-  contentClassName?: string;
-  children: (close: () => void) => ReactNode;
+  hiddenFrom?: Breakpoint;
+  children: ReactNode;
 }
 
 const SheetPanel = ({
-  title,
   side = "left",
-  trigger,
-  triggerClassName,
-  contentClassName,
+  hiddenFrom = "md",
   children,
 }: SheetPanelProps) => {
   const [open, setOpen] = useState(false);
@@ -34,16 +31,26 @@ const SheetPanel = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild className={triggerClassName}>
-        {trigger}
+      <SheetTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "text-foreground hover:text-foreground/70 transition-colors hover:bg-transparent",
+            `${hiddenFrom}:hidden`,
+          )}
+          aria-label="메뉴 열기"
+        >
+          <Menu className="h-5 w-5" strokeWidth={1.5} />
+        </Button>
       </SheetTrigger>
 
       <SheetContent
         side={side}
-        className={cn("p-0 [&>button:last-of-type]:hidden", contentClassName)}
+        className="border-border/50 flex w-72 flex-col border-r p-0 [&>button:last-of-type]:hidden"
       >
         <SheetHeader className="sr-only">
-          <SheetTitle>{title}</SheetTitle>
+          <SheetTitle>메뉴</SheetTitle>
         </SheetHeader>
 
         <div className="flex h-full min-h-0 flex-col">
@@ -71,9 +78,7 @@ const SheetPanel = ({
             </div>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-y-auto">
-            {children(close)}
-          </div>
+          <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>
 
           <div className="border-border/40 border-t px-6 py-5">
             <p className="text-muted-foreground/40 text-center text-[10px] tracking-[0.15em] uppercase">
