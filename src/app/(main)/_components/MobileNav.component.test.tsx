@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { MAIN_NAV_ITEMS } from "@/core/domain/navigation";
+import { ALL_NAVIGATE_ITEMS } from "@/core/domain/navigation";
 import { MobileNav } from "./MobileNav";
 
-const leafItem = MAIN_NAV_ITEMS.find((item) => !item.submenu)!;
-const groupItem = MAIN_NAV_ITEMS.find((item) => item.submenu)!;
+const leafItem = ALL_NAVIGATE_ITEMS.MAIN.links[0]!;
+const groupItem = ALL_NAVIGATE_ITEMS.MAIN.groups[0]!;
 
 describe("MobileNav", () => {
   it("로고는 홈으로 이동하는 링크다", async () => {
@@ -46,11 +46,7 @@ describe("MobileNav", () => {
       screen.getByRole("button", { name: new RegExp(groupItem.label) }),
     );
 
-    expect(screen.getByRole("link", { name: "전체보기" })).toHaveAttribute(
-      "href",
-      groupItem.href,
-    );
-    for (const sub of groupItem.submenu!) {
+    for (const sub of groupItem.submenu) {
       expect(screen.getByRole("link", { name: sub.label })).toHaveAttribute(
         "href",
         sub.href,
