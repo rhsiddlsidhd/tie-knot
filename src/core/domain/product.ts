@@ -34,6 +34,20 @@ const EDITABLE_PRODUCT_STATUS_OPTIONS: ReadonlyArray<
   label: PRODUCT_STATUS_LABELS[value],
 }));
 
+const DISCOUNT_TYPE = {
+  RATE: "rate",
+  AMOUNT: "amount",
+} as const;
+
+const DISCOUNT_TYPES = [DISCOUNT_TYPE.RATE, DISCOUNT_TYPE.AMOUNT] as const;
+
+type DiscountType = (typeof DISCOUNT_TYPES)[number];
+
+interface Discount {
+  discountType: DiscountType;
+  value: number;
+}
+
 interface ProductJson {
   _id: string;
   authorId: string;
@@ -50,7 +64,7 @@ interface ProductJson {
   likes: string[];
   views: number;
   salesCount: number;
-  discount: { discountType: "rate" | "amount"; value: number };
+  discount: Discount;
   status: ProductStatus;
   images: string[];
   minQuantity: number;
@@ -120,10 +134,14 @@ export {
   EDITABLE_PRODUCT_STATUSES,
   PRODUCT_STATUS_LABELS,
   EDITABLE_PRODUCT_STATUS_OPTIONS,
+  DISCOUNT_TYPE,
+  DISCOUNT_TYPES,
   PRODUCT_SORT_KEYS,
   PRODUCT_PRICE_KEYS,
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
+  type DiscountType,
+  type Discount,
   type ProductStatus,
   type EditableProductStatus,
   type ProductJson,

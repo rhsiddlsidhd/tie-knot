@@ -1,8 +1,9 @@
 import { describe, it, expect } from "vitest";
+import type { Discount } from "@/core/domain/product";
 import { calculatePrice, formatPriceWithComma } from "./price";
 
 describe("formatPriceWithComma", () => {
-  it("0은 콤마 없이 \"0\"을 반환한다", () => {
+  it('0은 콤마 없이 "0"을 반환한다', () => {
     expect(formatPriceWithComma(0)).toBe("0");
   });
 
@@ -29,9 +30,9 @@ describe("calculatePrice", () => {
   });
 
   it("amount 할인은 정액 차감하고 0 밑으로 내려가지 않는다", () => {
-    expect(
-      calculatePrice(1000, { discountType: "amount", value: 5000 }),
-    ).toBe(0);
+    expect(calculatePrice(1000, { discountType: "amount", value: 5000 })).toBe(
+      0,
+    );
   });
 
   it("discount.value가 음수면 할인 로직을 타지 않고 원가를 그대로 반환한다", () => {
@@ -41,8 +42,11 @@ describe("calculatePrice", () => {
   });
 
   it("알 수 없는 discountType이면 원가를 그대로 반환한다", () => {
-    expect(
-      calculatePrice(10000, { discountType: "unknown", value: 500 }),
-    ).toBe(10000);
+    const invalidDiscount = {
+      discountType: "unknown",
+      value: 500,
+    } as unknown as Discount;
+
+    expect(calculatePrice(10000, invalidDiscount)).toBe(10000);
   });
 });

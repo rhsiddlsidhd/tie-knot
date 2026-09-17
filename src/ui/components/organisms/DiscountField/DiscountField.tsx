@@ -9,8 +9,8 @@ import {
 } from "@/ui/components/atoms/input-group";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
-
-type DiscountType = "rate" | "amount";
+import type { DiscountType } from "@/core/domain/product";
+import { DISCOUNT_TYPE } from "@/core/domain/product";
 
 interface DiscountFieldProps {
   idPrefix: string;
@@ -20,8 +20,8 @@ interface DiscountFieldProps {
 }
 
 const DISCOUNT_TYPE_OPTIONS = [
-  { value: "rate", label: "비율 (%)" },
-  { value: "amount", label: "금액 (원)" },
+  { value: DISCOUNT_TYPE.RATE, label: "비율 (%)" },
+  { value: DISCOUNT_TYPE.AMOUNT, label: "금액 (원)" },
 ] satisfies { value: DiscountType; label: string }[];
 
 /** 할인 방식 선택과 할인값 입력, 클라이언트 검증을 하나의 필드로 제공한다. */
@@ -76,14 +76,14 @@ const DiscountField = ({
             type="number"
             placeholder="0"
             min={0}
-            step={discountType === "rate" ? "0.01" : "1"}
-            max={discountType === "rate" ? 1 : undefined}
+            step={discountType === DISCOUNT_TYPE.RATE ? "0.01" : "1"}
+            max={discountType === DISCOUNT_TYPE.RATE ? 1 : undefined}
             defaultValue={defaultValue}
             aria-invalid={!!displayedError}
             onChange={(event) => {
               const value = event.target.value;
               setInputError(
-                discountType === "amount" &&
+                discountType === DISCOUNT_TYPE.AMOUNT &&
                   value !== "" &&
                   !Number.isInteger(Number(value))
                   ? "할인액은 원 단위 정수로 입력해주세요."
@@ -92,12 +92,12 @@ const DiscountField = ({
             }}
           />
           <InputGroupAddon align="inline-end">
-            {discountType === "rate" ? "율" : "원"}
+            {discountType === DISCOUNT_TYPE.RATE ? "율" : "원"}
           </InputGroupAddon>
         </InputGroup>
       </div>
       <FieldDescription>
-        {discountType === "rate"
+        {discountType === DISCOUNT_TYPE.RATE
           ? "0~1 사이 소수 입력 (예: 0.1 = 10% 할인)"
           : "차감 금액 입력"}
       </FieldDescription>
@@ -105,5 +105,4 @@ const DiscountField = ({
   );
 };
 
-export { DiscountField };
-export type { DiscountFieldProps, DiscountType };
+export { DiscountField, type DiscountFieldProps };

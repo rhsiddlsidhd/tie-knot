@@ -6,8 +6,12 @@ import type {
   SubCategory,
 } from "@/core/domain/product-category";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
-import type { ProductStatus } from "@/core/domain/product";
-import { PRODUCT_STATUSES } from "@/core/domain/product";
+import type { Discount, ProductStatus } from "@/core/domain/product";
+import {
+  DISCOUNT_TYPE,
+  DISCOUNT_TYPES,
+  PRODUCT_STATUSES,
+} from "@/core/domain/product";
 import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES,
@@ -20,16 +24,16 @@ const DiscountSchema = new Schema(
   {
     discountType: {
       type: String,
-      enum: ["rate", "amount"],
-      default: "rate",
+      enum: DISCOUNT_TYPES,
+      default: DISCOUNT_TYPE.RATE,
     },
     value: {
       type: Number,
       default: 0,
       min: 0,
       validate: {
-        validator(this: { discountType?: string }, value: number) {
-          return this.discountType !== "rate" || value <= 1;
+        validator(this: Partial<Discount>, value: number) {
+          return this.discountType !== DISCOUNT_TYPE.RATE || value <= 1;
         },
         message: "할인율은 100% 이하여야 합니다.",
       },
@@ -53,10 +57,7 @@ interface ProductDb {
   likes: mongoose.Types.ObjectId[];
   views: number;
   salesCount: number;
-  discount: {
-    discountType: "rate" | "amount";
-    value: number;
-  };
+  discount: Discount;
   status: Status;
   // 스키마가 default: null이라 모든 문서에 항상 존재한다 — optional이 아니라 nullable.
   deletedAt: Date | null;
@@ -138,7 +139,7 @@ const ProductSchema = new Schema<ProductDocument>(
     salesCount: { type: Number, default: 0 },
     discount: {
       type: DiscountSchema,
-      default: () => ({ discountType: "rate", value: 0 }),
+      default: () => ({ discountType: DISCOUNT_TYPE.RATE, value: 0 }),
     },
     isPremium: { type: Boolean, required: true },
     status: {

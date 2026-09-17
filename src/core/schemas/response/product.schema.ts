@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
-import { PRODUCT_STATUSES } from "@/core/domain/product";
+import { DISCOUNT_TYPES, PRODUCT_STATUSES } from "@/core/domain/product";
 
 const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
   message: "ISO date string이 아님",
@@ -26,7 +26,7 @@ const ProductResponseSchema = z.object({
   views: z.number(),
   salesCount: z.number(),
   discount: z.object({
-    discountType: z.enum(["rate", "amount"]),
+    discountType: z.enum(DISCOUNT_TYPES),
     value: z.number(),
   }),
   status: z.enum(PRODUCT_STATUSES),
