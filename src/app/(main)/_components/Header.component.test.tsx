@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 vi.mock("@/ui/hooks/useAuth", () => ({
@@ -36,8 +36,9 @@ describe("Header", () => {
 
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
 
+    const dialog = screen.getByRole("dialog");
     expect(
-      screen.getByRole("link", { name: new RegExp(leafItem.label) }),
+      within(dialog).getByRole("link", { name: new RegExp(leafItem.label) }),
     ).toHaveAttribute("href", leafItem.href);
   });
 
@@ -48,8 +49,6 @@ describe("Header", () => {
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
     await user.click(screen.getByRole("button", { name: "메뉴 닫기" }));
 
-    expect(
-      screen.queryByRole("link", { name: new RegExp(leafItem.label) }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });
