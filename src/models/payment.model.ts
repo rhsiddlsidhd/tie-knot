@@ -1,5 +1,6 @@
 import "server-only";
 import type { PayMethod, PayStatus } from "@/core/domain/payment";
+import { PAY_STATUSES } from "@/core/domain/payment";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
@@ -225,14 +226,7 @@ const PaymentSchema = new Schema<PaymentDocument>(
     // 결제 상태
     status: {
       type: String,
-      enum: [
-        "PENDING",
-        "PAID",
-        "FAILED",
-        "CANCELLED",
-        "PARTIAL_CANCELLED",
-        "REFUNDED",
-      ],
+      enum: PAY_STATUSES,
       required: true,
       default: "PENDING", // 초기 상태 PENDING
     },

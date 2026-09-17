@@ -9,12 +9,15 @@ const PAY_METHOD = [
 
 type PayMethod = (typeof PAY_METHOD)[number];
 
-type PayStatus =
-  | "PENDING"
-  | "PAID"
-  | "FAILED"
-  | "CANCELLED"
-  | "PARTIAL_CANCELLED"
-  | "REFUNDED";
+const PAY_STATUSES = [
+  "PENDING",
+  "PAID",
+  "FAILED",
+  "CANCELLED",
+  "PARTIAL_CANCELLED",
+  "REFUNDED",
+] as const;
 
-export { PAY_METHOD, type PayMethod, type PayStatus };
+type PayStatus = (typeof PAY_STATUSES)[number];
+
+export { PAY_METHOD, PAY_STATUSES, type PayMethod, type PayStatus };
