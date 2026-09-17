@@ -25,6 +25,7 @@ import {
   AlertDescription,
 } from "@/ui/components/atoms/alert";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { useCopy } from "@/ui/hooks/useCopy";
 import { CreditCard, Edit, EllipsisVertical, Link2 } from "lucide-react";
 import type { OrderListItem, OrderStatus } from "@/core/domain/order";
@@ -208,12 +209,10 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
             {order.mobileInvitationStatus &&
               order.orderStatus !== "CANCELLED" &&
               customerInputRoute && (
-                <Button size="lg" variant="outline" asChild>
-                  <Link href={customerInputRoute}>
-                    <Edit className="mr-1 h-4 w-4" />
-                    수정하기
-                  </Link>
-                </Button>
+                <LinkButton size="lg" variant="outline" href={customerInputRoute}>
+                  <Edit className="mr-1 h-4 w-4" />
+                  수정하기
+                </LinkButton>
               )}
             {order.mobileInvitationPublicKey && (
               <Button

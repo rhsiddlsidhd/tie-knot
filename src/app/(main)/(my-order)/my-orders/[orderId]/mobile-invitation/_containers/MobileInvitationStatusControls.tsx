@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import Link from "next/link";
 import { setMobileInvitationStatus } from "@/actions/setMobileInvitationStatus";
 import { ROUTES } from "@/core/domain/routes";
 import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 
 const MobileInvitationStatusControls = ({
   orderId,
@@ -39,11 +39,12 @@ const MobileInvitationStatusControls = ({
       >
         {currentStatus === "published" ? "발행 취소" : "발행하기"}
       </Button>
-      <Button variant="outline" asChild>
-        <Link href={ROUTES.myOrders.mobileInvitationPreview(orderId)}>
-          미리보기
-        </Link>
-      </Button>
+      <LinkButton
+        variant="outline"
+        href={ROUTES.myOrders.mobileInvitationPreview(orderId)}
+      >
+        미리보기
+      </LinkButton>
       {currentStatus !== "published" && (
         <p className="text-warning text-sm">
           계좌 정보가 비어 있어도 발행할 수 있습니다. 공개 전 내용을 확인해

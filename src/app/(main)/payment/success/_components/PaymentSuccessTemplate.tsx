@@ -1,5 +1,4 @@
 import { Check, AlertCircle, Home, FileText } from "lucide-react";
-import { Button } from "@/ui/components/atoms/button";
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
   TypographySmall,
 } from "@/ui/components/atoms/typography";
 import Link from "next/link";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { ROUTES } from "@/core/domain/routes";
 
 interface PaymentSuccessTemplateProps {
@@ -67,18 +67,14 @@ const PaymentSuccessTemplate = ({ orderId }: PaymentSuccessTemplateProps) => {
 
         {/* Action Buttons */}
         <div className="flex flex-col gap-3 sm:flex-row">
-          <Button variant="outline" className="flex-1" asChild>
-            <Link href={ROUTES.home}>
-              <Home className="mr-2 h-4 w-4" />
-              홈으로 이동
-            </Link>
-          </Button>
-          <Button className="flex-1" asChild>
-            <Link href={ROUTES.myOrders.root}>
-              <FileText className="mr-2 h-4 w-4" />
-              주문 내역 확인
-            </Link>
-          </Button>
+          <LinkButton variant="outline" className="flex-1" href={ROUTES.home}>
+            <Home className="mr-2 h-4 w-4" />
+            홈으로 이동
+          </LinkButton>
+          <LinkButton className="flex-1" href={ROUTES.myOrders.root}>
+            <FileText className="mr-2 h-4 w-4" />
+            주문 내역 확인
+          </LinkButton>
         </div>
 
         {/* Additional Info */}

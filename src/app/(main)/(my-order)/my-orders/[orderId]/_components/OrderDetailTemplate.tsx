@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { format } from "date-fns";
 import { Badge } from "@/ui/components/atoms/badge";
 import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import {
   Card,
   CardContent,
@@ -62,12 +62,15 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
   return (
     <div className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Button variant="ghost" size="sm" asChild className="-ml-2">
-          <Link href={ROUTES.myOrders.root}>
-            <ChevronLeft className="mr-1 h-4 w-4" />
-            주문 목록
-          </Link>
-        </Button>
+        <LinkButton
+          variant="ghost"
+          size="sm"
+          className="-ml-2"
+          href={ROUTES.myOrders.root}
+        >
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          주문 목록
+        </LinkButton>
         <TypographyH1 className="text-left text-3xl font-bold">
           주문 상세
         </TypographyH1>

@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { format } from "date-fns";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import type { ReviewListPage, ReviewSortType } from "@/core/domain/review";
@@ -33,16 +32,15 @@ const ReviewsSection = ({ reviews, sort }: ReviewsSectionProps) => {
         <TypographyH2 className="text-xl font-bold">리뷰</TypographyH2>
         <div className="flex gap-2">
           {REVIEW_SORT_KEYS.map((key) => (
-            <Button
+            <LinkButton
               key={key}
-              asChild
               size="sm"
               variant={key === sort ? "default" : "outline"}
+              href={buildSortHref(key)}
+              scroll={false}
             >
-              <Link href={buildSortHref(key)} scroll={false}>
-                {REVIEW_SORT_OPTIONS[key]}
-              </Link>
-            </Button>
+              {REVIEW_SORT_OPTIONS[key]}
+            </LinkButton>
           ))}
         </div>
       </div>
@@ -88,11 +86,14 @@ const ReviewsSection = ({ reviews, sort }: ReviewsSectionProps) => {
       )}
 
       {reviews.nextCursor && (
-        <Button asChild variant="outline" className="w-full">
-          <Link href={buildMoreHref(sort, reviews.nextCursor)} scroll={false}>
-            더보기
-          </Link>
-        </Button>
+        <LinkButton
+          variant="outline"
+          className="w-full"
+          href={buildMoreHref(sort, reviews.nextCursor)}
+          scroll={false}
+        >
+          더보기
+        </LinkButton>
       )}
     </section>
   );

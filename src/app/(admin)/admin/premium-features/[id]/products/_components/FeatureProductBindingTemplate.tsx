@@ -1,7 +1,6 @@
-import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import {
   Empty,
   EmptyHeader,
@@ -35,12 +34,14 @@ const FeatureProductBindingTemplate = ({
 }: FeatureProductBindingTemplateProps) => (
   <div className="space-y-6">
     <div className="space-y-4">
-      <Button variant="ghost" size="sm" asChild>
-        <Link href={ROUTES.admin.premiumFeatures.root}>
-          <ArrowLeft className="mr-1 h-4 w-4" />
-          기능 목록
-        </Link>
-      </Button>
+      <LinkButton
+        variant="ghost"
+        size="sm"
+        href={ROUTES.admin.premiumFeatures.root}
+      >
+        <ArrowLeft className="mr-1 h-4 w-4" />
+        기능 목록
+      </LinkButton>
       <AdminListHeading
         title={`"${featureLabel}" 연결 상품`}
         subtitle="체크하면 바로 반영됩니다. 프리미엄 상품만 목록에 표시됩니다."

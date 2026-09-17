@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import {
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
@@ -94,17 +94,15 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
         </EmptyHeader>
         <EmptyContent>
           {isFiltered ? (
-            <Button asChild variant="outline">
-              <Link href={ROUTES.myOrders.root}>필터 초기화</Link>
-            </Button>
+            <LinkButton variant="outline" href={ROUTES.myOrders.root}>
+              필터 초기화
+            </LinkButton>
           ) : (
-            <Button asChild>
-              <Link
-                href={ROUTES.products.byCategory(MOBILE_INVITATION_CATEGORY)}
-              >
-                청첩장 보러가기
-              </Link>
-            </Button>
+            <LinkButton
+              href={ROUTES.products.byCategory(MOBILE_INVITATION_CATEGORY)}
+            >
+              청첩장 보러가기
+            </LinkButton>
           )}
         </EmptyContent>
       </Empty>

@@ -11,6 +11,7 @@ import {
 } from "@/ui/components/atoms/typography";
 
 import { InputField } from "@/ui/components/organisms/InputField";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
 import { ROUTES } from "@/core/domain/routes";
@@ -63,9 +64,9 @@ const ForgotPasswordForm = ({
         </Card>
 
         <div className="space-y-3">
-          <Button asChild className="w-full" size="lg">
-            <Link href={ROUTES.login}>로그인으로 돌아가기</Link>
-          </Button>
+          <LinkButton className="w-full" size="lg" href={ROUTES.login}>
+            로그인으로 돌아가기
+          </LinkButton>
           <form action={action}>
             <input
               type="hidden"

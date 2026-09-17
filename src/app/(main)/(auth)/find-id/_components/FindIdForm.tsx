@@ -10,6 +10,7 @@ import {
 } from "@/ui/components/atoms/typography";
 
 import { InputField } from "@/ui/components/organisms/InputField";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";
 import { ROUTES } from "@/core/domain/routes";
@@ -53,17 +54,17 @@ const FindIdForm = ({ action, pending, state }: FindIdFormProps) => {
         </Card>
 
         <div className="space-y-3">
-          <Button asChild className="w-full" size="lg">
-            <Link href={ROUTES.login}>로그인하기</Link>
-          </Button>
-          <Button
-            asChild
+          <LinkButton className="w-full" size="lg" href={ROUTES.login}>
+            로그인하기
+          </LinkButton>
+          <LinkButton
             variant="outline"
             className="w-full bg-transparent"
             size="lg"
+            href={ROUTES.findPw}
           >
-            <Link href={ROUTES.findPw}>비밀번호 찾기</Link>
-          </Button>
+            비밀번호 찾기
+          </LinkButton>
         </div>
       </div>
     );
