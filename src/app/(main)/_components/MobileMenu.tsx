@@ -10,7 +10,7 @@ import {
   SheetTrigger,
 } from "@/ui/components/atoms/sheet";
 import { Button } from "@/ui/components/atoms/button";
-import { SidebarPanel } from "@/ui/components/organisms/AppSidebar/AppSidebar";
+import { MobileMenuContent } from "./MobileMenuContent";
 
 const MobileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -35,8 +35,7 @@ const MobileMenu = () => {
         <SheetHeader className="sr-only">
           <SheetTitle>메뉴</SheetTitle>
         </SheetHeader>
-        <SidebarPanel
-          navType="MAIN"
+        <MobileMenuContent
           onClose={() => setOpen(false)}
           onNavigate={() => setOpen(false)}
         />
