@@ -10,12 +10,10 @@ import {
   AccordionTrigger,
 } from "@/ui/components/atoms/accordion";
 
-const SidebarNavItem = ({
+const SheetNavList = ({
   type,
-  onNavigate,
 }: {
   type: keyof typeof ALL_NAVIGATE_ITEMS;
-  onNavigate?: () => void;
 }) => {
   const pathname = usePathname();
   const { groups, links } = ALL_NAVIGATE_ITEMS[type];
@@ -41,7 +39,6 @@ const SidebarNavItem = ({
                   <Link
                     key={subItem.id}
                     href={subItem.href}
-                    onClick={onNavigate}
                     className={cn(
                       "text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm transition-colors",
                       pathname === subItem.href &&
@@ -59,7 +56,6 @@ const SidebarNavItem = ({
           <Link
             key={item.id}
             href={item.href}
-            onClick={onNavigate}
             className={cn(
               "group text-muted-foreground hover:text-foreground hover:bg-muted/50 relative flex items-center gap-3 rounded-lg px-3 py-3.5 transition-all duration-200",
               pathname === item.href && "text-foreground bg-muted/50",
@@ -87,4 +83,4 @@ const SidebarNavItem = ({
   );
 };
 
-export { SidebarNavItem };
+export { SheetNavList };
