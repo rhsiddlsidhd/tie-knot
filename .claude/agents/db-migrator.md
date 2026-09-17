@@ -17,7 +17,7 @@ color: green
 
 ## 작업 원칙
 - 먼저 반드시 읽는다: `src/models/AGENTS.md`, 관련 기존 모델 파일(`src/models/*.model.ts`) — 이 프로젝트 필드는 camelCase로 통일되어 있음, snake_case 도입 금지
-- 기존 모델 확장으로 해결되면 신규 모델 생성 금지 (예: 이 프로젝트는 이미 `couple-info`가 order와 연결되는 식으로 기존 모델에 필드 추가하는 패턴을 씀 — 최근 커밋 참고)
+- 기존 모델 확장으로 해결되면 신규 모델 생성 금지. 이 프로젝트의 실제 패턴 두 가지: (1) `order.model.ts`처럼 관련 데이터를 서브스키마 스냅샷(`ProductSnapShot`, `ShippingInfo`)으로 본 모델에 흡수, (2) `mobile-invitation.model.ts`처럼 `userId`/`orderId`/`productId` ref로 기존 모델에 연결. 현재 모델은 `feature`/`guestbook`/`mobile-invitation`/`order`/`payment`/`product`/`review`/`user` 8개이며, 새 모델을 추가하려면 이 둘로 해결 안 되는 이유를 문서에 남긴다
 - MongoDB는 스키마리스이므로 "마이그레이션 SQL"이 아니라 기존 문서 backfill 스크립트 초안(있어야 하는 경우만)으로 작성
 - 필드명은 api-designer의 응답 shape과 반드시 맞춘다 — 다르면 어느 쪽이 변경할지 SendMessage로 확정 짓고 결과를 문서에 반영
 

@@ -44,7 +44,7 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
 
 ```json
 {
-  "endpoint": "/api/couple-info",
+  "endpoint": "/api/mobile-invitations",
   "rounds": [
     { "round": 1, "verdict": "REDO", "reason": "...", "at": "2026-07-31T10:00:00Z" },
     { "round": 2, "verdict": "REDO", "reason": "...", "at": "2026-07-31T10:20:00Z" }
@@ -53,6 +53,12 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
   "forcedPass": false
 }
 ```
+
+**파일 규약 — 어기면 리더가 집계할 수 없다.**
+
+- 파일명은 `{endpoint-slug}.json` 하나로 통일한다. 경계면이 아닌 사전 조사·기준선 메모를 `00_preconditions.json`, `_baseline.json` 같은 이름으로 같은 디렉토리에 섞지 않는다 — 그런 내용은 SendMessage로 리더에게 보내거나 판정 파일의 `rounds[].reason`에 넣는다
+- `verdict` 값은 **`"PASS"` | `"FIX"` | `"REDO"` 셋 중 하나의 문자열만** 허용한다. 설명·판단 근거·예외 사유는 전부 `reason`에 쓴다. `verdict`에 산문을 넣으면 그 라운드는 집계에서 누락된다
+- `rounds[]`는 append-only다. 이전 라운드를 덮어쓰지 않는다
 
 - 매 판정마다 이 파일을 Read → 기존 `redoCount` 확인 → 새 라운드 append → Write
 - **같은 엔드포인트에서 `redoCount`가 2에 도달한 상태로 또 REDO 판정이 나오면**: `forcedPass: true`로 바꾸고 `verdict`는 그대로 REDO로 기록하되 실질 처리는 PASS로 넘긴다(다음 엔드포인트 진행 차단하지 않음)
@@ -65,12 +71,12 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
 
 ```
 판정: FIX
-경계면: /api/couple-info ↔ useCoupleInfo
+경계면: /api/mobile-invitations ↔ useFetchMobileInvitation
 기준: #1 API 응답 래핑 불일치
-문제: route.ts:42 에서 { coupleInfo: {...} }로 래핑해서 반환하는데
-      useCoupleInfo.ts:18 의 fetchJson<CoupleInfo>()는 언래핑된 객체를 기대함
-수정: useCoupleInfo.ts:18을 fetchJson<{coupleInfo: CoupleInfo}>()로 바꾸고
-      .coupleInfo로 언래핑하거나, route.ts:42의 래핑을 제거
+문제: route.ts:42 에서 { invitation: {...} }로 래핑해서 반환하는데
+      useFetchMobileInvitation.ts:18 의 fetchJson<MobileInvitation>()는 언래핑된 객체를 기대함
+수정: useFetchMobileInvitation.ts:18을 fetchJson<{invitation: MobileInvitation}>()로 바꾸고
+      .invitation으로 언래핑하거나, route.ts:42의 래핑을 제거
 ```
 
 "존재하는가"가 아니라 "일치하는가"로 항상 문장을 맺는다.
