@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { Sidebar, useSidebar } from "@/ui/components/atoms/sidebar";
 import { Logo } from "@/ui/components/atoms/logo";
-import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
+import { SidebarNavMenu } from "@/ui/components/organisms/SidebarNavMenu";
 
 interface AppSidebarProps {
   navType: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
@@ -16,7 +16,7 @@ interface SidebarPanelProps {
 const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="px-6 pt-6 pb-0">
+      <div className="px-6 pt-6 pb-0 group-data-[collapsible=icon]:hidden">
         <div className="flex items-center justify-between">
           <span onClick={onNavigate}>
             <Logo />
@@ -40,11 +40,11 @@ const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <SidebarNavItem type={navType} onNavigate={onNavigate} />
+      <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+        <SidebarNavMenu type={navType} onNavigate={onNavigate} />
       </div>
 
-      <div className="border-border/40 border-t px-6 py-5">
+      <div className="border-border/40 border-t px-6 py-5 group-data-[collapsible=icon]:hidden">
         <p className="text-muted-foreground/40 text-center text-[10px] tracking-[0.15em] uppercase">
           매듭을 맺다 &amp; 웨딩 이커머스
         </p>
@@ -57,7 +57,10 @@ const AppSidebar = ({ navType }: AppSidebarProps) => {
   const { toggleSidebar } = useSidebar();
 
   return (
-    <Sidebar className="border-border/50 fixed top-0 left-0 z-50 h-screen w-72 border-r p-0">
+    <Sidebar
+      collapsible="icon"
+      className="border-border/50 fixed top-0 left-0 z-50 h-screen border-r p-0"
+    >
       <SidebarPanel
         navType={navType}
         onClose={toggleSidebar}
