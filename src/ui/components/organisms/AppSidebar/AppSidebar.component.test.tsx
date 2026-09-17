@@ -24,7 +24,7 @@ describe("AppSidebar", () => {
       "href",
       "/",
     );
-    expect(screen.getByText("모바일 청첩장 & 명함 서비스")).toBeInTheDocument();
+    expect(screen.getByText("매듭을 맺다 & 웨딩 이커머스")).toBeInTheDocument();
   });
 
   it.each([

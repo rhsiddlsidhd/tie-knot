@@ -12,12 +12,12 @@ import {
 import { Button } from "@/ui/components/atoms/button";
 import { SidebarPanel } from "@/ui/components/organisms/AppSidebar/AppSidebar";
 
-const MobileNav = () => {
+const MobileMenu = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Sheet open={open} onOpenChange={setOpen} >
+      <SheetTrigger asChild className="md:hidden">
         <Button
           variant="ghost"
           size="icon"
@@ -45,4 +45,4 @@ const MobileNav = () => {
   );
 };
 
-export { MobileNav };
+export { MobileMenu };

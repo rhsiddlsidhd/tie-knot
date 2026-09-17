@@ -3,15 +3,15 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { ALL_NAVIGATE_ITEMS } from "@/core/domain/navigation";
-import { MobileNav } from "./MobileNav";
+import { MobileMenu } from "./MobileMenu";
 
 const leafItem = ALL_NAVIGATE_ITEMS.MAIN.links[0]!;
 const groupItem = ALL_NAVIGATE_ITEMS.MAIN.groups[0]!;
 
-describe("MobileNav", () => {
+describe("MobileMenu", () => {
   it("로고는 홈으로 이동하는 링크다", async () => {
     const user = userEvent.setup();
-    render(<MobileNav />);
+    render(<MobileMenu />);
 
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
 
@@ -23,7 +23,7 @@ describe("MobileNav", () => {
 
   it("메뉴 버튼 클릭 시 서브카테고리 없는 항목은 바로 링크로 보여준다", async () => {
     const user = userEvent.setup();
-    render(<MobileNav />);
+    render(<MobileMenu />);
 
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
 
@@ -34,7 +34,7 @@ describe("MobileNav", () => {
 
   it("서브카테고리 있는 항목은 아코디언 트리거로 보여주고 펼치면 전체보기·서브카테고리 링크가 나타난다", async () => {
     const user = userEvent.setup();
-    render(<MobileNav />);
+    render(<MobileMenu />);
 
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
 
@@ -56,7 +56,7 @@ describe("MobileNav", () => {
 
   it("닫기 버튼 클릭 시 메뉴가 닫힌다", async () => {
     const user = userEvent.setup();
-    render(<MobileNav />);
+    render(<MobileMenu />);
 
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
     await user.click(screen.getByRole("button", { name: "메뉴 닫기" }));
