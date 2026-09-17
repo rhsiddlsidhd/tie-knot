@@ -7,6 +7,7 @@ import type {
 } from "@/core/domain/product-category";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import type { ProductStatus } from "@/core/domain/product";
+import { PRODUCT_STATUSES } from "@/core/domain/product";
 import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES,
@@ -142,7 +143,7 @@ const ProductSchema = new Schema<ProductDocument>(
     isPremium: { type: Boolean, required: true },
     status: {
       type: String,
-      enum: ["active", "inactive", "soldOut", "deleted"],
+      enum: PRODUCT_STATUSES,
       default: "active",
     },
     featureIds: {

@@ -125,6 +125,14 @@ describe("ProductResponseSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("삭제된 상품 응답의 deleted 상태를 허용한다", () => {
+    const result = ProductResponseSchema.safeParse(
+      buildValidProduct({ status: "deleted" }),
+    );
+
+    expect(result.success).toBe(true);
+  });
+
   it("status가 없으면 실패한다 (optional 아님)", () => {
     const data = buildValidProduct();
     delete (data as { status?: unknown }).status;

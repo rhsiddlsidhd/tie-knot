@@ -6,7 +6,33 @@ import type { CursorPage } from "./cursor";
 const POPULAR_PRODUCTS_LIMIT = 8;
 const POPULAR_PRODUCTS_MIN_ITEMS = 3;
 
-type ProductStatus = "active" | "inactive" | "soldOut" | "deleted";
+const PRODUCT_STATUSES = ["active", "inactive", "soldOut", "deleted"] as const;
+
+type ProductStatus = (typeof PRODUCT_STATUSES)[number];
+
+// deleted는 삭제/복구 전용 흐름이 deletedAt과 함께 관리한다. 일반 상태 변경에서
+// status만 deleted로 바꾸면 휴지통 조회 기준과 어긋나므로 선택 가능한 상태에서 제외한다.
+const EDITABLE_PRODUCT_STATUSES = [
+  "active",
+  "inactive",
+  "soldOut",
+] as const satisfies readonly ProductStatus[];
+
+type EditableProductStatus = (typeof EDITABLE_PRODUCT_STATUSES)[number];
+
+const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
+  active: "판매중",
+  inactive: "비활성",
+  soldOut: "품절",
+  deleted: "삭제됨",
+};
+
+const EDITABLE_PRODUCT_STATUS_OPTIONS: ReadonlyArray<
+  Readonly<{ value: EditableProductStatus; label: string }>
+> = EDITABLE_PRODUCT_STATUSES.map((value) => ({
+  value,
+  label: PRODUCT_STATUS_LABELS[value],
+}));
 
 interface ProductJson {
   _id: string;
@@ -90,11 +116,16 @@ type ProductPriceType = (typeof PRODUCT_PRICE_KEYS)[number];
 export {
   POPULAR_PRODUCTS_LIMIT,
   POPULAR_PRODUCTS_MIN_ITEMS,
+  PRODUCT_STATUSES,
+  EDITABLE_PRODUCT_STATUSES,
+  PRODUCT_STATUS_LABELS,
+  EDITABLE_PRODUCT_STATUS_OPTIONS,
   PRODUCT_SORT_KEYS,
   PRODUCT_PRICE_KEYS,
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
   type ProductStatus,
+  type EditableProductStatus,
   type ProductJson,
   type Product,
   type AdminProductListPage,

@@ -4,6 +4,7 @@ import type React from "react";
 import { useActionState, useEffect, useReducer } from "react";
 import { updateProduct } from "@/actions/updateProduct";
 import type { Product } from "@/core/domain/product";
+import { EDITABLE_PRODUCT_STATUS_OPTIONS } from "@/core/domain/product";
 import { Spinner } from "@/ui/components/atoms/spinner";
 import { DiscountField } from "@/ui/components/organisms/DiscountField";
 import { ImageField } from "@/ui/components/organisms/ImageField";
@@ -87,16 +88,6 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
       </div>
     );
   }
-
-  // "deleted"는 여기서 선택할 수 없다 — 삭제는 이 드롭다운이 아니라 삭제/복구
-  // 버튼(ProductTableRowAction) 전용 경로이며, deletedAt과 함께 세팅된다.
-  // 드롭다운으로 status만 "deleted"로 바꾸면 deletedAt이 안 바뀌어 목록 필터
-  // (deletedAt 기준)와 상태 표시가 어긋난다(#136).
-  const statusOptions = [
-    { value: "active", label: "판매중" },
-    { value: "inactive", label: "비활성" },
-    { value: "soldOut", label: "품절" },
-  ];
 
   return (
     <form action={action} className="space-y-6">
@@ -207,14 +198,19 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
             id="edit-status"
             name="status"
             defaultValue={form.status}
-            onValueChange={(value) =>
+            onValueChange={(value) => {
+              const statusOption = EDITABLE_PRODUCT_STATUS_OPTIONS.find(
+                (option) => option.value === value,
+              );
+              if (!statusOption) return;
+
               dispatch({
                 type: "CHANGE_STATUS",
-                payload: value as "active" | "inactive" | "soldOut",
-              })
-            }
+                payload: statusOption.value,
+              });
+            }}
             placeholder="판매 상태를 선택하세요"
-            data={statusOptions}
+            data={[...EDITABLE_PRODUCT_STATUS_OPTIONS]}
             required
           >
             판매 상태

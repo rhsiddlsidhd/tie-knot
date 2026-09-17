@@ -1,6 +1,10 @@
 import "server-only";
 import type { ProductDb, ProductDocument } from "@/models/product.model";
-import type { ProductJson, ProductStatus } from "@/core/domain/product";
+import type {
+  EditableProductStatus,
+  ProductJson,
+  ProductStatus,
+} from "@/core/domain/product";
 import type { FeatureProductBindingPage } from "@/core/domain/premium-feature";
 import { FeatureModel } from "@/models/feature.model";
 import {
@@ -907,7 +911,7 @@ const permanentlyDeleteProductAsAdminService = async (
 
 const updateProductStatusAsAdminService = async (
   productId: string,
-  status: ProductDto["status"],
+  status: EditableProductStatus,
 ): Promise<ProductJson> => {
   await requireAdmin();
   const updated = await updateProductService(productId, { status });

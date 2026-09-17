@@ -9,14 +9,7 @@ import { Badge } from "@/ui/components/atoms/badge";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { TableCell, TableRow } from "@/ui/components/atoms/table";
 import type { FeatureProductBinding } from "@/core/domain/premium-feature";
-import type { ProductStatus } from "@/core/domain/product";
-
-const STATUS_LABELS: Record<ProductStatus, string> = {
-  active: "판매중",
-  inactive: "비활성",
-  soldOut: "품절",
-  deleted: "삭제됨",
-};
+import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
 
 /**
  * 체크가 곧 저장이다 — 목록이 URL로 페이징돼 선택 상태를 클라이언트에 모아둘 수
@@ -74,7 +67,7 @@ const FeatureProductBindingRow = ({
       <TableCell>{product.price.toLocaleString()}원</TableCell>
       <TableCell>
         <Badge variant={product.status === "active" ? "default" : "secondary"}>
-          {STATUS_LABELS[product.status]}
+          {PRODUCT_STATUS_LABELS[product.status]}
         </Badge>
       </TableCell>
     </TableRow>

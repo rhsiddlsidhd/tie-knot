@@ -5,6 +5,9 @@ import {
   SUB_CATEGORY_MAP,
   PRODUCT_CATEGORIES,
 } from "@/core/domain/product-category";
+import { EDITABLE_PRODUCT_STATUSES } from "@/core/domain/product";
+
+const EditableProductStatusSchema = z.enum(EDITABLE_PRODUCT_STATUSES);
 
 const ProductSchema = z
   .object({
@@ -33,7 +36,7 @@ const ProductSchema = z
         }),
       ])
       .optional(),
-    status: z.enum(["active", "inactive", "soldOut", "deleted"]).optional(),
+    status: EditableProductStatusSchema.optional(),
     thumbnail: z.string().url("유효한 썸네일 URL이어야 합니다."),
 
     // ── 신규 (REQ-2 / REQ-3) ─────────────────────────────
@@ -100,4 +103,4 @@ const ProductSchema = z
 
 type ProductDto = z.infer<typeof ProductSchema>;
 
-export { ProductSchema, type ProductDto };
+export { EditableProductStatusSchema, ProductSchema, type ProductDto };
