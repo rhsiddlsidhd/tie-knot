@@ -216,6 +216,14 @@ describe("ProductSchema", () => {
     expect(result.success).toBe(false);
   });
 
+  it("deleted는 삭제 전용 흐름의 상태라 일반 상품 입력에서 거부한다", () => {
+    const result = ProductSchema.safeParse(
+      buildValidInput({ status: "deleted" }),
+    );
+
+    expect(result.success).toBe(false);
+  });
+
   it("status를 생략하면 통과한다 (optional)", () => {
     const result = ProductSchema.safeParse(buildValidInput());
 

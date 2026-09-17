@@ -7,6 +7,7 @@ import {
   TypographySmall,
 } from "@/ui/components/atoms/typography";
 import type { Product } from "@/core/domain/product";
+import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
 import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
 import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
 import type {
@@ -83,7 +84,7 @@ const ProductTableRow = ({
         {view === "trash" ? (
           <div className="flex flex-col gap-1">
             <Badge variant="outline" className="w-fit">
-              삭제됨
+              {PRODUCT_STATUS_LABELS.deleted}
             </Badge>
             {product.deletedAt && (
               <TypographyMuted>

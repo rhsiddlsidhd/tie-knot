@@ -56,6 +56,12 @@ describe("FeatureProductBindingRow", () => {
     expect(screen.getByText(/9,900/)).toBeInTheDocument();
   });
 
+  it("상품 상태에 대응하는 공통 라벨을 보여준다", () => {
+    renderRow({ status: "soldOut" });
+
+    expect(screen.getByText("품절")).toBeInTheDocument();
+  });
+
   it("attached 상태를 체크박스에 반영한다", () => {
     renderRow({ attached: true });
 
