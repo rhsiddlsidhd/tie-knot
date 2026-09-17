@@ -11,10 +11,10 @@ permissionMode: auto
 Phase1에서 확정된 `01_api_contract.md`/`01_db_schema.md`를 실제 코드로 구현한다. 이 프로젝트의 계층 구조(route/action → service → model)를 그대로 따른다.
 
 ## 핵심 역할
-1. `src/models/`에 db-migrator 설계 반영 (필드/인덱스 추가)
-2. `src/services/`에 비즈니스 로직 구현 (`AppError`로 에러 던지기 — HTTP status는 여기서 모름, `src/boundary.ts`가 번역)
-3. 채널에 맞게 `src/app/api/**/route.ts`(채널 B, `routeSuccess`/`routeError` 사용) 또는 `src/actions/*.ts`(채널 A, `actionError` 사용) 구현
-4. 각 서비스/액션에 대응 단위 테스트 작성 (`*.unit.test.ts`, 기존 파일들과 같은 패턴)
+1. **테스트 선행** — 손댈 서비스/액션마다 대응 단위 테스트(`*.unit.test.ts`, 대상 코드 옆)를 **먼저** 써서 red를 만든다. 이 저장소는 TDD gate가 형제 테스트 없는 `src/` 편집을 차단한다(아래 "TDD gate")
+2. `src/models/`에 db-migrator 설계 반영 (필드/인덱스 추가)
+3. `src/services/`에 비즈니스 로직 구현 (`AppError`로 에러 던지기 — HTTP status는 여기서 모름, `src/boundary.ts`가 번역)
+4. 채널에 맞게 `src/app/api/**/route.ts`(채널 B, `routeSuccess`/`routeError` 사용) 또는 `src/actions/*.ts`(채널 A, `actionError` 사용) 구현
 5. 엔드포인트 하나 완성될 때마다 즉시 boundary-verifier에게 검증 요청 (전체 다 만들고 한번에 넘기지 않는다)
 
 ## 작업 원칙
@@ -22,6 +22,18 @@ Phase1에서 확정된 `01_api_contract.md`/`01_db_schema.md`를 실제 코드�
 - `01_api_contract.md`에 없는 필드/shape을 임의로 추가하지 않는다 — 계약과 어긋나면 임의 변경 대신 api-designer에게 SendMessage로 확인
 - 응답 envelope은 항상 `routeSuccess`/`routeError`(채널 B) 또는 `{success:true,data}`/`actionError`(채널 A)를 통해서만 생성 — 직접 `NextResponse.json({...})` 조립 금지
 - 즉시 응답과 비동기 결과가 분리된 설계라면, 응답 shape에서 그 구분이 명확히 드러나게 구현 (boundary-verifier 5번 체크 대상)
+- 외부 SDK·런타임 API(bcrypt, cloudinary, jose, kakao, nodemailer, portone, Next.js cookies 등)는 service에서 직접 호출하지 않고 `src/adapters/server/{서비스}/`를 경유한다 — 규칙은 `src/adapters/AGENTS.md`
+- 정적 검증은 `npm run lint`, `npm run lint:barrels`, `npm run tsc`, `npm run build`를 모두 돌린다 (배럴 파일 금지 규칙은 별도 스크립트가 강제한다)
+
+## TDD gate (이 저장소 필수)
+
+`.claude/settings.json`의 PreToolUse 훅(`tooling/tdd-gate/hook.mjs`)이 `src/` 소스 편집을 가로챈다. 제외 목록은 `tooling/tdd-gate/policy.json`에만 있다(`src/core/domain/**`, `src/ui/components/atoms/**` 등).
+
+- 대응 형제 테스트가 없는 소스 파일을 쓰면 **차단**된다 — 테스트를 먼저 만들어라
+- 신규 파일인데 형제 테스트가 이미 통과하면 **차단**된다 — 그 파일이 없으면 실패하는 테스트로 red를 먼저 만들어라
+- 턴 종료 시 Stop 훅이 남은 문제를 다시 검사한다
+- 차단을 우회하려고 `policy.json`의 exclude에 임의로 항목을 추가하지 않는다 — 정말 테스트 대상이 아니라고 판단되면 리더에게 SendMessage로 근거와 함께 요청한다
+- 티어·파일명·위치 규칙은 `docs/__test/README.md`와 `docs/__test/{unit,component}.md`를 따른다
 
 ## 작업 위치
 Phase2+3 동안은 표준 브랜치가 아니라 **자기 전용 워크트리**(`feat/{name}--backend`, kickoff 메시지에서 절대경로로 받음)에서 작업한다. 표준 브랜치를 직접 건드리지 않는다 — 거기 반영하는 건 리더의 몫이다.

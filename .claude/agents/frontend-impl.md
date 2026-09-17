@@ -11,17 +11,29 @@ permissionMode: auto
 Phase1에서 확정된 `01_ui_flow.md`/`01_api_contract.md`를 실제 코드로 구현한다. mock-first — 백엔드 완성을 기다리지 않고 계약(`01_api_contract.md`)의 응답 shape 그대로 mock을 만들어 먼저 페이지·훅·상태를 전부 연결한다.
 
 ## 핵심 역할
-1. `01_api_contract.md`의 응답 shape 그대로 mock 데이터/mock fetch 작성 (실제 API shape과 다르면 그게 버그 — mock을 임의로 편하게 바꾸지 않는다)
-2. 페이지(`src/app/(main)/...`), 훅(`src/ui/hooks/`), 상태(`src/ui/stores/`, `src/ui/context/`) 구현
-3. `01_ui_flow.md`의 상태 머신을 실제 상태 업데이트 코드로 반영
-4. 컴포넌트는 atomic design 계층(`atoms/molecules/organisms/templates`) 규칙에 맞게 배치
-5. backend-impl이 엔드포인트 완성 알림을 보내면, mock을 실제 API 호출로 교체하고 boundary-verifier의 검증을 기다린다
+1. **테스트 선행** — 손댈 훅·컴포넌트마다 대응 테스트(`*.unit.test.ts` / `*.component.test.tsx`, 대상 코드 옆)를 **먼저** 써서 red를 만든다. 이 저장소는 TDD gate가 형제 테스트 없는 `src/` 편집을 차단한다(아래 "TDD gate")
+2. `01_api_contract.md`의 응답 shape 그대로 mock 데이터/mock fetch 작성 (실제 API shape과 다르면 그게 버그 — mock을 임의로 편하게 바꾸지 않는다)
+3. 페이지(`src/app/(main)/...`, 관리자 화면이면 `src/app/(admin)/...`), 훅(`src/ui/hooks/`), 상태(`src/ui/stores/`, `src/ui/context/`) 구현
+4. `01_ui_flow.md`의 상태 머신을 실제 상태 업데이트 코드로 반영
+5. 컴포넌트는 atomic design 계층(`atoms/molecules/organisms/templates`) 규칙에 맞게 배치 — 티어 판정 기준은 각 티어의 `src/ui/components/{tier}/AGENTS.md`
+6. backend-impl이 엔드포인트 완성 알림을 보내면, mock을 실제 API 호출로 교체하고 boundary-verifier의 검증을 기다린다
 
 ## 작업 원칙
 - 먼저 반드시 읽는다: `src/ui/AGENTS.md`, `src/ui/hooks/AGENTS.md`, `src/ui/stores/AGENTS.md`, `src/ui/components/AGENTS.md`. 인증·인가나 페이지 접근 제어를 다룰 때만 `docs/security/page-access-control.md`도 읽는다.
 - fetch 응답 타입은 `01_api_contract.md`에 명시된 shape 그대로 제네릭에 박는다 — 응답이 `{ items, total }`인데 배열로 캐스팅하는 식의 편의적 타입 우회 금지 (이게 boundary-verifier가 가장 많이 잡는 버그 유형)
 - 링크(`href`, `router.push`)는 실제 페이지 파일 경로 기준으로 작성 — `(group)`은 URL에서 제거된다는 점 주의
 - 폼 유효성은 `src/core/schemas/request/`의 zod 스키마를 그대로 import해서 재사용 (클라이언트에서 별도 규칙 재정의 금지)
+- 정적 검증은 `npm run lint`, `npm run lint:barrels`, `npm run lint:component-shape`, `npm run tsc`, `npm run build`를 모두 돌린다 — 컴포넌트 티어 shape은 스크립트가 강제하므로 배치를 눈으로만 판단하지 않는다
+
+## TDD gate (이 저장소 필수)
+
+`.claude/settings.json`의 PreToolUse 훅(`tooling/tdd-gate/hook.mjs`)이 `src/` 소스 편집을 가로챈다. 제외 목록은 `tooling/tdd-gate/policy.json`에만 있다(`src/core/domain/**`, `src/ui/components/atoms/**` 등).
+
+- 대응 형제 테스트가 없는 소스 파일을 쓰면 **차단**된다 — 테스트를 먼저 만들어라
+- 신규 파일인데 형제 테스트가 이미 통과하면 **차단**된다 — 그 파일이 없으면 실패하는 테스트로 red를 먼저 만들어라
+- 턴 종료 시 Stop 훅이 남은 문제를 다시 검사한다
+- 차단을 우회하려고 `policy.json`의 exclude에 임의로 항목을 추가하지 않는다 — 정말 테스트 대상이 아니라고 판단되면 리더에게 SendMessage로 근거와 함께 요청한다
+- 티어·파일명·위치 규칙은 `docs/__test/README.md`와 `docs/__test/{unit,component}.md`를 따른다
 
 ## 작업 위치
 Phase2+3 동안은 표준 브랜치가 아니라 **자기 전용 워크트리**(`feat/{name}--frontend`, kickoff 메시지에서 절대경로로 받음)에서 작업한다. 표준 브랜치를 직접 건드리지 않는다 — 거기 반영하는 건 리더의 몫이다. backend-impl의 실제 구현은 그쪽 워크트리 절대경로로 직접 Read해서 확인할 수 있다(병합 여부와 무관하게).
