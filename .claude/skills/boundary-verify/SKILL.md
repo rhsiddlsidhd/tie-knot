@@ -22,7 +22,7 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
 | 2 | 케이스 변환 불일치 | Mongoose 모델 필드명(camelCase 기준) | API 응답/프론트 타입 필드명 | snake_case 유입 시 조용히 undefined |
 | 3 | 파일 경로 ↔ 링크 경로 | `src/app/` 하위 실제 page 경로((group) 제거, [param] 반영) | 코드 내 `href`/`router.push`/`redirect` 값 | 파일 구조와 링크를 따로 검증하면 둘 다 "정상"으로 보임 |
 | 4 | 상태 전이 맵 ↔ update 코드 | 설계 문서의 상태 전이표(`01_ui_flow.md`) | 실제 `.update({status:...})`/상태 세터 코드 | 맵 존재 확인만 하고 모든 업데이트 코드를 추적 안 하면 누락 놓침 |
-| 5 | API ↔ 프론트 훅 매핑 누락 | `src/app/api/`의 엔드포인트 전체 목록 | `src/client/hooks/`의 fetch 호출 URL 전체 목록 | 1:1 매핑을 안 하면 "만들었는데 아무도 안 씀"이 안 보임 |
+| 5 | API ↔ 프론트 훅 매핑 누락 | `src/app/api/`의 엔드포인트 전체 목록 | `src/ui/hooks/`의 fetch 호출 URL 전체 목록 | 1:1 매핑을 안 하면 "만들었는데 아무도 안 씀"이 안 보임 |
 | 6 | 즉시 응답 ↔ 비동기 결과 혼동 | route가 즉시 반환하는 shape | 프론트가 접근하는 필드(비동기 결과 필드를 즉시 응답에서 읽는지) | 동기/비동기 구분 없이 타입만 보면 놓침 |
 | 7 | 옵셔널 필드 처리 | 스키마의 optional/nullable 정의 | 양쪽의 null/undefined 처리 코드 | 한쪽만 옵셔널 처리하면 다른 쪽에서 크래시 |
 
@@ -44,7 +44,7 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
 
 ```json
 {
-  "endpoint": "/api/couple-info",
+  "endpoint": "/api/mobile-invitations",
   "rounds": [
     { "round": 1, "verdict": "REDO", "reason": "...", "at": "2026-07-31T10:00:00Z" },
     { "round": 2, "verdict": "REDO", "reason": "...", "at": "2026-07-31T10:20:00Z" }
@@ -53,6 +53,12 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
   "forcedPass": false
 }
 ```
+
+**파일 규약 — 어기면 리더가 집계할 수 없다.**
+
+- 파일명은 `{endpoint-slug}.json` 하나로 통일한다. 경계면이 아닌 사전 조사·기준선 메모를 `00_preconditions.json`, `_baseline.json` 같은 이름으로 같은 디렉토리에 섞지 않는다 — 그런 내용은 SendMessage로 리더에게 보내거나 판정 파일의 `rounds[].reason`에 넣는다
+- `verdict` 값은 **`"PASS"` | `"FIX"` | `"REDO"` 셋 중 하나의 문자열만** 허용한다. 설명·판단 근거·예외 사유는 전부 `reason`에 쓴다. `verdict`에 산문을 넣으면 그 라운드는 집계에서 누락된다
+- `rounds[]`는 append-only다. 이전 라운드를 덮어쓰지 않는다
 
 - 매 판정마다 이 파일을 Read → 기존 `redoCount` 확인 → 새 라운드 append → Write
 - **같은 엔드포인트에서 `redoCount`가 2에 도달한 상태로 또 REDO 판정이 나오면**: `forcedPass: true`로 바꾸고 `verdict`는 그대로 REDO로 기록하되 실질 처리는 PASS로 넘긴다(다음 엔드포인트 진행 차단하지 않음)
@@ -65,12 +71,12 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
 
 ```
 판정: FIX
-경계면: /api/couple-info ↔ useCoupleInfo
+경계면: /api/mobile-invitations ↔ useFetchMobileInvitation
 기준: #1 API 응답 래핑 불일치
-문제: route.ts:42 에서 { coupleInfo: {...} }로 래핑해서 반환하는데
-      useCoupleInfo.ts:18 의 fetchJson<CoupleInfo>()는 언래핑된 객체를 기대함
-수정: useCoupleInfo.ts:18을 fetchJson<{coupleInfo: CoupleInfo}>()로 바꾸고
-      .coupleInfo로 언래핑하거나, route.ts:42의 래핑을 제거
+문제: route.ts:42 에서 { invitation: {...} }로 래핑해서 반환하는데
+      useFetchMobileInvitation.ts:18 의 fetchJson<MobileInvitation>()는 언래핑된 객체를 기대함
+수정: useFetchMobileInvitation.ts:18을 fetchJson<{invitation: MobileInvitation}>()로 바꾸고
+      .invitation으로 언래핑하거나, route.ts:42의 래핑을 제거
 ```
 
 "존재하는가"가 아니라 "일치하는가"로 항상 문장을 맺는다.
