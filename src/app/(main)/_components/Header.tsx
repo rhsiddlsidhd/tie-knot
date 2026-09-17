@@ -1,3 +1,5 @@
+"use client";
+
 import { AuthButtons } from "./AuthButtons";
 import { PrimaryNav } from "./PrimaryNav";
 import { SheetPanel } from "./SheetPanel";
