@@ -14,6 +14,7 @@ import {
 } from "@/ui/components/atoms/typography";
 import { ChevronLeft } from "lucide-react";
 import type { OrderDetail } from "@/core/domain/order";
+import type { PayStatus } from "@/core/domain/payment";
 import { ROUTES } from "@/core/domain/routes";
 import { PAY_METHOD_LABEL } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
 import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
@@ -21,14 +22,14 @@ import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_util
 const formatDateTime = (value: Date | string) =>
   format(new Date(value), "yyyy.MM.dd HH:mm");
 
-const PAY_STATUS_LABELS: Record<string, string> = {
+const PAY_STATUS_LABELS = {
   PENDING: "입금대기",
   PAID: "결제완료",
   FAILED: "결제실패",
   CANCELLED: "결제취소",
   PARTIAL_CANCELLED: "부분취소",
   REFUNDED: "환불완료",
-};
+} satisfies Record<PayStatus, string>;
 
 const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
   const product = order.product;
@@ -129,9 +130,7 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
             <>
               <div className="flex justify-between">
                 <span>결제 상태</span>
-                <span>
-                  {PAY_STATUS_LABELS[payment.status] ?? payment.status}
-                </span>
+                <span>{PAY_STATUS_LABELS[payment.status]}</span>
               </div>
               <div className="flex justify-between">
                 <span>결제 요청금액</span>
