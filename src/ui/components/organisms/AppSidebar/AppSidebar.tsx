@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
 import { Sidebar, useSidebar } from "@/ui/components/atoms/sidebar";
 import { Logo } from "@/ui/components/atoms/logo";
-import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
 import { SidebarNavMenu } from "@/ui/components/organisms/SidebarNavMenu";
 
 interface AppSidebarProps {
@@ -12,22 +11,9 @@ interface SidebarPanelProps {
   navType: "MAIN" | AppSidebarProps["navType"];
   onClose: () => void;
   onNavigate?: () => void;
-  /**
-   * "list"(기본값)는 SidebarProvider 없이도 렌더링 가능한 SidebarNavItem을 쓴다.
-   * MobileMenu(Sheet 기반, SidebarProvider 없음)가 이 기본값에 의존한다.
-   * "menu"는 SidebarProvider 컨텍스트가 보장되는 AppSidebar 전용 아이콘 축소 렌더링(SidebarNavMenu)이다.
-   */
-  variant?: "list" | "menu";
 }
 
-const SidebarPanel = ({
-  navType,
-  onClose,
-  onNavigate,
-  variant = "list",
-}: SidebarPanelProps) => {
-  const NavComponent = variant === "menu" ? SidebarNavMenu : SidebarNavItem;
-
+const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="px-6 pt-6 pb-0 group-data-[collapsible=icon]:hidden">
@@ -55,7 +41,7 @@ const SidebarPanel = ({
       </div>
 
       <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-        <NavComponent type={navType} onNavigate={onNavigate} />
+        <SidebarNavMenu type={navType} onNavigate={onNavigate} />
       </div>
 
       <div className="border-border/40 border-t px-6 py-5 group-data-[collapsible=icon]:hidden">
@@ -79,7 +65,6 @@ const AppSidebar = ({ navType }: AppSidebarProps) => {
         navType={navType}
         onClose={toggleSidebar}
         onNavigate={toggleSidebar}
-        variant="menu"
       />
     </Sidebar>
   );
