@@ -31,6 +31,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 |------|----------|------|------|
 | 2026-07-31 | 초기 구성 (agent 7개 + skill 2개) | 전체 | 풀스택 기능 구현 자동화 요청 |
 | 2026-07-31 | git 통합 — 브랜치 `{domain}/{name}` 재정의(git prefix/슬러그), Phase0 브랜치확정, Phase2+3 워크트리 격리+유닛단위 커밋+리더전용 병합, Phase5 PR자동생성(merge는 항상 사람), 스코프 `feat` 전용 명시 | feature-team-orchestrator/SKILL.md, backend-impl.md, frontend-impl.md | GIT 워크플로우 그릴링 세션 확정 반영 |
+| 2026-09-17 | 경로 drift 수정 — `src/server/*`→`src/{actions,models,services}`+`src/boundary.ts`, `src/client/*`→`src/ui/*`, `src/shared/schemas/*`→`src/core/schemas/*`, `src/client/store/`→`src/ui/stores/` 로 전면 갱신 | api-designer.md, backend-impl.md, frontend-impl.md, ui-designer.md, db-migrator.md, boundary-verify/SKILL.md | 8/17 UI레이어 통합 리팩토링(#36) 이후 미반영 방치(8/28 감사 지적, 9/3 수정 때도 누락) 확인 후 정리 |
 
 ---
 

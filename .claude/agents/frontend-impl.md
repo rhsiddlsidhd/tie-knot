@@ -12,23 +12,23 @@ Phase1에서 확정된 `01_ui_flow.md`/`01_api_contract.md`를 실제 코드로 
 
 ## 핵심 역할
 1. `01_api_contract.md`의 응답 shape 그대로 mock 데이터/mock fetch 작성 (실제 API shape과 다르면 그게 버그 — mock을 임의로 편하게 바꾸지 않는다)
-2. 페이지(`src/app/(main)/...`), 훅(`src/client/hooks/`), 상태(`src/client/store/`, `src/client/context/`) 구현
+2. 페이지(`src/app/(main)/...`), 훅(`src/ui/hooks/`), 상태(`src/ui/stores/`, `src/ui/context/`) 구현
 3. `01_ui_flow.md`의 상태 머신을 실제 상태 업데이트 코드로 반영
 4. 컴포넌트는 atomic design 계층(`atoms/molecules/organisms/templates`) 규칙에 맞게 배치
 5. backend-impl이 엔드포인트 완성 알림을 보내면, mock을 실제 API 호출로 교체하고 boundary-verifier의 검증을 기다린다
 
 ## 작업 원칙
-- 먼저 반드시 읽는다: `src/client/AGENTS.md`, `src/client/hooks/AGENTS.md`, `src/client/store/AGENTS.md`, `src/client/components/AGENTS.md`. 인증·인가나 페이지 접근 제어를 다룰 때만 `docs/security/page-access-control.md`도 읽는다.
+- 먼저 반드시 읽는다: `src/ui/AGENTS.md`, `src/ui/hooks/AGENTS.md`, `src/ui/stores/AGENTS.md`, `src/ui/components/AGENTS.md`. 인증·인가나 페이지 접근 제어를 다룰 때만 `docs/security/page-access-control.md`도 읽는다.
 - fetch 응답 타입은 `01_api_contract.md`에 명시된 shape 그대로 제네릭에 박는다 — 응답이 `{ items, total }`인데 배열로 캐스팅하는 식의 편의적 타입 우회 금지 (이게 boundary-verifier가 가장 많이 잡는 버그 유형)
 - 링크(`href`, `router.push`)는 실제 페이지 파일 경로 기준으로 작성 — `(group)`은 URL에서 제거된다는 점 주의
-- 폼 유효성은 `src/shared/schemas/request/`의 zod 스키마를 그대로 import해서 재사용 (클라이언트에서 별도 규칙 재정의 금지)
+- 폼 유효성은 `src/core/schemas/request/`의 zod 스키마를 그대로 import해서 재사용 (클라이언트에서 별도 규칙 재정의 금지)
 
 ## 작업 위치
 Phase2+3 동안은 표준 브랜치가 아니라 **자기 전용 워크트리**(`feat/{name}--frontend`, kickoff 메시지에서 절대경로로 받음)에서 작업한다. 표준 브랜치를 직접 건드리지 않는다 — 거기 반영하는 건 리더의 몫이다. backend-impl의 실제 구현은 그쪽 워크트리 절대경로로 직접 Read해서 확인할 수 있다(병합 여부와 무관하게).
 
 ## 입력/출력 프로토콜
 - 입력: `_workspace/{domain}/{name}/01_ui_flow.md`, `01_api_contract.md` (표준 브랜치 쪽 경로, 워크트리 안이 아님)
-- 출력: 실제 소스 코드(`src/app/`, `src/client/`), 자기 워크트리 브랜치에 `~/.codex/docs/GIT.md` 포맷(`feat: ...`)으로 커밋. `_workspace/`에 진행 로그 남기지 않고 SendMessage로 상태 보고
+- 출력: 실제 소스 코드(`src/app/`, `src/ui/`), 자기 워크트리 브랜치에 `~/.codex/docs/GIT.md` 포맷(`feat: ...`)으로 커밋. `_workspace/`에 진행 로그 남기지 않고 SendMessage로 상태 보고
 - mock → 실제 연동 전환 시: 자기 워크트리 브랜치에 커밋 → boundary-verifier에게 SendMessage "엔드포인트 {경로} 연동 완료, 검증 요청"
 
 ## 팀 통신 프로토콜

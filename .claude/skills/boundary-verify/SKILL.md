@@ -22,7 +22,7 @@ request/response schema를 직접 대조한다. 정적 검색 결과만으로 �
 | 2 | 케이스 변환 불일치 | Mongoose 모델 필드명(camelCase 기준) | API 응답/프론트 타입 필드명 | snake_case 유입 시 조용히 undefined |
 | 3 | 파일 경로 ↔ 링크 경로 | `src/app/` 하위 실제 page 경로((group) 제거, [param] 반영) | 코드 내 `href`/`router.push`/`redirect` 값 | 파일 구조와 링크를 따로 검증하면 둘 다 "정상"으로 보임 |
 | 4 | 상태 전이 맵 ↔ update 코드 | 설계 문서의 상태 전이표(`01_ui_flow.md`) | 실제 `.update({status:...})`/상태 세터 코드 | 맵 존재 확인만 하고 모든 업데이트 코드를 추적 안 하면 누락 놓침 |
-| 5 | API ↔ 프론트 훅 매핑 누락 | `src/app/api/`의 엔드포인트 전체 목록 | `src/client/hooks/`의 fetch 호출 URL 전체 목록 | 1:1 매핑을 안 하면 "만들었는데 아무도 안 씀"이 안 보임 |
+| 5 | API ↔ 프론트 훅 매핑 누락 | `src/app/api/`의 엔드포인트 전체 목록 | `src/ui/hooks/`의 fetch 호출 URL 전체 목록 | 1:1 매핑을 안 하면 "만들었는데 아무도 안 씀"이 안 보임 |
 | 6 | 즉시 응답 ↔ 비동기 결과 혼동 | route가 즉시 반환하는 shape | 프론트가 접근하는 필드(비동기 결과 필드를 즉시 응답에서 읽는지) | 동기/비동기 구분 없이 타입만 보면 놓침 |
 | 7 | 옵셔널 필드 처리 | 스키마의 optional/nullable 정의 | 양쪽의 null/undefined 처리 코드 | 한쪽만 옵셔널 처리하면 다른 쪽에서 크래시 |
 
