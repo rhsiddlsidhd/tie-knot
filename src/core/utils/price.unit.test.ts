@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import type { Discount } from "@/core/domain/product";
-import { calculatePrice, formatPriceWithComma } from "./price";
+import { calculatePrice, formatDiscountLabel, formatPriceWithComma } from "./price";
 
 describe("formatPriceWithComma", () => {
   it('0은 콤마 없이 "0"을 반환한다', () => {
@@ -48,5 +48,28 @@ describe("calculatePrice", () => {
     } as unknown as Discount;
 
     expect(calculatePrice(10000, invalidDiscount)).toBe(10000);
+  });
+});
+
+describe("formatDiscountLabel", () => {
+  it("rate 할인은 반올림한 %로 표시한다", () => {
+    expect(formatDiscountLabel({ discountType: "rate", value: 0.3 })).toBe(
+      "30%",
+    );
+  });
+
+  it("amount 할인은 콤마를 붙인 원 단위 할인 라벨로 표시한다", () => {
+    expect(
+      formatDiscountLabel({ discountType: "amount", value: 3000 }),
+    ).toBe("3,000원 할인");
+  });
+
+  it("알 수 없는 discountType이면 amount와 동일하게 원 단위 라벨로 표시한다", () => {
+    const invalidDiscount = {
+      discountType: "unknown",
+      value: 500,
+    } as unknown as Discount;
+
+    expect(formatDiscountLabel(invalidDiscount)).toBe("500원 할인");
   });
 });

@@ -4,7 +4,7 @@ import type { Product } from "@/core/domain/product";
 import type { SubCategory } from "@/core/domain/product-category";
 import { ROUTES } from "@/core/domain/routes";
 import { SUB_CATEGORY_LABELS } from "@/core/domain/product-category";
-import { calculatePrice } from "@/core/utils/price";
+import { calculatePrice, formatDiscountLabel } from "@/core/utils/price";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
 import {
@@ -34,9 +34,7 @@ const ProductCard = ({
 
   const hasDiscount = product.discount?.value > 0;
   const discountLabel = hasDiscount
-    ? product.discount.discountType === "rate"
-      ? `${Math.round(product.discount.value * 100)}% OFF`
-      : `${product.discount.value.toLocaleString()}원 할인`
+    ? formatDiscountLabel(product.discount)
     : null;
 
   return (
