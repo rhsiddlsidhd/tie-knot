@@ -1,8 +1,7 @@
-import Link from "next/link";
-import { Gem, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Sidebar, useSidebar } from "@/ui/components/atoms/sidebar";
+import { Logo } from "@/ui/components/atoms/logo";
 import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
-import { ROUTES } from "@/core/domain/routes";
 
 interface AppSidebarProps {
   navType: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
@@ -19,14 +18,9 @@ const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
     <div className="flex h-full min-h-0 flex-col">
       <div className="px-6 pt-6 pb-0">
         <div className="flex items-center justify-between">
-          <Link
-            href={ROUTES.home}
-            onClick={onNavigate}
-            className="text-foreground flex items-center gap-2 text-base font-semibold tracking-widest uppercase"
-          >
-            <Gem className="text-muted-foreground h-4 w-4" strokeWidth={1.5} />
-            Tie Knot
-          </Link>
+          <span onClick={onNavigate}>
+            <Logo />
+          </span>
           <button
             type="button"
             onClick={onClose}
@@ -52,7 +46,7 @@ const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
 
       <div className="border-border/40 border-t px-6 py-5">
         <p className="text-muted-foreground/40 text-center text-[10px] tracking-[0.15em] uppercase">
-          모바일 청첩장 &amp; 명함 서비스
+          매듭을 맺다 &amp; 웨딩 이커머스
         </p>
       </div>
     </div>

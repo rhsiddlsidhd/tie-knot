@@ -12,7 +12,7 @@ import {
   NavigationMenuList,
 } from "@/ui/components/atoms/navigation-menu";
 
-const DesktopNav = () => {
+const PrimaryNav = () => {
   const pathname = usePathname();
 
   return (
@@ -25,4 +25,4 @@ const DesktopNav = () => {
   );
 };
 
-export { DesktopNav };
+export { PrimaryNav };
