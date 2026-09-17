@@ -2,8 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/ui/components/atoms/carousel";
 import { TypographyH1 } from "@/ui/components/atoms/typography";
 import { cn } from "@/core/utils/cn";
@@ -82,9 +81,9 @@ const EcommerceHero = () => {
                   {promo.description}
                 </p>
 
-                <Button asChild size="lg" className="w-fit">
-                  <Link href={promo.cta.href}>{promo.cta.label}</Link>
-                </Button>
+                <LinkButton size="lg" className="w-fit" href={promo.cta.href}>
+                  {promo.cta.label}
+                </LinkButton>
               </div>
             </CarouselItem>
           ))}

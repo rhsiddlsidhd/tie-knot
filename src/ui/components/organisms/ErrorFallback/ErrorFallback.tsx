@@ -3,9 +3,9 @@
 import { Button } from "@/ui/components/atoms/button";
 import { Card } from "@/ui/components/atoms/card";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 
 import { AlertCircle, ArrowLeft, RotateCcw } from "lucide-react";
-import Link from "next/link";
 import React from "react";
 
 interface ErrorFallbackProps {
@@ -68,12 +68,15 @@ const ErrorFallback = ({
               <RotateCcw className="mr-2 h-4 w-4" />
               다시 시도
             </Button>
-            <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href={backPath}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {backLabel}
-              </Link>
-            </Button>
+            <LinkButton
+              variant="outline"
+              size="lg"
+              className="w-full"
+              href={backPath}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {backLabel}
+            </LinkButton>
           </div>
         </div>
       </Card>

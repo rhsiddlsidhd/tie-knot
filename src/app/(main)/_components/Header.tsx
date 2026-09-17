@@ -3,11 +3,11 @@
 import { AuthButtons } from "./AuthButtons";
 import { PrimaryNav } from "./PrimaryNav";
 import { SheetPanel } from "./SheetPanel";
-import Link from "next/link";
 import React from "react";
 import { Menu, Search } from "lucide-react";
 import { ROUTES } from "@/core/domain/routes";
 import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { Logo } from "@/ui/components/atoms/logo";
 import { SidebarNavItem } from "@/ui/components/organisms/SidebarNavItem";
 const Header = () => {
@@ -38,11 +38,14 @@ const Header = () => {
 
         {/* Auth / Action Buttons */}
         <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="icon" aria-label="상품 검색">
-            <Link href={ROUTES.search}>
-              <Search className="h-5 w-5" strokeWidth={1.5} />
-            </Link>
-          </Button>
+          <LinkButton
+            variant="ghost"
+            size="icon"
+            aria-label="상품 검색"
+            href={ROUTES.search}
+          >
+            <Search className="h-5 w-5" strokeWidth={1.5} />
+          </LinkButton>
           <AuthButtons />
         </div>
       </div>

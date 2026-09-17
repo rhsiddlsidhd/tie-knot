@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { Edit } from "lucide-react";
-import { Button } from "@/ui/components/atoms/button";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { Alert, AlertDescription } from "@/ui/components/atoms/alert";
 import { ROUTES } from "@/core/domain/routes";
 
@@ -30,12 +29,14 @@ const PendingCoupleInfoBanner = ({
           )}
         </AlertDescription>
       </Alert>
-      <Button size="lg" variant="outline" asChild>
-        <Link href={ROUTES.myOrders.mobileInvitation(orderId)}>
-          <Edit className="mr-1 h-4 w-4" />
-          정보 입력하기
-        </Link>
-      </Button>
+      <LinkButton
+        size="lg"
+        variant="outline"
+        href={ROUTES.myOrders.mobileInvitation(orderId)}
+      >
+        <Edit className="mr-1 h-4 w-4" />
+        정보 입력하기
+      </LinkButton>
     </div>
   );
 };
