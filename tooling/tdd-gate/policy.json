@@ -8,6 +8,7 @@
     "**/_types/**",
     "**/_constants/**",
     "src/core/domain/**",
+    "src/core/content/**",
     "src/ui/stores/app.store.ts",
     "src/ui/stores/provider.tsx",
     "src/ui/stores/use-app-store.ts",
