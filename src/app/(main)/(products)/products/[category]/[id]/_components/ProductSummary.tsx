@@ -11,7 +11,6 @@ import {
   CardContent,
   CardHeader,
 } from "@/ui/components/atoms/card";
-import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
 import {
   TypographyH1,
   TypographyMuted,
@@ -57,8 +56,6 @@ const ProductSummary = ({
               loading="eager"
               zoomOnHover
             />
-
-            <HoverDarkenOverlay />
 
             {product.category === MOBILE_INVITATION_CATEGORY && (
               <Link

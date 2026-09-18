@@ -8,6 +8,13 @@ import { cloudinaryImageLoader } from "@/ui/utils/image-loader";
 
 const FALLBACK_SRC = "/assets/images/default/placeholder.svg";
 
+type ObjectFit = "cover" | "contain";
+
+const OBJECT_FIT_CLASSES: Record<ObjectFit, string> = {
+  cover: "object-cover",
+  contain: "object-contain",
+};
+
 interface AppImageProps {
   src: string | StaticImageData;
   alt?: string;
@@ -15,6 +22,7 @@ interface AppImageProps {
   className?: string;
   loading?: "eager" | "lazy";
   zoomOnHover?: boolean;
+  objectFit?: ObjectFit;
 }
 
 const AppImage = ({
@@ -24,6 +32,7 @@ const AppImage = ({
   className,
   loading,
   zoomOnHover = false,
+  objectFit = "cover",
 }: AppImageProps) => {
   const [failedSrc, setFailedSrc] = useState<AppImageProps["src"] | null>(null);
   const isImageUnavailable = !src || failedSrc === src;
@@ -39,7 +48,7 @@ const AppImage = ({
       fill
       alt={isImageUnavailable ? alt || "이미지를 불러올 수 없습니다" : alt}
       className={cn(
-        "object-cover",
+        OBJECT_FIT_CLASSES[objectFit],
         zoomOnHover &&
           "transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:scale-[1.06]",
         className,
