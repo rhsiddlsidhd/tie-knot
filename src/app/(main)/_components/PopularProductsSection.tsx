@@ -20,11 +20,13 @@ const PopularProductsSection = ({ products }: PopularProductsSectionProps) => {
         </TypographyH2>
         <CarouselList
           id="popular-products-heading"
-          data={products}
           opts={{ align: "start", loop: false, dragFree: true }}
           className="w-[61.8%] sm:w-[38.2%] md:w-[23.6%]"
-          renderItem={(product, index) => <ProductCard product={product} rank={index + 1} />}
-        />
+        >
+          {products.map((product, index) => (
+            <ProductCard key={product._id} product={product} rank={index + 1} />
+          ))}
+        </CarouselList>
     </section>
   );
 }

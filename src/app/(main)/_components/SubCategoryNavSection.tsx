@@ -21,12 +21,16 @@ const SubCategoryNavSection = ({
         </TypographyH2>
         <CarouselList
           id="sub-category-nav-heading"
-          data={availableSubCategories}
           opts={{ align: "start", loop: false, dragFree: true }}
-          renderItem={({ category, subCategory }) => (
-            <SubCategoryNavItem category={category} subCategory={subCategory} />
-          )}
-        />
+        >
+          {availableSubCategories.map(({ category, subCategory }) => (
+            <SubCategoryNavItem
+              key={`${category}-${subCategory}`}
+              category={category}
+              subCategory={subCategory}
+            />
+          ))}
+        </CarouselList>
     </section>
   );
 }
