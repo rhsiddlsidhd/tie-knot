@@ -45,6 +45,7 @@ const LiveDemoSection = () => {
                     src="/assets/images/output.webp"
                     alt="대표 청첩장 샘플 미리보기"
                     sizes="(min-width: 1024px) 50vw, 100vw"
+                    loading="eager"
                   />
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
