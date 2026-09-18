@@ -11,7 +11,7 @@ import { AppImage } from "@/ui/components/atoms/app-image";
 const promotions = (promotionsData as Promotion[]).filter((p) => p.isActive);
 const AUTOPLAY_INTERVAL = 5000;
 
-const EcommerceHero = () => {
+const PromotionHero = () => {
   if (promotions.length === 0) return null;
 
   return (
@@ -66,4 +66,4 @@ const EcommerceHero = () => {
   );
 };
 
-export { EcommerceHero };
+export { PromotionHero };

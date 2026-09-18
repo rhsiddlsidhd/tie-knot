@@ -1,5 +1,5 @@
 import type { Product } from "@/core/domain/product";
-import { EcommerceHero } from "./EcommerceHero";
+import { PromotionHero } from "./PromotionHero";
 import { LiveDemoSection } from "./LiveDemoSection";
 import { SubCategoryNavSection } from "./SubCategoryNavSection";
 import { PopularProductsSection } from "./PopularProductsSection";
@@ -16,7 +16,7 @@ const HomeTemplate = ({
 }: HomeTemplateProps) => {
   return (
     <div className="flex flex-col">
-      <EcommerceHero />
+      <PromotionHero />
 
       <SubCategoryNavSection availableSubCategories={availableSubCategories} />
 
