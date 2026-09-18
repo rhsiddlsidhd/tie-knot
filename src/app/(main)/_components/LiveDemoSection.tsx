@@ -4,9 +4,8 @@ import { TypographyH2 } from "@/ui/components/atoms/typography";
 
 import { Eye, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import React from "react";
-import Image from "next/image";
 import { ROUTES } from "@/core/domain/routes";
+import { AppImage } from "@/ui/components/atoms/app-image";
 
 /**
  * 메인 페이지에서 대표 청첩장 샘플(/preview/sample)을 보여주는 섹션 (Organism)
@@ -42,12 +41,10 @@ const LiveDemoSection = () => {
             <CardContent className="p-0">
               <div className="bg-background group relative aspect-16/10 w-full overflow-hidden">
                 <div className="absolute inset-0 transition-transform duration-500 group-hover:scale-105">
-                  <Image
+                  <AppImage
                     src="/assets/images/output.webp"
                     alt="대표 청첩장 샘플 미리보기"
-                    fill
                     sizes="(min-width: 1024px) 50vw, 100vw"
-                    className="object-cover"
                   />
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
