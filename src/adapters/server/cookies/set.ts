@@ -10,7 +10,7 @@ interface SetCookieArgs {
   remember?: boolean;
 }
 
-export const setCookie = async ({
+const setCookie = async ({
   name,
   value,
   maxAge,
@@ -34,3 +34,5 @@ export const setCookie = async ({
 
   store.set(name, value, { ...baseOption, ...expirationOptions });
 };
+
+export { setCookie };

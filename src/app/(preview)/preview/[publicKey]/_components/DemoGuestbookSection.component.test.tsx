@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { GuestbookDemoProvider } from "@/ui/context/guestbookDemo/provider";
-import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
+import { initialGuestbookDemoState } from "@/ui/context/guestbookDemo/reducer";
 import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
 import { StoreProvider } from "@/ui/stores/provider";
 import { DemoGuestbookSection } from "./DemoGuestbookSection";
@@ -43,7 +43,7 @@ let testStore: AppStoreApi;
 const renderDemoSection = () =>
   render(
     <StoreProvider store={testStore}>
-      <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
+      <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
         <DemoGuestbookSection />
       </GuestbookDemoProvider>
     </StoreProvider>,
@@ -119,7 +119,7 @@ describe("DemoGuestbookSection", () => {
     expect(modalState.guestbookModalIsOpen).toBe(true);
     expect(modalState.guestbookModalType).toBe("DELETE_GUESTBOOK");
     expect(modalState.payload).toMatchObject({
-      id: INITIAL_GUESTBOOK_DEMO_STATE.entries[0].id,
+      id: initialGuestbookDemoState.entries[0].id,
       publicKey: "sample",
     });
   });

@@ -20,9 +20,11 @@ const CATEGORY_ORDER_STATUS_LABELS: Partial<
   },
 };
 
-export const resolveOrderStatusLabel = (
+const resolveOrderStatusLabel = (
   status: OrderStatus,
   category?: ProductCategory,
 ): string =>
   (category && CATEGORY_ORDER_STATUS_LABELS[category]?.[status]) ??
   DEFAULT_ORDER_STATUS_LABELS[status];
+
+export { resolveOrderStatusLabel };

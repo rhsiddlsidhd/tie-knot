@@ -6,7 +6,7 @@ import type { HeroSectionProps } from "../_utils/heroSection.mapper";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
 import { ScrollIndicator } from "./ScrollIndicator";
-export function HeroSection({
+const HeroSection = ({
   groomName,
   brideName,
   weddingDate,
@@ -14,7 +14,7 @@ export function HeroSection({
   address,
   addressDetail,
   thumbnailImage,
-}: HeroSectionProps) {
+}: HeroSectionProps) => {
   return (
     <section className="relative flex h-screen items-center justify-center overflow-hidden">
       {/* Background Image */}
@@ -23,7 +23,7 @@ export function HeroSection({
           src={thumbnailImage}
           alt="inivitation main Thumbnail"
           sizes="(max-width: 768px) 100vw, 512px"
-          preload={true}
+          loading="eager"
         />
         <div className="absolute inset-0 bg-black/40" />
       </div>
@@ -68,3 +68,5 @@ export function HeroSection({
     </section>
   );
 }
+
+export { HeroSection };

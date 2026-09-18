@@ -1,4 +1,4 @@
-import type { APIRouteResponse} from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import type { GuestbookListPage } from "@/core/domain/guestbook";
 import { AppError } from "@/core/domain/error";
@@ -9,7 +9,9 @@ import type { NextRequest } from "next/server";
 
 // getGuestbookService가 이미 password/__v/updatedAt은 select에서 제외한다 —
 // 여기선 응답 계약(GuestbookListResponse)에 맞춰 createdAt만 ISO 문자열로 명시 변환한다.
-function toGuestbookListResponse(page: GuestbookListPage): GuestbookListResponse {
+const toGuestbookListResponse = (
+  page: GuestbookListPage,
+): GuestbookListResponse => {
   return {
     items: page.items.map(({ id, author, message, isPrivate, createdAt }) => ({
       _id: id,
@@ -20,11 +22,11 @@ function toGuestbookListResponse(page: GuestbookListPage): GuestbookListResponse
     })),
     nextCursor: page.nextCursor,
   };
-}
+};
 
-export const GET = async (
+const GET = async (
   req: NextRequest,
-): Promise<APIRouteResponse<GuestbookListResponse>> => {
+): Promise<ApiRouteResponse<GuestbookListResponse>> => {
   try {
     const publicKey = req.nextUrl.searchParams.get("publicKey");
     if (!publicKey) throw new AppError("VALIDATION", "publicKey가 필요합니다.");
@@ -40,3 +42,5 @@ export const GET = async (
     return routeError(e);
   }
 };
+
+export { GET };

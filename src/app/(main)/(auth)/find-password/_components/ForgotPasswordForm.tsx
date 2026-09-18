@@ -3,24 +3,30 @@ import { CheckCircle2 } from "lucide-react";
 
 import { Card } from "@/ui/components/atoms/card";
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyLarge,
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { getFieldError } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
-import { routes } from "@/core/domain/routes";
+import type { ApiResponse } from "@/core/domain/error";
+import { ROUTES } from "@/core/domain/routes";
 
 interface ForgotPasswordFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string; email: string }> | null;
+  state: ApiResponse<{ message: string; email: string }> | null;
 }
 
-export function ForgotPasswordForm({
+const ForgotPasswordForm = ({
   action,
   pending,
   state,
-}: ForgotPasswordFormProps) {
+}: ForgotPasswordFormProps) => {
   const emailError = getFieldError(state, "email");
 
   if (state && state.success === true) {
@@ -32,7 +38,7 @@ export function ForgotPasswordForm({
               <CheckCircle2 className="text-primary h-12 w-12" />
             </div>
           </div>
-          <TypographyH1 className="text-3xl font-bold font-[var(--font-NotoSerif)]">
+          <TypographyH1 className="text-3xl font-[var(--font-NotoSerif)] font-bold">
             이메일을 확인하세요
           </TypographyH1>
           <TypographyMuted>
@@ -45,18 +51,22 @@ export function ForgotPasswordForm({
             <TypographySmall className="font-medium">
               다음 이메일로 재설정 링크가 전송되었습니다:
             </TypographySmall>
-            <TypographyLarge className="text-primary font-semibold">{state.data.email}</TypographyLarge>
+            <TypographyLarge className="text-primary font-semibold">
+              {state.data.email}
+            </TypographyLarge>
             <div className="text-muted-foreground space-y-2 pt-3">
-              <TypographyMuted>• 이메일이 도착하지 않았다면 스팸함을 확인해주세요</TypographyMuted>
+              <TypographyMuted>
+                • 이메일이 도착하지 않았다면 스팸함을 확인해주세요
+              </TypographyMuted>
               <TypographyMuted>• 링크는 10분 동안 유효합니다</TypographyMuted>
             </div>
           </div>
         </Card>
 
         <div className="space-y-3">
-          <Button asChild className="w-full" size="lg">
-            <Link href={routes.login}>로그인으로 돌아가기</Link>
-          </Button>
+          <LinkButton className="w-full" size="lg" href={ROUTES.login}>
+            로그인으로 돌아가기
+          </LinkButton>
           <form action={action}>
             <input
               type="hidden"
@@ -82,23 +92,22 @@ export function ForgotPasswordForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">비밀번호 찾기</TypographyH1>
-        <TypographyMuted>
-          가입한 이메일 주소를 입력해주세요
-        </TypographyMuted>
+        <TypographyH1 className="text-left text-3xl font-[var(--font-NotoSerif)] font-bold">
+          비밀번호 찾기
+        </TypographyH1>
+        <TypographyMuted>가입한 이메일 주소를 입력해주세요</TypographyMuted>
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField
+        <InputField
           id="email"
           type="email"
           name="email"
+          label="이메일"
           placeholder="your@email.com"
           required
           error={emailError}
-        >
-          이메일
-        </TextField>
+        />
 
         <TypographyMuted>
           입력하신 이메일로 비밀번호 재설정 링크를 보내드립니다
@@ -113,14 +122,14 @@ export function ForgotPasswordForm({
         <TypographyMuted>
           아이디가 기억나지 않으신가요?{" "}
           <Link
-            href={routes.findId}
+            href={ROUTES.findId}
             className="text-primary font-medium hover:underline"
           >
             아이디 찾기
           </Link>
         </TypographyMuted>
         <Link
-          href={routes.login}
+          href={ROUTES.login}
           className="text-muted-foreground hover:text-foreground inline-block text-sm transition-colors"
         >
           로그인으로 돌아가기
@@ -128,4 +137,6 @@ export function ForgotPasswordForm({
       </div>
     </div>
   );
-}
+};
+
+export { ForgotPasswordForm };

@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
-export type ImageItem = { id: string; preview: string; url: string };
+type ImageItem = { id: string; preview: string; url: string };
 
-export function useImageList(defaultUrls?: string[]) {
+const useImageList = (defaultUrls?: string[]) => {
   // 훅 인스턴스별로 격리된 단조 증가 카운터. render 중이 아니라 add()가
   // 실제로 호출되는 시점(이벤트 핸들러)에만 읽고 증가시킨다 — render 중 ref
   // 접근은 react-hooks/refs 위반이라 아래 초기화 분기에서는 쓰지 않는다.
@@ -27,22 +27,34 @@ export function useImageList(defaultUrls?: string[]) {
     );
   }
 
-  const add = (urls: string[]) =>
-    setItems((prev) => [
-      ...prev,
-      ...urls.map((url) => ({
-        id: String(nextId.current++),
-        preview: url,
-        url,
-      })),
-    ]);
+  // 소비처가 memo된 자식에 그대로 내려보내므로 참조를 고정한다.
+  const add = useCallback(
+    (urls: string[]) =>
+      setItems((prev) => [
+        ...prev,
+        ...urls.map((url) => ({
+          id: String(nextId.current++),
+          preview: url,
+          url,
+        })),
+      ]),
+    [],
+  );
 
-  const remove = (id: string) =>
-    setItems((prev) => prev.filter((item) => item.id !== id));
+  const remove = useCallback(
+    (id: string) => setItems((prev) => prev.filter((item) => item.id !== id)),
+    [],
+  );
 
-  const getUrls = (): string[] => items.map((item) => item.url);
+  // items를 읽으므로 목록이 바뀌면 참조도 함께 바뀐다 — 호출 시점 값이 최신이어야 한다.
+  const getUrls = useCallback(
+    (): string[] => items.map((item) => item.url),
+    [items],
+  );
 
-  const reset = () => setItems([]);
+  const reset = useCallback(() => setItems([]), []);
 
   return { items, add, remove, getUrls, reset };
 }
+
+export { useImageList, type ImageItem };

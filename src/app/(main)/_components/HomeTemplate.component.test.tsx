@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/core/domain/product";
 
-vi.mock("./EcommerceHero", () => ({
-  EcommerceHero: () => <div>hero</div>,
+vi.mock("./PromotionHero", () => ({
+  PromotionHero: () => <div>hero</div>,
 }));
 vi.mock("./LiveDemoSection", () => ({
   LiveDemoSection: () => <div>live-demo</div>,
@@ -35,6 +35,7 @@ describe("HomeTemplate", () => {
       <HomeTemplate
         popularProducts={[]}
         availableSubCategories={AVAILABLE_SUB_CATEGORIES}
+        liveDemoThumbnail={null}
       />,
     );
 
@@ -47,6 +48,7 @@ describe("HomeTemplate", () => {
       <HomeTemplate
         popularProducts={buildProducts(3)}
         availableSubCategories={AVAILABLE_SUB_CATEGORIES}
+        liveDemoThumbnail={null}
       />,
     );
 

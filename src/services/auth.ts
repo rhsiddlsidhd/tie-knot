@@ -13,9 +13,9 @@ import { AppError } from "@/core/domain/error";
 import type { AuthSession } from "@/core/schemas/response/auth.schema";
 import { cache } from "react";
 import { redirect } from "next/navigation";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
-export type LeanUser = {
+type LeanUser = {
   email: string;
   name: string;
   phone: string;
@@ -33,7 +33,7 @@ type UserFilter = {
   _id?: mongoose.Types.ObjectId;
 };
 
-export const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
+const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
   await dbConnect();
 
   const filter: UserFilter = { deletedAt: null };
@@ -51,9 +51,9 @@ export const getUser = async (query: UserQuery): Promise<LeanUser | null> => {
   return user;
 };
 
-export type AuthResult = AuthSession | null;
+type AuthResult = AuthSession | null;
 
-export async function getAuth(): Promise<AuthResult> {
+const getAuth = async (): Promise<AuthResult> => {
   const cookie = await getCookie("token");
   if (!cookie?.value) return null;
 
@@ -79,39 +79,39 @@ export async function getAuth(): Promise<AuthResult> {
   if (!user) return null;
 
   return { role: user.role, email: user.email, userId: user._id.toString() };
-}
+};
 
 // 인증이 반드시 필요한 Route Handler/Server Action에서 호출한다 — 세션이 없으면 UNAUTHENTICATED를 throw한다.
 // HTTP status(401)로의 번역은 route.ts 경계(`boundary.ts`)가 담당한다.
-export async function requireAuth(): Promise<AuthSession> {
+const requireAuth = async (): Promise<AuthSession> => {
   const session = await getAuth();
   if (!session) {
     throw new AppError("UNAUTHENTICATED", "인증이 필요합니다.");
   }
   return session;
-}
+};
 
-export async function requireAdmin(): Promise<AuthSession> {
+const requireAdmin = async (): Promise<AuthSession> => {
   const session = await requireAuth();
   if (session.role !== "ADMIN") {
     throw new AppError("FORBIDDEN", "관리자 권한이 필요합니다.");
   }
   return session;
-}
+};
 
 /**
  * 로그아웃 처리를 위해 서버의 인증 토큰 쿠키를 삭제합니다.
  */
 
-export async function logoutService() {
+const logoutService = async () => {
   await deleteCookie("token");
-}
+};
 
-export async function clearUserEmailCookieService() {
+const clearUserEmailCookieService = async () => {
   await deleteCookie("userEmail");
-}
+};
 
-export async function loginUserService({
+const loginUserService = async ({
   email,
   password,
   remember,
@@ -119,7 +119,7 @@ export async function loginUserService({
   email: string;
   password: string;
   remember: boolean;
-}): Promise<AuthSession> {
+}): Promise<AuthSession> => {
   const user = await getUser({ email });
   if (!user || !(await comparePasswords(password, user.password))) {
     throw new AppError(
@@ -136,20 +136,35 @@ export async function loginUserService({
   await setCookie({ name: "token", value: refreshJWT, remember });
 
   return { role: user.role, email: user.email, userId: user._id.toString() };
-}
+};
 
 // page.tsx(Server Component render) 전용 라우팅 게이트 — requireAuth()(throw)와 달리
 // 실패를 곧바로 redirect로 처리한다. 인증 확인이 role 확인보다 먼저 와야 한다 — 순서를
 // 바꾸면 미인증 유저가 role-mismatch(/)로 오분류돼 재로그인 유도(/login)를 못 받는다.
 // cache()로 감싸 같은 렌더 패스 안 반복 호출(page 게이트 + service 재확인)이 세션을
 // 중복 조회하지 않게 한다(docs/security/page-access-control.md 참고).
-export const verifySession = cache(async (requiredRole?: UserRole): Promise<AuthSession> => {
-  const session = await getAuth();
-  if (!session) {
-    redirect(routes.login);
-  }
-  if (requiredRole && session.role !== requiredRole) {
-    redirect(routes.home);
-  }
-  return session;
-});
+const verifySession = cache(
+  async (requiredRole?: UserRole): Promise<AuthSession> => {
+    const session = await getAuth();
+    if (!session) {
+      redirect(ROUTES.login);
+    }
+    if (requiredRole && session.role !== requiredRole) {
+      redirect(ROUTES.home);
+    }
+    return session;
+  },
+);
+
+export {
+  getUser,
+  getAuth,
+  requireAuth,
+  requireAdmin,
+  logoutService,
+  clearUserEmailCookieService,
+  loginUserService,
+  verifySession,
+  type LeanUser,
+  type AuthResult,
+};

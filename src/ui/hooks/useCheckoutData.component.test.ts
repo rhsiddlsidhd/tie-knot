@@ -15,13 +15,25 @@ vi.mock("next/navigation", () => ({
 vi.mock("sonner", () => ({ toast: { error: vi.fn() } }));
 
 import { toast } from "sonner";
+import type { PayStatus } from "@/core/domain/payment";
 import { useCheckoutData } from "./useCheckoutData";
 
-type State = { order: unknown; _hasHydrated: boolean; paymentStatus: string };
+type State = {
+  order: unknown;
+  _hasHydrated: boolean;
+  paymentStatus: PayStatus | "IDLE";
+};
 
 const mockState = (state: Partial<State>) => {
-  const full: State = { order: null, _hasHydrated: false, paymentStatus: "IDLE", ...state };
-  useOrderStoreMock.mockImplementation((selector: (s: State) => unknown) => selector(full));
+  const full: State = {
+    order: null,
+    _hasHydrated: false,
+    paymentStatus: "IDLE",
+    ...state,
+  };
+  useOrderStoreMock.mockImplementation((selector: (s: State) => unknown) =>
+    selector(full),
+  );
 };
 
 describe("useCheckoutData", () => {
@@ -44,8 +56,12 @@ describe("useCheckoutData", () => {
 
     const { result } = renderHook(() => useCheckoutData());
 
-    expect(result.current.error).toBe("주문 정보가 없습니다. 상품 페이지로 이동합니다.");
-    expect(toast.error).toHaveBeenCalledWith("주문 정보가 없습니다. 상품 페이지로 이동합니다.");
+    expect(result.current.error).toBe(
+      "주문 정보가 없습니다. 상품 페이지로 이동합니다.",
+    );
+    expect(toast.error).toHaveBeenCalledWith(
+      "주문 정보가 없습니다. 상품 페이지로 이동합니다.",
+    );
     expect(routerReplaceMock).toHaveBeenCalledWith("/products");
   });
 
@@ -68,6 +84,20 @@ describe("useCheckoutData", () => {
 
       expect(result.current.error).toBeNull();
       expect(routerReplaceMock).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each(["CANCELLED", "PARTIAL_CANCELLED", "REFUNDED"] as const)(
+    "paymentStatus가 %s면 주문 없음 검사를 건너뛰지 않는다",
+    (paymentStatus) => {
+      mockState({ order: null, _hasHydrated: true, paymentStatus });
+
+      const { result } = renderHook(() => useCheckoutData());
+
+      expect(result.current.error).toBe(
+        "주문 정보가 없습니다. 상품 페이지로 이동합니다.",
+      );
+      expect(routerReplaceMock).toHaveBeenCalledWith("/products");
     },
   );
 });

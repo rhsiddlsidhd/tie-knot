@@ -1,12 +1,14 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
-export interface WeddingMonthCalendarProps {
+interface WeddingMonthCalendarProps {
   date: Date;
 }
 
-export const mapCoupleInfoToCalendarProps = (
+const mapCoupleInfoToCalendarProps = (
   coupleInfo: MobileInvitationContent,
 ): WeddingMonthCalendarProps => {
   return {
     date: coupleInfo.weddingDate,
   };
 };
+
+export { mapCoupleInfoToCalendarProps, type WeddingMonthCalendarProps };

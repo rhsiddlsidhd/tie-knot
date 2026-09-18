@@ -1,9 +1,9 @@
 import "server-only";
 import type { UserRole } from "@/core/domain/user";
-type JWTType = "REFRESH" | "ENTRY";
+type JwtType = "REFRESH" | "ENTRY";
 
-interface JWTBaseProps {
-  type: JWTType;
+interface JwtBaseProps {
+  type: JwtType;
 }
 
 interface RefreshEncrypt {
@@ -15,10 +15,13 @@ interface RefreshEncrypt {
 interface EntryEncrypt {
   type: "ENTRY";
   id?: string;
+  jti?: string;
 }
 
-export type EncryptProps = RefreshEncrypt | EntryEncrypt;
+type EncryptProps = RefreshEncrypt | EntryEncrypt;
 
-export interface DecryptProps extends JWTBaseProps {
+interface DecryptProps extends JwtBaseProps {
   token: string;
 }
+
+export { type EncryptProps, type DecryptProps };

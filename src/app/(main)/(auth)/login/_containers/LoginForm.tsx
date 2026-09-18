@@ -6,15 +6,15 @@ import { mutate } from "swr";
 import { toast } from "sonner";
 
 import { loginUser } from "@/actions/loginUser";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import type { UserRole } from "@/core/domain/user";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
 import { LoginForm as PureLoginForm } from "../_components/LoginForm";
-import { routes } from "@/core/domain/routes";
-export function LoginForm() {
+import { ROUTES } from "@/core/domain/routes";
+const LoginForm = () => {
   const router = useRouter();
   const [state, action, pending] = useActionState<
-    APIResponse<{ role: UserRole; email: string; userId: string }>,
+    ApiResponse<{ role: UserRole; email: string; userId: string }>,
     FormData
   >(loginUser, null);
 
@@ -30,7 +30,7 @@ export function LoginForm() {
         },
         false,
       );
-      return router.push(routes.home);
+      return router.push(ROUTES.home);
     } else {
       if (!hasFieldErrors(state.error)) {
         toast.error(state.error.message);
@@ -49,4 +49,6 @@ export function LoginForm() {
       passwordError={passwordError}
     />
   );
-}
+};
+
+export { LoginForm };

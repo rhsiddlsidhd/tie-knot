@@ -4,7 +4,7 @@ import useSWR from "swr";
 import { fetcher } from "@/ui/fetcher";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 
-export function useBanks() {
+const useBanks = () => {
   const { data, error, isLoading } = useSWR<BanksResponse>("/api/banks", fetcher);
 
   return {
@@ -13,3 +13,5 @@ export function useBanks() {
     isError: error,
   };
 }
+
+export { useBanks };

@@ -1,9 +1,12 @@
 export const dynamic = "force-dynamic";
 
 import { ProductCatalogTemplate } from "@/app/(main)/(products)/products/[category]/_components/ProductCatalogTemplate";
-import { getPublicProductsPageService, getAvailableSubCategoriesService } from "@/services/product";
+import {
+  getPublicProductsPageService,
+  getAvailableSubCategoriesService,
+} from "@/services/product";
 import { isProductCategory } from "@/core/utils/category";
-import { productCategoryLabels } from "@/core/domain/product-category";
+import { PRODUCT_CATEGORY_LABELS } from "@/core/domain/product-category";
 import { notFound } from "next/navigation";
 import { resolveInitialSubCategory } from "@/app/(main)/(products)/products/[category]/_utils/resolveInitialSubCategory";
 
@@ -39,7 +42,7 @@ export default async function ProductsPage({
     subCategory: initialSubCategory === "all" ? undefined : initialSubCategory,
   });
 
-  const currentCategoryLabel = productCategoryLabels[category];
+  const currentCategoryLabel = PRODUCT_CATEGORY_LABELS[category];
 
   return (
     <ProductCatalogTemplate

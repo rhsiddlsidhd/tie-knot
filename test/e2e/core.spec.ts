@@ -48,6 +48,38 @@ test("비인증 관리자는 상품 등록 화면을 볼 수 없다", async ({ p
   await expect(page).toHaveURL(/\/login/);
 });
 
+test("사용자 메뉴에서 프로필과 주문으로 이동해도 헤더가 viewport를 벗어나지 않는다", async ({
+  page,
+}) => {
+  await loginAsUser(page);
+
+  for (const target of [
+    { menuName: "프로필", path: /\/my-profile$/, heading: "프로필 관리" },
+    { menuName: "주문 정보", path: /\/my-orders$/, heading: "주문 목록" },
+  ]) {
+    await page.getByRole("button", { name: "사용자 메뉴" }).click();
+    await page.getByRole("menuitem", { name: target.menuName }).click();
+    await expect(page).toHaveURL(target.path);
+    await expect(page.getByRole("heading", { name: target.heading })).toBeVisible();
+
+    const layout = await page.evaluate(() => {
+      const header = document.querySelector("header");
+      const rect = header?.getBoundingClientRect();
+
+      return {
+        documentWidth: document.documentElement.scrollWidth,
+        viewportWidth: window.innerWidth,
+        headerLeft: rect?.left,
+        headerRight: rect?.right,
+      };
+    });
+
+    expect(layout.documentWidth).toBeLessThanOrEqual(layout.viewportWidth);
+    expect(layout.headerLeft).toBeGreaterThanOrEqual(0);
+    expect(layout.headerRight).toBeLessThanOrEqual(layout.viewportWidth);
+  }
+});
+
 test("ADMIN은 상세 이미지 없이 invitation 상품을 실제 DB에 등록한다", async ({ page }) => {
   await loginAsAdmin(page);
   await page.goto("/admin/products/new");

@@ -4,7 +4,13 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/ui/components/atoms/button";
 import { Input } from "@/ui/components/atoms/input";
-import { Label } from "@/ui/components/atoms/label";
+import {
+  Field,
+  FieldContent,
+  FieldLabel,
+  FieldTitle,
+  FieldDescription,
+} from "@/ui/components/atoms/field";
 import { Switch } from "@/ui/components/atoms/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
 import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
@@ -32,40 +38,40 @@ const AdminSettingsTemplate = () => {
         </TabsList>
 
         <TabsContent value="general" className="max-w-md space-y-4 pt-2">
-          <div className="space-y-2">
-            <Label htmlFor="site-name">사이트명</Label>
+          <Field>
+            <FieldLabel htmlFor="site-name">사이트명</FieldLabel>
             <Input id="site-name" defaultValue="tie-knot" />
-          </div>
+          </Field>
 
-          <div className="space-y-2">
-            <Label htmlFor="support-email">고객센터 이메일</Label>
+          <Field>
+            <FieldLabel htmlFor="support-email">고객센터 이메일</FieldLabel>
             <Input id="support-email" defaultValue="support@tie-knot.com" />
-          </div>
+          </Field>
 
           <div className="border-border border-t pt-4" />
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium">신규 가입 허용</p>
-              <TypographyMuted className="mt-0.5">
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldTitle>신규 가입 허용</FieldTitle>
+              <FieldDescription>
                 신규 사용자의 회원가입을 허용합니다
-              </TypographyMuted>
-            </div>
+              </FieldDescription>
+            </FieldContent>
             <Switch checked={allowSignup} onCheckedChange={setAllowSignup} />
-          </div>
+          </Field>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium">유지보수 모드</p>
-              <TypographyMuted className="mt-0.5">
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldTitle>유지보수 모드</FieldTitle>
+              <FieldDescription>
                 활성화 시 공개 화면 접속이 차단됩니다
-              </TypographyMuted>
-            </div>
+              </FieldDescription>
+            </FieldContent>
             <Switch
               checked={maintenanceMode}
               onCheckedChange={setMaintenanceMode}
             />
-          </div>
+          </Field>
 
           <Button onClick={notifyPreparing}>저장하기</Button>
         </TabsContent>

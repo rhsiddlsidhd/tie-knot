@@ -26,12 +26,12 @@ interface MobileInvitationTemplateProps {
   theme: string;
 }
 
-export function MobileInvitationTemplate({
+const MobileInvitationTemplate = ({
   content,
   publicKey,
   features,
   theme,
-}: MobileInvitationTemplateProps) {
+}: MobileInvitationTemplateProps) => {
   const thumbnails = mapCoupleInfoToThumbnails(content);
   return (
     <div className="relative" data-theme={theme}>
@@ -53,7 +53,7 @@ export function MobileInvitationTemplate({
           <GallerySection
             {...mapCoupleInfoToGalleryProps(
               content,
-              features.includes("HORIZONTAL_SLIDE"),
+              features.includes("GALLERY_LIGHTBOX"),
             )}
           />
           <LocationSection {...mapCoupleInfoToLocationProps(content)} />
@@ -78,3 +78,5 @@ export function MobileInvitationTemplate({
     </div>
   );
 }
+
+export { MobileInvitationTemplate };

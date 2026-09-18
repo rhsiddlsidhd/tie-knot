@@ -1,15 +1,15 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { RegisterSchema } from "@/core/schemas/request/register.schema";
 import { signupUserService } from "@/services/user";
 import { actionError } from "@/boundary";
-export async function signupUser(
+const signupUser = async (
   prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> {
+): Promise<ApiResponse<{ message: string }>> => {
   const data = {
     email: formData.get("email") as string,
     name: formData.get("name") as string,
@@ -41,4 +41,6 @@ export async function signupUser(
   } catch (e) {
     return actionError(e);
   }
-}
+};
+
+export { signupUser };

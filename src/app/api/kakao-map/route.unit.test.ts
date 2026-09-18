@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 import { GET } from "./route";
 
-function mockResponse(status: number, ok: boolean, body: string): Response {
+const mockResponse = (status: number, ok: boolean, body: string): Response => {
   return {
     ok,
     status,

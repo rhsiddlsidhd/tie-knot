@@ -1,5 +1,5 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
-export interface HeroSectionProps {
+interface HeroSectionProps {
   groomName: string;
   brideName: string;
   weddingDate: Date;
@@ -9,7 +9,7 @@ export interface HeroSectionProps {
   thumbnailImage: string;
 }
 
-export const mapCoupleInfoToHeroProps = (
+const mapCoupleInfoToHeroProps = (
   coupleInfo: MobileInvitationContent,
 ): HeroSectionProps => {
   return {
@@ -22,3 +22,5 @@ export const mapCoupleInfoToHeroProps = (
     thumbnailImage: coupleInfo.thumbnailImages[0],
   };
 };
+
+export { mapCoupleInfoToHeroProps, type HeroSectionProps };

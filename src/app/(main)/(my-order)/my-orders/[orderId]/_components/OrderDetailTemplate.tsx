@@ -1,26 +1,35 @@
-import Link from "next/link";
 import { format } from "date-fns";
 import { Badge } from "@/ui/components/atoms/badge";
 import { Button } from "@/ui/components/atoms/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { LinkButton } from "@/ui/components/molecules/LinkButton";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { ChevronLeft } from "lucide-react";
 import type { OrderDetail } from "@/core/domain/order";
-import { routes } from "@/core/domain/routes";
+import type { PayStatus } from "@/core/domain/payment";
+import { ROUTES } from "@/core/domain/routes";
 import { PAY_METHOD_LABEL } from "@/app/(main)/(my-order)/my-orders/_constants/labels";
 import { resolveOrderStatusLabel } from "@/app/(main)/(my-order)/my-orders/_utils/orderStatusLabel";
 
 const formatDateTime = (value: Date | string) =>
   format(new Date(value), "yyyy.MM.dd HH:mm");
 
-const PAY_STATUS_LABELS: Record<string, string> = {
+const PAY_STATUS_LABELS = {
   PENDING: "입금대기",
   PAID: "결제완료",
   FAILED: "결제실패",
   CANCELLED: "결제취소",
   PARTIAL_CANCELLED: "부분취소",
   REFUNDED: "환불완료",
-};
+} satisfies Record<PayStatus, string>;
 
 const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
   const product = order.product;
@@ -34,28 +43,41 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
   // 전부 "완료됨" 취급해 점을 항상 primary로 채운다.
   const timelineEvents = [
     { label: "주문 생성", value: formatDateTime(order.createdAt) },
-    order.confirmedAt && { label: "결제 완료", value: formatDateTime(order.confirmedAt) },
-    order.mobileInvitationStatus === "published" && { label: "청첩장 발행", value: "완료" },
+    order.confirmedAt && {
+      label: "결제 완료",
+      value: formatDateTime(order.confirmedAt),
+    },
+    order.mobileInvitationStatus === "published" && {
+      label: "청첩장 발행",
+      value: "완료",
+    },
     order.cancelledAt && {
       label: "주문 취소",
       value: `${formatDateTime(order.cancelledAt)}${order.cancelReason ? ` · ${order.cancelReason}` : ""}`,
     },
-  ].filter((event): event is { label: string; value: string } => Boolean(event));
+  ].filter((event): event is { label: string; value: string } =>
+    Boolean(event),
+  );
 
   return (
     <div className="max-w-3xl space-y-6">
       <div className="space-y-2">
-        <Button variant="ghost" size="sm" asChild className="-ml-2">
-          <Link href={routes.myOrders.root}>
-            <ChevronLeft className="mr-1 h-4 w-4" />
-            주문 목록
-          </Link>
-        </Button>
+        <LinkButton
+          variant="ghost"
+          size="sm"
+          className="-ml-2"
+          href={ROUTES.myOrders.root}
+        >
+          <ChevronLeft className="mr-1 h-4 w-4" />
+          주문 목록
+        </LinkButton>
         <TypographyH1 className="text-left text-3xl font-bold">
           주문 상세
         </TypographyH1>
         <div className="flex items-center gap-3">
-          <Badge>{resolveOrderStatusLabel(order.orderStatus, product.category)}</Badge>
+          <Badge>
+            {resolveOrderStatusLabel(order.orderStatus, product.category)}
+          </Badge>
           <TypographyMuted>{order.merchantUid}</TypographyMuted>
         </div>
       </div>
@@ -70,7 +92,10 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
               {product.title} × {product.quantity}
             </span>
             <span>
-              {(product.pricing.discountedPrice * product.quantity).toLocaleString()}원
+              {(
+                product.pricing.discountedPrice * product.quantity
+              ).toLocaleString()}
+              원
             </span>
           </div>
           {product.selectedFeatures.map((feature) => (
@@ -108,7 +133,7 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
             <>
               <div className="flex justify-between">
                 <span>결제 상태</span>
-                <span>{PAY_STATUS_LABELS[payment.status] ?? payment.status}</span>
+                <span>{PAY_STATUS_LABELS[payment.status]}</span>
               </div>
               <div className="flex justify-between">
                 <span>결제 요청금액</span>
@@ -160,7 +185,9 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
               )}
             </>
           ) : (
-            <TypographyMuted>아직 결제가 진행되지 않은 주문입니다.</TypographyMuted>
+            <TypographyMuted>
+              아직 결제가 진행되지 않은 주문입니다.
+            </TypographyMuted>
           )}
         </CardContent>
       </Card>
@@ -204,7 +231,9 @@ const OrderDetailTemplate = ({ order, payment }: OrderDetail) => {
                 }`}
               >
                 <span>{event.label}</span>
-                <span className="text-muted-foreground text-sm">{event.value}</span>
+                <span className="text-muted-foreground text-sm">
+                  {event.value}
+                </span>
               </div>
             </div>
           ))}

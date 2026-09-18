@@ -1,19 +1,19 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { permanentlyDeleteProductAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 import { revalidatePath } from "next/cache";
 
-export const permanentlyDeleteProduct = async (
+const permanentlyDeleteProduct = async (
   productId: string,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   try {
     await permanentlyDeleteProductAsAdminService(productId);
 
-    revalidatePath(routes.admin.products.root);
+    revalidatePath(ROUTES.admin.products.root);
 
     return {
       success: true,
@@ -23,3 +23,5 @@ export const permanentlyDeleteProduct = async (
     return actionError(e);
   }
 };
+
+export { permanentlyDeleteProduct };

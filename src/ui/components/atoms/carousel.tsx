@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
@@ -18,6 +17,7 @@ type CarouselProps = {
   plugins?: CarouselPlugin;
   orientation?: "horizontal" | "vertical";
   setApi?: (api: CarouselApi) => void;
+  keyboardNavigation?: boolean;
 };
 
 type CarouselContextProps = {
@@ -43,6 +43,7 @@ function useCarousel() {
 
 function Carousel({
   orientation = "horizontal",
+  keyboardNavigation = true,
   opts,
   setApi,
   plugins,
@@ -91,6 +92,8 @@ function Carousel({
 
   const handleKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (!keyboardNavigation) return;
+
       if (event.key === "ArrowLeft") {
         event.preventDefault();
         scrollPrev();
@@ -99,7 +102,7 @@ function Carousel({
         scrollNext();
       }
     },
-    [scrollPrev, scrollNext],
+    [keyboardNavigation, scrollPrev, scrollNext],
   );
 
   React.useEffect(() => {
@@ -115,6 +118,7 @@ function Carousel({
         opts,
         orientation:
           orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        keyboardNavigation,
         scrollPrev,
         scrollNext,
         canScrollPrev,
@@ -135,13 +139,17 @@ function Carousel({
   );
 }
 
-function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
+function CarouselContent({
+  className,
+  viewportClassName,
+  ...props
+}: React.ComponentProps<"div"> & { viewportClassName?: string }) {
   const { carouselRef, orientation } = useCarousel();
 
   return (
     <div
       ref={carouselRef}
-      className="overflow-hidden"
+      className={cn("overflow-hidden", viewportClassName)}
       data-slot="carousel-content"
     >
       <div
@@ -236,6 +244,7 @@ function CarouselNext({
 
 export {
   type CarouselApi,
+  type CarouselProps,
   Carousel,
   CarouselContent,
   CarouselItem,

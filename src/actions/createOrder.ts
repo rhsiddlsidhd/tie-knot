@@ -1,6 +1,6 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { redirect } from "next/navigation";
 
 import { getAuth } from "@/services/auth";
@@ -9,11 +9,11 @@ import { actionError } from "@/boundary";
 
 import { categoryRequiresShipping } from "@/core/utils/category";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { createOrderSchema } from "@/core/schemas/request/order.schema";
+import { CreateOrderSchema } from "@/core/schemas/request/order.schema";
 import type { PayMethod } from "@/core/domain/payment";
 import type { ProductCategory } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
-export type CreateOrderResult = {
+import { ROUTES } from "@/core/domain/routes";
+type CreateOrderResult = {
   merchantUid: string;
   finalPrice: number;
   payMethod: PayMethod;
@@ -26,13 +26,13 @@ export type CreateOrderResult = {
   message: string;
 };
 
-export async function createOrder(
+const createOrder = async (
   _prev: unknown,
   formData: FormData,
-): Promise<APIResponse<CreateOrderResult>> {
+): Promise<ApiResponse<CreateOrderResult>> => {
   // 로그인 안 된 상태면 로그인 페이지로(리다이렉트는 try/catch 밖에서)
   if (!(await getAuth())) {
-    redirect(routes.login);
+    redirect(ROUTES.login);
   }
 
   // FormData에서 주문 정보 추출
@@ -71,12 +71,16 @@ export async function createOrder(
   };
 
   // Zod 스키마로 유효성 검증
-  const parsed = validateAndFlatten(createOrderSchema, data);
+  const parsed = validateAndFlatten(CreateOrderSchema, data);
 
   if (!parsed.success) {
     return {
       success: false,
-      error: { category: "VALIDATION", message: "입력값이 올바르지 않습니다.", fieldErrors: parsed.error },
+      error: {
+        category: "VALIDATION",
+        message: "입력값이 올바르지 않습니다.",
+        fieldErrors: parsed.error,
+      },
     };
   }
 
@@ -101,4 +105,6 @@ export async function createOrder(
   } catch (e) {
     return actionError(e);
   }
-}
+};
+
+export { createOrder, type CreateOrderResult };

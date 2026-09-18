@@ -1,5 +1,5 @@
 import "server-only";
-import type { IGuestbook } from "@/models/guestbook.model";
+import type { GuestbookDocument } from "@/models/guestbook.model";
 import { GuestbookModel } from "@/models/guestbook.model";
 import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import type { GuestbookType } from "@/core/schemas/request/guestbook.schema";
@@ -12,11 +12,7 @@ import { decodeCursor, encodeCursor } from "@/core/utils/cursor";
 
 import mongoose from "mongoose";
 
-export const createGuestbookService = async ({
-  data,
-}: {
-  data: GuestbookType;
-}) => {
+const createGuestbookService = async ({ data }: { data: GuestbookType }) => {
   await dbConnect();
 
   const invitation = await MobileInvitationModel.findOne({
@@ -42,7 +38,7 @@ export const createGuestbookService = async ({
   });
 };
 
-export const getGuestbookService = async (
+const getGuestbookService = async (
   publicKey: string,
   { cursor, viewerUserId }: { cursor?: string; viewerUserId?: string } = {},
 ): Promise<GuestbookListPage> => {
@@ -105,9 +101,9 @@ export const getGuestbookService = async (
   };
 };
 
-export const getPrivateGuestbookService = async (
+const getPrivateGuestbookService = async (
   id: string,
-): Promise<IGuestbook | null> => {
+): Promise<GuestbookDocument | null> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(id)) {
@@ -126,7 +122,7 @@ export const getPrivateGuestbookService = async (
   };
 };
 
-export const deleteGuestbookService = async (
+const deleteGuestbookService = async (
   id: string,
 ): Promise<{ acknowledged: boolean; deletedCount: number }> => {
   await dbConnect();
@@ -141,21 +137,21 @@ export const deleteGuestbookService = async (
   return result;
 };
 
-export async function createGuestbookWithPasswordService(
+const createGuestbookWithPasswordService = async (
   data: GuestbookType,
-): Promise<void> {
+): Promise<void> => {
   await createGuestbookService({
     data: { ...data, password: await hashPassword(data.password) },
   });
-}
+};
 
-export async function deleteGuestbookWithPasswordService({
+const deleteGuestbookWithPasswordService = async ({
   guestbookId,
   password,
 }: {
   guestbookId: string;
   password: string;
-}): Promise<void> {
+}): Promise<void> => {
   const guestbook = await getPrivateGuestbookService(guestbookId);
   if (!guestbook) {
     throw new AppError("NOT_FOUND", "해당 게시글을 찾을 수 없습니다.");
@@ -167,4 +163,13 @@ export async function deleteGuestbookWithPasswordService({
   if (!result.acknowledged || result.deletedCount === 0) {
     throw new AppError("INTERNAL", "게시글 삭제에 실패했습니다.");
   }
-}
+};
+
+export {
+  createGuestbookService,
+  getGuestbookService,
+  getPrivateGuestbookService,
+  deleteGuestbookService,
+  createGuestbookWithPasswordService,
+  deleteGuestbookWithPasswordService,
+};

@@ -1,6 +1,6 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IOrder } from "@/models/order.model";
+import type { OrderDocument } from "@/models/order.model";
 import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
@@ -8,14 +8,31 @@ import { ProductModel } from "@/models/product.model";
 import { ReviewModel } from "@/models/review.model";
 import type { CreateOrderDto } from "@/core/schemas/request/order.schema";
 import { categoryRequiresShipping } from "@/core/utils/category";
-import { encodeCursor, decodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import {
+  encodeCursor,
+  decodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { generateUid } from "@/core/utils/id";
 import { dbConnect } from "@/db/connect";
-import type { AdminOrderListPage, OrderDetail, OrderListItem, OrderListPage, OrderStatus } from "@/core/domain/order";
+import type {
+  AdminOrderListPage,
+  OrderDetail,
+  OrderListItem,
+  OrderListPage,
+  OrderStatus,
+} from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import { EXPIRED_ORDER_BATCH_LIMIT, MOBILE_INVITATION_INPUT_DEADLINE_DAYS, ORDER_PAGE_SIZE, ORDER_STATUSES, PENDING_ORDER_EXPIRE_HOURS } from "@/core/domain/order";
+import {
+  EXPIRED_ORDER_BATCH_LIMIT,
+  MOBILE_INVITATION_INPUT_DEADLINE_DAYS,
+  ORDER_PAGE_SIZE,
+  ORDER_STATUSES,
+  PENDING_ORDER_EXPIRE_HOURS,
+} from "@/core/domain/order";
 import { getProductQuantityBoundsService } from "./product";
 import { requireAuth } from "./auth";
 
@@ -25,9 +42,9 @@ const assertObjectIdLike = (id: string, label: string): void => {
   }
 };
 
-export const createOrderService = async (
+const createOrderService = async (
   data: CreateOrderDto & { userId: string },
-): Promise<IOrder> => {
+): Promise<OrderDocument> => {
   await dbConnect();
 
   assertObjectIdLike(data.userId, "사용자 ID");
@@ -110,12 +127,12 @@ export const createOrderService = async (
   return order.toObject();
 };
 
-export async function createOrderForCurrentUserService(
+const createOrderForCurrentUserService = async (
   data: CreateOrderDto,
-): Promise<IOrder> {
+): Promise<OrderDocument> => {
   const { userId } = await requireAuth();
   return createOrderService({ ...data, userId });
-}
+};
 
 /**
  * 결제완료(CONFIRMED)됐지만 MobileInvitation을 만들지 않은 채 기한을 넘긴
@@ -124,9 +141,9 @@ export async function createOrderForCurrentUserService(
  * import하면 순환 의존이 생기므로, 오케스트레이션은 호출부에서 두 함수를
  * 조합한다).
  */
-export const findExpiredAwaitingMobileInvitationOrders = async (
+const findExpiredAwaitingMobileInvitationOrders = async (
   userId: string | mongoose.Types.ObjectId,
-): Promise<IOrder[]> => {
+): Promise<OrderDocument[]> => {
   await dbConnect();
 
   const deadline = new Date();
@@ -144,7 +161,7 @@ export const findExpiredAwaitingMobileInvitationOrders = async (
     orderStatus: "CONFIRMED",
     _id: { $nin: invitationOrderIds },
     confirmedAt: { $lt: deadline },
-  }).lean<IOrder[]>();
+  }).lean<OrderDocument[]>();
 };
 
 /**
@@ -164,8 +181,8 @@ export const findExpiredAwaitingMobileInvitationOrders = async (
  * 실제 CONFIRMED+기한초과 규모에 비례하므로(MobileInvitation 전체 컬렉션과 달리)
  * 상한 없이 조회해도 무제한 증가하지 않는다.
  */
-export const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
-  IOrder[]
+const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Promise<
+  OrderDocument[]
 > => {
   await dbConnect();
 
@@ -177,7 +194,7 @@ export const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Pr
     confirmedAt: { $lt: deadline },
   })
     .sort({ confirmedAt: 1 })
-    .lean<IOrder[]>();
+    .lean<OrderDocument[]>();
 
   if (candidates.length === 0) return [];
 
@@ -196,12 +213,12 @@ export const findExpiredAwaitingMobileInvitationOrdersForAllUsers = async (): Pr
     .slice(0, EXPIRED_ORDER_BATCH_LIMIT);
 };
 
-export const getOrderSeviceByMerchantUid = async (
+const getOrderSeviceByMerchantUid = async (
   merchantUid: string,
-): Promise<IOrder | null> => {
+): Promise<OrderDocument | null> => {
   await dbConnect();
 
-  const order = await OrderModel.findOne({ merchantUid }).lean<IOrder>();
+  const order = await OrderModel.findOne({ merchantUid }).lean<OrderDocument>();
 
   return order;
 };
@@ -216,7 +233,7 @@ export const getOrderSeviceByMerchantUid = async (
  * 인스턴스가 하나라도 남으면 "Only plain objects..." 에러가 난다.
  */
 const toOrderListItems = async (
-  orders: IOrder[],
+  orders: OrderDocument[],
 ): Promise<OrderListItem[]> => {
   if (orders.length === 0) return [];
 
@@ -317,7 +334,7 @@ type OrderListQuery = {
  * 다음 페이지가 있으면 마지막 행 기준 커서를 함께 리턴한다. 같은 createdAt을 가진
  * 주문이 있어도 _id를 tie-breaker로 써서 행이 중복되거나 건너뛰어지지 않는다.
  */
-export const getOrdersPageForUser = async ({
+const getOrdersPageForUser = async ({
   userId,
   status,
   category,
@@ -326,7 +343,7 @@ export const getOrdersPageForUser = async ({
 }: OrderListQuery): Promise<OrderListPage> => {
   await dbConnect();
 
-  const filter: mongoose.FilterQuery<IOrder> = { userId };
+  const filter: mongoose.FilterQuery<OrderDocument> = { userId };
 
   if (status) {
     filter.orderStatus = status;
@@ -361,7 +378,7 @@ export const getOrdersPageForUser = async ({
   const found = await OrderModel.find(filter)
     .sort({ createdAt: -1, _id: -1 })
     .limit(limit + 1)
-    .lean<IOrder[]>();
+    .lean<OrderDocument[]>();
 
   const hasMore = found.length > limit;
   const orders = hasMore ? found.slice(0, limit) : found;
@@ -380,6 +397,7 @@ export const getOrdersPageForUser = async ({
 };
 
 type AdminOrderListQuery = {
+  q?: string;
   status?: OrderStatus;
   cursor?: string;
   limit?: number;
@@ -402,7 +420,8 @@ type AdminOrderListRow = {
  * 최소 필드만 select한다 — 목록에 필요 이상의 문서 필드나 Mongoose 인스턴스를
  * 노출하지 않는다.
  */
-export const getAdminOrdersPageService = async ({
+const getAdminOrdersPageService = async ({
+  q,
   status,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
@@ -416,10 +435,27 @@ export const getAdminOrdersPageService = async ({
     throw new AppError("VALIDATION", "잘못된 주문 상태입니다.");
   }
 
-  const filter: mongoose.FilterQuery<IOrder> = {};
+  const filter: mongoose.FilterQuery<OrderDocument> = {};
 
   if (status) {
     filter.orderStatus = status;
+  }
+
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: mongoose.FilterQuery<OrderDocument>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    conditions.push({
+      $or: [
+        // 주문번호는 유일 식별자다 — 부분일치로 흩뿌리지 않고 완전일치로만 찾는다.
+        { merchantUid: term },
+        { buyerName: { $regex: escapeRegExp(term), $options: "i" } },
+        { buyerEmail: { $regex: escapeRegExp(term), $options: "i" } },
+        { buyerPhone: { $regex: escapeRegExp(term), $options: "i" } },
+      ],
+    });
   }
 
   if (cursor) {
@@ -427,17 +463,25 @@ export const getAdminOrdersPageService = async ({
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
+    conditions.push({
+      $or: [
+        { createdAt: { $lt: decoded.createdAt } },
+        {
+          createdAt: decoded.createdAt,
+          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+        },
+      ],
+    });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await OrderModel.find(filter)
-    .select("merchantUid buyerName product.title orderStatus finalPrice createdAt")
+    .select(
+      "merchantUid buyerName product.title orderStatus finalPrice createdAt",
+    )
     .sort({ createdAt: -1, _id: -1 })
     .limit(limit + 1)
     .lean<AdminOrderListRow[]>()
@@ -476,7 +520,7 @@ export const getAdminOrdersPageService = async ({
  * 주문 상세 — 소유자 본인만 조회할 수 있다(page 게이트와 별개의 데이터 게이트,
  * docs/security/page-access-control.md).
  */
-export const getOwnedOrderDetail = async (
+const getOwnedOrderDetail = async (
   orderId: string,
   userId: string,
 ): Promise<OrderDetail> => {
@@ -513,12 +557,12 @@ export const getOwnedOrderDetail = async (
 const requireOwnedOrder = async (
   orderId: string,
   userId: string,
-): Promise<IOrder> => {
+): Promise<OrderDocument> => {
   if (!mongoose.isObjectIdOrHexString(orderId)) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
 
-  const order = await OrderModel.findById(orderId).lean<IOrder>();
+  const order = await OrderModel.findById(orderId).lean<OrderDocument>();
   if (!order) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
@@ -529,7 +573,7 @@ const requireOwnedOrder = async (
   return order;
 };
 
-export const PENDING_ORDER_CANCEL_REASONS = {
+const PENDING_ORDER_CANCEL_REASONS = {
   byBuyer: "주문자 취소",
   expired: "결제 미완료로 인한 자동 취소",
 } as const;
@@ -540,7 +584,7 @@ export const PENDING_ORDER_CANCEL_REASONS = {
  * 있음)은 이 경로로 취소하지 않는다 — 입금이 이미 진행 중일 수 있어 PortOne 취소를
  * 거쳐야 하고, 그 흐름은 개별 입금기한 만료가 담당한다.
  */
-export const cancelPendingOrderForCurrentUser = async (
+const cancelPendingOrderForCurrentUser = async (
   orderId: string,
 ): Promise<void> => {
   await dbConnect();
@@ -587,9 +631,9 @@ export const cancelPendingOrderForCurrentUser = async (
  * payment.service를 import하면 순환 의존이 생긴다). 오케스트레이션 쪽이 같은
  * `deadline`으로 취소 대상을 다시 걸러야 하므로 함께 리턴한다.
  */
-export const findExpiredPendingOrders = async (
+const findExpiredPendingOrders = async (
   userId: string | mongoose.Types.ObjectId,
-): Promise<{ orders: IOrder[]; deadline: Date }> => {
+): Promise<{ orders: OrderDocument[]; deadline: Date }> => {
   await dbConnect();
 
   const deadline = new Date(
@@ -604,7 +648,7 @@ export const findExpiredPendingOrders = async (
     // 사용자가 창을 닫아 아직 동기화되지 않은 주문까지 덮으려면 결제수단도 본다.
     payMethod: { $ne: "VIRTUAL_ACCOUNT" },
     createdAt: { $lt: deadline },
-  }).lean<IOrder[]>();
+  }).lean<OrderDocument[]>();
 
   return { orders, deadline };
 };
@@ -615,8 +659,8 @@ export const findExpiredPendingOrders = async (
  * 반환 shape을 per-user와 맞춰(orders + deadline) payment.ts의 공통 취소
  * 실행부가 두 진입점을 그대로 공유한다.
  */
-export const findExpiredPendingOrdersForAllUsers = async (): Promise<{
-  orders: IOrder[];
+const findExpiredPendingOrdersForAllUsers = async (): Promise<{
+  orders: OrderDocument[];
   deadline: Date;
 }> => {
   await dbConnect();
@@ -633,7 +677,22 @@ export const findExpiredPendingOrdersForAllUsers = async (): Promise<{
   })
     .sort({ createdAt: 1 })
     .limit(EXPIRED_ORDER_BATCH_LIMIT)
-    .lean<IOrder[]>();
+    .lean<OrderDocument[]>();
 
   return { orders, deadline };
+};
+
+export {
+  createOrderService,
+  createOrderForCurrentUserService,
+  findExpiredAwaitingMobileInvitationOrders,
+  findExpiredAwaitingMobileInvitationOrdersForAllUsers,
+  getOrderSeviceByMerchantUid,
+  getOrdersPageForUser,
+  getAdminOrdersPageService,
+  getOwnedOrderDetail,
+  PENDING_ORDER_CANCEL_REASONS,
+  cancelPendingOrderForCurrentUser,
+  findExpiredPendingOrders,
+  findExpiredPendingOrdersForAllUsers,
 };

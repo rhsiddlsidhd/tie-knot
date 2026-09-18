@@ -1,17 +1,17 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
-import { updateReviewSchema } from "@/core/schemas/request/review.schema";
+import type { ApiResponse } from "@/core/domain/error";
+import { UpdateReviewSchema } from "@/core/schemas/request/review.schema";
 import { updateReviewForCurrentUserService } from "@/services/review";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { revalidatePath } from "next/cache";
 
-export const updateReview = async (
+const updateReview = async (
   _prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   const ratingRaw = formData.get("rating");
   const contentRaw = formData.get("content");
   const imagesRaw = formData.getAll("images");
@@ -23,7 +23,7 @@ export const updateReview = async (
     images: imagesRaw.length > 0 ? (imagesRaw as string[]) : undefined,
   };
 
-  const parsed = validateAndFlatten(updateReviewSchema, data);
+  const parsed = validateAndFlatten(UpdateReviewSchema, data);
   if (!parsed.success) {
     return {
       success: false,
@@ -38,10 +38,12 @@ export const updateReview = async (
   try {
     await updateReviewForCurrentUserService(parsed.data);
 
-    revalidatePath(routes.myOrders.root);
+    revalidatePath(ROUTES.myOrders.root);
 
     return { success: true, data: { message: "리뷰가 수정되었습니다." } };
   } catch (e) {
     return actionError(e);
   }
 };
+
+export { updateReview };

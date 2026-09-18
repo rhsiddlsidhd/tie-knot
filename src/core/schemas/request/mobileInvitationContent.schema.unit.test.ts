@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { mobileInvitationContentSchema } from "./mobileInvitationContent.schema";
+import { MobileInvitationContentSchema } from "./mobileInvitationContent.schema";
 
 const validPerson = { name: "신랑", phone: "010-0000-0001" };
 
@@ -18,9 +18,9 @@ const buildInput = (thumbnailImages: string[]): Record<string, unknown> => ({
 
 const THUMB = "https://example.com/thumb.jpg";
 
-describe("mobileInvitationContentSchema", () => {
+describe("MobileInvitationContentSchema", () => {
   it("썸네일이 정확히 3장이면 통과한다", () => {
-    const result = mobileInvitationContentSchema.safeParse(
+    const result = MobileInvitationContentSchema.safeParse(
       buildInput([THUMB, THUMB, THUMB]),
     );
 
@@ -28,19 +28,19 @@ describe("mobileInvitationContentSchema", () => {
   });
 
   it("썸네일이 0장이면 실패한다", () => {
-    const result = mobileInvitationContentSchema.safeParse(buildInput([]));
+    const result = MobileInvitationContentSchema.safeParse(buildInput([]));
 
     expect(result.success).toBe(false);
   });
 
   it("썸네일이 1장이면 실패한다", () => {
-    const result = mobileInvitationContentSchema.safeParse(buildInput([THUMB]));
+    const result = MobileInvitationContentSchema.safeParse(buildInput([THUMB]));
 
     expect(result.success).toBe(false);
   });
 
   it("썸네일이 4장이면 실패한다", () => {
-    const result = mobileInvitationContentSchema.safeParse(
+    const result = MobileInvitationContentSchema.safeParse(
       buildInput([THUMB, THUMB, THUMB, THUMB]),
     );
 
@@ -48,7 +48,7 @@ describe("mobileInvitationContentSchema", () => {
   });
 
   it("계좌 정보가 없어도 통과한다 (선택 입력)", () => {
-    const result = mobileInvitationContentSchema.safeParse(
+    const result = MobileInvitationContentSchema.safeParse(
       buildInput([THUMB, THUMB, THUMB]),
     );
 

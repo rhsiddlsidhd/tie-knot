@@ -5,25 +5,45 @@ import { useRouter } from "next/navigation";
 import { AutoCompleteList } from "@/ui/components/molecules/AutoCompleteList";
 import { Command, CommandInput } from "@/ui/components/atoms/command";
 import { Button } from "@/ui/components/atoms/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/ui/components/atoms/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "@/ui/components/atoms/dropdown-menu";
 import { Badge } from "@/ui/components/atoms/badge";
-import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 
 import { useSuggestProducts } from "@/ui/hooks/useSuggestProducts";
 
 import type { Dispatch } from "react";
 import { useState } from "react";
 
-import type { ProductFilterState, ProductFilterAction } from "@/ui/context/productFilter/type";
+import type {
+  ProductFilterState,
+  ProductFilterAction,
+} from "@/ui/context/productFilter/type";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
-import type { SubCategory, ProductCategory } from "@/core/domain/product-category";
+import type {
+  SubCategory,
+  ProductCategory,
+} from "@/core/domain/product-category";
 import type { ProductSortType } from "@/core/domain/product";
-import { PRODUCT_SORT_OPTIONS, PRODUCT_PRICE_OPTIONS, PREMIUM_FEATURE_LABELS, PRODUCT_SORT_KEYS, PRODUCT_PRICE_KEYS } from "@/core/domain/product";
-import { subCategoryLabels } from "@/core/domain/product-category";
+import {
+  PRODUCT_SORT_OPTIONS,
+  PRODUCT_PRICE_OPTIONS,
+  PRODUCT_SORT_KEYS,
+  PRODUCT_PRICE_KEYS,
+} from "@/core/domain/product";
+import { SUB_CATEGORY_LABELS } from "@/core/domain/product-category";
 
 /**
  * subCategory 필터는 URL searchParams가 소유한다(OrderFilters.tsx와 동일 패턴) —
@@ -31,7 +51,7 @@ import { subCategoryLabels } from "@/core/domain/product-category";
  * 다시 렌더하고, 목록의 더보기 누적분도 함께 리셋된다. availableSubCategories도 로드된
  * 일부 데이터가 아니라 서버가 카테고리 전체를 조회해 내려준 값을 그대로 쓴다.
  */
-export function ProductFilters({
+const ProductFilters = ({
   data,
   category,
   subCategory,
@@ -47,7 +67,7 @@ export function ProductFilters({
   premiumFeatures: PremiumFeature[];
   state: ProductFilterState;
   dispatch: Dispatch<ProductFilterAction>;
-}) {
+}) => {
   const router = useRouter();
   const [showAdvanced, setShowAdvanced] = useState<boolean>(false);
   const { suggestions } = useSuggestProducts({
@@ -64,7 +84,7 @@ export function ProductFilters({
     { value: "all", label: "전체" },
     ...availableSubCategories.map((value) => ({
       value,
-      label: subCategoryLabels[value],
+      label: SUB_CATEGORY_LABELS[value],
     })),
   ];
 
@@ -106,7 +126,7 @@ export function ProductFilters({
             variant={subCategory === option.value ? "default" : "outline"}
             onClick={() =>
               router.push(
-                routes.products.byCategory(
+                ROUTES.products.byCategory(
                   category,
                   option.value === "all" ? undefined : option.value,
                 ),
@@ -199,9 +219,7 @@ export function ProductFilters({
                     })
                   }
                 >
-                  {PREMIUM_FEATURE_LABELS[
-                    value.code as keyof typeof PREMIUM_FEATURE_LABELS
-                  ] || value.label}
+                  {value.label}
                 </Badge>
               ))}
             </div>
@@ -223,4 +241,6 @@ export function ProductFilters({
       )}
     </div>
   );
-}
+};
+
+export { ProductFilters };

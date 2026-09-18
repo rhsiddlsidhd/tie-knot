@@ -1,19 +1,45 @@
 import "server-only";
-import type { ProductDB, IProduct } from "@/models/product.model";
-import type { ProductJSON } from "@/core/domain/product";
-import { ProductModel, MobileInvitationProductModel } from "@/models/product.model";
+import type { ProductDb, ProductDocument } from "@/models/product.model";
+import type {
+  EditableProductStatus,
+  ProductJson,
+  ProductStatus,
+} from "@/core/domain/product";
+import type { FeatureProductBindingPage } from "@/core/domain/premium-feature";
+import { FeatureModel } from "@/models/feature.model";
+import {
+  ProductModel,
+  MobileInvitationProductModel,
+} from "@/models/product.model";
 import type { ProductDto } from "@/core/schemas/request/product.schema";
 import { dbConnect } from "@/db/connect";
 import { calculatePrice } from "@/core/utils/price";
-import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import {
+  decodeCursor,
+  encodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
 import { escapeRegExp } from "@/core/utils/escape-regexp";
-import { findProductCategoriesByTerm, findSubCategoriesByTerm } from "@/core/utils/category";
+import {
+  findProductCategoriesByTerm,
+  findSubCategoriesByTerm,
+} from "@/core/utils/category";
 import { AppError } from "@/core/domain/error";
-import type { AdminProductListPage, PublicProductListPage } from "@/core/domain/product";
-import type { AvailableSubCategory, ProductCategory } from "@/core/domain/product-category";
+import type {
+  AdminProductListPage,
+  PublicProductListPage,
+} from "@/core/domain/product";
+import type {
+  AvailableSubCategory,
+  ProductCategory,
+} from "@/core/domain/product-category";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import { MOBILE_INVITATION_CATEGORY, PRODUCT_CATEGORIES, SUB_CATEGORY_MAP } from "@/core/domain/product-category";
+import {
+  MOBILE_INVITATION_CATEGORY,
+  PRODUCT_CATEGORIES,
+  SUB_CATEGORY_MAP,
+} from "@/core/domain/product-category";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
@@ -21,13 +47,12 @@ import { requireAdmin, requireAuth } from "./auth";
 import { deleteProductAsset } from "@/adapters/server/cloudinary/cleanup";
 import { extractPublicId } from "@/adapters/server/cloudinary/publicId";
 
-
 type ProductUploadInput = ProductDto & {
   previewUrl?: string;
   currentPreviewUrl?: string;
 };
 
-type LeanProduct = ProductDB & {
+type LeanProduct = ProductDb & {
   _id: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -38,15 +63,19 @@ type LeanProduct = ProductDB & {
 
 // previewUrl은 mobile-invitation 카테고리 discriminator 전용 필드라 base ProductModel로
 // 쓰면 strict 모드에 의해 조용히 버려진다 — 생성/수정 시 카테고리별로 모델을 골라야 한다.
-// Model<IProduct>로 통일해서 리턴한다 — discriminator Model과 base Model의 union을
+// Model<ProductDocument>로 통일해서 리턴한다 — discriminator Model과 base Model의 union을
 // 그대로 리턴하면 오버로드 시그니처가 갈라져 findOneAndUpdate 호출이 막힌다.
-const getWritableProductModel = (category: string): Model<IProduct> =>
+const getWritableProductModel = (category: string): Model<ProductDocument> =>
   category === MOBILE_INVITATION_CATEGORY
-    ? (MobileInvitationProductModel as Model<IProduct>)
+    ? (MobileInvitationProductModel as Model<ProductDocument>)
     : ProductModel;
 
-const transformProduct = (product: LeanProduct, userId?: string): ProductJSON => {
-  const { deletedAt, _id, featureIds, likes, createdAt, updatedAt, ...rest } = product;
+const transformProduct = (
+  product: LeanProduct,
+  userId?: string,
+): ProductJson => {
+  const { deletedAt, _id, featureIds, likes, createdAt, updatedAt, ...rest } =
+    product;
 
   return {
     ...rest,
@@ -65,7 +94,7 @@ const transformProduct = (product: LeanProduct, userId?: string): ProductJSON =>
 
 // REQ-5(주문 수량 검증) 전용 — 클라이언트가 보낸 minQuantity/maxQuantity를 신뢰하지 않고
 // order.service가 이 함수로 DB를 재조회한다.
-export const getProductQuantityBoundsService = async (
+const getProductQuantityBoundsService = async (
   productId: string,
 ): Promise<{ minQuantity: number; maxQuantity: number } | null> => {
   await dbConnect();
@@ -74,7 +103,10 @@ export const getProductQuantityBoundsService = async (
     return null;
   }
 
-  const product = await ProductModel.findOne({ _id: productId, deletedAt: null })
+  const product = await ProductModel.findOne({
+    _id: productId,
+    deletedAt: null,
+  })
     .select("minQuantity maxQuantity")
     .lean();
 
@@ -87,7 +119,7 @@ export const getProductQuantityBoundsService = async (
 };
 
 // 상품생성
-export const createProductService = async (
+const createProductService = async (
   data: Omit<ProductDto, "thumbnail" | "images"> & {
     thumbnail: string;
     images: string[];
@@ -119,10 +151,10 @@ export const createProductService = async (
 };
 
 // 단일 상품 조회
-export const getProductService = async (
+const getProductService = async (
   productId: string,
   userId?: string,
-): Promise<ProductJSON | null> => {
+): Promise<ProductJson | null> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(productId)) {
@@ -140,7 +172,7 @@ export const getProductService = async (
 // 상품 상세페이지 방문 시 조회수 증가 — getProductService에는 안 넣는다.
 // payment.service.ts(결제 검증용 조회)와 (main)/page.tsx(고정 미리보기)도
 // getProductService를 호출하는데 그 두 호출까지 조회수로 잡히면 안 되기 때문.
-export const incrementProductViewsService = async (
+const incrementProductViewsService = async (
   productId: string,
 ): Promise<boolean> => {
   await dbConnect();
@@ -165,6 +197,7 @@ export const incrementProductViewsService = async (
 
 type AdminProductListQuery = {
   view?: "active" | "trash";
+  q?: string;
   cursor?: string;
   limit?: number;
 };
@@ -175,8 +208,9 @@ type AdminProductListQuery = {
  * limit+1)을 쓴다. getPublicProductsPageService와 달리 isFeatured/priority 정렬을 쓰지
  * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
  */
-export const getAdminProductsPageService = async ({
+const getAdminProductsPageService = async ({
   view = "active",
+  q,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
 }: AdminProductListQuery): Promise<AdminProductListPage> => {
@@ -189,18 +223,44 @@ export const getAdminProductsPageService = async ({
   const filter: Record<string, unknown> =
     view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
 
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: Record<string, unknown>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    const or: Record<string, unknown>[] = [
+      { title: { $regex: escapeRegExp(term), $options: "i" } },
+    ];
+    const categoryKeys = findProductCategoriesByTerm(term);
+    if (categoryKeys.length > 0) {
+      or.push({ category: { $in: categoryKeys } });
+    }
+    const subCategoryKeys = findSubCategoriesByTerm(term);
+    if (subCategoryKeys.length > 0) {
+      or.push({ subCategory: { $in: subCategoryKeys } });
+    }
+    conditions.push({ $or: or });
+  }
+
   if (cursor) {
     const decoded = decodeCursor(cursor);
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
+    conditions.push({
+      $or: [
+        { createdAt: { $lt: decoded.createdAt } },
+        {
+          createdAt: decoded.createdAt,
+          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+        },
+      ],
+    });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await ProductModel.find(filter)
@@ -228,6 +288,180 @@ export const getAdminProductsPageService = async ({
           })
         : null,
   };
+};
+
+type FeatureProductBindingsQuery = {
+  featureId: string;
+  q?: string;
+  cursor?: string;
+  limit?: number;
+};
+
+type LeanBindableProduct = {
+  _id: mongoose.Types.ObjectId;
+  title: string;
+  price: number;
+  status: ProductStatus;
+  featureIds?: mongoose.Types.ObjectId[];
+  createdAt: Date;
+};
+
+/**
+ * 기능 하나를 붙일 상품 후보 한 페이지 — 정렬·커서 계약은 다른 admin 목록과 같다.
+ *
+ * `isPremium: true`, `deletedAt: null`만 후보다. 프리미엄이 아닌 상품은 create/update
+ * 서비스가 featureIds를 강제로 비우므로 붙여도 조용히 사라지고, 휴지통 상품에 붙이는
+ * 것은 복구 시점에 결정할 일이다.
+ */
+const getFeatureProductBindingsPageService = async ({
+  featureId,
+  q,
+  cursor,
+  limit = DEFAULT_PAGE_SIZE,
+}: FeatureProductBindingsQuery): Promise<FeatureProductBindingPage> => {
+  await dbConnect();
+
+  if (!isValidPageLimit(limit)) {
+    throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+
+  const filter: mongoose.FilterQuery<ProductDocument> = {
+    isPremium: true,
+    deletedAt: null,
+  };
+
+  const term = q?.trim();
+  if (term) {
+    // 관리자가 입력한 문자열이 그대로 정규식이 되면 쿼리가 깨지거나 의도치 않게
+    // 매칭된다 — 반드시 이스케이프한다(#309 규약).
+    filter.title = { $regex: escapeRegExp(term), $options: "i" };
+  }
+
+  if (cursor) {
+    const decoded = decodeCursor(cursor);
+    if (!decoded) {
+      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
+    }
+    filter.$or = [
+      { createdAt: { $lt: decoded.createdAt } },
+      {
+        createdAt: decoded.createdAt,
+        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+      },
+    ];
+  }
+
+  const found = await ProductModel.find(filter)
+    .select("title price status featureIds createdAt")
+    .sort({ createdAt: -1, _id: -1 })
+    .limit(limit + 1)
+    .lean<LeanBindableProduct[]>()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+      );
+    });
+
+  const hasMore = found.length > limit;
+  const products = hasMore ? found.slice(0, limit) : found;
+  const lastProduct = products.at(-1);
+
+  return {
+    items: products.map((product) => ({
+      _id: product._id.toString(),
+      title: product.title,
+      price: product.price,
+      status: product.status,
+      attached: (product.featureIds ?? []).some(
+        (id) => id.toString() === featureId,
+      ),
+    })),
+    nextCursor:
+      hasMore && lastProduct
+        ? encodeCursor({
+            createdAt: lastProduct.createdAt,
+            id: lastProduct._id.toString(),
+          })
+        : null,
+  };
+};
+
+// 연결/해제는 상품 문서 하나만 쓴다 — MongoDB가 문서 단위 원자성을 보장하므로
+// 트랜잭션이 필요 없다(src/services/AGENTS.md 트랜잭션 절).
+const findBindableProduct = async (productId: string) => {
+  if (!mongoose.isObjectIdOrHexString(productId)) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+
+  const product = await ProductModel.findOne({
+    _id: productId,
+    deletedAt: null,
+  }).lean<LeanBindableProduct & { isPremium: boolean }>();
+
+  if (!product) {
+    throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
+  }
+
+  return product;
+};
+
+const attachPremiumFeatureToProductService = async (
+  productId: string,
+  featureId: string,
+): Promise<void> => {
+  await dbConnect();
+
+  if (!mongoose.isObjectIdOrHexString(featureId)) {
+    throw new AppError("NOT_FOUND", "프리미엄 기능을 찾을 수 없습니다.");
+  }
+  if (!(await FeatureModel.exists({ _id: featureId }))) {
+    throw new AppError("NOT_FOUND", "프리미엄 기능을 찾을 수 없습니다.");
+  }
+
+  const product = await findBindableProduct(productId);
+
+  // 프리미엄이 아닌 상품은 create/update 서비스가 featureIds를 비운다 — 붙여도
+  // 조용히 사라지므로 성공으로 처리하지 않는다.
+  if (!product.isPremium) {
+    throw new AppError(
+      "VALIDATION",
+      `"${product.title}"은(는) 프리미엄 상품이 아니라 기능을 붙일 수 없습니다.`,
+    );
+  }
+
+  await ProductModel.updateOne(
+    { _id: productId },
+    { $addToSet: { featureIds: new mongoose.Types.ObjectId(featureId) } },
+    { runValidators: true },
+  );
+};
+
+const detachPremiumFeatureFromProductService = async (
+  productId: string,
+  featureId: string,
+): Promise<void> => {
+  await dbConnect();
+
+  const product = await findBindableProduct(productId);
+  const featureIds = (product.featureIds ?? []).map(String);
+
+  if (!featureIds.includes(featureId)) return;
+
+  // 마지막 기능을 빼면 isPremium인데 featureIds가 비어 product.schema의 refine을
+  // 통과하지 못해 그 상품은 이후 수정 저장이 전부 막힌다.
+  if (product.isPremium && featureIds.length === 1) {
+    throw new AppError(
+      "VALIDATION",
+      `"${product.title}"의 마지막 프리미엄 기능이라 뗄 수 없습니다. 상품을 일반 상품으로 바꾸거나 다른 기능을 먼저 붙이세요.`,
+    );
+  }
+
+  await ProductModel.updateOne(
+    { _id: productId },
+    { $pull: { featureIds: new mongoose.Types.ObjectId(featureId) } },
+    { runValidators: true },
+  );
 };
 
 const PUBLIC_PRODUCT_SORT_SPEC = {
@@ -269,6 +503,7 @@ const buildPublicProductCursorOr = (
 type PublicProductListQuery = {
   category?: string;
   subCategory?: string;
+  theme?: MobileInvitationTheme;
   cursor?: string;
   limit?: number;
   userId?: string;
@@ -278,9 +513,10 @@ type PublicProductListQuery = {
 // active 상품만 노출하고, isFeatured/priority 우선순위 정렬(공개 노출 우선순위 의미)을
 // 유지한 채 cursor 페이징한다. limit+1 조회로 다음 페이지 존재 여부를 판정하는 계약은
 // admin/review와 동일하다.
-export const getPublicProductsPageService = async ({
+const getPublicProductsPageService = async ({
   category,
   subCategory,
+  theme,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
   userId,
@@ -294,6 +530,7 @@ export const getPublicProductsPageService = async ({
   const filter: Record<string, unknown> = { deletedAt: null, status: "active" };
   if (category) filter.category = category;
   if (subCategory) filter.subCategory = subCategory;
+  if (theme) filter.theme = theme;
 
   if (cursor) {
     const decoded = decodeCursor(cursor);
@@ -333,7 +570,7 @@ export const getPublicProductsPageService = async ({
 };
 
 // 공개 상품이 하나 이상 있는 유효 pair만 코드 taxonomy 순서로 반환한다.
-export const getAvailableSubCategoriesService = async (
+const getAvailableSubCategoriesService = async (
   category?: ProductCategory,
 ): Promise<AvailableSubCategory[]> => {
   await dbConnect();
@@ -373,10 +610,10 @@ export const getAvailableSubCategoriesService = async (
 
 // 상품 검색 — title 부분일치(대소문자 무시) OR 카테고리/서브카테고리 라벨 부분일치(역조회 후 $in).
 // q가 없거나 공백뿐이면 DB를 치지 않고 즉시 빈 배열을 리턴한다 — 빈 $or는 MongoDB가 reject한다.
-export const searchProductsService = async (
+const searchProductsService = async (
   q?: string,
   userId?: string,
-): Promise<ProductJSON[]> => {
+): Promise<ProductJson[]> => {
   const term = q?.trim();
 
   if (!term) return [];
@@ -410,10 +647,10 @@ export const searchProductsService = async (
 
 // Home 인기 상품 섹션 — 좋아요 수(likes.length) 내림차순 Top N 조회.
 // 배열 길이 정렬은 find().sort()로 불가능해 aggregation을 쓴다(01_db_schema.md §2-1).
-export const getPopularProductsService = async (
+const getPopularProductsService = async (
   limit: number = POPULAR_PRODUCTS_LIMIT,
   userId?: string,
-): Promise<ProductJSON[]> => {
+): Promise<ProductJson[]> => {
   await dbConnect();
 
   // $limit은 0 이하를 받으면 빈 배열이 아니라 MongoServerError를 던진다 — 서비스가 방어한다.
@@ -432,7 +669,15 @@ export const getPopularProductsService = async (
     },
     // $ifNull은 방어적 중복이지만 유지한다 — $size는 인자가 missing이면 null이 아니라 에러(Location17124)를 던진다.
     { $addFields: { likesCount: { $size: { $ifNull: ["$likes", []] } } } },
-    { $sort: { likesCount: -1, isFeatured: -1, priority: -1, createdAt: -1, _id: -1 } },
+    {
+      $sort: {
+        likesCount: -1,
+        isFeatured: -1,
+        priority: -1,
+        createdAt: -1,
+        _id: -1,
+      },
+    },
     { $limit: take },
     { $unset: "likesCount" },
   ]).catch((err) => {
@@ -446,7 +691,7 @@ export const getPopularProductsService = async (
 };
 
 // 상품 업데이트
-export const updateProductService = async (
+const updateProductService = async (
   productId: string,
   data: Partial<Omit<ProductDto, "thumbnail" | "images">> & {
     thumbnail?: string;
@@ -455,7 +700,7 @@ export const updateProductService = async (
     isPremium?: boolean;
     featureIds?: string[];
   },
-): Promise<ProductJSON | null> => {
+): Promise<ProductJson | null> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(productId)) {
@@ -489,9 +734,7 @@ export const updateProductService = async (
 };
 
 // 상품 삭제
-export const deleteProductService = async (
-  productId: string,
-): Promise<boolean> => {
+const deleteProductService = async (productId: string): Promise<boolean> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(productId)) {
@@ -515,9 +758,7 @@ export const deleteProductService = async (
 // 상품 복구(휴지통 → 복원) — 항상 status를 "active"로 되돌린다. 삭제 전 상태
 // (inactive/soldOut)는 보존하지 않는다 — 삭제와 복구를 대칭적인 명시 상태 전이로
 // 고정해 "복구했더니 무슨 상태인지" 추측할 필요가 없게 한다(관계 정의 참고).
-export const restoreProductService = async (
-  productId: string,
-): Promise<boolean> => {
+const restoreProductService = async (productId: string): Promise<boolean> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(productId)) {
@@ -543,7 +784,7 @@ export const restoreProductService = async (
 // 아니라 이 시점에 Cloudinary 이미지 정리를 건다(#135, #136 관계 정의 참고).
 // Cloudinary 정리가 실패하면 DB 문서를 지우지 않는다 — 고아 에셋보다 고아 문서(다시
 // 삭제를 시도할 수 있음)가 낫다.
-export const permanentlyDeleteProductService = async (
+const permanentlyDeleteProductService = async (
   productId: string,
 ): Promise<boolean> => {
   await dbConnect();
@@ -561,11 +802,13 @@ export const permanentlyDeleteProductService = async (
 
   if (!product) return false;
 
-  const publicIds = [...new Set(
-    [product.thumbnail, ...product.images]
-      .map((url) => extractPublicId(url))
-      .filter((id): id is string => !!id),
-  )];
+  const publicIds = [
+    ...new Set(
+      [product.thumbnail, ...product.images]
+        .map((url) => extractPublicId(url))
+        .filter((id): id is string => !!id),
+    ),
+  ];
 
   await Promise.all(publicIds.map((id) => deleteProductAsset(id)));
 
@@ -583,7 +826,7 @@ export const permanentlyDeleteProductService = async (
 };
 
 // 상품 좋아요 토글
-export const updateProductLikeService = async (
+const updateProductLikeService = async (
   productId: string,
   userId: string,
 ): Promise<boolean> => {
@@ -620,15 +863,17 @@ export const updateProductLikeService = async (
   return !!updated;
 };
 
-export async function createProductWorkflow(data: ProductUploadInput): Promise<void> {
+const createProductWorkflow = async (
+  data: ProductUploadInput,
+): Promise<void> => {
   const { userId } = await requireAdmin();
   await createProductService({ ...data, authorId: userId });
-}
+};
 
-export async function updateProductWorkflow(
+const updateProductWorkflow = async (
   productId: string,
   data: ProductUploadInput,
-): Promise<ProductJSON> {
+): Promise<ProductJson> => {
   await requireAdmin();
   const updated = await updateProductService(productId, {
     ...data,
@@ -638,48 +883,82 @@ export async function updateProductWorkflow(
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
   }
   return updated;
-}
+};
 
-export async function deleteProductAsAdminService(productId: string): Promise<void> {
+const deleteProductAsAdminService = async (
+  productId: string,
+): Promise<void> => {
   await requireAdmin();
   if (!(await deleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
   }
-}
+};
 
-export async function restoreProductAsAdminService(productId: string): Promise<void> {
+const restoreProductAsAdminService = async (
+  productId: string,
+): Promise<void> => {
   await requireAdmin();
   if (!(await restoreProductService(productId))) {
     throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
-}
+};
 
-export async function permanentlyDeleteProductAsAdminService(
+const permanentlyDeleteProductAsAdminService = async (
   productId: string,
-): Promise<void> {
+): Promise<void> => {
   await requireAdmin();
   if (!(await permanentlyDeleteProductService(productId))) {
     throw new AppError("NOT_FOUND", "삭제된 상품을 찾을 수 없습니다.");
   }
-}
+};
 
-export async function updateProductStatusAsAdminService(
+const updateProductStatusAsAdminService = async (
   productId: string,
-  status: ProductDto["status"],
-): Promise<ProductJSON> {
+  status: EditableProductStatus,
+): Promise<ProductJson> => {
   await requireAdmin();
   const updated = await updateProductService(productId, { status });
   if (!updated) {
     throw new AppError("NOT_FOUND", "상품을 찾을 수 없습니다.");
   }
   return updated;
-}
+};
 
-export async function toggleProductLikeForCurrentUserService(
+const toggleProductLikeForCurrentUserService = async (
   productId: string,
-): Promise<void> {
+): Promise<void> => {
   const { userId } = await requireAuth();
   if (!(await updateProductLikeService(productId, userId))) {
-    throw new AppError("NOT_FOUND", "상품을 찾을 수 없거나 좋아요 업데이트에 실패했습니다.");
+    throw new AppError(
+      "NOT_FOUND",
+      "상품을 찾을 수 없거나 좋아요 업데이트에 실패했습니다.",
+    );
   }
-}
+};
+
+export {
+  getProductQuantityBoundsService,
+  createProductService,
+  getProductService,
+  incrementProductViewsService,
+  getAdminProductsPageService,
+  getPublicProductsPageService,
+  getAvailableSubCategoriesService,
+  searchProductsService,
+  getFeatureProductBindingsPageService,
+  attachPremiumFeatureToProductService,
+  detachPremiumFeatureFromProductService,
+  getPopularProductsService,
+  updateProductService,
+  deleteProductService,
+  restoreProductService,
+  permanentlyDeleteProductService,
+  updateProductLikeService,
+  createProductWorkflow,
+  updateProductWorkflow,
+  deleteProductAsAdminService,
+  restoreProductAsAdminService,
+  permanentlyDeleteProductAsAdminService,
+  updateProductStatusAsAdminService,
+  toggleProductLikeForCurrentUserService,
+};

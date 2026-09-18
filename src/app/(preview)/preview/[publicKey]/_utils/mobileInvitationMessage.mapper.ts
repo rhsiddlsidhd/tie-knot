@@ -18,7 +18,7 @@ interface Party {
   contacts: Contact[];
 }
 
-export interface MobileInvitationMessageMappedProps {
+interface MobileInvitationMessageMappedProps {
   parties: Party[];
 }
 
@@ -26,10 +26,10 @@ type CoupleSide = MobileInvitationContent["groom"];
 type Parent = NonNullable<CoupleSide["father"]>;
 
 // 헬퍼 함수 1: 부모/신랑/신부 정보를 Contact 타입으로 변환
-function createContact(
+const createContact = (
   person: CoupleSide | Parent | undefined,
   relation: string,
-): Contact | undefined {
+): Contact | undefined => {
   if (!person?.name || !person.phone) {
     return undefined;
   }
@@ -41,7 +41,7 @@ function createContact(
 }
 
 // 헬퍼 함수 2: 부모님 이름 목록 생성
-function getParentNames(parents: CoupleSide): ParentName[] {
+const getParentNames = (parents: CoupleSide): ParentName[] => {
   const list: ParentName[] = [];
   if (parents.father?.name) {
     list.push({ label: "아버님", name: parents.father.name });
@@ -57,9 +57,9 @@ function getParentNames(parents: CoupleSide): ParentName[] {
  * @param coupleInfoData - 청첩장 콘텐츠
  * @returns MobileInvitationMessage 컴포넌트가 필요로 하는 `parties` 배열을 포함한 객체
  */
-export function mapCoupleInfoToMobileInvitationProps(
+const mapCoupleInfoToMobileInvitationProps = (
   coupleInfoData: MobileInvitationContent,
-): MobileInvitationMessageMappedProps {
+): MobileInvitationMessageMappedProps => {
   // 1. 신랑측 연락처 배열 생성
   const groomSideContacts = [
     createContact(coupleInfoData.groom, "신랑"),
@@ -92,3 +92,5 @@ export function mapCoupleInfoToMobileInvitationProps(
 
   return { parties: displayParties };
 }
+
+export { mapCoupleInfoToMobileInvitationProps, type MobileInvitationMessageMappedProps };

@@ -10,29 +10,31 @@ props로 받은 핸들러를 전달하는 상호작용도 동작으로 센다. �
 
 ## 현재 예시
 
-| 파일              | 조합                        | 동작             |
-| ----------------- | --------------------------- | ---------------- |
-| `Alert.tsx`       | Typography                  | 상태 메시지 표시 |
-| `ProductCard.tsx` | AppImage, Badge, Typography | 상품 요약 표시   |
+| 파일                     | 조합                        | 동작           |
+| ------------------------ | --------------------------- | -------------- |
+| `AdminListHeading.tsx`   | Typography                  | 제목 표시      |
+| `TableShell.tsx`         | Table                       | 표 헤더 표시   |
+| `ProductCard.tsx`        | AppImage, Badge, Typography | 상품 요약 표시 |
 
-`TextField`와 `FormField`는 현재 `organisms/`에 있다. 이름에 `Field`가 붙었는지, 바로 사용할 수 있는지는 molecule 판정 근거가 아니다.
+`InputField`와 `FieldFrame`은 현재 `organisms/`에 있다. 이름에 `Field`가 붙었는지, 바로 사용할 수 있는지는 molecule 판정 근거가 아니다.
 
 ## Structure
 
 ```text
 src/ui/components/molecules/
-├── Alert.tsx
-├── AutoCompleteList.tsx
-├── BaseSelect.tsx
-├── CursorPagination.tsx
-├── ProductCard.tsx
-└── ...              # 축 A/B 판정마다 추가되는 molecule
+├── AdminListHeading/
+│   ├── AdminListHeading.tsx
+│   ├── AdminListHeading.component.test.tsx
+│   └── index.ts
+├── AutoCompleteList/
+│   ├── AutoCompleteList.tsx
+│   └── index.ts
+└── ...              # 축 A/B 판정마다 추가되는 molecule 디렉토리
 ```
 
 ## Critical Convention
 
-- 완전한 flat 구조를 유지하고 하위 폴더를 만들지 않는다.
-- 파일명과 export 이름은 PascalCase로 짓는다.
+- export 이름은 PascalCase로 짓는다.
 - 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다.
 - 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.
 - 유일한 직접 소비자가 이미 여러 라우트에서 쓰이는 공용 컴포넌트라면 그 하위 molecule은 이 폴더에 둘 수 있다.

@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 const FADE_DELAY = { 1: 0.1, 2: 0.25, 3: 0.4, 4: 0.6, 5: 0.75 } as const;
 
@@ -126,7 +126,11 @@ export default function NotFound() {
             className="mb-6"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[2] }}
+            transition={{
+              duration: 0.7,
+              ease: "easeOut",
+              delay: FADE_DELAY[2],
+            }}
           >
             <svg
               width="48"
@@ -161,7 +165,11 @@ export default function NotFound() {
             }}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[3] }}
+            transition={{
+              duration: 0.7,
+              ease: "easeOut",
+              delay: FADE_DELAY[3],
+            }}
           >
             404
           </motion.p>
@@ -170,7 +178,11 @@ export default function NotFound() {
             className="text-foreground text-xl font-[var(--font-NotoSerif)] font-semibold tracking-tight"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[3] }}
+            transition={{
+              duration: 0.7,
+              ease: "easeOut",
+              delay: FADE_DELAY[3],
+            }}
           >
             페이지를 찾을 수 없습니다
           </motion.h1>
@@ -179,7 +191,11 @@ export default function NotFound() {
             className="my-6 flex items-center gap-3"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[4] }}
+            transition={{
+              duration: 0.7,
+              ease: "easeOut",
+              delay: FADE_DELAY[4],
+            }}
           >
             <div
               className="h-px w-10"
@@ -200,7 +216,11 @@ export default function NotFound() {
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[4] }}
+            transition={{
+              duration: 0.7,
+              ease: "easeOut",
+              delay: FADE_DELAY[4],
+            }}
           >
             <TypographyMuted className="max-w-[260px] text-center leading-relaxed">
               요청하신 청첩장 또는 페이지가
@@ -213,10 +233,14 @@ export default function NotFound() {
             className="mt-10"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: "easeOut", delay: FADE_DELAY[5] }}
+            transition={{
+              duration: 0.7,
+              ease: "easeOut",
+              delay: FADE_DELAY[5],
+            }}
           >
             <Link
-              href={routes.home}
+              href={ROUTES.home}
               onMouseEnter={() => setIsCtaHovered(true)}
               onMouseLeave={() => setIsCtaHovered(false)}
               className="border-foreground text-foreground hover:text-background relative inline-block overflow-hidden border px-10 py-3 text-sm font-[var(--font-NotoSerif)] font-medium tracking-widest transition-colors duration-[350ms] ease-out"

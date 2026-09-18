@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminProductsPageService } from "@/services/product";
-import { adminProductListRequestSchema } from "@/core/schemas/request/adminProductList.schema";
+import { AdminProductListRequestSchema } from "@/core/schemas/request/adminProductList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminProductsTemplate } from "@/app/(admin)/admin/products/_components/AdminProductsTemplate";
@@ -13,18 +13,20 @@ import { AdminProductsTemplate } from "@/app/(admin)/admin/products/_components/
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(adminProductListRequestSchema, {
+  const parsed = validateAndFlatten(AdminProductListRequestSchema, {
+    q: typeof searchParams.q === "string" ? searchParams.q : null,
     view: typeof searchParams.view === "string" ? searchParams.view : null,
-    cursor: typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+    cursor:
+      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};
 
-  const { view, cursor } = parsed.data;
+  const { q, view, cursor } = parsed.data;
   if (cursor && !decodeCursor(cursor)) {
-    return { view };
+    return { q, view };
   }
-  return { view, cursor };
+  return { q, view, cursor };
 };
 
 export default async function ProductsPage({
@@ -34,8 +36,10 @@ export default async function ProductsPage({
 }) {
   await verifySession("ADMIN");
 
-  const { view = "active", cursor } = resolveFilters(await searchParams);
-  const page = await getAdminProductsPageService({ view, cursor });
+  const { view = "active", q, cursor } = resolveFilters(await searchParams);
+  const page = await getAdminProductsPageService({ view, q, cursor });
 
-  return <AdminProductsTemplate page={page} view={view} cursor={cursor} />;
+  return (
+    <AdminProductsTemplate page={page} view={view} q={q} cursor={cursor} />
+  );
 }

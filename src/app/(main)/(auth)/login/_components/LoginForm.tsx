@@ -2,14 +2,15 @@ import Link from "next/link";
 import { Globe } from "lucide-react";
 
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Label } from "@/ui/components/atoms/label";
+import { Field, FieldLabel } from "@/ui/components/atoms/field";
 
-
-
-import { TextField } from "@/ui/components/organisms/TextField";
-import { routes } from "@/core/domain/routes";
+import { InputField } from "@/ui/components/organisms/InputField";
+import { ROUTES } from "@/core/domain/routes";
 interface LoginFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
@@ -17,53 +18,53 @@ interface LoginFormProps {
   passwordError?: string;
 }
 
-export function LoginForm({
+const LoginForm = ({
   action,
   pending,
   emailError,
   passwordError,
-}: LoginFormProps) {
+}: LoginFormProps) => {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">로그인</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-[var(--font-NotoSerif)] font-bold">
+          로그인
+        </TypographyH1>
         <TypographyMuted className="text-sm">
           계정에 로그인하여 청첩장을 만들어보세요
         </TypographyMuted>
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField
+        <InputField
           id="email"
           name="email"
+          label="이메일"
           type="email"
           placeholder="your@email.com"
           required
           error={emailError}
-        >
-          이메일
-        </TextField>
+        />
 
-        <TextField
+        <InputField
           id="password"
           name="password"
+          label="비밀번호"
           type="password"
           placeholder="••••••••"
           required
           error={passwordError}
-        >
-          비밀번호
-        </TextField>
+        />
 
-        <div className="flex items-center gap-2">
+        <Field orientation="horizontal" className="gap-2">
           <Checkbox id="remember" name="remember" />
-          <Label
+          <FieldLabel
             htmlFor="remember"
             className="cursor-pointer text-sm font-normal"
           >
             로그인 상태 유지
-          </Label>
-        </div>
+          </FieldLabel>
+        </Field>
 
         <Button type="submit" className="w-full" size="lg" disabled={pending}>
           {pending ? "로그인 중..." : "로그인"}
@@ -98,7 +99,7 @@ export function LoginForm({
         <TypographyMuted>
           아직 계정이 없으신가요?{" "}
           <Link
-            href={routes.signup}
+            href={ROUTES.signup}
             className="text-primary font-medium hover:underline"
           >
             회원가입
@@ -106,14 +107,14 @@ export function LoginForm({
         </TypographyMuted>
         <div className="flex items-center justify-center gap-2 text-sm">
           <Link
-            href={routes.findId}
+            href={ROUTES.findId}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             아이디 찾기
           </Link>
           <span className="text-muted-foreground">·</span>
           <Link
-            href={routes.findPw}
+            href={ROUTES.findPw}
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
             비밀번호 찾기
@@ -122,4 +123,6 @@ export function LoginForm({
       </div>
     </div>
   );
-}
+};
+
+export { LoginForm };

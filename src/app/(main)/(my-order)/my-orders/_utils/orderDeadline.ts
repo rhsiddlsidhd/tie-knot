@@ -7,7 +7,7 @@ const DAY_IN_MS = 24 * 60 * 60 * 1000;
  * 계산한다. 하루가 채 안 남았으면 0(오늘 마감), 이미 지났으면 음수를 리턴해 호출부가
  * "기한 경과"를 구분할 수 있게 한다.
  */
-export const getMobileInvitationInputDaysLeft = (
+const getMobileInvitationInputDaysLeft = (
   confirmedAt: Date | string,
   now: Date = new Date(),
 ): number => {
@@ -16,3 +16,5 @@ export const getMobileInvitationInputDaysLeft = (
 
   return Math.floor((deadline - now.getTime()) / DAY_IN_MS);
 };
+
+export { getMobileInvitationInputDaysLeft };

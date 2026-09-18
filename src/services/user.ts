@@ -1,20 +1,28 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import type { Types } from "mongoose";
 import mongoose from "mongoose";
 import type { AdminUserListPage, UserRole } from "@/core/domain/user";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
 import { USER_ROLES } from "@/core/domain/user";
-import type { BaseUser, IUser } from "@/models/user.model";
+import type { BaseUser, UserDocument } from "@/models/user.model";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { hashPassword } from "@/adapters/server/bcrypt/hash";
 import { decrypt } from "@/adapters/server/jose/decrypt";
 import { encrypt } from "@/adapters/server/jose/encrypt";
 import { deleteCookie } from "@/adapters/server/cookies/delete";
 import { sendEmail } from "@/adapters/server/nodemailer/send";
-import { routes } from "@/core/domain/routes";
-import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import { ROUTES } from "@/core/domain/routes";
+import {
+  decodeCursor,
+  encodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
+
+const PASSWORD_RESET_COOLDOWN_MS = 60_000;
 
 const getAppBaseUrl = (): string => {
   const baseUrl =
@@ -33,21 +41,21 @@ const getAppBaseUrl = (): string => {
 };
 
 // 유저 생성
-export const createUser = async (user: BaseUser): Promise<IUser> => {
+const createUser = async (user: BaseUser): Promise<UserDocument> => {
   await dbConnect();
   const newUser = await new UserModel(user).save();
   return newUser;
 };
 
 // 이메일 중복 확인
-export const checkEmailDuplicate = async (email: string): Promise<boolean> => {
+const checkEmailDuplicate = async (email: string): Promise<boolean> => {
   await dbConnect();
   const exists = await UserModel.exists({ email });
   return !!exists;
 };
 
 // 유저 email 찾기
-export const getUserEmail = async ({
+const getUserEmail = async ({
   name,
   phone,
 }: {
@@ -61,15 +69,15 @@ export const getUserEmail = async ({
 };
 
 // 유저 ID로 유저 찾기
-export const getUserById = async (id: string): Promise<IUser> => {
+const getUserById = async (id: string): Promise<UserDocument> => {
   await dbConnect();
-  const user = await UserModel.findById(id).lean<IUser>();
+  const user = await UserModel.findById(id).lean<UserDocument>();
   if (!user) throw new AppError("NOT_FOUND", "유저를 찾을 수가 없습니다.");
   return user;
 };
 
 // 비밀번호 변경 함수
-export const changePassword = async (
+const changePassword = async (
   email: string,
   newPassword: string,
 ): Promise<boolean> => {
@@ -93,7 +101,7 @@ export const changePassword = async (
   return !!userBeforeUpdate;
 };
 
-export async function signupUserService({
+const signupUserService = async ({
   email,
   name,
   phone,
@@ -103,46 +111,103 @@ export async function signupUserService({
   name: string;
   phone: string;
   password: string;
-}): Promise<void> {
+}): Promise<void> => {
   if (await checkEmailDuplicate(email)) {
     throw new AppError("VALIDATION", "이미 존재하는 이메일 입니다.");
   }
-  await createUser({ email, name, phone, password: await hashPassword(password) });
-}
+  await createUser({
+    email,
+    name,
+    phone,
+    password: await hashPassword(password),
+  });
+};
 
-export async function requestPasswordResetService(email: string): Promise<void> {
+const consumePasswordResetToken = async ({
+  email,
+  tokenId,
+  newPassword,
+}: {
+  email: string;
+  tokenId: string;
+  newPassword: string;
+}): Promise<boolean> => {
+  await dbConnect();
+  const hashedNewPassword = await hashPassword(newPassword);
+  const updated = await UserModel.findOneAndUpdate(
+    { email, passwordResetTokenId: tokenId },
+    { password: hashedNewPassword, passwordResetTokenId: null },
+    { runValidators: true },
+  );
+  return !!updated;
+};
+
+const requestPasswordResetService = async (email: string): Promise<void> => {
   if (!(await checkEmailDuplicate(email))) {
     throw new AppError("VALIDATION", "등록되지 않은 이메일입니다.");
   }
-  const token = await encrypt({ id: email, type: "ENTRY" });
+
+  await dbConnect();
+  const cutoff = new Date(Date.now() - PASSWORD_RESET_COOLDOWN_MS);
+  const cooldownPassed = await UserModel.findOneAndUpdate(
+    {
+      email,
+      $or: [
+        { lastPasswordResetRequestedAt: null },
+        { lastPasswordResetRequestedAt: { $lt: cutoff } },
+      ],
+    },
+    { $set: { lastPasswordResetRequestedAt: new Date() } },
+  );
+  if (!cooldownPassed) {
+    throw new AppError("VALIDATION", "잠시 후 다시 시도해주세요.");
+  }
+
+  const jti = randomUUID();
+  const token = await encrypt({ id: email, type: "ENTRY", jti });
+  await UserModel.findOneAndUpdate(
+    { email },
+    { passwordResetTokenId: jti },
+    { runValidators: true },
+  );
   const path = new URL(
-    `${routes.changePw}?t=${encodeURIComponent(token)}`,
+    `${ROUTES.changePw}?t=${encodeURIComponent(token)}`,
     getAppBaseUrl(),
   ).toString();
   await sendEmail({ email, path });
-}
+};
 
-export async function resetUserPasswordService({
+const resetUserPasswordService = async ({
   token,
   password,
 }: {
   token: string;
   password: string;
-}): Promise<void> {
+}): Promise<void> => {
   const { payload } = await decrypt({ token, type: "ENTRY" });
-  if (!payload.id) {
+  if (!payload.id || !payload.jti) {
     throw new AppError(
       "UNAUTHENTICATED",
       "유효하지 않거나 만료된 토큰입니다. 비밀번호 재설정을 다시 시도해주세요.",
     );
   }
-  if (!(await changePassword(payload.id, password))) {
-    throw new AppError("NOT_FOUND", "해당 계정을 찾을 수 없습니다. 이메일 주소를 확인해주세요.");
+  if (
+    !(await consumePasswordResetToken({
+      email: payload.id,
+      tokenId: payload.jti,
+      newPassword: password,
+    }))
+  ) {
+    throw new AppError(
+      "UNAUTHENTICATED",
+      "유효하지 않거나 만료된 토큰입니다. 비밀번호 재설정을 다시 시도해주세요.",
+    );
   }
   await deleteCookie("userEmail");
-}
+};
 
 type AdminUserListQuery = {
+  q?: string;
   role?: UserRole;
   cursor?: string;
   limit?: number;
@@ -161,9 +226,11 @@ type AdminUserListRow = {
  * 관리자 전역 사용자 목록 한 페이지 — 활동/탈퇴 여부와 무관하게 전체 사용자를
  * 대상으로 한다(deletedAt으로 걸러내지 않는다). 정렬·커서 계약(createdAt desc, _id
  * tie-break, limit+1)은 주문 목록과 동일하되, 비밀번호·전화번호·인증 관련 필드는
- * select 단계에서부터 제외한다.
+ * select 단계에서부터 제외한다. 검색(q)은 이름/이메일 부분일치를 하나의 $or로
+ * 묶는다(#309).
  */
-export const getAdminUsersPageService = async ({
+const getAdminUsersPageService = async ({
+  q,
   role,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
@@ -177,10 +244,24 @@ export const getAdminUsersPageService = async ({
     throw new AppError("VALIDATION", "잘못된 사용자 역할입니다.");
   }
 
-  const filter: mongoose.FilterQuery<IUser> = {};
+  const filter: mongoose.FilterQuery<UserDocument> = {};
 
   if (role) {
     filter.role = role;
+  }
+
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: mongoose.FilterQuery<UserDocument>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    conditions.push({
+      $or: [
+        { name: { $regex: escapeRegExp(term), $options: "i" } },
+        { email: { $regex: escapeRegExp(term), $options: "i" } },
+      ],
+    });
   }
 
   if (cursor) {
@@ -188,13 +269,19 @@ export const getAdminUsersPageService = async ({
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
+    conditions.push({
+      $or: [
+        { createdAt: { $lt: decoded.createdAt } },
+        {
+          createdAt: decoded.createdAt,
+          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
+        },
+      ],
+    });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await UserModel.find(filter)
@@ -230,4 +317,16 @@ export const getAdminUsersPageService = async ({
           })
         : null,
   };
+};
+
+export {
+  createUser,
+  checkEmailDuplicate,
+  getUserEmail,
+  getUserById,
+  changePassword,
+  signupUserService,
+  requestPasswordResetService,
+  resetUserPasswordService,
+  getAdminUsersPageService,
 };

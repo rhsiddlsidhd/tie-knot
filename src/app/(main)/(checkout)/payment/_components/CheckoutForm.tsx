@@ -25,7 +25,7 @@ interface CheckoutFormProps {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-export function CheckoutForm({
+const CheckoutForm = ({
   loading,
   paymentStatus,
   agreed,
@@ -36,7 +36,7 @@ export function CheckoutForm({
   shippingErrors,
   pending,
   onSubmit,
-}: CheckoutFormProps) {
+}: CheckoutFormProps) => {
   if (loading) {
     return (
       <div className="flex min-h-100 items-center justify-center">
@@ -77,3 +77,5 @@ export function CheckoutForm({
     </div>
   );
 }
+
+export { CheckoutForm };

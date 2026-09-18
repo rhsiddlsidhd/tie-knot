@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
-import type { APIRouteResponse } from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getOrdersPageForUser } from "@/services/order";
 import { requireAuth } from "@/services/auth";
-import { orderListRequestSchema } from "@/core/schemas/request/orderList.schema";
+import { OrderListRequestSchema } from "@/core/schemas/request/orderList.schema";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import type { OrderListPage } from "@/core/domain/order";
 import { AppError } from "@/core/domain/error";
@@ -16,14 +16,14 @@ import { AppError } from "@/core/domain/error";
  * 자동취소 lazy-check(cancelExpired*)는 여기서 호출하지 않는다 — PortOne 환불 API를
  * 실제로 부르므로 필터 전환·더보기마다 도는 것을 막아야 한다(첫 진입 RSC에서만 1회).
  */
-export const GET = async (
+const GET = async (
   request: NextRequest,
-): Promise<APIRouteResponse<OrderListPage>> => {
+): Promise<ApiRouteResponse<OrderListPage>> => {
   try {
     const { userId } = await requireAuth();
 
     const { searchParams } = new URL(request.url);
-    const parsed = validateAndFlatten(orderListRequestSchema, {
+    const parsed = validateAndFlatten(OrderListRequestSchema, {
       status: searchParams.get("status"),
       category: searchParams.get("category"),
       cursor: searchParams.get("cursor"),
@@ -40,3 +40,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

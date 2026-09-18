@@ -1,5 +1,5 @@
 // 정적 셸 — 실제 FAQ/문의 폼(API 연동)은 별도 작업(원래 page.tsx 주석과 동일한 이유).
-export const MOCK_FAQS = [
+const MOCK_FAQS = [
   {
     question: "주문 후 제작 기간은 얼마나 걸리나요?",
     answer: "주문 후 영업일 기준 1~2일 내 제작이 시작되며, 평균 3~5일 내 발송됩니다.",
@@ -13,3 +13,5 @@ export const MOCK_FAQS = [
     answer: "청첩장 발행 전까지는 언제든 자유롭게 수정할 수 있습니다.",
   },
 ] as const;
+
+export { MOCK_FAQS };

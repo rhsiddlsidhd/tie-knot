@@ -2,11 +2,11 @@
 
 import { incrementProductViewsService } from "@/services/product";
 import { actionError } from "@/boundary";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 
-export const incrementProductViews = async (
+const incrementProductViews = async (
   productId: string,
-): Promise<APIResponse<{ success: boolean }>> => {
+): Promise<ApiResponse<{ success: boolean }>> => {
   try {
     const success = await incrementProductViewsService(productId);
     return { success: true, data: { success } };
@@ -14,3 +14,5 @@ export const incrementProductViews = async (
     return actionError(e);
   }
 };
+
+export { incrementProductViews };

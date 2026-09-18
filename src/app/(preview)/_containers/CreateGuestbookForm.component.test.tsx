@@ -19,8 +19,11 @@ import { toast } from "sonner";
 import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
 import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
 import { StoreProvider } from "@/ui/stores/provider";
-import { GuestbookDemoProvider, useGuestbookDemo } from "@/ui/context/guestbookDemo/provider";
-import { INITIAL_GUESTBOOK_DEMO_STATE } from "@/ui/context/guestbookDemo/reducer";
+import {
+  GuestbookDemoProvider,
+  useGuestbookDemo,
+} from "@/ui/context/guestbookDemo/provider";
+import { initialGuestbookDemoState } from "@/ui/context/guestbookDemo/reducer";
 import { CreateGuestbookForm } from "./CreateGuestbookForm";
 
 const DemoEntriesProbe = () => {
@@ -35,7 +38,7 @@ let testStore: AppStoreApi;
 const renderForm = (payload: unknown) =>
   render(
     <StoreProvider store={testStore}>
-      <GuestbookDemoProvider initialValue={INITIAL_GUESTBOOK_DEMO_STATE}>
+      <GuestbookDemoProvider initialValue={initialGuestbookDemoState}>
         <Dialog open>
           <DialogContent>
             <CreateGuestbookForm payload={payload} />
@@ -46,7 +49,11 @@ const renderForm = (payload: unknown) =>
     </StoreProvider>,
   );
 
-const fillAndSubmit = async (author: string, password: string, message: string) => {
+const fillAndSubmit = async (
+  author: string,
+  password: string,
+  message: string,
+) => {
   const user = userEvent.setup();
   await user.type(screen.getByLabelText("이름"), author);
   await user.type(screen.getByLabelText("비밀번호"), password);
@@ -80,7 +87,9 @@ describe("CreateGuestbookForm (컨테이너)", () => {
         expect(testStore.getState().guestbookModalIsOpen).toBe(false),
       );
       expect(refreshMock).toHaveBeenCalled();
-      expect(toast.message).toHaveBeenCalledWith("방명록 작성이 완료되었습니다.");
+      expect(toast.message).toHaveBeenCalledWith(
+        "방명록 작성이 완료되었습니다.",
+      );
       expect(screen.getByText("최신항목:박서준")).toBeInTheDocument();
     });
   });

@@ -1,13 +1,13 @@
-import type { APIRouteResponse} from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getSubwayStationLines } from "@/services/subway";
 import type { SubwayStationLineInfoResponse } from "@/core/schemas/response/subway.schema";
 import type { NextRequest } from "next/server";
 
-export const GET = async (
+const GET = async (
   _req: NextRequest,
   { params }: { params: Promise<{ station: string }> },
-): Promise<APIRouteResponse<SubwayStationLineInfoResponse>> => {
+): Promise<ApiRouteResponse<SubwayStationLineInfoResponse>> => {
   try {
     const { station } = await params;
 
@@ -16,3 +16,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

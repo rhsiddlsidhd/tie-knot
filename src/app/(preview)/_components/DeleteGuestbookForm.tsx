@@ -1,9 +1,14 @@
-import { Alert } from "@/ui/components/molecules/Alert";
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { Button } from "@/ui/components/atoms/button";
-import { DialogClose, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import {
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/atoms/dialog";
 
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
 
 interface DeleteGuestbookFormProps {
@@ -11,16 +16,16 @@ interface DeleteGuestbookFormProps {
   publicKey: string;
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
 }
 
-export function DeleteGuestbookForm({
+const DeleteGuestbookForm = ({
   guestbookId,
   publicKey,
   action,
   pending,
   state,
-}: DeleteGuestbookFormProps) {
+}: DeleteGuestbookFormProps) => {
   const passwordError = getFieldError(state, "password");
 
   return (
@@ -35,10 +40,13 @@ export function DeleteGuestbookForm({
         </DialogDescription>
       </DialogHeader>
 
-      <TextField id="password" name="password" type="password">
-        비밀번호
-      </TextField>
-      {passwordError && <Alert type="error">{passwordError}</Alert>}
+      <InputField
+        id="password"
+        name="password"
+        label="비밀번호"
+        type="password"
+        error={passwordError}
+      />
 
       <DialogFooter>
         <DialogClose asChild>
@@ -50,4 +58,6 @@ export function DeleteGuestbookForm({
       </DialogFooter>
     </form>
   );
-}
+};
+
+export { DeleteGuestbookForm };

@@ -28,7 +28,7 @@ const runBatch = async <T>(
   }
 };
 
-export async function GET(request: Request): Promise<Response> {
+const GET = async (request: Request): Promise<Response> => {
   const secret = process.env.CRON_SECRET;
   if (!secret) {
     return Response.json({ error: "Cron is not configured" }, { status: 503 });
@@ -65,3 +65,5 @@ export async function GET(request: Request): Promise<Response> {
     { status: ok ? 200 : 500 },
   );
 }
+
+export { GET };

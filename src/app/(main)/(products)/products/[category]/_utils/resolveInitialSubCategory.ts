@@ -1,9 +1,9 @@
 import type { SubCategory } from "@/core/domain/product-category";
 
-export function resolveInitialSubCategory(
+const resolveInitialSubCategory = (
   querySubCategory: string | string[] | undefined,
   availableSubCategories: readonly SubCategory[],
-): SubCategory | "all" {
+): SubCategory | "all" => {
   if (typeof querySubCategory !== "string") return "all";
 
   const matchingSubCategory = availableSubCategories.find(
@@ -12,3 +12,5 @@ export function resolveInitialSubCategory(
 
   return matchingSubCategory ?? "all";
 }
+
+export { resolveInitialSubCategory };

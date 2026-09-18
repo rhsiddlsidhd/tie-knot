@@ -1,7 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { Input } from "@/ui/components/atoms/input";
 import { AddressField } from "@/ui/components/organisms/AddressField";
-import { FormField } from "@/ui/components/organisms/FormField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import type { ShippingInfo } from "@/core/schemas/request/order.schema";
 
 interface ShippingInfoCardProps {
@@ -12,7 +17,7 @@ interface ShippingInfoCardProps {
 // 실물 상품(favor/accessory/guestbook/ceremony) 주문일 때만 렌더된다 — 모바일초대장
 // 주문은 배송이 필요 없어 이 카드 자체가 트리에서 빠진다(CheckoutForm organism 참고).
 // 그래서 여기 렌더되면 모든 필드가 항상 필수다.
-export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
+const ShippingInfoCard = ({ step, errors }: ShippingInfoCardProps) => {
   return (
     <Card className="border-border">
       <CardHeader>
@@ -25,7 +30,11 @@ export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid gap-4 sm:grid-cols-2">
-          <FormField id="shippingReceiver" label="받는 분" error={errors.receiver?.[0]} required>
+          <FieldFrame
+            id="shippingReceiver"
+            label="받는 분"
+            error={errors.receiver?.[0]}
+          >
             <Input
               id="shippingReceiver"
               name="shippingReceiver"
@@ -34,8 +43,12 @@ export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
               required
               aria-invalid={!!errors.receiver?.[0]}
             />
-          </FormField>
-          <FormField id="shippingPhone" label="연락처" error={errors.phone?.[0]} required>
+          </FieldFrame>
+          <FieldFrame
+            id="shippingPhone"
+            label="연락처"
+            error={errors.phone?.[0]}
+          >
             <Input
               id="shippingPhone"
               name="shippingPhone"
@@ -44,7 +57,7 @@ export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
               required
               aria-invalid={!!errors.phone?.[0]}
             />
-          </FormField>
+          </FieldFrame>
         </div>
         <AddressField
           name="ship"
@@ -55,4 +68,6 @@ export function ShippingInfoCard({ step, errors }: ShippingInfoCardProps) {
       </CardContent>
     </Card>
   );
-}
+};
+
+export { ShippingInfoCard };

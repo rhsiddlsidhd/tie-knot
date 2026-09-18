@@ -57,7 +57,8 @@ description: "이 프로젝트(tie-knot)에서 새 엔드포인트·새 화면·
      ]
    }
    ```
-5. **`passes` 플래그는 리더만 갱신한다** — Phase4에서 acceptance 충족을 리더가 직접 판단했을 때만 `true`. 팀원이 이 파일을 쓰지 않도록 kickoff 메시지에서 명시.
+5. kickoff 공통 고지에 포함: **목적 밖 결함을 발견해도 이 브랜치에서 함께 고치지 않는다** — 리더에게 보고하고 리더가 별도 Issue로 등록한다(프로젝트 `AGENTS.md`)
+6. **`passes` 플래그는 리더만 갱신한다** — Phase4에서 acceptance 충족을 리더가 직접 판단했을 때만 `true`. 팀원이 이 파일을 쓰지 않도록 kickoff 메시지에서 명시.
 
 ### Phase 1: 설계 팬아웃 (에이전트 팀)
 
@@ -78,12 +79,17 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
    git worktree add -b feat/{name}--backend  ../tie-knot--{name}-backend  feat/{name}
    git worktree add -b feat/{name}--frontend ../tie-knot--{name}-frontend feat/{name}
    ```
-   각 워크트리에서 `npm install` 새로 (node_modules 심볼릭 금지)
+   각 워크트리를 **반드시 부트스트랩한다** — 빠뜨리면 테스트가 코드와 무관하게 가짜로 실패한다:
+   ```
+   cd ../tie-knot--{name}-backend && npm ci && cp /home/claude/tie-knot/.env .env
+   ```
+   `npm ci`(lockfile 기준, `npm install` 아님) + 메인 워크트리의 `.env` 복사, frontend 워크트리도 동일. `node_modules` 심볼릭 링크 금지(`~/.codex/docs/GIT.md`)
 2. 유휴 스폰 (한 메시지 병렬): backend-impl(sonnet), frontend-impl(sonnet), boundary-verifier(opus, `boundary-verify` 스킬 사용 지시 포함) → id 확보. backend-impl/frontend-impl에게 각자 워크트리 절대경로를 작업 위치로 명시
 3. kickoff SendMessage 공통:
    - 동료 2명의 id
    - `01_api_contract.md`/`01_ui_flow.md`/`01_db_schema.md` 경로(표준 브랜치 쪽 `_workspace/`, 워크트리 안이 아님)
    - "표준 브랜치는 `~/.codex/docs/GIT.md`의 '작업 1개=브랜치 1개' 그 자체다. 지금 워크트리는 병렬 쓰기 충돌을 막는 내부 메커니즘이고 이 Phase 끝나면 사라진다"
+   - backend-impl/frontend-impl에게: "이 저장소는 PreToolUse TDD gate가 걸려 있다 — 형제 테스트 없는 `src/` 편집은 차단된다. 구현 전에 대응 테스트로 red를 먼저 만들어라. `tooling/tdd-gate/policy.json`의 exclude를 임의로 늘리지 말고 필요하면 리더에게 요청하라"
    - frontend-impl에게: "backend 완성 기다리지 말고 계약 shape 그대로 mock부터 만들어 전부 연결하라(mock-first)"
    - backend-impl/frontend-impl에게: "유닛(엔드포인트/화면) 하나 끝나면 자기 워크트리 브랜치에 `~/.codex/docs/GIT.md` 포맷(`feat: ...`)으로 커밋 → boundary-verifier에게 검증 요청 → PASS 받으면 그 즉시 리더에게 병합 요청 SendMessage(브랜치명+커밋 확인 포함) — 다 끝날 때까지 몰아두지 말 것"
    - boundary-verifier에게: "완성 알림마다 즉시 판정, 두 워크트리 절대경로를 동시에 Read해서 교차비교, REDO 카운터는 `_workspace/feat/{name}/03_boundary/{endpoint-slug}.json`에 기록"
@@ -108,8 +114,11 @@ Phase2("구현")와 Phase3("검증 루프")는 별도 팀 재구성 없이 **하
 
 ### Phase 5: 정리 + PR
 
+0. **진입 게이트** — `_workspace/feat/{name}/04_test_report.md`가 실제 파일로 존재하는지 확인한다. 없으면 Phase5로 넘어가지 않는다: test-suite가 반환값만 주고 파일을 안 남긴 경우이므로 재호출해 파일부터 받는다(과거 실행 6건 중 1건이 이 파일 없이 종료됐다). 반환값 요약을 리더가 대신 옮겨 적어 게이트를 통과시키지 않는다 — 실행 명령과 결과는 테스트를 실제로 돌린 쪽만 안다.
 1. `_workspace/feat/{name}/` 보존(삭제하지 않음 — 브랜치는 나중에 머지되면 삭제돼도 이 디렉토리는 남는다. 재실행 시 Phase0 3번 분기가 처리)
 2. **모든 REQ의 acceptance가 충족됐다면(Phase4 통과), 확인질문 없이 `gh pr create --base dev`로 PR을 생성한다.** PR 본문에 `04_integration_report.md` 요약과 `MANUAL_INTERVENTION_REQUIRED` 항목(있다면 반드시)을 포함시킨다. **Merge는 항상 사람이 직접 한다** — 하네스는 merge를 실행하지 않고, auto-merge 설정도 걸지 않는다.
+   - **PR 제목은 프로젝트 `AGENTS.md`의 한국어 규칙을 따른다**: `feat: {한국어 서술형}` 또는 `feat({scope}): {한국어 서술형}`, 72자 이내, 마침표 없음, squash merge 결과로 써도 의미가 완전할 것. 로컬 커밋 메시지는 영문 그대로다
+   - **CI required check는 `static`(lint/tsc/build) 하나뿐이고 vitest·playwright는 CI에서 돌지 않는다**(`docs/validation/ci-gates.md`). PR 본문의 test plan에 `04_test_report.md`가 기록한 실행 명령과 결과를 그대로 옮긴다 — 그게 유일한 테스트 근거다
 3. 시작점이 된 GitHub Issue 번호가 있으면 PR 본문에 `Closes #번호`를 남긴다. 직접 해결하지 않고 관련만 있으면 `Related to #번호`를 사용한다.
 4. 사용자에게 요약 보고: 완료된 REQ 항목, 남은 `MANUAL_INTERVENTION_REQUIRED` 항목(있다면 강조), PR 링크와 Issue 연결 상태, 생성/수정된 주요 파일 목록
 

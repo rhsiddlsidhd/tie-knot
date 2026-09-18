@@ -209,6 +209,100 @@ describe("user", () => {
       );
     };
 
+    describe("검색(q)", () => {
+      it("이름 부분일치로 찾는다", async () => {
+        await UserModel.create(buildUserInput({ name: "김철수" }));
+        await UserModel.create(
+          buildUserInput({ name: "박영희", email: "young@example.com" }),
+        );
+
+        const result = await getAdminUsersPageService({ q: "철수" });
+
+        expect(result.items.map((u) => u.name)).toEqual(["김철수"]);
+      });
+
+      it("이메일 부분일치로 찾는다", async () => {
+        await UserModel.create(buildUserInput({ email: "chulsoo@example.com" }));
+        await UserModel.create(
+          buildUserInput({ name: "박영희", email: "young@example.com" }),
+        );
+
+        const result = await getAdminUsersPageService({ q: "chulsoo" });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      it("대소문자를 무시한다", async () => {
+        await UserModel.create(buildUserInput({ email: "ChulSoo@example.com" }));
+
+        const result = await getAdminUsersPageService({ q: "chulsoo" });
+
+        expect(result.items).toHaveLength(1);
+      });
+
+      it("정규식 특수문자를 글자 그대로 찾는다", async () => {
+        await UserModel.create(buildUserInput({ name: "김(철수)" }));
+        await UserModel.create(
+          buildUserInput({ name: "김철수", email: "young@example.com" }),
+        );
+
+        const result = await getAdminUsersPageService({ q: "(철수)" });
+
+        expect(result.items.map((u) => u.name)).toEqual(["김(철수)"]);
+      });
+
+      it("조건에 맞는 사용자가 없으면 빈 배열을 리턴한다", async () => {
+        await UserModel.create(buildUserInput());
+
+        const result = await getAdminUsersPageService({ q: "없는사용자" });
+
+        expect(result.items).toEqual([]);
+      });
+
+      // 검색·role 필터·커서가 각자 $or를 쓰면 서로를 덮어쓴다 — 함께 걸렸을 때
+      // 전부 적용되는지가 이 계약의 핵심이다.
+      it("검색어와 role 필터를 함께 적용한다", async () => {
+        const target = await UserModel.create(
+          buildUserInput({ name: "김철수", role: "ADMIN" }),
+        );
+        await UserModel.create(
+          buildUserInput({ name: "김철수", role: "USER" }),
+        );
+
+        const result = await getAdminUsersPageService({
+          q: "철수",
+          role: "ADMIN",
+        });
+
+        expect(result.items.map((u) => u.id)).toEqual([target._id.toString()]);
+      });
+
+      it("검색어와 커서를 함께 적용한다", async () => {
+        for (let i = 0; i < 3; i += 1) {
+          await UserModel.create(buildUserInput({ name: "김철수" }));
+        }
+        await UserModel.create(
+          buildUserInput({ name: "박영희", email: "young@example.com" }),
+        );
+
+        const first = await getAdminUsersPageService({ q: "철수", limit: 2 });
+        expect(first.items).toHaveLength(2);
+        expect(first.nextCursor).not.toBeNull();
+
+        const second = await getAdminUsersPageService({
+          q: "철수",
+          limit: 2,
+          cursor: first.nextCursor!,
+        });
+
+        expect(second.items).toHaveLength(1);
+        expect(second.nextCursor).toBeNull();
+        expect(
+          [...first.items, ...second.items].every((u) => u.name === "김철수"),
+        ).toBe(true);
+      });
+    });
+
     it("createdAt 내림차순으로 정렬한다", async () => {
       const older = await UserModel.create(buildUserInput());
       const newer = await UserModel.create(buildUserInput());

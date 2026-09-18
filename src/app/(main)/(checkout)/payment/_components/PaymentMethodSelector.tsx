@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/
 import type { PayMethod } from "@/core/domain/payment";
 import { ArrowRightLeft, CreditCard, Landmark, Phone, Gift, Wallet } from "lucide-react";
 import React from "react";
-import { Alert } from "@/ui/components/molecules/Alert";
+import { FieldError } from "@/ui/components/atoms/field";
 import type { RadioFieldOption } from "@/ui/components/organisms/RadioField";
 import { RadioField } from "@/ui/components/organisms/RadioField";
 
@@ -59,16 +59,18 @@ const PaymentMethodSelector = ({ step, error }: { step: number; error?: string }
           <span className="bg-primary/10 text-primary flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold">
             {step}
           </span>
-          결제 수단 {error && <Alert type="error">{error}</Alert>}
+          결제 수단
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-2">
         <RadioField
           options={PAYMENT_METHODS}
           id="PaymentMethod"
           name="payMethod"
           defaultValue="CARD"
         />
+        {/* 제목이 아니라 선택지에 딸린 오류라 CardTitle 밖, 목록 아래에 둔다. */}
+        <FieldError>{error}</FieldError>
       </CardContent>
     </Card>
   );

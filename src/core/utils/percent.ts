@@ -1,4 +1,4 @@
-export type SignedPercentTrend = {
+type SignedPercentTrend = {
   label: string;
   direction: "up" | "down" | "flat";
 };
@@ -8,7 +8,7 @@ export type SignedPercentTrend = {
  * `null`을 반환한다 — 서비스 오픈 첫 달처럼 전월 실적이 없는 경우가 상시 경로다.
  * 부호/방향을 완성 문자열이 아니라 구조체로 반환해야 UI가 색상을 판정할 수 있다.
  */
-export const formatSignedPercent = (
+const formatSignedPercent = (
   current: number,
   previous: number,
 ): SignedPercentTrend | null => {
@@ -24,3 +24,5 @@ export const formatSignedPercent = (
     direction,
   };
 };
+
+export { formatSignedPercent, type SignedPercentTrend };

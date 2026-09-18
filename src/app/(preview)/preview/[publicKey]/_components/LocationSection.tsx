@@ -11,12 +11,12 @@ import { KakaoMap } from "./KakaoMap";
 import { Navigation } from "./Navigation";
 import type { LocationSectionProps } from "../_utils/locationSection.mapper";
 
-export function LocationSection({
+const LocationSection = ({
   venueName,
   address,
   addressDetail,
   subwayStation,
-}: LocationSectionProps) {
+}: LocationSectionProps) => {
   const fullAddress = addressDetail ? `${address} ${addressDetail}` : address;
   const { isCopied, copyToClipboard } = useCopy();
   const geoState = useNavigationGeo(fullAddress);
@@ -67,3 +67,5 @@ export function LocationSection({
     </EyebrowSection>
   );
 }
+
+export { LocationSection };

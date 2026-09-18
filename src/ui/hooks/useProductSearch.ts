@@ -10,7 +10,7 @@ import type { ErrorPayload } from "@/core/domain/error";
 // Product[]이기 때문이다(useProducts.ts 기존 선례와 동일, "as" 캐스팅 없이 그대로 흘려보내려면
 // 소비처 타입에 맞춰야 한다 — src/ui/hooks/AGENTS.md는 아직 이 불일치를 별도로 규정하지
 // 않지만 기존 코드가 이미 이 방향으로 통일돼 있다).
-export function useProductSearch(query: string) {
+const useProductSearch = (query: string) => {
   const trimmed = query.trim();
   const key = trimmed
     ? `/api/products/search?q=${encodeURIComponent(trimmed)}`
@@ -32,3 +32,5 @@ export function useProductSearch(query: string) {
     isIdle: key === null,
   };
 }
+
+export { useProductSearch };

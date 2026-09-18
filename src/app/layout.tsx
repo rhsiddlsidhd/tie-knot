@@ -23,7 +23,7 @@ const BASEURL =
     ? process.env.BASE_URL
     : process.env.DEPLOYMENT_BASE_URL;
 
-export const metadata: Metadata = {
+const metadata: Metadata = {
   title: "Home - Tie Knot",
   description: "모바일 청첩장을 쉽고 빠르게 만들어드립니다.",
   metadataBase: new URL(BASEURL),
@@ -82,3 +82,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+export { metadata };

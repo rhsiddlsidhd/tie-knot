@@ -3,13 +3,13 @@
 import { Search } from "lucide-react";
 import { Input } from "@/ui/components/atoms/input";
 
-export function SearchBar({
+const SearchBar = ({
   value,
   onChange,
 }: {
   value: string;
   onChange: (value: string) => void;
-}) {
+}) => {
   return (
     <form
       role="search"
@@ -31,3 +31,5 @@ export function SearchBar({
     </form>
   );
 }
+
+export { SearchBar };

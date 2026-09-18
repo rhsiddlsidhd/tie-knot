@@ -1,5 +1,3 @@
-"use client";
-
 import { BottomActionBar } from "@/ui/components/organisms/BottomActionBar";
 import { Spinner } from "@/ui/components/atoms/spinner";
 import { Save } from "lucide-react";
@@ -10,11 +8,11 @@ interface CheckoutSubmitBarProps {
   paymentStatus: PayStatus | "IDLE";
 }
 
-export function CheckoutSubmitBar({
+const CheckoutSubmitBar = ({
   disabled,
   pending,
   paymentStatus,
-}: CheckoutSubmitBarProps) {
+}: CheckoutSubmitBarProps) => {
   const isProcessing = pending || paymentStatus === "PENDING";
 
   return (
@@ -28,3 +26,5 @@ export function CheckoutSubmitBar({
     </BottomActionBar>
   );
 }
+
+export { CheckoutSubmitBar };

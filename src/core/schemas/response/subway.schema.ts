@@ -1,26 +1,35 @@
 import * as z from "zod";
 
 // GET /api/subway — 드롭다운용 전체 역명 목록. SelectField가 기대하는 {value,label} shape 그대로 유지.
-export const subwayStationOptionSchema = z.object({
+const SubwayStationOptionSchema = z.object({
   value: z.string(),
   label: z.string(),
 });
 
-export const subwayStationsResponseSchema = z.array(subwayStationOptionSchema);
+const SubwayStationsResponseSchema = z.array(SubwayStationOptionSchema);
 
-export type SubwayStationsResponse = z.infer<typeof subwayStationsResponseSchema>;
+type SubwayStationsResponse = z.infer<typeof SubwayStationsResponseSchema>;
 
 // GET /api/subway/[station] — 특정 역이 지나는 노선 + 노선 컬러.
-export const subwayLineSchema = z.object({
+const SubwayLineSchema = z.object({
   name: z.string(),
   color: z.string(),
 });
 
-export const subwayStationLineInfoResponseSchema = z.object({
+const SubwayStationLineInfoResponseSchema = z.object({
   station: z.string(),
-  lines: z.array(subwayLineSchema),
+  lines: z.array(SubwayLineSchema),
 });
 
-export type SubwayStationLineInfoResponse = z.infer<
-  typeof subwayStationLineInfoResponseSchema
+type SubwayStationLineInfoResponse = z.infer<
+  typeof SubwayStationLineInfoResponseSchema
 >;
+
+export {
+  SubwayStationOptionSchema,
+  SubwayStationsResponseSchema,
+  SubwayLineSchema,
+  SubwayStationLineInfoResponseSchema,
+  type SubwayStationsResponse,
+  type SubwayStationLineInfoResponse,
+};

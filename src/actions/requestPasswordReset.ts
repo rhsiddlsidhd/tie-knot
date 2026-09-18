@@ -1,15 +1,15 @@
 "use server";
 
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { emailSchema } from "@/core/schemas/request/email.schema";
-import type { APIResponse } from "@/core/domain/error";
+import { EmailSchema } from "@/core/schemas/request/email.schema";
+import type { ApiResponse } from "@/core/domain/error";
 import { requestPasswordResetService } from "@/services/user";
 import { actionError } from "@/boundary";
 
-export const requestPasswordReset = async (
+const requestPasswordReset = async (
   prev: unknown,
   formData: FormData,
-): Promise<APIResponse<{ message: string; email: string }>> => {
+): Promise<ApiResponse<{ message: string; email: string }>> => {
   // 이메일 비밀번호 재설정 링크 전송
   // nodeMailer 라이브러리 사용
 
@@ -17,7 +17,7 @@ export const requestPasswordReset = async (
     email: formData.get("email") as string,
   };
 
-  const parsed = validateAndFlatten(emailSchema, data);
+  const parsed = validateAndFlatten(EmailSchema, data);
 
   if (!parsed.success) {
     return {
@@ -42,3 +42,5 @@ export const requestPasswordReset = async (
     return actionError(e);
   }
 };
+
+export { requestPasswordReset };

@@ -11,7 +11,6 @@ import {
   CardContent,
   CardHeader,
 } from "@/ui/components/atoms/card";
-import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
 import {
   TypographyH1,
   TypographyMuted,
@@ -19,20 +18,20 @@ import {
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { isProductCategory } from "@/core/utils/category";
-import { calculatePrice } from "@/core/utils/price";
+import { calculatePrice, formatDiscountLabel } from "@/core/utils/price";
 import type { SubCategory } from "@/core/domain/product-category";
 import {
   MOBILE_INVITATION_CATEGORY,
-  productCategoryLabels,
-  subCategoryLabels,
+  PRODUCT_CATEGORY_LABELS,
+  SUB_CATEGORY_LABELS,
 } from "@/core/domain/product-category";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { ProductLikeBadge } from "../_containers/ProductLikeBadge";
 import { ProductOptions } from "./ProductOptions";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
-export function ProductSummary({
+const ProductSummary = ({
   product,
   options,
   onPurchase,
@@ -40,7 +39,7 @@ export function ProductSummary({
   product: Product;
   options: PremiumFeature[];
   onPurchase: (checkoutData: CheckoutItem) => void;
-}) {
+}) => {
   const discountedPrice = useMemo(() => {
     return calculatePrice(product.price, product.discount);
   }, [product.price, product.discount]);
@@ -58,11 +57,9 @@ export function ProductSummary({
               zoomOnHover
             />
 
-            <HoverDarkenOverlay />
-
             {product.category === MOBILE_INVITATION_CATEGORY && (
               <Link
-                href={routes.preview.sampleTheme(product.theme ?? "default")}
+                href={ROUTES.preview.sampleTheme(product.theme ?? "default")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="absolute inset-0 cursor-pointer"
@@ -103,10 +100,10 @@ export function ProductSummary({
               <div className="flex gap-2">
                 <Badge variant="outline">
                   {isProductCategory(product.category) &&
-                    productCategoryLabels[product.category]}
+                    PRODUCT_CATEGORY_LABELS[product.category]}
                 </Badge>
                 <Badge variant="outline">
-                  {subCategoryLabels[product.subCategory as SubCategory] ??
+                  {SUB_CATEGORY_LABELS[product.subCategory as SubCategory] ??
                     product.subCategory}
                 </Badge>
               </div>
@@ -148,9 +145,7 @@ export function ProductSummary({
                 {/* 할인이 있을 때: 할인율/금액 + 원가(취소선) */}
                 <div className="flex items-baseline gap-2">
                   <span className="text-primary text-sm font-bold">
-                    {product.discount.discountType === "rate"
-                      ? `${Math.round(product.discount.value * 100)}%`
-                      : `${product.discount.value.toLocaleString()}원 할인`}
+                    {formatDiscountLabel(product.discount)}
                   </span>
                   <span className="text-muted-foreground/40 text-sm line-through">
                     {product.price.toLocaleString()}원
@@ -204,4 +199,6 @@ export function ProductSummary({
       </div>
     </div>
   );
-}
+};
+
+export { ProductSummary };

@@ -1,10 +1,13 @@
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { TypographyH3 } from "@/ui/components/atoms/typography";
 
 import { BankField } from "@/ui/components/organisms/BankField";
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
@@ -14,7 +17,7 @@ type CoupleInfoSectionProps = {
   banks?: BanksResponse;
 };
 
-export function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
+const CoupleInfoSection = ({ data, banks }: CoupleInfoSectionProps) => {
   return (
     <Card>
       <CardHeader>
@@ -28,27 +31,25 @@ export function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
               신랑 정보
             </TypographyH3>
 
-            <TextField
+            <InputField
               id="groom.name"
               name="groom_name"
+              label="이름"
               type="text"
               placeholder="신랑 이름"
               defaultValue={data?.groom?.name}
               required
-            >
-              이름
-            </TextField>
+            />
 
-            <TextField
+            <InputField
               id="groom.phone"
               name="groom_phone"
+              label="연락처"
               type="tel"
               placeholder="010-1234-5678"
               defaultValue={data?.groom?.phone}
               required
-            >
-              연락처
-            </TextField>
+            />
 
             <BankField
               id="groom"
@@ -64,27 +65,25 @@ export function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
               신부 정보
             </TypographyH3>
 
-            <TextField
+            <InputField
               id="bride.name"
               name="bride_name"
+              label="이름"
               type="text"
               placeholder="신부 이름"
               defaultValue={data?.bride?.name}
               required
-            >
-              이름
-            </TextField>
+            />
 
-            <TextField
+            <InputField
               id="bride.phone"
               name="bride_phone"
+              label="연락처"
               type="tel"
               placeholder="010-1234-5678"
               defaultValue={data?.bride?.phone}
               required
-            >
-              연락처
-            </TextField>
+            />
 
             <BankField
               id="bride"
@@ -97,4 +96,6 @@ export function CoupleInfoSection({ data, banks }: CoupleInfoSectionProps) {
       </CardContent>
     </Card>
   );
-}
+};
+
+export { CoupleInfoSection };

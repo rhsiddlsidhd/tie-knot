@@ -65,3 +65,7 @@ ADR(Architecture Decision Record)은 프로젝트에 장기간 영향을 주는 
 | [0003](0003-order-scoped-invitation-model.md) | Accepted | 2026-08-19 | 주문 기반 청첩장 도메인 모델 |
 | [0004](0004-explicit-module-paths-over-barrels.md) | Accepted | 2026-09-02 | 배럴 없는 명시적 모듈 경로 |
 | [0005](0005-mobile-invitation-thumbnail-minimum.md) | Accepted | 2026-09-04 | 모바일 청첩장 발행 최소 요건 — 썸네일 정확히 3장 |
+| [0006](0006-named-exports-over-default.md) | Accepted | 2026-09-14 | src/ 전역 named export 강제와 Next.js 파일 컨벤션 예외 |
+| [0007](0007-per-component-directory-barrel.md) | Accepted | 2026-09-14 | 컴포넌트 디렉토리 단일 재수출 배럴 예외 |
+| [0008](0008-list-style-named-exports.md) | Superseded | 2026-09-14 | 컴포넌트 티어 list 스타일 named export 강제 |
+| [0009](0009-project-wide-list-style-named-exports.md) | Accepted | 2026-09-14 | 저장소 전역 list 스타일 named export 강제 |

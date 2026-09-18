@@ -5,13 +5,13 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/ui/components/atoms/button";
 import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/ui/stores/use-app-store";
-import type { OrderJSON } from "@/core/domain/order";
+import type { OrderJson } from "@/core/domain/order";
 import type { CheckoutItem } from "@/core/domain/checkout";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { completePayment } from "@/actions/completePayment";
 
-const PaymentButton = ({ order }: { order: OrderJSON }) => {
+const PaymentButton = ({ order }: { order: OrderJson }) => {
   const router = useRouter();
   const setOrder = useOrderStore((state) => state.setOrder);
   const setResumePayment = useOrderStore((state) => state.setResumePayment);
@@ -27,7 +27,7 @@ const PaymentButton = ({ order }: { order: OrderJSON }) => {
     setIsChecking(false);
 
     if (result.success && result.data.status === "PAID") {
-      router.push(routes.myOrders.detail(order._id));
+      router.push(ROUTES.myOrders.detail(order._id));
       return;
     }
 
@@ -50,7 +50,8 @@ const PaymentButton = ({ order }: { order: OrderJSON }) => {
       originalPrice: order.product.pricing.originalPrice,
       discountedPrice: order.product.pricing.discountedPrice,
       discountAmount:
-        order.product.pricing.originalPrice - order.product.pricing.discountedPrice,
+        order.product.pricing.originalPrice -
+        order.product.pricing.discountedPrice,
       optionsTotalPrice,
       finalPrice: order.finalPrice,
       quantity: order.product.quantity,
@@ -77,11 +78,16 @@ const PaymentButton = ({ order }: { order: OrderJSON }) => {
       // (src/ui/hooks/usePortOnePayment.ts) — 타입만 맞추는 고정 문자열.
       message: "재결제를 진행합니다.",
     });
-    router.push(routes.payment.root);
+    router.push(ROUTES.payment.root);
   };
 
   return (
-    <Button size="lg" variant="default" onClick={handleClick} disabled={isChecking}>
+    <Button
+      size="lg"
+      variant="default"
+      onClick={handleClick}
+      disabled={isChecking}
+    >
       <CreditCard className="mr-1 h-4 w-4" />
       결제하기
     </Button>

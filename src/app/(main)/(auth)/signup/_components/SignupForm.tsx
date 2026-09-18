@@ -7,23 +7,24 @@ import { Globe } from "lucide-react";
 
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { Button } from "@/ui/components/atoms/button";
-import { Label } from "@/ui/components/atoms/label";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import { Field, FieldLabel } from "@/ui/components/atoms/field";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
-
-
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 import { getFieldError } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
-import { routes } from "@/core/domain/routes";
+import type { ApiResponse } from "@/core/domain/error";
+import { ROUTES } from "@/core/domain/routes";
 
 interface SignupFormProps {
   action: (formData: FormData) => void;
   pending: boolean;
-  state: APIResponse<{ message: string }> | null;
+  state: ApiResponse<{ message: string }> | null;
 }
 
-export function SignupForm({ action, pending, state }: SignupFormProps) {
+const SignupForm = ({ action, pending, state }: SignupFormProps) => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [agreedToPrivacy, setAgreedToPrivacy] = useState(false);
 
@@ -36,33 +37,65 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
   return (
     <div className="space-y-6">
       <div className="space-y-2 text-center lg:text-left">
-        <TypographyH1 className="text-left text-3xl font-bold font-[var(--font-NotoSerif)]">회원가입</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-[var(--font-NotoSerif)] font-bold">
+          회원가입
+        </TypographyH1>
         <TypographyMuted>새 계정을 만들어 시작하세요</TypographyMuted>
       </div>
 
       <form action={action} className="space-y-4">
-        <TextField id="name" name="name" type="text" placeholder="홍길동" required error={nameError}>
-          이름
-        </TextField>
+        <InputField
+          id="name"
+          name="name"
+          label="이름"
+          type="text"
+          placeholder="홍길동"
+          required
+          error={nameError}
+        />
 
-        <TextField id="email" name="email" type="email" placeholder="your@email.com" required error={emailError}>
-          이메일
-        </TextField>
+        <InputField
+          id="email"
+          name="email"
+          label="이메일"
+          type="email"
+          placeholder="your@email.com"
+          required
+          error={emailError}
+        />
 
-        <TextField id="phone" name="phone" type="tel" placeholder="010-1234-5678" required error={phoneError}>
-          전화번호
-        </TextField>
+        <InputField
+          id="phone"
+          name="phone"
+          label="전화번호"
+          type="tel"
+          placeholder="010-1234-5678"
+          required
+          error={phoneError}
+        />
 
-        <TextField id="password" name="password" type="password" placeholder="••••••••" required error={passwordError}>
-          비밀번호
-        </TextField>
+        <InputField
+          id="password"
+          name="password"
+          label="비밀번호"
+          type="password"
+          placeholder="••••••••"
+          required
+          error={passwordError}
+        />
 
-        <TextField id="confirmPassword" name="confirmPassword" type="password" placeholder="••••••••" required error={confirmPasswordError}>
-          비밀번호 확인
-        </TextField>
+        <InputField
+          id="confirmPassword"
+          name="confirmPassword"
+          label="비밀번호 확인"
+          type="password"
+          placeholder="••••••••"
+          required
+          error={confirmPasswordError}
+        />
 
         <div className="space-y-3 pt-2">
-          <div className="flex items-center gap-2">
+          <Field orientation="horizontal" className="gap-2">
             <Checkbox
               id="terms"
               checked={agreedToTerms}
@@ -70,12 +103,12 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
                 setAgreedToTerms(checked as boolean)
               }
             />
-            <Label
+            <FieldLabel
               htmlFor="terms"
               className="cursor-pointer text-sm font-normal"
             >
               <Link
-                href={routes.terms}
+                href={ROUTES.terms}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
@@ -83,10 +116,10 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
                 이용약관
               </Link>
               에 동의합니다 (필수)
-            </Label>
-          </div>
+            </FieldLabel>
+          </Field>
 
-          <div className="flex items-center gap-2">
+          <Field orientation="horizontal" className="gap-2">
             <Checkbox
               id="privacy"
               checked={agreedToPrivacy}
@@ -94,12 +127,12 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
                 setAgreedToPrivacy(checked as boolean)
               }
             />
-            <Label
+            <FieldLabel
               htmlFor="privacy"
               className="cursor-pointer text-sm font-normal"
             >
               <Link
-                href={routes.privacy}
+                href={ROUTES.privacy}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
@@ -107,8 +140,8 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
                 개인정보 처리방침
               </Link>
               에 동의합니다 (필수)
-            </Label>
-          </div>
+            </FieldLabel>
+          </Field>
         </div>
 
         <Button
@@ -149,7 +182,7 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
         <TypographyMuted>
           이미 계정이 있으신가요?{" "}
           <Link
-            href={routes.login}
+            href={ROUTES.login}
             className="text-primary font-medium hover:underline"
           >
             로그인
@@ -158,4 +191,6 @@ export function SignupForm({ action, pending, state }: SignupFormProps) {
       </div>
     </div>
   );
-}
+};
+
+export { SignupForm };

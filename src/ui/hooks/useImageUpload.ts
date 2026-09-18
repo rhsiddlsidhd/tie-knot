@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
+import { MobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 import type { ImagePayload } from "@/core/domain/image";
 
-export function useImageUpload() {
+const useImageUpload = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -22,7 +22,7 @@ export function useImageUpload() {
 
     try {
       // 1. 클라이언트 검증 (텍스트 필드 + 이미지 상태 합산)
-      const validated = validateAndFlatten(mobileInvitationContentSchema, {
+      const validated = validateAndFlatten(MobileInvitationContentSchema, {
         ...buildTextData(formData),
         thumbnailImages: imagePayload.thumbnailImages,
         galleryImages: imagePayload.galleryImages,
@@ -48,9 +48,9 @@ export function useImageUpload() {
   };
 
   return { upload, uploadProgress, isUploading };
-}
+};
 
-function buildTextData(formData: FormData) {
+const buildTextData = (formData: FormData) => {
   const buildParent = (prefix: string) => {
     const name = (formData.get(`${prefix}_name`) as string) || "";
     const phone = (formData.get(`${prefix}_phone`) as string) || "";
@@ -88,4 +88,6 @@ function buildTextData(formData: FormData) {
     subwayStation: (formData.get("subway_station") as string) || undefined,
     guestbookEnabled: formData.get("guestbook_enabled") === "on",
   };
-}
+};
+
+export { useImageUpload };

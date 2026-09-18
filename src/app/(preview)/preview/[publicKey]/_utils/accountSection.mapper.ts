@@ -1,13 +1,13 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 // AccountSection 컴포넌트가 받을 props 타입 정의
-export interface AccountInfo {
+interface AccountInfo {
   relation: string;
   name: string;
   bankName: string;
   accountNumber: string;
 }
 
-export interface AccountSectionMappedProps {
+interface AccountSectionMappedProps {
   groomAccounts: AccountInfo[];
   brideAccounts: AccountInfo[];
 }
@@ -16,10 +16,10 @@ type CoupleSide = MobileInvitationContent["groom"];
 type Parent = NonNullable<CoupleSide["father"]>;
 
 // 헬퍼 함수: 부모/신랑/신부 정보를 AccountInfo 타입으로 변환
-function createAccountInfo(
+const createAccountInfo = (
   person: CoupleSide | Parent | undefined,
   relation: string,
-): AccountInfo | undefined {
+): AccountInfo | undefined => {
   // 이름, 은행명, 계좌번호가 모두 있어야 유효한 계좌 정보로 간주
   if (!person?.name || !person.bankName || !person.accountNumber) {
     return undefined;
@@ -37,9 +37,9 @@ function createAccountInfo(
  * @param coupleInfoData - 청첩장 콘텐츠
  * @returns AccountSection 컴포넌트가 필요로 하는 `groomAccounts` 및 `brideAccounts` 배열을 포함한 객체
  */
-export function mapCoupleInfoToAccountProps(
+const mapCoupleInfoToAccountProps = (
   coupleInfoData: MobileInvitationContent,
-): AccountSectionMappedProps {
+): AccountSectionMappedProps => {
   // 1. 신랑측 계좌 정보 배열 생성
   const groomAccounts = [
     createAccountInfo(coupleInfoData.groom, "신랑"),
@@ -56,3 +56,5 @@ export function mapCoupleInfoToAccountProps(
 
   return { groomAccounts, brideAccounts };
 }
+
+export { mapCoupleInfoToAccountProps, type AccountInfo, type AccountSectionMappedProps };

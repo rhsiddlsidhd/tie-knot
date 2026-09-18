@@ -11,9 +11,9 @@ import {
   type GuestbookModalSlice,
 } from "./slices/guestbook-modal.slice";
 
-export type AppStore = OrderSlice & AdminModalSlice & GuestbookModalSlice;
+type AppStore = OrderSlice & AdminModalSlice & GuestbookModalSlice;
 
-export const createAppStore = () =>
+const createAppStore = () =>
   createStore<AppStore>()(
     persist(
       (...a) => ({
@@ -43,4 +43,6 @@ export const createAppStore = () =>
     ),
   );
 
-export type AppStoreApi = ReturnType<typeof createAppStore>;
+type AppStoreApi = ReturnType<typeof createAppStore>;
+
+export { createAppStore, type AppStore, type AppStoreApi };

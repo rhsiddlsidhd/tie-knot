@@ -6,7 +6,7 @@ import type { ProductCategory } from "@/core/domain/product-category";
 import { PAY_METHOD } from "@/core/domain/payment";
 import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 import { categoryRequiresShipping } from "@/core/utils/category";
-export type { OrderJSON } from "@/core/domain/order";
+import type { OrderJson } from "@/core/domain/order";
 interface ProductPricing {
   originalPrice: number;
   discountedPrice: number;
@@ -28,18 +28,20 @@ interface ProductSnapShot {
   selectedFeatures: SelectedFeatureSnapShot[];
 }
 
-export interface ShippingInfo {
+interface ShippingInfo {
   receiver: string;
   phone: string;
   address: string;
   addressDetail: string;
 }
 
-const selectedFeatureSnapShotSchema = new Schema<SelectedFeatureSnapShot>(
+const SelectedFeatureSnapShotSchema = new Schema<SelectedFeatureSnapShot>(
   {
+    // ref를 두지 않는다 — 이 id는 결제 시점의 식별자 기록이지 살아 있는 외래키가
+    // 아니다. Feature 문서는 참조 상품이 없으면 하드 삭제되므로 populate하면
+    // 지워진 기능에서 null이 나온다. 주문이 읽어야 할 값은 옆의 code/label/price다.
     featureId: {
       type: Schema.Types.ObjectId,
-      ref: "Feature",
       required: true,
     },
     code: { type: String, required: true },
@@ -70,7 +72,7 @@ const ProductSnapShotSchema = new Schema<ProductSnapShot>(
     },
     quantity: { type: Number, required: true, default: 1 },
     selectedFeatures: {
-      type: [selectedFeatureSnapShotSchema],
+      type: [SelectedFeatureSnapShotSchema],
       default: [],
     },
   },
@@ -96,7 +98,7 @@ const ORDER_STATUS = [
 
 type OrderStatusType = (typeof ORDER_STATUS)[number];
 
-export interface IOrder {
+interface OrderDocument {
   _id: Types.ObjectId;
   merchantUid: string;
   userId: Types.ObjectId | string;
@@ -105,7 +107,7 @@ export interface IOrder {
   buyerPhone: string;
   product: ProductSnapShot;
   // 모바일초대장 카테고리는 배송이 필요 없어 없을 수 있다 — required 여부는
-  // orderSchema.shipping의 conditional required(형제 필드 product.category 참조)가 정한다.
+  // OrderSchema.shipping의 conditional required(형제 필드 product.category 참조)가 정한다.
   shipping?: ShippingInfo;
   finalPrice: number;
   discountRate: number;
@@ -121,7 +123,7 @@ export interface IOrder {
   updatedAt: Date;
 }
 
-const orderSchema = new Schema<IOrder>(
+const OrderSchema = new Schema<OrderDocument>(
   {
     // 식별자
     merchantUid: { type: String, required: true, unique: true },
@@ -153,7 +155,7 @@ const orderSchema = new Schema<IOrder>(
     // (mobile-invitation) 하나만 shipping 없는 서브타입이 되어 얻는 이득이 적다.
     shipping: {
       type: ShippingInfoSchema,
-      required: function (this: IOrder) {
+      required: function (this: OrderDocument) {
         return categoryRequiresShipping(this.product.category);
       },
     },
@@ -194,26 +196,28 @@ const orderSchema = new Schema<IOrder>(
 
 // my-orders 목록은 (유저 + 상태 필터) 조건에 createdAt 내림차순 커서 페이징을 얹는다 —
 // 상태 필터가 걸린 조회가 정렬까지 인덱스로 처리되도록 복합 인덱스를 둔다.
-orderSchema.index({ userId: 1, orderStatus: 1, createdAt: -1 });
+OrderSchema.index({ userId: 1, orderStatus: 1, createdAt: -1 });
 
 // 스케줄러 배치(/api/cron/expired-orders) 전용 — 배치 쿼리는 userId 필터가 없어
 // 위 인덱스의 선두 필드를 못 쓴다(안 붙이면 COLLSCAN). sparse는 붙이지 않는다 —
 // paymentId: null 쿼리가 필드 누락 문서와도 매칭돼야 하는데 sparse면 그 문서들이
 // 인덱스에서 빠진다.
-orderSchema.index({ orderStatus: 1, paymentId: 1, createdAt: 1 }); // findExpiredPendingOrdersForAllUsers
-orderSchema.index({ orderStatus: 1, confirmedAt: 1 }); // findExpiredAwaitingMobileInvitationOrdersForAllUsers
+OrderSchema.index({ orderStatus: 1, paymentId: 1, createdAt: 1 }); // findExpiredPendingOrdersForAllUsers
+OrderSchema.index({ orderStatus: 1, confirmedAt: 1 }); // findExpiredAwaitingMobileInvitationOrdersForAllUsers
 
 // 관리자 대시보드 "최근 주문" + 관리자 전역 주문 목록(상태 필터 없음) 전용 — 둘 다
 // 위 복합 인덱스(선두 필드가 userId/orderStatus)를 못 쓴다. _id를 tie-break로
 // 포함해 getAdminOrdersPageService의 (createdAt desc, _id desc) 정렬을 전부
 // 인덱스로 커버한다 — createdAt만 있으면 같은 createdAt인 문서들의 _id 정렬은
 // blocking in-memory SORT로 떨어진다(32MB 상한에 걸리면 쿼리 자체가 실패한다).
-orderSchema.index({ createdAt: -1, _id: -1 });
+OrderSchema.index({ createdAt: -1, _id: -1 });
 
 // 관리자 전역 주문 목록의 상태 필터 조회 전용 — 위 { userId, orderStatus, createdAt }
 // 인덱스는 선두가 userId라 소유자 스코프 없는 전역 상태 필터 조회엔 못 쓴다.
-orderSchema.index({ orderStatus: 1, createdAt: -1, _id: -1 });
+OrderSchema.index({ orderStatus: 1, createdAt: -1, _id: -1 });
 
-export const OrderModel =
-  (mongoose.models.Order as Model<IOrder>) ||
-  mongoose.model<IOrder>("Order", orderSchema);
+const OrderModel =
+  (mongoose.models.Order as Model<OrderDocument>) ||
+  mongoose.model<OrderDocument>("Order", OrderSchema);
+
+export { OrderModel, type OrderJson, type ShippingInfo, type OrderDocument };

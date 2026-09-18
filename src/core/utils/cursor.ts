@@ -3,7 +3,7 @@
 // btoa/atob를 쓰는 이유: 이 파일이 클라이언트 번들에도 실릴 수 있어 Node 전용 Buffer에 의존하지 않는다.
 import { MAX_PAGE_SIZE } from "@/core/domain/cursor";
 
-export type PageCursor = {
+type PageCursor = {
   createdAt: Date;
   id: string;
   // createdAt 외 보조 정렬 키가 필요한 목록(예: 리뷰 평점순)에서만 채운다 — 없으면
@@ -25,7 +25,7 @@ const toBase64Url = (value: string): string =>
 const fromBase64Url = (value: string): string =>
   atob(value.replace(/-/g, "+").replace(/_/g, "/"));
 
-export const encodeCursor = ({ createdAt, id, secondary, tertiary }: PageCursor): string => {
+const encodeCursor = ({ createdAt, id, secondary, tertiary }: PageCursor): string => {
   const parts = [createdAt.toISOString(), id];
   if (secondary !== undefined) parts.push(String(secondary));
   if (tertiary !== undefined) parts.push(String(tertiary));
@@ -34,7 +34,7 @@ export const encodeCursor = ({ createdAt, id, secondary, tertiary }: PageCursor)
 
 // 형식이 깨진 커서는 "조건 없음"이 아니라 명시적 실패로 다뤄야 하므로 null을 리턴하고,
 // 호출자(서비스)가 VALIDATION 에러로 번역한다.
-export const decodeCursor = (raw: string): PageCursor | null => {
+const decodeCursor = (raw: string): PageCursor | null => {
   let decoded: string;
   try {
     decoded = fromBase64Url(raw);
@@ -66,5 +66,7 @@ export const decodeCursor = (raw: string): PageCursor | null => {
 
 /** limit이 1 이상 MAX_PAGE_SIZE 이하의 정수인지 검증한다 — 범위 밖이면 서비스가
  * VALIDATION AppError로 번역한다(이 유틸 자체는 boolean만 리턴, throw하지 않는다). */
-export const isValidPageLimit = (limit: number): boolean =>
+const isValidPageLimit = (limit: number): boolean =>
   Number.isInteger(limit) && limit >= 1 && limit <= MAX_PAGE_SIZE;
+
+export { encodeCursor, decodeCursor, isValidPageLimit, type PageCursor };

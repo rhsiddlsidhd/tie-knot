@@ -3,11 +3,11 @@
 import { useActionState, useEffect } from "react";
 
 import { createPremiumFeature } from "@/actions/createPremiumFeature";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { PremiumFeatureRegistrationForm as PurePremiumFeatureRegistrationForm } from "../_components/PremiumFeatureRegistrationForm";
-export function PremiumFeatureRegistrationForm() {
+const PremiumFeatureRegistrationForm = () => {
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
+    ApiResponse<{ message: string }>,
     FormData
   >(createPremiumFeature, null);
 
@@ -22,4 +22,6 @@ export function PremiumFeatureRegistrationForm() {
       state={state}
     />
   );
-}
+};
+
+export { PremiumFeatureRegistrationForm };

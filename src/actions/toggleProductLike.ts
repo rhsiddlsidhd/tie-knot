@@ -1,21 +1,26 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { toggleProductLikeForCurrentUserService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
-export const toggleProductLike = async (
+const toggleProductLike = async (
   productId: string,
-): Promise<APIResponse<{ message: string }>> => {
+): Promise<ApiResponse<{ message: string }>> => {
   try {
     await toggleProductLikeForCurrentUserService(productId);
 
-    revalidatePath(routes.products.root);
+    revalidatePath(ROUTES.products.root);
 
-    return { success: true, data: { message: "좋아요 업데이트에 성공하였습니다." } };
+    return {
+      success: true,
+      data: { message: "좋아요 업데이트에 성공하였습니다." },
+    };
   } catch (e) {
     return actionError(e);
   }
 };
+
+export { toggleProductLike };

@@ -1,25 +1,31 @@
 import Link from "next/link";
 import { TypographySmall } from "@/ui/components/atoms/typography";
-import { routes } from "@/core/domain/routes";
-import { subCategoryLabels, type ProductCategory, type SubCategory } from "@/core/domain/product-category";
+import { ROUTES } from "@/core/domain/routes";
+import {
+  SUB_CATEGORY_LABELS,
+  type ProductCategory,
+  type SubCategory,
+} from "@/core/domain/product-category";
 
 interface SubCategoryNavItemProps {
   category: ProductCategory;
   subCategory: SubCategory;
 }
 
-export function SubCategoryNavItem({
+const SubCategoryNavItem = ({
   category,
   subCategory,
-}: SubCategoryNavItemProps) {
+}: SubCategoryNavItemProps) => {
   return (
     <Link
-      href={routes.products.byCategory(category, subCategory)}
+      href={ROUTES.products.byCategory(category, subCategory)}
       className="focus-visible:ring-ring flex min-h-11 min-w-11 shrink-0 items-center px-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <TypographySmall className="whitespace-nowrap">
-        {subCategoryLabels[subCategory]}
+        {SUB_CATEGORY_LABELS[subCategory]}
       </TypographySmall>
     </Link>
   );
-}
+};
+
+export { SubCategoryNavItem };

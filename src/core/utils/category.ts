@@ -1,35 +1,43 @@
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
-import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, productCategoryLabels, subCategoryLabels } from "@/core/domain/product-category";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
+import {
+  MOBILE_INVITATION_CATEGORY,
+  SUB_CATEGORY_MAP,
+  PRODUCT_CATEGORY_LABELS,
+  SUB_CATEGORY_LABELS,
+} from "@/core/domain/product-category";
 
 // 모바일초대장만 배송이 필요 없는 유일한 카테고리다 — 이 판단을 쓰는 모든
 // 레이어(클라이언트 폼/서비스 검증/DB conditional required)가 이 함수 하나로
 // 수렴해야 카테고리 추가·rename 시 한 곳만 고치면 된다.
-export const categoryRequiresShipping = (
+const categoryRequiresShipping = (
   category: ProductCategory | undefined,
 ): boolean => category !== MOBILE_INVITATION_CATEGORY;
 
-export const isProductCategory = (value: string): value is ProductCategory => {
-  return Object.keys(productCategoryLabels).includes(value);
+const isProductCategory = (value: string): value is ProductCategory => {
+  return Object.keys(PRODUCT_CATEGORY_LABELS).includes(value);
 };
 
-export const isSubCategory = (value: string): value is SubCategory => {
-  return Object.keys(subCategoryLabels).includes(value);
+const isSubCategory = (value: string): value is SubCategory => {
+  return Object.keys(SUB_CATEGORY_LABELS).includes(value);
 };
 
-export const getCategoryOptions = (includeAll = false) => {
+const getCategoryOptions = (includeAll = false) => {
   const allOption = includeAll
     ? [{ value: "all" as const, label: "전체" }]
     : [];
   return [
     ...allOption,
-    ...Object.entries(productCategoryLabels).map(([value, label]) => ({
+    ...Object.entries(PRODUCT_CATEGORY_LABELS).map(([value, label]) => ({
       value: value as ProductCategory,
       label,
     })),
   ];
 };
 
-export const getSubCategoryOptions = (
+const getSubCategoryOptions = (
   category: ProductCategory,
   includeAll = false,
 ) => {
@@ -38,12 +46,12 @@ export const getSubCategoryOptions = (
     : [];
   const options = SUB_CATEGORY_MAP[category].map((value) => ({
     value,
-    label: subCategoryLabels[value],
+    label: SUB_CATEGORY_LABELS[value],
   }));
   return [...allOption, ...options];
 };
 
-export const getAvailableSubCategories = (
+const getAvailableSubCategories = (
   category: ProductCategory,
   products: readonly { category: string; subCategory: string }[],
 ): SubCategory[] => {
@@ -62,13 +70,13 @@ export const getAvailableSubCategories = (
 const LABEL_MATCH_MIN_LENGTH = 2;
 
 // 검색어가 라벨 또는 enum key에 부분일치하는 카테고리 key들을 돌려준다 (대소문자 무시).
-export const findProductCategoriesByTerm = (
-  term: string,
-): ProductCategory[] => {
+const findProductCategoriesByTerm = (term: string): ProductCategory[] => {
   const normalized = term.trim().toLowerCase();
   if (normalized.length < LABEL_MATCH_MIN_LENGTH) return [];
 
-  return (Object.entries(productCategoryLabels) as [ProductCategory, string][])
+  return (
+    Object.entries(PRODUCT_CATEGORY_LABELS) as [ProductCategory, string][]
+  )
     .filter(
       ([key, label]) =>
         label.toLowerCase().includes(normalized) ||
@@ -78,15 +86,26 @@ export const findProductCategoriesByTerm = (
 };
 
 // 검색어가 라벨 또는 enum key에 부분일치하는 서브카테고리 key들을 돌려준다 (대소문자 무시).
-export const findSubCategoriesByTerm = (term: string): SubCategory[] => {
+const findSubCategoriesByTerm = (term: string): SubCategory[] => {
   const normalized = term.trim().toLowerCase();
   if (normalized.length < LABEL_MATCH_MIN_LENGTH) return [];
 
-  return (Object.entries(subCategoryLabels) as [SubCategory, string][])
+  return (Object.entries(SUB_CATEGORY_LABELS) as [SubCategory, string][])
     .filter(
       ([key, label]) =>
         label.toLowerCase().includes(normalized) ||
         key.toLowerCase().includes(normalized),
     )
     .map(([key]) => key);
+};
+
+export {
+  categoryRequiresShipping,
+  isProductCategory,
+  isSubCategory,
+  getCategoryOptions,
+  getSubCategoryOptions,
+  getAvailableSubCategories,
+  findProductCategoriesByTerm,
+  findSubCategoriesByTerm,
 };

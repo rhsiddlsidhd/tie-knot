@@ -1,22 +1,33 @@
-"use client";
-
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import { format } from "date-fns";
 import { ComboboxField } from "./ComboboxField";
 import { DateField } from "./DateField";
 import { AddressField } from "@/ui/components/organisms/AddressField";
 import { SwitchField } from "@/ui/components/organisms/SwitchField";
-import { TextField } from "@/ui/components/organisms/TextField";
+import { InputField } from "@/ui/components/organisms/InputField";
 
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 import type { SubwayStationsResponse } from "@/core/schemas/response/subway.schema";
 
 type BasicInfoSectionProps = {
-  data?: Pick<MobileInvitationContent, "weddingDate" | "venue" | "address" | "addressDetail" | "subwayStation" | "guestbookEnabled">;
+  data?: Pick<
+    MobileInvitationContent,
+    | "weddingDate"
+    | "venue"
+    | "address"
+    | "addressDetail"
+    | "subwayStation"
+    | "guestbookEnabled"
+  >;
   subwayStations?: SubwayStationsResponse;
 };
 
-export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps) {
+const BasicInfoSection = ({ data, subwayStations }: BasicInfoSectionProps) => {
   return (
     <Card>
       <CardHeader>
@@ -36,9 +47,10 @@ export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps
             결혼식 날짜
           </DateField>
 
-          <TextField
+          <InputField
             id="weddingTime"
             name="wedding_time"
+            label="결혼식 시간"
             type="time"
             placeholder="결혼식 시간"
             defaultValue={
@@ -47,22 +59,19 @@ export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps
                 : ""
             }
             required
-          >
-            결혼식 시간
-          </TextField>
+          />
         </div>
 
         {/* 예식장명 */}
-        <TextField
+        <InputField
           id="venueName"
           name="venue_name"
+          label="예식장명"
           type="text"
           placeholder="예: 더 컨벤션 웨딩홀"
           defaultValue={data?.venue}
           required
-        >
-          예식장명
-        </TextField>
+        />
 
         {/* Address (+ 상세 주소는 AddressField 내부에서 함께 렌더) */}
         <AddressField
@@ -87,12 +96,13 @@ export function BasicInfoSection({ data, subwayStations }: BasicInfoSectionProps
         <SwitchField
           id={"guestbookEnabled"}
           name={"guestbook_enabled"}
-          message={"하객들이 축하 메시지를 남길 수 있습니다."}
-          defaultValue={data?.guestbookEnabled}
-        >
-          방명록 사용
-        </SwitchField>
+          label="방명록 사용"
+          description="하객들이 축하 메시지를 남길 수 있습니다."
+          defaultChecked={data?.guestbookEnabled}
+        />
       </CardContent>
     </Card>
   );
-}
+};
+
+export { BasicInfoSection };

@@ -1,5 +1,5 @@
 // 법무 미검수 초안 — 서비스 오픈 전 검토 필요. 보호책임자 연락처·사업자 정보는 TODO(legal).
-export const PRIVACY_SECTIONS = [
+const PRIVACY_SECTIONS = [
   {
     heading: "1. 수집하는 개인정보 항목",
     paragraphs: [
@@ -74,4 +74,6 @@ export const PRIVACY_SECTIONS = [
   },
 ] as const;
 
-export const PRIVACY_EFFECTIVE_DATE = "2026-08-21";
+const PRIVACY_EFFECTIVE_DATE = "2026-08-21";
+
+export { PRIVACY_SECTIONS, PRIVACY_EFFECTIVE_DATE };

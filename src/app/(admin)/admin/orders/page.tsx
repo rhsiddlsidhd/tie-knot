@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { verifySession } from "@/services/auth";
 import { getAdminOrdersPageService } from "@/services/order";
-import { adminOrderListRequestSchema } from "@/core/schemas/request/adminOrderList.schema";
+import { AdminOrderListRequestSchema } from "@/core/schemas/request/adminOrderList.schema";
 import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminOrdersTemplate } from "@/app/(admin)/admin/orders/_components/AdminOrdersTemplate";
@@ -13,18 +13,21 @@ import { AdminOrdersTemplate } from "@/app/(admin)/admin/orders/_components/Admi
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(adminOrderListRequestSchema, {
-    status: typeof searchParams.status === "string" ? searchParams.status : null,
-    cursor: typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+  const parsed = validateAndFlatten(AdminOrderListRequestSchema, {
+    q: typeof searchParams.q === "string" ? searchParams.q : null,
+    status:
+      typeof searchParams.status === "string" ? searchParams.status : null,
+    cursor:
+      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
   });
 
   if (!parsed.success) return {};
 
-  const { status, cursor } = parsed.data;
+  const { q, status, cursor } = parsed.data;
   if (cursor && !decodeCursor(cursor)) {
-    return { status };
+    return { q, status };
   }
-  return { status, cursor };
+  return { q, status, cursor };
 };
 
 const OrdersPage = async ({
@@ -34,10 +37,17 @@ const OrdersPage = async ({
 }) => {
   await verifySession("ADMIN");
 
-  const { status, cursor } = resolveFilters(await searchParams);
-  const page = await getAdminOrdersPageService({ status, cursor });
+  const { q, status, cursor } = resolveFilters(await searchParams);
+  const page = await getAdminOrdersPageService({ q, status, cursor });
 
-  return <AdminOrdersTemplate page={page} status={status} cursor={cursor} />;
+  return (
+    <AdminOrdersTemplate
+      page={page}
+      q={q}
+      status={status}
+      cursor={cursor}
+    />
+  );
 };
 
 export default OrdersPage;

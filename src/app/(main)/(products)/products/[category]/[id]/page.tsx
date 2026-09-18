@@ -5,7 +5,7 @@ import { getAuth } from "@/services/auth";
 import { getPremiumFeatureService } from "@/services/premiumFeature";
 import { getProductReviewsPageService } from "@/services/review";
 import { getProductService } from "@/services/product";
-import { productReviewListRequestSchema } from "@/core/schemas/request/productReviewList.schema";
+import { ProductReviewListRequestSchema } from "@/core/schemas/request/productReviewList.schema";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 
 import { notFound } from "next/navigation";
@@ -13,7 +13,7 @@ import { notFound } from "next/navigation";
 const resolveReviewQuery = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
-  const parsed = validateAndFlatten(productReviewListRequestSchema, {
+  const parsed = validateAndFlatten(ProductReviewListRequestSchema, {
     sort: typeof searchParams.sort === "string" ? searchParams.sort : null,
     reviewCursor:
       typeof searchParams.reviewCursor === "string"

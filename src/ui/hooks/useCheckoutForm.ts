@@ -5,11 +5,17 @@ import type React from "react";
 import { toast } from "sonner";
 import { categoryRequiresShipping } from "@/core/utils/category";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import type { BuyerInfo, ShippingInfo } from "@/core/schemas/request/order.schema";
-import { BuyerInfoSchema, ShippingInfoSchema } from "@/core/schemas/request/order.schema";
+import type {
+  BuyerInfo,
+  ShippingInfo,
+} from "@/core/schemas/request/order.schema";
+import {
+  BuyerInfoSchema,
+  ShippingInfoSchema,
+} from "@/core/schemas/request/order.schema";
 import type { CheckoutItem } from "@/core/domain/checkout";
 import type { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 
 interface UseCheckoutFormOptions {
   order: CheckoutItem | null;
@@ -17,11 +23,7 @@ interface UseCheckoutFormOptions {
   router: AppRouterInstance;
 }
 
-export function useCheckoutForm({
-  order,
-  action,
-  router,
-}: UseCheckoutFormOptions) {
+const useCheckoutForm = ({ order, action, router }: UseCheckoutFormOptions) => {
   const [errors, setErrors] = useState<
     Partial<Record<keyof BuyerInfo, string[]>>
   >({});
@@ -38,7 +40,7 @@ export function useCheckoutForm({
 
     if (!order) {
       toast.error("주문 정보를 찾을 수 없습니다. 다시 시도해주세요.");
-      router.replace(routes.products.root);
+      router.replace(ROUTES.products.root);
       return;
     }
 
@@ -57,12 +59,15 @@ export function useCheckoutForm({
     }
 
     if (requiresShipping) {
-      const shippingParsed = validateAndFlatten<ShippingInfo>(ShippingInfoSchema, {
-        receiver: formData.get("shippingReceiver") as string,
-        phone: formData.get("shippingPhone") as string,
-        address: formData.get("ship_address") as string,
-        addressDetail: formData.get("ship_address_detail") as string,
-      });
+      const shippingParsed = validateAndFlatten<ShippingInfo>(
+        ShippingInfoSchema,
+        {
+          receiver: formData.get("shippingReceiver") as string,
+          phone: formData.get("shippingPhone") as string,
+          address: formData.get("ship_address") as string,
+          addressDetail: formData.get("ship_address_detail") as string,
+        },
+      );
 
       if (!shippingParsed.success) {
         setShippingErrors(shippingParsed.error);
@@ -92,4 +97,6 @@ export function useCheckoutForm({
   };
 
   return { errors, shippingErrors, requiresShipping, handleSubmit };
-}
+};
+
+export { useCheckoutForm };

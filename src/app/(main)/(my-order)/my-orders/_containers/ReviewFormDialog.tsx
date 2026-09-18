@@ -5,14 +5,23 @@ import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Button } from "@/ui/components/atoms/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/ui/components/atoms/dialog";
-import { Textarea } from "@/ui/components/atoms/textarea";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/ui/components/atoms/dialog";
+import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import { useImageList } from "@/ui/hooks/useImageList";
 import { getFieldError, hasFieldErrors } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import type { OrderReviewSummary } from "@/core/domain/order";
 import { createReview } from "@/actions/createReview";
 import { deleteReview } from "@/actions/deleteReview";
@@ -25,7 +34,7 @@ interface ReviewFormDialogProps {
   onOrderChanged?: () => void;
 }
 
-type ReviewActionResult = APIResponse<{ message: string }>;
+type ReviewActionResult = ApiResponse<{ message: string }>;
 
 // review 유무에 따라 작성/수정 모드가 갈린다 — 호출부(OrderCard)가 review.id를 key로
 // 넘겨서, 작성 직후 review가 새로 생기면 이 컴포넌트를 통째로 재마운트한다(내부 state를
@@ -128,22 +137,15 @@ const ReviewFormDialog = ({
             )}
           </div>
 
-          <div className="space-y-2">
-            <label htmlFor="content" className="text-sm font-medium">
-              리뷰 내용
-            </label>
-            <Textarea
-              id="content"
-              name="content"
-              rows={5}
-              defaultValue={review?.content}
-              placeholder="상품에 대한 솔직한 후기를 남겨주세요. (최소 10자)"
-              aria-invalid={Boolean(contentError)}
-            />
-            {contentError && (
-              <p className="text-destructive text-sm">{contentError}</p>
-            )}
-          </div>
+          <TextareaField
+            id="content"
+            name="content"
+            label="리뷰 내용"
+            rows={5}
+            defaultValue={review?.content}
+            placeholder="상품에 대한 솔직한 후기를 남겨주세요. (최소 10자)"
+            error={contentError ?? undefined}
+          />
 
           <div className="space-y-2">
             <span className="text-sm font-medium">사진 (선택, 최대 5장)</span>

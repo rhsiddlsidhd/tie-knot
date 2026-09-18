@@ -3,12 +3,52 @@ import type { ProductCategory, SubCategory } from "./product-category";
 import type { CursorPage } from "./cursor";
 
 // 0. Home 인기 상품 섹션(좋아요순 Top N) 관련 상수 — service 기본값과 UI 노출 게이트가 같은 값을 본다.
-export const POPULAR_PRODUCTS_LIMIT = 8;
-export const POPULAR_PRODUCTS_MIN_ITEMS = 3;
+const POPULAR_PRODUCTS_LIMIT = 8;
+const POPULAR_PRODUCTS_MIN_ITEMS = 3;
 
-export type ProductStatus = "active" | "inactive" | "soldOut" | "deleted";
+const PRODUCT_STATUSES = ["active", "inactive", "soldOut", "deleted"] as const;
 
-export interface ProductJSON {
+type ProductStatus = (typeof PRODUCT_STATUSES)[number];
+
+// deleted는 삭제/복구 전용 흐름이 deletedAt과 함께 관리한다. 일반 상태 변경에서
+// status만 deleted로 바꾸면 휴지통 조회 기준과 어긋나므로 선택 가능한 상태에서 제외한다.
+const EDITABLE_PRODUCT_STATUSES = [
+  "active",
+  "inactive",
+  "soldOut",
+] as const satisfies readonly ProductStatus[];
+
+type EditableProductStatus = (typeof EDITABLE_PRODUCT_STATUSES)[number];
+
+const PRODUCT_STATUS_LABELS: Record<ProductStatus, string> = {
+  active: "판매중",
+  inactive: "비활성",
+  soldOut: "품절",
+  deleted: "삭제됨",
+};
+
+const EDITABLE_PRODUCT_STATUS_OPTIONS: ReadonlyArray<
+  Readonly<{ value: EditableProductStatus; label: string }>
+> = EDITABLE_PRODUCT_STATUSES.map((value) => ({
+  value,
+  label: PRODUCT_STATUS_LABELS[value],
+}));
+
+const DISCOUNT_TYPE = {
+  RATE: "rate",
+  AMOUNT: "amount",
+} as const;
+
+const DISCOUNT_TYPES = [DISCOUNT_TYPE.RATE, DISCOUNT_TYPE.AMOUNT] as const;
+
+type DiscountType = (typeof DISCOUNT_TYPES)[number];
+
+interface Discount {
+  discountType: DiscountType;
+  value: number;
+}
+
+interface ProductJson {
   _id: string;
   authorId: string;
   title: string;
@@ -24,7 +64,7 @@ export interface ProductJSON {
   likes: string[];
   views: number;
   salesCount: number;
-  discount: { discountType: "rate" | "amount"; value: number };
+  discount: Discount;
   status: ProductStatus;
   images: string[];
   minQuantity: number;
@@ -41,14 +81,14 @@ export interface ProductJSON {
   deletedAt: string | null;
 }
 
-export type Product = ProductJSON;
+type Product = ProductJson;
 
-export type AdminProductListPage = CursorPage<ProductJSON>;
+type AdminProductListPage = CursorPage<ProductJson>;
 
-export type PublicProductListPage = CursorPage<ProductJSON>;
+type PublicProductListPage = CursorPage<ProductJson>;
 
 // 1. 필터 키 배열 정의 (UI 노출 순서 보장 및 타입 추출용)
-export const PRODUCT_SORT_KEYS = [
+const PRODUCT_SORT_KEYS = [
   "ALL",
   "POPULAR",
   "RECOMENDED",
@@ -57,7 +97,7 @@ export const PRODUCT_SORT_KEYS = [
   "PRICE_HIGH",
 ] as const;
 
-export const PRODUCT_PRICE_KEYS = [
+const PRODUCT_PRICE_KEYS = [
   "ALL",
   "FREE",
   "UNDER-10k",
@@ -65,16 +105,8 @@ export const PRODUCT_PRICE_KEYS = [
   "OVER-30k",
 ] as const;
 
-export const PREMIUM_FEATURE_KEYS = [
-  "VIDEO",
-  "HORIZONTAL_SLIDE",
-  "CUSTOM_FONT",
-  "SAVE_MOBILE_INVITATION",
-  "SAVE_GUESTBOOK",
-] as const;
-
 // 2. 각 키에 대응하는 라벨 정의 (Record 활용으로 누락 방지)
-export const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
+const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
   ALL: "모두",
   POPULAR: "인기순",
   RECOMENDED: "추천순",
@@ -83,7 +115,7 @@ export const PRODUCT_SORT_OPTIONS: Record<ProductSortType, string> = {
   PRICE_HIGH: "높은 가격순",
 };
 
-export const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
+const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
   ALL: "모두",
   FREE: "무료",
   "UNDER-10k": "1만원 이하",
@@ -91,15 +123,31 @@ export const PRODUCT_PRICE_OPTIONS: Record<ProductPriceType, string> = {
   "OVER-30k": "3만원 이상",
 };
 
-export const PREMIUM_FEATURE_LABELS: Record<PremiumFeatureType, string> = {
-  VIDEO: "🎬 비디오 추가",
-  HORIZONTAL_SLIDE: "➡️ 가로 슬라이드 갤러리",
-  CUSTOM_FONT: "✍️ 나만의 폰트",
-  SAVE_MOBILE_INVITATION: "💌 영원히 간직하는 청첩장",
-  SAVE_GUESTBOOK: "📝 방명록 추억 저장",
-};
-
 // 3. 타입은 배열로부터 파생
-export type ProductSortType = (typeof PRODUCT_SORT_KEYS)[number];
-export type ProductPriceType = (typeof PRODUCT_PRICE_KEYS)[number];
-export type PremiumFeatureType = (typeof PREMIUM_FEATURE_KEYS)[number];
+type ProductSortType = (typeof PRODUCT_SORT_KEYS)[number];
+type ProductPriceType = (typeof PRODUCT_PRICE_KEYS)[number];
+
+export {
+  POPULAR_PRODUCTS_LIMIT,
+  POPULAR_PRODUCTS_MIN_ITEMS,
+  PRODUCT_STATUSES,
+  EDITABLE_PRODUCT_STATUSES,
+  PRODUCT_STATUS_LABELS,
+  EDITABLE_PRODUCT_STATUS_OPTIONS,
+  DISCOUNT_TYPE,
+  DISCOUNT_TYPES,
+  PRODUCT_SORT_KEYS,
+  PRODUCT_PRICE_KEYS,
+  PRODUCT_SORT_OPTIONS,
+  PRODUCT_PRICE_OPTIONS,
+  type DiscountType,
+  type Discount,
+  type ProductStatus,
+  type EditableProductStatus,
+  type ProductJson,
+  type Product,
+  type AdminProductListPage,
+  type PublicProductListPage,
+  type ProductSortType,
+  type ProductPriceType,
+};

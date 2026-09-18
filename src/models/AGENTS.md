@@ -1,6 +1,6 @@
 # AGENTS.md — src/models/
 
-> Last updated: 2026-07-26
+> Last updated: 2026-09-15
 > 이 폴더는 프로젝트 고유 선택 — DB 스키마 계약 레이어.
 
 ## Overview
@@ -11,18 +11,18 @@
 
 ```
 src/models/
-├── user.model.ts        # UserRole, BaseUser, IUser, UserModel
-├── product.model.ts       # ProductDB, IProduct, ProductJSON, ProductModel
+├── user.model.ts        # UserRole, BaseUser, UserDocument, UserModel
+├── product.model.ts     # ProductDb, ProductDocument, ProductJson, ProductModel
 └── ...                     # 도메인당 파일 1개
 ```
 
 ## Critical Convention
 
 - 파일명은 `{도메인}.model.ts`로 고정한다.
-- 문서 인터페이스는 **mongoose 공식 권장 패턴**을 따른다 — `Document`를 extends하지 않는 순수 인터페이스(`I{Domain}`)로 정의하고 `Schema<I{Domain}>`/`model<I{Domain}>` 제네릭에 넘긴다. Mongoose가 반환하는 실제 문서 인스턴스는 `HydratedDocument<I{Domain}>`가 `.save()`/`.toJSON()` 등 Document 메서드를 자동으로 얹어주므로, 인터페이스 자체가 `Document`를 extends할 필요 없다(mongoose 공식 문서: "IUser is a document interface... HydratedDocument<IUser> represents a hydrated Mongoose document, with methods, virtuals, and other Mongoose-specific features" — `Document`를 직접 extends하는 방식은 공식 문서가 레거시로 분류함).
-- DB 저장 shape과 별도로 API 응답용 JSON shape이 필요하면 서로 구분되는 이름을 쓴다(`ProductJSON`처럼) — 이름이 섞이면 "지금 이게 DB raw인지 API 응답인지" 판단 불가능해짐.
-- 개발 환경 HMR로 인한 모델 재컴파일 에러를 피하려면 `(mongoose.models.{Model} as Model<I{Domain}>) || mongoose.model<I{Domain}>(...)` 가드를 쓴다 — **캐스팅을 생략하지 않는다.** `mongoose.models.X`는 타입이 `Model<any>`라, 캐스팅 없이 `mongoose.model<I{Domain}>(...)`과 `||`로 묶으면 두 오버로드 시그니처가 합쳐지면서 TS가 `.find()`/`.findOne()` 등 호출을 전부 "This expression is not callable"로 막는다(실제로 이 문서의 예전 버전이 "캐스팅 없는 `||` 가드가 기본"이라고 잘못 적어놨다가 전수 리팩토링 중 8개 서비스 파일에서 이 에러로 드러남 — 원래 `user.model.ts`가 캐스팅 없이도 동작했던 건 `const X: Model<I{Domain}> = ...`처럼 좌변에 명시 타입 annotation을 달아 같은 효과를 냈기 때문이었다).
-- 모델 인스턴스에서 `._id`를 쓰는 곳이 있으면 `I{Domain}`에 `_id: Types.ObjectId`를 명시한다 — `Document`를 안 extend하므로 자동으로 안 붙는다.
+- 문서 인터페이스는 **mongoose 공식 권장 패턴**을 따른다 — `Document`를 extends하지 않는 순수 인터페이스(`{Domain}Document`)로 정의하고 `Schema<{Domain}Document>`/`model<{Domain}Document>` 제네릭에 넘긴다. Mongoose가 반환하는 실제 문서 인스턴스는 `HydratedDocument<{Domain}Document>`가 `.save()`/`.toJSON()` 등 Document 메서드를 자동으로 얹어주므로, 인터페이스 자체가 `Document`를 extends할 필요 없다. Mongoose 문서의 `IUser`는 예시 이름일 뿐이며, 이 프로젝트에서는 인터페이스에 `I` 접두사를 붙이지 않는다.
+- DB 저장 shape과 별도로 API 응답용 JSON shape이 필요하면 서로 구분되는 이름을 쓴다(`ProductJson`처럼) — 이름이 섞이면 "지금 이게 DB raw인지 API 응답인지" 판단 불가능해짐. 약어는 `docs/conventions/identifier-naming.md`에 따라 일반 단어처럼 표기한다.
+- 개발 환경 HMR로 인한 모델 재컴파일 에러를 피하려면 `(mongoose.models.{Model} as Model<{Domain}Document>) || mongoose.model<{Domain}Document>(...)` 가드를 쓴다 — **캐스팅을 생략하지 않는다.** `mongoose.models.X`는 타입이 `Model<any>`라, 캐스팅 없이 `mongoose.model<{Domain}Document>(...)`과 `||`로 묶으면 두 오버로드 시그니처가 합쳐지면서 TS가 `.find()`/`.findOne()` 등 호출을 전부 "This expression is not callable"로 막는다(실제로 이 문서의 예전 버전이 "캐스팅 없는 `||` 가드가 기본"이라고 잘못 적어놨다가 전수 리팩토링 중 8개 서비스 파일에서 이 에러로 드러남 — 원래 `user.model.ts`가 캐스팅 없이도 동작했던 건 좌변에 명시 타입 annotation을 달아 같은 효과를 냈기 때문이었다).
+- 모델 인스턴스에서 `._id`를 쓰는 곳이 있으면 `{Domain}Document`에 `_id: Types.ObjectId`를 명시한다 — `Document`를 안 extend하므로 자동으로 안 붙는다.
 - 스키마 옵션에 `{ timestamps: true }`를 쓰면 인터페이스에 `createdAt`/`updatedAt` 둘 다 선언한다 — mongoose가 이 옵션으로 두 필드를 다 만드는데 인터페이스에 하나만 선언하면 실제 DB 문서와 타입이 어긋난다.
 - **모델 파일(`*.model.ts`)의 pre/post 훅(미들웨어)에 도메인 계산·비즈니스 규칙을 두지 않는다** — 훅은 그 문서 자체의 형태를 다루는 관심사(필드 정규화, 캐스팅 보정 등)에 한정한다. 가격 계산 같은 도메인 로직은 `services/`가 소유한다(`src/services/AGENTS.md` Overview: "DB 접근 + 비즈니스 로직"). 위반하면 그 로직이 mongoose 생명주기에 암묵적으로 종속된다 — `pre('save')` 훅은 `save()`에서만 발화하고 `updateOne()`/`findOneAndUpdate()`에선 발화하지 않는다(mongoose 공식 문서: "Pre and post save() hooks are not executed on update(), findOneAndUpdate(), etc."), 그래서 같은 문서를 다른 경로로 수정하는 순간 로직이 조용히 스킵된다.
 - ObjectId→string 변환을 스키마 `toJSON` transform에 두지 않는다 — `.lean()` 결과엔 스키마 `toJSON` 옵션이 적용되지 않는다(mongoose 공식문서: lean 쿼리는 Document를 생성하지 않아 `.toJSON()`이 없음). 읽기 경로 기본값이 `.lean()`인데(`services/AGENTS.md`) 모델 transform은 hydrated Document 경로에만 적용돼 커버리지가 갈린다. 변환은 services에서 명시적으로 한다.

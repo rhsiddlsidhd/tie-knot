@@ -1,0 +1,166 @@
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import type { PremiumFeature } from "@/core/domain/premium-feature";
+import { PremiumFeatureDialog } from "./PremiumFeatureDialog";
+
+const buildFeature = (overrides?: Partial<PremiumFeature>): PremiumFeature => ({
+  _id: "feature-1",
+  code: "GALLERY_LIGHTBOX",
+  label: "방명록",
+  description: "방명록 기능",
+  additionalPrice: 3000,
+  isActive: true,
+  createdAt: new Date("2026-08-01T00:00:00.000Z").toISOString(),
+  ...overrides,
+});
+
+describe("PremiumFeatureDialog", () => {
+  it("기존 프리미엄 기능 값을 각 필드의 기본값으로 렌더링한다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByLabelText(/기능 이름/)).toHaveValue("방명록");
+    expect(screen.getByLabelText(/기능 설명/)).toHaveValue("방명록 기능");
+    expect(screen.getByLabelText(/추가 비용/)).toHaveValue(3000);
+  });
+
+  it("필드 에러가 있으면 각 필드 아래에 에러 메시지를 렌더링한다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={{
+          success: false,
+          error: {
+            category: "VALIDATION",
+            message: "입력값을 확인해주세요",
+            fieldErrors: {
+              code: ["코드 형식이 올바르지 않습니다."],
+              label: ["기능 이름을 입력해주세요."],
+              description: ["설명은 최소 10자 이상이어야 합니다."],
+              additionalPrice: ["추가 비용은 0 이상이어야 합니다."],
+            },
+          },
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByText("코드 형식이 올바르지 않습니다."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("기능 이름을 입력해주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText("설명은 최소 10자 이상이어야 합니다."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("추가 비용은 0 이상이어야 합니다."),
+    ).toBeInTheDocument();
+  });
+
+  it("에러가 없으면 에러 메시지를 렌더링하지 않는다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(
+      screen.queryByText("기능 이름을 입력해주세요."),
+    ).not.toBeInTheDocument();
+  });
+
+  it("pending이면 수정 버튼이 비활성화되고 문구가 바뀐다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={true}
+        state={null}
+      />,
+    );
+
+    const submitButton = screen.getByRole("button", { name: "수정 중..." });
+    expect(submitButton).toBeDisabled();
+  });
+
+  it("제출하면 전달받은 action이 FormData와 함께 호출된다", async () => {
+    const action = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={action}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "수정" }));
+
+    expect(action).toHaveBeenCalledTimes(1);
+  });
+  it("기능 코드는 수정할 수 없고 현재 값을 표시만 한다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByText("GALLERY_LIGHTBOX")).toBeInTheDocument();
+    expect(screen.queryByRole("textbox", { name: /기능 코드/ })).toBeNull();
+    expect(screen.queryByRole("combobox", { name: /기능 코드/ })).toBeNull();
+  });
+
+  it("수정해도 기존 기능 코드가 그대로 제출된다", () => {
+    const { container } = render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature()}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    const hidden = container.querySelector('input[name="code"]');
+    expect(hidden).toHaveValue("GALLERY_LIGHTBOX");
+  });
+  it("등록 가능 토글이 기존 isActive 값을 따른다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature({ isActive: false })}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /등록 가능/ })).not.toBeChecked();
+  });
+
+  it("isActive가 true면 토글이 켜져 있다", () => {
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={buildFeature({ isActive: true })}
+        action={vi.fn()}
+        pending={false}
+        state={null}
+      />,
+    );
+
+    expect(screen.getByRole("switch", { name: /등록 가능/ })).toBeChecked();
+  });
+});

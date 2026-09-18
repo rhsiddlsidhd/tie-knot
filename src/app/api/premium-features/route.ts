@@ -1,11 +1,9 @@
-import type { APIRouteResponse} from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeSuccess, routeError } from "@/boundary";
 import { getAllPremiumFeatureService } from "@/services/premiumFeature";
 import type { PremiumFeaturesResponse } from "@/core/schemas/response/premiumFeature.schema";
 
-export const GET = async (): Promise<
-  APIRouteResponse<PremiumFeaturesResponse>
-> => {
+const GET = async (): Promise<ApiRouteResponse<PremiumFeaturesResponse>> => {
   try {
     const features = await getAllPremiumFeatureService();
 
@@ -14,3 +12,5 @@ export const GET = async (): Promise<
     return routeError(error);
   }
 };
+
+export { GET };

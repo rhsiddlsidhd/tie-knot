@@ -6,7 +6,7 @@ import { fetcher } from "@/ui/fetcher";
 import type { NullableCoordinates } from "@/core/domain/geo";
 import type { KakaomapResponse } from "@/core/schemas/response/kakaomap.schema";
 
-export function useKakaomapGeocode(address: string): NullableCoordinates {
+const useKakaomapGeocode = (address: string): NullableCoordinates => {
   const trimmedAddress = address.trim();
   const swrKey = trimmedAddress
     ? `/api/kakao-map?address=${encodeURIComponent(trimmedAddress)}`
@@ -26,3 +26,5 @@ export function useKakaomapGeocode(address: string): NullableCoordinates {
     ? { lat: Number(document.y), lng: Number(document.x) }
     : { lat: null, lng: null };
 }
+
+export { useKakaomapGeocode };

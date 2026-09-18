@@ -1,8 +1,18 @@
 import * as z from "zod";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
-import { MOBILE_INVITATION_CATEGORY, SUB_CATEGORY_MAP, PRODUCT_CATEGORIES } from "@/core/domain/product-category";
+import {
+  MOBILE_INVITATION_CATEGORY,
+  SUB_CATEGORY_MAP,
+  PRODUCT_CATEGORIES,
+} from "@/core/domain/product-category";
+import {
+  DISCOUNT_TYPE,
+  EDITABLE_PRODUCT_STATUSES,
+} from "@/core/domain/product";
 
-export const productSchema = z
+const EditableProductStatusSchema = z.enum(EDITABLE_PRODUCT_STATUSES);
+
+const ProductSchema = z
   .object({
     title: z.string().min(1, "상품명을 입력해주세요."),
     description: z.string().min(10, "상품 설명은 최소 10자 이상이어야 합니다."),
@@ -20,16 +30,16 @@ export const productSchema = z
     discount: z
       .discriminatedUnion("discountType", [
         z.object({
-          discountType: z.literal("rate"),
+          discountType: z.literal(DISCOUNT_TYPE.RATE),
           value: z.number().min(0).max(1, "할인율은 100% 이하여야 합니다."),
         }),
         z.object({
-          discountType: z.literal("amount"),
+          discountType: z.literal(DISCOUNT_TYPE.AMOUNT),
           value: z.number().int("할인액은 원 단위 정수로 입력해주세요.").min(0),
         }),
       ])
       .optional(),
-    status: z.enum(["active", "inactive", "soldOut", "deleted"]).optional(),
+    status: EditableProductStatusSchema.optional(),
     thumbnail: z.string().url("유효한 썸네일 URL이어야 합니다."),
 
     // ── 신규 (REQ-2 / REQ-3) ─────────────────────────────
@@ -47,7 +57,10 @@ export const productSchema = z
   })
   .refine(
     (data) => {
-      if (data.isPremium && (!data.featureIds || data.featureIds.length === 0)) {
+      if (
+        data.isPremium &&
+        (!data.featureIds || data.featureIds.length === 0)
+      ) {
         return false;
       }
       return true;
@@ -74,10 +87,14 @@ export const productSchema = z
   )
   // mobile-invitation은 previewUrl이 상세 확인을 대신하므로 images 없이도 판매 성립.
   // 물리 상품 4종(favor/accessory/guestbook/ceremony)은 최소 1장 필요.
-  .refine((data) => data.category === MOBILE_INVITATION_CATEGORY || data.images.length > 0, {
-    message: "상세 이미지를 1장 이상 등록해주세요.",
-    path: ["images"],
-  })
+  .refine(
+    (data) =>
+      data.category === MOBILE_INVITATION_CATEGORY || data.images.length > 0,
+    {
+      message: "상세 이미지를 1장 이상 등록해주세요.",
+      path: ["images"],
+    },
+  )
   // maxQuantity 0(무제한)은 하한 비교 대상이 아니다.
   .refine(
     (data) => data.maxQuantity === 0 || data.maxQuantity >= data.minQuantity,
@@ -87,4 +104,6 @@ export const productSchema = z
     },
   );
 
-export type ProductDto = z.infer<typeof productSchema>;
+type ProductDto = z.infer<typeof ProductSchema>;
+
+export { EditableProductStatusSchema, ProductSchema, type ProductDto };

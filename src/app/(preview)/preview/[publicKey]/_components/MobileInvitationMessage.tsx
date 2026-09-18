@@ -15,7 +15,7 @@ const pinMessage = [
   "축복해 주시면 감사하겠습니다.",
 ];
 
-export function MobileInvitationMessage({ parties }: MobileInvitationMessageMappedProps) {
+const MobileInvitationMessage = ({ parties }: MobileInvitationMessageMappedProps) => {
   const { setIsOpen } = useGuestbookModalStore();
 
   return (
@@ -69,3 +69,5 @@ export function MobileInvitationMessage({ parties }: MobileInvitationMessageMapp
     </EyebrowSection>
   );
 }
+
+export { MobileInvitationMessage };

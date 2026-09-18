@@ -1,23 +1,37 @@
 "use server";
 
-import type { APIResponse } from "@/core/domain/error";
-import type { ProductStatus } from "@/core/domain/product";
+import type { ApiResponse } from "@/core/domain/error";
 import { updateProductStatusAsAdminService } from "@/services/product";
 import { actionError } from "@/boundary";
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
+import { EditableProductStatusSchema } from "@/core/schemas/request/product.schema";
 
 import { revalidatePath } from "next/cache";
 
-export const updateProductStatus = async (
+const updateProductStatus = async (
   productId: string,
-  status: ProductStatus,
-): Promise<APIResponse<{ message: string }>> => {
-  try {
-    const updated = await updateProductStatusAsAdminService(productId, status);
+  status: string,
+): Promise<ApiResponse<{ message: string }>> => {
+  const parsedStatus = EditableProductStatusSchema.safeParse(status);
+  if (!parsedStatus.success) {
+    return {
+      success: false,
+      error: {
+        category: "VALIDATION",
+        message: "변경할 수 없는 상품 상태입니다.",
+      },
+    };
+  }
 
-    revalidatePath(routes.admin.products.root);
-    revalidatePath(routes.products.root);
-    revalidatePath(routes.products.detail(updated.category, productId));
+  try {
+    const updated = await updateProductStatusAsAdminService(
+      productId,
+      parsedStatus.data,
+    );
+
+    revalidatePath(ROUTES.admin.products.root);
+    revalidatePath(ROUTES.products.root);
+    revalidatePath(ROUTES.products.detail(updated.category, productId));
 
     return {
       success: true,
@@ -27,3 +41,5 @@ export const updateProductStatus = async (
     return actionError(e);
   }
 };
+
+export { updateProductStatus };

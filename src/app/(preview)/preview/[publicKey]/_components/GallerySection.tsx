@@ -5,20 +5,23 @@ import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Button } from "@/ui/components/atoms/button";
 import { Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms/dialog";
+import { cn } from "@/core/utils/cn";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { EyebrowSection } from "./EyebrowSection";
 import type { GallerySectionProps } from "../_utils/gallerySection.mapper";
 
-export function GallerySection({
+const thumbnailClassName =
+  "bg-muted relative aspect-square w-full overflow-hidden rounded-lg";
+
+const GallerySection = ({
   images,
   lightboxEnabled,
-}: GallerySectionProps) {
+}: GallerySectionProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const openLightbox = (index: number) => {
-    if (!lightboxEnabled) return;
     setCurrentIndex(index);
     setLightboxOpen(true);
   };
@@ -32,19 +35,32 @@ export function GallerySection({
   return (
     <EyebrowSection eyebrow="GALLERY" heading="웨딩 갤러리">
       <div className="grid grid-cols-2 gap-2">
-        {images.map((src, index) => (
-          <button
-            key={index}
-            onClick={() => openLightbox(index)}
-            className="bg-muted relative aspect-square w-full overflow-hidden rounded-lg transition-opacity hover:opacity-90"
-          >
+        {images.map((src, index) => {
+          const thumbnail = (
             <AppImage
               src={src}
               alt={`Gallery image ${index + 1}`}
               sizes="(max-width: 512px) 50vw, 320px"
             />
-          </button>
-        ))}
+          );
+
+          // 라이트박스가 없으면 썸네일은 그냥 그림이다 — button으로 감싸면 포커스를
+          // 받고 hover에 반응하면서 눌러도 아무 일이 없어, 유료 기능이 아니라
+          // 고장으로 읽힌다.
+          return lightboxEnabled ? (
+            <button
+              key={index}
+              onClick={() => openLightbox(index)}
+              className={cn(thumbnailClassName, "transition-opacity hover:opacity-90")}
+            >
+              {thumbnail}
+            </button>
+          ) : (
+            <div key={index} className={thumbnailClassName}>
+              {thumbnail}
+            </div>
+          );
+        })}
       </div>
 
       {lightboxEnabled && (
@@ -97,3 +113,5 @@ export function GallerySection({
     </EyebrowSection>
   );
 }
+
+export { GallerySection };

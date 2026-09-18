@@ -8,15 +8,13 @@ import type { OrderSlice } from "./slices/order.slice";
 import type { AdminModalPropsMap, AdminModalSlice, AdminModalType } from "./slices/admin-modal.slice";
 import type { GuestbookModalSlice, GuestbookModalType } from "./slices/guestbook-modal.slice";
 
-export type { AdminModalPropsMap, AdminModalType, GuestbookModalType };
-
-function useAppStoreApi() {
+const useAppStoreApi = () => {
   const store = useContext(AppStoreContext);
   if (!store) throw new Error("StoreProvider is missing!");
   return store;
 }
 
-export function useOrderStore<T>(selector: (state: OrderSlice) => T): T {
+const useOrderStore = <T>(selector: (state: OrderSlice) => T): T => {
   return useStore(useAppStoreApi(), selector);
 }
 
@@ -28,7 +26,7 @@ interface AdminModalView {
   closeModal: AdminModalSlice["closeAdminModal"];
 }
 
-export function useAdminModalStore<T>(selector: (state: AdminModalView) => T): T {
+const useAdminModalStore = <T>(selector: (state: AdminModalView) => T): T => {
   const store = useAppStoreApi();
   return useStore(store, (s) =>
     selector({
@@ -52,11 +50,11 @@ interface GuestbookModalView {
 
 const identityGuestbookModalView = (state: GuestbookModalView) => state;
 
-export function useGuestbookModalStore<T = GuestbookModalView>(
+const useGuestbookModalStore = <T = GuestbookModalView>(
   selector: (state: GuestbookModalView) => T = identityGuestbookModalView as (
     state: GuestbookModalView,
   ) => T,
-): T {
+): T => {
   const store = useAppStoreApi();
   return useStore(
     store,
@@ -72,3 +70,12 @@ export function useGuestbookModalStore<T = GuestbookModalView>(
     ),
   );
 }
+
+export {
+  useOrderStore,
+  useAdminModalStore,
+  useGuestbookModalStore,
+  type AdminModalPropsMap,
+  type AdminModalType,
+  type GuestbookModalType,
+};

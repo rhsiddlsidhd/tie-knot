@@ -5,7 +5,7 @@ const SERVICE_NAME = "SearchSTNBySubwayLineInfo";
 
 type Row = { STATION_NM: string };
 
-function mockResponse(status: number, ok: boolean, contentType: string, body: string): Response {
+const mockResponse = (status: number, ok: boolean, contentType: string, body: string): Response => {
   return {
     ok,
     status,

@@ -8,9 +8,12 @@
     "**/_types/**",
     "**/_constants/**",
     "src/core/domain/**",
+    "src/core/content/**",
     "src/ui/stores/app.store.ts",
     "src/ui/stores/provider.tsx",
     "src/ui/stores/use-app-store.ts",
-    "src/ui/context/*/provider.tsx"
+    "src/ui/context/*/provider.tsx",
+    "src/ui/components/*/*/index.ts",
+    "src/ui/components/atoms/**"
   ]
 }

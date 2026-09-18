@@ -1,15 +1,26 @@
 import "server-only";
 import mongoose from "mongoose";
-import type { IReview } from "@/models/review.model";
-import type { IOrder } from "@/models/order.model";
+import type { ReviewDocument } from "@/models/review.model";
+import type { OrderDocument } from "@/models/order.model";
 import { ReviewModel } from "@/models/review.model";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
+import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
-import { decodeCursor, encodeCursor, isValidPageLimit } from "@/core/utils/cursor";
+import {
+  decodeCursor,
+  encodeCursor,
+  isValidPageLimit,
+} from "@/core/utils/cursor";
+import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { maskName } from "@/core/utils/mask";
 import { AppError } from "@/core/domain/error";
-import type { AdminReviewListPage, ReviewJSON, ReviewListPage, ReviewSortType } from "@/core/domain/review";
+import type {
+  AdminReviewListPage,
+  ReviewJson,
+  ReviewListPage,
+  ReviewSortType,
+} from "@/core/domain/review";
 import { REVIEW_PAGE_SIZE } from "@/core/domain/review";
 import { getUser, requireAdmin, requireAuth } from "./auth";
 
@@ -69,7 +80,7 @@ const toReviewJSON = (
   review: ReviewCore,
   authorName: string,
   viewerUserId?: string,
-): ReviewJSON => ({
+): ReviewJson => ({
   _id: review._id.toString(),
   productId: review.productId.toString(),
   authorName,
@@ -93,7 +104,13 @@ const recomputeProductRating = async (
 
   const [result] = await ReviewModel.aggregate<{ avg: number; count: number }>([
     { $match: { productId: objectId } },
-    { $group: { _id: "$productId", avg: { $avg: "$rating" }, count: { $sum: 1 } } },
+    {
+      $group: {
+        _id: "$productId",
+        avg: { $avg: "$rating" },
+        count: { $sum: 1 },
+      },
+    },
   ]);
 
   await ProductModel.findByIdAndUpdate(objectId, {
@@ -109,7 +126,9 @@ const recomputeProductRating = async (
 
 type PopulatedAuthor = { _id: mongoose.Types.ObjectId; name: string } | null;
 
-type LeanReviewWithAuthor = Omit<IReview, "userId"> & { userId: PopulatedAuthor };
+type LeanReviewWithAuthor = Omit<ReviewDocument, "userId"> & {
+  userId: PopulatedAuthor;
+};
 
 type ProductReviewsQuery = {
   productId: string;
@@ -119,7 +138,7 @@ type ProductReviewsQuery = {
   viewerUserId?: string;
 };
 
-export const getProductReviewsPageService = async ({
+const getProductReviewsPageService = async ({
   productId,
   sort = "LATEST",
   cursor,
@@ -190,20 +209,20 @@ type CreateReviewInput = {
   images: string[];
 };
 
-export const createReviewService = async ({
+const createReviewService = async ({
   orderId,
   userId,
   rating,
   content,
   images,
-}: CreateReviewInput): Promise<ReviewJSON> => {
+}: CreateReviewInput): Promise<ReviewJson> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(orderId)) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
 
-  const order = await OrderModel.findById(orderId).lean<IOrder>();
+  const order = await OrderModel.findById(orderId).lean<OrderDocument>();
   if (!order) {
     throw new AppError("NOT_FOUND", "주문을 찾을 수 없습니다.");
   }
@@ -248,12 +267,12 @@ export const createReviewService = async ({
   return toReviewJSON(review, maskName(author?.name ?? ""), userId);
 };
 
-export async function createReviewForCurrentUserService(
+const createReviewForCurrentUserService = async (
   data: Omit<CreateReviewInput, "userId">,
-): Promise<ReviewJSON> {
+): Promise<ReviewJson> => {
   const { userId } = await requireAuth();
   return createReviewService({ ...data, userId });
-}
+};
 
 type UpdateReviewInput = {
   reviewId: string;
@@ -263,20 +282,20 @@ type UpdateReviewInput = {
   images?: string[];
 };
 
-export const updateReviewService = async ({
+const updateReviewService = async ({
   reviewId,
   userId,
   rating,
   content,
   images,
-}: UpdateReviewInput): Promise<ReviewJSON> => {
+}: UpdateReviewInput): Promise<ReviewJson> => {
   await dbConnect();
 
   if (!mongoose.isObjectIdOrHexString(reviewId)) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
 
-  const existing = await ReviewModel.findById(reviewId).lean<IReview>();
+  const existing = await ReviewModel.findById(reviewId).lean<ReviewDocument>();
   if (!existing) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
@@ -284,7 +303,8 @@ export const updateReviewService = async ({
     throw new AppError("FORBIDDEN", "본인이 작성한 리뷰만 수정할 수 있습니다.");
   }
 
-  const update: Partial<Pick<IReview, "rating" | "content" | "images">> = {};
+  const update: Partial<Pick<ReviewDocument, "rating" | "content" | "images">> =
+    {};
   if (rating !== undefined) update.rating = rating;
   if (content !== undefined) update.content = content;
   if (images !== undefined) update.images = images;
@@ -293,7 +313,7 @@ export const updateReviewService = async ({
     new: true,
     runValidators: true,
   })
-    .lean<IReview>()
+    .lean<ReviewDocument>()
     .catch((err) => {
       throw new AppError(
         "INTERNAL",
@@ -312,14 +332,14 @@ export const updateReviewService = async ({
   return toReviewJSON(updated, maskName(author?.name ?? ""), userId);
 };
 
-export async function updateReviewForCurrentUserService(
+const updateReviewForCurrentUserService = async (
   data: Omit<UpdateReviewInput, "userId">,
-): Promise<ReviewJSON> {
+): Promise<ReviewJson> => {
   const { userId } = await requireAuth();
   return updateReviewService({ ...data, userId });
-}
+};
 
-export const deleteReviewService = async ({
+const deleteReviewService = async ({
   reviewId,
   userId,
 }: {
@@ -332,7 +352,7 @@ export const deleteReviewService = async ({
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
 
-  const existing = await ReviewModel.findById(reviewId).lean<IReview>();
+  const existing = await ReviewModel.findById(reviewId).lean<ReviewDocument>();
   if (!existing) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
@@ -350,18 +370,16 @@ export const deleteReviewService = async ({
   await recomputeProductRating(existing.productId);
 };
 
-export async function deleteReviewForCurrentUserService(
+const deleteReviewForCurrentUserService = async (
   reviewId: string,
-): Promise<void> {
+): Promise<void> => {
   const { userId } = await requireAuth();
   return deleteReviewService({ reviewId, userId });
-}
+};
 
 // 어드민 모더레이션 삭제 — 소유권 검사 없이 어떤 리뷰든 삭제한다, 그래서 자체적으로
 // requireAdmin()을 호출해 게이트한다(product.ts의 관리자 전용 함수들과 동일 패턴).
-export const deleteReviewByAdminService = async (
-  reviewId: string,
-): Promise<void> => {
+const deleteReviewByAdminService = async (reviewId: string): Promise<void> => {
   await requireAdmin();
   await dbConnect();
 
@@ -369,7 +387,7 @@ export const deleteReviewByAdminService = async (
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
 
-  const existing = await ReviewModel.findById(reviewId).lean<IReview>();
+  const existing = await ReviewModel.findById(reviewId).lean<ReviewDocument>();
   if (!existing) {
     throw new AppError("NOT_FOUND", "리뷰를 찾을 수 없습니다.");
   }
@@ -384,14 +402,15 @@ export const deleteReviewByAdminService = async (
   await recomputeProductRating(existing.productId);
 };
 
-type LeanAdminReview = Omit<IReview, "userId" | "productId"> & {
+type LeanAdminReview = Omit<ReviewDocument, "userId" | "productId"> & {
   userId: { name: string } | null;
   productId: { title: string } | null;
 };
 
-type AdminReviewsQuery = { cursor?: string; limit?: number };
+type AdminReviewsQuery = { q?: string; cursor?: string; limit?: number };
 
-export const getAdminReviewsPageService = async ({
+const getAdminReviewsPageService = async ({
+  q,
   cursor,
   limit,
 }: AdminReviewsQuery): Promise<AdminReviewListPage> => {
@@ -403,12 +422,39 @@ export const getAdminReviewsPageService = async ({
   }
 
   const filter: Record<string, unknown> = {};
+
+  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
+  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  const conditions: Record<string, unknown>[] = [];
+
+  const term = q?.trim();
+  if (term) {
+    // userId/productId가 ref라 리뷰 문서 자체엔 이메일·상품명이 없다 — 먼저
+    // User/Product에서 부분일치하는 id를 모은 뒤 $in으로 건다(2단계 역조회).
+    const regex = { $regex: escapeRegExp(term), $options: "i" };
+    const [matchedUsers, matchedProducts] = await Promise.all([
+      UserModel.find({ email: regex }).select("_id").lean(),
+      ProductModel.find({ title: regex }).select("_id").lean(),
+    ]);
+
+    conditions.push({
+      $or: [
+        { userId: { $in: matchedUsers.map((u) => u._id) } },
+        { productId: { $in: matchedProducts.map((p) => p._id) } },
+      ],
+    });
+  }
+
   if (cursor) {
     const decoded = decodeCursor(cursor);
     if (!decoded) {
       throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
     }
-    filter.$or = buildReviewCursorOr("LATEST", decoded);
+    conditions.push({ $or: buildReviewCursorOr("LATEST", decoded) });
+  }
+
+  if (conditions.length > 0) {
+    filter.$and = conditions;
   }
 
   const found = await ReviewModel.find(filter)
@@ -442,4 +488,16 @@ export const getAdminReviewsPageService = async ({
         ? encodeCursor({ createdAt: last.createdAt, id: last._id.toString() })
         : null,
   };
+};
+
+export {
+  getProductReviewsPageService,
+  createReviewService,
+  createReviewForCurrentUserService,
+  updateReviewService,
+  updateReviewForCurrentUserService,
+  deleteReviewService,
+  deleteReviewForCurrentUserService,
+  deleteReviewByAdminService,
+  getAdminReviewsPageService,
 };

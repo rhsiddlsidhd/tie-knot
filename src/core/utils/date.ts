@@ -6,7 +6,7 @@ const MINUTE = SECOND * 60;
 const HOUR = MINUTE * 60;
 const DAY = HOUR * 24;
 
-export const getTimeDiff = (target: Date, now: Date = new Date()) => {
+const getTimeDiff = (target: Date, now: Date = new Date()) => {
   const diff = Math.max(target.getTime() - now.getTime(), 0);
 
   const days = Math.floor(diff / DAY);
@@ -17,7 +17,7 @@ export const getTimeDiff = (target: Date, now: Date = new Date()) => {
   return { diff, days, hours, minutes, seconds };
 };
 
-export const calculateCountdown = ({
+const calculateCountdown = ({
   weddingDate,
   now,
 }: {
@@ -34,7 +34,7 @@ export const calculateCountdown = ({
   };
 };
 
-export const updateCountdownMessage = (
+const updateCountdownMessage = (
   weddingDate: Date,
   now?: Date,
 ): string => {
@@ -48,7 +48,7 @@ export const updateCountdownMessage = (
 };
 
 /** 주어진 시각이 속한 KST 기준 전월·이번 달·다음 달 경계를 UTC instant로 돌려준다. */
-export const getKstMonthRange = (now: Date = new Date()) => {
+const getKstMonthRange = (now: Date = new Date()) => {
   const zoned = toZonedTime(now, "Asia/Seoul");
   return {
     startOfLastMonth: fromZonedTime(startOfMonth(subMonths(zoned, 1)), "Asia/Seoul"),
@@ -57,7 +57,7 @@ export const getKstMonthRange = (now: Date = new Date()) => {
   };
 };
 
-export type DateFormatType =
+type DateFormatType =
   | "slash"
   | "dot"
   | "text"
@@ -68,7 +68,7 @@ export type DateFormatType =
 /**
  * 날짜를 지정된 형식으로 변환합니다.
  */
-export const formatDate = (date: string | Date, type: DateFormatType) => {
+const formatDate = (date: string | Date, type: DateFormatType) => {
   const newDate = typeof date === "string" ? new Date(date) : date;
   const year = newDate.getFullYear();
   const month = newDate.getMonth() + 1;
@@ -111,7 +111,7 @@ export const formatDate = (date: string | Date, type: DateFormatType) => {
   }
 };
 
-export const KST_TIMEZONE = "Asia/Seoul";
+const KST_TIMEZONE = "Asia/Seoul";
 
 /**
  * 서버/브라우저의 로컬 timezone과 무관하게 항상 KST(Asia/Seoul) 기준으로
@@ -119,7 +119,7 @@ export const KST_TIMEZONE = "Asia/Seoul";
  * getter(`getFullYear` 등)가 KST 기준값을 읽도록 내부 timestamp를 이동시키므로
  * 그대로 `formatDate`에 넘길 수 있다(`formatRelativeTime`의 마지막 폴백과 동일 패턴).
  */
-export const formatKstDate = (
+const formatKstDate = (
   date: string | Date,
   type: DateFormatType = "dot",
 ): string => {
@@ -132,7 +132,7 @@ export const formatKstDate = (
  * <1분 "방금 전", <60분 "N분 전", <24시간 "N시간 전", <7일 "N일 전",
  * 그 이상은 KST(Asia/Seoul) 기준 `formatDate(date, "dot")` 폴백.
  */
-export const formatRelativeTime = (date: Date, now: Date = new Date()): string => {
+const formatRelativeTime = (date: Date, now: Date = new Date()): string => {
   const diff = now.getTime() - date.getTime();
 
   if (diff < MINUTE) return "방금 전";
@@ -141,4 +141,16 @@ export const formatRelativeTime = (date: Date, now: Date = new Date()): string =
   if (diff < DAY * 7) return `${Math.floor(diff / DAY)}일 전`;
 
   return formatDate(toZonedTime(date, KST_TIMEZONE), "dot");
+};
+
+export {
+  getTimeDiff,
+  calculateCountdown,
+  updateCountdownMessage,
+  getKstMonthRange,
+  formatDate,
+  KST_TIMEZONE,
+  formatKstDate,
+  formatRelativeTime,
+  type DateFormatType,
 };

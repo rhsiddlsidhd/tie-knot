@@ -10,7 +10,7 @@ interface TypographyProps {
  * - 크기: 4xl (36px) | 굵기: extrabold | 가운데 정렬
  * - 사용: <TypographyH1>서비스 소개 제목</TypographyH1>
  */
-export function TypographyH1({ children, className }: TypographyProps) {
+function TypographyH1({ children, className }: TypographyProps) {
   return (
     <h1
       className={cn(
@@ -28,7 +28,7 @@ export function TypographyH1({ children, className }: TypographyProps) {
  * - 크기: 3xl (30px) | 굵기: semibold | 하단 구분선 있음
  * - 사용: <TypographyH2>섹션 이름</TypographyH2>
  */
-export function TypographyH2({
+function TypographyH2({
   children,
   className,
   id,
@@ -51,7 +51,7 @@ export function TypographyH2({
  * - 크기: 2xl (24px) | 굵기: semibold
  * - 사용: <TypographyH3>그룹 이름</TypographyH3>
  */
-export function TypographyH3({ children, className }: TypographyProps) {
+function TypographyH3({ children, className }: TypographyProps) {
   return (
     <h3
       className={cn(
@@ -69,7 +69,7 @@ export function TypographyH3({ children, className }: TypographyProps) {
  * - 크기: xl (20px) | 굵기: semibold
  * - 사용: <TypographyH4>항목 이름</TypographyH4>
  */
-export function TypographyH4({ children, className }: TypographyProps) {
+function TypographyH4({ children, className }: TypographyProps) {
   return (
     <h4
       className={cn(
@@ -87,7 +87,7 @@ export function TypographyH4({ children, className }: TypographyProps) {
  * - 크기: base | 줄 간격 넓음 | 두 번째 단락부터 상단 margin 자동
  * - 사용: <TypographyP>본문 내용</TypographyP>
  */
-export function TypographyP({ children, className }: TypographyProps) {
+function TypographyP({ children, className }: TypographyProps) {
   return (
     <p className={cn("leading-7 not-first:mt-6", className)}>{children}</p>
   );
@@ -98,7 +98,7 @@ export function TypographyP({ children, className }: TypographyProps) {
  * - 왼쪽 보더 라인 + 이탤릭체 | 상단 margin 있음
  * - 사용: <TypographyBlockquote>인용 내용</TypographyBlockquote>
  */
-export function TypographyBlockquote({ children, className }: TypographyProps) {
+function TypographyBlockquote({ children, className }: TypographyProps) {
   return (
     <blockquote className={cn("mt-6 border-l-2 pl-6 italic", className)}>
       {children}
@@ -111,7 +111,7 @@ export function TypographyBlockquote({ children, className }: TypographyProps) {
  * - 배경색 있는 rounded 박스 | monospace | text-sm
  * - 사용: <TypographyInlineCode>npm install</TypographyInlineCode>
  */
-export function TypographyInlineCode({ children, className }: TypographyProps) {
+function TypographyInlineCode({ children, className }: TypographyProps) {
   return (
     <code
       className={cn(
@@ -129,7 +129,7 @@ export function TypographyInlineCode({ children, className }: TypographyProps) {
  * - 크기: xl (20px) | 색상: muted (흐리게)
  * - 사용: <TypographyLead>페이지 한 줄 설명</TypographyLead>
  */
-export function TypographyLead({ children, className }: TypographyProps) {
+function TypographyLead({ children, className }: TypographyProps) {
   return (
     <p className={cn("text-muted-foreground text-xl", className)}>{children}</p>
   );
@@ -140,7 +140,7 @@ export function TypographyLead({ children, className }: TypographyProps) {
  * - 크기: lg (18px) | 굵기: semibold
  * - 사용: <TypographyLarge>강조할 항목</TypographyLarge>
  */
-export function TypographyLarge({ children, className }: TypographyProps) {
+function TypographyLarge({ children, className }: TypographyProps) {
   return (
     <div className={cn("text-lg font-semibold", className)}>{children}</div>
   );
@@ -151,7 +151,7 @@ export function TypographyLarge({ children, className }: TypographyProps) {
  * - 크기: sm (14px) | 줄 간격 없음 | 굵기: medium
  * - 사용: <TypographySmall>2024.01.01</TypographySmall>
  */
-export function TypographySmall({ children, className }: TypographyProps) {
+function TypographySmall({ children, className }: TypographyProps) {
   return (
     <small className={cn("text-sm leading-none font-medium", className)}>
       {children}
@@ -164,7 +164,7 @@ export function TypographySmall({ children, className }: TypographyProps) {
  * - 크기: sm (14px) | 색상: muted (흐리게)
  * - 사용: <TypographyMuted>아직 등록된 항목이 없습니다</TypographyMuted>
  */
-export function TypographyMuted({ children, className }: TypographyProps) {
+function TypographyMuted({ children, className }: TypographyProps) {
   return (
     <p className={cn("text-muted-foreground text-sm", className)}>{children}</p>
   );
@@ -175,10 +175,25 @@ export function TypographyMuted({ children, className }: TypographyProps) {
  * - 크기: xs (12px) | 굵기: bold | 자간: widest
  * - 사용: <TypographyEyebrow>GALLERY</TypographyEyebrow>
  */
-export function TypographyEyebrow({ children, className }: TypographyProps) {
+function TypographyEyebrow({ children, className }: TypographyProps) {
   return (
     <p className={cn("text-xs font-bold tracking-widest", className)}>
       {children}
     </p>
   );
 }
+
+export {
+  TypographyH1,
+  TypographyH2,
+  TypographyH3,
+  TypographyH4,
+  TypographyP,
+  TypographyBlockquote,
+  TypographyInlineCode,
+  TypographyLead,
+  TypographyLarge,
+  TypographySmall,
+  TypographyMuted,
+  TypographyEyebrow,
+};

@@ -1,10 +1,12 @@
-import { routes } from "@/core/domain/routes";
+import { ROUTES } from "@/core/domain/routes";
 import { DemoGuestbookSection } from "./DemoGuestbookSection";
 import { LiveGuestbookSection } from "../_containers/LiveGuestbookSection";
 
-export function GuestbookSection({ publicKey }: { publicKey: string }) {
-  if (publicKey === routes.preview.samplePublicKey) {
+const GuestbookSection = ({ publicKey }: { publicKey: string }) => {
+  if (publicKey === ROUTES.preview.samplePublicKey) {
     return <DemoGuestbookSection />;
   }
   return <LiveGuestbookSection publicKey={publicKey} />;
-}
+};
+
+export { GuestbookSection };

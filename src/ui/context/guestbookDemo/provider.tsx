@@ -5,6 +5,8 @@ import { createStateContext } from "../createStateContext";
 import { guestbookDemoReducer } from "./reducer";
 import type { GuestbookDemoState } from "./type";
 
-export const [GuestbookDemoProvider, useGuestbookDemo] = createStateContext(
+const [GuestbookDemoProvider, useGuestbookDemo] = createStateContext(
   (init: GuestbookDemoState) => useReducer(guestbookDemoReducer, init),
 );
+
+export { GuestbookDemoProvider, useGuestbookDemo };

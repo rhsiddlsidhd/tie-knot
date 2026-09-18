@@ -12,17 +12,46 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { spawnSync } from "node:child_process";
 import picomatch from "picomatch";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-export const ROOT = path.resolve(HERE, "..", "..", "..");
 
-const VITEST_CONFIG = path.join(ROOT, "vitest.config.ts");
-const TSCONFIG = path.join(ROOT, "tsconfig.json");
-const POLICY_FILE = path.join(ROOT, "tooling", "tdd-gate", "policy.json");
+/**
+ * 스크립트 자기 위치 기준 ROOT는 기본값일 뿐이다. `.claude/worktrees/**`에서
+ * 편집이 일어나면 훅이 메인 저장소 스크립트로 실행돼도 이 기본값은 메인
+ * 저장소를 가리켜, 워크트리 절대경로를 relPath로 바꿨을 때 `.claude/worktrees/...`
+ * 접두사가 남아 `src/` 판정이 깨진다 — resolveRootFromCwd 로 훅 payload 의 실제
+ * cwd 기준 git toplevel 로 덮어써야 한다.
+ */
+let ROOT = path.resolve(HERE, "..", "..", "..");
 
-export const CACHE_DIR = path.join(ROOT, "node_modules", ".cache", "tdd-gate");
-const CONFIG_CACHE = path.join(CACHE_DIR, "projects.json");
+/** payload.cwd 기준 실제 worktree toplevel 로 ROOT 를 다시 잡는다. 실패하면 그대로 둔다(fail-open). */
+function resolveRootFromCwd(cwd) {
+  if (typeof cwd !== "string" || !cwd) return;
+  const result = spawnSync("git", ["-C", cwd, "rev-parse", "--show-toplevel"], {
+    encoding: "utf8",
+  });
+  if (result.status === 0 && result.stdout.trim()) {
+    ROOT = result.stdout.trim();
+  }
+}
+
+function vitestConfigPath() {
+  return path.join(ROOT, "vitest.config.ts");
+}
+function tsconfigPath() {
+  return path.join(ROOT, "tsconfig.json");
+}
+function policyFilePath() {
+  return path.join(ROOT, "tooling", "tdd-gate", "policy.json");
+}
+function cacheDir() {
+  return path.join(ROOT, "node_modules", ".cache", "tdd-gate");
+}
+function configCachePath() {
+  return path.join(cacheDir(), "projects.json");
+}
 
 /** 게이트가 다루는 tier. integration 은 test/ 아래 별도 트리라 형제 매핑 밖이다. */
 const GATE_TIERS = ["unit", "component"];
@@ -30,21 +59,104 @@ const GATE_TIERS = ["unit", "component"];
 const TEST_FILE_RE = /\.(unit|component|integration)\.test\.tsx?$/;
 
 /** 이번 턴에 편집된 강제 대상 경로 기록. PostToolUse 가 쓰고 Stop 이 소비한다. */
-export function turnFile(sessionId) {
+function turnFile(sessionId) {
   const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
-  return path.join(CACHE_DIR, `turn-${safe}.txt`);
+  return path.join(cacheDir(), `turn-${safe}.txt`);
 }
 
-export function ensureCacheDir() {
-  fs.mkdirSync(CACHE_DIR, { recursive: true });
+/** 턴 시작 시점의 src/ dirty 상태 스냅샷. UserPromptSubmit 이 쓰고 Stop 이 소비한다. */
+function snapshotFile(sessionId) {
+  const safe = String(sessionId ?? "unknown").replace(/[^a-zA-Z0-9_-]/g, "");
+  return path.join(cacheDir(), `snapshot-${safe}.json`);
 }
 
-export function toPosix(p) {
+function ensureCacheDir() {
+  fs.mkdirSync(cacheDir(), { recursive: true });
+}
+
+function git(args) {
+  const result = spawnSync("git", args, { cwd: ROOT, encoding: "utf8" });
+  if (result.status !== 0) return null;
+  return result.stdout;
+}
+
+function gitHead() {
+  const out = git(["rev-parse", "HEAD"]);
+  return out ? out.trim() : null;
+}
+
+/** src/ 아래 dirty(수정+untracked) 파일의 relPath → git hash-object 해시. 삭제된 항목은 null. */
+function gitDirtySrcHashes() {
+  const status = git(["status", "--porcelain", "-uall", "--", "src"]);
+  if (status === null) return {};
+
+  const hashes = {};
+  for (const rawLine of status.split("\n")) {
+    if (!rawLine) continue;
+    const marker = rawLine.slice(0, 2);
+    let rel = rawLine.slice(3).trim().replace(/^"|"$/g, "");
+    if (rel.includes(" -> ")) rel = rel.split(" -> ")[1];
+
+    if (marker.includes("D")) {
+      hashes[toPosix(rel)] = null;
+      continue;
+    }
+    const hashOut = git(["hash-object", path.join(ROOT, rel)]);
+    if (hashOut) hashes[toPosix(rel)] = hashOut.trim();
+  }
+  return hashes;
+}
+
+/** snapshotHead 이후 커밋된 src/ 변경 경로. */
+function gitChangedSrcSince(snapshotHead) {
+  if (!snapshotHead) return [];
+  const out = git(["diff", "--name-only", `${snapshotHead}..HEAD`, "--", "src"]);
+  if (!out) return [];
+  return out.split("\n").filter(Boolean).map(toPosix);
+}
+
+function writeTurnSnapshot(sessionId) {
+  ensureCacheDir();
+  const snapshot = { head: gitHead(), hashes: gitDirtySrcHashes() };
+  fs.writeFileSync(snapshotFile(sessionId), JSON.stringify(snapshot));
+}
+
+function readTurnSnapshot(sessionId) {
+  try {
+    return JSON.parse(fs.readFileSync(snapshotFile(sessionId), "utf8"));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 스냅샷 대비 이번 턴에 실제로 바뀐 src/ 경로.
+ * 스냅샷이 없으면(첫 턴 등) null 을 반환해 호출부가 "미커밋 전체"로 fallback 하게 한다.
+ */
+function computeTurnChanges(sessionId) {
+  const snapshot = readTurnSnapshot(sessionId);
+  if (!snapshot) return null;
+
+  const currentHashes = gitDirtySrcHashes();
+  const changed = new Set();
+  for (const [rel, hash] of Object.entries(currentHashes)) {
+    if (snapshot.hashes?.[rel] !== hash) changed.add(rel);
+  }
+
+  const currentHead = gitHead();
+  if (snapshot.head && currentHead && snapshot.head !== currentHead) {
+    for (const rel of gitChangedSrcSince(snapshot.head)) changed.add(rel);
+  }
+
+  return [...changed];
+}
+
+function toPosix(p) {
   return p.split(path.sep).join("/");
 }
 
 /** 절대경로·상대경로·`@/`·`@test/` 를 전부 repo 루트 기준 posix 상대경로로 정규화한다. */
-export function toRelative(filePath) {
+function toRelative(filePath) {
   if (!filePath) return null;
   const aliased = expandAlias(filePath);
   const abs = path.isAbsolute(aliased) ? aliased : path.resolve(ROOT, aliased);
@@ -60,7 +172,7 @@ function loadAliases() {
   if (aliasCache) return aliasCache;
   const entries = [];
   try {
-    const raw = fs.readFileSync(TSCONFIG, "utf8");
+    const raw = fs.readFileSync(tsconfigPath(), "utf8");
     const paths =
       JSON.parse(stripJsonComments(raw))?.compilerOptions?.paths ?? {};
     for (const [pattern, targets] of Object.entries(paths)) {
@@ -90,14 +202,14 @@ function stripJsonComments(raw) {
     .replace(/(^|[^:])\/\/.*$/gm, "$1");
 }
 
-export function isTestFile(relPath) {
+function isTestFile(relPath) {
   return TEST_FILE_RE.test(relPath);
 }
 
 /** tooling/tdd-gate/policy.json — 강제 대상에서 뺄 소스 glob. 없으면 빈 목록(fail-open). */
-export function loadExcludes() {
+function loadExcludes() {
   try {
-    const parsed = JSON.parse(fs.readFileSync(POLICY_FILE, "utf8"));
+    const parsed = JSON.parse(fs.readFileSync(policyFilePath(), "utf8"));
     return Array.isArray(parsed?.exclude) ? parsed.exclude : [];
   } catch {
     return [];
@@ -108,11 +220,13 @@ export function loadExcludes() {
  * vitest.config.ts 의 unit·component project 에서 include/exclude 만 뽑는다.
  * 로드가 196ms 라 mtime 으로 캐시한다.
  */
-export async function loadProjects() {
-  const mtimeMs = fs.statSync(VITEST_CONFIG).mtimeMs;
+async function loadProjects() {
+  const vitestConfig = vitestConfigPath();
+  const configCache = configCachePath();
+  const mtimeMs = fs.statSync(vitestConfig).mtimeMs;
 
   try {
-    const cached = JSON.parse(fs.readFileSync(CONFIG_CACHE, "utf8"));
+    const cached = JSON.parse(fs.readFileSync(configCache, "utf8"));
     if (cached.mtimeMs === mtimeMs) return cached.projects;
   } catch {
     // 캐시 부재·손상은 정상 경로다. 다시 읽는다.
@@ -121,7 +235,7 @@ export async function loadProjects() {
   const { loadConfigFromFile } = await import("vite");
   const loaded = await loadConfigFromFile(
     { command: "serve", mode: "test" },
-    VITEST_CONFIG,
+    vitestConfig,
     ROOT,
     "silent",
   );
@@ -139,7 +253,7 @@ export async function loadProjects() {
 
   try {
     ensureCacheDir();
-    fs.writeFileSync(CONFIG_CACHE, JSON.stringify({ mtimeMs, projects }));
+    fs.writeFileSync(configCache, JSON.stringify({ mtimeMs, projects }));
   } catch {
     // 캐시 저장 실패는 판정에 영향이 없다.
   }
@@ -155,7 +269,7 @@ function matchesAny(globs, relPath) {
  * 소스 경로 하나에 대해 config 가 허용하는 형제 test 후보를 뽑는다.
  * 후보를 만들어 picomatch 에 물을 뿐, tier 규칙을 발명하지 않는다.
  */
-export async function resolveCandidates(relPath) {
+async function resolveCandidates(relPath) {
   const projects = await loadProjects();
   const base = relPath.replace(/\.[^./]+$/, "");
   const suffixes = ["unit.test.ts", "component.test.ts", "component.test.tsx"];
@@ -177,14 +291,14 @@ export async function resolveCandidates(relPath) {
  * 승계한 확장자가 config 에서 허용되지 않으면 허용되는 유일값으로 떨어진다
  * (예: adapters/browser 는 .ts 고정).
  */
-export function recommend(relPath, candidates) {
+function recommend(relPath, candidates) {
   if (candidates.length === 0) return null;
   const ext = path.extname(relPath).replace(".", "");
   return candidates.find((c) => c.suffix.endsWith(`.${ext}`)) ?? candidates[0];
 }
 
 /** `<base>.<suffix>` 와 `<base>.<관점>.<suffix>` 를 둘 다 형제로 인정한다. */
-export function findSiblings(relPath, candidates) {
+function findSiblings(relPath, candidates) {
   const base = relPath.replace(/\.[^./]+$/, "");
   const dir = path.posix.dirname(base);
   const stem = path.posix.basename(base);
@@ -216,7 +330,7 @@ export function findSiblings(relPath, candidates) {
  * 강제 대상 판정. 아래 4조건을 전부 만족해야 게이트가 개입한다.
  *   src/ 안 · test 파일 아님 · policy exclude 아님 · config 가 형제 test 를 허용함
  */
-export async function inspect(filePath) {
+async function inspect(filePath) {
   const relPath = toRelative(filePath);
   if (!relPath)
     return { relPath: null, enforced: false, reason: "outside-repo" };
@@ -245,3 +359,27 @@ export async function inspect(filePath) {
     exists: fs.existsSync(path.join(ROOT, relPath)),
   };
 }
+
+export {
+  ROOT,
+  resolveRootFromCwd,
+  cacheDir,
+  turnFile,
+  snapshotFile,
+  ensureCacheDir,
+  gitHead,
+  gitDirtySrcHashes,
+  gitChangedSrcSince,
+  writeTurnSnapshot,
+  readTurnSnapshot,
+  computeTurnChanges,
+  toPosix,
+  toRelative,
+  isTestFile,
+  loadExcludes,
+  loadProjects,
+  resolveCandidates,
+  recommend,
+  findSiblings,
+  inspect,
+};

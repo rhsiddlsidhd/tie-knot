@@ -1,9 +1,15 @@
 import Link from "next/link";
-import { TypographyH4, TypographySmall } from "@/ui/components/atoms/typography";
-import { routes } from "@/core/domain/routes";
-import { PRODUCT_CATEGORIES, productCategoryLabels } from "@/core/domain/product-category";
+import {
+  TypographyH4,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
+import { ROUTES } from "@/core/domain/routes";
+import {
+  PRODUCT_CATEGORIES,
+  PRODUCT_CATEGORY_LABELS,
+} from "@/core/domain/product-category";
 
-export function Footer() {
+const Footer = () => {
   return (
     <footer className="border-border bg-muted border-t py-12">
       <div className="container mx-auto px-4">
@@ -23,10 +29,10 @@ export function Footer() {
               {PRODUCT_CATEGORIES.map((category) => (
                 <li key={category}>
                   <Link
-                    href={routes.products.byCategory(category)}
+                    href={ROUTES.products.byCategory(category)}
                     className="hover:text-foreground"
                   >
-                    {productCategoryLabels[category]}
+                    {PRODUCT_CATEGORY_LABELS[category]}
                   </Link>
                 </li>
               ))}
@@ -39,7 +45,7 @@ export function Footer() {
             </TypographySmall>
             <ul className="text-muted-foreground space-y-2 text-sm">
               <li>
-                <Link href={routes.support} className="hover:text-foreground">
+                <Link href={ROUTES.support} className="hover:text-foreground">
                   고객센터
                 </Link>
               </li>
@@ -53,4 +59,6 @@ export function Footer() {
       </div>
     </footer>
   );
-}
+};
+
+export { Footer };

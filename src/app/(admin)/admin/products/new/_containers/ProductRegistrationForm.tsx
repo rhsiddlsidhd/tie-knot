@@ -5,18 +5,18 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { createProduct } from "@/actions/createProduct";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { ProductRegistrationForm as PureProductRegistrationForm } from "../_components/ProductRegistrationForm";
-import { routes } from "@/core/domain/routes";
-export function ProductRegistrationForm({
+import { ROUTES } from "@/core/domain/routes";
+const ProductRegistrationForm = ({
   premiumFeatures,
 }: {
   premiumFeatures: PremiumFeature[];
-}) {
+}) => {
   const router = useRouter();
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
+    ApiResponse<{ message: string }>,
     FormData
   >(createProduct, null);
 
@@ -29,7 +29,7 @@ export function ProductRegistrationForm({
     if (state.success) {
       toast.success(state.data.message);
       if (!continueRegistrationRef.current) {
-        router.push(routes.admin.products.root);
+        router.push(ROUTES.admin.products.root);
       }
     }
   }, [state, router]);
@@ -40,10 +40,12 @@ export function ProductRegistrationForm({
       action={action}
       pending={pending}
       state={state}
-      onCancel={() => router.push(routes.admin.products.root)}
+      onCancel={() => router.push(ROUTES.admin.products.root)}
       onSubmitIntentChange={(continueRegistration) => {
         continueRegistrationRef.current = continueRegistration;
       }}
     />
   );
-}
+};
+
+export { ProductRegistrationForm };

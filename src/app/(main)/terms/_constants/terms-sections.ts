@@ -1,5 +1,5 @@
 // 법무 미검수 초안 — 서비스 오픈 전 검토 필요.
-export const TERMS_SECTIONS = [
+const TERMS_SECTIONS = [
   {
     heading: "제1조 (목적)",
     paragraphs: [
@@ -84,4 +84,6 @@ export const TERMS_SECTIONS = [
   },
 ] as const;
 
-export const TERMS_EFFECTIVE_DATE = "2026-08-21";
+const TERMS_EFFECTIVE_DATE = "2026-08-21";
+
+export { TERMS_SECTIONS, TERMS_EFFECTIVE_DATE };

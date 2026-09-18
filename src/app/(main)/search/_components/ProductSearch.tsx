@@ -7,14 +7,14 @@ import { useDebouncedValue } from "@/ui/hooks/useDebouncedValue";
 import { useProductSearch } from "@/ui/hooks/useProductSearch";
 import { Spinner } from "@/ui/components/atoms/spinner";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { Alert } from "@/ui/components/molecules/Alert";
+import { Alert, AlertDescription } from "@/ui/components/atoms/alert";
 import { ProductGrid } from "@/ui/components/organisms/ProductGrid";
 import { initialFilterState } from "@/ui/context/productFilter/reducer";
 
 // 값이 끝까지 리터럴 → SCREAMING_SNAKE_CASE (src/AGENTS.md)
 const SEARCH_DEBOUNCE_MS = 300;
 
-export function ProductSearch() {
+const ProductSearch = () => {
   const [input, setInput] = useState("");
   const debouncedQuery = useDebouncedValue(input, SEARCH_DEBOUNCE_MS);
   const { products, error, isLoading, isValidating, isIdle } =
@@ -35,7 +35,9 @@ export function ProductSearch() {
             {isIdle ? (
               <TypographyMuted>검색어를 입력해주세요</TypographyMuted>
             ) : error ? (
-              <Alert type="error">{error.message}</Alert>
+              <Alert variant="destructive">
+                <AlertDescription>{error.message}</AlertDescription>
+              </Alert>
             ) : isLoadingState ? (
               <div className="flex justify-center py-20">
                 <Spinner />
@@ -57,3 +59,5 @@ export function ProductSearch() {
     </main>
   );
 }
+
+export { ProductSearch };

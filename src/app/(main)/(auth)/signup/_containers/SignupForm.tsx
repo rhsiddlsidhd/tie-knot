@@ -6,13 +6,13 @@ import { toast } from "sonner";
 
 import { signupUser } from "@/actions/signupUser";
 import { hasFieldErrors } from "@/core/utils/error";
-import type { APIResponse } from "@/core/domain/error";
+import type { ApiResponse } from "@/core/domain/error";
 import { SignupForm as PureSignupForm } from "../_components/SignupForm";
-import { routes } from "@/core/domain/routes";
-export function SignupForm() {
+import { ROUTES } from "@/core/domain/routes";
+const SignupForm = () => {
   const router = useRouter();
   const [state, action, pending] = useActionState<
-    APIResponse<{ message: string }>,
+    ApiResponse<{ message: string }>,
     FormData
   >(signupUser, null);
 
@@ -20,7 +20,7 @@ export function SignupForm() {
     if (!state) return;
     if (state.success === true) {
       alert(state.data.message);
-      router.push(routes.login);
+      router.push(ROUTES.login);
     } else {
       if (!hasFieldErrors(state.error)) {
         toast.error(state.error.message);
@@ -29,4 +29,6 @@ export function SignupForm() {
   }, [state, router]);
 
   return <PureSignupForm action={action} pending={pending} state={state} />;
-}
+};
+
+export { SignupForm };

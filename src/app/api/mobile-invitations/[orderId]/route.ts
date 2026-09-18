@@ -1,13 +1,13 @@
-import type { APIRouteResponse } from "@/boundary";
+import type { ApiRouteResponse } from "@/boundary";
 import { routeError, routeSuccess } from "@/boundary";
 import type { MobileInvitationEditor } from "@/core/domain/mobile-invitation";
 import { getOwnedMobileInvitationByOrder } from "@/services/mobile-invitation";
 import { requireAuth } from "@/services/auth";
 
-export const GET = async (
+const GET = async (
   _request: Request,
   { params }: { params: Promise<{ orderId: string }> },
-): Promise<APIRouteResponse<MobileInvitationEditor | null>> => {
+): Promise<ApiRouteResponse<MobileInvitationEditor | null>> => {
   try {
     const { orderId } = await params;
     const { userId } = await requireAuth();
@@ -32,3 +32,5 @@ export const GET = async (
     return routeError(error);
   }
 };
+
+export { GET };

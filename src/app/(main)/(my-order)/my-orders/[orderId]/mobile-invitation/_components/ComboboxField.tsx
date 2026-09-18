@@ -1,7 +1,7 @@
 "use client";
 
 import { AutoCompleteList } from "@/ui/components/molecules/AutoCompleteList";
-import { FormField } from "@/ui/components/organisms/FormField";
+import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { Command, CommandInput } from "@/ui/components/atoms/command";
 import type { FieldBase } from "@/core/domain/field";
 import { useMemo, useState } from "react";
@@ -29,14 +29,19 @@ const ComboboxField = ({
   error,
   required = false,
 }: ComboboxFieldProps) => {
-  const defaultLabel = options.find((o) => o.value === defaultValue)?.label ?? "";
+  const defaultLabel =
+    options.find((o) => o.value === defaultValue)?.label ?? "";
   const [inputValue, setInputValue] = useState(defaultLabel);
-  const [selectedValue, setSelectedValue] = useState<string | undefined>(defaultValue);
+  const [selectedValue, setSelectedValue] = useState<string | undefined>(
+    defaultValue,
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const suggestions = useMemo(() => {
     if (!inputValue) return [];
-    return options.filter((option) => option.label.includes(inputValue)).slice(0, 8);
+    return options
+      .filter((option) => option.label.includes(inputValue))
+      .slice(0, 8);
   }, [inputValue, options]);
 
   const handleSelect = (label: string) => {
@@ -49,8 +54,13 @@ const ComboboxField = ({
   };
 
   return (
-    <FormField id={id} label={children} required={required} error={error}>
-      <input type="hidden" name={name} value={selectedValue ?? ""} />
+    <FieldFrame id={id} label={children} error={error}>
+      <input
+        type="hidden"
+        name={name}
+        value={selectedValue ?? ""}
+        required={required}
+      />
       <Command
         shouldFilter={false}
         className="relative overflow-visible rounded-md border"
@@ -71,7 +81,7 @@ const ComboboxField = ({
           onSelect={handleSelect}
         />
       </Command>
-    </FormField>
+    </FieldFrame>
   );
 };
 

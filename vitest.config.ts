@@ -27,6 +27,7 @@ export default defineConfig({
             "src/adapters/server/**/*.unit.test.ts",
             "src/core/**/*.unit.test.ts",
             "src/app/api/**/*.unit.test.ts",
+            "src/app/**/_utils/**/*.unit.test.ts",
             "src/ui/stores/slices/**/*.unit.test.ts",
             "src/ui/context/**/reducer.unit.test.ts",
             "src/boundary.unit.test.ts",
@@ -50,6 +51,7 @@ export default defineConfig({
           exclude: [
             ...configDefaults.exclude,
             "src/app/api/**",
+            "src/app/**/_utils/**",
             "src/ui/stores/slices/**",
             "src/ui/context/**/reducer.*",
           ],

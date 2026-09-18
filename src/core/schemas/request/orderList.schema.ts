@@ -7,7 +7,7 @@ import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
 const emptyToUndefined = (value: unknown) =>
   value === "" || value === null ? undefined : value;
 
-export const orderListRequestSchema = z.object({
+const OrderListRequestSchema = z.object({
   status: z.preprocess(emptyToUndefined, z.enum(ORDER_STATUSES).optional()),
   category: z.preprocess(
     emptyToUndefined,
@@ -16,4 +16,6 @@ export const orderListRequestSchema = z.object({
   cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
 });
 
-export type OrderListRequest = z.infer<typeof orderListRequestSchema>;
+type OrderListRequest = z.infer<typeof OrderListRequestSchema>;
+
+export { OrderListRequestSchema, type OrderListRequest };

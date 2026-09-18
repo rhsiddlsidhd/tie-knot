@@ -1,8 +1,13 @@
 import "server-only";
 import mongoose from "mongoose";
 import * as PortOne from "@portone/server-sdk";
-import type { PayStatus, PayMethod, PaymentMethodDetail, IPayment } from "@/models/payment.model";
-import type { IOrder } from "@/models/order.model";
+import type {
+  PayStatus,
+  PayMethod,
+  PaymentMethodDetail,
+  PaymentDocument,
+} from "@/models/payment.model";
+import type { OrderDocument } from "@/models/order.model";
 import { PaymentModel } from "@/models/payment.model";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
@@ -17,7 +22,10 @@ import {
   PENDING_ORDER_CANCEL_REASONS,
 } from "./order";
 import { AppError } from "@/core/domain/error";
-import type { ExpiredPendingOrderBatchResult, ExpiredAwaitingMobileInvitationBatchResult } from "@/core/domain/order";
+import type {
+  ExpiredPendingOrderBatchResult,
+  ExpiredAwaitingMobileInvitationBatchResult,
+} from "@/core/domain/order";
 import { dbConnect } from "@/db/connect";
 import { requireAuth } from "./auth";
 
@@ -60,7 +68,7 @@ const isPaymentAppliedStatus = (orderStatus: string): boolean =>
  * - 알 수 없는 상태는 에러를 던져 즉시 감지
  * - 결제는 민감한 영역이므로 silent failure 방지
  */
-function mapPortOneStatus(status: unknown): PayStatus {
+const mapPortOneStatus = (status: unknown): PayStatus => {
   if (typeof status !== "string") {
     throw new AppError(
       "EXTERNAL_SERVICE",
@@ -82,7 +90,7 @@ function mapPortOneStatus(status: unknown): PayStatus {
   }
 
   return statusMap[status];
-}
+};
 
 type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
 
@@ -94,10 +102,12 @@ type SdkPaymentMethod = NonNullable<PaidPayment["method"]>;
  * - 미인식 값은 Unrecognized로 폴백해 methodDetail에 흔적을 남긴다(silent
  *   failure 방지 — mapPortOneStatus와 같은 원칙).
  */
-function mapPortOnePaymentMethod(method: SdkPaymentMethod | undefined): {
+const mapPortOnePaymentMethod = (
+  method: SdkPaymentMethod | undefined,
+): {
   payMethod?: PayMethod;
   methodDetail?: PaymentMethodDetail;
-} {
+} => {
   if (!method) return {};
 
   switch (method.type) {
@@ -188,12 +198,12 @@ function mapPortOnePaymentMethod(method: SdkPaymentMethod | undefined): {
     default:
       return { methodDetail: { type: "Unrecognized" } };
   }
-}
+};
 
 /**
  * 결제 데이터 검증 (위변조 방지)
  */
-async function verifyPayment(payment: PaidPayment): Promise<boolean> {
+const verifyPayment = async (payment: PaidPayment): Promise<boolean> => {
   try {
     // 1. customData 존재 확인 및 파싱
     if (!payment.customData) {
@@ -251,7 +261,7 @@ async function verifyPayment(payment: PaidPayment): Promise<boolean> {
     console.error("[verifyPayment] Error:", e);
     return false;
   }
-}
+};
 
 /**
  * PortOne 에러의 로그용 컨텍스트 문자열 — AppError.message에 실려 boundary.ts의
@@ -279,7 +289,7 @@ const portOneErrorContext = (
  * PortOne 결제 정보 동기화 및 검증
  * @param paymentId - merchantUid (주문번호)
  */
-export const syncPayment = async (paymentId: string) => {
+const syncPayment = async (paymentId: string) => {
   await dbConnect();
 
   try {
@@ -309,14 +319,15 @@ export const syncPayment = async (paymentId: string) => {
       // 4~6. Payment 저장 + Order 상태 전이 + Product salesCount 증가는 하나의
       // 논리적 단위라 트랜잭션으로 묶는다 — 중간에 하나라도 실패하면 전부
       // 롤백된다(services/AGENTS.md "트랜잭션" 섹션 참고).
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
 
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
           merchantUid: paymentId,
         }).session(session);
         const alreadyApplied =
-          existing?.status === "PAID" && isPaymentAppliedStatus(order.orderStatus);
+          existing?.status === "PAID" &&
+          isPaymentAppliedStatus(order.orderStatus);
 
         const { payMethod, methodDetail } = mapPortOnePaymentMethod(
           actualPayment.method,
@@ -379,7 +390,7 @@ export const syncPayment = async (paymentId: string) => {
     if (actualPayment.status === "FAILED") {
       const failedPayment = actualPayment as FailedPayment;
 
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
 
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
@@ -444,13 +455,14 @@ export const syncPayment = async (paymentId: string) => {
         latest?.cancelledAt ?? cancelledPayment.cancelledAt,
       );
 
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
           merchantUid: paymentId,
         }).session(session);
         const wasFullyApplied =
-          existing?.status === "PAID" && isPaymentAppliedStatus(order.orderStatus);
+          existing?.status === "PAID" &&
+          isPaymentAppliedStatus(order.orderStatus);
         const paymentData = {
           merchantUid: paymentId,
           impUid: cancelledPayment.transactionId,
@@ -502,7 +514,7 @@ export const syncPayment = async (paymentId: string) => {
     if (actualPayment.status === "VIRTUAL_ACCOUNT_ISSUED") {
       const issuedPayment = actualPayment as VirtualAccountIssuedPayment;
 
-      let payment!: mongoose.HydratedDocument<IPayment>;
+      let payment!: mongoose.HydratedDocument<PaymentDocument>;
 
       await mongoose.connection.transaction(async (session) => {
         const existing = await PaymentModel.findOne({
@@ -579,7 +591,7 @@ export const syncPayment = async (paymentId: string) => {
  * 자동취소(/api/cron/expired-orders 스케줄러 배치, cancelOrdersAwaitingMobileInvitation)에서 사용.
  * @param merchantUid - 우리 서버에서 생성한 주문번호(PortOne paymentId)
  */
-export const cancelPayment = async (
+const cancelPayment = async (
   merchantUid: string,
   reason: string,
 ): Promise<void> => {
@@ -657,7 +669,7 @@ export const cancelPayment = async (
  * CONFIRMED로 남아 있기 때문).
  */
 const cancelOrdersAwaitingMobileInvitation = async (
-  expiredOrders: IOrder[],
+  expiredOrders: OrderDocument[],
 ): Promise<ExpiredAwaitingMobileInvitationBatchResult> => {
   const outcomes = await Promise.allSettled(
     expiredOrders.map((order) =>
@@ -686,7 +698,7 @@ const cancelOrdersAwaitingMobileInvitation = async (
  * coupleInfo 미입력 자동취소(단일 유저) — 스케줄러 이전(GH #82) 이후 제품 코드에서
  * 호출하는 곳은 없다. 관리자 단위 수동 취소 같은 후속 용도를 위해 진입점만 남긴다.
  */
-export const cancelExpiredAwaitingMobileInvitationOrders = async (
+const cancelExpiredAwaitingMobileInvitationOrders = async (
   userId: string,
 ): Promise<void> => {
   const expiredOrders = await findExpiredAwaitingMobileInvitationOrders(userId);
@@ -697,7 +709,7 @@ export const cancelExpiredAwaitingMobileInvitationOrders = async (
  * coupleInfo 미입력 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점.
  * PortOne 실환불을 호출하므로 만료 PENDING 배치(DB-only)와 실행·실패를 분리한다.
  */
-export const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
+const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
   async (): Promise<ExpiredAwaitingMobileInvitationBatchResult> => {
     const expiredOrders =
       await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
@@ -717,7 +729,7 @@ export const cancelExpiredAwaitingMobileInvitationOrdersForAllUsers =
  * 다른 주문 처리를 막지 않도록 격리한다.
  */
 const cancelPendingOrderCandidates = async (
-  candidates: IOrder[],
+  candidates: OrderDocument[],
   deadline: Date,
 ): Promise<ExpiredPendingOrderBatchResult> => {
   const empty: ExpiredPendingOrderBatchResult = {
@@ -746,7 +758,10 @@ const cancelPendingOrderCandidates = async (
       }
 
       const reason = outcome.reason;
-      if (reason instanceof AppError && reason.category === "EXTERNAL_SERVICE") {
+      if (
+        reason instanceof AppError &&
+        reason.category === "EXTERNAL_SERVICE"
+      ) {
         return true;
       }
 
@@ -795,7 +810,7 @@ const cancelPendingOrderCandidates = async (
 };
 
 /** 방치 PENDING 주문 자동취소(단일 유저) — 위 청첩장 미입력 함수와 같은 이유로 진입점만 남긴다. */
-export const cancelExpiredPendingOrders = async (
+const cancelExpiredPendingOrders = async (
   userId: string | mongoose.Types.ObjectId,
 ): Promise<void> => {
   const { orders, deadline } = await findExpiredPendingOrders(userId);
@@ -803,15 +818,15 @@ export const cancelExpiredPendingOrders = async (
 };
 
 /** 방치 PENDING 주문 자동취소(전체 유저) — /api/cron/expired-orders 배치의 진입점. */
-export const cancelExpiredPendingOrdersForAllUsers =
+const cancelExpiredPendingOrdersForAllUsers =
   async (): Promise<ExpiredPendingOrderBatchResult> => {
     const { orders, deadline } = await findExpiredPendingOrdersForAllUsers();
     return cancelPendingOrderCandidates(orders, deadline);
   };
 
-export async function completePaymentService(
+const completePaymentService = async (
   paymentId: string,
-): Promise<PayStatus> {
+): Promise<PayStatus> => {
   const { userId } = await requireAuth();
   if (!paymentId) {
     throw new AppError("VALIDATION", "올바르지 않은 요청입니다.");
@@ -836,4 +851,14 @@ export async function completePaymentService(
     throw new AppError("INTERNAL", "결제 동기화에 실패했습니다.");
   }
   return payment.status;
-}
+};
+
+export {
+  syncPayment,
+  cancelPayment,
+  cancelExpiredAwaitingMobileInvitationOrders,
+  cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+  cancelExpiredPendingOrders,
+  cancelExpiredPendingOrdersForAllUsers,
+  completePaymentService,
+};

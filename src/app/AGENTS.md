@@ -51,7 +51,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 
 - `layout.tsx`는 그 라우트 그룹의 페이지 셸(shell)을 구성한다 — 특정 페이지 하나에만 필요한 데이터 페칭/비즈니스 로직을 여기 두지 않는다(그건 `page.tsx`/`_hooks` 소관).
   - 하위 라우트그룹으로 갈수록 셸이 누적된다(예: `(main)/layout.tsx`가 Header+공지바 셸을 깔면, 그 안의 `(admin)/admin/layout.tsx`가 사이드바 셸을 한 겹 더 얹음).
-  - 셸 전용 조각(`Header`/`AuthButtons`/`UserAccountNav`/`Footer`/`GuestbookModal`처럼 그 layout.tsx 하나만 쓰는 것)은 그 layout이 속한 라우트 그룹의 `_components/`에 둔다 — Zustand 구독 등 도메인 로직이 있어도 된다(라우트 그룹이 사실상의 소유자이므로).
+  - 셸 전용 조각(`Header`/`AuthStatus`/`AccountMenu`/`Footer`/`GuestbookModal`처럼 그 layout.tsx 하나만 쓰는 것)은 그 layout이 속한 라우트 그룹의 `_components/`에 둔다 — Zustand 구독 등 도메인 로직이 있어도 된다(라우트 그룹이 사실상의 소유자이므로).
   - 여러 layout이 겹치는 셸 조각(예: `SidebarLayout`이 admin/my-order/my-profile 3곳에서 쓰이던 것)은 공용 컴포넌트로 승격하지 않고 각 `layout.tsx`가 직접 정의한다 — 지금은 내용이 같아 보여도 각 레이어가 독립적으로 진화할 수 있어서다.
 - 루트 `app/layout.tsx`만 metadata(SEO/OG/Twitter)·전역 CSS import·환경변수 검증을 담당한다 — 하위 `layout.tsx`에서 이걸 중복 정의하지 않는다.
 - `error.tsx`와 `not-found.tsx`를 혼용하지 않는다 — `error.tsx`는 fetch 실패/예외 경계, `not-found.tsx`는 존재하지 않는 리소스 전용이다. 현재는 라우트 개별이 아니라 **라우트 그룹 단위**로 배치돼있다(`(main)/error.tsx`, `(main)/(products)/error.tsx`, `(admin)/error.tsx`, 루트 `not-found.tsx`) — 그룹 내 여러 라우트가 에러 경계를 공유해도 되면 그룹 레벨, 특정 라우트만 다른 처리가 필요하면 그 라우트에 개별 배치한다.
@@ -60,7 +60,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 - **`page.tsx`는 Pages 단계만 담당한다** — 실제 데이터를 fetch/조립해서 Template(`src/ui/components/templates/{Name}Template.tsx` 또는 그 라우트 `_components/{Name}Template.tsx`)에 props로 넘기는 것까지만 한다. organism을 배치(grid/flex/spacing 등)하는 코드가 하나라도 있으면 Template 추출이 필수다 — organism 딱 1개를 배치 코드 없이 그대로 렌더하는 경우에 한해서만 `page.tsx`가 직접 렌더할 수 있다. Template은 `layout.tsx`(라우트 그룹 셸)와 다른 층위다 — Template은 항상 그 layout.tsx 안에 중첩된다. (Template 자격 조건 자체 — 순수성 등 — 은 `src/ui/components/templates/AGENTS.md` 소관.)
 - self-fetching 자식(자기 데이터를 직접 fetch하는 Server Component, Suspense 스트리밍)이 필요해도 Template 순수성 규칙에 예외를 두지 않는다 — 그 자식은 `_containers/`에 두고, Template은 `children: ReactNode` prop으로만 받아 배치한다(`<Template ...><ReviewsContainer productId={id} /></Template>`). Template은 `children`이 뭘 하는지 모른 채 자리만 내주므로 데이터 페칭·도메인 로직을 여전히 두지 않는 것과 같다.
 - `_components`/`_containers`/`_types`/`_utils`/`_constants`/`_hooks`를 폴더 형태 외의 방식으로 만들지 않는다 — 폴더 안 파일이 1개뿐이어도 예외 없이 이 형태를 유지한다. 이 폴더들에 배럴(`index.ts`/`index.tsx`)을 두지 않으며, `page.tsx`/`layout.tsx`는 필요한 파일을 직접 지정해 import한다(`./_components/BuyerInfoCard`) — 근거는 `docs/decisions/0004-explicit-module-paths-over-barrels.md`. 그 라우트 밖에서 이 폴더에 뭐가 있는지는 폴더 구조 자체가 알려준다.
-- **`page.tsx`/`layout.tsx`/`loading.tsx`/`error.tsx`/`not-found.tsx`/`template.tsx`/`default.tsx`는 `export default`를 쓴다** — Next.js가 강제하는 파일 컨벤션이다. `route.ts`는 반대로 `GET`/`POST` 등 메서드명 named export를 강제한다(`api/AGENTS.md`). `proxy.ts`는 default와 named `proxy`를 모두 지원하므로 강제 대상이 아니며 `src/` 공통 규칙대로 named export를 쓴다.
+- **Next.js가 파일 컨벤션으로 `export default`를 요구하는 파일만 예외로 그 방식을 쓴다** — `page.tsx`/`layout.tsx`/`loading.tsx`/`error.tsx`/`global-error.tsx`/`not-found.tsx`/`global-not-found.tsx`/`template.tsx`/`default.tsx`/`forbidden.tsx`/`unauthorized.tsx`, 아이콘·소셜 이미지 생성 파일(`icon.tsx`/`apple-icon.tsx`와 숫자 접미사 변형/`opengraph-image.tsx`/`twitter-image.tsx`), 메타데이터 파일(`manifest.ts`/`robots.ts`/`sitemap.ts`)이 대상이다. `route.ts`는 반대로 `GET`/`POST` 등 메서드명 named export를 강제한다(`api/AGENTS.md`). `proxy.ts`는 default와 named `proxy`를 모두 지원하므로 강제 대상이 아니며 `src/` 공통 규칙대로 named export를 쓴다. 그 밖의 모든 파일은 named export만 쓴다 — 근거는 `docs/decisions/0006-named-exports-over-default.md`.
 
 ## References
 

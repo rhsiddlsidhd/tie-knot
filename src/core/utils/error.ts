@@ -1,4 +1,4 @@
-import type { APIResponse, ErrorResponse } from "@/core/domain/error";
+import type { ApiResponse, ErrorResponse } from "@/core/domain/error";
 
 /**
  * API 응답에서 특정 필드의 에러 메시지를 안전하게 추출합니다.
@@ -12,8 +12,8 @@ import type { APIResponse, ErrorResponse } from "@/core/domain/error";
  * const emailError = getFieldError(state, 'email');
  * {emailError && <p className="text-red-500">{emailError}</p>}
  */
-export const getFieldError = (
-  state: APIResponse<unknown> | null,
+const getFieldError = (
+  state: ApiResponse<unknown> | null,
   field: string,
 ): string | undefined => {
   // state가 없거나, 성공 상태이면 에러가 없으므로 undefined를 반환합니다.
@@ -36,8 +36,10 @@ export const getFieldError = (
  * }
  */
 
-export const hasFieldErrors = (error: ErrorResponse["error"]): boolean => {
+const hasFieldErrors = (error: ErrorResponse["error"]): boolean => {
   return Boolean(
     error.fieldErrors && Object.keys(error.fieldErrors).length > 0,
   );
 };
+
+export { getFieldError, hasFieldErrors };

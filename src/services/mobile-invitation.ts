@@ -7,7 +7,7 @@ import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 import type { MobileInvitationTheme } from "@/core/domain/theme";
 import { AppError } from "@/core/domain/error";
 import type { MobileInvitationContentSchemaDto } from "@/core/schemas/request/mobileInvitationContent.schema";
-import type { IMobileInvitation } from "@/models/mobile-invitation.model";
+import type { MobileInvitationDocument } from "@/models/mobile-invitation.model";
 import { MobileInvitationModel } from "@/models/mobile-invitation.model";
 import { OrderModel } from "@/models/order.model";
 import { dbConnect } from "@/db/connect";
@@ -15,7 +15,7 @@ import { requireAuth } from "./auth";
 import { isValidSubwayStationName } from "./subway";
 import { getProductService } from "./product";
 
-export const mobileInvitationCacheTag = (publicKey: string) =>
+const mobileInvitationCacheTag = (publicKey: string) =>
   `mobile-invitation:${publicKey}`;
 
 const createPublicKey = (): string => randomBytes(16).toString("base64url");
@@ -26,7 +26,9 @@ const toInternalError = (error: unknown, fallbackMessage: string): AppError =>
     error instanceof Error ? error.message : fallbackMessage,
   );
 
-const toContent = (invitation: IMobileInvitation): MobileInvitationContent => ({
+const toContent = (
+  invitation: MobileInvitationDocument,
+): MobileInvitationContent => ({
   groom: invitation.groom,
   bride: invitation.bride,
   weddingDate: invitation.weddingDate,
@@ -79,11 +81,11 @@ const requireOwnedEligibleOrder = async (orderId: string, userId: string) => {
   return order;
 };
 
-export const saveMobileInvitationForOrder = async (
+const saveMobileInvitationForOrder = async (
   orderId: string,
   userId: string,
   data: MobileInvitationContentSchemaDto,
-): Promise<IMobileInvitation> => {
+): Promise<MobileInvitationDocument> => {
   await dbConnect();
   if (
     data.subwayStation &&
@@ -129,18 +131,18 @@ export const saveMobileInvitationForOrder = async (
   }
 };
 
-export const saveMobileInvitationForCurrentUser = async (
+const saveMobileInvitationForCurrentUser = async (
   orderId: string,
   data: MobileInvitationContentSchemaDto,
-): Promise<IMobileInvitation> => {
+): Promise<MobileInvitationDocument> => {
   const { userId } = await requireAuth();
   return saveMobileInvitationForOrder(orderId, userId, data);
 };
 
-export const getOwnedMobileInvitationByOrder = async (
+const getOwnedMobileInvitationByOrder = async (
   orderId: string,
   userId: string,
-): Promise<IMobileInvitation | null> => {
+): Promise<MobileInvitationDocument | null> => {
   await dbConnect();
   await requireOwnedEligibleOrder(orderId, userId);
   if (!mongoose.isObjectIdOrHexString(orderId)) return null;
@@ -149,13 +151,13 @@ export const getOwnedMobileInvitationByOrder = async (
   }).lean();
 };
 
-export const getOwnedMobileInvitationPreviewByOrder = async (
+const getOwnedMobileInvitationPreviewByOrder = async (
   orderId: string,
   userId: string,
-): Promise<
-  | { invitation: IMobileInvitation; features: string[] }
-  | null
-> => {
+): Promise<{
+  invitation: MobileInvitationDocument;
+  features: string[];
+} | null> => {
   await dbConnect();
   const order = await requireOwnedEligibleOrder(orderId, userId);
   const invitation = await MobileInvitationModel.findOne({
@@ -191,18 +193,19 @@ const findPublishedMobileInvitationByPublicKey = async (
     status: "published",
     content: toContent(invitation),
     productId: invitation.productId.toString(),
-    features: order?.product.selectedFeatures.map((feature) => feature.code) ?? [],
+    features:
+      order?.product.selectedFeatures.map((feature) => feature.code) ?? [],
   };
 };
 
-export const getPublishedMobileInvitationByPublicKey = async (publicKey: string) =>
+const getPublishedMobileInvitationByPublicKey = async (publicKey: string) =>
   unstable_cache(
     () => findPublishedMobileInvitationByPublicKey(publicKey),
     ["published-invitation", publicKey],
     { tags: [mobileInvitationCacheTag(publicKey)], revalidate: 300 },
   )();
 
-export const setMobileInvitationStatusForCurrentUser = async (
+const setMobileInvitationStatusForCurrentUser = async (
   orderId: string,
   status: "draft" | "published",
 ): Promise<{ publicKey: string; status: "draft" | "published" }> => {
@@ -237,4 +240,14 @@ export const setMobileInvitationStatusForCurrentUser = async (
   });
 
   return { publicKey: invitation.publicKey, status: invitation.status };
+};
+
+export {
+  mobileInvitationCacheTag,
+  saveMobileInvitationForOrder,
+  saveMobileInvitationForCurrentUser,
+  getOwnedMobileInvitationByOrder,
+  getOwnedMobileInvitationPreviewByOrder,
+  getPublishedMobileInvitationByPublicKey,
+  setMobileInvitationStatusForCurrentUser,
 };

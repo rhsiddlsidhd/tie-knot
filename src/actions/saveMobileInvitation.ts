@@ -1,16 +1,19 @@
 "use server";
 
 import { updateTag } from "next/cache";
-import type { APIResponse } from "@/core/domain/error";
-import { mobileInvitationCacheTag, saveMobileInvitationForCurrentUser } from "@/services/mobile-invitation";
+import type { ApiResponse } from "@/core/domain/error";
+import {
+  mobileInvitationCacheTag,
+  saveMobileInvitationForCurrentUser,
+} from "@/services/mobile-invitation";
 import { actionError } from "@/boundary";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
-import { mobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
+import { MobileInvitationContentSchema } from "@/core/schemas/request/mobileInvitationContent.schema";
 
-export const saveMobileInvitation = async (
+const saveMobileInvitation = async (
   _prev: null,
   formData: FormData,
-): Promise<APIResponse<{ message: string; publicKey: string }>> => {
+): Promise<ApiResponse<{ message: string; publicKey: string }>> => {
   const thumbnailRaw = formData.get("thumbnailSource") as string;
   const galleryRaw = formData.get("gallerySource") as string;
 
@@ -61,7 +64,7 @@ export const saveMobileInvitation = async (
     galleryImages: galleryData,
   };
 
-  const parsed = validateAndFlatten(mobileInvitationContentSchema, data);
+  const parsed = validateAndFlatten(MobileInvitationContentSchema, data);
 
   if (!parsed.success) {
     return {
@@ -82,7 +85,10 @@ export const saveMobileInvitation = async (
         error: { category: "VALIDATION", message: "주문 ID가 필요합니다." },
       };
     }
-    const invitation = await saveMobileInvitationForCurrentUser(orderId, parsed.data);
+    const invitation = await saveMobileInvitationForCurrentUser(
+      orderId,
+      parsed.data,
+    );
     updateTag(mobileInvitationCacheTag(invitation.publicKey));
 
     return {
@@ -96,3 +102,5 @@ export const saveMobileInvitation = async (
     return actionError(e);
   }
 };
+
+export { saveMobileInvitation };

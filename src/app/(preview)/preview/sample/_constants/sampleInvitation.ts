@@ -1,6 +1,6 @@
 import type { MobileInvitationContent } from "@/core/domain/mobile-invitation";
 
-export const sampleInvitation = {
+const sampleInvitation = {
   groom: {
     name: "민준",
     phone: "010-1234-5678",
@@ -32,5 +32,7 @@ export const sampleInvitation = {
   theme: "blossom",
 } satisfies MobileInvitationContent;
 
-export const SAMPLE_FEATURES = ["HORIZONTAL_SLIDE"] as const;
-export const SAMPLE_THEME = "blossom";
+const SAMPLE_FEATURES = ["GALLERY_LIGHTBOX"] as const;
+const SAMPLE_THEME = "blossom";
+
+export { sampleInvitation, SAMPLE_FEATURES, SAMPLE_THEME };

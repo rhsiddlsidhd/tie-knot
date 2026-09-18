@@ -1,16 +1,15 @@
 import "server-only";
 import type { PayMethod, PayStatus } from "@/core/domain/payment";
+import { PAY_STATUSES } from "@/core/domain/payment";
 import type { Types, Model } from "mongoose";
 import mongoose, { Schema } from "mongoose";
 
 // --- Enums --- TRANS 실시간 계좌이체 VBANK 가상 계좌
 
-export type { PayMethod, PayStatus } from "@/core/domain/payment";
-
 // PortOne이 반환하는 PG사 식별자는 동적이므로 string으로 처리
 type PgProvider = string;
 // PortOne 결제수단 판별값(@portone/server-sdk PaymentMethod.type) + 미인식 폴백.
-export type PaymentMethodDetailType =
+type PaymentMethodDetailType =
   | "PaymentMethodCard"
   | "PaymentMethodVirtualAccount"
   | "PaymentMethodTransfer"
@@ -22,7 +21,7 @@ export type PaymentMethodDetailType =
 
 // 필드명은 PortOne 원문 그대로 쓴다(한글 의미 기반 재명명 안 함) — API 응답과
 // 1:1 매핑을 유지해 번역 없이 그대로 소비하기 위함이다.
-export interface PaymentMethodDetail {
+interface PaymentMethodDetail {
   type?: PaymentMethodDetailType;
   card?: {
     publisher?: string;
@@ -73,7 +72,7 @@ export interface PaymentMethodDetail {
   };
 }
 
-export interface IPayment {
+interface PaymentDocument {
   // 식별자
   _id: Types.ObjectId;
   merchantUid: string; // PortOne의 주문번호 (우리 서버에서 생성)
@@ -120,7 +119,7 @@ export interface IPayment {
 // "고정 목록 | string"인 open union이다(PG가 계속 값을 추가) — 위 pgProvider와
 // 같은 이유로 enum을 걸지 않는다. type만 예외 — SDK가 정의한 7종 판별값 +
 // Unrecognized 폴백은 고정된 닫힌 집합이라 다르다.
-const methodDetailSchema = new Schema<PaymentMethodDetail>(
+const MethodDetailSchema = new Schema<PaymentMethodDetail>(
   {
     type: {
       type: String,
@@ -186,7 +185,7 @@ const methodDetailSchema = new Schema<PaymentMethodDetail>(
   { _id: false },
 );
 
-const paymentSchema = new Schema<IPayment>(
+const PaymentSchema = new Schema<PaymentDocument>(
   {
     // 식별자
     merchantUid: { type: String, required: true, unique: true }, // 우리 서버에서 생성, 필수, 고유
@@ -207,7 +206,14 @@ const paymentSchema = new Schema<IPayment>(
     // PG 결제 정보
     payMethod: {
       type: String,
-      enum: ["CARD", "TRANSFER", "VIRTUAL_ACCOUNT", "MOBILE", "GIFT_CERTIFICATE", "EASY_PAY"],
+      enum: [
+        "CARD",
+        "TRANSFER",
+        "VIRTUAL_ACCOUNT",
+        "MOBILE",
+        "GIFT_CERTIFICATE",
+        "EASY_PAY",
+      ],
     },
     pgProvider: {
       type: String,
@@ -215,19 +221,12 @@ const paymentSchema = new Schema<IPayment>(
       // 예: "INICIS_V2", "INICIS", "HTML5_INICIS", "NICE_V2", "TOSSPAYMENTS" 등
     },
     pgTid: { type: String },
-    methodDetail: { type: methodDetailSchema },
+    methodDetail: { type: MethodDetailSchema },
 
     // 결제 상태
     status: {
       type: String,
-      enum: [
-        "PENDING",
-        "PAID",
-        "FAILED",
-        "CANCELLED",
-        "PARTIAL_CANCELLED",
-        "REFUNDED",
-      ],
+      enum: PAY_STATUSES,
       required: true,
       default: "PENDING", // 초기 상태 PENDING
     },
@@ -249,6 +248,15 @@ const paymentSchema = new Schema<IPayment>(
   },
 );
 
-export const PaymentModel =
-  (mongoose.models.Payment as Model<IPayment>) ||
-  mongoose.model<IPayment>("Payment", paymentSchema);
+const PaymentModel =
+  (mongoose.models.Payment as Model<PaymentDocument>) ||
+  mongoose.model<PaymentDocument>("Payment", PaymentSchema);
+
+export {
+  PaymentModel,
+  type PayMethod,
+  type PayStatus,
+  type PaymentMethodDetailType,
+  type PaymentMethodDetail,
+  type PaymentDocument,
+};

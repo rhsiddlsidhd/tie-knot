@@ -1,12 +1,13 @@
 import * as z from "zod";
 import { MOBILE_INVITATION_THEMES } from "@/core/domain/theme";
 import { PRODUCT_CATEGORIES } from "@/core/domain/product-category";
+import { DISCOUNT_TYPES, PRODUCT_STATUSES } from "@/core/domain/product";
 
 const isoDateString = z.string().refine((v) => !isNaN(Date.parse(v)), {
   message: "ISO date string이 아님",
 });
 
-export const productResponseSchema = z.object({
+const ProductResponseSchema = z.object({
   _id: z.string(),
   authorId: z.string(),
   title: z.string(),
@@ -25,10 +26,10 @@ export const productResponseSchema = z.object({
   views: z.number(),
   salesCount: z.number(),
   discount: z.object({
-    discountType: z.enum(["rate", "amount"]),
+    discountType: z.enum(DISCOUNT_TYPES),
     value: z.number(),
   }),
-  status: z.enum(["active", "inactive", "soldOut", "deleted"]),
+  status: z.enum(PRODUCT_STATUSES),
   isLiked: z.boolean(),
   discountedPrice: z.number(),
   createdAt: isoDateString,
@@ -41,6 +42,8 @@ export const productResponseSchema = z.object({
   maxQuantity: z.number(),
 });
 
-export const productsResponseSchema = z.array(productResponseSchema);
+const ProductsResponseSchema = z.array(ProductResponseSchema);
 
-export type ProductResponse = z.infer<typeof productResponseSchema>;
+type ProductResponse = z.infer<typeof ProductResponseSchema>;
+
+export { ProductResponseSchema, ProductsResponseSchema, type ProductResponse };
