@@ -1,12 +1,12 @@
 "use client";
 
 import { Fragment } from "react";
-import Image from "next/image";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { TypographyH1 } from "@/ui/components/atoms/typography";
 import promotionsData from "@/core/content/promotions.json";
 import type { Promotion } from "@/core/domain/promotion";
 import { IndicatorCarousel } from "./IndicatorCarousel";
+import { AppImage } from "@/ui/components/atoms/app-image";
 
 const promotions = (promotionsData as Promotion[]).filter((p) => p.isActive);
 const AUTOPLAY_INTERVAL = 5000;
@@ -20,19 +20,17 @@ const EcommerceHero = () => {
         id="hero-carousel"
         opts={{ loop: true }}
         contentClassName="ml-0"
-        className="relative min-h-[420px] basis-full pl-0 md:min-h-[560px]"
+        className="relative aspect-4/5 basis-full pl-0 sm:aspect-3/2 md:aspect-2/1 lg:aspect-3/1"
         labels={promotions.map((promo) => promo.label)}
         autoplayIntervalMs={AUTOPLAY_INTERVAL}
       >
         {promotions.map((promo) => (
           <Fragment key={promo.id}>
-            <Image
+            <AppImage
               src={promo.image}
               alt={promo.label}
-              fill
+              loading="eager"
               sizes="100vw"
-              className="object-cover"
-              priority
             />
             {/* 텍스트 가독성용 하단 스크림 — ProductCard 사진 오버레이와 동일 관례 */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
