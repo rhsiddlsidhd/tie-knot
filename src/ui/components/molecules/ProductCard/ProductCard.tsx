@@ -5,20 +5,13 @@ import type { SubCategory } from "@/core/domain/product-category";
 import { ROUTES } from "@/core/domain/routes";
 import { SUB_CATEGORY_LABELS } from "@/core/domain/product-category";
 import { calculatePrice, formatDiscountLabel } from "@/core/utils/price";
-import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/atoms/badge";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/ui/components/atoms/card";
-import { HoverDarkenOverlay } from "@/ui/components/atoms/hover-darken-overlay";
+import { CardAction, CardFooter, CardHeader } from "@/ui/components/atoms/card";
 import {
   TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
+import { PortraitImageCard } from "@/ui/components/molecules/PortraitImageCard";
 
 const ProductCard = ({
   product,
@@ -40,22 +33,16 @@ const ProductCard = ({
   return (
     <Link href={ROUTES.products.detail(product.category, product._id)}>
       <article className="cursor-pointer">
-        {/* aspect-ratio는 황금비(1:1.618) 세로 카드 */}
-        <Card className="group bg-muted relative aspect-[1/1.618] overflow-hidden rounded-2xl border-0 p-0 shadow-none">
-          <CardContent className="absolute inset-0 p-0">
-            <AppImage
-              src={product.thumbnail}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-              alt={`${product.title} 썸네일`}
-              loading="eager"
-              zoomOnHover
-            />
-
-            {/* Persistent bottom gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-            <HoverDarkenOverlay />
-          </CardContent>
+        <PortraitImageCard
+          src={product.thumbnail}
+          alt={`${product.title} 썸네일`}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+          loading="eager"
+          zoomOnHover
+          className="bg-muted rounded-2xl"
+        >
+          {/* Persistent bottom gradient */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
           {/* Top badges */}
           <CardHeader className="absolute top-2 right-2 left-2 gap-0 px-0 sm:top-3 sm:right-3 sm:left-3">
@@ -122,7 +109,7 @@ const ProductCard = ({
               </span>
             </div>
           </CardFooter>
-        </Card>
+        </PortraitImageCard>
       </article>
     </Link>
   );

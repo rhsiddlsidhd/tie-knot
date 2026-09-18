@@ -35,6 +35,7 @@ describe("HomeTemplate", () => {
       <HomeTemplate
         popularProducts={[]}
         availableSubCategories={AVAILABLE_SUB_CATEGORIES}
+        liveDemoThumbnail={null}
       />,
     );
 
@@ -47,6 +48,7 @@ describe("HomeTemplate", () => {
       <HomeTemplate
         popularProducts={buildProducts(3)}
         availableSubCategories={AVAILABLE_SUB_CATEGORIES}
+        liveDemoThumbnail={null}
       />,
     );
 

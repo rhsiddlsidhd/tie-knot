@@ -503,6 +503,7 @@ const buildPublicProductCursorOr = (
 type PublicProductListQuery = {
   category?: string;
   subCategory?: string;
+  theme?: MobileInvitationTheme;
   cursor?: string;
   limit?: number;
   userId?: string;
@@ -515,6 +516,7 @@ type PublicProductListQuery = {
 const getPublicProductsPageService = async ({
   category,
   subCategory,
+  theme,
   cursor,
   limit = DEFAULT_PAGE_SIZE,
   userId,
@@ -528,6 +530,7 @@ const getPublicProductsPageService = async ({
   const filter: Record<string, unknown> = { deletedAt: null, status: "active" };
   if (category) filter.category = category;
   if (subCategory) filter.subCategory = subCategory;
+  if (theme) filter.theme = theme;
 
   if (cursor) {
     const decoded = decodeCursor(cursor);
