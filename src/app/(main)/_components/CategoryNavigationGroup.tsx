@@ -23,7 +23,10 @@ const CategoryNavigationGroup = ({
     return (
       <NavigationMenuItem key={item.id}>
         <NavigationMenuTrigger
-          className={cn(isActive && "bg-accent/50 text-accent-foreground")}
+          className={cn(
+            "bg-transparent",
+            isActive && "bg-accent/50 text-accent-foreground",
+          )}
         >
           {item.label}
         </NavigationMenuTrigger>

@@ -22,7 +22,9 @@ const GeneralNavigationLinks = ({
         active={pathname === item.href}
         className={navigationMenuTriggerStyle()}
       >
-        <Link href={item.href}>{item.label}</Link>
+        <Link href={item.href} className="bg-transparent">
+          {item.label}
+        </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   ));
