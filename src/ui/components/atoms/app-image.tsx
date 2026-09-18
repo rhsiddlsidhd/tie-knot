@@ -4,6 +4,7 @@ import { cn } from "@/core/utils/cn";
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
 import { useState } from "react";
+import { cloudinaryImageLoader } from "@/ui/utils/image-loader";
 
 const FALLBACK_SRC = "/assets/images/default/placeholder.svg";
 
@@ -26,10 +27,14 @@ const AppImage = ({
 }: AppImageProps) => {
   const [failedSrc, setFailedSrc] = useState<AppImageProps["src"] | null>(null);
   const isImageUnavailable = !src || failedSrc === src;
+  const resolvedSrc = isImageUnavailable ? FALLBACK_SRC : src;
+  const isCloudinarySrc =
+    typeof resolvedSrc === "string" && resolvedSrc.includes("res.cloudinary.com");
 
   return (
     <Image
-      src={isImageUnavailable ? FALLBACK_SRC : src}
+      src={resolvedSrc}
+      loader={isCloudinarySrc ? cloudinaryImageLoader : undefined}
       sizes={sizes}
       fill
       alt={isImageUnavailable ? alt || "이미지를 불러올 수 없습니다" : alt}
