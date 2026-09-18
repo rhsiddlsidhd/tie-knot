@@ -1,33 +1,32 @@
 "use client";
 
-import type { ComponentProps, ReactNode } from "react";
-import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
+import { Children, type ReactNode } from "react";
 import { cn } from "@/core/utils/cn";
-import { Carousel, CarouselContent, CarouselItem } from "@/ui/components/atoms/carousel";
+import { Carousel, CarouselContent, CarouselItem, type CarouselProps } from "@/ui/components/atoms/carousel";
 
-type CarouselOptions = ComponentProps<typeof Carousel>["opts"];
-
-interface CarouselListProps<T> {
+interface CarouselListProps extends CarouselProps {
   id: string;
-  data: readonly T[];
-  opts?: CarouselOptions;
   className?: string;
-  renderItem: (item: T, index: number) => ReactNode;
+  contentClassName?: string;
+  children: ReactNode;
 }
 
-const CarouselList = <T,>({ id, data, opts, className, renderItem }: CarouselListProps<T>) => {
+const CarouselList = ({
+  id,
+  className,
+  contentClassName,
+  children,
+  ...carouselProps
+}: CarouselListProps) => {
   return (
     <Carousel
       aria-labelledby={id}
       data-id={id}
-      opts={opts}
-      plugins={[WheelGesturesPlugin()]}
+      {...carouselProps}
     >
-      <CarouselContent>
-        {data.map((item, index) => (
-          <CarouselItem key={`${id}-${index}`} className={cn("basis-auto", className)}>
-            {renderItem(item, index)}
-          </CarouselItem>
+      <CarouselContent className={contentClassName}>
+        {Children.map(children, (child) => (
+          <CarouselItem className={cn("basis-auto", className)}>{child}</CarouselItem>
         ))}
       </CarouselContent>
     </Carousel>
