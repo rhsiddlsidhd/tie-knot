@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import type { Product } from "@/core/domain/product";
 
-vi.mock("./EcommerceHero", () => ({
-  EcommerceHero: () => <div>hero</div>,
+vi.mock("./PromotionHero", () => ({
+  PromotionHero: () => <div>hero</div>,
 }));
 vi.mock("./LiveDemoSection", () => ({
   LiveDemoSection: () => <div>live-demo</div>,
