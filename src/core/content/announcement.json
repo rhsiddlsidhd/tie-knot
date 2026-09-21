@@ -1,14 +1,14 @@
 [
   {
-    "id": "welcome-discount",
-    "text": "🎉 신규 가입 시 모든 프리미엄 템플릿 3,000원 즉시 할인!",
-    "link": "/signup",
+    "id": "launch-discount",
+    "text": "🎉 오픈 기념, 모바일 청첩장 전 상품 90% 할인!",
+    "link": "/products/mobile-invitation",
     "isActive": true
   },
   {
-    "id": "review-event",
-    "text": "✍️ 정성스러운 후기를 남겨주시면 스타벅스 기프티콘을 드려요!",
-    "link": "/reviews",
+    "id": "trust-review",
+    "text": "✍️ 먼저 써본 예비부부들의 생생한 후기를 확인해보세요",
+    "link": "/products",
     "isActive": true
   }
 ]
