@@ -15,7 +15,11 @@ describe("useSubwayStations", () => {
   });
 
   it("고정된 역 목록 key와 fetcher, 재시도 안 함 옵션으로 swr을 호출한다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: true });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+    });
 
     renderHook(() => useSubwayStations());
 
@@ -25,7 +29,11 @@ describe("useSubwayStations", () => {
   });
 
   it("로딩 중에는 subwayStations가 없고 isLoading이 true다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: true });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+    });
 
     const { result } = renderHook(() => useSubwayStations());
 
@@ -36,7 +44,11 @@ describe("useSubwayStations", () => {
 
   it("응답이 도착하면 subwayStations로 노출한다", () => {
     const stations = [{ value: "강남역", label: "강남역" }];
-    useSWRMock.mockReturnValue({ data: stations, error: undefined, isLoading: false });
+    useSWRMock.mockReturnValue({
+      data: stations,
+      error: undefined,
+      isLoading: false,
+    });
 
     const { result } = renderHook(() => useSubwayStations());
 
@@ -46,7 +58,10 @@ describe("useSubwayStations", () => {
   });
 
   it("에러가 있으면 isError로 노출한다", () => {
-    const error = { category: "EXTERNAL_SERVICE", message: "역 목록 조회 실패" };
+    const error = {
+      category: "EXTERNAL_SERVICE",
+      message: "역 목록 조회 실패",
+    };
     useSWRMock.mockReturnValue({ data: undefined, error, isLoading: false });
 
     const { result } = renderHook(() => useSubwayStations());

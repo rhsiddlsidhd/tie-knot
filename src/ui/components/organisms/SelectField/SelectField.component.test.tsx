@@ -11,7 +11,12 @@ const data = [
 describe("SelectField", () => {
   it("label과 placeholder를 렌더링한다", () => {
     render(
-      <SelectField id="city" name="city" placeholder="도시를 선택하세요" data={data}>
+      <SelectField
+        id="city"
+        name="city"
+        placeholder="도시를 선택하세요"
+        data={data}
+      >
         도시
       </SelectField>,
     );

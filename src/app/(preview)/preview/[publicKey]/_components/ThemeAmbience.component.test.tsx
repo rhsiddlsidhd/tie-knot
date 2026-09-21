@@ -20,7 +20,8 @@ class CapturingResizeObserverMock {
 }
 
 beforeAll(() => {
-  globalThis.ResizeObserver = CapturingResizeObserverMock as unknown as typeof ResizeObserver;
+  globalThis.ResizeObserver =
+    CapturingResizeObserverMock as unknown as typeof ResizeObserver;
 });
 
 beforeEach(() => {

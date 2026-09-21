@@ -25,6 +25,6 @@ const useKakaomapGeocode = (address: string): NullableCoordinates => {
   return document
     ? { lat: Number(document.y), lng: Number(document.x) }
     : { lat: null, lng: null };
-}
+};
 
 export { useKakaomapGeocode };

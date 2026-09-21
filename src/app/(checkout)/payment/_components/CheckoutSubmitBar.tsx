@@ -25,6 +25,6 @@ const CheckoutSubmitBar = ({
           : "결제하기"}
     </BottomActionBar>
   );
-}
+};
 
 export { CheckoutSubmitBar };

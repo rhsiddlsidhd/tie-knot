@@ -17,9 +17,8 @@ describe("PaymentSuccessTemplate", () => {
       "href",
       "/",
     );
-    expect(screen.getByRole("link", { name: /주문 내역 확인/ })).toHaveAttribute(
-      "href",
-      "/my-orders",
-    );
+    expect(
+      screen.getByRole("link", { name: /주문 내역 확인/ }),
+    ).toHaveAttribute("href", "/my-orders");
   });
 });

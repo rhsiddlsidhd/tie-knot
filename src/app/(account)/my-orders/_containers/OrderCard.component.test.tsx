@@ -105,9 +105,7 @@ describe("OrderCard", () => {
   });
 
   it("가상계좌 주문은 결제 동기화 전(paymentId 없음)에도 결제하기를 숨긴다", () => {
-    render(
-      <OrderCard order={buildOrder({ payMethod: "VIRTUAL_ACCOUNT" })} />,
-    );
+    render(<OrderCard order={buildOrder({ payMethod: "VIRTUAL_ACCOUNT" })} />);
 
     expect(screen.queryByRole("button", { name: "결제하기" })).toBeNull();
     expect(screen.getByText("입금대기")).toBeInTheDocument();
@@ -209,13 +207,18 @@ describe("OrderCard", () => {
   });
 
   it("취소가 진행되는 동안 확인 버튼을 다시 눌러도 cancelOrder를 중복 호출하지 않는다", async () => {
-    const deferred = createDeferred<{ success: true; data: { orderId: string } }>();
+    const deferred = createDeferred<{
+      success: true;
+      data: { orderId: string };
+    }>();
     vi.mocked(cancelOrder).mockReturnValue(deferred.promise);
     const user = await openCancelConfirm();
 
     const dialog = screen.getByRole("alertdialog");
     await user.click(within(dialog).getByRole("button", { name: "주문 취소" }));
-    await user.click(within(dialog).getByRole("button", { name: "취소 중..." }));
+    await user.click(
+      within(dialog).getByRole("button", { name: "취소 중..." }),
+    );
 
     expect(cancelOrder).toHaveBeenCalledTimes(1);
 

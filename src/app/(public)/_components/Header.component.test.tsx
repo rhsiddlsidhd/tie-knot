@@ -18,7 +18,10 @@ describe("Header", () => {
   it("로고는 홈으로 이동하는 링크다", () => {
     render(<Header />);
 
-    expect(screen.getByRole("link", { name: "Tie Knot" })).toHaveAttribute("href", "/");
+    expect(screen.getByRole("link", { name: "Tie Knot" })).toHaveAttribute(
+      "href",
+      "/",
+    );
   });
 
   it("검색 아이콘은 /search로 이동하는 링크다", () => {

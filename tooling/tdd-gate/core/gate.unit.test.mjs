@@ -22,12 +22,8 @@ vi.mock("./resolver.mjs", () => ({
   turnFile: () => turnFilePath,
 }));
 
-const {
-  checkBeforeEdit,
-  checkBeforeStop,
-  recordEdits,
-  recordTurnStart,
-} = await import("./gate.mjs");
+const { checkBeforeEdit, checkBeforeStop, recordEdits, recordTurnStart } =
+  await import("./gate.mjs");
 
 let tmpDir;
 let turnFilePath;
@@ -48,8 +44,18 @@ const enforcedTarget = (overrides = {}) => ({
   relPath: "src/actions/order.ts",
   enforced: true,
   tier: "unit",
-  candidates: [{ path: "src/actions/order.unit.test.ts", tier: "unit", suffix: "unit.test.ts" }],
-  recommended: { path: "src/actions/order.unit.test.ts", tier: "unit", suffix: "unit.test.ts" },
+  candidates: [
+    {
+      path: "src/actions/order.unit.test.ts",
+      tier: "unit",
+      suffix: "unit.test.ts",
+    },
+  ],
+  recommended: {
+    path: "src/actions/order.unit.test.ts",
+    tier: "unit",
+    suffix: "unit.test.ts",
+  },
   siblings: [{ path: "src/actions/order.unit.test.ts", tier: "unit" }],
   exists: true,
   ...overrides,
@@ -57,7 +63,9 @@ const enforcedTarget = (overrides = {}) => ({
 
 describe("checkBeforeEdit", () => {
   it("op이 delete면 inspect도 호출하지 않고 통과시킨다", async () => {
-    const result = await checkBeforeEdit([{ path: "src/actions/legacy.ts", op: "delete" }]);
+    const result = await checkBeforeEdit([
+      { path: "src/actions/legacy.ts", op: "delete" },
+    ]);
     expect(result).toBeNull();
     expect(mockInspect).not.toHaveBeenCalled();
   });
@@ -66,10 +74,19 @@ describe("checkBeforeEdit", () => {
     mockInspect.mockResolvedValue(enforcedTarget({ exists: false }));
     mockRunSiblings.mockReturnValue({
       green: false,
-      failures: [{ tier: "unit", paths: ["src/actions/order.unit.test.ts"], output: "x", timedOut: true }],
+      failures: [
+        {
+          tier: "unit",
+          paths: ["src/actions/order.unit.test.ts"],
+          output: "x",
+          timedOut: true,
+        },
+      ],
     });
 
-    const result = await checkBeforeEdit([{ path: "src/actions/order.ts", op: "add" }]);
+    const result = await checkBeforeEdit([
+      { path: "src/actions/order.ts", op: "add" },
+    ]);
     expect(result.action).toBe("deny");
     expect(result.reason).toContain("제한 시간을 초과");
   });
@@ -78,10 +95,19 @@ describe("checkBeforeEdit", () => {
     mockInspect.mockResolvedValue(enforcedTarget({ exists: false }));
     mockRunSiblings.mockReturnValue({
       green: false,
-      failures: [{ tier: "unit", paths: ["src/actions/order.unit.test.ts"], output: "x", timedOut: false }],
+      failures: [
+        {
+          tier: "unit",
+          paths: ["src/actions/order.unit.test.ts"],
+          output: "x",
+          timedOut: false,
+        },
+      ],
     });
 
-    const result = await checkBeforeEdit([{ path: "src/actions/order.ts", op: "add" }]);
+    const result = await checkBeforeEdit([
+      { path: "src/actions/order.ts", op: "add" },
+    ]);
     expect(result).toBeNull();
   });
 
@@ -89,7 +115,9 @@ describe("checkBeforeEdit", () => {
     mockInspect.mockResolvedValue(enforcedTarget({ exists: false }));
     mockRunSiblings.mockReturnValue({ green: true, failures: [] });
 
-    const result = await checkBeforeEdit([{ path: "src/actions/order.ts", op: "add" }]);
+    const result = await checkBeforeEdit([
+      { path: "src/actions/order.ts", op: "add" },
+    ]);
     expect(result.action).toBe("deny");
     expect(result.reason).toContain("이미 통과");
   });
@@ -127,10 +155,19 @@ describe("checkBeforeStop", () => {
     mockInspect.mockResolvedValue(enforcedTarget());
     mockRunSiblings.mockReturnValue({
       green: false,
-      failures: [{ tier: "unit", paths: ["src/actions/order.unit.test.ts"], output: "fail" }],
+      failures: [
+        {
+          tier: "unit",
+          paths: ["src/actions/order.unit.test.ts"],
+          output: "fail",
+        },
+      ],
     });
 
-    const result = await checkBeforeStop({ sessionId: "s1", stopHookActive: false });
+    const result = await checkBeforeStop({
+      sessionId: "s1",
+      stopHookActive: false,
+    });
     expect(result.action).toBe("block");
     expect(fs.existsSync(turnFilePath)).toBe(true);
   });
@@ -140,10 +177,19 @@ describe("checkBeforeStop", () => {
     mockInspect.mockResolvedValue(enforcedTarget());
     mockRunSiblings.mockReturnValue({
       green: false,
-      failures: [{ tier: "unit", paths: ["src/actions/order.unit.test.ts"], output: "fail" }],
+      failures: [
+        {
+          tier: "unit",
+          paths: ["src/actions/order.unit.test.ts"],
+          output: "fail",
+        },
+      ],
     });
 
-    const result = await checkBeforeStop({ sessionId: "s1", stopHookActive: true });
+    const result = await checkBeforeStop({
+      sessionId: "s1",
+      stopHookActive: true,
+    });
     expect(result.action).toBe("warn");
     expect(fs.existsSync(turnFilePath)).toBe(true);
   });
@@ -153,16 +199,24 @@ describe("checkBeforeStop", () => {
     mockInspect.mockResolvedValue(enforcedTarget());
     mockRunSiblings.mockReturnValue({ green: true, failures: [] });
 
-    const result = await checkBeforeStop({ sessionId: "s1", stopHookActive: false });
+    const result = await checkBeforeStop({
+      sessionId: "s1",
+      stopHookActive: false,
+    });
     expect(result).toBeNull();
     expect(fs.existsSync(turnFilePath)).toBe(false);
   });
 
   it("존재하는데 sibling test가 0개면 test 없음으로 block 한다(Bash 우회 방지)", async () => {
     fs.writeFileSync(turnFilePath, "src/actions/order.ts\n");
-    mockInspect.mockResolvedValue(enforcedTarget({ siblings: [], exists: true }));
+    mockInspect.mockResolvedValue(
+      enforcedTarget({ siblings: [], exists: true }),
+    );
 
-    const result = await checkBeforeStop({ sessionId: "s1", stopHookActive: false });
+    const result = await checkBeforeStop({
+      sessionId: "s1",
+      stopHookActive: false,
+    });
     expect(result.action).toBe("block");
     expect(result.reason).toContain("test 가 없다");
     expect(mockRunSiblings).not.toHaveBeenCalled();
@@ -170,9 +224,14 @@ describe("checkBeforeStop", () => {
 
   it("이번 턴에 삭제된 파일(exists=false)은 sibling이 없어도 통과시킨다", async () => {
     fs.writeFileSync(turnFilePath, "src/actions/legacy.ts\n");
-    mockInspect.mockResolvedValue(enforcedTarget({ siblings: [], exists: false }));
+    mockInspect.mockResolvedValue(
+      enforcedTarget({ siblings: [], exists: false }),
+    );
 
-    const result = await checkBeforeStop({ sessionId: "s1", stopHookActive: false });
+    const result = await checkBeforeStop({
+      sessionId: "s1",
+      stopHookActive: false,
+    });
     expect(result).toBeNull();
     expect(fs.existsSync(turnFilePath)).toBe(false);
   });
@@ -188,7 +247,10 @@ describe("checkBeforeStop", () => {
   });
 
   it("검사할 게 없으면 그대로 통과시킨다", async () => {
-    const result = await checkBeforeStop({ sessionId: "empty", stopHookActive: false });
+    const result = await checkBeforeStop({
+      sessionId: "empty",
+      stopHookActive: false,
+    });
     expect(result).toBeNull();
   });
 });
@@ -207,7 +269,9 @@ describe("recordEdits / recordTurnStart", () => {
       "s1",
     );
 
-    expect(fs.readFileSync(turnFilePath, "utf8")).toBe("src/actions/order.ts\n");
+    expect(fs.readFileSync(turnFilePath, "utf8")).toBe(
+      "src/actions/order.ts\n",
+    );
   });
 
   it("recordTurnStart는 세션 스냅샷을 기록한다", () => {

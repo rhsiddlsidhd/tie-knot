@@ -28,30 +28,45 @@ vi.mock("./ThemeSync", () => ({
     <div data-testid="theme-sync" data-theme={theme} />
   ),
 }));
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/AccountSection", () => ({
-  AccountSection: (props: { groomAccounts: unknown[]; brideAccounts: unknown[] }) => (
-    <div data-testid="account-section">
-      {props.groomAccounts.length}/{props.brideAccounts.length}
-    </div>
-  ),
-}));
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/AccountSection",
+  () => ({
+    AccountSection: (props: {
+      groomAccounts: unknown[];
+      brideAccounts: unknown[];
+    }) => (
+      <div data-testid="account-section">
+        {props.groomAccounts.length}/{props.brideAccounts.length}
+      </div>
+    ),
+  }),
+);
 vi.mock("@/app/(preview)/preview/[publicKey]/_components/Footer", () => ({
   Footer: ({ children }: { children: ReactNode }) => (
     <footer data-testid="footer">{children}</footer>
   ),
 }));
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/GallerySection", () => ({
-  GallerySection: (props: { images: string[]; lightboxEnabled: boolean }) => (
-    <div data-testid="gallery-section" data-lightbox={String(props.lightboxEnabled)}>
-      {props.images.join(",")}
-    </div>
-  ),
-}));
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/GuestbookSection", () => ({
-  GuestbookSection: (props: { publicKey: string }) => (
-    <div data-testid="guestbook-section">{props.publicKey}</div>
-  ),
-}));
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/GallerySection",
+  () => ({
+    GallerySection: (props: { images: string[]; lightboxEnabled: boolean }) => (
+      <div
+        data-testid="gallery-section"
+        data-lightbox={String(props.lightboxEnabled)}
+      >
+        {props.images.join(",")}
+      </div>
+    ),
+  }),
+);
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/GuestbookSection",
+  () => ({
+    GuestbookSection: (props: { publicKey: string }) => (
+      <div data-testid="guestbook-section">{props.publicKey}</div>
+    ),
+  }),
+);
 vi.mock("@/app/(preview)/preview/[publicKey]/_components/HeroSection", () => ({
   HeroSection: (props: { groomName: string; brideName: string }) => (
     <div data-testid="hero-section">
@@ -59,21 +74,30 @@ vi.mock("@/app/(preview)/preview/[publicKey]/_components/HeroSection", () => ({
     </div>
   ),
 }));
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/MobileInvitationMessage", () => ({
-  MobileInvitationMessage: (props: { parties: { name: string }[] }) => (
-    <div data-testid="invitation-message">
-      {props.parties.map((party) => party.name).join(",")}
-    </div>
-  ),
-}));
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/LocationSection", () => ({
-  LocationSection: (props: { venueName: string }) => (
-    <div data-testid="location-section">{props.venueName}</div>
-  ),
-}));
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/WeddingMonthCalendar", () => ({
-  WeddingMonthCalendar: () => <div data-testid="wedding-month-calendar" />,
-}));
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/MobileInvitationMessage",
+  () => ({
+    MobileInvitationMessage: (props: { parties: { name: string }[] }) => (
+      <div data-testid="invitation-message">
+        {props.parties.map((party) => party.name).join(",")}
+      </div>
+    ),
+  }),
+);
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/LocationSection",
+  () => ({
+    LocationSection: (props: { venueName: string }) => (
+      <div data-testid="location-section">{props.venueName}</div>
+    ),
+  }),
+);
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/WeddingMonthCalendar",
+  () => ({
+    WeddingMonthCalendar: () => <div data-testid="wedding-month-calendar" />,
+  }),
+);
 
 import { MobileInvitationTemplate } from "./MobileInvitationTemplate";
 
@@ -113,8 +137,14 @@ describe("MobileInvitationTemplate", () => {
     );
 
     expect(container.querySelector('[data-theme="botanical"]')).not.toBeNull();
-    expect(screen.getByTestId("theme-sync")).toHaveAttribute("data-theme", "botanical");
-    expect(screen.getByTestId("theme-ambience")).toHaveAttribute("data-theme", "botanical");
+    expect(screen.getByTestId("theme-sync")).toHaveAttribute(
+      "data-theme",
+      "botanical",
+    );
+    expect(screen.getByTestId("theme-ambience")).toHaveAttribute(
+      "data-theme",
+      "botanical",
+    );
     expect(screen.getByTestId("interaction-overlay")).toHaveAttribute(
       "data-theme",
       "botanical",
@@ -131,11 +161,19 @@ describe("MobileInvitationTemplate", () => {
       />,
     );
 
-    expect(screen.getByTestId("hero-section")).toHaveTextContent("김철수-이영희");
-    expect(screen.getByTestId("location-section")).toHaveTextContent("그랜드홀");
-    expect(screen.getByTestId("invitation-message")).toHaveTextContent("김철수,이영희");
+    expect(screen.getByTestId("hero-section")).toHaveTextContent(
+      "김철수-이영희",
+    );
+    expect(screen.getByTestId("location-section")).toHaveTextContent(
+      "그랜드홀",
+    );
+    expect(screen.getByTestId("invitation-message")).toHaveTextContent(
+      "김철수,이영희",
+    );
     expect(screen.getByTestId("account-section")).toHaveTextContent("1/1");
-    expect(screen.getByTestId("guestbook-section")).toHaveTextContent("public-key-1");
+    expect(screen.getByTestId("guestbook-section")).toHaveTextContent(
+      "public-key-1",
+    );
   });
 
   it("guestbookEnabled가 true면 방명록 섹션을 렌더링한다", () => {
@@ -174,7 +212,10 @@ describe("MobileInvitationTemplate", () => {
       />,
     );
 
-    expect(screen.getByTestId("gallery-section")).toHaveAttribute("data-lightbox", "true");
+    expect(screen.getByTestId("gallery-section")).toHaveAttribute(
+      "data-lightbox",
+      "true",
+    );
   });
 
   it("features에 GALLERY_LIGHTBOX가 없으면 갤러리 라이트박스를 비활성화한다", () => {
@@ -187,7 +228,10 @@ describe("MobileInvitationTemplate", () => {
       />,
     );
 
-    expect(screen.getByTestId("gallery-section")).toHaveAttribute("data-lightbox", "false");
+    expect(screen.getByTestId("gallery-section")).toHaveAttribute(
+      "data-lightbox",
+      "false",
+    );
   });
 
   it("구분 이미지와 footer 썸네일 이미지를 실제로 렌더링한다", () => {
@@ -202,9 +246,13 @@ describe("MobileInvitationTemplate", () => {
 
     // next/image가 src를 "/_next/image?url=<encoded>&w=..&q=.." 형태로 변환하므로
     // 원본 경로는 url 쿼리파라미터 안의 인코딩된 부분 문자열로만 확인할 수 있다.
-    expect(container.querySelector('img[src*="url=%2Fdivider.jpg"]')).not.toBeNull();
     expect(
-      screen.getByTestId("footer").querySelector('img[src*="url=%2Ffooter.jpg"]'),
+      container.querySelector('img[src*="url=%2Fdivider.jpg"]'),
+    ).not.toBeNull();
+    expect(
+      screen
+        .getByTestId("footer")
+        .querySelector('img[src*="url=%2Ffooter.jpg"]'),
     ).not.toBeNull();
   });
 });

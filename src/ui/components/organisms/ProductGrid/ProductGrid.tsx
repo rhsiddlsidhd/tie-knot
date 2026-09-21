@@ -4,7 +4,10 @@ import { ProductCard } from "@/ui/components/molecules/ProductCard";
 
 import { useVisibleProducts } from "@/ui/hooks/useVisibleProducts";
 import { Button } from "@/ui/components/atoms/button";
-import type { ProductFilterAction, ProductFilterState } from "@/ui/context/productFilter/type";
+import type {
+  ProductFilterAction,
+  ProductFilterState,
+} from "@/ui/context/productFilter/type";
 import type { Product } from "@/core/domain/product";
 import { TypographyMuted, TypographyP } from "../../atoms/typography";
 import { PackageOpen, SearchX } from "lucide-react";
@@ -56,7 +59,10 @@ const ProductGrid = ({
             다른 카테고리나 정렬 조건으로 <br />
             다시 검색해보세요.
           </TypographyMuted>
-          <Button variant="outline" onClick={() => dispatch({ type: "RESET_ALL" })}>
+          <Button
+            variant="outline"
+            onClick={() => dispatch({ type: "RESET_ALL" })}
+          >
             필터 초기화
           </Button>
         </>
@@ -73,6 +79,6 @@ const ProductGrid = ({
       )}
     </div>
   );
-}
+};
 
 export { ProductGrid };

@@ -1,0 +1,22 @@
+# dependencies and framework output
+node_modules/
+.next/
+out/
+build/
+coverage/
+
+# local test and tooling output
+test-results/
+playwright-report/
+.playwright-cli/
+.claude/worktrees/
+_workspace/
+
+# generated cross-agent artifacts (source: .claude/skills/)
+.agents/
+
+# shared skill sources use the dedicated migration workflow
+.claude/skills/
+
+# exported design references
+docs/design/

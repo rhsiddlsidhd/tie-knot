@@ -1,5 +1,13 @@
 // @vitest-environment node
-import { describe, it, expect, beforeEach, afterAll, vi, afterEach } from "vitest";
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterAll,
+  vi,
+  afterEach,
+} from "vitest";
 import mongoose from "mongoose";
 import { dbConnect } from "@/db/connect";
 import { buildUserInput, clearCollections } from "@test/support";
@@ -81,7 +89,9 @@ describe("user", () => {
       expect(sendEmailMock).toHaveBeenCalledOnce();
       const { path } = sendEmailMock.mock.calls[0][0];
       expect(path).not.toBe("");
-      expect(path.startsWith("https://tie-knot-pi.vercel.app/change-password?t=")).toBe(true);
+      expect(
+        path.startsWith("https://tie-knot-pi.vercel.app/change-password?t="),
+      ).toBe(true);
     });
 
     it("등록되지 않은 이메일이면 VALIDATION을 던진다", async () => {
@@ -99,7 +109,9 @@ describe("user", () => {
       await requestPasswordResetService(input.email);
 
       const { path } = sendEmailMock.mock.calls[0][0];
-      expect(path.startsWith("http://localhost:3000/change-password?t=")).toBe(true);
+      expect(path.startsWith("http://localhost:3000/change-password?t=")).toBe(
+        true,
+      );
     });
 
     it("선택된 base url 환경변수가 없으면 INTERNAL을 던진다", async () => {
@@ -108,7 +120,9 @@ describe("user", () => {
       const input = buildUserInput();
       await UserModel.create(input);
 
-      await expect(requestPasswordResetService(input.email)).rejects.toMatchObject({
+      await expect(
+        requestPasswordResetService(input.email),
+      ).rejects.toMatchObject({
         category: "INTERNAL",
       });
     });
@@ -136,15 +150,18 @@ describe("user", () => {
       const input = buildUserInput();
       await UserModel.create(input);
 
-      const email = await getUserEmail({ name: input.name, phone: input.phone });
+      const email = await getUserEmail({
+        name: input.name,
+        phone: input.phone,
+      });
 
       expect(email).toBe(input.email);
     });
 
     it("일치하는 유저가 없으면 AppError(NOT_FOUND)를 던진다", async () => {
-      await expect(getUserEmail({ name: "없는사람", phone: "010-0000-0000" })).rejects.toBeInstanceOf(
-        AppError,
-      );
+      await expect(
+        getUserEmail({ name: "없는사람", phone: "010-0000-0000" }),
+      ).rejects.toBeInstanceOf(AppError);
       await expect(
         getUserEmail({ name: "없는사람", phone: "010-0000-0000" }),
       ).rejects.toMatchObject({ category: "NOT_FOUND" });
@@ -165,7 +182,9 @@ describe("user", () => {
       const missingId = new mongoose.Types.ObjectId().toString();
 
       await expect(getUserById(missingId)).rejects.toBeInstanceOf(AppError);
-      await expect(getUserById(missingId)).rejects.toMatchObject({ category: "NOT_FOUND" });
+      await expect(getUserById(missingId)).rejects.toMatchObject({
+        category: "NOT_FOUND",
+      });
     });
   });
 
@@ -183,7 +202,10 @@ describe("user", () => {
     });
 
     it("존재하지 않는 이메일이면 false를 리턴한다", async () => {
-      const result = await changePassword("no-such-user@example.com", "new-password");
+      const result = await changePassword(
+        "no-such-user@example.com",
+        "new-password",
+      );
 
       expect(result).toBe(false);
     });
@@ -201,7 +223,10 @@ describe("user", () => {
   describe("getAdminUsersPageService", () => {
     // createdAt은 timestamps가 자동으로 채우고 immutable로 잠그므로, 순서 검증을
     // 위해 덮어쓰려면 두 보호를 모두 풀어야 한다(order.integration.test.ts와 동일 패턴).
-    const setCreatedAt = async (userId: mongoose.Types.ObjectId, createdAt: Date) => {
+    const setCreatedAt = async (
+      userId: mongoose.Types.ObjectId,
+      createdAt: Date,
+    ) => {
       await UserModel.updateOne(
         { _id: userId },
         { $set: { createdAt } },
@@ -222,7 +247,9 @@ describe("user", () => {
       });
 
       it("이메일 부분일치로 찾는다", async () => {
-        await UserModel.create(buildUserInput({ email: "chulsoo@example.com" }));
+        await UserModel.create(
+          buildUserInput({ email: "chulsoo@example.com" }),
+        );
         await UserModel.create(
           buildUserInput({ name: "박영희", email: "young@example.com" }),
         );
@@ -233,7 +260,9 @@ describe("user", () => {
       });
 
       it("대소문자를 무시한다", async () => {
-        await UserModel.create(buildUserInput({ email: "ChulSoo@example.com" }));
+        await UserModel.create(
+          buildUserInput({ email: "ChulSoo@example.com" }),
+        );
 
         const result = await getAdminUsersPageService({ q: "chulsoo" });
 
@@ -328,7 +357,9 @@ describe("user", () => {
 
       const result = await getAdminUsersPageService({});
 
-      expect(result.items.map((u) => u.id)).toEqual([...created].sort().reverse());
+      expect(result.items.map((u) => u.id)).toEqual(
+        [...created].sort().reverse(),
+      );
     });
 
     it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
@@ -381,7 +412,10 @@ describe("user", () => {
       }
       await UserModel.create(buildUserInput({ role: "ADMIN" }));
 
-      const firstPage = await getAdminUsersPageService({ role: "USER", limit: 2 });
+      const firstPage = await getAdminUsersPageService({
+        role: "USER",
+        limit: 2,
+      });
       const secondPage = await getAdminUsersPageService({
         role: "USER",
         limit: 2,
@@ -393,8 +427,12 @@ describe("user", () => {
     });
 
     it("활동 사용자와 탈퇴 사용자를 모두 포함한다(deletedAt으로 제외하지 않는다)", async () => {
-      const active = await UserModel.create(buildUserInput({ deletedAt: null }));
-      const deleted = await UserModel.create(buildUserInput({ deletedAt: new Date() }));
+      const active = await UserModel.create(
+        buildUserInput({ deletedAt: null }),
+      );
+      const deleted = await UserModel.create(
+        buildUserInput({ deletedAt: new Date() }),
+      );
 
       const result = await getAdminUsersPageService({});
 

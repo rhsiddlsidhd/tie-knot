@@ -17,7 +17,11 @@ describe("DateField", () => {
 
   it("defaultValue가 있으면 포맷된 날짜를 보여준다", () => {
     render(
-      <DateField id="weddingDate" name="weddingDate" defaultValue={new Date("2026-05-01")}>
+      <DateField
+        id="weddingDate"
+        name="weddingDate"
+        defaultValue={new Date("2026-05-01")}
+      >
         예식일
       </DateField>,
     );
@@ -47,8 +51,9 @@ describe("DateField", () => {
     );
 
     await user.click(screen.getByText("날짜를 선택하세요"));
-    const dayButton = (await screen.findAllByRole("button", { hidden: false }))
-      .find((el) => el.hasAttribute("data-day")) as HTMLButtonElement;
+    const dayButton = (
+      await screen.findAllByRole("button", { hidden: false })
+    ).find((el) => el.hasAttribute("data-day")) as HTMLButtonElement;
     await user.click(dayButton);
 
     expect(screen.queryByText("날짜를 선택하세요")).not.toBeInTheDocument();
@@ -60,7 +65,11 @@ describe("DateField", () => {
 
   it("defaultValue가 리렌더 중 바뀌면 값이 재동기화된다", () => {
     const { rerender } = render(
-      <DateField id="weddingDate" name="weddingDate" defaultValue={new Date("2026-05-01")}>
+      <DateField
+        id="weddingDate"
+        name="weddingDate"
+        defaultValue={new Date("2026-05-01")}
+      >
         예식일
       </DateField>,
     );
@@ -68,7 +77,11 @@ describe("DateField", () => {
     expect(screen.getByText("2026년 5월 1일")).toBeInTheDocument();
 
     rerender(
-      <DateField id="weddingDate" name="weddingDate" defaultValue={new Date("2026-09-10")}>
+      <DateField
+        id="weddingDate"
+        name="weddingDate"
+        defaultValue={new Date("2026-09-10")}
+      >
         예식일
       </DateField>,
     );

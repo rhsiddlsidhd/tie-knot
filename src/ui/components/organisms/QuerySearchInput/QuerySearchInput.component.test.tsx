@@ -30,7 +30,9 @@ describe("QuerySearchInput", () => {
   it("검색어가 없으면 빈 입력으로 시작한다", () => {
     render(<QuerySearchInput basePath="/admin/orders" label="주문 검색" />);
 
-    expect(screen.getByRole("searchbox", { name: /주문 검색/ })).toHaveValue("");
+    expect(screen.getByRole("searchbox", { name: /주문 검색/ })).toHaveValue(
+      "",
+    );
   });
 
   // 검색은 항상 첫 페이지에서 시작해야 한다 — cursor를 실어 보내면 이전 페이지
@@ -72,7 +74,9 @@ describe("QuerySearchInput", () => {
       />,
     );
 
-    expect(container.querySelector('input[name="keyword"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('input[name="keyword"]'),
+    ).toBeInTheDocument();
   });
 
   it("placeholder를 전달한다", () => {

@@ -14,5 +14,11 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
-  projects: [{ name: "core", use: { ...devices["Desktop Chrome"] }, testIgnore: /portone-smoke/ }],
+  projects: [
+    {
+      name: "core",
+      use: { ...devices["Desktop Chrome"] },
+      testIgnore: /portone-smoke/,
+    },
+  ],
 });

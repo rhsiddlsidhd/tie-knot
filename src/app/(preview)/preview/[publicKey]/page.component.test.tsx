@@ -9,11 +9,22 @@ vi.mock("@/services/mobile-invitation", () => ({
   getPublishedMobileInvitationByPublicKey: getPublishedMobileInvitationMock,
 }));
 
-vi.mock("@/app/(preview)/preview/[publicKey]/_components/MobileInvitationTemplate", () => ({
-  MobileInvitationTemplate: ({ publicKey, theme }: { publicKey: string; theme: string }) => (
-    <div>청첩장:{publicKey}:{theme}</div>
-  ),
-}));
+vi.mock(
+  "@/app/(preview)/preview/[publicKey]/_components/MobileInvitationTemplate",
+  () => ({
+    MobileInvitationTemplate: ({
+      publicKey,
+      theme,
+    }: {
+      publicKey: string;
+      theme: string;
+    }) => (
+      <div>
+        청첩장:{publicKey}:{theme}
+      </div>
+    ),
+  }),
+);
 
 import Page from "./page";
 
@@ -66,6 +77,8 @@ describe("공개 청첩장 페이지", () => {
       await Page({ params: Promise.resolve({ publicKey: "published-key" }) }),
     );
 
-    expect(screen.getByText("청첩장:published-key:blossom")).toBeInTheDocument();
+    expect(
+      screen.getByText("청첩장:published-key:blossom"),
+    ).toBeInTheDocument();
   });
 });

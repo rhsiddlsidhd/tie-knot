@@ -19,7 +19,9 @@ describe("AddressField", () => {
 
     render(<AddressField name="wedding" defaultValue="서울시 강남구" />);
 
-    expect(screen.getByRole("textbox", { name: "주소" })).toHaveValue("서울시 강남구");
+    expect(screen.getByRole("textbox", { name: "주소" })).toHaveValue(
+      "서울시 강남구",
+    );
   });
 
   it("입력 필드 클릭 시 handleDaumAddressPopup을 호출한다", async () => {
@@ -51,7 +53,9 @@ describe("AddressField", () => {
     });
     rerender(<AddressField name="wedding" />);
 
-    expect(screen.getByRole("textbox", { name: "주소" })).toHaveValue("서울시 서초구");
+    expect(screen.getByRole("textbox", { name: "주소" })).toHaveValue(
+      "서울시 서초구",
+    );
   });
 
   it("상세 주소 필드의 id/name이 name prop을 따라간다(하드코딩 아님)", () => {

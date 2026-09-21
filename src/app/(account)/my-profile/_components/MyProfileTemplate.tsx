@@ -1,7 +1,10 @@
 "use client";
 
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { BasicInfoForm } from "./BasicInfoForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { Camera } from "lucide-react";
@@ -16,10 +19,10 @@ const MyProfileTemplate = ({ email, name, phone }: MyProfileTemplateProps) => {
   return (
     <div className="max-w-2xl space-y-6">
       <div>
-        <TypographyH1 className="text-left mb-2 text-3xl font-bold">프로필 관리</TypographyH1>
-        <TypographyMuted>
-          회원 정보를 수정하고 관리합니다.
-        </TypographyMuted>
+        <TypographyH1 className="mb-2 text-left text-3xl font-bold">
+          프로필 관리
+        </TypographyH1>
+        <TypographyMuted>회원 정보를 수정하고 관리합니다.</TypographyMuted>
       </div>
 
       <div className="flex items-center gap-4">

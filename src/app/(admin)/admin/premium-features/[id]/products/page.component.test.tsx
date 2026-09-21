@@ -36,7 +36,9 @@ vi.mock(
       featureLabel: string;
       q?: string;
       page: FeatureProductBindingPage;
-    }) => <div>{`Template:${featureLabel}:q=${q ?? ""}:${page.items.length}`}</div>,
+    }) => (
+      <div>{`Template:${featureLabel}:q=${q ?? ""}:${page.items.length}`}</div>
+    ),
   }),
 );
 

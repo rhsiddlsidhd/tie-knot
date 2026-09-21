@@ -1,10 +1,13 @@
 "use client";
 
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyP, TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyP,
+  TypographyLarge,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { Separator } from "@/ui/components/atoms/separator";
 import { EyebrowSection } from "./EyebrowSection";
-
 
 import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 import type { MobileInvitationMessageMappedProps } from "../_utils/mobileInvitationMessage.mapper";
@@ -15,14 +18,19 @@ const pinMessage = [
   "축복해 주시면 감사하겠습니다.",
 ];
 
-const MobileInvitationMessage = ({ parties }: MobileInvitationMessageMappedProps) => {
+const MobileInvitationMessage = ({
+  parties,
+}: MobileInvitationMessageMappedProps) => {
   const { setIsOpen } = useGuestbookModalStore();
 
   return (
     <EyebrowSection eyebrow="INVITATION" heading="소중한 분들을 초대합니다.">
       <div className="mb-16 space-y-2">
         {pinMessage.map((msg) => (
-          <TypographyP key={msg} className="m-0 text-lg leading-relaxed tracking-wide">
+          <TypographyP
+            key={msg}
+            className="m-0 text-lg leading-relaxed tracking-wide"
+          >
             {msg}
           </TypographyP>
         ))}
@@ -37,14 +45,20 @@ const MobileInvitationMessage = ({ parties }: MobileInvitationMessageMappedProps
                   <TypographyMuted className="text-xs opacity-60 sm:text-sm">
                     {parent.label}
                   </TypographyMuted>
-                  <TypographyMuted className="text-base sm:text-lg">{parent.name}</TypographyMuted>
+                  <TypographyMuted className="text-base sm:text-lg">
+                    {parent.name}
+                  </TypographyMuted>
                 </div>
               ))}
             </div>
 
             <div className="flex items-center gap-2">
-              <TypographyMuted className="text-xs opacity-60 sm:text-sm">{party.title}</TypographyMuted>
-              <TypographyLarge className="text-xl font-bold sm:text-2xl">{party.name}</TypographyLarge>
+              <TypographyMuted className="text-xs opacity-60 sm:text-sm">
+                {party.title}
+              </TypographyMuted>
+              <TypographyLarge className="text-xl font-bold sm:text-2xl">
+                {party.name}
+              </TypographyLarge>
             </div>
 
             <Button
@@ -57,7 +71,7 @@ const MobileInvitationMessage = ({ parties }: MobileInvitationMessageMappedProps
               }
               variant="outline"
               size="sm"
-              className="mt-6 h-9 rounded-full px-6 text-xs tracking-tight transition-all hover:bg-primary hover:text-primary-foreground"
+              className="hover:bg-primary hover:text-primary-foreground mt-6 h-9 rounded-full px-6 text-xs tracking-tight transition-all"
             >
               {`${party.title}측 연락하기`}
             </Button>
@@ -68,6 +82,6 @@ const MobileInvitationMessage = ({ parties }: MobileInvitationMessageMappedProps
       </div>
     </EyebrowSection>
   );
-}
+};
 
 export { MobileInvitationMessage };

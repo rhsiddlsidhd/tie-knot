@@ -27,7 +27,8 @@ const isValidComponentBarrel = (file) => {
   const dir = path.dirname(file);
   const parentDir = path.dirname(dir);
   const tier = path.basename(parentDir);
-  if (path.dirname(parentDir) !== EXEMPT_TIER_DIR || !EXEMPT_TIERS.has(tier)) return false;
+  if (path.dirname(parentDir) !== EXEMPT_TIER_DIR || !EXEMPT_TIERS.has(tier))
+    return false;
 
   const componentName = path.basename(dir);
   const content = fs.readFileSync(file, "utf8").trim();
@@ -39,11 +40,15 @@ const isValidComponentBarrel = (file) => {
     .filter((line) => line.length > 0);
   if (statements.length !== 1) return false;
 
-  const pattern = new RegExp(`^export\\s*\\{[^}]*\\}\\s*from\\s*["']\\./${componentName}["'];?$`);
+  const pattern = new RegExp(
+    `^export\\s*\\{[^}]*\\}\\s*from\\s*["']\\./${componentName}["'];?$`,
+  );
   return pattern.test(statements[0]);
 };
 
-const found = walk(SRC).filter((file) => !isValidComponentBarrel(file)).sort();
+const found = walk(SRC)
+  .filter((file) => !isValidComponentBarrel(file))
+  .sort();
 
 if (found.length > 0) {
   console.error(
@@ -55,4 +60,6 @@ if (found.length > 0) {
   process.exit(1);
 }
 
-console.log("배럴 없음 — src/ 안에 index.ts/index.tsx가 없거나 ADR-0007 예외만 존재한다.");
+console.log(
+  "배럴 없음 — src/ 안에 index.ts/index.tsx가 없거나 ADR-0007 예외만 존재한다.",
+);

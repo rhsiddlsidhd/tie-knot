@@ -10,7 +10,7 @@ import { MidnightInteraction } from "./MidnightInteraction";
 const createMotionValue = (initial: number) => {
   const { result } = renderHook(() => useMotionValue(initial));
   return result.current;
-}
+};
 
 describe("MidnightInteraction", () => {
   let now = 0;

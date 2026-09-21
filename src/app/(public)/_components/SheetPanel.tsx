@@ -35,7 +35,7 @@ const SheetPanel = ({
         <Button
           variant="ghost"
           size="icon"
-          className='text-foreground hover:text-foreground/70 transition-colors hover:bg-transparent'
+          className="text-foreground hover:text-foreground/70 transition-colors hover:bg-transparent"
           aria-label="메뉴 열기"
         >
           <Menu className="h-5 w-5" strokeWidth={1.5} />

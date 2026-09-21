@@ -70,7 +70,9 @@ describe("sample/[theme] 프리뷰 페이지", () => {
     async (theme) => {
       render(await Page({ params: buildParams(theme) }));
 
-      expect(screen.getByText(new RegExp(`Template:theme=${theme}:`))).toBeInTheDocument();
+      expect(
+        screen.getByText(new RegExp(`Template:theme=${theme}:`)),
+      ).toBeInTheDocument();
       expect(notFoundMock).not.toHaveBeenCalled();
     },
   );

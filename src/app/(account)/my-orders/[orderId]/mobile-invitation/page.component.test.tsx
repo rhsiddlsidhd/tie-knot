@@ -24,7 +24,11 @@ vi.mock(
     }: {
       orderId: string;
       status?: string;
-    }) => <div>StatusControls:orderId={orderId}:status={status ?? "none"}</div>,
+    }) => (
+      <div>
+        StatusControls:orderId={orderId}:status={status ?? "none"}
+      </div>
+    ),
   }),
 );
 vi.mock(

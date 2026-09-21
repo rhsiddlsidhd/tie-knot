@@ -8,9 +8,9 @@ describe("SearchBar", () => {
   it("value를 입력창에 그대로 반영한다", () => {
     render(<SearchBar value="청첩장" onChange={vi.fn()} />);
 
-    expect(
-      screen.getByRole("searchbox", { name: "상품 검색" }),
-    ).toHaveValue("청첩장");
+    expect(screen.getByRole("searchbox", { name: "상품 검색" })).toHaveValue(
+      "청첩장",
+    );
   });
 
   it("입력 시 onChange를 호출한다", async () => {

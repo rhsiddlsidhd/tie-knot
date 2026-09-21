@@ -2,7 +2,10 @@ import "server-only";
 import { OrderModel } from "@/models/order.model";
 import { ProductModel } from "@/models/product.model";
 import { UserModel } from "@/models/user.model";
-import type { DashboardStats, DashboardRecentOrder } from "@/core/domain/dashboard";
+import type {
+  DashboardStats,
+  DashboardRecentOrder,
+} from "@/core/domain/dashboard";
 import type { OrderStatus } from "@/core/domain/order";
 import { AppError } from "@/core/domain/error";
 import { PAID_ORDER_STATUSES } from "@/core/domain/order";
@@ -80,7 +83,9 @@ const getDashboardStatsService = async (): Promise<DashboardStats> => {
             _id: null,
             total: { $sum: 1 },
             createdThisMonth: {
-              $sum: { $cond: [{ $gte: ["$createdAt", startOfThisMonth] }, 1, 0] },
+              $sum: {
+                $cond: [{ $gte: ["$createdAt", startOfThisMonth] }, 1, 0],
+              },
             },
           },
         },
@@ -93,7 +98,9 @@ const getDashboardStatsService = async (): Promise<DashboardStats> => {
             _id: null,
             total: { $sum: 1 },
             createdThisMonth: {
-              $sum: { $cond: [{ $gte: ["$createdAt", startOfThisMonth] }, 1, 0] },
+              $sum: {
+                $cond: [{ $gte: ["$createdAt", startOfThisMonth] }, 1, 0],
+              },
             },
           },
         },

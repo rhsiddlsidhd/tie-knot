@@ -9,7 +9,10 @@ import {
   findSubCategoriesByTerm,
   getAvailableSubCategories,
 } from "./category";
-import { PRODUCT_CATEGORIES, MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import {
+  PRODUCT_CATEGORIES,
+  MOBILE_INVITATION_CATEGORY,
+} from "@/core/domain/product-category";
 
 describe("categoryRequiresShipping", () => {
   it("모바일초대장은 디지털 상품이라 배송이 필요 없다", () => {
@@ -169,15 +172,21 @@ describe("getAvailableSubCategories", () => {
 
 describe("findProductCategoriesByTerm", () => {
   it("라벨에 부분일치하면 해당 카테고리 key를 리턴한다", () => {
-    expect(findProductCategoriesByTerm("초대")).toEqual([MOBILE_INVITATION_CATEGORY]);
+    expect(findProductCategoriesByTerm("초대")).toEqual([
+      MOBILE_INVITATION_CATEGORY,
+    ]);
   });
 
   it("enum key에 부분일치해도 매칭한다 (영문 입력 대응)", () => {
-    expect(findProductCategoriesByTerm("invit")).toEqual([MOBILE_INVITATION_CATEGORY]);
+    expect(findProductCategoriesByTerm("invit")).toEqual([
+      MOBILE_INVITATION_CATEGORY,
+    ]);
   });
 
   it("대소문자를 무시한다", () => {
-    expect(findProductCategoriesByTerm("INVIT")).toEqual([MOBILE_INVITATION_CATEGORY]);
+    expect(findProductCategoriesByTerm("INVIT")).toEqual([
+      MOBILE_INVITATION_CATEGORY,
+    ]);
   });
 
   it("2글자 미만이면 빈 배열을 리턴한다 (오탐 방지)", () => {

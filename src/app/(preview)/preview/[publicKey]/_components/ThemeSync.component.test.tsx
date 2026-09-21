@@ -14,7 +14,9 @@ describe("ThemeSync", () => {
   it("마운트 시 documentElement에 theme을 data-theme으로 반영한다", () => {
     render(<ThemeSync theme="midnight" />);
 
-    expect(document.documentElement.getAttribute("data-theme")).toBe("midnight");
+    expect(document.documentElement.getAttribute("data-theme")).toBe(
+      "midnight",
+    );
   });
 
   it("언마운트 시 이전 data-theme 값으로 복원한다", () => {
@@ -29,7 +31,9 @@ describe("ThemeSync", () => {
 
   it("이전 값이 없었다면 언마운트 시 속성을 제거한다", () => {
     const { unmount } = render(<ThemeSync theme="botanical" />);
-    expect(document.documentElement.getAttribute("data-theme")).toBe("botanical");
+    expect(document.documentElement.getAttribute("data-theme")).toBe(
+      "botanical",
+    );
 
     unmount();
     expect(document.documentElement.hasAttribute("data-theme")).toBe(false);
@@ -40,7 +44,9 @@ describe("ThemeSync", () => {
     expect(document.documentElement.getAttribute("data-theme")).toBe("default");
 
     rerender(<ThemeSync theme="midnight" />);
-    expect(document.documentElement.getAttribute("data-theme")).toBe("midnight");
+    expect(document.documentElement.getAttribute("data-theme")).toBe(
+      "midnight",
+    );
   });
 
   it("항상 null을 렌더한다(화면에 자체 UI가 없다)", () => {

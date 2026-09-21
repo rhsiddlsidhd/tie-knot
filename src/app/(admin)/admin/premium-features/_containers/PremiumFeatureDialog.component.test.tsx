@@ -40,14 +40,19 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
     await user.click(screen.getByRole("button", { name: "수정" }));
 
     await waitFor(() =>
-      expect(toast.success).toHaveBeenCalledWith("프리미엄 기능이 수정되었습니다."),
+      expect(toast.success).toHaveBeenCalledWith(
+        "프리미엄 기능이 수정되었습니다.",
+      ),
     );
   });
 
   it("필드 에러 없는 실패면 에러 메시지를 toast로 표시한다", async () => {
     vi.mocked(updatePremiumFeature).mockResolvedValue({
       success: false,
-      error: { category: "INTERNAL", message: "알 수 없는 오류가 발생했습니다." },
+      error: {
+        category: "INTERNAL",
+        message: "알 수 없는 오류가 발생했습니다.",
+      },
     });
     const user = userEvent.setup();
     render(<PremiumFeatureDialog premiumFeature={feature} />);
@@ -55,7 +60,9 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
     await user.click(screen.getByRole("button", { name: "수정" }));
 
     await waitFor(() =>
-      expect(toast.error).toHaveBeenCalledWith("알 수 없는 오류가 발생했습니다."),
+      expect(toast.error).toHaveBeenCalledWith(
+        "알 수 없는 오류가 발생했습니다.",
+      ),
     );
   });
 

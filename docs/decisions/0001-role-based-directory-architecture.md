@@ -22,16 +22,16 @@
 
 디렉터리는 코드가 어디서 실행되는지가 아니라 무슨 역할을 담당하는지를 표현한다.
 
-| 디렉터리 | 배치 기준 |
-|---|---|
-| `app/` | Next.js가 위치를 강제하는 라우팅 진입점과 route-local UI |
-| `actions/` | 입력 검증, Service 위임, 응답 변환과 캐시 갱신 |
-| `services/` | 비즈니스 규칙, DB 작업과 외부 연동의 유스케이스 조합 |
-| `models/` | Mongoose schema와 persistence 표현 |
-| `db/` | DB 연결 인프라 |
-| `adapters/` | 외부 SDK, 브라우저 API와 프레임워크 API 경계 |
-| `core/` | I/O 없는 도메인 타입·스키마·정적 콘텐츠·순수 계산 |
-| `ui/` | 재사용 UI, Hook과 클라이언트 상태 |
+| 디렉터리    | 배치 기준                                                |
+| ----------- | -------------------------------------------------------- |
+| `app/`      | Next.js가 위치를 강제하는 라우팅 진입점과 route-local UI |
+| `actions/`  | 입력 검증, Service 위임, 응답 변환과 캐시 갱신           |
+| `services/` | 비즈니스 규칙, DB 작업과 외부 연동의 유스케이스 조합     |
+| `models/`   | Mongoose schema와 persistence 표현                       |
+| `db/`       | DB 연결 인프라                                           |
+| `adapters/` | 외부 SDK, 브라우저 API와 프레임워크 API 경계             |
+| `core/`     | I/O 없는 도메인 타입·스키마·정적 콘텐츠·순수 계산        |
+| `ui/`       | 재사용 UI, Hook과 클라이언트 상태                        |
 
 역할 이외의 경계는 전용 장치가 담당한다.
 

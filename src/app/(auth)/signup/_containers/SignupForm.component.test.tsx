@@ -32,7 +32,9 @@ describe("SignupForm (컨테이너)", () => {
     render(<SignupForm />);
 
     await user.click(screen.getByRole("checkbox", { name: /이용약관/ }));
-    await user.click(screen.getByRole("checkbox", { name: /개인정보 처리방침/ }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /개인정보 처리방침/ }),
+    );
     await user.type(screen.getByLabelText("이름"), "홍길동");
     await user.type(screen.getByLabelText("이메일"), "a@b.com");
     await user.type(screen.getByLabelText("전화번호"), "010-1234-5678");

@@ -33,7 +33,8 @@ if (typeof window !== "undefined") {
       unobserve() {}
       disconnect() {}
     }
-    globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+    globalThis.ResizeObserver =
+      ResizeObserverMock as unknown as typeof ResizeObserver;
   }
 
   // jsdom이 DataTransfer를 구현하지 않아, 파일 input을 프로그래밍적으로 채우는
@@ -52,7 +53,8 @@ if (typeof window !== "undefined") {
         return this.fileList as unknown as FileList;
       }
     }
-    globalThis.DataTransfer = DataTransferMock as unknown as typeof DataTransfer;
+    globalThis.DataTransfer =
+      DataTransferMock as unknown as typeof DataTransfer;
   }
 
   // jsdom이 IntersectionObserver를 구현하지 않아, BottomActionBar(useEffect 안에서
@@ -103,7 +105,10 @@ if (typeof window !== "undefined") {
       get(this: HTMLInputElement & { __filesOverride?: FileList }) {
         return this.__filesOverride ?? nativeFilesDescriptor.get!.call(this);
       },
-      set(this: HTMLInputElement & { __filesOverride?: FileList }, value: FileList) {
+      set(
+        this: HTMLInputElement & { __filesOverride?: FileList },
+        value: FileList,
+      ) {
         this.__filesOverride = value;
       },
     });

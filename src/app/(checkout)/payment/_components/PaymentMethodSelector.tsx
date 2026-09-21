@@ -1,6 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
 import type { PayMethod } from "@/core/domain/payment";
-import { ArrowRightLeft, CreditCard, Landmark, Phone, Gift, Wallet } from "lucide-react";
+import {
+  ArrowRightLeft,
+  CreditCard,
+  Landmark,
+  Phone,
+  Gift,
+  Wallet,
+} from "lucide-react";
 import React from "react";
 import { FieldError } from "@/ui/components/atoms/field";
 import type { RadioFieldOption } from "@/ui/components/organisms/RadioField";
@@ -51,7 +63,13 @@ const PAYMENT_METHODS: RadioFieldOption<PayMethod>[] = [
   },
 ];
 
-const PaymentMethodSelector = ({ step, error }: { step: number; error?: string }) => {
+const PaymentMethodSelector = ({
+  step,
+  error,
+}: {
+  step: number;
+  error?: string;
+}) => {
   return (
     <Card className="border-border">
       <CardHeader>

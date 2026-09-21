@@ -10,19 +10,28 @@ describe("getMobileInvitationInputDaysLeft", () => {
 
   it("나흘이 지나면 3일 남는다", () => {
     expect(
-      getMobileInvitationInputDaysLeft(confirmedAt, new Date("2026-08-05T00:00:00.000Z")),
+      getMobileInvitationInputDaysLeft(
+        confirmedAt,
+        new Date("2026-08-05T00:00:00.000Z"),
+      ),
     ).toBe(3);
   });
 
   it("마감 당일에는 0을 리턴한다", () => {
     expect(
-      getMobileInvitationInputDaysLeft(confirmedAt, new Date("2026-08-07T12:00:00.000Z")),
+      getMobileInvitationInputDaysLeft(
+        confirmedAt,
+        new Date("2026-08-07T12:00:00.000Z"),
+      ),
     ).toBe(0);
   });
 
   it("기한이 지나면 음수를 리턴한다", () => {
     expect(
-      getMobileInvitationInputDaysLeft(confirmedAt, new Date("2026-08-09T00:00:00.000Z")),
+      getMobileInvitationInputDaysLeft(
+        confirmedAt,
+        new Date("2026-08-09T00:00:00.000Z"),
+      ),
     ).toBe(-1);
   });
 

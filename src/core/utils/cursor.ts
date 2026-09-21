@@ -25,7 +25,12 @@ const toBase64Url = (value: string): string =>
 const fromBase64Url = (value: string): string =>
   atob(value.replace(/-/g, "+").replace(/_/g, "/"));
 
-const encodeCursor = ({ createdAt, id, secondary, tertiary }: PageCursor): string => {
+const encodeCursor = ({
+  createdAt,
+  id,
+  secondary,
+  tertiary,
+}: PageCursor): string => {
   const parts = [createdAt.toISOString(), id];
   if (secondary !== undefined) parts.push(String(secondary));
   if (tertiary !== undefined) parts.push(String(tertiary));
@@ -47,7 +52,11 @@ const decodeCursor = (raw: string): PageCursor | null => {
 
   const [createdAtRaw, id, secondaryRaw, tertiaryRaw] = parts;
   const createdAt = new Date(createdAtRaw);
-  if (!id || Number.isNaN(createdAt.getTime()) || !OBJECT_ID_HEX_PATTERN.test(id)) {
+  if (
+    !id ||
+    Number.isNaN(createdAt.getTime()) ||
+    !OBJECT_ID_HEX_PATTERN.test(id)
+  ) {
     return null;
   }
 

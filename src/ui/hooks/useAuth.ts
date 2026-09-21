@@ -11,6 +11,6 @@ const useAuth = () => {
   );
 
   return { session: session ?? null, isLoading };
-}
+};
 
 export { useAuth };

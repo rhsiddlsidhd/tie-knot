@@ -8,8 +8,8 @@
 
 ## Key Files
 
-| File         | Purpose                                                                                                      |
-| ------------ | ------------------------------------------------------------------------------------------------------------ |
+| File         | Purpose                                                                                               |
+| ------------ | ----------------------------------------------------------------------------------------------------- |
 | `fetcher.ts` | `useSWR` 전용 — `src/boundary.ts` route 응답 envelope 파싱, 실패 시 `ErrorPayload`로 정규화해서 throw |
 
 ## Structure
@@ -36,9 +36,9 @@ src/ui/
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.
 
-| 문서                | 위치                  | 트리거                                         | 요약                     |
-| ------------------- | --------------------- | ---------------------------------------------- | ------------------------ |
-| `AGENTS.md`         | `src/`         | Route Handler 응답 계약(`boundary.ts`) 확인 시 | 성공/에러 응답 빌더 계약 |
-| `AGENTS.md`         | `src/actions/` | 이 계약에서 제외된 Server Actions 확인 시      | Server Action 리턴 계약  |
-| `AGENTS.md`         | `src/app/api/`        | 이 계약을 쓰는 Route Handlers 확인 시          | Route Handler 컨벤션     |
-| `AGENTS.md`         | `src/core/types/`   | 응답/에러 타입 원본 확인 시                    | `types/error.ts`         |
+| 문서        | 위치              | 트리거                                         | 요약                     |
+| ----------- | ----------------- | ---------------------------------------------- | ------------------------ |
+| `AGENTS.md` | `src/`            | Route Handler 응답 계약(`boundary.ts`) 확인 시 | 성공/에러 응답 빌더 계약 |
+| `AGENTS.md` | `src/actions/`    | 이 계약에서 제외된 Server Actions 확인 시      | Server Action 리턴 계약  |
+| `AGENTS.md` | `src/app/api/`    | 이 계약을 쓰는 Route Handlers 확인 시          | Route Handler 컨벤션     |
+| `AGENTS.md` | `src/core/types/` | 응답/에러 타입 원본 확인 시                    | `types/error.ts`         |

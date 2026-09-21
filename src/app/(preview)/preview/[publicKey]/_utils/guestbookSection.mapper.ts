@@ -26,4 +26,8 @@ const mapDataToGuestbookProps = (
   };
 };
 
-export { mapDataToGuestbookProps, type GuestbookEntryProps, type GuestbookSectionProps };
+export {
+  mapDataToGuestbookProps,
+  type GuestbookEntryProps,
+  type GuestbookSectionProps,
+};

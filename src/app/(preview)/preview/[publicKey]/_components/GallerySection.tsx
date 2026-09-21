@@ -4,7 +4,11 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Button } from "@/ui/components/atoms/button";
-import { Dialog, DialogContent, DialogTitle } from "@/ui/components/atoms/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/ui/components/atoms/dialog";
 import { cn } from "@/core/utils/cn";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
@@ -14,10 +18,7 @@ import type { GallerySectionProps } from "../_utils/gallerySection.mapper";
 const thumbnailClassName =
   "bg-muted relative aspect-square w-full overflow-hidden rounded-lg";
 
-const GallerySection = ({
-  images,
-  lightboxEnabled,
-}: GallerySectionProps) => {
+const GallerySection = ({ images, lightboxEnabled }: GallerySectionProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -51,7 +52,10 @@ const GallerySection = ({
             <button
               key={index}
               onClick={() => openLightbox(index)}
-              className={cn(thumbnailClassName, "transition-opacity hover:opacity-90")}
+              className={cn(
+                thumbnailClassName,
+                "transition-opacity hover:opacity-90",
+              )}
             >
               {thumbnail}
             </button>
@@ -112,6 +116,6 @@ const GallerySection = ({
       )}
     </EyebrowSection>
   );
-}
+};
 
 export { GallerySection };

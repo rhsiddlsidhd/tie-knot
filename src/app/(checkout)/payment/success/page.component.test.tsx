@@ -20,11 +20,14 @@ vi.mock("@/services/auth", () => ({
 // PaymentSuccessTemplate.component.test.tsx가 이미 검증한다 — README의 "상위 레이어
 // 테스트로 하위 레이어의 모든 behavior를 반복해서 검증하지 않는다" 원칙에 따라 이 page
 // 테스트는 orderId 분기(redirect 또는 props 전달)만 확인한다.
-vi.mock("@/app/(checkout)/payment/success/_components/PaymentSuccessTemplate", () => ({
-  PaymentSuccessTemplate: ({ orderId }: { orderId: string }) => (
-    <div>Template:orderId={orderId}</div>
-  ),
-}));
+vi.mock(
+  "@/app/(checkout)/payment/success/_components/PaymentSuccessTemplate",
+  () => ({
+    PaymentSuccessTemplate: ({ orderId }: { orderId: string }) => (
+      <div>Template:orderId={orderId}</div>
+    ),
+  }),
+);
 
 import PaymentSuccessPage from "./page";
 

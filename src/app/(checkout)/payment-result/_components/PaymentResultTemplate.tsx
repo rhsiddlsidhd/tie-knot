@@ -36,7 +36,9 @@ const PaymentResultTemplate = ({
                   중복 결제로 이어질 수 있다(#91에서 고친 PENDING 재결제 중복 이슈와
                   같은 종류의 위험). 그래서 mockup의 "다시 시도하기" 버튼은 넣지 않고
                   주문 내역에서 실제 상태를 확인하도록만 안내한다. */}
-              <LinkButton href={ROUTES.myOrders.root}>주문 내역 확인</LinkButton>
+              <LinkButton href={ROUTES.myOrders.root}>
+                주문 내역 확인
+              </LinkButton>
             </>
           ) : (
             <>

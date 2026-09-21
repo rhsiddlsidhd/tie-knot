@@ -12,7 +12,9 @@ import { GET } from "./route";
 
 const buildRequest = (query: Record<string, string> = {}): NextRequest => {
   const url = new URL("http://localhost/api/guestbook");
-  Object.entries(query).forEach(([key, value]) => url.searchParams.set(key, value));
+  Object.entries(query).forEach(([key, value]) =>
+    url.searchParams.set(key, value),
+  );
   return new NextRequest(url);
 };
 
@@ -83,7 +85,10 @@ describe("GET /api/guestbook", () => {
       email: "hong@example.com",
       role: "USER",
     });
-    vi.mocked(getGuestbookService).mockResolvedValue({ items: [], nextCursor: null });
+    vi.mocked(getGuestbookService).mockResolvedValue({
+      items: [],
+      nextCursor: null,
+    });
 
     await GET(buildRequest({ publicKey: "pub-1" }));
 
@@ -94,7 +99,10 @@ describe("GET /api/guestbook", () => {
   });
 
   it("cursor 쿼리 파라미터를 그대로 서비스에 전달한다", async () => {
-    vi.mocked(getGuestbookService).mockResolvedValue({ items: [], nextCursor: null });
+    vi.mocked(getGuestbookService).mockResolvedValue({
+      items: [],
+      nextCursor: null,
+    });
 
     await GET(buildRequest({ publicKey: "pub-1", cursor: "cursor-abc" }));
 
@@ -109,7 +117,9 @@ describe("GET /api/guestbook", () => {
       new AppError("VALIDATION", "잘못된 페이지 커서입니다."),
     );
 
-    const res = await GET(buildRequest({ publicKey: "pub-1", cursor: "bad-cursor" }));
+    const res = await GET(
+      buildRequest({ publicKey: "pub-1", cursor: "bad-cursor" }),
+    );
     const json = await res.json();
 
     expect(res.status).toBe(400);

@@ -4,7 +4,9 @@ import { describe, expect, it, vi } from "vitest";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { BasicInfoSlide } from "./BasicInfoSlide";
 
-const renderSlide = (overrides: Partial<Parameters<typeof BasicInfoSlide>[0]> = {}) => {
+const renderSlide = (
+  overrides: Partial<Parameters<typeof BasicInfoSlide>[0]> = {},
+) => {
   const dispatch = vi.fn();
   const onNext = vi.fn();
   render(

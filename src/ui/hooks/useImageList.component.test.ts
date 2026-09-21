@@ -43,11 +43,7 @@ describe("useImageList", () => {
 
     const ids = result.current.items.map((item) => item.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(result.current.getUrls()).toEqual([
-      "init-1",
-      "init-2",
-      "added-1",
-    ]);
+    expect(result.current.getUrls()).toEqual(["init-1", "init-2", "added-1"]);
   });
 
   it("remove(id)는 해당 항목만 제거한다", () => {

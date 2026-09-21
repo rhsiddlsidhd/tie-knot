@@ -38,7 +38,7 @@ const createContact = (
     name: person.name,
     phone: person.phone,
   };
-}
+};
 
 // 헬퍼 함수 2: 부모님 이름 목록 생성
 const getParentNames = (parents: CoupleSide): ParentName[] => {
@@ -50,7 +50,7 @@ const getParentNames = (parents: CoupleSide): ParentName[] => {
     list.push({ label: "어머님", name: parents.mother.name });
   }
   return list;
-}
+};
 
 /**
  * coupleInfoData를 받아 MobileInvitationMessage 컴포넌트의 props를 생성하는 매퍼 함수
@@ -91,6 +91,9 @@ const mapCoupleInfoToMobileInvitationProps = (
   ];
 
   return { parties: displayParties };
-}
+};
 
-export { mapCoupleInfoToMobileInvitationProps, type MobileInvitationMessageMappedProps };
+export {
+  mapCoupleInfoToMobileInvitationProps,
+  type MobileInvitationMessageMappedProps,
+};

@@ -27,6 +27,6 @@ const DefaultInteraction = ({ x, y }: ThemeInteractionProps) => {
       }}
     />
   );
-}
+};
 
 export { DefaultInteraction };

@@ -18,6 +18,6 @@ const useSubwayLineInfo = (station?: string) => {
     isLoading,
     isError: error,
   };
-}
+};
 
 export { useSubwayLineInfo };

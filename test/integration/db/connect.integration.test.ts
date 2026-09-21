@@ -52,7 +52,10 @@ describe("dbConnect", () => {
 
     await expect(dbConnect()).rejects.toThrow("연결 실패");
     expect(global.mongooseCache.promise).toBeNull();
-    expect(errorSpy).toHaveBeenCalledWith("MongoDB Connected Fail", "연결 실패");
+    expect(errorSpy).toHaveBeenCalledWith(
+      "MongoDB Connected Fail",
+      "연결 실패",
+    );
 
     errorSpy.mockRestore();
   });
@@ -85,7 +88,10 @@ describe("트랜잭션 지원 여부 (replSet)", () => {
 
   const TxnTestModel =
     (mongoose.models.TxnTest as mongoose.Model<{ value: string }>) ||
-    mongoose.model<{ value: string }>("TxnTest", new mongoose.Schema({ value: String }));
+    mongoose.model<{ value: string }>(
+      "TxnTest",
+      new mongoose.Schema({ value: String }),
+    );
 
   it("session.withTransaction으로 커밋하면 변경사항이 실제로 저장된다", async () => {
     await dbConnect();
@@ -143,7 +149,9 @@ describe("연결 시 URI 검증", () => {
 
     // 두 guard의 에러 메시지가 둘 다 "MONGO_TEST_URI"를 언급해서 이 substring만으로는
     // 어느 guard가 던졌는지 구분이 안 된다 — 첫 번째 guard 고유 문구로 특정한다.
-    await expect(dbConnect()).rejects.toThrow("테스트 환경에서 MONGO_TEST_URI 없이 실행됨");
+    await expect(dbConnect()).rejects.toThrow(
+      "테스트 환경에서 MONGO_TEST_URI 없이 실행됨",
+    );
   });
 
   it("MONGO_TEST_URI도 DB_USER/DB_PASSWORD도 없으면 에러를 던진다", async () => {
@@ -162,7 +170,10 @@ describe("연결 시 URI 검증", () => {
 
     await dbConnect();
 
-    expect(spy).toHaveBeenCalledWith("mongodb://fake-test-uri/db", expect.anything());
+    expect(spy).toHaveBeenCalledWith(
+      "mongodb://fake-test-uri/db",
+      expect.anything(),
+    );
   });
 
   it("VITEST 환경이 아니면 DB_USER/DB_PASSWORD로 만든 SRV URI로 연결한다", async () => {

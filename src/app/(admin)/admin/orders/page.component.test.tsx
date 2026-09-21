@@ -32,7 +32,8 @@ vi.mock("@/app/(admin)/admin/orders/_components/AdminOrdersTemplate", () => ({
     q?: string;
   }) => (
     <div>
-      템플릿:items={page.items.length}:status={status ?? "없음"}:cursor={cursor ?? "없음"}:q={q ?? "없음"}
+      템플릿:items={page.items.length}:status={status ?? "없음"}:cursor=
+      {cursor ?? "없음"}:q={q ?? "없음"}
     </div>
   ),
 }));
@@ -47,7 +48,11 @@ const emptyPage: { items: unknown[]; nextCursor: string | null } = {
 describe("관리자 주문 목록 페이지", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    verifySessionMock.mockResolvedValue({ role: "ADMIN", email: "a@x.com", userId: "1" });
+    verifySessionMock.mockResolvedValue({
+      role: "ADMIN",
+      email: "a@x.com",
+      userId: "1",
+    });
     getAdminOrdersPageServiceMock.mockResolvedValue(emptyPage);
   });
 
@@ -60,14 +65,19 @@ describe("관리자 주문 목록 페이지", () => {
   it("인증에 실패하면(verifySession이 throw) 목록 service를 호출하지 않는다", async () => {
     verifySessionMock.mockRejectedValue(new Error("redirect"));
 
-    await expect(OrdersPage({ searchParams: Promise.resolve({}) })).rejects.toThrow();
+    await expect(
+      OrdersPage({ searchParams: Promise.resolve({}) }),
+    ).rejects.toThrow();
 
     expect(getAdminOrdersPageServiceMock).not.toHaveBeenCalled();
   });
 
   it("인증 성공 후 URL의 status/cursor를 service에 그대로 전달한다", async () => {
     await OrdersPage({
-      searchParams: Promise.resolve({ status: "CONFIRMED", cursor: validCursor }),
+      searchParams: Promise.resolve({
+        status: "CONFIRMED",
+        cursor: validCursor,
+      }),
     });
 
     expect(getAdminOrdersPageServiceMock).toHaveBeenCalledWith({
@@ -77,7 +87,9 @@ describe("관리자 주문 목록 페이지", () => {
   });
 
   it("잘못된 status는 필터 없음으로 정규화된다", async () => {
-    await OrdersPage({ searchParams: Promise.resolve({ status: "NOT_A_STATUS" }) });
+    await OrdersPage({
+      searchParams: Promise.resolve({ status: "NOT_A_STATUS" }),
+    });
 
     expect(getAdminOrdersPageServiceMock).toHaveBeenCalledWith({});
   });
@@ -98,7 +110,10 @@ describe("관리자 주문 목록 페이지", () => {
 
   it("형식이 깨진 cursor는 제거하고 나머지 필터는 유지한다", async () => {
     await OrdersPage({
-      searchParams: Promise.resolve({ status: "CONFIRMED", cursor: "!!broken!!" }),
+      searchParams: Promise.resolve({
+        status: "CONFIRMED",
+        cursor: "!!broken!!",
+      }),
     });
 
     expect(getAdminOrdersPageServiceMock).toHaveBeenCalledWith({
@@ -114,7 +129,10 @@ describe("관리자 주문 목록 페이지", () => {
 
     render(
       await OrdersPage({
-        searchParams: Promise.resolve({ status: "CONFIRMED", cursor: validCursor }),
+        searchParams: Promise.resolve({
+          status: "CONFIRMED",
+          cursor: validCursor,
+        }),
       }),
     );
 

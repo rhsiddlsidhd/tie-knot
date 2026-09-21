@@ -13,7 +13,12 @@ interface RatingStarsProps {
 }
 
 // onChange가 있으면 입력 가능한 별점(hover 미리보기 포함), 없으면 읽기 전용 표시다.
-const RatingStars = ({ value, onChange, size = "md", className }: RatingStarsProps) => {
+const RatingStars = ({
+  value,
+  onChange,
+  size = "md",
+  className,
+}: RatingStarsProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
   const interactive = Boolean(onChange);
   const displayValue = hovered ?? value;
@@ -26,35 +31,39 @@ const RatingStars = ({ value, onChange, size = "md", className }: RatingStarsPro
       role={interactive ? "radiogroup" : undefined}
       aria-label={interactive ? "평점 선택" : `평점 ${value}점`}
     >
-      {Array.from({ length: REVIEW_RATING_MAX }, (_, i) => i + 1).map((star) => {
-        const filled = star <= displayValue;
-        const StarIcon = (
-          <Star
-            className={cn(
-              starSize,
-              filled ? "fill-primary text-primary" : "fill-none text-muted-foreground",
-            )}
-          />
-        );
+      {Array.from({ length: REVIEW_RATING_MAX }, (_, i) => i + 1).map(
+        (star) => {
+          const filled = star <= displayValue;
+          const StarIcon = (
+            <Star
+              className={cn(
+                starSize,
+                filled
+                  ? "fill-primary text-primary"
+                  : "text-muted-foreground fill-none",
+              )}
+            />
+          );
 
-        if (!interactive) {
-          return <span key={star}>{StarIcon}</span>;
-        }
+          if (!interactive) {
+            return <span key={star}>{StarIcon}</span>;
+          }
 
-        return (
-          <button
-            key={star}
-            type="button"
-            aria-label={`${star}점`}
-            aria-pressed={star === value}
-            onMouseEnter={() => setHovered(star)}
-            onClick={() => onChange?.(star)}
-            className="cursor-pointer"
-          >
-            {StarIcon}
-          </button>
-        );
-      })}
+          return (
+            <button
+              key={star}
+              type="button"
+              aria-label={`${star}점`}
+              aria-pressed={star === value}
+              onMouseEnter={() => setHovered(star)}
+              onClick={() => onChange?.(star)}
+              className="cursor-pointer"
+            >
+              {StarIcon}
+            </button>
+          );
+        },
+      )}
     </div>
   );
 };

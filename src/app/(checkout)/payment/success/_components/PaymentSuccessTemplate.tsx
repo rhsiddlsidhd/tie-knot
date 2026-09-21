@@ -81,7 +81,10 @@ const PaymentSuccessTemplate = ({ orderId }: PaymentSuccessTemplateProps) => {
         <div className="mt-8 text-center">
           <TypographyMuted>
             결제 관련 문의사항이 있으시면{" "}
-            <Link href={ROUTES.support} className="text-primary hover:underline">
+            <Link
+              href={ROUTES.support}
+              className="text-primary hover:underline"
+            >
               고객센터
             </Link>
             로 문의해 주세요.

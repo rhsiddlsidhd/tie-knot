@@ -25,9 +25,13 @@ const LocationSection = ({
   return (
     <EyebrowSection eyebrow="LOCATION" heading="오시는 길">
       <div>
-        <p className="text-foreground text-md font-semibold sm:text-lg">{venueName}</p>
+        <p className="text-foreground text-md font-semibold sm:text-lg">
+          {venueName}
+        </p>
         <div className="flex items-center justify-center gap-2">
-          <p className="text-muted-foreground text-sm sm:text-base">{fullAddress}</p>
+          <p className="text-muted-foreground text-sm sm:text-base">
+            {fullAddress}
+          </p>
           {/* 재사용 가능한 ClipboardButton으로 교체 */}
           <ClipboardButton
             isCopied={isCopied}
@@ -66,6 +70,6 @@ const LocationSection = ({
       )}
     </EyebrowSection>
   );
-}
+};
 
 export { LocationSection };

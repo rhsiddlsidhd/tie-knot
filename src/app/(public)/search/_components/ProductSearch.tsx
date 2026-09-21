@@ -58,6 +58,6 @@ const ProductSearch = () => {
       </div>
     </main>
   );
-}
+};
 
 export { ProductSearch };

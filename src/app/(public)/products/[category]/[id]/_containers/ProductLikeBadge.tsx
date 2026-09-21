@@ -59,17 +59,22 @@ const ProductLikeBadge = ({
       className={cn(
         "cursor-pointer gap-1 bg-white/80 backdrop-blur-sm transition-colors hover:bg-white",
         showCount ? "px-2 py-1" : "aspect-square p-1.5",
-        className
+        className,
       )}
     >
       <Heart
         className={cn(
           "h-4 w-4 transition-colors",
-          isLiked ? "fill-red-500 text-red-500" : "text-muted-foreground"
+          isLiked ? "fill-red-500 text-red-500" : "text-muted-foreground",
         )}
       />
       {showCount && (
-        <span className={cn("text-xs font-bold", isLiked ? "text-red-500" : "text-muted-foreground")}>
+        <span
+          className={cn(
+            "text-xs font-bold",
+            isLiked ? "text-red-500" : "text-muted-foreground",
+          )}
+        >
           {localLikes.length}
         </span>
       )}

@@ -7,7 +7,9 @@ import { usePathname } from "next/navigation";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const navigationType = pathname.startsWith("/my-profile") ? "MY_PROFILE" : "MY_ORDER";
+  const navigationType = pathname.startsWith("/my-profile")
+    ? "MY_PROFILE"
+    : "MY_ORDER";
 
   return (
     <SidebarProvider>

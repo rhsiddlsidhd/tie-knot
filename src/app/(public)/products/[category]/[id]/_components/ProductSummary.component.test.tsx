@@ -51,7 +51,11 @@ describe("ProductSummary (상품 상세)", () => {
 
   it("상품 제목/설명/카테고리 라벨을 렌더링한다", () => {
     render(
-      <ProductSummary product={buildProduct()} options={[]} onPurchase={vi.fn()} />,
+      <ProductSummary
+        product={buildProduct()}
+        options={[]}
+        onPurchase={vi.fn()}
+      />,
     );
 
     expect(screen.getByText("봄맞이 청첩장")).toBeInTheDocument();

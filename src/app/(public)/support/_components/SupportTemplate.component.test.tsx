@@ -12,7 +12,9 @@ describe("SupportTemplate", () => {
   it("고객센터 제목과 안내 문구를 렌더링한다", () => {
     render(<SupportTemplate />);
 
-    expect(screen.getByRole("heading", { name: "고객센터" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "고객센터" }),
+    ).toBeInTheDocument();
     expect(
       screen.getByText("자주 묻는 질문을 확인하거나 1:1 문의를 남겨주세요."),
     ).toBeInTheDocument();

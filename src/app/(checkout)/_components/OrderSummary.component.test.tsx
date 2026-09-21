@@ -36,7 +36,9 @@ describe("OrderSummary", () => {
   it("order가 없으면 상품 정보 없음을 안내한다", () => {
     render(<OrderSummary data={null} loading={false} />);
 
-    expect(screen.getByText("상품 정보를 찾을 수 없습니다.")).toBeInTheDocument();
+    expect(
+      screen.getByText("상품 정보를 찾을 수 없습니다."),
+    ).toBeInTheDocument();
   });
 
   it("order props로 주문 내역과 총 결제금액을 렌더링한다", () => {

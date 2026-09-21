@@ -13,7 +13,11 @@ interface SidebarPanelProps {
   onNavigate?: () => void;
 }
 
-const SidebarPanel = ({ navigationType, onClose, onNavigate }: SidebarPanelProps) => {
+const SidebarPanel = ({
+  navigationType,
+  onClose,
+  onNavigate,
+}: SidebarPanelProps) => {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="px-6 pt-6 pb-0 group-data-[collapsible=icon]:hidden">

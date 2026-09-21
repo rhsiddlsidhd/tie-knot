@@ -5,7 +5,10 @@ const POST = async (request: Request): Promise<Response> => {
   const secret = process.env.PORTONE_WEBHOOK_SECRET;
   const expectedStoreId = process.env.NEXT_PUBLIC_PORTONE_STORE_ID;
   if (!secret || !expectedStoreId) {
-    return Response.json({ error: "PortOne webhook is not configured" }, { status: 503 });
+    return Response.json(
+      { error: "PortOne webhook is not configured" },
+      { status: 503 },
+    );
   }
 
   const payload = await request.text();
@@ -17,14 +20,24 @@ const POST = async (request: Request): Promise<Response> => {
       "webhook-timestamp": request.headers.get("webhook-timestamp") ?? "",
     });
   } catch {
-    return Response.json({ error: "Invalid webhook signature" }, { status: 400 });
+    return Response.json(
+      { error: "Invalid webhook signature" },
+      { status: 400 },
+    );
   }
 
   if (Webhook.isUnrecognizedWebhook(webhook)) {
     return Response.json({ received: true, ignored: true }, { status: 202 });
   }
-  if (!("data" in webhook) || !("storeId" in webhook.data) || webhook.data.storeId !== expectedStoreId) {
-    return Response.json({ error: "Unexpected PortOne store" }, { status: 400 });
+  if (
+    !("data" in webhook) ||
+    !("storeId" in webhook.data) ||
+    webhook.data.storeId !== expectedStoreId
+  ) {
+    return Response.json(
+      { error: "Unexpected PortOne store" },
+      { status: 400 },
+    );
   }
 
   if ("paymentId" in webhook.data) {
@@ -32,6 +45,6 @@ const POST = async (request: Request): Promise<Response> => {
   }
 
   return Response.json({ received: true });
-}
+};
 
 export { POST };

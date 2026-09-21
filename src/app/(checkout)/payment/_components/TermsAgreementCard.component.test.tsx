@@ -19,7 +19,9 @@ describe("TermsAgreementCard", () => {
   it("체크박스를 클릭하면 onAgreedChange를 true 인자로 호출한다", async () => {
     const onAgreedChange = vi.fn();
     const user = userEvent.setup();
-    render(<TermsAgreementCard agreed={false} onAgreedChange={onAgreedChange} />);
+    render(
+      <TermsAgreementCard agreed={false} onAgreedChange={onAgreedChange} />,
+    );
 
     await user.click(screen.getByRole("checkbox"));
 
@@ -29,7 +31,9 @@ describe("TermsAgreementCard", () => {
   it("이미 동의한 상태에서 클릭하면 onAgreedChange를 false 인자로 호출한다", async () => {
     const onAgreedChange = vi.fn();
     const user = userEvent.setup();
-    render(<TermsAgreementCard agreed={true} onAgreedChange={onAgreedChange} />);
+    render(
+      <TermsAgreementCard agreed={true} onAgreedChange={onAgreedChange} />,
+    );
 
     await user.click(screen.getByRole("checkbox"));
 

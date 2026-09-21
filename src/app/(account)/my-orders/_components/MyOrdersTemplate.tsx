@@ -1,4 +1,7 @@
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";
 import type { ProductCategory } from "@/core/domain/product-category";
 import { OrderFilters } from "./OrderFilters";
@@ -18,7 +21,7 @@ const MyOrdersTemplate = ({
   return (
     <div className="max-w-3xl space-y-6">
       <div>
-        <TypographyH1 className="text-left mb-2 text-3xl font-bold">
+        <TypographyH1 className="mb-2 text-left text-3xl font-bold">
           주문 목록
         </TypographyH1>
         <TypographyMuted>

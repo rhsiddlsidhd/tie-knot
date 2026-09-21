@@ -36,10 +36,15 @@ const WeddingMonthCalendar = ({ date }: WeddingMonthCalendarProps) => {
     return getDayOfMonth(newDate.getFullYear(), newDate.getMonth() + 1);
   }, [date]);
 
-  const result = formatInTimeZone(date, "Asia/Seoul", "eeee aa h시 mm분", { locale: ko });
+  const result = formatInTimeZone(date, "Asia/Seoul", "eeee aa h시 mm분", {
+    locale: ko,
+  });
 
   return (
-    <EyebrowSection eyebrow="CALENDAR" heading={formatInTimeZone(date, "Asia/Seoul", "yyyy. MM. dd")}>
+    <EyebrowSection
+      eyebrow="CALENDAR"
+      heading={formatInTimeZone(date, "Asia/Seoul", "yyyy. MM. dd")}
+    >
       <p className="text-muted-foreground font-semibold">{result}</p>
       <ul className="mx-auto grid w-52 grid-cols-7">
         {weekOfKr.map((kr, i) => {
@@ -64,7 +69,8 @@ const WeddingMonthCalendar = ({ date }: WeddingMonthCalendarProps) => {
               key={idx}
               className={clsx(
                 "px-1 py-3 text-center text-xs",
-                Dday && "rounded-full bg-primary font-bold text-primary-foreground",
+                Dday &&
+                  "bg-primary text-primary-foreground rounded-full font-bold",
               )}
             >
               {day}

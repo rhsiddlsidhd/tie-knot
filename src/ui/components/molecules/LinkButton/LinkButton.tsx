@@ -8,7 +8,12 @@ type LinkButtonProps = React.ComponentProps<typeof Link> &
     className?: string;
   };
 
-const LinkButton = ({ variant, size, className, ...props }: LinkButtonProps) => {
+const LinkButton = ({
+  variant,
+  size,
+  className,
+  ...props
+}: LinkButtonProps) => {
   return (
     <Button variant={variant} size={size} className={className} asChild>
       <Link {...props} />

@@ -49,7 +49,10 @@ describe("LoginForm (컨테이너)", () => {
   it("로그인 실패 시 세션 캐시를 갱신하지 않는다", async () => {
     vi.mocked(loginUser).mockResolvedValue({
       success: false,
-      error: { category: "VALIDATION", message: "이메일 또는 비밀번호가 올바르지 않습니다." },
+      error: {
+        category: "VALIDATION",
+        message: "이메일 또는 비밀번호가 올바르지 않습니다.",
+      },
     });
     const user = userEvent.setup();
     render(<LoginForm />);

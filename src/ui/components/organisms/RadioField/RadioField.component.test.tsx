@@ -23,14 +23,18 @@ describe("RadioField", () => {
   });
 
   it("defaultValue로 지정한 옵션이 처음부터 선택돼 있다", () => {
-    render(<RadioField id="pay" name="pay" options={options} defaultValue="cash" />);
+    render(
+      <RadioField id="pay" name="pay" options={options} defaultValue="cash" />,
+    );
 
     expect(screen.getByRole("radio", { name: "현금" })).toBeChecked();
   });
 
   it("다른 옵션을 클릭하면 선택 상태가 전환된다", async () => {
     const user = userEvent.setup();
-    render(<RadioField id="pay" name="pay" options={options} defaultValue="cash" />);
+    render(
+      <RadioField id="pay" name="pay" options={options} defaultValue="cash" />,
+    );
 
     await user.click(screen.getByRole("radio", { name: /카드/ }));
 

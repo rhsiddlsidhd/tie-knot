@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { sdkRequestPayment } = vi.hoisted(() => ({ sdkRequestPayment: vi.fn() }));
+const { sdkRequestPayment } = vi.hoisted(() => ({
+  sdkRequestPayment: vi.fn(),
+}));
 vi.mock("@portone/browser-sdk/v2", () => ({
   default: { requestPayment: sdkRequestPayment },
 }));
@@ -26,7 +28,9 @@ describe("PortOne browser adapter", () => {
 
   it("PR E2E mock은 외부 SDK를 호출하지 않고 동일 paymentId를 반환한다", async () => {
     vi.stubEnv("NEXT_PUBLIC_PORTONE_E2E_MOCK", "enabled");
-    await expect(requestPayment(request)).resolves.toMatchObject({ paymentId: "payment-test" });
+    await expect(requestPayment(request)).resolves.toMatchObject({
+      paymentId: "payment-test",
+    });
     expect(sdkRequestPayment).not.toHaveBeenCalled();
   });
 
@@ -40,7 +44,9 @@ describe("PortOne browser adapter", () => {
 
     await requestPayment(request);
 
-    expect(sessionStorage.getItem("portone-smoke-payment-id")).toBe("payment-test");
+    expect(sessionStorage.getItem("portone-smoke-payment-id")).toBe(
+      "payment-test",
+    );
     expect(sdkRequestPayment).toHaveBeenCalledWith(request);
   });
 });

@@ -4,9 +4,7 @@ import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
-import {
-  TypographyMuted,
-} from "@/ui/components/atoms/typography";
+import { TypographyMuted } from "@/ui/components/atoms/typography";
 import {
   Empty,
   EmptyHeader,
@@ -84,7 +82,9 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
             <Inbox className="text-muted-foreground size-8" />
           </EmptyMedia>
           <EmptyTitle className="text-xl">
-            {isFiltered ? "조건에 맞는 주문이 없습니다." : "주문 내역이 없습니다."}
+            {isFiltered
+              ? "조건에 맞는 주문이 없습니다."
+              : "주문 내역이 없습니다."}
           </EmptyTitle>
           <EmptyDescription>
             {isFiltered

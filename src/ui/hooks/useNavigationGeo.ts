@@ -30,6 +30,6 @@ const useNavigationGeo = (address: string): NavigationGeo => {
   const target = useKakaomapGeocode(address);
 
   return { current, target };
-}
+};
 
 export { useNavigationGeo, type NavigationGeo };

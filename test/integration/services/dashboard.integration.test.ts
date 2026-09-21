@@ -252,9 +252,9 @@ describe("getDashboardStatsService", () => {
       expect(result.recentOrders.map((o) => o.merchantUid)).toEqual(
         expectedMerchantUids,
       );
-      expect(
-        result.recentOrders.some((o) => o.orderStatus === "PENDING"),
-      ).toBe(true);
+      expect(result.recentOrders.some((o) => o.orderStatus === "PENDING")).toBe(
+        true,
+      );
     });
 
     it("productTitle이 product.title 스냅샷으로 평탄화되고 createdAt이 Date 인스턴스로 온다", async () => {

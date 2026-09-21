@@ -1,7 +1,10 @@
 import { format } from "date-fns";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
-import { TypographyH2, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH2,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import type { ReviewListPage, ReviewSortType } from "@/core/domain/review";
 import { REVIEW_SORT_KEYS, REVIEW_SORT_OPTIONS } from "@/core/domain/review";

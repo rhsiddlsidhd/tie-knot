@@ -11,6 +11,6 @@ const resolveInitialSubCategory = (
   );
 
   return matchingSubCategory ?? "all";
-}
+};
 
 export { resolveInitialSubCategory };

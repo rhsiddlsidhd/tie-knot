@@ -33,7 +33,9 @@ describe("GET /api/products/search — 통합(DB~route)", () => {
     await createProductService(
       buildProductInput({ title: "웨딩청첩장 프리미엄" }),
     );
-    await createProductService(buildProductInput({ title: "완전히 다른 제목" }));
+    await createProductService(
+      buildProductInput({ title: "완전히 다른 제목" }),
+    );
 
     const res = await GET(buildRequest("?q=웨딩"));
     const body = await res.json();
@@ -48,7 +50,10 @@ describe("GET /api/products/search — 통합(DB~route)", () => {
 
   it("골든패스(핵심): '돌잔' 검색이 라벨 부분일치 역조회로 subCategory=first-birthday(라벨 '돌잔치') 상품을 찾는다 — 정확일치였다면 실패했을 케이스", async () => {
     await createProductService(
-      buildProductInput({ title: "무관한 제목1", subCategory: "first-birthday" }),
+      buildProductInput({
+        title: "무관한 제목1",
+        subCategory: "first-birthday",
+      }),
     );
     await createProductService(
       buildProductInput({ title: "무관한 제목2", subCategory: "wedding" }),

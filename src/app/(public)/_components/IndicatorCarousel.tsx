@@ -5,7 +5,10 @@ import { cn } from "@/core/utils/cn";
 import type { ComponentProps } from "react";
 import { useAutoplayCarousel } from "../_hooks/useAutoplayCarousel";
 
-interface IndicatorCarouselProps extends Omit<ComponentProps<typeof CarouselList>, "setApi"> {
+interface IndicatorCarouselProps extends Omit<
+  ComponentProps<typeof CarouselList>,
+  "setApi"
+> {
   labels: readonly string[];
   autoplayIntervalMs?: number;
 }

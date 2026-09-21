@@ -60,7 +60,10 @@ describe("review", () => {
     overrides: Partial<{ userId: string; orderStatus: string }> = {},
   ) => {
     const userId = overrides.userId ?? new mongoose.Types.ObjectId().toString();
-    const input = buildOrderInput({ userId, product: { ...buildOrderInput().product, productId } });
+    const input = buildOrderInput({
+      userId,
+      product: { ...buildOrderInput().product, productId },
+    });
     const order = await OrderModel.create({
       merchantUid: `test-${new mongoose.Types.ObjectId().toString()}`,
       userId,
@@ -107,7 +110,9 @@ describe("review", () => {
           content: "내 주문이 아님",
           images: [],
         }),
-      ).rejects.toMatchObject({ category: "FORBIDDEN" } satisfies Partial<AppError>);
+      ).rejects.toMatchObject({
+        category: "FORBIDDEN",
+      } satisfies Partial<AppError>);
     });
 
     it("주문이 COMPLETED가 아니면 VALIDATION을 던진다", async () => {
@@ -121,7 +126,9 @@ describe("review", () => {
           content: "아직 발행 전",
           images: [],
         }),
-      ).rejects.toMatchObject({ category: "VALIDATION" } satisfies Partial<AppError>);
+      ).rejects.toMatchObject({
+        category: "VALIDATION",
+      } satisfies Partial<AppError>);
     });
 
     it("같은 주문에 중복으로 작성하면 VALIDATION을 던진다", async () => {
@@ -137,7 +144,9 @@ describe("review", () => {
 
       await expect(
         createReviewService({ ...input, content: "중복 시도" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" } satisfies Partial<AppError>);
+      ).rejects.toMatchObject({
+        category: "VALIDATION",
+      } satisfies Partial<AppError>);
     });
   });
 
@@ -178,7 +187,9 @@ describe("review", () => {
           userId: new mongoose.Types.ObjectId().toString(),
           content: "몰래 수정 시도",
         }),
-      ).rejects.toMatchObject({ category: "FORBIDDEN" } satisfies Partial<AppError>);
+      ).rejects.toMatchObject({
+        category: "FORBIDDEN",
+      } satisfies Partial<AppError>);
     });
   });
 
@@ -216,7 +227,9 @@ describe("review", () => {
           reviewId: review._id,
           userId: new mongoose.Types.ObjectId().toString(),
         }),
-      ).rejects.toMatchObject({ category: "FORBIDDEN" } satisfies Partial<AppError>);
+      ).rejects.toMatchObject({
+        category: "FORBIDDEN",
+      } satisfies Partial<AppError>);
     });
 
     it("어드민은 작성자가 아니어도 삭제할 수 있다", async () => {
@@ -307,130 +320,137 @@ describe("review", () => {
     });
   });
 
-describe("getAdminReviewsPageService", () => {
-  const createReviewFixture = async (overrides?: {
-    userInput?: Parameters<typeof buildUserInput>[0];
-    productInput?: Parameters<typeof buildProductInput>[0];
-    rating?: number;
-    content?: string;
-  }) => {
-    const user = await UserModel.create(buildUserInput(overrides?.userInput));
-    await createProductService(buildProductInput(overrides?.productInput));
-    const product = await ProductModel.findOne({
-      title: overrides?.productInput?.title ?? "테스트 샘플 상품",
-    }).lean<{ _id: mongoose.Types.ObjectId }>();
+  describe("getAdminReviewsPageService", () => {
+    const createReviewFixture = async (overrides?: {
+      userInput?: Parameters<typeof buildUserInput>[0];
+      productInput?: Parameters<typeof buildProductInput>[0];
+      rating?: number;
+      content?: string;
+    }) => {
+      const user = await UserModel.create(buildUserInput(overrides?.userInput));
+      await createProductService(buildProductInput(overrides?.productInput));
+      const product = await ProductModel.findOne({
+        title: overrides?.productInput?.title ?? "테스트 샘플 상품",
+      }).lean<{ _id: mongoose.Types.ObjectId }>();
 
-    return ReviewModel.create({
-      productId: product!._id,
-      userId: user._id,
-      orderId: new mongoose.Types.ObjectId(),
-      rating: overrides?.rating ?? 5,
-      content: overrides?.content ?? "만족스러운 상품입니다.",
-    });
-  };
+      return ReviewModel.create({
+        productId: product!._id,
+        userId: user._id,
+        orderId: new mongoose.Types.ObjectId(),
+        rating: overrides?.rating ?? 5,
+        content: overrides?.content ?? "만족스러운 상품입니다.",
+      });
+    };
 
-  it("검색 조건이 없으면 createdAt 내림차순으로 전체를 리턴한다", async () => {
-    await createReviewFixture({ productInput: { title: "상품A" } });
-    await createReviewFixture({ productInput: { title: "상품B" } });
+    it("검색 조건이 없으면 createdAt 내림차순으로 전체를 리턴한다", async () => {
+      await createReviewFixture({ productInput: { title: "상품A" } });
+      await createReviewFixture({ productInput: { title: "상품B" } });
 
-    const result = await getAdminReviewsPageService({});
+      const result = await getAdminReviewsPageService({});
 
-    expect(result.items).toHaveLength(2);
-  });
-
-  it("작성자 이메일 부분일치로 찾는다", async () => {
-    await createReviewFixture({
-      userInput: { email: "chulsoo@example.com" },
-    });
-    await createReviewFixture({
-      userInput: { email: "younghee@example.com" },
+      expect(result.items).toHaveLength(2);
     });
 
-    const result = await getAdminReviewsPageService({ q: "chulsoo" });
+    it("작성자 이메일 부분일치로 찾는다", async () => {
+      await createReviewFixture({
+        userInput: { email: "chulsoo@example.com" },
+      });
+      await createReviewFixture({
+        userInput: { email: "younghee@example.com" },
+      });
 
-    expect(result.items).toHaveLength(1);
-  });
+      const result = await getAdminReviewsPageService({ q: "chulsoo" });
 
-  it("상품명 부분일치로 찾는다", async () => {
-    await createReviewFixture({ productInput: { title: "봄맞이 한정판" } });
-    await createReviewFixture({ productInput: { title: "가을 신상품" } });
-
-    const result = await getAdminReviewsPageService({ q: "봄맞이" });
-
-    expect(result.items.map((r) => r.productTitle)).toEqual(["봄맞이 한정판"]);
-  });
-
-  it("작성자 이메일과 상품명 중 어느 쪽에 걸려도 찾는다", async () => {
-    await createReviewFixture({
-      userInput: { email: "match@example.com" },
-      productInput: { title: "무관한 상품" },
-    });
-    await createReviewFixture({
-      userInput: { email: "unrelated@example.com" },
-      productInput: { title: "match 상품" },
-    });
-    await createReviewFixture({
-      userInput: { email: "unrelated2@example.com" },
-      productInput: { title: "무관한 상품2" },
+      expect(result.items).toHaveLength(1);
     });
 
-    const result = await getAdminReviewsPageService({ q: "match" });
+    it("상품명 부분일치로 찾는다", async () => {
+      await createReviewFixture({ productInput: { title: "봄맞이 한정판" } });
+      await createReviewFixture({ productInput: { title: "가을 신상품" } });
 
-    expect(result.items).toHaveLength(2);
-  });
+      const result = await getAdminReviewsPageService({ q: "봄맞이" });
 
-  it("대소문자를 무시한다", async () => {
-    await createReviewFixture({ userInput: { email: "ChulSoo@example.com" } });
-
-    const result = await getAdminReviewsPageService({ q: "chulsoo" });
-
-    expect(result.items).toHaveLength(1);
-  });
-
-  it("정규식 특수문자를 글자 그대로 찾는다", async () => {
-    await createReviewFixture({ productInput: { title: "청첩장 (한정판)" } });
-    await createReviewFixture({ productInput: { title: "청첩장 한정판" } });
-
-    const result = await getAdminReviewsPageService({ q: "(한정판)" });
-
-    expect(result.items.map((r) => r.productTitle)).toEqual([
-      "청첩장 (한정판)",
-    ]);
-  });
-
-  it("조건에 맞는 리뷰가 없으면 빈 배열을 리턴한다", async () => {
-    await createReviewFixture({});
-
-    const result = await getAdminReviewsPageService({ q: "없는사람" });
-
-    expect(result.items).toEqual([]);
-  });
-
-  it("검색어와 커서를 함께 적용한다", async () => {
-    for (let i = 0; i < 3; i += 1) {
-      await createReviewFixture({ userInput: { email: `match${i}@example.com` } });
-    }
-    await createReviewFixture({ userInput: { email: "unrelated@example.com" } });
-
-    const first = await getAdminReviewsPageService({ q: "match", limit: 2 });
-    expect(first.items).toHaveLength(2);
-    expect(first.nextCursor).not.toBeNull();
-
-    const second = await getAdminReviewsPageService({
-      q: "match",
-      limit: 2,
-      cursor: first.nextCursor!,
+      expect(result.items.map((r) => r.productTitle)).toEqual([
+        "봄맞이 한정판",
+      ]);
     });
 
-    expect(second.items).toHaveLength(1);
-    expect(second.nextCursor).toBeNull();
-  });
+    it("작성자 이메일과 상품명 중 어느 쪽에 걸려도 찾는다", async () => {
+      await createReviewFixture({
+        userInput: { email: "match@example.com" },
+        productInput: { title: "무관한 상품" },
+      });
+      await createReviewFixture({
+        userInput: { email: "unrelated@example.com" },
+        productInput: { title: "match 상품" },
+      });
+      await createReviewFixture({
+        userInput: { email: "unrelated2@example.com" },
+        productInput: { title: "무관한 상품2" },
+      });
 
-  it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
-    await expect(
-      getAdminReviewsPageService({ cursor: "!!!broken!!!" }),
-    ).rejects.toMatchObject({ category: "VALIDATION" });
-  });
-});
+      const result = await getAdminReviewsPageService({ q: "match" });
 
+      expect(result.items).toHaveLength(2);
+    });
+
+    it("대소문자를 무시한다", async () => {
+      await createReviewFixture({
+        userInput: { email: "ChulSoo@example.com" },
+      });
+
+      const result = await getAdminReviewsPageService({ q: "chulsoo" });
+
+      expect(result.items).toHaveLength(1);
+    });
+
+    it("정규식 특수문자를 글자 그대로 찾는다", async () => {
+      await createReviewFixture({ productInput: { title: "청첩장 (한정판)" } });
+      await createReviewFixture({ productInput: { title: "청첩장 한정판" } });
+
+      const result = await getAdminReviewsPageService({ q: "(한정판)" });
+
+      expect(result.items.map((r) => r.productTitle)).toEqual([
+        "청첩장 (한정판)",
+      ]);
+    });
+
+    it("조건에 맞는 리뷰가 없으면 빈 배열을 리턴한다", async () => {
+      await createReviewFixture({});
+
+      const result = await getAdminReviewsPageService({ q: "없는사람" });
+
+      expect(result.items).toEqual([]);
+    });
+
+    it("검색어와 커서를 함께 적용한다", async () => {
+      for (let i = 0; i < 3; i += 1) {
+        await createReviewFixture({
+          userInput: { email: `match${i}@example.com` },
+        });
+      }
+      await createReviewFixture({
+        userInput: { email: "unrelated@example.com" },
+      });
+
+      const first = await getAdminReviewsPageService({ q: "match", limit: 2 });
+      expect(first.items).toHaveLength(2);
+      expect(first.nextCursor).not.toBeNull();
+
+      const second = await getAdminReviewsPageService({
+        q: "match",
+        limit: 2,
+        cursor: first.nextCursor!,
+      });
+
+      expect(second.items).toHaveLength(1);
+      expect(second.nextCursor).toBeNull();
+    });
+
+    it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
+      await expect(
+        getAdminReviewsPageService({ cursor: "!!!broken!!!" }),
+      ).rejects.toMatchObject({ category: "VALIDATION" });
+    });
+  });
 });

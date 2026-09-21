@@ -6,7 +6,13 @@ import { QuantityStepper } from "./QuantityStepper";
 describe("QuantityStepper (상품 상세)", () => {
   it("value/min/max를 받아 입력값을 표시한다", () => {
     render(
-      <QuantityStepper id="quantity" value={3} min={1} max={10} onChange={vi.fn()} />,
+      <QuantityStepper
+        id="quantity"
+        value={3}
+        min={1}
+        max={10}
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByLabelText("수량")).toHaveValue(3);
@@ -16,7 +22,13 @@ describe("QuantityStepper (상품 상세)", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <QuantityStepper id="quantity" value={3} min={1} max={10} onChange={onChange} />,
+      <QuantityStepper
+        id="quantity"
+        value={3}
+        min={1}
+        max={10}
+        onChange={onChange}
+      />,
     );
 
     await user.click(screen.getByLabelText("수량 증가"));
@@ -28,7 +40,13 @@ describe("QuantityStepper (상품 상세)", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <QuantityStepper id="quantity" value={3} min={1} max={10} onChange={onChange} />,
+      <QuantityStepper
+        id="quantity"
+        value={3}
+        min={1}
+        max={10}
+        onChange={onChange}
+      />,
     );
 
     await user.click(screen.getByLabelText("수량 감소"));
@@ -38,7 +56,13 @@ describe("QuantityStepper (상품 상세)", () => {
 
   it("value가 min이면 감소 버튼이 disabled다", () => {
     render(
-      <QuantityStepper id="quantity" value={1} min={1} max={10} onChange={vi.fn()} />,
+      <QuantityStepper
+        id="quantity"
+        value={1}
+        min={1}
+        max={10}
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByLabelText("수량 감소")).toBeDisabled();
@@ -46,7 +70,13 @@ describe("QuantityStepper (상품 상세)", () => {
 
   it("value가 max면 증가 버튼이 disabled다", () => {
     render(
-      <QuantityStepper id="quantity" value={10} min={1} max={10} onChange={vi.fn()} />,
+      <QuantityStepper
+        id="quantity"
+        value={10}
+        min={1}
+        max={10}
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByLabelText("수량 증가")).toBeDisabled();
@@ -54,7 +84,13 @@ describe("QuantityStepper (상품 상세)", () => {
 
   it("min===max면 두 버튼 모두 자연히 disabled된다(별도 fixed 분기 없이)", () => {
     render(
-      <QuantityStepper id="quantity" value={5} min={5} max={5} onChange={vi.fn()} />,
+      <QuantityStepper
+        id="quantity"
+        value={5}
+        min={5}
+        max={5}
+        onChange={vi.fn()}
+      />,
     );
 
     expect(screen.getByLabelText("수량 감소")).toBeDisabled();
@@ -65,7 +101,13 @@ describe("QuantityStepper (상품 상세)", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <QuantityStepper id="quantity" value={1} min={2} max={10} onChange={onChange} />,
+      <QuantityStepper
+        id="quantity"
+        value={1}
+        min={2}
+        max={10}
+        onChange={onChange}
+      />,
     );
 
     await user.type(screen.getByLabelText("수량"), "2");
@@ -78,7 +120,13 @@ describe("QuantityStepper (상품 상세)", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <QuantityStepper id="quantity" value={999} min={1} max={10} onChange={onChange} />,
+      <QuantityStepper
+        id="quantity"
+        value={999}
+        min={1}
+        max={10}
+        onChange={onChange}
+      />,
     );
 
     const input = screen.getByLabelText("수량");
@@ -90,7 +138,14 @@ describe("QuantityStepper (상품 상세)", () => {
 
   it("disabled면 버튼과 입력이 모두 비활성화된다", () => {
     render(
-      <QuantityStepper id="quantity" value={1} min={1} max={1} onChange={vi.fn()} disabled />,
+      <QuantityStepper
+        id="quantity"
+        value={1}
+        min={1}
+        max={1}
+        onChange={vi.fn()}
+        disabled
+      />,
     );
 
     expect(screen.getByLabelText("수량 감소")).toBeDisabled();

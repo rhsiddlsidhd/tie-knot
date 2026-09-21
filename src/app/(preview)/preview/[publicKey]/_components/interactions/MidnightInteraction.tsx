@@ -26,7 +26,10 @@ const MidnightInteraction = ({ x, y }: ThemeInteractionProps) => {
     lastSpawnRef.current = now;
 
     const id = nextIdRef.current++;
-    setPoints((prev) => [...prev.slice(-MAX_TRAIL_POINTS + 1), { id, left, top }]);
+    setPoints((prev) => [
+      ...prev.slice(-MAX_TRAIL_POINTS + 1),
+      { id, left, top },
+    ]);
   };
 
   // 마운트 시점엔 이미 첫 pointermove가 x/y를 채운 뒤(오버레이가 그 이벤트로
@@ -46,7 +49,11 @@ const MidnightInteraction = ({ x, y }: ThemeInteractionProps) => {
           key={point.id}
           aria-hidden
           className="absolute text-sm"
-          style={{ left: point.left, top: point.top, color: "var(--midnight-gold)" }}
+          style={{
+            left: point.left,
+            top: point.top,
+            color: "var(--midnight-gold)",
+          }}
           initial={{ opacity: 0.9, scale: 1 }}
           animate={{ opacity: 0, scale: 0.2, y: -12 }}
           transition={{ duration: FADE_DURATION_S, ease: "easeOut" }}
@@ -59,6 +66,6 @@ const MidnightInteraction = ({ x, y }: ThemeInteractionProps) => {
       ))}
     </>
   );
-}
+};
 
 export { MidnightInteraction };

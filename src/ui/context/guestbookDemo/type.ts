@@ -16,4 +16,8 @@ type GuestbookDemoAction =
     }
   | { type: "REMOVE_ENTRY"; payload: { id: string } };
 
-export { type GuestbookDemoEntry, type GuestbookDemoState, type GuestbookDemoAction };
+export {
+  type GuestbookDemoEntry,
+  type GuestbookDemoState,
+  type GuestbookDemoAction,
+};

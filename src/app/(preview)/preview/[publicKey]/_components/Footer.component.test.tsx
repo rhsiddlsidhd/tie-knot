@@ -18,7 +18,9 @@ describe("Footer", () => {
 
     expect(screen.getByText("Tie Knot")).toBeInTheDocument();
     expect(
-      screen.getByText("© 2026 Wedding Invitation Service. All rights reserved."),
+      screen.getByText(
+        "© 2026 Wedding Invitation Service. All rights reserved.",
+      ),
     ).toBeInTheDocument();
   });
 });

@@ -66,14 +66,14 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.
 
-| 문서        | 위치                              | 트리거                                  | 요약                     |
-| ----------- | ---------------------------------- | ----------------------------------------- | ------------------------ |
-| `AGENTS.md` | `src/core/constants/`            | 라우트 경로 문자열(`routes.ts`) 상수화, 승격된 상수 확인 시 | 상수 컨벤션  |
-| `AGENTS.md` | `src/core/utils/`                | 승격된 순수함수 확인 시                   | 순수함수 컨벤션          |
-| `AGENTS.md` | `src/ui/hooks/`                | 승격된 훅 확인 시                         | 훅 컨벤션                |
-| `AGENTS.md` | `src/core/types/`                | 승격된 타입 확인 시                       | 타입 컨벤션              |
-| `AGENTS.md` | `src/ui/components/`           | 컴포넌트 조직 구조 확인 시                | Atomic Design 조직 구조  |
-| `AGENTS.md` | `src/ui/components/templates/` | Templates(페이지 전체 배치) 세부 규칙 확인 시 | template 컨벤션      |
-| `AGENTS.md` | `src/actions/`              | Server Actions 확인 시                    | Server Action 컨벤션     |
-| `AGENTS.md` | `src/`                      | 응답/에러 계약(Route Handler) 확인 시     | 성공/에러 응답 빌더 계약 |
-| `AGENTS.md` | `src/ui/`                      | 응답/에러 계약(Client fetch) 확인 시      | fetcher 계약             |
+| 문서        | 위치                           | 트리거                                                      | 요약                     |
+| ----------- | ------------------------------ | ----------------------------------------------------------- | ------------------------ |
+| `AGENTS.md` | `src/core/constants/`          | 라우트 경로 문자열(`routes.ts`) 상수화, 승격된 상수 확인 시 | 상수 컨벤션              |
+| `AGENTS.md` | `src/core/utils/`              | 승격된 순수함수 확인 시                                     | 순수함수 컨벤션          |
+| `AGENTS.md` | `src/ui/hooks/`                | 승격된 훅 확인 시                                           | 훅 컨벤션                |
+| `AGENTS.md` | `src/core/types/`              | 승격된 타입 확인 시                                         | 타입 컨벤션              |
+| `AGENTS.md` | `src/ui/components/`           | 컴포넌트 조직 구조 확인 시                                  | Atomic Design 조직 구조  |
+| `AGENTS.md` | `src/ui/components/templates/` | Templates(페이지 전체 배치) 세부 규칙 확인 시               | template 컨벤션          |
+| `AGENTS.md` | `src/actions/`                 | Server Actions 확인 시                                      | Server Action 컨벤션     |
+| `AGENTS.md` | `src/`                         | 응답/에러 계약(Route Handler) 확인 시                       | 성공/에러 응답 빌더 계약 |
+| `AGENTS.md` | `src/ui/`                      | 응답/에러 계약(Client fetch) 확인 시                        | fetcher 계약             |

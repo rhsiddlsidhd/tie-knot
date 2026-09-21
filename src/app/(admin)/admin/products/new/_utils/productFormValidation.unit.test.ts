@@ -35,9 +35,9 @@ describe("getStepErrorMessage", () => {
   });
 
   it("서브 카테고리를 고르지 않으면 기본 정보 스텝을 막는다", () => {
-    expect(
-      getStepErrorMessage("basic", inputWith({ subCategory: "" })),
-    ).toBe("서브 카테고리를 선택해주세요.");
+    expect(getStepErrorMessage("basic", inputWith({ subCategory: "" }))).toBe(
+      "서브 카테고리를 선택해주세요.",
+    );
   });
 
   it("가격 입력 오류가 있으면 그 메시지를 가격 스텝에 그대로 전달한다", () => {

@@ -16,6 +16,6 @@ const useSubwayStations = () => {
     isLoading,
     isError: error,
   };
-}
+};
 
 export { useSubwayStations };

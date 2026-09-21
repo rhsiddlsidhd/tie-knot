@@ -11,11 +11,15 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
     children,
   }: {
     onUpload: (url: string) => void;
-    children: (controls: { isLoading: boolean; open: () => void }) => React.ReactNode;
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
   }) =>
     children({
       isLoading: false,
-      open: () => onUpload("https://res.cloudinary.com/demo/image/upload/new.jpg"),
+      open: () =>
+        onUpload("https://res.cloudinary.com/demo/image/upload/new.jpg"),
     }),
 }));
 
@@ -37,7 +41,9 @@ const buildImageList = (items: ReturnType<typeof buildItem>[] = []) => ({
 
 describe("ImagesSection", () => {
   it("메인 이미지와 갤러리 섹션을 렌더링한다", () => {
-    render(<ImagesSection thumbnail={buildImageList()} gallery={buildImageList()} />);
+    render(
+      <ImagesSection thumbnail={buildImageList()} gallery={buildImageList()} />,
+    );
 
     expect(screen.getByText("메인 이미지")).toBeInTheDocument();
     expect(screen.getByText("갤러리")).toBeInTheDocument();

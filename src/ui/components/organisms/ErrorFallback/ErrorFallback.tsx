@@ -2,7 +2,10 @@
 
 import { Button } from "@/ui/components/atoms/button";
 import { Card } from "@/ui/components/atoms/card";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 
 import { AlertCircle, ArrowLeft, RotateCcw } from "lucide-react";
@@ -35,8 +38,12 @@ const ErrorFallback = ({
             </div>
 
             <div className="space-y-2">
-              <TypographyH1 className="text-foreground text-3xl font-bold">{title}</TypographyH1>
-              <TypographyMuted className="text-sm">{description}</TypographyMuted>
+              <TypographyH1 className="text-foreground text-3xl font-bold">
+                {title}
+              </TypographyH1>
+              <TypographyMuted className="text-sm">
+                {description}
+              </TypographyMuted>
             </div>
           </div>
 
@@ -82,6 +89,6 @@ const ErrorFallback = ({
       </Card>
     </div>
   );
-}
+};
 
 export { ErrorFallback };

@@ -19,8 +19,11 @@ const deleteProductAsset = async (publicId: string): Promise<void> => {
     invalidate: true,
   });
   if (!result || !["ok", "not found"].includes(result.result)) {
-    throw new AppError("EXTERNAL_SERVICE", `이미지 정리에 실패했습니다: ${publicId}`);
+    throw new AppError(
+      "EXTERNAL_SERVICE",
+      `이미지 정리에 실패했습니다: ${publicId}`,
+    );
   }
-}
+};
 
 export { deleteProductAsset };

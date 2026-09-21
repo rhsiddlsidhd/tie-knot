@@ -43,7 +43,10 @@ const BotanicalInteraction = ({ x, y }: ThemeInteractionProps) => {
   const angle = useTransform(curve, (c) => c.angle);
 
   return (
-    <svg className="absolute inset-0 h-full w-full overflow-visible" aria-hidden>
+    <svg
+      className="absolute inset-0 h-full w-full overflow-visible"
+      aria-hidden
+    >
       <motion.path
         d={d}
         fill="none"
@@ -57,6 +60,6 @@ const BotanicalInteraction = ({ x, y }: ThemeInteractionProps) => {
       </motion.g>
     </svg>
   );
-}
+};
 
 export { BotanicalInteraction };

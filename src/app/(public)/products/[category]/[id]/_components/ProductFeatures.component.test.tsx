@@ -20,15 +20,24 @@ describe("ProductFeatures", () => {
     render(
       <ProductFeatures
         options={[
-          buildFeature({ label: "나만의 폰트", description: "원하는 폰트를 직접 지정할 수 있습니다." }),
-          buildFeature({ _id: "feature-2", label: "비디오 추가", description: "영상을 추가할 수 있습니다." }),
+          buildFeature({
+            label: "나만의 폰트",
+            description: "원하는 폰트를 직접 지정할 수 있습니다.",
+          }),
+          buildFeature({
+            _id: "feature-2",
+            label: "비디오 추가",
+            description: "영상을 추가할 수 있습니다.",
+          }),
         ]}
         images={[]}
       />,
     );
 
     expect(screen.getByText("나만의 폰트")).toBeInTheDocument();
-    expect(screen.getByText("원하는 폰트를 직접 지정할 수 있습니다.")).toBeInTheDocument();
+    expect(
+      screen.getByText("원하는 폰트를 직접 지정할 수 있습니다."),
+    ).toBeInTheDocument();
     expect(screen.getByText("비디오 추가")).toBeInTheDocument();
     expect(screen.getByText("영상을 추가할 수 있습니다.")).toBeInTheDocument();
   });
@@ -51,7 +60,9 @@ describe("ProductFeatures", () => {
     render(<ProductFeatures options={[]} images={["/images/detail-1.jpg"]} />);
 
     expect(screen.getByAltText("상세 이미지 1")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "더보기" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "더보기" }),
+    ).not.toBeInTheDocument();
   });
 
   it("이미지가 노출 개수보다 많으면 더보기 버튼으로 나머지 이미지를 펼친다", async () => {
@@ -59,7 +70,11 @@ describe("ProductFeatures", () => {
     render(
       <ProductFeatures
         options={[]}
-        images={["/images/detail-1.jpg", "/images/detail-2.jpg", "/images/detail-3.jpg"]}
+        images={[
+          "/images/detail-1.jpg",
+          "/images/detail-2.jpg",
+          "/images/detail-3.jpg",
+        ]}
       />,
     );
 

@@ -90,7 +90,10 @@ function recordTurnStart(sessionId) {
   writeTurnSnapshot(sessionId);
 }
 
-async function checkBeforeStop({ sessionId, stopHookActive }, timeoutMs = 300_000) {
+async function checkBeforeStop(
+  { sessionId, stopHookActive },
+  timeoutMs = 300_000,
+) {
   const file = turnFile(sessionId);
 
   let recorded;
@@ -102,7 +105,8 @@ async function checkBeforeStop({ sessionId, stopHookActive }, timeoutMs = 300_00
     recorded = [];
   }
 
-  const gitChanged = computeTurnChanges(sessionId) ?? Object.keys(gitDirtySrcHashes());
+  const gitChanged =
+    computeTurnChanges(sessionId) ?? Object.keys(gitDirtySrcHashes());
   const edited = [...new Set([...recorded, ...gitChanged])];
 
   if (edited.length === 0) {
@@ -148,7 +152,8 @@ async function checkBeforeStop({ sessionId, stopHookActive }, timeoutMs = 300_00
     "TDD gate: 이번 턴에 편집한 파일의 test 가 실패한다. green 을 만들고 끝내라.",
     "",
     ...failures.map(
-      (failure) => `[${failure.tier}] ${failure.paths.join(", ")}\n${failure.output}`,
+      (failure) =>
+        `[${failure.tier}] ${failure.paths.join(", ")}\n${failure.output}`,
     ),
   ]);
 }
@@ -161,7 +166,11 @@ function stopOutcome(stopHookActive, lines) {
   if (stopHookActive) {
     return {
       action: "warn",
-      reason: ["TDD gate: 문제가 남은 채 턴이 종료된다. 다음 턴 Stop 에서 이어서 검사한다.", "", ...lines].join("\n"),
+      reason: [
+        "TDD gate: 문제가 남은 채 턴이 종료된다. 다음 턴 Stop 에서 이어서 검사한다.",
+        "",
+        ...lines,
+      ].join("\n"),
     };
   }
   return { action: "block", reason: lines.join("\n") };

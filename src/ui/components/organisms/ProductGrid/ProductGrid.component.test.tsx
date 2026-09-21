@@ -33,17 +33,25 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
 describe("ProductGrid", () => {
   it("상품이 있으면 카드를 렌더링한다", () => {
     render(
-      <ProductGrid data={[buildProduct()]} state={initialFilterState} dispatch={vi.fn()} />,
+      <ProductGrid
+        data={[buildProduct()]}
+        state={initialFilterState}
+        dispatch={vi.fn()}
+      />,
     );
 
     expect(screen.getByText("봄맞이 청첩장")).toBeInTheDocument();
   });
 
   it("카테고리에 상품 자체가 없으면 '준비 중' 빈 상태를 렌더링한다(필터 초기화 버튼 없음)", () => {
-    render(<ProductGrid data={[]} state={initialFilterState} dispatch={vi.fn()} />);
+    render(
+      <ProductGrid data={[]} state={initialFilterState} dispatch={vi.fn()} />,
+    );
 
     expect(screen.getByText("상품을 준비 중에 있습니다")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "필터 초기화" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "필터 초기화" }),
+    ).not.toBeInTheDocument();
   });
 
   it("상품은 있지만 필터 조건에 안 맞으면 '조건에 맞는 상품 없음' 빈 상태 + 필터 초기화 버튼을 렌더링한다", () => {
@@ -69,7 +77,10 @@ describe("ProductGrid", () => {
   it("rank를 넘기지 않으므로 카드에 순위 배지가 렌더되지 않는다 (ProductCard rank 추가 무회귀)", () => {
     render(
       <ProductGrid
-        data={[buildProduct(), buildProduct({ _id: "product-2", title: "두 번째 상품" })]}
+        data={[
+          buildProduct(),
+          buildProduct({ _id: "product-2", title: "두 번째 상품" }),
+        ]}
         state={initialFilterState}
         dispatch={vi.fn()}
       />,

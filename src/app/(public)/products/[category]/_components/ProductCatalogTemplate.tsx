@@ -1,6 +1,12 @@
 import type { PublicProductListPage } from "@/core/domain/product";
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 import { ProductCatalog } from "@/app/(public)/products/[category]/_containers/ProductCatalog";
 

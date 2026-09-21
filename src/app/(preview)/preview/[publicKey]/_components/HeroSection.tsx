@@ -4,7 +4,10 @@ import { ko } from "date-fns/locale";
 
 import type { HeroSectionProps } from "../_utils/heroSection.mapper";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { ScrollIndicator } from "./ScrollIndicator";
 const HeroSection = ({
   groomName,
@@ -34,9 +37,9 @@ const HeroSection = ({
           <TypographyMuted className="mb-4 text-xs font-light tracking-[0.4em] text-white/80 uppercase">
             Wedding Invitation
           </TypographyMuted>
-          <TypographyH1 className="mb-6 font-[var(--font-NotoSerif)] text-5xl leading-tight text-white md:text-7xl">
+          <TypographyH1 className="mb-6 text-5xl leading-tight font-[var(--font-NotoSerif)] text-white md:text-7xl">
             {groomName}{" "}
-            <span className="mx-2 font-[var(--font-NotoSansKR)] text-2xl font-light opacity-70 md:text-4xl">
+            <span className="mx-2 text-2xl font-[var(--font-NotoSansKR)] font-light opacity-70 md:text-4xl">
               &
             </span>{" "}
             {brideName}
@@ -47,7 +50,12 @@ const HeroSection = ({
           <div className="flex items-center justify-center gap-2">
             <Calendar className="h-4 w-4 opacity-80" />
             <span>
-              {formatInTimeZone(weddingDate, "Asia/Seoul", "yyyy. MM. dd EEEE a h시", { locale: ko })}
+              {formatInTimeZone(
+                weddingDate,
+                "Asia/Seoul",
+                "yyyy. MM. dd EEEE a h시",
+                { locale: ko },
+              )}
             </span>
           </div>
           <div className="flex flex-col items-center gap-1">
@@ -67,6 +75,6 @@ const HeroSection = ({
       </div>
     </section>
   );
-}
+};
 
 export { HeroSection };

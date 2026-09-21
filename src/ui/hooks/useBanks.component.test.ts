@@ -15,7 +15,11 @@ describe("useBanks", () => {
   });
 
   it("고정된 은행 목록 key와 fetcher로 swr을 호출한다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: true });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+    });
 
     renderHook(() => useBanks());
 
@@ -23,7 +27,11 @@ describe("useBanks", () => {
   });
 
   it("로딩 중에는 banks가 없고 isLoading이 true다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: true });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+    });
 
     const { result } = renderHook(() => useBanks());
 
@@ -34,7 +42,11 @@ describe("useBanks", () => {
 
   it("응답이 도착하면 banks로 노출한다", () => {
     const banks = [{ bank: "004", name: { ko: "국민은행" } }];
-    useSWRMock.mockReturnValue({ data: banks, error: undefined, isLoading: false });
+    useSWRMock.mockReturnValue({
+      data: banks,
+      error: undefined,
+      isLoading: false,
+    });
 
     const { result } = renderHook(() => useBanks());
 
@@ -44,7 +56,10 @@ describe("useBanks", () => {
   });
 
   it("에러가 있으면 isError로 노출한다", () => {
-    const error = { category: "EXTERNAL_SERVICE", message: "은행 목록 조회 실패" };
+    const error = {
+      category: "EXTERNAL_SERVICE",
+      message: "은행 목록 조회 실패",
+    };
     useSWRMock.mockReturnValue({ data: undefined, error, isLoading: false });
 
     const { result } = renderHook(() => useBanks());

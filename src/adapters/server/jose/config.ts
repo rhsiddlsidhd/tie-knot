@@ -5,7 +5,7 @@ const requireEnv = (key: string): string => {
     throw new Error(`${key} is not defined`);
   }
   return value;
-}
+};
 
 const JWT_SECRET = requireEnv("JWT_SECRET");
 const ENTRY_JWT_SECRET = requireEnv("ENTRY_JWT_SECRET");
