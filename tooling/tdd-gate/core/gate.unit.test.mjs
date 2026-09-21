@@ -11,12 +11,14 @@ vi.mock("./run-tests.mjs", () => ({
 const mockInspect = vi.fn();
 const mockComputeTurnChanges = vi.fn();
 const mockGitDirtySrcHashes = vi.fn();
+const mockIsFormattingOnlyChange = vi.fn();
 const mockWriteTurnSnapshot = vi.fn();
 
 vi.mock("./resolver.mjs", () => ({
   inspect: (...args) => mockInspect(...args),
   computeTurnChanges: (...args) => mockComputeTurnChanges(...args),
   gitDirtySrcHashes: (...args) => mockGitDirtySrcHashes(...args),
+  isFormattingOnlyChange: (...args) => mockIsFormattingOnlyChange(...args),
   writeTurnSnapshot: (...args) => mockWriteTurnSnapshot(...args),
   ensureCacheDir: () => {},
   turnFile: () => turnFilePath,
@@ -33,6 +35,7 @@ beforeEach(() => {
   turnFilePath = path.join(tmpDir, "turn.txt");
   mockComputeTurnChanges.mockReturnValue([]);
   mockGitDirtySrcHashes.mockReturnValue({});
+  mockIsFormattingOnlyChange.mockResolvedValue(false);
 });
 
 afterEach(() => {
@@ -220,6 +223,23 @@ describe("checkBeforeStop", () => {
     expect(result.action).toBe("block");
     expect(result.reason).toContain("test 가 없다");
     expect(mockRunSiblings).not.toHaveBeenCalled();
+  });
+
+  it("Prettier 정규화 결과가 같은 변경은 test 없이 통과시킨다", async () => {
+    fs.writeFileSync(turnFilePath, "src/actions/order.ts\n");
+    mockIsFormattingOnlyChange.mockResolvedValue(true);
+
+    const result = await checkBeforeStop({
+      sessionId: "s1",
+      stopHookActive: false,
+    });
+
+    expect(result).toBeNull();
+    expect(mockIsFormattingOnlyChange).toHaveBeenCalledWith(
+      "s1",
+      "src/actions/order.ts",
+    );
+    expect(mockInspect).not.toHaveBeenCalled();
   });
 
   it("이번 턴에 삭제된 파일(exists=false)은 sibling이 없어도 통과시킨다", async () => {

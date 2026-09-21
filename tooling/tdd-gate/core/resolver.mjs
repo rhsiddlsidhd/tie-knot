@@ -5,6 +5,7 @@
  *   - vitest.config.ts 의 project include/exclude → 어떤 test 경로가 어느 tier에 속하는가
  *   - tooling/tdd-gate/policy.json 의 exclude  → 어떤 소스가 강제 대상 밖인가
  *   - 파일 존재 여부                              → 형제 test 가 이미 있는가
+ *   - 턴 시작/현재 파일의 Prettier 정규화 결과    → format-only 변경인가
  *
  * 새 규칙을 여기에 발명하지 마라. 예외가 필요하면 tooling/tdd-gate/policy.json 에 적는다.
  */
@@ -123,7 +124,17 @@ function gitChangedSrcSince(snapshotHead) {
 
 function writeTurnSnapshot(sessionId) {
   ensureCacheDir();
-  const snapshot = { head: gitHead(), hashes: gitDirtySrcHashes() };
+  const hashes = gitDirtySrcHashes();
+  const contents = {};
+  for (const [relPath, hash] of Object.entries(hashes)) {
+    if (hash === null) continue;
+    try {
+      contents[relPath] = fs.readFileSync(path.join(ROOT, relPath), "utf8");
+    } catch {
+      // 읽을 수 없는 dirty 파일은 hash만 남기고 format-only 판정은 fail-closed 한다.
+    }
+  }
+  const snapshot = { head: gitHead(), hashes, contents };
   fs.writeFileSync(snapshotFile(sessionId), JSON.stringify(snapshot));
 }
 
@@ -155,6 +166,43 @@ function computeTurnChanges(sessionId) {
   }
 
   return [...changed];
+}
+
+/** 스냅샷 시점과 현재 파일을 Prettier로 정규화했을 때 동일한지 판정한다. */
+async function isFormattingOnlyChange(sessionId, relPath) {
+  const snapshot = readTurnSnapshot(sessionId);
+  if (!snapshot?.head) return false;
+
+  const normalizedPath = toPosix(relPath);
+  const hadDirtyBaseline = Object.prototype.hasOwnProperty.call(
+    snapshot.hashes ?? {},
+    normalizedPath,
+  );
+  const before = hadDirtyBaseline
+    ? snapshot.contents?.[normalizedPath]
+    : git(["show", `${snapshot.head}:${normalizedPath}`]);
+  if (typeof before !== "string") return false;
+
+  const absolutePath = path.join(ROOT, normalizedPath);
+  let current;
+  try {
+    current = fs.readFileSync(absolutePath, "utf8");
+  } catch {
+    return false;
+  }
+
+  try {
+    const prettier = await import("prettier");
+    const config = (await prettier.resolveConfig(absolutePath)) ?? {};
+    const options = { ...config, filepath: absolutePath };
+    const [formattedBefore, formattedCurrent] = await Promise.all([
+      prettier.format(before, options),
+      prettier.format(current, options),
+    ]);
+    return formattedBefore === formattedCurrent;
+  } catch {
+    return false;
+  }
 }
 
 function toPosix(p) {
@@ -379,6 +427,7 @@ export {
   writeTurnSnapshot,
   readTurnSnapshot,
   computeTurnChanges,
+  isFormattingOnlyChange,
   toPosix,
   toRelative,
   isTestFile,

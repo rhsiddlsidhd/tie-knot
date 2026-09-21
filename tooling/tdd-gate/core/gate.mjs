@@ -5,6 +5,7 @@ import {
   ensureCacheDir,
   gitDirtySrcHashes,
   inspect,
+  isFormattingOnlyChange,
   turnFile,
   writeTurnSnapshot,
 } from "./resolver.mjs";
@@ -121,6 +122,7 @@ async function checkBeforeStop(
   const missingTest = [];
   const siblings = [];
   for (const relPath of edited) {
+    if (await isFormattingOnlyChange(sessionId, relPath)) continue;
     const target = await inspect(relPath);
     if (!target.enforced || !target.exists) continue;
     if (target.siblings.length === 0) missingTest.push(relPath);

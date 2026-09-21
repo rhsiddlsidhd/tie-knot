@@ -9,6 +9,7 @@ import {
   computeTurnChanges,
   gitDirtySrcHashes,
   gitHead,
+  isFormattingOnlyChange,
   readTurnSnapshot,
   resolveRootFromCwd,
   snapshotFile,
@@ -78,6 +79,30 @@ describe("writeTurnSnapshot / readTurnSnapshot / computeTurnChanges", () => {
 
   it("스냅샷이 없으면 null을 반환한다", () => {
     expect(computeTurnChanges("no-such-session")).toBeNull();
+  });
+});
+
+describe("isFormattingOnlyChange", () => {
+  it("Prettier 정규화 결과가 같으면 true를 반환한다", async () => {
+    fs.mkdirSync(PROBE_DIR, { recursive: true });
+    fs.writeFileSync(PROBE_FILE, "export const probe={value:1};\n");
+    writeTurnSnapshot(SESSION_ID);
+    fs.writeFileSync(PROBE_FILE, "export const probe = { value: 1 };\n");
+
+    await expect(
+      isFormattingOnlyChange(SESSION_ID, "src/core/__gate_probe__/probe.ts"),
+    ).resolves.toBe(true);
+  });
+
+  it("Prettier 정규화 후에도 내용이 다르면 false를 반환한다", async () => {
+    fs.mkdirSync(PROBE_DIR, { recursive: true });
+    fs.writeFileSync(PROBE_FILE, "export const probe={value:1};\n");
+    writeTurnSnapshot(SESSION_ID);
+    fs.writeFileSync(PROBE_FILE, "export const probe = { value: 2 };\n");
+
+    await expect(
+      isFormattingOnlyChange(SESSION_ID, "src/core/__gate_probe__/probe.ts"),
+    ).resolves.toBe(false);
   });
 });
 
