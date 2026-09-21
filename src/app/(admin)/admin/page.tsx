@@ -1,7 +1,9 @@
 import { redirect } from "next/navigation";
 import { ROUTES } from "@/core/domain/routes";
+import { verifySession } from "@/services/auth";
 
-const AdminIndexPage = () => {
+const AdminIndexPage = async () => {
+  await verifySession("ADMIN");
   redirect(ROUTES.admin.dashboard);
 };
 
