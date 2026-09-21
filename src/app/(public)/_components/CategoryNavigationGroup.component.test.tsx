@@ -2,14 +2,14 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import type { NavGroupItem } from "@/core/domain/navigation";
+import type { NavigationGroup } from "@/core/domain/navigation";
 import { CategoryNavigationGroup } from "./CategoryNavigationGroup";
 import {
   NavigationMenu,
   NavigationMenuList,
 } from "@/ui/components/atoms/navigation-menu";
 
-const items: NavGroupItem[] = [
+const items: NavigationGroup[] = [
   {
     id: "mobile-invitation",
     label: "모바일초대장",

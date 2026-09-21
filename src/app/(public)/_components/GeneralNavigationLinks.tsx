@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { NavLinkItem } from "@/core/domain/navigation";
+import type { NavigationLinkItem } from "@/core/domain/navigation";
 import {
   NavigationMenuItem,
   NavigationMenuLink,
@@ -7,7 +7,7 @@ import {
 } from "@/ui/components/atoms/navigation-menu";
 
 interface GeneralNavigationLinksProps {
-  items: NavLinkItem[];
+  items: NavigationLinkItem[];
   pathname: string;
 }
 

@@ -8,13 +8,13 @@ const { pathnameMock } = vi.hoisted(() => ({
 vi.mock("next/navigation", () => ({ usePathname: pathnameMock }));
 
 import {
-  CATEGORY_NAV_ITEMS,
-  GENERAL_NAV_ITEMS,
+  CATEGORY_NAVIGATION_ITEMS,
+  GENERAL_NAVIGATION_ITEMS,
 } from "@/core/domain/navigation";
 import { HeaderNavigationMenu } from "./HeaderNavigationMenu";
 
-const leafItem = GENERAL_NAV_ITEMS[0]!;
-const groupItem = CATEGORY_NAV_ITEMS[0]!;
+const leafItem = GENERAL_NAVIGATION_ITEMS[0]!;
+const groupItem = CATEGORY_NAVIGATION_ITEMS[0]!;
 
 describe("HeaderNavigationMenu", () => {
   it("서브카테고리 없는 항목은 바로 링크로 보여준다", () => {

@@ -7,12 +7,12 @@ import { usePathname } from "next/navigation";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
-  const navType = pathname.startsWith("/my-profile") ? "MY_PROFILE" : "MY_ORDER";
+  const navigationType = pathname.startsWith("/my-profile") ? "MY_PROFILE" : "MY_ORDER";
 
   return (
     <SidebarProvider>
       <div className="bg-background flex min-h-screen w-full min-w-0 pt-16">
-        <AppSidebar navType={navType} />
+        <AppSidebar navigationType={navigationType} />
         <main className="min-w-0 flex-1">
           <div className="container mx-auto px-4 pt-4 pb-20">
             <SidebarToggle />

@@ -1,5 +1,5 @@
 "use client";
-import { ALL_NAVIGATE_ITEMS } from "@/core/domain/navigation";
+import { NAVIGATION_BY_TYPE } from "@/core/domain/navigation";
 import { cn } from "@/core/utils/cn";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,10 +13,10 @@ import {
 const SheetNavList = ({
   type,
 }: {
-  type: keyof typeof ALL_NAVIGATE_ITEMS;
+  type: keyof typeof NAVIGATION_BY_TYPE;
 }) => {
   const pathname = usePathname();
-  const { groups, links } = ALL_NAVIGATE_ITEMS[type];
+  const { groups, links } = NAVIGATION_BY_TYPE[type];
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-4 pt-4">

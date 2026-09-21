@@ -9,10 +9,10 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/",
 }));
 
-import { ALL_NAVIGATE_ITEMS } from "@/core/domain/navigation";
+import { NAVIGATION_BY_TYPE } from "@/core/domain/navigation";
 import { Header } from "./Header";
 
-const leafItem = ALL_NAVIGATE_ITEMS.MAIN.links[0]!;
+const leafItem = NAVIGATION_BY_TYPE.MAIN.links[0]!;
 
 describe("Header", () => {
   it("로고는 홈으로 이동하는 링크다", () => {

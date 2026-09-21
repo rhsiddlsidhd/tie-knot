@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { cn } from "@/core/utils/cn";
-import type { NavGroupItem } from "@/core/domain/navigation";
+import type { NavigationGroup } from "@/core/domain/navigation";
 import {
   NavigationMenuContent,
   NavigationMenuItem,
@@ -9,7 +9,7 @@ import {
 } from "@/ui/components/atoms/navigation-menu";
 
 interface CategoryNavigationGroupProps {
-  items: NavGroupItem[];
+  items: NavigationGroup[];
   pathname: string;
 }
 

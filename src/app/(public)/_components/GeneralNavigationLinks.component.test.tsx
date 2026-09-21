@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-import type { NavLinkItem } from "@/core/domain/navigation";
+import type { NavigationLinkItem } from "@/core/domain/navigation";
 import { GeneralNavigationLinks } from "./GeneralNavigationLinks";
 import {
   NavigationMenu,
   NavigationMenuList,
 } from "@/ui/components/atoms/navigation-menu";
 
-const items: NavLinkItem[] = [
+const items: NavigationLinkItem[] = [
   { id: "support", label: "고객 센터", href: "/support", icon: null },
 ];
 

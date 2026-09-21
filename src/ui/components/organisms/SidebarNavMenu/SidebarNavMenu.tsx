@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { ALL_NAVIGATE_ITEMS } from "@/core/domain/navigation";
+import { NAVIGATION_BY_TYPE } from "@/core/domain/navigation";
 import { cn } from "@/core/utils/cn";
 import {
   SidebarMenu,
@@ -18,11 +18,11 @@ const SidebarNavMenu = ({
   type,
   onNavigate,
 }: {
-  type: keyof typeof ALL_NAVIGATE_ITEMS;
+  type: keyof typeof NAVIGATION_BY_TYPE;
   onNavigate?: () => void;
 }) => {
   const pathname = usePathname();
-  const { groups, links } = ALL_NAVIGATE_ITEMS[type];
+  const { groups, links } = NAVIGATION_BY_TYPE[type];
   const [openGroupIds, setOpenGroupIds] = useState<Set<string>>(new Set());
 
   const toggleGroup = (id: string) => {

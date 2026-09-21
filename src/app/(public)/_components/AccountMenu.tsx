@@ -14,16 +14,16 @@ import {
 } from "@/ui/components/atoms/dropdown-menu";
 
 import { UserIcon, LogOut } from "lucide-react";
-import { ADMIN_NAV_ITEMS, USER_NAV_ITEMS } from "@/core/domain/navigation";
+import { ADMIN_NAVIGATION_ITEMS, USER_NAVIGATION_ITEMS } from "@/core/domain/navigation";
 
 const AccountMenu = () => {
   const { session } = useAuth();
   const { logout } = useLogout();
 
-  const navItems =
+  const navigationItems =
     session?.role === "ADMIN"
-      ? [...ADMIN_NAV_ITEMS, ...USER_NAV_ITEMS]
-      : USER_NAV_ITEMS;
+      ? [...ADMIN_NAVIGATION_ITEMS, ...USER_NAVIGATION_ITEMS]
+      : USER_NAVIGATION_ITEMS;
 
   return (
     <DropdownMenu>
@@ -33,7 +33,7 @@ const AccountMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        {navItems.map((item) => (
+        {navigationItems.map((item) => (
           <DropdownMenuItem key={item.href} asChild>
             <Link href={item.href ?? "#"} className="flex w-full items-center">
               {item.icon && <item.icon className="mr-2 size-4" />}

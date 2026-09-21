@@ -18,31 +18,31 @@ import {
   SUB_CATEGORY_MAP,
 } from "./product-category";
 
-type NavIcon = React.ForwardRefExoticComponent<
+type NavigationIcon = React.ForwardRefExoticComponent<
   Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
 >;
 
-interface NavLinkItem {
+interface NavigationLinkItem {
   id: string;
   label: string;
   href: string;
-  icon: NavIcon | null;
+  icon: NavigationIcon | null;
 }
 
-interface NavGroupItem {
+interface NavigationGroup {
   id: string;
   label: string;
-  icon: NavIcon | null;
-  submenu: NavLinkItem[];
+  icon: NavigationIcon | null;
+  submenu: NavigationLinkItem[];
 }
 
-interface NavSection {
-  groups: NavGroupItem[];
-  links: NavLinkItem[];
+interface NavigationSection {
+  groups: NavigationGroup[];
+  links: NavigationLinkItem[];
 }
 
-const CATEGORY_NAV_ITEMS: NavGroupItem[] = PRODUCT_CATEGORIES.map(
-  (category): NavGroupItem => ({
+const CATEGORY_NAVIGATION_ITEMS: NavigationGroup[] = PRODUCT_CATEGORIES.map(
+  (category): NavigationGroup => ({
     id: category,
     label: PRODUCT_CATEGORY_LABELS[category],
     icon: null,
@@ -54,7 +54,7 @@ const CATEGORY_NAV_ITEMS: NavGroupItem[] = PRODUCT_CATEGORIES.map(
         icon: null,
       },
       ...SUB_CATEGORY_MAP[category].map(
-        (subCategory): NavLinkItem => ({
+        (subCategory): NavigationLinkItem => ({
           id: subCategory,
           label: SUB_CATEGORY_LABELS[subCategory],
           href: ROUTES.products.byCategory(category, subCategory),
@@ -65,7 +65,7 @@ const CATEGORY_NAV_ITEMS: NavGroupItem[] = PRODUCT_CATEGORIES.map(
   }),
 );
 
-const GENERAL_NAV_ITEMS: NavLinkItem[] = [
+const GENERAL_NAVIGATION_ITEMS: NavigationLinkItem[] = [
   {
     id: "support",
     label: "고객 센터",
@@ -74,7 +74,7 @@ const GENERAL_NAV_ITEMS: NavLinkItem[] = [
   },
 ];
 
-const adminGroupItems: NavGroupItem[] = [
+const adminNavigationGroups: NavigationGroup[] = [
   {
     id: "products",
     label: "상품 관리",
@@ -115,7 +115,7 @@ const adminGroupItems: NavGroupItem[] = [
   },
 ];
 
-const adminLinkItems: NavLinkItem[] = [
+const adminNavigationLinks: NavigationLinkItem[] = [
   {
     id: "dashboard",
     label: "대시보드",
@@ -148,7 +148,7 @@ const adminLinkItems: NavLinkItem[] = [
   },
 ];
 
-const authUserOrderGroupItems: NavGroupItem[] = [
+const authUserOrderNavigationGroups: NavigationGroup[] = [
   {
     id: "orders",
     label: "주문 정보",
@@ -164,7 +164,7 @@ const authUserOrderGroupItems: NavGroupItem[] = [
   },
 ];
 
-const authUserProfileLinkItems: NavLinkItem[] = [
+const authUserProfileNavigationLinks: NavigationLinkItem[] = [
   {
     id: "profile",
     label: "프로필",
@@ -173,16 +173,16 @@ const authUserProfileLinkItems: NavLinkItem[] = [
   },
 ];
 
-const ALL_NAVIGATE_ITEMS: Readonly<
-  Record<"MAIN" | "ADMIN" | "MY_ORDER" | "MY_PROFILE", NavSection>
+const NAVIGATION_BY_TYPE: Readonly<
+  Record<"MAIN" | "ADMIN" | "MY_ORDER" | "MY_PROFILE", NavigationSection>
 > = {
-  MAIN: { groups: CATEGORY_NAV_ITEMS, links: GENERAL_NAV_ITEMS },
-  ADMIN: { groups: adminGroupItems, links: adminLinkItems },
-  MY_ORDER: { groups: authUserOrderGroupItems, links: [] },
-  MY_PROFILE: { groups: [], links: authUserProfileLinkItems },
+  MAIN: { groups: CATEGORY_NAVIGATION_ITEMS, links: GENERAL_NAVIGATION_ITEMS },
+  ADMIN: { groups: adminNavigationGroups, links: adminNavigationLinks },
+  MY_ORDER: { groups: authUserOrderNavigationGroups, links: [] },
+  MY_PROFILE: { groups: [], links: authUserProfileNavigationLinks },
 };
 
-const ADMIN_NAV_ITEMS: NavLinkItem[] = [
+const ADMIN_NAVIGATION_ITEMS: NavigationLinkItem[] = [
   {
     id: "dashboard",
     label: "대시보드",
@@ -191,7 +191,7 @@ const ADMIN_NAV_ITEMS: NavLinkItem[] = [
   },
 ];
 
-const USER_NAV_ITEMS: NavLinkItem[] = [
+const USER_NAVIGATION_ITEMS: NavigationLinkItem[] = [
   { id: "profile", label: "프로필", href: ROUTES.profile, icon: User },
   {
     id: "orders",
@@ -202,13 +202,13 @@ const USER_NAV_ITEMS: NavLinkItem[] = [
 ];
 
 export {
-  CATEGORY_NAV_ITEMS,
-  GENERAL_NAV_ITEMS,
-  ADMIN_NAV_ITEMS,
-  USER_NAV_ITEMS,
-  ALL_NAVIGATE_ITEMS,
-  type NavSection,
-  type NavLinkItem,
-  type NavGroupItem,
-  type NavIcon,
+  CATEGORY_NAVIGATION_ITEMS,
+  GENERAL_NAVIGATION_ITEMS,
+  ADMIN_NAVIGATION_ITEMS,
+  USER_NAVIGATION_ITEMS,
+  NAVIGATION_BY_TYPE,
+  type NavigationSection,
+  type NavigationLinkItem,
+  type NavigationGroup,
+  type NavigationIcon,
 };

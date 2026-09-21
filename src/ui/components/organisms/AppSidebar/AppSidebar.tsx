@@ -4,16 +4,16 @@ import { Logo } from "@/ui/components/atoms/logo";
 import { SidebarNavMenu } from "@/ui/components/organisms/SidebarNavMenu";
 
 interface AppSidebarProps {
-  navType: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
+  navigationType: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
 }
 
 interface SidebarPanelProps {
-  navType: "MAIN" | AppSidebarProps["navType"];
+  navigationType: "MAIN" | AppSidebarProps["navigationType"];
   onClose: () => void;
   onNavigate?: () => void;
 }
 
-const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
+const SidebarPanel = ({ navigationType, onClose, onNavigate }: SidebarPanelProps) => {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="px-6 pt-6 pb-0 group-data-[collapsible=icon]:hidden">
@@ -41,7 +41,7 @@ const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
       </div>
 
       <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-        <SidebarNavMenu type={navType} onNavigate={onNavigate} />
+        <SidebarNavMenu type={navigationType} onNavigate={onNavigate} />
       </div>
 
       <div className="border-border/40 border-t px-6 py-5 group-data-[collapsible=icon]:hidden">
@@ -53,7 +53,7 @@ const SidebarPanel = ({ navType, onClose, onNavigate }: SidebarPanelProps) => {
   );
 };
 
-const AppSidebar = ({ navType }: AppSidebarProps) => {
+const AppSidebar = ({ navigationType }: AppSidebarProps) => {
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -62,7 +62,7 @@ const AppSidebar = ({ navType }: AppSidebarProps) => {
       className="border-border/50 fixed top-0 left-0 z-50 h-screen border-r p-0"
     >
       <SidebarPanel
-        navType={navType}
+        navigationType={navigationType}
         onClose={toggleSidebar}
         onNavigate={toggleSidebar}
       />
