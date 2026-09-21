@@ -1,19 +1,25 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { SubCategoryNavigationSection } from "./SubCategoryNavigationSection";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
+import {
+  PRODUCT_CATEGORIES,
+  SUB_CATEGORY_MAP,
+} from "@/core/domain/product-category";
 
 describe("SubCategoryNavigationSection", () => {
-  it("전달된 서브카테고리만 링크로 렌더한다", () => {
-    render(
-      <SubCategoryNavigationSection
-        availableSubCategories={[
-          { category: MOBILE_INVITATION_CATEGORY, subCategory: "first-birthday" },
-          { category: "favor", subCategory: "candle" },
-        ]}
-      />,
+  it("로컬 taxonomy의 모든 서브카테고리를 링크로 렌더한다", () => {
+    render(<SubCategoryNavigationSection />);
+
+    const expectedCount = PRODUCT_CATEGORIES.reduce(
+      (count, category) => count + SUB_CATEGORY_MAP[category].length,
+      0,
     );
 
+    expect(screen.getAllByRole("link")).toHaveLength(expectedCount);
+    expect(screen.getByRole("link", { name: "청첩장" })).toHaveAttribute(
+      "href",
+      "/products/mobile-invitation?subCategory=wedding",
+    );
     expect(screen.getByRole("link", { name: "돌잔치" })).toHaveAttribute(
       "href",
       "/products/mobile-invitation?subCategory=first-birthday",
@@ -22,31 +28,13 @@ describe("SubCategoryNavigationSection", () => {
       "href",
       "/products/favor?subCategory=candle",
     );
-    expect(
-      screen.queryByRole("link", { name: "청첩장" }),
-    ).not.toBeInTheDocument();
   });
 
   it("캐러셀 region 랜드마크로 렌더한다", () => {
-    render(
-      <SubCategoryNavigationSection
-        availableSubCategories={[
-          { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
-        ]}
-      />,
-    );
+    render(<SubCategoryNavigationSection />);
 
     expect(
       screen.getByRole("region", { name: "카테고리 둘러보기" }),
     ).toBeInTheDocument();
-  });
-
-  it("사용 가능한 서브카테고리가 없으면 섹션 전체를 렌더링하지 않는다", () => {
-    render(<SubCategoryNavigationSection availableSubCategories={[]} />);
-
-    expect(screen.queryByText("카테고리 둘러보기")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("region", { name: "카테고리 둘러보기" }),
-    ).not.toBeInTheDocument();
   });
 });

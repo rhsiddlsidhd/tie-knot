@@ -3,13 +3,13 @@ import { render, screen } from "@testing-library/react";
 import { LiveDemoSection } from "./LiveDemoSection";
 
 describe("LiveDemoSection", () => {
-  it("샘플 미리보기 링크가 새 창에서 열리도록 렌더링된다", () => {
+  it("이미지 없이 샘플 미리보기 CTA만 렌더링한다", () => {
     render(<LiveDemoSection />);
 
-    const links = screen.getAllByRole("link", { name: /미리보기|열기/ });
-    links.forEach((link) => {
-      expect(link).toHaveAttribute("href", "/preview/sample");
-      expect(link).toHaveAttribute("target", "_blank");
-    });
+    const link = screen.getByRole("link", { name: "샘플 미리보기" });
+
+    expect(link).toHaveAttribute("href", "/preview/sample");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(screen.queryByRole("img")).not.toBeInTheDocument();
   });
 });
