@@ -3,7 +3,7 @@
 import "client-only";
 
 import { useState } from "react";
-import type { Address} from "react-daum-postcode";
+import type { Address } from "react-daum-postcode";
 import { useDaumPostcodePopup } from "react-daum-postcode";
 
 const DAUM_POSTCODE_URL = process.env.NEXT_PUBLIC_DAUM_POSTCODE_URL;

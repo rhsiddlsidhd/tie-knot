@@ -10,7 +10,9 @@ vi.mock("next/navigation", () => ({
 
 import { AdminUsersTemplate } from "./AdminUsersTemplate";
 
-const buildPage = (overrides?: Partial<AdminUserListPage>): AdminUserListPage => ({
+const buildPage = (
+  overrides?: Partial<AdminUserListPage>,
+): AdminUserListPage => ({
   items: [
     {
       id: "user-1",
@@ -64,8 +66,22 @@ describe("AdminUsersTemplate", () => {
       <AdminUsersTemplate
         page={buildPage({
           items: [
-            { id: "u1", name: "A", email: "a@x.com", createdAt: new Date(), role: "USER", deletedAt: null },
-            { id: "u2", name: "B", email: "b@x.com", createdAt: new Date(), role: "USER", deletedAt: new Date() },
+            {
+              id: "u1",
+              name: "A",
+              email: "a@x.com",
+              createdAt: new Date(),
+              role: "USER",
+              deletedAt: null,
+            },
+            {
+              id: "u2",
+              name: "B",
+              email: "b@x.com",
+              createdAt: new Date(),
+              role: "USER",
+              deletedAt: new Date(),
+            },
           ],
         })}
       />,
@@ -78,7 +94,9 @@ describe("AdminUsersTemplate", () => {
   it("항목이 없으면 빈 상태 UI를 보여준다", () => {
     render(<AdminUsersTemplate page={buildPage({ items: [] })} />);
 
-    expect(screen.getByText("해당 역할의 사용자가 없습니다")).toBeInTheDocument();
+    expect(
+      screen.getByText("해당 역할의 사용자가 없습니다"),
+    ).toBeInTheDocument();
   });
 
   it("검색어가 있는데 결과가 없으면 검색 전용 빈 상태 문구를 보여준다", () => {

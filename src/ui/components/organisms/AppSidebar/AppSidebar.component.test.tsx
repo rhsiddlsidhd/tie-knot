@@ -8,10 +8,10 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/admin/dashboard",
 }));
 
-const renderSidebar = (navType: "ADMIN" | "MY_PROFILE" | "MY_ORDER") => {
+const renderSidebar = (navigationType: "ADMIN" | "MY_PROFILE" | "MY_ORDER") => {
   return render(
     <SidebarProvider defaultOpen>
-      <AppSidebar navType={navType} />
+      <AppSidebar navigationType={navigationType} />
     </SidebarProvider>,
   );
 };
@@ -31,11 +31,14 @@ describe("AppSidebar", () => {
     ["ADMIN", "대시보드"],
     ["MY_PROFILE", "프로필"],
     ["MY_ORDER", "주문 정보"],
-  ] as const)("%s 타입에 해당하는 메뉴를 표시한다", (navType, menuName) => {
-    renderSidebar(navType);
+  ] as const)(
+    "%s 타입에 해당하는 메뉴를 표시한다",
+    (navigationType, menuName) => {
+      renderSidebar(navigationType);
 
-    expect(screen.getByText(menuName)).toBeInTheDocument();
-  });
+      expect(screen.getByText(menuName)).toBeInTheDocument();
+    },
+  );
 
   it("주문과 프로필 사이드바는 해당 라우트 메뉴만 표시한다", () => {
     const { unmount } = renderSidebar("MY_ORDER");

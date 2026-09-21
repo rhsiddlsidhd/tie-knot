@@ -10,7 +10,9 @@ vi.mock("next/navigation", () => ({
 
 import { AdminOrdersTemplate } from "./AdminOrdersTemplate";
 
-const buildPage = (overrides?: Partial<AdminOrderListPage>): AdminOrderListPage => ({
+const buildPage = (
+  overrides?: Partial<AdminOrderListPage>,
+): AdminOrderListPage => ({
   items: [
     {
       id: "order-1",
@@ -70,7 +72,9 @@ describe("AdminOrdersTemplate", () => {
   it("항목이 없으면 빈 상태 UI를 보여준다", () => {
     render(<AdminOrdersTemplate page={buildPage({ items: [] })} />);
 
-    expect(screen.getByText("조건에 해당하는 주문이 없습니다")).toBeInTheDocument();
+    expect(
+      screen.getByText("조건에 해당하는 주문이 없습니다"),
+    ).toBeInTheDocument();
   });
 
   it("현재 status 필터를 Pagination 링크에 그대로 전달한다(cursor는 제거)", () => {

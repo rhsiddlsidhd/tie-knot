@@ -12,7 +12,10 @@ import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
-const ProductTableRowAction = ({ product, view = "active" }: ProductTableRowProps) => {
+const ProductTableRowAction = ({
+  product,
+  view = "active",
+}: ProductTableRowProps) => {
   const open = useAdminModalStore((state) => state.openModal);
   const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);

@@ -9,7 +9,9 @@ type BuildUserInput = {
   deletedAt: Date | null;
 };
 
-const buildUserInput = (overrides?: Partial<BuildUserInput>): BuildUserInput => ({
+const buildUserInput = (
+  overrides?: Partial<BuildUserInput>,
+): BuildUserInput => ({
   email: `user-${Date.now()}-${Math.random().toString(36).slice(2)}@example.com`,
   name: "홍길동",
   phone: "010-1234-5678",

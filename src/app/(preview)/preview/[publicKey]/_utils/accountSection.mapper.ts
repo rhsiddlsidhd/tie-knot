@@ -30,7 +30,7 @@ const createAccountInfo = (
     bankName: person.bankName,
     accountNumber: person.accountNumber,
   };
-}
+};
 
 /**
  * coupleInfoData를 받아 AccountSection 컴포넌트의 props를 생성하는 매퍼 함수
@@ -55,6 +55,10 @@ const mapCoupleInfoToAccountProps = (
   ].filter((account): account is AccountInfo => !!account);
 
   return { groomAccounts, brideAccounts };
-}
+};
 
-export { mapCoupleInfoToAccountProps, type AccountInfo, type AccountSectionMappedProps };
+export {
+  mapCoupleInfoToAccountProps,
+  type AccountInfo,
+  type AccountSectionMappedProps,
+};

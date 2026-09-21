@@ -1,4 +1,9 @@
-import { TypographyH1, TypographyH2, TypographyMuted, TypographyP } from "@/ui/components/atoms/typography";
+import {
+  TypographyH1,
+  TypographyH2,
+  TypographyMuted,
+  TypographyP,
+} from "@/ui/components/atoms/typography";
 
 interface LegalSection {
   heading: string;
@@ -12,20 +17,31 @@ interface LegalDocumentTemplateProps {
   sections: readonly LegalSection[];
 }
 
-const LegalDocumentTemplate = ({ title, effectiveDate, sections }: LegalDocumentTemplateProps) => {
+const LegalDocumentTemplate = ({
+  title,
+  effectiveDate,
+  sections,
+}: LegalDocumentTemplateProps) => {
   return (
     <div className="max-w-2xl space-y-10">
       <div className="space-y-2">
-        <TypographyH1 className="text-left text-3xl font-bold">{title}</TypographyH1>
+        <TypographyH1 className="text-left text-3xl font-bold">
+          {title}
+        </TypographyH1>
         <TypographyMuted>시행일: {effectiveDate}</TypographyMuted>
       </div>
 
       <div className="space-y-8">
         {sections.map((section) => (
           <div key={section.heading} className="space-y-3">
-            <TypographyH2 className="border-none text-xl font-bold">{section.heading}</TypographyH2>
+            <TypographyH2 className="border-none text-xl font-bold">
+              {section.heading}
+            </TypographyH2>
             {section.paragraphs?.map((paragraph, index) => (
-              <TypographyP key={index} className="text-muted-foreground text-sm leading-relaxed">
+              <TypographyP
+                key={index}
+                className="text-muted-foreground text-sm leading-relaxed"
+              >
                 {paragraph}
               </TypographyP>
             ))}
@@ -41,6 +57,6 @@ const LegalDocumentTemplate = ({ title, effectiveDate, sections }: LegalDocument
       </div>
     </div>
   );
-}
+};
 
 export { LegalDocumentTemplate };

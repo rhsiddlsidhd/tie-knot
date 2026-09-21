@@ -12,9 +12,7 @@ type KakaoErrorBody = { errorType?: string; message?: string };
  * 카카오는 인증 실패·잘못된 파라미터를 상태코드로만 알리지 않고 200 본문의
  * `errorType`으로도 알린다. 그래서 `response.ok`만으로는 성공을 판정할 수 없다.
  */
-const geocodeAddress = async (
-  address: string,
-): Promise<KakaomapResponse> => {
+const geocodeAddress = async (address: string): Promise<KakaomapResponse> => {
   const restApiKey = process.env.KAKAO_REST_API_KEY;
 
   let response: Response;
@@ -49,6 +47,6 @@ const geocodeAddress = async (
   }
 
   return data;
-}
+};
 
 export { geocodeAddress };

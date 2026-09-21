@@ -146,7 +146,9 @@ describe("관리자 상품 목록 페이지", () => {
     );
 
     expect(
-      screen.getByText(`템플릿:items=1:view=trash:q=없음:cursor=${validCursor}`),
+      screen.getByText(
+        `템플릿:items=1:view=trash:q=없음:cursor=${validCursor}`,
+      ),
     ).toBeInTheDocument();
   });
 

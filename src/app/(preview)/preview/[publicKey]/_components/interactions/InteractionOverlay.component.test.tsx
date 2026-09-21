@@ -7,9 +7,11 @@ import { InteractionOverlay } from "./InteractionOverlay";
 // 감싸야 커밋된 결과를 곧바로 단언할 수 있다.
 const firePointerMove = (x: number, y: number) => {
   act(() => {
-    window.dispatchEvent(new MouseEvent("pointermove", { clientX: x, clientY: y }));
+    window.dispatchEvent(
+      new MouseEvent("pointermove", { clientX: x, clientY: y }),
+    );
   });
-}
+};
 
 // prefers-reduced-motion 분기는 여기서 검증하지 않는다: motion/react의
 // useReducedMotion은 matchMedia 결과를 모듈 스코프에 프로세스 생애주기 동안
@@ -25,7 +27,9 @@ describe("InteractionOverlay", () => {
   it("blossom 테마는 고정 꽃잎 없이 default(spotlight)로 폴백한다", () => {
     const { container } = render(<InteractionOverlay theme="blossom" />);
     firePointerMove(200, 200);
-    expect(container.querySelector('[style*="radial-gradient"]')).not.toBeNull();
+    expect(
+      container.querySelector('[style*="radial-gradient"]'),
+    ).not.toBeNull();
   });
 
   it("botanical 테마는 pointermove 이후 커서를 향해 뻗는 덩굴손을 렌더한다", () => {
@@ -43,12 +47,16 @@ describe("InteractionOverlay", () => {
   it("default 테마는 pointermove 이후 spotlight glow를 렌더한다", () => {
     const { container } = render(<InteractionOverlay theme="default" />);
     firePointerMove(200, 200);
-    expect(container.querySelector('[style*="radial-gradient"]')).not.toBeNull();
+    expect(
+      container.querySelector('[style*="radial-gradient"]'),
+    ).not.toBeNull();
   });
 
   it("등록되지 않은 테마 문자열은 default(spotlight)로 폴백한다", () => {
     const { container } = render(<InteractionOverlay theme="does-not-exist" />);
     firePointerMove(200, 200);
-    expect(container.querySelector('[style*="radial-gradient"]')).not.toBeNull();
+    expect(
+      container.querySelector('[style*="radial-gradient"]'),
+    ).not.toBeNull();
   });
 });

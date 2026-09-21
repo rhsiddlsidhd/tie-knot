@@ -25,6 +25,6 @@ const useCopy = () => {
   };
 
   return { isCopied, copyToClipboard };
-}
+};
 
 export { useCopy };

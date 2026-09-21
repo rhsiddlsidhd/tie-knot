@@ -18,7 +18,12 @@ describe("useCountdown", () => {
 
     const { result } = renderHook(() => useCountdown(target));
 
-    expect(result.current.countdown).toEqual({ days: 2, hour: 0, min: 0, sec: 0 });
+    expect(result.current.countdown).toEqual({
+      days: 2,
+      hour: 0,
+      min: 0,
+      sec: 0,
+    });
     expect(result.current.message).toBe("결혼식까지 2일 남았습니다");
   });
 
@@ -33,7 +38,12 @@ describe("useCountdown", () => {
       vi.advanceTimersByTime(1000);
     });
 
-    expect(result.current.countdown).toEqual({ days: 0, hour: 0, min: 0, sec: 0 });
+    expect(result.current.countdown).toEqual({
+      days: 0,
+      hour: 0,
+      min: 0,
+      sec: 0,
+    });
   });
 
   it("남은 일수가 없으면 시간 단위 메시지를 노출한다", () => {
@@ -49,7 +59,12 @@ describe("useCountdown", () => {
 
     const { result } = renderHook(() => useCountdown(target));
 
-    expect(result.current.countdown).toEqual({ days: 0, hour: 0, min: 0, sec: 0 });
+    expect(result.current.countdown).toEqual({
+      days: 0,
+      hour: 0,
+      min: 0,
+      sec: 0,
+    });
     expect(result.current.message).toBe("결혼식이 끝났습니다");
   });
 
@@ -57,9 +72,12 @@ describe("useCountdown", () => {
     const first = new Date("2026-01-02T00:00:00+09:00");
     const second = new Date("2026-01-05T00:00:00+09:00");
 
-    const { result, rerender } = renderHook(({ target }) => useCountdown(target), {
-      initialProps: { target: first },
-    });
+    const { result, rerender } = renderHook(
+      ({ target }) => useCountdown(target),
+      {
+        initialProps: { target: first },
+      },
+    );
     expect(result.current.countdown.days).toBe(1);
 
     rerender({ target: second });

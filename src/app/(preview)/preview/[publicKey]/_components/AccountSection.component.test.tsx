@@ -10,7 +10,11 @@ vi.mock("@/ui/hooks/useBanks", async (importOriginal) => {
 
   return {
     ...hooks,
-    useBanks: () => ({ banks: [] as BanksResponse, isLoading: false, isError: false }),
+    useBanks: () => ({
+      banks: [] as BanksResponse,
+      isLoading: false,
+      isError: false,
+    }),
   };
 });
 

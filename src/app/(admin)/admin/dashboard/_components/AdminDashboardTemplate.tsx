@@ -1,7 +1,15 @@
 import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
 import type { ComponentType } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/ui/components/atoms/card";
-import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
+import {
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 import type { DashboardStats } from "@/core/domain/dashboard";
 import { cn } from "@/core/utils/cn";
 import { formatPriceWithComma } from "@/core/utils/price";
@@ -51,7 +59,10 @@ const AdminDashboardTemplate = ({ stats }: AdminDashboardTemplateProps) => {
       description: "삭제 제외 전체 상품",
       trend:
         stats.productsCreatedThisMonth > 0
-          ? { label: `+${stats.productsCreatedThisMonth}개 이번 달`, direction: "up" }
+          ? {
+              label: `+${stats.productsCreatedThisMonth}개 이번 달`,
+              direction: "up",
+            }
           : null,
     },
     {
@@ -60,7 +71,10 @@ const AdminDashboardTemplate = ({ stats }: AdminDashboardTemplateProps) => {
       value: `₩${formatPriceWithComma(stats.revenueThisMonth)}`,
       description: "이번 달 결제 완료 기준",
       trend: revenueTrend
-        ? { label: `${revenueTrend.label} 지난 달 대비`, direction: revenueTrend.direction }
+        ? {
+            label: `${revenueTrend.label} 지난 달 대비`,
+            direction: revenueTrend.direction,
+          }
         : null,
     },
     {
@@ -69,7 +83,10 @@ const AdminDashboardTemplate = ({ stats }: AdminDashboardTemplateProps) => {
       value: stats.paidOrderCountThisMonth.toLocaleString(),
       description: "이번 달 결제 완료 주문",
       trend: paidOrderTrend
-        ? { label: `${paidOrderTrend.label} 지난 달 대비`, direction: paidOrderTrend.direction }
+        ? {
+            label: `${paidOrderTrend.label} 지난 달 대비`,
+            direction: paidOrderTrend.direction,
+          }
         : null,
     },
     {
@@ -79,7 +96,10 @@ const AdminDashboardTemplate = ({ stats }: AdminDashboardTemplateProps) => {
       description: "탈퇴 제외 가입 회원",
       trend:
         stats.usersCreatedThisMonth > 0
-          ? { label: `+${stats.usersCreatedThisMonth}명 이번 달`, direction: "up" }
+          ? {
+              label: `+${stats.usersCreatedThisMonth}명 이번 달`,
+              direction: "up",
+            }
           : null,
     },
   ];
@@ -108,7 +128,10 @@ const AdminDashboardTemplate = ({ stats }: AdminDashboardTemplateProps) => {
               </TypographyMuted>
               {stat.trend && (
                 <TypographySmall
-                  className={cn(TREND_DIRECTION_CLASS[stat.trend.direction], "font-medium")}
+                  className={cn(
+                    TREND_DIRECTION_CLASS[stat.trend.direction],
+                    "font-medium",
+                  )}
                 >
                   {stat.trend.label}
                 </TypographySmall>

@@ -13,7 +13,10 @@ describe("AdminListHeading", () => {
 
   it("subtitle을 지정하면 함께 표시한다", () => {
     render(
-      <AdminListHeading title="상품 목록" subtitle="등록된 템플릿 상품을 관리합니다." />,
+      <AdminListHeading
+        title="상품 목록"
+        subtitle="등록된 템플릿 상품을 관리합니다."
+      />,
     );
 
     expect(

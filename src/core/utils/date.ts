@@ -34,10 +34,7 @@ const calculateCountdown = ({
   };
 };
 
-const updateCountdownMessage = (
-  weddingDate: Date,
-  now?: Date,
-): string => {
+const updateCountdownMessage = (weddingDate: Date, now?: Date): string => {
   const { days, hours, minutes } = getTimeDiff(weddingDate, now);
 
   if (days > 0) return `결혼식까지 ${days}일 남았습니다`;
@@ -51,9 +48,15 @@ const updateCountdownMessage = (
 const getKstMonthRange = (now: Date = new Date()) => {
   const zoned = toZonedTime(now, "Asia/Seoul");
   return {
-    startOfLastMonth: fromZonedTime(startOfMonth(subMonths(zoned, 1)), "Asia/Seoul"),
+    startOfLastMonth: fromZonedTime(
+      startOfMonth(subMonths(zoned, 1)),
+      "Asia/Seoul",
+    ),
     startOfThisMonth: fromZonedTime(startOfMonth(zoned), "Asia/Seoul"),
-    startOfNextMonth: fromZonedTime(startOfMonth(addMonths(zoned, 1)), "Asia/Seoul"),
+    startOfNextMonth: fromZonedTime(
+      startOfMonth(addMonths(zoned, 1)),
+      "Asia/Seoul",
+    ),
   };
 };
 

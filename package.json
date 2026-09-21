@@ -6,6 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:barrels": "node scripts/check-no-barrels.mjs",
     "lint:component-shape": "node scripts/check-component-tier-shape.mjs",

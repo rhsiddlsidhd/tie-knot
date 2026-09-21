@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { MOBILE_INVITATION_THEMES, MOBILE_INVITATION_THEME_LABELS } from "@/core/domain/theme";
+import {
+  MOBILE_INVITATION_THEMES,
+  MOBILE_INVITATION_THEME_LABELS,
+} from "@/core/domain/theme";
 import { getMobileInvitationThemeOptions } from "./theme";
 
 describe("getMobileInvitationThemeOptions", () => {
@@ -13,7 +16,9 @@ describe("getMobileInvitationThemeOptions", () => {
   });
 
   it("테마 상수에 정의된 개수만큼 옵션을 만든다", () => {
-    expect(getMobileInvitationThemeOptions()).toHaveLength(MOBILE_INVITATION_THEMES.length);
+    expect(getMobileInvitationThemeOptions()).toHaveLength(
+      MOBILE_INVITATION_THEMES.length,
+    );
   });
 
   it("label은 테마 라벨 상수에서 가져온다", () => {

@@ -1,10 +1,15 @@
-
 import * as React from "react";
 import { Command as CommandPrimitive } from "cmdk";
 import { SearchIcon } from "lucide-react";
 
 import { cn } from "@/core/utils/cn";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/atoms/dialog";
 function Command({
   className,
   ...props

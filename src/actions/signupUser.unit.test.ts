@@ -27,7 +27,10 @@ describe("signupUser", () => {
   });
 
   it("이메일 형식이 올바르지 않으면 VALIDATION 오류를 반환하고 서비스를 호출하지 않는다", async () => {
-    const result = await signupUser(null, buildFormData({ email: "invalid-email" }));
+    const result = await signupUser(
+      null,
+      buildFormData({ email: "invalid-email" }),
+    );
 
     expect(result).toEqual({
       success: false,

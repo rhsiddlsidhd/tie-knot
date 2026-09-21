@@ -11,9 +11,12 @@ vi.mock("@/ui/stores/use-app-store", () => ({
 vi.mock("@/app/(admin)/admin/products/_containers/ProductEditDialog", () => ({
   ProductEditDialog: () => <div>product-edit-dialog</div>,
 }));
-vi.mock("@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog", () => ({
-  PremiumFeatureDialog: () => <div>premium-feature-dialog</div>,
-}));
+vi.mock(
+  "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog",
+  () => ({
+    PremiumFeatureDialog: () => <div>premium-feature-dialog</div>,
+  }),
+);
 
 import { AdminModal } from "./AdminModal";
 
@@ -25,8 +28,16 @@ type State = {
 };
 
 const mockState = (state: Partial<State>) => {
-  const full: State = { isOpen: true, type: null, props: {}, closeModal: vi.fn(), ...state };
-  useAdminModalStoreMock.mockImplementation((selector: (s: State) => unknown) => selector(full));
+  const full: State = {
+    isOpen: true,
+    type: null,
+    props: {},
+    closeModal: vi.fn(),
+    ...state,
+  };
+  useAdminModalStoreMock.mockImplementation((selector: (s: State) => unknown) =>
+    selector(full),
+  );
 };
 
 describe("AdminModal", () => {

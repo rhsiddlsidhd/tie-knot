@@ -1,5 +1,5 @@
 {
-  "$comment": "공통 TDD gate 강제 대상에서 제외할 소스 glob. 원본은 각 AGENTS.md 이며 이 파일은 사본이다.",
+  "$comment": "공통 TDD gate 강제 대상에서 제외할 소스 glob. 원본은 각 AGENTS.md 이며 이 파일은 사본이다. Route Group migration에서 behavior를 소유하지 않는 entry/layout/loading/error와 기존 조합 wrapper는 child·integration 테스트가 책임지므로 명시 경로만 예외로 둔다.",
   "exclude": [
     "**/*.d.ts",
     "**/*.md",
@@ -14,6 +14,18 @@
     "src/ui/stores/use-app-store.ts",
     "src/ui/context/*/provider.tsx",
     "src/ui/components/*/*/index.ts",
-    "src/ui/components/atoms/**"
+    "src/ui/components/atoms/**",
+    "src/app/**/page.tsx",
+    "src/app/**/layout.tsx",
+    "src/app/**/loading.tsx",
+    "src/app/**/error.tsx",
+    "src/app/\\(account\\)/my-orders/_components/MyOrdersTemplate.tsx",
+    "src/app/\\(account\\)/my-orders/_components/OrderFilters.tsx",
+    "src/app/\\(account\\)/my-profile/_components/MyProfileTemplate.tsx",
+    "src/app/\\(checkout\\)/_components/PageTitle.tsx",
+    "src/app/\\(checkout\\)/_containers/OrderSummary.tsx",
+    "src/app/\\(public\\)/_components/IndicatorCarousel.tsx",
+    "src/app/\\(public\\)/_hooks/useAutoplayCarousel.ts",
+    "src/app/\\(public\\)/products/\\[category\\]/_components/ProductCatalogTemplate.tsx"
   ]
 }

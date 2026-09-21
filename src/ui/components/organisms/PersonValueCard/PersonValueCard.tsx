@@ -1,6 +1,9 @@
 import { Badge } from "@/ui/components/atoms/badge";
 import { Card } from "@/ui/components/atoms/card";
-import { TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyLarge,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { ClipboardButton } from "../ClipboardButton";
 
 interface PersonValueCardProps {
@@ -43,14 +46,16 @@ const PersonValueCard = ({
           >
             {relation}
           </Badge>
-          <TypographyLarge className="text-sm [word-break:keep-all] font-bold sm:text-lg">
+          <TypographyLarge className="text-sm font-bold [word-break:keep-all] sm:text-lg">
             {name}
           </TypographyLarge>
-          {subLabel && <TypographyMuted className="text-sm">{subLabel}</TypographyMuted>}
+          {subLabel && (
+            <TypographyMuted className="text-sm">{subLabel}</TypographyMuted>
+          )}
         </div>
 
         <div className="flex min-w-0 items-center justify-end gap-1 sm:gap-2">
-          <TypographyLarge className="whitespace-nowrap text-right font-mono text-[11px] tracking-tighter sm:text-base">
+          <TypographyLarge className="text-right font-mono text-[11px] tracking-tighter whitespace-nowrap sm:text-base">
             {value}
           </TypographyLarge>
           <ClipboardButton
@@ -62,6 +67,6 @@ const PersonValueCard = ({
       </div>
     </Card>
   );
-}
+};
 
 export { PersonValueCard };

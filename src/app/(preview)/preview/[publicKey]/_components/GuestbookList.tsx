@@ -23,7 +23,10 @@ const GuestbookList = ({
   onDeleteClick,
 }: GuestbookListProps) => {
   return (
-    <div ref={scrollContainerRef} className="scrollbar-hide max-h-[480px] overflow-y-auto">
+    <div
+      ref={scrollContainerRef}
+      className="scrollbar-hide max-h-[480px] overflow-y-auto"
+    >
       <ul className="space-y-4 py-2">
         {status === "ready" && items.length === 0 && (
           <li className="text-muted-foreground py-6 text-center">
@@ -70,6 +73,6 @@ const GuestbookList = ({
       </ul>
     </div>
   );
-}
+};
 
 export { GuestbookList };

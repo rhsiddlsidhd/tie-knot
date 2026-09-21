@@ -32,7 +32,7 @@ const renderWithStore = () => {
     </StoreProvider>,
   );
   return { ...utils, testStore };
-}
+};
 
 describe("MobileInvitationMessage", () => {
   it("각 party의 이름과 부모 정보를 렌더링한다", () => {

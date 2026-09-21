@@ -2,7 +2,15 @@
 // 커서 기반 무한스크롤로 불러온다. 이 파일은 그 hook→SWR→fetch→MSW 경계를 실제로
 // 관통시켜 (1) 첫 페이지 렌더, (2) 교차 관찰 트리거 시 다음 커서 페이지 병합,
 // (3) 작성/삭제 모달이 닫힐 때 전체 페이지 재검증이 실제로 일어나는지 검증한다.
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
 import { act, render, screen } from "@testing-library/react";
 import { SWRConfig } from "swr";
 import { http, HttpResponse } from "msw";

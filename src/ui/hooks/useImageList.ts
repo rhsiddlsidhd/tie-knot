@@ -55,6 +55,6 @@ const useImageList = (defaultUrls?: string[]) => {
   const reset = useCallback(() => setItems([]), []);
 
   return { items, add, remove, getUrls, reset };
-}
+};
 
 export { useImageList, type ImageItem };

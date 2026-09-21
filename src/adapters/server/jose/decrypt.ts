@@ -32,6 +32,6 @@ const decrypt = async (
     }
     throw error;
   }
-}
+};
 
 export { decrypt };

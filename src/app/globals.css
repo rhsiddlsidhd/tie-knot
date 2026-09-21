@@ -145,106 +145,106 @@
    리브랜딩되더라도 이미 발행된 청첩장 외관은 흔들리면 안 된다 — 그래서 :root를
    그냥 상속받게 두지 않고 이 시점의 값을 명시적으로 박아넣는다(blossom과 동일 패턴). */
 [data-theme="default"] {
-  --background:           #faf6f1;
-  --foreground:           #3a342e;
-  --card:                 #ffffff;
-  --card-foreground:      #3a342e;
-  --popover:              #ffffff;
-  --popover-foreground:   #3a342e;
-  --muted:                #efe7dc;
-  --muted-foreground:     #8a7f72;
-  --primary:              #aa6147;
-  --primary-foreground:   #ffffff;
-  --secondary:            #f0e6da;
+  --background: #faf6f1;
+  --foreground: #3a342e;
+  --card: #ffffff;
+  --card-foreground: #3a342e;
+  --popover: #ffffff;
+  --popover-foreground: #3a342e;
+  --muted: #efe7dc;
+  --muted-foreground: #8a7f72;
+  --primary: #aa6147;
+  --primary-foreground: #ffffff;
+  --secondary: #f0e6da;
   --secondary-foreground: #3a342e;
-  --accent:               #e8ddd0;
-  --accent-foreground:    #3a342e;
-  --border:               #e3d8c9;
-  --input:                #e3d8c9;
-  --ring:                 #c68868;
-  --success:              #3f7d52;
-  --success-foreground:   #ffffff;
-  --info:                 #3b6e8f;
-  --info-foreground:      #ffffff;
-  --warning:              #a05f0a;
-  --warning-foreground:   #ffffff;
+  --accent: #e8ddd0;
+  --accent-foreground: #3a342e;
+  --border: #e3d8c9;
+  --input: #e3d8c9;
+  --ring: #c68868;
+  --success: #3f7d52;
+  --success-foreground: #ffffff;
+  --info: #3b6e8f;
+  --info-foreground: #ffffff;
+  --warning: #a05f0a;
+  --warning-foreground: #ffffff;
 }
 
 /* ── Blossom Theme (벚꽃) ── */
 [data-theme="blossom"] {
-  --background:           #fff8f7;
-  --foreground:           #4a2d35;
-  --card:                 #fffdfc;
-  --card-foreground:      #4a2d35;
-  --popover:              #fffdfc;
-  --popover-foreground:   #4a2d35;
-  --muted:                #f5ecec;
-  --muted-foreground:     #80656c;
-  --primary:              #b84f69;
-  --primary-foreground:   #ffffff;
-  --secondary:            #f7e4e8;
+  --background: #fff8f7;
+  --foreground: #4a2d35;
+  --card: #fffdfc;
+  --card-foreground: #4a2d35;
+  --popover: #fffdfc;
+  --popover-foreground: #4a2d35;
+  --muted: #f5ecec;
+  --muted-foreground: #80656c;
+  --primary: #b84f69;
+  --primary-foreground: #ffffff;
+  --secondary: #f7e4e8;
   --secondary-foreground: #5b3540;
-  --accent:               #efd0d8;
-  --accent-foreground:    #5b3540;
-  --border:               #e9cdd3;
-  --input:                #e9cdd3;
-  --ring:                 #b84f69;
+  --accent: #efd0d8;
+  --accent-foreground: #5b3540;
+  --border: #e9cdd3;
+  --input: #e9cdd3;
+  --ring: #b84f69;
 
-  --blossom-pink:         #d77f94;
-  --blossom-light:        #f9e9ec;
-  --blossom-gold:         #b99a64;
+  --blossom-pink: #d77f94;
+  --blossom-light: #f9e9ec;
+  --blossom-gold: #b99a64;
 }
 
 /* ── Botanical Theme (세이지 그린) ── */
 [data-theme="botanical"] {
-  --background:           #f6f7f0;
-  --foreground:           #30382c;
-  --card:                 #fbfcf8;
-  --card-foreground:      #30382c;
-  --popover:              #fbfcf8;
-  --popover-foreground:   #30382c;
-  --muted:                #edf0e7;
-  --muted-foreground:     #687162;
-  --primary:              #68785b;
-  --primary-foreground:   #ffffff;
-  --secondary:            #e3e8dc;
+  --background: #f6f7f0;
+  --foreground: #30382c;
+  --card: #fbfcf8;
+  --card-foreground: #30382c;
+  --popover: #fbfcf8;
+  --popover-foreground: #30382c;
+  --muted: #edf0e7;
+  --muted-foreground: #687162;
+  --primary: #68785b;
+  --primary-foreground: #ffffff;
+  --secondary: #e3e8dc;
   --secondary-foreground: #35402f;
-  --accent:               #d8e0d0;
-  --accent-foreground:    #35402f;
-  --border:               #ccd5c5;
-  --input:                #ccd5c5;
-  --ring:                 #68785b;
+  --accent: #d8e0d0;
+  --accent-foreground: #35402f;
+  --border: #ccd5c5;
+  --input: #ccd5c5;
+  --ring: #68785b;
 
-  --botanical-green:      #7f9270;
-  --botanical-light:      #e8ede2;
-  --botanical-gold:       #a99467;
+  --botanical-green: #7f9270;
+  --botanical-light: #e8ede2;
+  --botanical-gold: #a99467;
 }
 
 /* ── Midnight Theme (네이비 골드) ── */
 [data-theme="midnight"] {
-  --background:           #171b29;
-  --foreground:           #f5f0e8;
-  --card:                 #202534;
-  --card-foreground:      #f5f0e8;
-  --popover:              #202534;
-  --popover-foreground:   #f5f0e8;
-  --muted:                #292e40;
-  --muted-foreground:     #b8b2a8;
-  --primary:              #c9a96e;
-  --primary-foreground:   #171b29;
-  --secondary:            #292e40;
+  --background: #171b29;
+  --foreground: #f5f0e8;
+  --card: #202534;
+  --card-foreground: #f5f0e8;
+  --popover: #202534;
+  --popover-foreground: #f5f0e8;
+  --muted: #292e40;
+  --muted-foreground: #b8b2a8;
+  --primary: #c9a96e;
+  --primary-foreground: #171b29;
+  --secondary: #292e40;
   --secondary-foreground: #f5f0e8;
-  --accent:               #343a4f;
-  --accent-foreground:    #f5f0e8;
-  --border:               #3c4357;
-  --input:                #3c4357;
-  --ring:                 #c9a96e;
+  --accent: #343a4f;
+  --accent-foreground: #f5f0e8;
+  --border: #3c4357;
+  --input: #3c4357;
+  --ring: #c9a96e;
 
-  --midnight-gold:        #c9a96e;
-  --midnight-navy:        #202534;
-  --midnight-light:       #f5f0e8;
-  --midnight-deep:        #0a0d16;
-  --midnight-haze:        #4a5b95;
+  --midnight-gold: #c9a96e;
+  --midnight-navy: #202534;
+  --midnight-light: #f5f0e8;
+  --midnight-deep: #0a0d16;
+  --midnight-haze: #4a5b95;
 }
 
 /* Calendar: D-day 하이라이트 + 주말 색상 */

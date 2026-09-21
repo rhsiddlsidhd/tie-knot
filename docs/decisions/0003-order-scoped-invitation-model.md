@@ -2,7 +2,7 @@
 
 - 상태: Accepted
 - 결정일: 2026-08-19
-- 적용 범위: `src/models/`, `src/app/(preview)/`, `src/app/(main)/(my-order)/`, `src/app/api/guestbook/`
+- 적용 범위: `src/models/`, `src/app/(preview)/`, `src/app/(account)/my-orders/`, `src/app/api/guestbook/`
 
 ## 맥락
 

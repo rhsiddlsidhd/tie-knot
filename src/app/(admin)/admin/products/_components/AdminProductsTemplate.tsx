@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/atoms/button";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyTitle,
-} from "@/ui/components/atoms/empty";
+import { Empty, EmptyHeader, EmptyTitle } from "@/ui/components/atoms/empty";
 import { TableRow, TableCell } from "@/ui/components/atoms/table";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";

@@ -1,25 +1,25 @@
 "use client";
 
-import * as React from "react"
+import * as React from "react";
 
-const MOBILE_BREAKPOINT = 768
+const MOBILE_BREAKPOINT = 768;
 
 const subscribe = (onChange: () => void) => {
-  const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-  mql.addEventListener("change", onChange)
-  return () => mql.removeEventListener("change", onChange)
-}
+  const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+  mql.addEventListener("change", onChange);
+  return () => mql.removeEventListener("change", onChange);
+};
 
 const getSnapshot = () => {
-  return window.innerWidth < MOBILE_BREAKPOINT
-}
+  return window.innerWidth < MOBILE_BREAKPOINT;
+};
 
 const getServerSnapshot = () => {
-  return false
-}
+  return false;
+};
 
 const useIsMobile = () => {
-  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-}
+  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+};
 
 export { useIsMobile };

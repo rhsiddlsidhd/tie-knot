@@ -7,11 +7,19 @@ const ONE_MINUTE = 60;
 
 describe("encrypt", () => {
   it("REFRESH 토큰은 JWT_ENCODED_KEY로 서명하고 id·role과 7일 만료를 담는다", async () => {
-    const token = await encrypt({ type: "REFRESH", id: "user-1", role: "USER" });
-
-    const { payload, protectedHeader } = await jwtVerify(token, JWT_ENCODED_KEY, {
-      algorithms: ["HS256"],
+    const token = await encrypt({
+      type: "REFRESH",
+      id: "user-1",
+      role: "USER",
     });
+
+    const { payload, protectedHeader } = await jwtVerify(
+      token,
+      JWT_ENCODED_KEY,
+      {
+        algorithms: ["HS256"],
+      },
+    );
 
     expect(protectedHeader.alg).toBe("HS256");
     expect(payload.id).toBe("user-1");
@@ -58,7 +66,11 @@ describe("encrypt", () => {
   });
 
   it("REFRESH 토큰은 ENTRY_ENCODED_KEY로 검증할 수 없다", async () => {
-    const token = await encrypt({ type: "REFRESH", id: "user-1", role: "USER" });
+    const token = await encrypt({
+      type: "REFRESH",
+      id: "user-1",
+      role: "USER",
+    });
 
     await expect(
       jwtVerify(token, ENTRY_ENCODED_KEY, { algorithms: ["HS256"] }),

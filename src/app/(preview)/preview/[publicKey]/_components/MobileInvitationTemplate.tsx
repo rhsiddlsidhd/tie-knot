@@ -48,7 +48,9 @@ const MobileInvitationTemplate = ({
         <div className="relative [grid-area:1/1]">
           <InteractionOverlay theme={theme} />
           <HeroSection {...mapCoupleInfoToHeroProps(content)} />
-          <MobileInvitationMessage {...mapCoupleInfoToMobileInvitationProps(content)} />
+          <MobileInvitationMessage
+            {...mapCoupleInfoToMobileInvitationProps(content)}
+          />
           <WeddingMonthCalendar {...mapCoupleInfoToCalendarProps(content)} />
           <GallerySection
             {...mapCoupleInfoToGalleryProps(
@@ -77,6 +79,6 @@ const MobileInvitationTemplate = ({
       </div>
     </div>
   );
-}
+};
 
 export { MobileInvitationTemplate };

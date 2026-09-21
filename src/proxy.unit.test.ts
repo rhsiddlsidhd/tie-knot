@@ -25,7 +25,11 @@ describe("proxy", () => {
     });
 
     it("token이 유효하면 통과시킨다", async () => {
-      const token = await encrypt({ id: "user-1", role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: "user-1",
+        role: "USER",
+        type: "REFRESH",
+      });
 
       const res = await proxy(buildRequest("/my-orders", token));
 
@@ -40,6 +44,12 @@ describe("proxy", () => {
   });
 
   describe("admin 라우트", () => {
+    it("/admin 진입점도 인증 없이 접근할 수 없다", async () => {
+      const res = await proxy(buildRequest("/admin"));
+
+      expect(redirectsTo(res, "/login")).toBe(true);
+    });
+
     it("token이 없으면 /login으로 리다이렉트한다", async () => {
       const res = await proxy(buildRequest("/admin/dashboard"));
 
@@ -47,7 +57,11 @@ describe("proxy", () => {
     });
 
     it("role이 ADMIN이 아니면 /로 리다이렉트한다", async () => {
-      const token = await encrypt({ id: "user-1", role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: "user-1",
+        role: "USER",
+        type: "REFRESH",
+      });
 
       const res = await proxy(buildRequest("/admin/dashboard", token));
 
@@ -55,11 +69,23 @@ describe("proxy", () => {
     });
 
     it("role이 ADMIN이면 통과시킨다", async () => {
-      const token = await encrypt({ id: "admin-1", role: "ADMIN", type: "REFRESH" });
+      const token = await encrypt({
+        id: "admin-1",
+        role: "ADMIN",
+        type: "REFRESH",
+      });
 
       const res = await proxy(buildRequest("/admin/dashboard", token));
 
       expect(isNext(res)).toBe(true);
+    });
+  });
+
+  describe("결제 라우트", () => {
+    it("결제 성공 콜백도 인증 없이 접근할 수 없다", async () => {
+      const res = await proxy(buildRequest("/payment/success"));
+
+      expect(redirectsTo(res, "/login")).toBe(true);
     });
   });
 
@@ -71,7 +97,11 @@ describe("proxy", () => {
     });
 
     it("이미 로그인한 유저는 /로 리다이렉트한다", async () => {
-      const token = await encrypt({ id: "user-1", role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: "user-1",
+        role: "USER",
+        type: "REFRESH",
+      });
 
       const res = await proxy(buildRequest("/login", token));
 

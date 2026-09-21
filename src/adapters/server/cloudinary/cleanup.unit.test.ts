@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 
-const { destroy, config } = vi.hoisted(() => ({ destroy: vi.fn(), config: vi.fn() }));
+const { destroy, config } = vi.hoisted(() => ({
+  destroy: vi.fn(),
+  config: vi.fn(),
+}));
 vi.mock("cloudinary", () => ({ v2: { config, uploader: { destroy } } }));
 
 import { deleteProductAsset } from "./cleanup";
@@ -20,8 +23,10 @@ describe("deleteProductAsset", () => {
   it("Cloudinary 삭제 실패를 EXTERNAL_SERVICE로 전파한다", async () => {
     destroy.mockResolvedValue({ result: "failed" });
 
-    await expect(deleteProductAsset("products/images/a")).rejects.toMatchObject({
-      category: "EXTERNAL_SERVICE",
-    });
+    await expect(deleteProductAsset("products/images/a")).rejects.toMatchObject(
+      {
+        category: "EXTERNAL_SERVICE",
+      },
+    );
   });
 });

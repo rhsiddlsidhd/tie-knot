@@ -39,9 +39,7 @@ const UsersPage = async ({
   const { q, role, cursor } = resolveFilters(await searchParams);
   const page = await getAdminUsersPageService({ q, role, cursor });
 
-  return (
-    <AdminUsersTemplate page={page} q={q} role={role} cursor={cursor} />
-  );
+  return <AdminUsersTemplate page={page} q={q} role={role} cursor={cursor} />;
 };
 
 export default UsersPage;

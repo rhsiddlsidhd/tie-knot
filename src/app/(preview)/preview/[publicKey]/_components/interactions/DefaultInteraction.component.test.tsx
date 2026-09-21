@@ -11,11 +11,13 @@ import { DefaultInteraction } from "./DefaultInteraction";
 const createMotionValue = (initial: number) => {
   const { result } = renderHook(() => useMotionValue(initial));
   return result.current;
-}
+};
 
 const getGlow = (container: HTMLElement) => {
-  return container.querySelector('[style*="radial-gradient"]') as HTMLElement | null;
-}
+  return container.querySelector(
+    '[style*="radial-gradient"]',
+  ) as HTMLElement | null;
+};
 
 describe("DefaultInteraction", () => {
   it("커서 좌표를 중심으로 spotlight glow를 배치한다", () => {

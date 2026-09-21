@@ -61,6 +61,6 @@ const filterReducer = (
     default:
       return state;
   }
-}
+};
 
 export { initialFilterState, filterReducer };

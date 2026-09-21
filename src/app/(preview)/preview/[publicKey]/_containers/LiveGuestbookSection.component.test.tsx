@@ -57,7 +57,7 @@ const mockSwrInfinite = (data: GuestbookListResponse[] | undefined) => {
     isValidating: false,
     mutate: vi.fn(),
   });
-}
+};
 
 describe("LiveGuestbookSection", () => {
   beforeEach(() => {

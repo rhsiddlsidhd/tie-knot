@@ -9,7 +9,9 @@ describe("RatingStars", () => {
     const { container } = render(<RatingStars value={3} />);
 
     expect(screen.queryAllByRole("button")).toHaveLength(0);
-    expect(container.querySelector('[aria-label="평점 3점"]')).toBeInTheDocument();
+    expect(
+      container.querySelector('[aria-label="평점 3점"]'),
+    ).toBeInTheDocument();
   });
 
   it("onChange가 있으면 별마다 클릭 가능한 버튼을 표시한다", () => {

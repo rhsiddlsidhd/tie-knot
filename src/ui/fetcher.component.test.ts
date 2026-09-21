@@ -12,7 +12,9 @@ describe("fetcher", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ success: true, data }), { status: 200 }),
+        new Response(JSON.stringify({ success: true, data }), {
+          status: 200,
+        }),
       ),
     );
 
@@ -27,7 +29,9 @@ describe("fetcher", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ success: false, error }), { status: 404 }),
+        new Response(JSON.stringify({ success: false, error }), {
+          status: 404,
+        }),
       ),
     );
 
@@ -43,7 +47,9 @@ describe("fetcher", () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ success: false, error }), { status: 400 }),
+        new Response(JSON.stringify({ success: false, error }), {
+          status: 400,
+        }),
       ),
     );
 

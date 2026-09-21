@@ -9,7 +9,9 @@ describe("writeText", () => {
 
   it("navigator.clipboard에 텍스트를 위임한다", async () => {
     const clipboardWriteText = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("navigator", { clipboard: { writeText: clipboardWriteText } });
+    vi.stubGlobal("navigator", {
+      clipboard: { writeText: clipboardWriteText },
+    });
 
     await writeText("복사할 텍스트");
 

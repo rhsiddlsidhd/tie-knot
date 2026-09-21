@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { filterReducer, initialFilterState } from "./reducer";
 import type { ProductFilterState } from "./type";
 
-const buildState = (overrides: Partial<ProductFilterState> = {}): ProductFilterState => ({
+const buildState = (
+  overrides: Partial<ProductFilterState> = {},
+): ProductFilterState => ({
   ...initialFilterState,
   ...overrides,
 });
@@ -11,7 +13,10 @@ describe("filterReducer", () => {
   it("CHANGE_KEYWORD는 keyword만 갱신하고 나머지 필드는 유지한다", () => {
     const state = buildState({ sortBy: "POPULAR" });
 
-    const result = filterReducer(state, { type: "CHANGE_KEYWORD", payload: "청첩장" });
+    const result = filterReducer(state, {
+      type: "CHANGE_KEYWORD",
+      payload: "청첩장",
+    });
 
     expect(result).toEqual({ ...state, keyword: "청첩장" });
   });
@@ -35,7 +40,10 @@ describe("filterReducer", () => {
   it("SELECT_SORT_BY는 sortBy를 갱신한다", () => {
     const state = buildState({ sortBy: "ALL" });
 
-    const result = filterReducer(state, { type: "SELECT_SORT_BY", payload: "POPULAR" });
+    const result = filterReducer(state, {
+      type: "SELECT_SORT_BY",
+      payload: "POPULAR",
+    });
 
     expect(result.sortBy).toBe("POPULAR");
   });
@@ -43,7 +51,10 @@ describe("filterReducer", () => {
   it("SELECT_PRICE는 price를 갱신한다", () => {
     const state = buildState({ price: "ALL" });
 
-    const result = filterReducer(state, { type: "SELECT_PRICE", payload: "UNDER-10k" });
+    const result = filterReducer(state, {
+      type: "SELECT_PRICE",
+      payload: "UNDER-10k",
+    });
 
     expect(result.price).toBe("UNDER-10k");
   });
@@ -77,7 +88,10 @@ describe("filterReducer", () => {
       premiumFeat: ["gold-foil"],
     });
 
-    const result = filterReducer(state, { type: "CLEAR_DETAIL_FILTER", payload: null });
+    const result = filterReducer(state, {
+      type: "CLEAR_DETAIL_FILTER",
+      payload: null,
+    });
 
     expect(result).toEqual({
       ...state,
@@ -103,10 +117,7 @@ describe("filterReducer", () => {
   it("알 수 없는 action type이면 상태를 그대로 반환한다", () => {
     const state = buildState({ keyword: "청첩장" });
 
-    const result = filterReducer(
-      state,
-      { type: "UNKNOWN_ACTION" } as never,
-    );
+    const result = filterReducer(state, { type: "UNKNOWN_ACTION" } as never);
 
     expect(result).toBe(state);
   });

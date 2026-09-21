@@ -1,7 +1,9 @@
 <!-- BEGIN:nextjs-agent-rules -->
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+
 <!-- END:nextjs-agent-rules -->
 
 ---
@@ -9,7 +11,6 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## 프로젝트 개요
 
 웨딩 관련 상품을 취급하는 이커머스 플랫폼. 모바일 청첩장 템플릿을 시작으로, 답례품·웨딩 소품·방명록 굿즈·예식 용품 등 결혼 준비 과정에서 필요한 상품군으로 확장 가능한 구조를 지향한다.
-
 
 ## Shared Skills
 

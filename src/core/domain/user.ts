@@ -15,4 +15,9 @@ type AdminUserListItem = {
 
 type AdminUserListPage = CursorPage<AdminUserListItem>;
 
-export { USER_ROLES, type UserRole, type AdminUserListItem, type AdminUserListPage };
+export {
+  USER_ROLES,
+  type UserRole,
+  type AdminUserListItem,
+  type AdminUserListPage,
+};

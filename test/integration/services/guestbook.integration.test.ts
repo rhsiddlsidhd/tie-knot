@@ -50,7 +50,9 @@ describe("guestbook", () => {
     const result = await createGuestbookService({ data: input });
 
     expect(result.author).toBe(input.author);
-    expect(result.mobileInvitationId.toString()).toBe(invitation._id.toString());
+    expect(result.mobileInvitationId.toString()).toBe(
+      invitation._id.toString(),
+    );
   });
 
   it("draft 청첩장에는 방명록을 생성하지 않는다", async () => {

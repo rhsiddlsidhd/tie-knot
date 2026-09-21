@@ -26,7 +26,11 @@ describe("useProductSearch", () => {
 
     const { result } = renderHook(() => useProductSearch(""));
 
-    expect(useSWRMock).toHaveBeenCalledWith(null, expect.any(Function), swrOptions);
+    expect(useSWRMock).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      swrOptions,
+    );
     expect(result.current.isIdle).toBe(true);
     expect(result.current.products).toBeUndefined();
   });
@@ -41,7 +45,11 @@ describe("useProductSearch", () => {
 
     const { result } = renderHook(() => useProductSearch("   "));
 
-    expect(useSWRMock).toHaveBeenCalledWith(null, expect.any(Function), swrOptions);
+    expect(useSWRMock).toHaveBeenCalledWith(
+      null,
+      expect.any(Function),
+      swrOptions,
+    );
     expect(result.current.isIdle).toBe(true);
   });
 

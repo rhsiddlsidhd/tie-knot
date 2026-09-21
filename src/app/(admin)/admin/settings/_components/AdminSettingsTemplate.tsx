@@ -12,8 +12,16 @@ import {
   FieldDescription,
 } from "@/ui/components/atoms/field";
 import { Switch } from "@/ui/components/atoms/switch";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
-import { TypographyH1, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/ui/components/atoms/tabs";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 const notifyPreparing = () =>
   toast.message("설정 저장 기능은 준비 중입니다 — 실제로 저장되지 않습니다.");

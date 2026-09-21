@@ -8,7 +8,7 @@ const mockResponse = (status: number, ok: boolean, body: string): Response => {
     status,
     text: async () => body,
   } as Response;
-}
+};
 
 describe("fetchBanks", () => {
   beforeEach(() => {

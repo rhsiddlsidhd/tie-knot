@@ -14,7 +14,7 @@ const signToken = (
     .setIssuedAt()
     .setExpirationTime(expirationTime)
     .sign(key);
-}
+};
 
 describe("decrypt", () => {
   it("REFRESH 토큰이 유효하면 JWT_ENCODED_KEY로 검증해 payload를 반환한다", async () => {
@@ -59,8 +59,8 @@ describe("decrypt", () => {
       role: "USER",
     });
 
-    await expect(
-      decrypt({ token, type: "ENTRY" }),
-    ).rejects.not.toBeInstanceOf(AppError);
+    await expect(decrypt({ token, type: "ENTRY" })).rejects.not.toBeInstanceOf(
+      AppError,
+    );
   });
 });

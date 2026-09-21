@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import type { MotionValue } from "motion/react";
 
 const BLOSSOM_PETALS = [
@@ -50,7 +55,7 @@ const BlossomAmbience = () => {
       ))}
     </div>
   );
-}
+};
 
 // z(translateZ)가 음수로 클수록 perspective 투영상 더 멀리 있는 별이다 —
 // 브라우저가 원근에 맞춰 자동으로 작게 그려주므로 별도 scale 계산이 없다.
@@ -61,10 +66,38 @@ const BlossomAmbience = () => {
 const MIDNIGHT_STARS = [
   // far
   { size: 1.5, duration: 2.4, delay: 0, z: -240, brightness: 0.45, drift: -25 },
-  { size: 1.5, duration: 3.1, delay: 0.6, z: -240, brightness: 0.45, drift: -25 },
-  { size: 1.5, duration: 2.8, delay: 1.2, z: -240, brightness: 0.45, drift: -25 },
-  { size: 1.5, duration: 2.2, delay: 0.3, z: -240, brightness: 0.45, drift: -25 },
-  { size: 1.5, duration: 3.4, delay: 1.8, z: -240, brightness: 0.45, drift: -25 },
+  {
+    size: 1.5,
+    duration: 3.1,
+    delay: 0.6,
+    z: -240,
+    brightness: 0.45,
+    drift: -25,
+  },
+  {
+    size: 1.5,
+    duration: 2.8,
+    delay: 1.2,
+    z: -240,
+    brightness: 0.45,
+    drift: -25,
+  },
+  {
+    size: 1.5,
+    duration: 2.2,
+    delay: 0.3,
+    z: -240,
+    brightness: 0.45,
+    drift: -25,
+  },
+  {
+    size: 1.5,
+    duration: 3.4,
+    delay: 1.8,
+    z: -240,
+    brightness: 0.45,
+    drift: -25,
+  },
   // mid
   { size: 2, duration: 2.6, delay: 0.9, z: -120, brightness: 0.7, drift: -80 },
   { size: 2, duration: 3, delay: 2.4, z: -120, brightness: 0.7, drift: -80 },
@@ -80,8 +113,11 @@ const MIDNIGHT_STARS = [
 
 // 4%~92% 범위로 제한해 별이 화면 가장자리에서 잘려 보이는 걸 막는다.
 const randomStarPosition = () => {
-  return { top: `${(Math.random() * 88 + 4).toFixed(1)}%`, left: `${(Math.random() * 88 + 4).toFixed(1)}%` };
-}
+  return {
+    top: `${(Math.random() * 88 + 4).toFixed(1)}%`,
+    left: `${(Math.random() * 88 + 4).toFixed(1)}%`,
+  };
+};
 
 // 최초 렌더(SSR)와 클라이언트 hydration은 같은 함수를 같은 입력으로 한 번씩
 // 실행한다 — 그 자리에서 Math.random()을 쓰면 서버/클라이언트가 서로 다른
@@ -94,7 +130,7 @@ const seededStarPosition = (duration: number, delay: number) => {
   const top = (Math.abs(Math.sin(seed)) * 88 + 4).toFixed(1);
   const left = (Math.abs(Math.sin(seed * 1.37)) * 88 + 4).toFixed(1);
   return { top: `${top}%`, left: `${left}%` };
-}
+};
 
 interface StarProps {
   size: number;
@@ -110,8 +146,18 @@ interface StarProps {
 // 한 사이클(opacity가 0으로 꺼지는 순간)이 끝날 때마다 다른 랜덤 좌표로
 // 순간이동시켜, 별이 이곳저곳에서 새로 뜨는 느낌을 준다. top/left는 motion이
 // 아니라 React state로만 바꿔 CSS 트랜지션 없이 즉시 점프하게 한다.
-const MidnightStar = ({ size, duration, delay, z, brightness, drift, scrollYProgress }: StarProps) => {
-  const [position, setPosition] = useState(() => seededStarPosition(duration, delay));
+const MidnightStar = ({
+  size,
+  duration,
+  delay,
+  z,
+  brightness,
+  drift,
+  scrollYProgress,
+}: StarProps) => {
+  const [position, setPosition] = useState(() =>
+    seededStarPosition(duration, delay),
+  );
   // 별마다 z깊이에 비례한 drift를 스크롤에 물려 별마다 다른 속도로 움직이게
   // 한다 — 그룹 전체를 한 속도로 미는 것보다, 가까운 별이 훨씬 빨리 흐르고
   // 먼 별은 거의 안 움직여야 "카메라가 우주를 관통해 지나간다"는 원근감이 산다.
@@ -121,7 +167,10 @@ const MidnightStar = ({ size, duration, delay, z, brightness, drift, scrollYProg
     let intervalId: ReturnType<typeof setInterval> | undefined;
     const timeoutId = setTimeout(() => {
       setPosition(randomStarPosition());
-      intervalId = setInterval(() => setPosition(randomStarPosition()), duration * 1000);
+      intervalId = setInterval(
+        () => setPosition(randomStarPosition()),
+        duration * 1000,
+      );
     }, delay * 1000);
     return () => {
       clearTimeout(timeoutId);
@@ -141,11 +190,14 @@ const MidnightStar = ({ size, duration, delay, z, brightness, drift, scrollYProg
         z,
         y: driftY,
       }}
-      animate={{ opacity: [0.2 * brightness, brightness, 0.2 * brightness], scale: [1, 1.4, 1] }}
+      animate={{
+        opacity: [0.2 * brightness, brightness, 0.2 * brightness],
+        scale: [1, 1.4, 1],
+      }}
       transition={{ duration, delay, repeat: Infinity, ease: "easeInOut" }}
     />
   );
-}
+};
 
 const ShootingStar = () => {
   return (
@@ -165,7 +217,7 @@ const ShootingStar = () => {
       }}
     />
   );
-}
+};
 
 // 블렌드 모드로 콘텐츠 위를 덮어 물들이는 대신(그러면 텍스트/이미지까지 흐려진다),
 // 레이어를 콘텐츠보다 뒤에 둔다 — 섹션이 불투명한 곳은 자연히 가려지고,
@@ -197,7 +249,10 @@ const MidnightAmbience = () => {
           opacity: 0.6,
         }}
       />
-      <div className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
+      <div
+        className="absolute inset-0"
+        style={{ transformStyle: "preserve-3d" }}
+      >
         {MIDNIGHT_STARS.map((star, i) => (
           <MidnightStar
             key={i}
@@ -214,7 +269,7 @@ const MidnightAmbience = () => {
       <ShootingStar />
     </div>
   );
-}
+};
 
 const VINE_WIDTH = 40;
 const VINE_WAVELENGTH = 160;
@@ -239,11 +294,18 @@ interface BraidSegment {
 // 매듭처럼 보인다.
 const strandAt = (y: number, phase: number) => {
   const theta = (y / VINE_WAVELENGTH) * Math.PI * 2 + phase;
-  return { x: VINE_WIDTH / 2 + VINE_AMPLITUDE * Math.sin(theta), depth: Math.cos(theta) };
-}
+  return {
+    x: VINE_WIDTH / 2 + VINE_AMPLITUDE * Math.sin(theta),
+    depth: Math.cos(theta),
+  };
+};
 
 const generateBraid = (height: number) => {
-  if (height <= 0) return { bands: [] as BraidSegment[][], leaves: [] as { x: number; y: number; flip: boolean }[] };
+  if (height <= 0)
+    return {
+      bands: [] as BraidSegment[][],
+      leaves: [] as { x: number; y: number; flip: boolean }[],
+    };
 
   const bands: BraidSegment[][] = [];
   for (let y = 0; y < height; y += VINE_STEP) {
@@ -251,7 +313,14 @@ const generateBraid = (height: number) => {
     const segments = STRAND_PHASES.map((phase, strand) => {
       const p0 = strandAt(y, phase);
       const p1 = strandAt(yEnd, phase);
-      return { strand, x0: p0.x, y0: y, x1: p1.x, y1: yEnd, depth: (p0.depth + p1.depth) / 2 };
+      return {
+        strand,
+        x0: p0.x,
+        y0: y,
+        x1: p1.x,
+        y1: yEnd,
+        depth: (p0.depth + p1.depth) / 2,
+      };
     });
     segments.sort((a, b) => a.depth - b.depth);
     bands.push(segments);
@@ -264,12 +333,14 @@ const generateBraid = (height: number) => {
     const y = Math.min(i * VINE_STEP, height);
     // 그 높이에서 제일 앞에 있는(depth 최대) 줄기에만 잎을 달아 앞줄기를
     // 따라 잎이 돋는 것처럼 보이게 한다.
-    const front = STRAND_PHASES.map((phase) => strandAt(y, phase)).reduce((a, b) => (b.depth > a.depth ? b : a));
+    const front = STRAND_PHASES.map((phase) => strandAt(y, phase)).reduce(
+      (a, b) => (b.depth > a.depth ? b : a),
+    );
     leaves.push({ x: front.x, y, flip: leaves.length % 2 === 0 });
   }
 
   return { bands, leaves };
-}
+};
 
 const BotanicalAmbience = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -302,11 +373,16 @@ const BotanicalAmbience = () => {
       aria-hidden
     >
       {height > 0 && (
-        <BraidStrand height={height} bands={bands} leaves={leaves} revealHeight={revealHeight} />
+        <BraidStrand
+          height={height}
+          bands={bands}
+          leaves={leaves}
+          revealHeight={revealHeight}
+        />
       )}
     </div>
   );
-}
+};
 
 interface BraidStrandProps {
   height: number;
@@ -325,11 +401,16 @@ interface BraidStrandProps {
 // 구간만 clipPath로 선명하게 덧그린다 — 청첩장을 읽어 내려가는 만큼 덩굴이
 // 실제로 자라나 보이는 스크롤 진행 표시다. 자라는 끝 지점엔 펄스하는
 // 새싹 하나를 얹어 "지금 여기까지 읽었다"는 지점을 짚어준다.
-const BraidStrand = ({ height, bands, leaves, revealHeight }: BraidStrandProps) => {
+const BraidStrand = ({
+  height,
+  bands,
+  leaves,
+  revealHeight,
+}: BraidStrandProps) => {
   const clipId = "botanical-braid-reveal";
   const tip = useTransform(revealHeight, (ry) => {
-    const front = STRAND_PHASES.map((phase) => strandAt(ry, phase)).reduce((a, b) =>
-      b.depth > a.depth ? b : a,
+    const front = STRAND_PHASES.map((phase) => strandAt(ry, phase)).reduce(
+      (a, b) => (b.depth > a.depth ? b : a),
     );
     return { x: front.x, y: ry };
   });
@@ -404,7 +485,7 @@ const BraidStrand = ({ height, bands, leaves, revealHeight }: BraidStrandProps) 
       />
     </svg>
   );
-}
+};
 
 // 청첩장 테마별 시그니처 앰비언트 연출 — 낙하(blossom)/스크롤 성장(botanical)/반짝임(midnight)로
 // 메커니즘 자체를 다르게 가서 테마 구분력을 준다(파라미터 변주가 아니라 다른 종류의 모션).
@@ -422,6 +503,6 @@ const ThemeAmbience = ({ theme }: { theme: string }) => {
     default:
       return null;
   }
-}
+};
 
 export { ThemeAmbience };

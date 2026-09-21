@@ -1,0 +1,17 @@
+export const dynamic = "force-dynamic";
+
+import { MyProfileTemplate } from "@/app/(account)/my-profile/_components/MyProfileTemplate";
+import { verifySession, getUser } from "@/services/auth";
+import { redirect } from "next/navigation";
+import { ROUTES } from "@/core/domain/routes";
+
+const page = async () => {
+  const session = await verifySession();
+  const user = await getUser({ id: session.userId });
+  if (!user) return redirect(ROUTES.login);
+  const { email, name, phone } = user;
+
+  return <MyProfileTemplate email={email} name={name} phone={phone} />;
+};
+
+export default page;

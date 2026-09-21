@@ -43,7 +43,10 @@ vi.mock("./useImageList", () => ({
   useImageList: () => ({ getUrls: getUrlsMock }),
 }));
 vi.mock("./useFetchMobileInvitation", () => ({
-  useFetchMobileInvitation: () => ({ data: undefined as unknown, isLoading: false }),
+  useFetchMobileInvitation: () => ({
+    data: undefined as unknown,
+    isLoading: false,
+  }),
 }));
 vi.mock("./useBanks", () => ({ useBanks: () => ({ banks: [] as unknown[] }) }));
 vi.mock("./useSubwayStations", () => ({

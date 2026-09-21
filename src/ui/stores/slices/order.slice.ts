@@ -20,9 +20,7 @@ interface OrderSlice {
   clearResumePayment: () => void;
 }
 
-const createOrderSlice: StateCreator<AppStore, [], [], OrderSlice> = (
-  set,
-) => ({
+const createOrderSlice: StateCreator<AppStore, [], [], OrderSlice> = (set) => ({
   order: null,
   // order 트리거 시점(구매하기/결제하기)과 paymentStatus 트리거 시점(체크아웃 폼 제출)이
   // 서로 달라, 리셋 안 하면 이전 결제 시도의 상태가 새 주문으로 새어 들어간다. 같은 이유로

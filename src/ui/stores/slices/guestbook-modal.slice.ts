@@ -43,4 +43,8 @@ const createGuestbookModalSlice: StateCreator<
   clearIsOpen: () => set({ ...initialGuestbookModalState }),
 });
 
-export { createGuestbookModalSlice, type GuestbookModalType, type GuestbookModalSlice };
+export {
+  createGuestbookModalSlice,
+  type GuestbookModalType,
+  type GuestbookModalSlice,
+};

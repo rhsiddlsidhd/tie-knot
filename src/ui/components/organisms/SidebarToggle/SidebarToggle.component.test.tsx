@@ -33,6 +33,8 @@ describe("SidebarToggle", () => {
       </SidebarProvider>,
     );
 
-    expect(screen.queryByRole("link", { name: "ADMIN" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "ADMIN" }),
+    ).not.toBeInTheDocument();
   });
 });

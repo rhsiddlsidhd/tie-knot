@@ -6,7 +6,8 @@ vi.mock("next/cache", () => ({
 }));
 
 vi.mock("@/services/mobile-invitation", () => ({
-  mobileInvitationCacheTag: (publicKey: string) => `mobile-invitation:${publicKey}`,
+  mobileInvitationCacheTag: (publicKey: string) =>
+    `mobile-invitation:${publicKey}`,
   setMobileInvitationStatusForCurrentUser: vi.fn(),
 }));
 

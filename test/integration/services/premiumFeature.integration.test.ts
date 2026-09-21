@@ -20,10 +20,7 @@ import {
   getPremiumFeatureService,
   updatePremiumFeatureService,
 } from "@/services/premiumFeature";
-import {
-  createProductService,
-  deleteProductService,
-} from "@/services/product";
+import { createProductService, deleteProductService } from "@/services/product";
 import { createOrderService } from "@/services/order";
 
 describe("premiumFeature", () => {
@@ -320,10 +317,7 @@ describe("premiumFeature", () => {
     });
   });
   describe("deletePremiumFeatureService", () => {
-    const createReferencingProduct = async (
-      featureId: string,
-      title: string,
-    ) =>
+    const createReferencingProduct = async (featureId: string, title: string) =>
       createProductService(
         buildProductInput({ title, isPremium: true, featureIds: [featureId] }),
       );
@@ -398,9 +392,7 @@ describe("premiumFeature", () => {
     // 있는 외래키가 아니라 그때의 식별자 기록이다).
     it("과거 주문만 참조하는 기능은 삭제되고 주문 스냅샷은 그대로 남는다", async () => {
       const feature = await createPremiumFeatureService(buildFeatureInput());
-      await createProductService(
-        buildProductInput({ title: "주문된 청첩장" }),
-      );
+      await createProductService(buildProductInput({ title: "주문된 청첩장" }));
       const product = await ProductModel.findOne({
         title: "주문된 청첩장",
       }).lean<{ _id: mongoose.Types.ObjectId }>();

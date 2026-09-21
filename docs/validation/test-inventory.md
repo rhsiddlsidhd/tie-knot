@@ -4,13 +4,13 @@
 
 ## 실행 단위
 
-| 명령 | 파일 | 테스트 | 환경·경계 |
-|---|---:|---:|---|
-| `npm run test:unit` | 20 | 166 | Node, 순수 로직·Action/API 계약 |
-| `npm run test:component` | 89 | 318 | jsdom, UI·Hook·브라우저 Adapter |
-| `npm run test:integration` | 13 | 199 | 실제 MongoDB replica set, 직렬 실행 |
-| `npm test` | 122 | 683 | 전체 Vitest project |
-| `npm run test:e2e` | 1 | 7 | Playwright core 시나리오 |
+| 명령                       | 파일 | 테스트 | 환경·경계                           |
+| -------------------------- | ---: | -----: | ----------------------------------- |
+| `npm run test:unit`        |   20 |    166 | Node, 순수 로직·Action/API 계약     |
+| `npm run test:component`   |   89 |    318 | jsdom, UI·Hook·브라우저 Adapter     |
+| `npm run test:integration` |   13 |    199 | 실제 MongoDB replica set, 직렬 실행 |
+| `npm test`                 |  122 |    683 | 전체 Vitest project                 |
+| `npm run test:e2e`         |    1 |      7 | Playwright core 시나리오            |
 
 파일·테스트 수는 현재 기준선이며 새 동작 추가에 따라 늘어날 수 있다. 분류와 명령 계약이 기준이고 숫자 자체를 고정하지 않는다.
 

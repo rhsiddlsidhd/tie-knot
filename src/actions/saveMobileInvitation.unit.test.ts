@@ -5,7 +5,8 @@ vi.mock("next/cache", () => ({
 }));
 
 vi.mock("@/services/mobile-invitation", () => ({
-  mobileInvitationCacheTag: (publicKey: string) => `mobile-invitation:${publicKey}`,
+  mobileInvitationCacheTag: (publicKey: string) =>
+    `mobile-invitation:${publicKey}`,
   saveMobileInvitationForCurrentUser: vi.fn(),
 }));
 
@@ -48,7 +49,9 @@ describe("saveMobileInvitation", () => {
   });
 
   it("썸네일이 3장이 아니면 VALIDATION 에러를 리턴한다", async () => {
-    const formData = buildFormData({ thumbnailSource: JSON.stringify([THUMB]) });
+    const formData = buildFormData({
+      thumbnailSource: JSON.stringify([THUMB]),
+    });
 
     const result = await saveMobileInvitation(null, formData);
 

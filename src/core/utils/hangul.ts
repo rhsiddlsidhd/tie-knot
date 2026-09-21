@@ -1,5 +1,4 @@
-const isChosungOnly = (keyword: string) =>
-  /^[ㄱ-ㅎ]+$/.test(keyword.trim());
+const isChosungOnly = (keyword: string) => /^[ㄱ-ㅎ]+$/.test(keyword.trim());
 
 const getChosung = (text: string) =>
   text.replace(/[가-힣]/g, (char) => {

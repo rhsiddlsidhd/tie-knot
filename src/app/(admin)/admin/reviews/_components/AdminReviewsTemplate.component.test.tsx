@@ -57,7 +57,9 @@ describe("AdminReviewsTemplate", () => {
   });
 
   it("검색 결과가 없으면 검색어를 지우라는 안내를 보여준다", () => {
-    render(<AdminReviewsTemplate page={buildPage({ items: [] })} q="없는사람" />);
+    render(
+      <AdminReviewsTemplate page={buildPage({ items: [] })} q="없는사람" />,
+    );
 
     expect(screen.getByText(/검색어를 지우면/)).toBeInTheDocument();
   });

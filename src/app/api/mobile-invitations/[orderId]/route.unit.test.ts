@@ -14,7 +14,9 @@ import { requireAuth } from "@/services/auth";
 import { getOwnedMobileInvitationByOrder } from "@/services/mobile-invitation";
 import { GET } from "./route";
 
-const buildParams = (orderId: string) => ({ params: Promise.resolve({ orderId }) });
+const buildParams = (orderId: string) => ({
+  params: Promise.resolve({ orderId }),
+});
 
 describe("GET /api/invitations/[orderId]", () => {
   beforeEach(() => {
@@ -26,7 +28,10 @@ describe("GET /api/invitations/[orderId]", () => {
       new AppError("UNAUTHENTICATED", "로그인이 필요합니다."),
     );
 
-    const res = await GET(new Request("http://localhost"), buildParams("order-1"));
+    const res = await GET(
+      new Request("http://localhost"),
+      buildParams("order-1"),
+    );
     const body = await res.json();
 
     expect(body.success).toBe(false);
@@ -41,7 +46,10 @@ describe("GET /api/invitations/[orderId]", () => {
     });
     vi.mocked(getOwnedMobileInvitationByOrder).mockResolvedValue(null);
 
-    const res = await GET(new Request("http://localhost"), buildParams("order-1"));
+    const res = await GET(
+      new Request("http://localhost"),
+      buildParams("order-1"),
+    );
     const body = await res.json();
 
     expect(body).toEqual({ success: true, data: null });
@@ -68,7 +76,10 @@ describe("GET /api/invitations/[orderId]", () => {
       theme: "blossom",
     } as never);
 
-    const res = await GET(new Request("http://localhost"), buildParams("order-1"));
+    const res = await GET(
+      new Request("http://localhost"),
+      buildParams("order-1"),
+    );
     const body = await res.json();
 
     expect(body.success).toBe(true);

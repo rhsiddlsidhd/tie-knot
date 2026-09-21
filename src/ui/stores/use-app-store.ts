@@ -5,18 +5,25 @@ import { useStore } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { AppStoreContext } from "./provider";
 import type { OrderSlice } from "./slices/order.slice";
-import type { AdminModalPropsMap, AdminModalSlice, AdminModalType } from "./slices/admin-modal.slice";
-import type { GuestbookModalSlice, GuestbookModalType } from "./slices/guestbook-modal.slice";
+import type {
+  AdminModalPropsMap,
+  AdminModalSlice,
+  AdminModalType,
+} from "./slices/admin-modal.slice";
+import type {
+  GuestbookModalSlice,
+  GuestbookModalType,
+} from "./slices/guestbook-modal.slice";
 
 const useAppStoreApi = () => {
   const store = useContext(AppStoreContext);
   if (!store) throw new Error("StoreProvider is missing!");
   return store;
-}
+};
 
 const useOrderStore = <T>(selector: (state: OrderSlice) => T): T => {
   return useStore(useAppStoreApi(), selector);
-}
+};
 
 interface AdminModalView {
   isOpen: AdminModalSlice["adminModalIsOpen"];
@@ -37,7 +44,7 @@ const useAdminModalStore = <T>(selector: (state: AdminModalView) => T): T => {
       closeModal: s.closeAdminModal,
     }),
   );
-}
+};
 
 interface GuestbookModalView {
   isOpen: GuestbookModalSlice["guestbookModalIsOpen"];
@@ -69,7 +76,7 @@ const useGuestbookModalStore = <T = GuestbookModalView>(
       }),
     ),
   );
-}
+};
 
 export {
   useOrderStore,

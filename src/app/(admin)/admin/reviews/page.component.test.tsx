@@ -7,10 +7,12 @@ const validCursor = encodeCursor({
   id: "68a3f0c1c2d3e4f5a6b7c8d9",
 });
 
-const { verifySessionMock, getAdminReviewsPageServiceMock } = vi.hoisted(() => ({
-  verifySessionMock: vi.fn(),
-  getAdminReviewsPageServiceMock: vi.fn(),
-}));
+const { verifySessionMock, getAdminReviewsPageServiceMock } = vi.hoisted(
+  () => ({
+    verifySessionMock: vi.fn(),
+    getAdminReviewsPageServiceMock: vi.fn(),
+  }),
+);
 
 vi.mock("@/services/auth", () => ({
   verifySession: verifySessionMock,
@@ -45,7 +47,11 @@ const emptyPage: { items: unknown[]; nextCursor: string | null } = {
 describe("관리자 리뷰 목록 페이지", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    verifySessionMock.mockResolvedValue({ role: "ADMIN", email: "a@x.com", userId: "1" });
+    verifySessionMock.mockResolvedValue({
+      role: "ADMIN",
+      email: "a@x.com",
+      userId: "1",
+    });
     getAdminReviewsPageServiceMock.mockResolvedValue(emptyPage);
   });
 
@@ -58,7 +64,9 @@ describe("관리자 리뷰 목록 페이지", () => {
   it("인증에 실패하면(verifySession이 throw) 목록 service를 호출하지 않는다", async () => {
     verifySessionMock.mockRejectedValue(new Error("redirect"));
 
-    await expect(ReviewsPage({ searchParams: Promise.resolve({}) })).rejects.toThrow();
+    await expect(
+      ReviewsPage({ searchParams: Promise.resolve({}) }),
+    ).rejects.toThrow();
 
     expect(getAdminReviewsPageServiceMock).not.toHaveBeenCalled();
   });
@@ -70,13 +78,19 @@ describe("관리자 리뷰 목록 페이지", () => {
   });
 
   it("인증 성공 후 URL의 cursor를 service에 그대로 전달한다", async () => {
-    await ReviewsPage({ searchParams: Promise.resolve({ cursor: validCursor }) });
+    await ReviewsPage({
+      searchParams: Promise.resolve({ cursor: validCursor }),
+    });
 
-    expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith({ cursor: validCursor });
+    expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith({
+      cursor: validCursor,
+    });
   });
 
   it("형식이 깨진 cursor는 제거한다", async () => {
-    await ReviewsPage({ searchParams: Promise.resolve({ cursor: "!!broken!!" }) });
+    await ReviewsPage({
+      searchParams: Promise.resolve({ cursor: "!!broken!!" }),
+    });
 
     expect(getAdminReviewsPageServiceMock).toHaveBeenCalledWith({});
   });

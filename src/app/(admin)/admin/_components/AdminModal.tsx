@@ -1,16 +1,22 @@
 "use client";
 
 import { ProductEditDialog } from "@/app/(admin)/admin/products/_containers/ProductEditDialog";
-import type { AdminModalPropsMap, AdminModalType } from "@/ui/stores/use-app-store";
+import type {
+  AdminModalPropsMap,
+  AdminModalType,
+} from "@/ui/stores/use-app-store";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/ui/components/atoms/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/ui/components/atoms/dialog";
 import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog";
 
-const modalCopy: Record<
-  AdminModalType,
-  { title: string; des: string }
-> = {
+const modalCopy: Record<AdminModalType, { title: string; des: string }> = {
   "EDIT-PRODUCT": {
     title: "상품 수정",
     des: "상품 정보를 수정합니다.",
@@ -39,7 +45,9 @@ const AdminModal = () => {
           <DialogDescription>{copy.des}</DialogDescription>
         </DialogHeader>
         {type === "EDIT-PRODUCT" && (
-          <ProductEditDialog {...(props as AdminModalPropsMap["EDIT-PRODUCT"])} />
+          <ProductEditDialog
+            {...(props as AdminModalPropsMap["EDIT-PRODUCT"])}
+          />
         )}
         {type === "EDIT-PREMIUMFEATURE" && (
           <PremiumFeatureDialog

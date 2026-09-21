@@ -124,7 +124,11 @@ describe("useCheckoutForm", () => {
     const action = vi.fn();
     const order = buildOrder({ category: "favor" });
     const { result } = renderHook(() =>
-      useCheckoutForm({ order, action, router: { replace: routerReplace } as never }),
+      useCheckoutForm({
+        order,
+        action,
+        router: { replace: routerReplace } as never,
+      }),
     );
 
     expect(result.current.requiresShipping).toBe(true);
@@ -142,7 +146,11 @@ describe("useCheckoutForm", () => {
     const action = vi.fn();
     const order = buildOrder({ category: "favor" });
     const { result } = renderHook(() =>
-      useCheckoutForm({ order, action, router: { replace: routerReplace } as never }),
+      useCheckoutForm({
+        order,
+        action,
+        router: { replace: routerReplace } as never,
+      }),
     );
 
     act(() => {

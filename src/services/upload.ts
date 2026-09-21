@@ -24,6 +24,6 @@ const createUploadSignatureForCurrentUser = async (
   }
 
   return signUploadRequest(folder, paramsToSign);
-}
+};
 
 export { createUploadSignatureForCurrentUser };

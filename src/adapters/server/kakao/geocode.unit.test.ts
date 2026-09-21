@@ -8,7 +8,7 @@ const mockResponse = (status: number, ok: boolean, body: string): Response => {
     status,
     text: async () => body,
   } as Response;
-}
+};
 
 describe("geocodeAddress", () => {
   beforeEach(() => {
@@ -70,7 +70,9 @@ describe("geocodeAddress", () => {
   });
 
   it("HTTP status가 실패(ok:false)면 EXTERNAL_SERVICE로 분류하고 응답 message를 사용한다", async () => {
-    const body = JSON.stringify({ message: "요청 파라미터가 올바르지 않습니다." });
+    const body = JSON.stringify({
+      message: "요청 파라미터가 올바르지 않습니다.",
+    });
     vi.mocked(fetch).mockResolvedValue(mockResponse(400, false, body));
 
     await expect(geocodeAddress("")).rejects.toMatchObject({

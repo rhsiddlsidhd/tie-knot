@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { AppError } from "@/core/domain/error";
-import { routeSuccess, routeError, actionError, toErrorPayload, ERROR_STATUS_MAP } from "./boundary";
+import {
+  routeSuccess,
+  routeError,
+  actionError,
+  toErrorPayload,
+  ERROR_STATUS_MAP,
+} from "./boundary";
 
 describe("routeSuccess", () => {
   it("success:true와 data를 담아 200으로 응답한다", async () => {
@@ -25,7 +31,9 @@ describe("routeError", () => {
   });
 
   it("AppError 분류를 ERROR_STATUS_MAP에 따라 HTTP status로 번역한다", async () => {
-    const res = routeError(new AppError("NOT_FOUND", "상품을 찾을 수 없습니다"));
+    const res = routeError(
+      new AppError("NOT_FOUND", "상품을 찾을 수 없습니다"),
+    );
 
     expect(res.status).toBe(ERROR_STATUS_MAP.NOT_FOUND);
     await expect(res.json()).resolves.toEqual({
@@ -93,9 +101,13 @@ describe("toErrorPayload", () => {
   });
 
   it("AppError면 category/message/fieldErrors를 그대로 담는다", () => {
-    const error = new AppError("VALIDATION", "이메일 형식이 올바르지 않습니다", {
-      email: ["형식이 올바르지 않습니다"],
-    });
+    const error = new AppError(
+      "VALIDATION",
+      "이메일 형식이 올바르지 않습니다",
+      {
+        email: ["형식이 올바르지 않습니다"],
+      },
+    );
 
     const payload = toErrorPayload(error, "Route");
 
@@ -142,6 +154,9 @@ describe("toErrorPayload", () => {
     toErrorPayload(new Error("boom"), "Action");
 
     expect(spy).toHaveBeenCalledWith("[Route] NOT_FOUND: 없음");
-    expect(spy).toHaveBeenCalledWith("[Action] Unknown error:", expect.any(Error));
+    expect(spy).toHaveBeenCalledWith(
+      "[Action] Unknown error:",
+      expect.any(Error),
+    );
   });
 });

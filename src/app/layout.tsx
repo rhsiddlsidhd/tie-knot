@@ -37,9 +37,7 @@ const metadata: Metadata = {
     "frontend",
     "next.js",
   ],
-  authors: [
-    { name: "Tie Knot", url: "https://tie-knot-pi.vercel.app" },
-  ],
+  authors: [{ name: "Tie Knot", url: "https://tie-knot-pi.vercel.app" }],
   creator: "Tie Knot",
   publisher: "Tie Knot",
 
@@ -75,7 +73,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${notoSansKR.variable} ${gowunBatang.variable}`}>
+    <html
+      lang="en"
+      className={`${notoSansKR.variable} ${gowunBatang.variable}`}
+    >
       <body>
         <StoreProvider>{children}</StoreProvider>
       </body>

@@ -1,4 +1,7 @@
-import { TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 const Footer = ({ children }: { children: React.ReactNode }) => {
   return (
     <footer className="relative min-h-[60vh] py-12 text-center">
@@ -18,6 +21,6 @@ const Footer = ({ children }: { children: React.ReactNode }) => {
       </div>
     </footer>
   );
-}
+};
 
 export { Footer };
