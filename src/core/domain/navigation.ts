@@ -160,12 +160,6 @@ const authUserOrderGroupItems: NavGroupItem[] = [
         href: ROUTES.myOrders.root,
         icon: null,
       },
-      {
-        id: "orders-refund",
-        label: "취소/환불",
-        href: ROUTES.myOrders.refund,
-        icon: null,
-      },
     ],
   },
 ];

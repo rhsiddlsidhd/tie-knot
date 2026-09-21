@@ -20,7 +20,6 @@ const ROUTES = {
   },
   myOrders: {
     root: "/my-orders",
-    refund: "/my-orders/refund",
     detail: (orderId: string) => `/my-orders/${orderId}`,
     mobileInvitation: (orderId: string) =>
       `/my-orders/${orderId}/mobile-invitation`,
