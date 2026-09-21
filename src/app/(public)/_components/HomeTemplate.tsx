@@ -1,7 +1,7 @@
 import type { Product } from "@/core/domain/product";
 import { PromotionHero } from "./PromotionHero";
 import { LiveDemoSection } from "./LiveDemoSection";
-import { SubCategoryNavSection } from "./SubCategoryNavSection";
+import { SubCategoryNavigationSection } from "./SubCategoryNavigationSection";
 import { PopularProductsSection } from "./PopularProductsSection";
 import type { AvailableSubCategory } from "@/core/domain/product-category";
 
@@ -20,7 +20,7 @@ const HomeTemplate = ({
     <div className="flex flex-col">
       <PromotionHero />
 
-      <SubCategoryNavSection availableSubCategories={availableSubCategories} />
+      <SubCategoryNavigationSection availableSubCategories={availableSubCategories} />
 
       <PopularProductsSection products={popularProducts} />
 

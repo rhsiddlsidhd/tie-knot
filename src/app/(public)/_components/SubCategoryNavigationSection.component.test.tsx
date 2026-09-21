@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { SubCategoryNavSection } from "./SubCategoryNavSection";
+import { SubCategoryNavigationSection } from "./SubCategoryNavigationSection";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
-describe("SubCategoryNavSection", () => {
+describe("SubCategoryNavigationSection", () => {
   it("전달된 서브카테고리만 링크로 렌더한다", () => {
     render(
-      <SubCategoryNavSection
+      <SubCategoryNavigationSection
         availableSubCategories={[
           { category: MOBILE_INVITATION_CATEGORY, subCategory: "first-birthday" },
           { category: "favor", subCategory: "candle" },
@@ -29,7 +29,7 @@ describe("SubCategoryNavSection", () => {
 
   it("캐러셀 region 랜드마크로 렌더한다", () => {
     render(
-      <SubCategoryNavSection
+      <SubCategoryNavigationSection
         availableSubCategories={[
           { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
         ]}
@@ -42,7 +42,7 @@ describe("SubCategoryNavSection", () => {
   });
 
   it("사용 가능한 서브카테고리가 없으면 섹션 전체를 렌더링하지 않는다", () => {
-    render(<SubCategoryNavSection availableSubCategories={[]} />);
+    render(<SubCategoryNavigationSection availableSubCategories={[]} />);
 
     expect(screen.queryByText("카테고리 둘러보기")).not.toBeInTheDocument();
     expect(

@@ -43,7 +43,7 @@ describe("HomeTemplate", () => {
     expect(screen.getByText("live-demo")).toBeInTheDocument();
   });
 
-  it("SubCategoryNavSection → 인기 상품 순서로 배치된다", () => {
+  it("SubCategoryNavigationSection → 인기 상품 순서로 배치된다", () => {
     render(
       <HomeTemplate
         popularProducts={buildProducts(3)}

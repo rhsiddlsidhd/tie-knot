@@ -5,13 +5,13 @@ import { CarouselList } from "@/ui/components/molecules/CarouselList";
 import type { AvailableSubCategory } from "@/core/domain/product-category";
 import { SubCategoryNavigationItem } from "./SubCategoryNavigationItem";
 
-interface SubCategoryNavSectionProps {
+interface SubCategoryNavigationSectionProps {
   availableSubCategories: readonly AvailableSubCategory[];
 }
 
-const SubCategoryNavSection = ({
+const SubCategoryNavigationSection = ({
   availableSubCategories,
-}: SubCategoryNavSectionProps) => {
+}: SubCategoryNavigationSectionProps) => {
   if (availableSubCategories.length === 0) return null;
 
   return (
@@ -35,4 +35,4 @@ const SubCategoryNavSection = ({
   );
 }
 
-export { SubCategoryNavSection };
+export { SubCategoryNavigationSection };
