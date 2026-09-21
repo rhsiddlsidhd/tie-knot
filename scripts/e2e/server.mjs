@@ -11,12 +11,19 @@ const ADMIN_EMAIL = "admin-e2e@example.com";
 const ADMIN_PASSWORD = "Admin-e2e1!";
 const USER_EMAIL = "user-e2e@example.com";
 const USER_PASSWORD = "User-e2e1!";
-const CHECKOUT_PRODUCT_ID = new mongoose.Types.ObjectId("64b000000000000000000001");
+const CHECKOUT_PRODUCT_ID = new mongoose.Types.ObjectId(
+  "64b000000000000000000001",
+);
 const realPortOneSmoke = process.env.PORTONE_SMOKE === "1";
 
 if (realPortOneSmoke) {
-  for (const name of ["PORTONE_STORE_ID", "PORTONE_CHANNEL_KEY", "PORTONE_API_SECRET"]) {
-    if (!process.env[name]) throw new Error(`${name} is required when PORTONE_SMOKE=1`);
+  for (const name of [
+    "PORTONE_STORE_ID",
+    "PORTONE_CHANNEL_KEY",
+    "PORTONE_API_SECRET",
+  ]) {
+    if (!process.env[name])
+      throw new Error(`${name} is required when PORTONE_SMOKE=1`);
   }
 }
 
@@ -52,7 +59,8 @@ await mongoose.connection.collection("products").insertOne({
   authorId: "e2e-seed",
   title: "E2E 기존 이미지 상품",
   description: "기존 이미지를 유지하는 수정 흐름 검증 상품입니다.",
-  thumbnail: "https://res.cloudinary.com/e2e/image/upload/existing-thumbnail.png",
+  thumbnail:
+    "https://res.cloudinary.com/e2e/image/upload/existing-thumbnail.png",
   price: 15000,
   category: "favor",
   subCategory: "candle",
@@ -109,58 +117,89 @@ const cloudinary = http.createServer((request, response) => {
   request.on("end", () => {
     uploadSequence += 1;
     response.writeHead(200, { "content-type": "application/json" });
-    response.end(JSON.stringify({
-      public_id: `e2e/product-${uploadSequence}`,
-      secure_url: `https://res.cloudinary.com/e2e/image/upload/product-${uploadSequence}.png`,
-    }));
+    response.end(
+      JSON.stringify({
+        public_id: `e2e/product-${uploadSequence}`,
+        secure_url: `https://res.cloudinary.com/e2e/image/upload/product-${uploadSequence}.png`,
+      }),
+    );
   });
 });
-await new Promise((resolve) => cloudinary.listen(CLOUDINARY_PORT, "127.0.0.1", resolve));
+await new Promise((resolve) =>
+  cloudinary.listen(CLOUDINARY_PORT, "127.0.0.1", resolve),
+);
 
-const portone = realPortOneSmoke ? null : http.createServer(async (request, response) => {
-  const match = request.url?.match(/^\/payments\/([^?]+)/);
-  if (request.method !== "GET" || !match) {
-    response.writeHead(404).end();
-    return;
-  }
+const portone = realPortOneSmoke
+  ? null
+  : http.createServer(async (request, response) => {
+      const match = request.url?.match(/^\/payments\/([^?]+)/);
+      if (request.method !== "GET" || !match) {
+        response.writeHead(404).end();
+        return;
+      }
 
-  const paymentId = decodeURIComponent(match[1]);
-  const order = await mongoose.connection.collection("orders").findOne({ merchantUid: paymentId });
-  if (!order) {
-    response.writeHead(404, { "content-type": "application/json" });
-    response.end(JSON.stringify({ type: "PAYMENT_NOT_FOUND", message: "payment not found" }));
-    return;
-  }
+      const paymentId = decodeURIComponent(match[1]);
+      const order = await mongoose.connection
+        .collection("orders")
+        .findOne({ merchantUid: paymentId });
+      if (!order) {
+        response.writeHead(404, { "content-type": "application/json" });
+        response.end(
+          JSON.stringify({
+            type: "PAYMENT_NOT_FOUND",
+            message: "payment not found",
+          }),
+        );
+        return;
+      }
 
-  const now = new Date().toISOString();
-  response.writeHead(200, { "content-type": "application/json" });
-  response.end(JSON.stringify({
-    status: "PAID",
-    id: paymentId,
-    transactionId: `transaction-${paymentId}`,
-    merchantId: "merchant-e2e",
-    storeId: "store-e2e",
-    channel: { pgProvider: "E2E" },
-    version: "V2",
-    requestedAt: now,
-    updatedAt: now,
-    statusChangedAt: now,
-    orderName: `${order.product.title} 모바일 청첩장`,
-    amount: { total: order.finalPrice, paid: order.finalPrice, cancelled: 0, cancelledTaxFree: 0 },
-    currency: "KRW",
-    customer: {},
-    customData: JSON.stringify({ productId: order.product.productId.toString() }),
-    paidAt: now,
-    disputes: [],
-  }));
-});
+      const now = new Date().toISOString();
+      response.writeHead(200, { "content-type": "application/json" });
+      response.end(
+        JSON.stringify({
+          status: "PAID",
+          id: paymentId,
+          transactionId: `transaction-${paymentId}`,
+          merchantId: "merchant-e2e",
+          storeId: "store-e2e",
+          channel: { pgProvider: "E2E" },
+          version: "V2",
+          requestedAt: now,
+          updatedAt: now,
+          statusChangedAt: now,
+          orderName: `${order.product.title} 모바일 청첩장`,
+          amount: {
+            total: order.finalPrice,
+            paid: order.finalPrice,
+            cancelled: 0,
+            cancelledTaxFree: 0,
+          },
+          currency: "KRW",
+          customer: {},
+          customData: JSON.stringify({
+            productId: order.product.productId.toString(),
+          }),
+          paidAt: now,
+          disputes: [],
+        }),
+      );
+    });
 if (portone) {
-  await new Promise((resolve) => portone.listen(PORTONE_PORT, "127.0.0.1", resolve));
+  await new Promise((resolve) =>
+    portone.listen(PORTONE_PORT, "127.0.0.1", resolve),
+  );
 }
 
 const app = spawn(
   process.execPath,
-  ["node_modules/next/dist/bin/next", "dev", "--hostname", "127.0.0.1", "--port", String(APP_PORT)],
+  [
+    "node_modules/next/dist/bin/next",
+    "dev",
+    "--hostname",
+    "127.0.0.1",
+    "--port",
+    String(APP_PORT),
+  ],
   {
     stdio: "inherit",
     env: {
@@ -171,6 +210,7 @@ const app = spawn(
       CLOUDINARY_CLOUD_NAME: "e2e-cloud",
       CLOUDINARY_API_KEY: "e2e-key",
       CLOUDINARY_API_SECRET: "e2e-secret",
+      NEXT_PUBLIC_CLOUDINARY_E2E_MOCK: "enabled",
       NEXT_PUBLIC_PORTONE_STORE_ID: realPortOneSmoke
         ? process.env.PORTONE_STORE_ID
         : "store-e2e",
