@@ -39,6 +39,6 @@ const ClipboardButton = ({
       <span className="sr-only">Copy to clipboard</span>
     </Button>
   );
-}
+};
 
 export { ClipboardButton, type ClipboardButtonProps };

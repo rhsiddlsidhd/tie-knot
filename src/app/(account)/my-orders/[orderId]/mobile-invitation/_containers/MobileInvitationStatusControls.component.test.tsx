@@ -21,7 +21,9 @@ describe("MobileInvitationStatusControls", () => {
     render(<MobileInvitationStatusControls orderId="order-1" />);
 
     expect(
-      screen.getByText("청첩장을 저장하면 미리보기와 발행 기능을 사용할 수 있습니다."),
+      screen.getByText(
+        "청첩장을 저장하면 미리보기와 발행 기능을 사용할 수 있습니다.",
+      ),
     ).toBeInTheDocument();
     expect(screen.queryByRole("button")).not.toBeInTheDocument();
   });
@@ -30,7 +32,9 @@ describe("MobileInvitationStatusControls", () => {
     render(<MobileInvitationStatusControls orderId="order-1" status="draft" />);
 
     expect(
-      screen.getByText("계좌 정보가 비어 있어도 발행할 수 있습니다. 공개 전 내용을 확인해 주세요."),
+      screen.getByText(
+        "계좌 정보가 비어 있어도 발행할 수 있습니다. 공개 전 내용을 확인해 주세요.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -44,7 +48,12 @@ describe("MobileInvitationStatusControls", () => {
 
     await user.click(screen.getByRole("button", { name: "발행하기" }));
 
-    expect(setMobileInvitationStatusMock).toHaveBeenCalledWith("order-1", "published");
-    expect(await screen.findByRole("button", { name: "발행 취소" })).toBeInTheDocument();
+    expect(setMobileInvitationStatusMock).toHaveBeenCalledWith(
+      "order-1",
+      "published",
+    );
+    expect(
+      await screen.findByRole("button", { name: "발행 취소" }),
+    ).toBeInTheDocument();
   });
 });

@@ -2,14 +2,20 @@
 
 import type { RefObject } from "react";
 import { initialFilterState } from "@/ui/context/productFilter/reducer";
-import { ProductFilterProvider, useProductFilter } from "@/ui/context/productFilter/provider";
+import {
+  ProductFilterProvider,
+  useProductFilter,
+} from "@/ui/context/productFilter/provider";
 import { ProductGrid } from "@/ui/components/organisms/ProductGrid";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { ProductFilters } from "./ProductFilters";
 import type { Product } from "@/core/domain/product";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
 
 interface ProductCatalogProps {
   products: Product[];
@@ -66,7 +72,7 @@ const ProductCatalogBody = ({
       )}
     </>
   );
-}
+};
 
 const ProductCatalog = ({
   products,

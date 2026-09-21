@@ -1,6 +1,10 @@
 import { describe, it, expect } from "vitest";
 import type { Discount } from "@/core/domain/product";
-import { calculatePrice, formatDiscountLabel, formatPriceWithComma } from "./price";
+import {
+  calculatePrice,
+  formatDiscountLabel,
+  formatPriceWithComma,
+} from "./price";
 
 describe("formatPriceWithComma", () => {
   it('0은 콤마 없이 "0"을 반환한다', () => {
@@ -59,9 +63,9 @@ describe("formatDiscountLabel", () => {
   });
 
   it("amount 할인은 콤마를 붙인 원 단위 할인 라벨로 표시한다", () => {
-    expect(
-      formatDiscountLabel({ discountType: "amount", value: 3000 }),
-    ).toBe("3,000원 할인");
+    expect(formatDiscountLabel({ discountType: "amount", value: 3000 })).toBe(
+      "3,000원 할인",
+    );
   });
 
   it("알 수 없는 discountType이면 amount와 동일하게 원 단위 라벨로 표시한다", () => {

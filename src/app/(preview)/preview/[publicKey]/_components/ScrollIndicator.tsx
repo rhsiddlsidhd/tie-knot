@@ -14,6 +14,6 @@ const ScrollIndicator = () => {
       </div>
     </motion.div>
   );
-}
+};
 
 export { ScrollIndicator };

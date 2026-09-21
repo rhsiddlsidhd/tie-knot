@@ -5,7 +5,11 @@ import { MobileInvitationNotice } from "@/app/(preview)/preview/[publicKey]/_com
 
 export const revalidate = 300;
 
-export default async function Page({ params }: { params: Promise<{ publicKey: string }> }) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ publicKey: string }>;
+}) {
   const { publicKey } = await params;
   const invitation = await getPublishedMobileInvitationByPublicKey(publicKey);
 
@@ -28,5 +32,12 @@ export default async function Page({ params }: { params: Promise<{ publicKey: st
   // theme은 저장 시점 스냅샷(invitation.content.theme)을 쓴다 — 상품 theme을 매번
   // 라이브 조회하지 않는다, 관리자가 나중에 상품 theme을 바꿔도 이미 발행된
   // 청첩장은 조용히 안 바뀐다.
-  return <MobileInvitationTemplate content={invitation.content} publicKey={publicKey} features={invitation.features} theme={invitation.content.theme} />;
+  return (
+    <MobileInvitationTemplate
+      content={invitation.content}
+      publicKey={publicKey}
+      features={invitation.features}
+      theme={invitation.content.theme}
+    />
+  );
 }

@@ -91,9 +91,7 @@ describe("PremiumFeatureRegistrationForm", () => {
       />,
     );
 
-    expect(
-      screen.getByRole("button", { name: "등록중" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "등록중" })).toBeInTheDocument();
   });
 
   it("제출하면 전달받은 action이 호출된다", async () => {

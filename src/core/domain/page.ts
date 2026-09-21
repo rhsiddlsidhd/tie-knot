@@ -1,11 +1,10 @@
 type PagePath = "payment";
 
-const PAGE_TITLE: Record<PagePath, { title: string; subTitle: string }> =
-  {
-    payment: {
-      title: "주문하기",
-      subTitle: "안전하고 빠른 결제를 진행해주세요",
-    },
-  };
+const PAGE_TITLE: Record<PagePath, { title: string; subTitle: string }> = {
+  payment: {
+    title: "주문하기",
+    subTitle: "안전하고 빠른 결제를 진행해주세요",
+  },
+};
 
 export { PAGE_TITLE, type PagePath };

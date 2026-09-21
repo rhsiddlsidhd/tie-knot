@@ -31,7 +31,10 @@ afterEach(cleanup);
 
 describe("gitHead", () => {
   it("실제 HEAD sha와 일치한다", () => {
-    const expected = execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
+    const expected = execFileSync("git", ["rev-parse", "HEAD"], {
+      cwd: ROOT,
+      encoding: "utf8",
+    }).trim();
     expect(gitHead()).toBe(expected);
   });
 });
@@ -124,7 +127,9 @@ describe("resolveRootFromCwd", () => {
   });
 
   it("cwd 가 git 저장소가 아니면 ROOT 를 그대로 둔다 (fail-open)", () => {
-    const notAGitDir = fs.mkdtempSync(path.join(os.tmpdir(), "tdd-gate-not-git-"));
+    const notAGitDir = fs.mkdtempSync(
+      path.join(os.tmpdir(), "tdd-gate-not-git-"),
+    );
     try {
       resolveRootFromCwd(notAGitDir);
       expect(ROOT).toBe(MAIN_ROOT);

@@ -8,7 +8,11 @@ describe("AutoCompleteList", () => {
   it("suggestions을 옵션으로 표시한다", () => {
     render(
       <Command>
-        <AutoCompleteList suggestions={["김철수", "이영희"]} isOpen={true} onSelect={vi.fn()} />
+        <AutoCompleteList
+          suggestions={["김철수", "이영희"]}
+          isOpen={true}
+          onSelect={vi.fn()}
+        />
       </Command>,
     );
 
@@ -31,7 +35,11 @@ describe("AutoCompleteList", () => {
     const user = userEvent.setup();
     render(
       <Command>
-        <AutoCompleteList suggestions={["김철수", "이영희"]} isOpen={true} onSelect={onSelect} />
+        <AutoCompleteList
+          suggestions={["김철수", "이영희"]}
+          isOpen={true}
+          onSelect={onSelect}
+        />
       </Command>,
     );
 

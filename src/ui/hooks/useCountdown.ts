@@ -28,6 +28,6 @@ const useCountdown = (targetDate: Date) => {
   }, [targetDate]);
 
   return { countdown, message };
-}
+};
 
 export { useCountdown };

@@ -73,7 +73,11 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
+      <ProductFilters
+        data={[buildProduct()]}
+        {...defaultProps}
+        dispatch={dispatch}
+      />,
     );
 
     await user.type(screen.getByPlaceholderText("상품 검색..."), "봄");
@@ -116,7 +120,9 @@ describe("ProductFilters", () => {
 
     await user.click(screen.getByText("전체"));
 
-    expect(pushMock).toHaveBeenCalledWith(`/products/${MOBILE_INVITATION_CATEGORY}`);
+    expect(pushMock).toHaveBeenCalledWith(
+      `/products/${MOBILE_INVITATION_CATEGORY}`,
+    );
   });
 
   it("현재 subCategory와 일치하는 버튼을 활성 상태로 표시한다", () => {
@@ -129,8 +135,12 @@ describe("ProductFilters", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: "청첩장" })).toHaveClass("bg-primary");
-    expect(screen.getByRole("button", { name: "전체" })).not.toHaveClass("bg-primary");
+    expect(screen.getByRole("button", { name: "청첩장" })).toHaveClass(
+      "bg-primary",
+    );
+    expect(screen.getByRole("button", { name: "전체" })).not.toHaveClass(
+      "bg-primary",
+    );
   });
 
   it("서버가 내려준 availableSubCategories 순서 그대로 전체 버튼과 함께 렌더링한다", () => {
@@ -171,7 +181,11 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
+      <ProductFilters
+        data={[buildProduct()]}
+        {...defaultProps}
+        dispatch={dispatch}
+      />,
     );
 
     await user.type(screen.getByPlaceholderText("상품 검색..."), "봄");
@@ -206,7 +220,11 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
+      <ProductFilters
+        data={[buildProduct()]}
+        {...defaultProps}
+        dispatch={dispatch}
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: /모두/ }));
@@ -238,7 +256,11 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
+      <ProductFilters
+        data={[buildProduct()]}
+        {...defaultProps}
+        dispatch={dispatch}
+      />,
     );
 
     await user.click(screen.getByText("상세 필터"));
@@ -313,7 +335,11 @@ describe("ProductFilters", () => {
     const dispatch = vi.fn();
 
     render(
-      <ProductFilters data={[buildProduct()]} {...defaultProps} dispatch={dispatch} />,
+      <ProductFilters
+        data={[buildProduct()]}
+        {...defaultProps}
+        dispatch={dispatch}
+      />,
     );
 
     await user.click(screen.getByText("상세 필터"));

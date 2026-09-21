@@ -21,7 +21,10 @@ describe("useNavigationGeo", () => {
   });
 
   it("현재 위치를 가져와 current에 반영한다", async () => {
-    vi.mocked(getCurrentCoordinates).mockResolvedValue({ lat: 37.5, lng: 127.0 });
+    vi.mocked(getCurrentCoordinates).mockResolvedValue({
+      lat: 37.5,
+      lng: 127.0,
+    });
 
     const { result } = renderHook(() => useNavigationGeo("서울"));
 

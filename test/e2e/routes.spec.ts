@@ -54,7 +54,9 @@ test.describe("라우트 그룹 스모크", () => {
   }
 
   for (const path of PROTECTED_ROUTES) {
-    test(`보호 라우트 ${path}가 미인증 사용자를 로그인으로 보낸다`, async ({ page }) => {
+    test(`보호 라우트 ${path}가 미인증 사용자를 로그인으로 보낸다`, async ({
+      page,
+    }) => {
       await page.goto(path);
 
       await expect(page).toHaveURL(/\/login$/);

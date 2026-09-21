@@ -44,7 +44,10 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
   }: {
-    children: (controls: { isLoading: boolean; open: () => void }) => React.ReactNode;
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
   }) => children({ isLoading: false, open: vi.fn() }),
 }));
 

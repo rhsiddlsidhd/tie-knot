@@ -12,7 +12,13 @@ const options = [
 describe("ComboboxField", () => {
   it("defaultValue에 해당하는 라벨을 입력값으로 보여준다", () => {
     render(
-      <ComboboxField id="station" name="station" placeholder="역을 검색하세요" options={options} defaultValue="busan">
+      <ComboboxField
+        id="station"
+        name="station"
+        placeholder="역을 검색하세요"
+        options={options}
+        defaultValue="busan"
+      >
         지하철역
       </ComboboxField>,
     );
@@ -23,7 +29,12 @@ describe("ComboboxField", () => {
   it("입력값에 매칭되는 후보를 선택하면 hidden input에 value가 확정된다", async () => {
     const user = userEvent.setup();
     render(
-      <ComboboxField id="station" name="station" placeholder="역을 검색하세요" options={options}>
+      <ComboboxField
+        id="station"
+        name="station"
+        placeholder="역을 검색하세요"
+        options={options}
+      >
         지하철역
       </ComboboxField>,
     );

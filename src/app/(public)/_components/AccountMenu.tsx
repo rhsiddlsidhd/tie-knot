@@ -14,7 +14,10 @@ import {
 } from "@/ui/components/atoms/dropdown-menu";
 
 import { UserIcon, LogOut } from "lucide-react";
-import { ADMIN_NAVIGATION_ITEMS, USER_NAVIGATION_ITEMS } from "@/core/domain/navigation";
+import {
+  ADMIN_NAVIGATION_ITEMS,
+  USER_NAVIGATION_ITEMS,
+} from "@/core/domain/navigation";
 
 const AccountMenu = () => {
   const { session } = useAuth();

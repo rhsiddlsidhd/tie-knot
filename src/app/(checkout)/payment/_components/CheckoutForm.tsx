@@ -1,11 +1,17 @@
 import { AlertCircle } from "lucide-react";
 
 import type { PayStatus } from "@/core/domain/payment";
-import type { BuyerInfo, ShippingInfo } from "@/core/schemas/request/order.schema";
+import type {
+  BuyerInfo,
+  ShippingInfo,
+} from "@/core/schemas/request/order.schema";
 
 import { Spinner } from "@/ui/components/atoms/spinner";
 import { PaymentPendingOverlay } from "./PaymentPendingOverlay";
-import { TypographySmall, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographySmall,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import { BuyerInfoCard } from "./BuyerInfoCard";
 import { ShippingInfoCard } from "./ShippingInfoCard";
 import { TermsAgreementCard } from "./TermsAgreementCard";
@@ -54,16 +60,25 @@ const CheckoutForm = ({
       <PaymentPendingOverlay visible={paymentStatus === "PENDING"} />
       <form onSubmit={onSubmit} className="space-y-6 pb-24">
         <BuyerInfoCard step={1} errors={errors} />
-        {requiresShipping && <ShippingInfoCard step={2} errors={shippingErrors} />}
+        {requiresShipping && (
+          <ShippingInfoCard step={2} errors={shippingErrors} />
+        )}
         <TermsAgreementCard agreed={agreed} onAgreedChange={onAgreedChange} />
-        <PaymentMethodSelector step={paymentStep} error={errors.payMethod?.[0]} />
+        <PaymentMethodSelector
+          step={paymentStep}
+          error={errors.payMethod?.[0]}
+        />
 
         {errorMessage && (
           <div className="border-destructive/50 bg-destructive/10 text-destructive flex items-start gap-3 rounded-lg border p-4 text-sm">
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <div>
-              <TypographySmall className="font-medium">오류가 발생했습니다</TypographySmall>
-              <TypographyMuted className="text-destructive/80 mt-1">{errorMessage}</TypographyMuted>
+              <TypographySmall className="font-medium">
+                오류가 발생했습니다
+              </TypographySmall>
+              <TypographyMuted className="text-destructive/80 mt-1">
+                {errorMessage}
+              </TypographyMuted>
             </div>
           </div>
         )}
@@ -76,6 +91,6 @@ const CheckoutForm = ({
       </form>
     </div>
   );
-}
+};
 
 export { CheckoutForm };

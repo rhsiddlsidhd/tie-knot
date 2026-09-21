@@ -23,14 +23,20 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
   }: {
-    children: (controls: { isLoading: boolean; open: () => void }) => React.ReactNode;
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
   }) => children({ isLoading: false, open: vi.fn() }),
 }));
 
 import type { OrderReviewSummary } from "@/core/domain/order";
 import { ReviewFormDialog } from "./ReviewFormDialog";
 
-const successResponse = { success: true as const, data: { message: "완료되었습니다." } };
+const successResponse = {
+  success: true as const,
+  data: { message: "완료되었습니다." },
+};
 
 const createDeferred = <T,>() => {
   let resolve!: (value: T) => void;
@@ -69,7 +75,9 @@ describe("ReviewFormDialog", () => {
 
     await user.click(screen.getByRole("button", { name: "리뷰 작성" }));
 
-    expect(screen.getByRole("heading", { name: "리뷰 작성" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "리뷰 작성" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "등록하기" })).toBeDisabled();
     expect(screen.queryByRole("button", { name: "리뷰 삭제" })).toBeNull();
   });
@@ -109,7 +117,9 @@ describe("ReviewFormDialog", () => {
     expect(
       screen.getByDisplayValue("만족스러운 상품이었습니다."),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "리뷰 삭제" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "리뷰 삭제" }),
+    ).toBeInTheDocument();
   });
 
   it("삭제 확인을 취소하면 확인창만 닫히고 리뷰 다이얼로그와 포커스가 남는다", async () => {
@@ -122,7 +132,9 @@ describe("ReviewFormDialog", () => {
     );
 
     expect(screen.queryByRole("alertdialog")).toBeNull();
-    expect(screen.getByRole("heading", { name: "리뷰 수정" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "리뷰 수정" }),
+    ).toBeInTheDocument();
     expect(actions.deleteReview).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "리뷰 삭제" })).toHaveFocus();
   });
@@ -171,7 +183,9 @@ describe("ReviewFormDialog", () => {
 
     const dialog = screen.getByRole("alertdialog");
     await user.click(within(dialog).getByRole("button", { name: "삭제" }));
-    await user.click(within(dialog).getByRole("button", { name: "삭제 중..." }));
+    await user.click(
+      within(dialog).getByRole("button", { name: "삭제 중..." }),
+    );
 
     expect(actions.deleteReview).toHaveBeenCalledTimes(1);
 

@@ -50,12 +50,18 @@ const GET = async (request: Request): Promise<Response> => {
   // 충분하다. 순차 실행은 maxDuration(60초) 예산을 불필요하게 두 배로 소모한다.
   const [pending, awaitingInvitation] = await Promise.all([
     runBatch("expired-pending", cancelExpiredPendingOrdersForAllUsers),
-    runBatch("awaiting-invitation", cancelExpiredAwaitingMobileInvitationOrdersForAllUsers),
+    runBatch(
+      "awaiting-invitation",
+      cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+    ),
   ]);
 
   const ok = pending !== null && awaitingInvitation !== null;
 
-  console.log("[cron/expired-orders] 실행 완료", { pending, awaitingInvitation });
+  console.log("[cron/expired-orders] 실행 완료", {
+    pending,
+    awaitingInvitation,
+  });
 
   // 배치가 통째로 실패하면 non-2xx로 알린다 — Vercel Cron 대시보드/로그에서 실패한
   // 실행으로 표시되는 유일한 신호다(자동 재시도는 없다). 개별 주문 실패는 각 배치의
@@ -64,6 +70,6 @@ const GET = async (request: Request): Promise<Response> => {
     { ok, pending, awaitingInvitation },
     { status: ok ? 200 : 500 },
   );
-}
+};
 
 export { GET };

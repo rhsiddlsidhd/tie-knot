@@ -5,7 +5,12 @@ import { MobileInvitationFormView } from "../_components/MobileInvitationFormVie
 
 const MobileInvitationForm = () => {
   const formState = useMobileInvitationForm();
-  return <MobileInvitationFormView type={formState.data ? "edit" : "create"} {...formState} />;
-}
+  return (
+    <MobileInvitationFormView
+      type={formState.data ? "edit" : "create"}
+      {...formState}
+    />
+  );
+};
 
 export { MobileInvitationForm };

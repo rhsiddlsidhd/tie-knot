@@ -107,6 +107,6 @@ const LiveGuestbookSection = ({ publicKey }: { publicKey: string }) => {
       </div>
     </EyebrowSection>
   );
-}
+};
 
 export { LiveGuestbookSection };

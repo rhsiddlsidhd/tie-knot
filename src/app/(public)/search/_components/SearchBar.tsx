@@ -30,6 +30,6 @@ const SearchBar = ({
       />
     </form>
   );
-}
+};
 
 export { SearchBar };

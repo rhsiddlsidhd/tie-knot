@@ -1,10 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { cancelExpiredPendingOrdersForAllUsers, cancelExpiredAwaitingMobileInvitationOrdersForAllUsers } =
-  vi.hoisted(() => ({
-    cancelExpiredPendingOrdersForAllUsers: vi.fn(),
-    cancelExpiredAwaitingMobileInvitationOrdersForAllUsers: vi.fn(),
-  }));
+const {
+  cancelExpiredPendingOrdersForAllUsers,
+  cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+} = vi.hoisted(() => ({
+  cancelExpiredPendingOrdersForAllUsers: vi.fn(),
+  cancelExpiredAwaitingMobileInvitationOrdersForAllUsers: vi.fn(),
+}));
 
 vi.mock("@/services/payment", () => ({
   cancelExpiredPendingOrdersForAllUsers,
@@ -41,7 +43,9 @@ describe("GET /api/cron/expired-orders", () => {
     const body = await response.json();
 
     expect(cancelExpiredPendingOrdersForAllUsers).toHaveBeenCalled();
-    expect(cancelExpiredAwaitingMobileInvitationOrdersForAllUsers).toHaveBeenCalled();
+    expect(
+      cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+    ).toHaveBeenCalled();
     expect(response.status).toBe(200);
     expect(body).toEqual({
       ok: true,
@@ -55,7 +59,9 @@ describe("GET /api/cron/expired-orders", () => {
 
     expect(response.status).toBe(401);
     expect(cancelExpiredPendingOrdersForAllUsers).not.toHaveBeenCalled();
-    expect(cancelExpiredAwaitingMobileInvitationOrdersForAllUsers).not.toHaveBeenCalled();
+    expect(
+      cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+    ).not.toHaveBeenCalled();
   });
 
   it("시크릿이 틀리면 401이고 배치를 호출하지 않는다", async () => {
@@ -72,16 +78,22 @@ describe("GET /api/cron/expired-orders", () => {
 
     expect(response.status).toBe(503);
     expect(cancelExpiredPendingOrdersForAllUsers).not.toHaveBeenCalled();
-    expect(cancelExpiredAwaitingMobileInvitationOrdersForAllUsers).not.toHaveBeenCalled();
+    expect(
+      cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+    ).not.toHaveBeenCalled();
   });
 
   it("한 배치가 reject해도 다른 배치는 호출되며 500과 실패한 쪽 null을 반환한다", async () => {
-    cancelExpiredPendingOrdersForAllUsers.mockRejectedValue(new Error("db down"));
+    cancelExpiredPendingOrdersForAllUsers.mockRejectedValue(
+      new Error("db down"),
+    );
 
     const response = await GET(request("Bearer cron-secret"));
     const body = await response.json();
 
-    expect(cancelExpiredAwaitingMobileInvitationOrdersForAllUsers).toHaveBeenCalled();
+    expect(
+      cancelExpiredAwaitingMobileInvitationOrdersForAllUsers,
+    ).toHaveBeenCalled();
     expect(response.status).toBe(500);
     expect(body).toEqual({
       ok: false,
@@ -91,7 +103,9 @@ describe("GET /api/cron/expired-orders", () => {
   });
 
   it("두 배치가 모두 reject해도 500을 반환하고 예외를 던지지 않는다", async () => {
-    cancelExpiredPendingOrdersForAllUsers.mockRejectedValue(new Error("db down"));
+    cancelExpiredPendingOrdersForAllUsers.mockRejectedValue(
+      new Error("db down"),
+    );
     cancelExpiredAwaitingMobileInvitationOrdersForAllUsers.mockRejectedValue(
       new Error("portone down"),
     );
@@ -100,6 +114,10 @@ describe("GET /api/cron/expired-orders", () => {
     const body = await response.json();
 
     expect(response.status).toBe(500);
-    expect(body).toEqual({ ok: false, pending: null, awaitingInvitation: null });
+    expect(body).toEqual({
+      ok: false,
+      pending: null,
+      awaitingInvitation: null,
+    });
   });
 });

@@ -44,7 +44,10 @@ async function main() {
 
   if (mode === "stop") {
     const result = await checkBeforeStop(
-      { sessionId: payload.session_id, stopHookActive: payload.stop_hook_active },
+      {
+        sessionId: payload.session_id,
+        stopHookActive: payload.stop_hook_active,
+      },
       STOP_TIMEOUT_MS,
     );
     if (result?.action === "block") writeStopBlock(result.reason);

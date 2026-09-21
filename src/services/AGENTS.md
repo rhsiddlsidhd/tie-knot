@@ -57,9 +57,9 @@ src/services/
 
 즉시 로드(`@import`) 아님 — 트리거 열 키워드에 해당하는 작업일 때만 해당 문서를 읽는다.
 
-| 문서                 | 위치                   | 트리거                              | 요약                               |
-| -------------------- | ----------------------- | ------------------------------------ | ----------------------------------- |
-| `AGENTS.md`          | `src/models/`    | DB 스키마 확인 시                    | 모델 정의                           |
-| `AGENTS.md`          | `src/adapters/`       | 외부 연동 wrapper 확인 시            | 외부 연동 컨벤션                    |
-| `AGENTS.md`          | `src/app/api/`          | 이 서비스를 호출하는 쪽(route.ts) 확인 시 | Route Handler 컨벤션           |
-| `AGENTS.md`          | `src/actions/`   | 이 서비스를 호출하는 쪽(action) 확인 시   | Server Action 컨벤션           |
+| 문서        | 위치            | 트리거                                    | 요약                 |
+| ----------- | --------------- | ----------------------------------------- | -------------------- |
+| `AGENTS.md` | `src/models/`   | DB 스키마 확인 시                         | 모델 정의            |
+| `AGENTS.md` | `src/adapters/` | 외부 연동 wrapper 확인 시                 | 외부 연동 컨벤션     |
+| `AGENTS.md` | `src/app/api/`  | 이 서비스를 호출하는 쪽(route.ts) 확인 시 | Route Handler 컨벤션 |
+| `AGENTS.md` | `src/actions/`  | 이 서비스를 호출하는 쪽(action) 확인 시   | Server Action 컨벤션 |

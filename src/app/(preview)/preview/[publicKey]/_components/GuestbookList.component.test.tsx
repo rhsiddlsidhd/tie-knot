@@ -6,7 +6,10 @@ import { GuestbookList } from "./GuestbookList";
 import type { GuestbookEntryProps } from "../_utils/guestbookSection.mapper";
 
 type GuestbookListProps = ComponentProps<typeof GuestbookList>;
-type RefFreeProps = Omit<GuestbookListProps, "scrollContainerRef" | "sentinelRef">;
+type RefFreeProps = Omit<
+  GuestbookListProps,
+  "scrollContainerRef" | "sentinelRef"
+>;
 
 // scrollContainerRef/sentinelRef는 RefObject라 실제 useRef로 감싼 wrapper 없이는
 // hasMore=true일 때 sentinel 엘리먼트가 실제로 마운트되는지 관찰할 수 없다.
@@ -24,7 +27,7 @@ const renderGuestbookList = (props: RefFreeProps) => {
         sentinelRef={sentinelRef}
       />
     );
-  }
+  };
 
   const utils = render(<Wrapper />);
   return {
@@ -32,7 +35,7 @@ const renderGuestbookList = (props: RefFreeProps) => {
     getSentinelRef: () => sentinelRef,
     getScrollContainerRef: () => scrollContainerRef,
   };
-}
+};
 
 const items: GuestbookEntryProps[] = [
   { id: "1", author: "작성자1", message: "메시지1" },
@@ -41,19 +44,34 @@ const items: GuestbookEntryProps[] = [
 
 describe("GuestbookList", () => {
   it("status가 loading이면 로딩 문구를 보여준다", () => {
-    renderGuestbookList({ status: "loading", items: [], hasMore: false, onDeleteClick: vi.fn() });
+    renderGuestbookList({
+      status: "loading",
+      items: [],
+      hasMore: false,
+      onDeleteClick: vi.fn(),
+    });
 
     expect(screen.getByText("방명록을 불러오는 중입니다.")).toBeInTheDocument();
   });
 
   it("status가 ready이고 목록이 비어있으면 빈 상태 문구를 보여준다", () => {
-    renderGuestbookList({ status: "ready", items: [], hasMore: false, onDeleteClick: vi.fn() });
+    renderGuestbookList({
+      status: "ready",
+      items: [],
+      hasMore: false,
+      onDeleteClick: vi.fn(),
+    });
 
     expect(screen.getByText("등록된 방명록이 없습니다.")).toBeInTheDocument();
   });
 
   it("항목을 작성자/메시지와 함께 렌더링한다", () => {
-    renderGuestbookList({ status: "ready", items, hasMore: false, onDeleteClick: vi.fn() });
+    renderGuestbookList({
+      status: "ready",
+      items,
+      hasMore: false,
+      onDeleteClick: vi.fn(),
+    });
 
     expect(screen.getByText("작성자1")).toBeInTheDocument();
     expect(screen.getByText("메시지1")).toBeInTheDocument();
@@ -64,7 +82,12 @@ describe("GuestbookList", () => {
   it("삭제 버튼을 클릭하면 해당 항목의 id로 onDeleteClick을 호출한다", async () => {
     const user = userEvent.setup();
     const onDeleteClick = vi.fn();
-    renderGuestbookList({ status: "ready", items, hasMore: false, onDeleteClick });
+    renderGuestbookList({
+      status: "ready",
+      items,
+      hasMore: false,
+      onDeleteClick,
+    });
 
     const [firstDeleteButton] = screen.getAllByRole("button");
     await user.click(firstDeleteButton);

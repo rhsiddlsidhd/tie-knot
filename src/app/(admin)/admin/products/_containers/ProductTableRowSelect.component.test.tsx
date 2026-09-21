@@ -55,7 +55,9 @@ describe("ProductTableRowSelect", () => {
   });
 
   it("현재 상품 status를 선택값으로 렌더링한다", () => {
-    render(<ProductTableRowSelect product={buildProduct({ status: "active" })} />);
+    render(
+      <ProductTableRowSelect product={buildProduct({ status: "active" })} />,
+    );
 
     expect(screen.getByText("판매중")).toBeInTheDocument();
   });
@@ -67,7 +69,9 @@ describe("ProductTableRowSelect", () => {
       data: { message: "상태가 변경되었습니다." },
     });
 
-    render(<ProductTableRowSelect product={buildProduct({ status: "active" })} />);
+    render(
+      <ProductTableRowSelect product={buildProduct({ status: "active" })} />,
+    );
 
     await user.click(screen.getByRole("combobox"));
     await user.click(await screen.findByRole("option", { name: "비활성" }));
@@ -86,7 +90,9 @@ describe("ProductTableRowSelect", () => {
       error: { category: "INTERNAL", message: "상태 변경에 실패했습니다." },
     });
 
-    render(<ProductTableRowSelect product={buildProduct({ status: "active" })} />);
+    render(
+      <ProductTableRowSelect product={buildProduct({ status: "active" })} />,
+    );
 
     await user.click(screen.getByRole("combobox"));
     await user.click(await screen.findByRole("option", { name: "비활성" }));

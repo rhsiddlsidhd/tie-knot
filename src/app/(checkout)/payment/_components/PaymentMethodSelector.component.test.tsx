@@ -9,22 +9,30 @@ describe("PaymentMethodSelector", () => {
 
     const radios = screen.getAllByRole("radio");
     expect(radios).toHaveLength(6);
-    expect(screen.getByRole("radio", { name: "신용/체크카드 모든 카드 사용 가능" })).toBeChecked();
+    expect(
+      screen.getByRole("radio", { name: "신용/체크카드 모든 카드 사용 가능" }),
+    ).toBeChecked();
   });
 
   it("다른 결제 수단을 클릭하면 그 항목만 선택 상태로 바뀐다", async () => {
     const user = userEvent.setup();
     render(<PaymentMethodSelector step={3} />);
 
-    const easyPay = screen.getByRole("radio", { name: "간편결제 카카오페이·네이버페이 등" });
+    const easyPay = screen.getByRole("radio", {
+      name: "간편결제 카카오페이·네이버페이 등",
+    });
     await user.click(easyPay);
 
     expect(easyPay).toBeChecked();
-    expect(screen.getByRole("radio", { name: "신용/체크카드 모든 카드 사용 가능" })).not.toBeChecked();
+    expect(
+      screen.getByRole("radio", { name: "신용/체크카드 모든 카드 사용 가능" }),
+    ).not.toBeChecked();
   });
 
   it("error prop이 있으면 에러 메시지를 보여준다", () => {
-    render(<PaymentMethodSelector step={3} error="결제 수단을 선택해주세요." />);
+    render(
+      <PaymentMethodSelector step={3} error="결제 수단을 선택해주세요." />,
+    );
 
     expect(screen.getByText("결제 수단을 선택해주세요.")).toBeInTheDocument();
   });

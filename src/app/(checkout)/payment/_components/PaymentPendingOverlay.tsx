@@ -1,5 +1,8 @@
 import { Spinner } from "@/ui/components/atoms/spinner";
-import { TypographyLarge, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyLarge,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 interface PaymentPendingOverlayProps {
   visible: boolean;
 }
@@ -14,6 +17,6 @@ const PaymentPendingOverlay = ({ visible }: PaymentPendingOverlayProps) => {
       <TypographyMuted>잠시만 기다려주세요.</TypographyMuted>
     </div>
   );
-}
+};
 
 export { PaymentPendingOverlay };

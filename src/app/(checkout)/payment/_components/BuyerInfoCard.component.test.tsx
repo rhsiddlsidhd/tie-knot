@@ -25,10 +25,14 @@ describe("BuyerInfoCard", () => {
       />,
     );
 
-    expect(screen.getByText("이름은 2자 이상 입력해주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText("이름은 2자 이상 입력해주세요."),
+    ).toBeInTheDocument();
     expect(
       screen.getByText("휴대폰 번호 형식이 올바르지 않습니다."),
     ).toBeInTheDocument();
-    expect(screen.getByText("유효한 이메일을 입력해주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText("유효한 이메일을 입력해주세요."),
+    ).toBeInTheDocument();
   });
 });

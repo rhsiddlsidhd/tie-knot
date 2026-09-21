@@ -42,7 +42,7 @@ const PromotionHero = () => {
                 </span>
               )}
 
-              <TypographyH1 className="font-[var(--font-NotoSerif)] max-w-2xl text-left text-2xl leading-tight font-bold text-white md:text-3xl">
+              <TypographyH1 className="max-w-2xl text-left text-2xl leading-tight font-[var(--font-NotoSerif)] font-bold text-white md:text-3xl">
                 {promo.title.split("\n").map((line, i) => (
                   <Fragment key={i}>
                     {line}

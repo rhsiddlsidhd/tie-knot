@@ -52,7 +52,11 @@ describe("LocationSection", () => {
 
   it("예식장 이름과 전체 주소를 렌더링한다", () => {
     render(
-      <LocationSection venueName="그랜드홀" address="서울시 강남구" addressDetail="3층" />,
+      <LocationSection
+        venueName="그랜드홀"
+        address="서울시 강남구"
+        addressDetail="3층"
+      />,
     );
 
     expect(screen.getByText("그랜드홀")).toBeInTheDocument();
@@ -70,7 +74,11 @@ describe("LocationSection", () => {
     const writeText = vi.spyOn(navigator.clipboard, "writeText");
 
     render(
-      <LocationSection venueName="그랜드홀" address="서울시 강남구" addressDetail="3층" />,
+      <LocationSection
+        venueName="그랜드홀"
+        address="서울시 강남구"
+        addressDetail="3층"
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
@@ -82,12 +90,21 @@ describe("LocationSection", () => {
 
   it("지하철 정보가 있으면 역 이름과 호선 배지를 렌더링한다", () => {
     vi.mocked(useSubwayLineInfo).mockReturnValue({
-      lineInfo: { station: "강남", lines: [{ name: "2호선", color: "#00A84D" }] },
+      lineInfo: {
+        station: "강남",
+        lines: [{ name: "2호선", color: "#00A84D" }],
+      },
       isLoading: false,
       isError: undefined,
     });
 
-    render(<LocationSection venueName="그랜드홀" address="서울시 강남구" subwayStation="강남" />);
+    render(
+      <LocationSection
+        venueName="그랜드홀"
+        address="서울시 강남구"
+        subwayStation="강남"
+      />,
+    );
 
     expect(screen.getByText("강남역")).toBeInTheDocument();
     expect(screen.getByText("2호선")).toBeInTheDocument();

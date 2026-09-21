@@ -4,5 +4,8 @@ import { vi } from "vitest";
 vi.mock("server-only", () => ({}));
 
 if (!("File" in globalThis)) {
-  Object.defineProperty(globalThis, "File", { value: File, configurable: true });
+  Object.defineProperty(globalThis, "File", {
+    value: File,
+    configurable: true,
+  });
 }

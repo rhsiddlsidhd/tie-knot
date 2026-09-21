@@ -22,6 +22,6 @@ const StoreProvider = ({
       {children}
     </AppStoreContext.Provider>
   );
-}
+};
 
 export { AppStoreContext, StoreProvider };

@@ -43,7 +43,9 @@ describe("PopularProductsSection", () => {
   });
 
   it("상품이 2개면 아무것도 렌더링하지 않는다", () => {
-    const { container } = render(<PopularProductsSection products={buildProducts(2)} />);
+    const { container } = render(
+      <PopularProductsSection products={buildProducts(2)} />,
+    );
 
     expect(screen.queryByText("인기 상품")).not.toBeInTheDocument();
     expect(container).toBeEmptyDOMElement();

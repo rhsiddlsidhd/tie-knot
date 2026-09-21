@@ -16,7 +16,10 @@ vi.mock("@/adapters/browser/cloudinary/widget", () => ({
   CloudinaryWidget: ({
     children,
   }: {
-    children: (controls: { isLoading: boolean; open: () => void }) => React.ReactNode;
+    children: (controls: {
+      isLoading: boolean;
+      open: () => void;
+    }) => React.ReactNode;
   }) => children({ isLoading: false, open: vi.fn() }),
 }));
 
@@ -55,7 +58,13 @@ describe("MobileInvitationFormView", () => {
   });
 
   it("create 모드면 isLoading이어도 폼을 보여준다", () => {
-    render(<MobileInvitationFormView type="create" isLoading={false} {...baseProps} />);
+    render(
+      <MobileInvitationFormView
+        type="create"
+        isLoading={false}
+        {...baseProps}
+      />,
+    );
 
     expect(screen.getByText("기본 정보")).toBeInTheDocument();
     expect(
@@ -99,7 +108,12 @@ describe("MobileInvitationFormView", () => {
 
   it("orderId가 있으면 hidden input으로 폼에 포함한다", () => {
     const { container } = render(
-      <MobileInvitationFormView type="create" isLoading={false} {...baseProps} orderId="order-42" />,
+      <MobileInvitationFormView
+        type="create"
+        isLoading={false}
+        {...baseProps}
+        orderId="order-42"
+      />,
     );
 
     const hiddenInput = container.querySelector(

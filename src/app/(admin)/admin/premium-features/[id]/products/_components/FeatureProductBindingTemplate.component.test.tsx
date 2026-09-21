@@ -91,8 +91,9 @@ describe("FeatureProductBindingTemplate", () => {
   it("기능 목록으로 돌아가는 링크를 제공한다", () => {
     renderTemplate();
 
-    expect(
-      screen.getByRole("link", { name: /기능 목록/ }),
-    ).toHaveAttribute("href", "/admin/premium-features");
+    expect(screen.getByRole("link", { name: /기능 목록/ })).toHaveAttribute(
+      "href",
+      "/admin/premium-features",
+    );
   });
 });

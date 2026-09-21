@@ -56,7 +56,9 @@ describe("OrderList", () => {
   it("필터 결과만 0건이면 필터 초기화를 안내한다", () => {
     render(<OrderList firstPage={EMPTY_PAGE} status="CANCELLED" />);
 
-    expect(screen.getByText("조건에 맞는 주문이 없습니다.")).toBeInTheDocument();
+    expect(
+      screen.getByText("조건에 맞는 주문이 없습니다."),
+    ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "필터 초기화" }),
     ).toBeInTheDocument();

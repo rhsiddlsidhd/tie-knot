@@ -53,9 +53,7 @@ describe("ProductSearch", () => {
 
     render(<ProductSearch />);
 
-    expect(
-      screen.getByText("서버 오류가 발생했습니다."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("서버 오류가 발생했습니다.")).toBeInTheDocument();
   });
 
   it("LOADING: isLoading이면 안내 문구/그리드가 아니라 로딩 표시를 보여준다", () => {

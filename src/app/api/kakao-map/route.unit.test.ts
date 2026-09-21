@@ -9,10 +9,12 @@ const mockResponse = (status: number, ok: boolean, body: string): Response => {
     status,
     text: async () => body,
   } as Response;
-}
+};
 
 const buildRequest = (address: string) =>
-  new NextRequest(`http://localhost/api/kakao-map?address=${encodeURIComponent(address)}`);
+  new NextRequest(
+    `http://localhost/api/kakao-map?address=${encodeURIComponent(address)}`,
+  );
 
 describe("GET /api/kakao-map", () => {
   beforeEach(() => {
@@ -24,7 +26,9 @@ describe("GET /api/kakao-map", () => {
   });
 
   it("정상 JSON 응답이면 200과 데이터를 리턴한다", async () => {
-    const body = JSON.stringify({ documents: [{ address_name: "서울시 강남구" }] });
+    const body = JSON.stringify({
+      documents: [{ address_name: "서울시 강남구" }],
+    });
     vi.mocked(fetch).mockResolvedValueOnce(mockResponse(200, true, body));
 
     const res = await GET(buildRequest("강남구"));
@@ -38,7 +42,10 @@ describe("GET /api/kakao-map", () => {
   });
 
   it("ok:false이고 JSON 에러 본문이면 502 EXTERNAL_SERVICE를 리턴한다", async () => {
-    const body = JSON.stringify({ errorType: "InvalidArgumentError", message: "query is required" });
+    const body = JSON.stringify({
+      errorType: "InvalidArgumentError",
+      message: "query is required",
+    });
     vi.mocked(fetch).mockResolvedValueOnce(mockResponse(400, false, body));
 
     const res = await GET(buildRequest("강남구"));
@@ -80,7 +87,9 @@ describe("GET /api/kakao-map", () => {
   });
 
   it("address 앞뒤 공백은 trim해 Adapter에 전달한다", async () => {
-    const body = JSON.stringify({ documents: [{ address_name: "서울시 강남구" }] });
+    const body = JSON.stringify({
+      documents: [{ address_name: "서울시 강남구" }],
+    });
     vi.mocked(fetch).mockResolvedValueOnce(mockResponse(200, true, body));
 
     const res = await GET(buildRequest("  강남구  "));
@@ -88,8 +97,12 @@ describe("GET /api/kakao-map", () => {
 
     expect(res.status).toBe(200);
     expect(json.success).toBe(true);
-    expect(vi.mocked(fetch).mock.calls[0][0]).toContain(encodeURIComponent("강남구"));
-    expect(vi.mocked(fetch).mock.calls[0][0]).not.toContain(encodeURIComponent("  강남구  "));
+    expect(vi.mocked(fetch).mock.calls[0][0]).toContain(
+      encodeURIComponent("강남구"),
+    );
+    expect(vi.mocked(fetch).mock.calls[0][0]).not.toContain(
+      encodeURIComponent("  강남구  "),
+    );
   });
 
   it("ok:true이지만 비-JSON(HTML 에러 페이지) 본문이면 502 EXTERNAL_SERVICE로 분류한다", async () => {
@@ -106,7 +119,9 @@ describe("GET /api/kakao-map", () => {
   });
 
   it("ok:false이고 비-JSON 본문이면 SyntaxError로 죽지 않고 502 EXTERNAL_SERVICE로 분류한다", async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(mockResponse(502, false, "<html>Bad Gateway</html>"));
+    vi.mocked(fetch).mockResolvedValueOnce(
+      mockResponse(502, false, "<html>Bad Gateway</html>"),
+    );
 
     const res = await GET(buildRequest("강남구"));
     const json = await res.json();

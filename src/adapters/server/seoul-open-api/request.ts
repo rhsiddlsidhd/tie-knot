@@ -6,7 +6,10 @@ const fetchSeoulOpenApi = async <T>(
   serviceName: string,
   pathParams: (string | number)[],
 ): Promise<T[]> => {
-  const path = [serviceName, ...pathParams.map((p) => encodeURIComponent(p))].join("/");
+  const path = [
+    serviceName,
+    ...pathParams.map((p) => encodeURIComponent(p)),
+  ].join("/");
   const url = `${process.env.SUBWAY_SEOUL_BASE_URL}/${process.env.SEOUL_PUBLIC_API_KEY}/json/${path}/`;
 
   let res: Response;
@@ -39,6 +42,6 @@ const fetchSeoulOpenApi = async <T>(
   }
 
   return result.rows;
-}
+};
 
 export { fetchSeoulOpenApi };

@@ -1,6 +1,17 @@
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/ui/components/atoms/card";
-import { TypographyH3, TypographyMuted, TypographyP, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/ui/components/atoms/card";
+import {
+  TypographyH3,
+  TypographyMuted,
+  TypographyP,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 import { DELIVERY_FEE } from "@/core/domain/price";
 import type { CheckoutItem } from "@/core/domain/checkout";
 import { formatPriceWithComma } from "@/core/utils/price";
@@ -56,7 +67,7 @@ const OrderSummary = ({ data, loading }: OrderSummaryProps) => {
                 {title}
               </TypographyH3>
               <TypographyMuted>청첩장 템플릿</TypographyMuted>
-              <TypographyMuted className="mt-2 font-semibold text-foreground">
+              <TypographyMuted className="text-foreground mt-2 font-semibold">
                 {formatPriceWithComma(discountedPrice)}원
               </TypographyMuted>
             </div>
@@ -64,7 +75,9 @@ const OrderSummary = ({ data, loading }: OrderSummaryProps) => {
 
           {selectedFeatures && selectedFeatures.length > 0 && (
             <div className="space-y-1">
-              <TypographySmall className="font-medium">선택 옵션:</TypographySmall>
+              <TypographySmall className="font-medium">
+                선택 옵션:
+              </TypographySmall>
               {selectedFeatures.map((option) => (
                 <div
                   key={option.featureId}

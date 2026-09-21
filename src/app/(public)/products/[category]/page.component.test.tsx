@@ -45,7 +45,8 @@ vi.mock(
     }) => (
       <div>
         Template:category={category}:label={categoryLabel}:products=
-        {firstPage.items.length}:available={availableSubCategories.join(",")}:initial=
+        {firstPage.items.length}:available={availableSubCategories.join(",")}
+        :initial=
         {initialSubCategory}
       </div>
     ),

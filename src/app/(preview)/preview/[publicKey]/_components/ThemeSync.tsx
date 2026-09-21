@@ -21,6 +21,6 @@ const ThemeSync = ({ theme }: { theme: string }): null => {
   }, [theme]);
 
   return null;
-}
+};
 
 export { ThemeSync };

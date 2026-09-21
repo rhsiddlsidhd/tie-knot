@@ -11,6 +11,6 @@ const fetcher = async <T>(url: string): Promise<T> => {
 
   const body: ErrorResponse = await res.json();
   throw body.error;
-}
+};
 
 export { fetcher };

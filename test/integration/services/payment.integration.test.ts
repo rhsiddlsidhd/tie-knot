@@ -683,9 +683,9 @@ describe("payment", () => {
       expect(
         (await ProductModel.findById(savedProduct._id).lean())?.salesCount,
       ).toBe(0);
-      expect(
-        (await OrderModel.findById(order._id).lean())?.orderStatus,
-      ).toBe("CANCELLED");
+      expect((await OrderModel.findById(order._id).lean())?.orderStatus).toBe(
+        "CANCELLED",
+      );
     });
 
     it("PARTIAL_CANCELLED는 Payment에 취소 합계를 기록하고 Order는 CONFIRMED로 유지한다", async () => {
@@ -754,7 +754,9 @@ describe("payment", () => {
 
     it("가상계좌 발급을 PENDING Payment로 저장하고 주문에 연결한다", async () => {
       const { order } = await setupProductAndOrder(1);
-      getPaymentMock.mockResolvedValue(virtualAccountPayload(order.merchantUid));
+      getPaymentMock.mockResolvedValue(
+        virtualAccountPayload(order.merchantUid),
+      );
 
       const result = await syncPayment(order.merchantUid);
 
@@ -776,7 +778,9 @@ describe("payment", () => {
 
     it("같은 발급 webhook이 재전송돼도 Payment는 하나만 유지된다", async () => {
       const { order } = await setupProductAndOrder(1);
-      getPaymentMock.mockResolvedValue(virtualAccountPayload(order.merchantUid));
+      getPaymentMock.mockResolvedValue(
+        virtualAccountPayload(order.merchantUid),
+      );
 
       await syncPayment(order.merchantUid);
       await syncPayment(order.merchantUid);
@@ -1022,7 +1026,9 @@ describe("payment", () => {
         },
       });
 
-      await cancelExpiredAwaitingMobileInvitationOrders(order.userId.toString());
+      await cancelExpiredAwaitingMobileInvitationOrders(
+        order.userId.toString(),
+      );
 
       const updatedOrder = await OrderModel.findById(order._id).lean();
       expect(updatedOrder?.orderStatus).toBe("CANCELLED");
@@ -1038,7 +1044,9 @@ describe("payment", () => {
         ),
       );
       await syncPayment(order.merchantUid);
-      await cancelExpiredAwaitingMobileInvitationOrders(order.userId.toString());
+      await cancelExpiredAwaitingMobileInvitationOrders(
+        order.userId.toString(),
+      );
 
       expect(cancelPaymentMock).not.toHaveBeenCalled();
       const updatedOrder = await OrderModel.findById(order._id).lean();
@@ -1117,7 +1125,11 @@ describe("payment", () => {
       const { savedProduct: product1, order: order1 } =
         await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
-        paidPayload(order1.merchantUid, product1._id.toString(), order1.finalPrice),
+        paidPayload(
+          order1.merchantUid,
+          product1._id.toString(),
+          order1.finalPrice,
+        ),
       );
       await syncPayment(order1.merchantUid);
       await expireConfirmedAt(order1._id);
@@ -1125,7 +1137,11 @@ describe("payment", () => {
       const { savedProduct: product2, order: order2 } =
         await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue({
-        ...paidPayload(order2.merchantUid, product2._id.toString(), order2.finalPrice),
+        ...paidPayload(
+          order2.merchantUid,
+          product2._id.toString(),
+          order2.finalPrice,
+        ),
         transactionId: "txn_2",
       });
       await syncPayment(order2.merchantUid);
@@ -1139,7 +1155,8 @@ describe("payment", () => {
         },
       });
 
-      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 2, cancelled: 2, failed: 0 });
       const updated1 = await OrderModel.findById(order1._id).lean();
@@ -1151,7 +1168,11 @@ describe("payment", () => {
     it("MobileInvitation이 있는 주문은 cancelPayment를 호출하지 않는다", async () => {
       const { savedProduct, order } = await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
-        paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
       );
       await syncPayment(order.merchantUid);
       await expireConfirmedAt(order._id);
@@ -1172,7 +1193,8 @@ describe("payment", () => {
         galleryImages: [],
       });
 
-      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
       expect(cancelPaymentMock).not.toHaveBeenCalled();
@@ -1181,11 +1203,16 @@ describe("payment", () => {
     it("기한이 안 지난 주문은 건드리지 않는다", async () => {
       const { savedProduct, order } = await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
-        paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
       );
       await syncPayment(order.merchantUid);
 
-      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
       expect(cancelPaymentMock).not.toHaveBeenCalled();
@@ -1195,7 +1222,11 @@ describe("payment", () => {
       const { savedProduct: product1, order: order1 } =
         await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue(
-        paidPayload(order1.merchantUid, product1._id.toString(), order1.finalPrice),
+        paidPayload(
+          order1.merchantUid,
+          product1._id.toString(),
+          order1.finalPrice,
+        ),
       );
       await syncPayment(order1.merchantUid);
       await expireConfirmedAt(order1._id);
@@ -1203,7 +1234,11 @@ describe("payment", () => {
       const { savedProduct: product2, order: order2 } =
         await setupProductAndOrder(1);
       getPaymentMock.mockResolvedValue({
-        ...paidPayload(order2.merchantUid, product2._id.toString(), order2.finalPrice),
+        ...paidPayload(
+          order2.merchantUid,
+          product2._id.toString(),
+          order2.finalPrice,
+        ),
         transactionId: "txn_2",
       });
       await syncPayment(order2.merchantUid);
@@ -1224,7 +1259,8 @@ describe("payment", () => {
         },
       );
 
-      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 2, cancelled: 1, failed: 1 });
       const updated1 = await OrderModel.findById(order1._id).lean();
@@ -1234,7 +1270,8 @@ describe("payment", () => {
     });
 
     it("후보가 없으면 cancelPaymentMock을 호출하지 않는다", async () => {
-      const result = await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await cancelExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual({ scanned: 0, cancelled: 0, failed: 0 });
       expect(cancelPaymentMock).not.toHaveBeenCalled();
@@ -1323,7 +1360,10 @@ describe("payment", () => {
     it("만료됐고 실제로 미결제(READY)인 주문은 그대로 취소된다", async () => {
       const { order } = await setupProductAndOrder(1);
       await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
-      getPaymentMock.mockResolvedValue({ status: "READY", id: order.merchantUid });
+      getPaymentMock.mockResolvedValue({
+        status: "READY",
+        id: order.merchantUid,
+      });
 
       await cancelExpiredPendingOrders(order.userId.toString());
 
@@ -1355,29 +1395,37 @@ describe("payment", () => {
 
     it("한 후보의 동기화 실패가 같은 유저의 다른 만료 후보 처리를 막지 않는다", async () => {
       const { savedProduct, order: order1 } = await setupProductAndOrder(1);
-      await setCreatedAt(order1._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(
+        order1._id,
+        new Date(Date.now() - 25 * 60 * 60 * 1000),
+      );
 
       const { order: order2 } = await setupProductAndOrder(1);
       await OrderModel.updateOne(
         { _id: order2._id },
         { userId: order1.userId },
       );
-      await setCreatedAt(order2._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(
+        order2._id,
+        new Date(Date.now() - 25 * 60 * 60 * 1000),
+      );
 
-      getPaymentMock.mockImplementation(({ paymentId }: { paymentId: string }) => {
-        if (paymentId === order1.merchantUid) {
-          // PG상 PAID인데 검증 실패 — 취소 보류 대상(취소되면 안 됨)
-          return Promise.resolve(
-            paidPayload(
-              order1.merchantUid,
-              savedProduct._id.toString(),
-              order1.finalPrice + 1000,
-            ),
-          );
-        }
-        // 진짜 미결제 — 취소 대상
-        return Promise.resolve({ status: "READY", id: order2.merchantUid });
-      });
+      getPaymentMock.mockImplementation(
+        ({ paymentId }: { paymentId: string }) => {
+          if (paymentId === order1.merchantUid) {
+            // PG상 PAID인데 검증 실패 — 취소 보류 대상(취소되면 안 됨)
+            return Promise.resolve(
+              paidPayload(
+                order1.merchantUid,
+                savedProduct._id.toString(),
+                order1.finalPrice + 1000,
+              ),
+            );
+          }
+          // 진짜 미결제 — 취소 대상
+          return Promise.resolve({ status: "READY", id: order2.merchantUid });
+        },
+      );
 
       await expect(
         cancelExpiredPendingOrders(order1.userId.toString()),
@@ -1404,9 +1452,15 @@ describe("payment", () => {
 
     it("서로 다른 유저의 만료건을 모두 취소하고 집계를 반환한다", async () => {
       const { order: order1 } = await setupProductAndOrder(1);
-      await setCreatedAt(order1._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(
+        order1._id,
+        new Date(Date.now() - 25 * 60 * 60 * 1000),
+      );
       const { order: order2 } = await setupProductAndOrder(1);
-      await setCreatedAt(order2._id, new Date(Date.now() - 30 * 60 * 60 * 1000));
+      await setCreatedAt(
+        order2._id,
+        new Date(Date.now() - 30 * 60 * 60 * 1000),
+      );
       getPaymentMock.mockResolvedValue({ status: "READY", id: "irrelevant" });
 
       const result = await cancelExpiredPendingOrdersForAllUsers();
@@ -1463,7 +1517,11 @@ describe("payment", () => {
       const { savedProduct, order } = await setupProductAndOrder(1);
       await setCreatedAt(order._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
       getPaymentMock.mockResolvedValue(
-        paidPayload(order.merchantUid, savedProduct._id.toString(), order.finalPrice),
+        paidPayload(
+          order.merchantUid,
+          savedProduct._id.toString(),
+          order.finalPrice,
+        ),
       );
 
       const result = await cancelExpiredPendingOrdersForAllUsers();
@@ -1480,19 +1538,31 @@ describe("payment", () => {
 
     it("한 유저의 동기화 실패가 다른 유저 주문 취소를 막지 않는다", async () => {
       const { savedProduct, order: order1 } = await setupProductAndOrder(1);
-      await setCreatedAt(order1._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(
+        order1._id,
+        new Date(Date.now() - 25 * 60 * 60 * 1000),
+      );
       const { order: order2 } = await setupProductAndOrder(1);
-      await setCreatedAt(order2._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
+      await setCreatedAt(
+        order2._id,
+        new Date(Date.now() - 25 * 60 * 60 * 1000),
+      );
 
-      getPaymentMock.mockImplementation(({ paymentId }: { paymentId: string }) => {
-        if (paymentId === order1.merchantUid) {
-          // PG상 PAID인데 검증 실패 — 취소 보류 대상(취소되면 안 됨)
-          return Promise.resolve(
-            paidPayload(order1.merchantUid, savedProduct._id.toString(), order1.finalPrice + 1000),
-          );
-        }
-        return Promise.resolve({ status: "READY", id: order2.merchantUid });
-      });
+      getPaymentMock.mockImplementation(
+        ({ paymentId }: { paymentId: string }) => {
+          if (paymentId === order1.merchantUid) {
+            // PG상 PAID인데 검증 실패 — 취소 보류 대상(취소되면 안 됨)
+            return Promise.resolve(
+              paidPayload(
+                order1.merchantUid,
+                savedProduct._id.toString(),
+                order1.finalPrice + 1000,
+              ),
+            );
+          }
+          return Promise.resolve({ status: "READY", id: order2.merchantUid });
+        },
+      );
 
       const result = await cancelExpiredPendingOrdersForAllUsers();
 

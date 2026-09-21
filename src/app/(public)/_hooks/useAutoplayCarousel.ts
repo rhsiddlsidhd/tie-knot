@@ -8,7 +8,10 @@ interface UseAutoplayCarouselOptions {
   intervalMs?: number;
 }
 
-const useAutoplayCarousel = ({ itemCount, intervalMs }: UseAutoplayCarouselOptions) => {
+const useAutoplayCarousel = ({
+  itemCount,
+  intervalMs,
+}: UseAutoplayCarouselOptions) => {
   const [api, setApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 

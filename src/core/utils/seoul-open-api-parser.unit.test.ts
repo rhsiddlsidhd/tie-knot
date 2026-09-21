@@ -51,7 +51,10 @@ describe("parseSeoulOpenApiResponse", () => {
 
   it("wrapper 없이 bare RESULT.CODE가 에러면 failure로 code와 message를 반환한다", () => {
     const json = {
-      RESULT: { CODE: "ERROR-336", MESSAGE: "일별 트래픽 제한을 초과했습니다." },
+      RESULT: {
+        CODE: "ERROR-336",
+        MESSAGE: "일별 트래픽 제한을 초과했습니다.",
+      },
     };
 
     expect(parseSeoulOpenApiResponse<Row>(SERVICE_NAME, json)).toEqual({

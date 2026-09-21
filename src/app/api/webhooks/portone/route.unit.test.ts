@@ -6,20 +6,23 @@ const { verify, isUnrecognizedWebhook, syncPayment } = vi.hoisted(() => ({
   syncPayment: vi.fn(),
 }));
 
-vi.mock("@portone/server-sdk", () => ({ Webhook: { verify, isUnrecognizedWebhook } }));
+vi.mock("@portone/server-sdk", () => ({
+  Webhook: { verify, isUnrecognizedWebhook },
+}));
 vi.mock("@/services/payment", () => ({ syncPayment }));
 
 import { POST } from "./route";
 
-const request = (body = "raw-body") => new Request("http://localhost/api/webhooks/portone", {
-  method: "POST",
-  body,
-  headers: {
-    "webhook-id": "event-1",
-    "webhook-signature": "v1,signature",
-    "webhook-timestamp": "123",
-  },
-});
+const request = (body = "raw-body") =>
+  new Request("http://localhost/api/webhooks/portone", {
+    method: "POST",
+    body,
+    headers: {
+      "webhook-id": "event-1",
+      "webhook-signature": "v1,signature",
+      "webhook-timestamp": "123",
+    },
+  });
 
 describe("POST /api/webhooks/portone", () => {
   beforeEach(() => {
@@ -33,7 +36,11 @@ describe("POST /api/webhooks/portone", () => {
     verify.mockResolvedValue({
       type: "Transaction.Paid",
       timestamp: "2026-08-10T00:00:00.000Z",
-      data: { paymentId: "payment-1", transactionId: "tx-1", storeId: "store-1" },
+      data: {
+        paymentId: "payment-1",
+        transactionId: "tx-1",
+        storeId: "store-1",
+      },
     });
 
     const response = await POST(request());
@@ -57,7 +64,11 @@ describe("POST /api/webhooks/portone", () => {
   });
 
   it("다른 store의 유효한 webhook을 거부한다", async () => {
-    verify.mockResolvedValue({ type: "Transaction.Failed", timestamp: "now", data: { paymentId: "payment-1", transactionId: "tx-1", storeId: "other" } });
+    verify.mockResolvedValue({
+      type: "Transaction.Failed",
+      timestamp: "now",
+      data: { paymentId: "payment-1", transactionId: "tx-1", storeId: "other" },
+    });
 
     const response = await POST(request());
 

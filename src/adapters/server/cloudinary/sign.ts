@@ -36,6 +36,6 @@ const signUploadRequest = (
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     apiKey: process.env.CLOUDINARY_API_KEY,
   };
-}
+};
 
 export { signUploadRequest, type UploadSignature };

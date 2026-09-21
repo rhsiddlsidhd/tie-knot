@@ -24,7 +24,10 @@ const UNLIMITED_SOFT_MAX = 99;
 type QuantityMode = "fixed" | "open" | "range";
 
 // 분기 입력은 오직 minQuantity/maxQuantity 두 숫자뿐이다 — product.category를 읽지 않는다.
-const deriveQuantityMode = (minQuantity: number, maxQuantity: number): QuantityMode => {
+const deriveQuantityMode = (
+  minQuantity: number,
+  maxQuantity: number,
+): QuantityMode => {
   if (minQuantity === 1 && maxQuantity === 1) return "fixed";
   if (maxQuantity === 0) return "open";
   return "range";
@@ -104,7 +107,8 @@ const ProductOptions = ({
 
     // 수량을 곱하지 않던 기존 버그 수정 — 화면 "총 상품 금액"이 /payment의
     // finalPrice(discountedPrice * quantity + optionsTotalPrice)와 어긋나면 안 된다.
-    const currentTotalPrice = discountedPrice * quantity + currentSelectedOptionPrice;
+    const currentTotalPrice =
+      discountedPrice * quantity + currentSelectedOptionPrice;
 
     return {
       selectedOptionsDetails: currentSelectedOptionsDetails,
@@ -114,7 +118,10 @@ const ProductOptions = ({
   }, [selectedOptionIds, optionsMap, discountedPrice, quantity]);
 
   const handlePurchase = useCallback(() => {
-    const optionsTotalPrice = selectedOptionsDetails.reduce((sum, f) => sum + f.price, 0);
+    const optionsTotalPrice = selectedOptionsDetails.reduce(
+      (sum, f) => sum + f.price,
+      0,
+    );
     const discountAmount = product.price - discountedPrice;
 
     const checkoutData: CheckoutItem = {

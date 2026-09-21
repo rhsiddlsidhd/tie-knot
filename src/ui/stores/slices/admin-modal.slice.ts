@@ -16,7 +16,10 @@ interface AdminModalSlice {
   adminModalIsOpen: boolean;
   adminModalType: null | AdminModalType;
   props: AdminModalPropsMap[AdminModalType] | Record<string, never>;
-  openModal: <T extends AdminModalType>(type: T, props: AdminModalPropsMap[T]) => void;
+  openModal: <T extends AdminModalType>(
+    type: T,
+    props: AdminModalPropsMap[T],
+  ) => void;
   closeAdminModal: () => void;
 }
 
@@ -29,16 +32,14 @@ const initialAdminModalState: Pick<
   props: {},
 };
 
-const createAdminModalSlice: StateCreator<
-  AppStore,
-  [],
-  [],
-  AdminModalSlice
-> = (set) => ({
+const createAdminModalSlice: StateCreator<AppStore, [], [], AdminModalSlice> = (
+  set,
+) => ({
   ...initialAdminModalState,
   openModal: (type, props) =>
     set({ adminModalIsOpen: true, adminModalType: type, props }),
-  closeAdminModal: () => set({ ...initialAdminModalState, adminModalIsOpen: false }),
+  closeAdminModal: () =>
+    set({ ...initialAdminModalState, adminModalIsOpen: false }),
 });
 
 export {

@@ -110,7 +110,13 @@ function gitDirtySrcHashes() {
 /** snapshotHead 이후 커밋된 src/ 변경 경로. */
 function gitChangedSrcSince(snapshotHead) {
   if (!snapshotHead) return [];
-  const out = git(["diff", "--name-only", `${snapshotHead}..HEAD`, "--", "src"]);
+  const out = git([
+    "diff",
+    "--name-only",
+    `${snapshotHead}..HEAD`,
+    "--",
+    "src",
+  ]);
   if (!out) return [];
   return out.split("\n").filter(Boolean).map(toPosix);
 }

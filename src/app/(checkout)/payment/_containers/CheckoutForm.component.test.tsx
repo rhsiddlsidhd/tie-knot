@@ -44,7 +44,10 @@ import { CheckoutForm } from "./CheckoutForm";
 describe("CheckoutForm (컨테이너)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    usePortOnePaymentMock.mockReturnValue({ paymentStatus: "IDLE", triggerPayment: vi.fn() });
+    usePortOnePaymentMock.mockReturnValue({
+      paymentStatus: "IDLE",
+      triggerPayment: vi.fn(),
+    });
   });
 
   it("결제 성공 시 주문 정보를 비우고 /payment/success로 이동한다", () => {
@@ -55,6 +58,8 @@ describe("CheckoutForm (컨테이너)", () => {
 
     expect(clearOrderMock).toHaveBeenCalled();
     expect(toast.success).toHaveBeenCalledWith("결제가 완료되었습니다!");
-    expect(pushMock).toHaveBeenCalledWith("/payment/success?orderId=merchant-1");
+    expect(pushMock).toHaveBeenCalledWith(
+      "/payment/success?orderId=merchant-1",
+    );
   });
 });

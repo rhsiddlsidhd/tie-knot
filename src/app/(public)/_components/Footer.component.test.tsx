@@ -8,10 +8,12 @@ describe("Footer", () => {
     render(<Footer />);
 
     expect(screen.getByText("Tie Knot")).toBeInTheDocument();
-    expect(screen.getByText("© 2026 Tie Knot. All rights reserved.")).toBeInTheDocument();
+    expect(
+      screen.getByText("© 2026 Tie Knot. All rights reserved."),
+    ).toBeInTheDocument();
   });
 
-  it("href=\"#\" 데드링크를 렌더하지 않는다", () => {
+  it('href="#" 데드링크를 렌더하지 않는다', () => {
     const { container } = render(<Footer />);
 
     const deadLinks = container.querySelectorAll('a[href="#"]');

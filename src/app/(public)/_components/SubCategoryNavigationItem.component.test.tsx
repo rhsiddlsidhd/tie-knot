@@ -5,7 +5,12 @@ import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 describe("SubCategoryNavigationItem", () => {
   it("청첩장(wedding) 링크를 올바른 href로 렌더한다", () => {
-    render(<SubCategoryNavigationItem category={MOBILE_INVITATION_CATEGORY} subCategory="wedding" />);
+    render(
+      <SubCategoryNavigationItem
+        category={MOBILE_INVITATION_CATEGORY}
+        subCategory="wedding"
+      />,
+    );
 
     const link = screen.getByRole("link", { name: "청첩장" });
     expect(link).toHaveAttribute(
@@ -16,7 +21,10 @@ describe("SubCategoryNavigationItem", () => {
 
   it("돌잔치(first-birthday) 링크를 올바른 href로 렌더한다 — 하이픈 유지", () => {
     render(
-      <SubCategoryNavigationItem category={MOBILE_INVITATION_CATEGORY} subCategory="first-birthday" />,
+      <SubCategoryNavigationItem
+        category={MOBILE_INVITATION_CATEGORY}
+        subCategory="first-birthday"
+      />,
     );
 
     const link = screen.getByRole("link", { name: "돌잔치" });

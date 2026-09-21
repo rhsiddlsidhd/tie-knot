@@ -70,7 +70,11 @@ const ProductRegistrationForm = ({
       {form.featureIds.map((id) => (
         <input key={id} type="hidden" name="featureIds" value={id} />
       ))}
-      <input type="hidden" name="isFeatured" value={form.isFeature.toString()} />
+      <input
+        type="hidden"
+        name="isFeatured"
+        value={form.isFeature.toString()}
+      />
       <input type="hidden" name="isPremium" value={form.isPremium.toString()} />
 
       <div className="flex items-center justify-between">

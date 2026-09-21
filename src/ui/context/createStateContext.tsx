@@ -27,6 +27,6 @@ const createStateContext = <State, InitialValue>(
   };
 
   return [StateProvider, useContextState] as const;
-}
+};
 
 export { createStateContext };

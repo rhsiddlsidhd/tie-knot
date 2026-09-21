@@ -51,9 +51,7 @@ describe("BasicInfoSection", () => {
   it("data가 없으면 빈 값과 placeholder로 렌더한다", () => {
     render(<BasicInfoSection />);
 
-    expect(
-      screen.getByPlaceholderText("예: 더 컨벤션 웨딩홀"),
-    ).toHaveValue("");
+    expect(screen.getByPlaceholderText("예: 더 컨벤션 웨딩홀")).toHaveValue("");
     expect(screen.getByText("날짜를 선택하세요")).toBeInTheDocument();
     const toggle = screen.getByRole("switch", { name: "방명록 사용" });
     expect(toggle).toHaveAttribute("aria-checked", "false");

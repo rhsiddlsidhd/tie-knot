@@ -15,9 +15,7 @@ describe("SheetPanel", () => {
 
     await user.click(screen.getByRole("button", { name: "메뉴 열기" }));
 
-    expect(
-      screen.getByRole("heading", { name: "메뉴" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "메뉴" })).toBeInTheDocument();
     expect(screen.getByText("본문 콘텐츠")).toBeInTheDocument();
   });
 

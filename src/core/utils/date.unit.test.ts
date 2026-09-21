@@ -59,9 +59,7 @@ describe("formatKstDate", () => {
   });
 
   it("문자열 입력도 동일하게 KST로 변환한다", () => {
-    expect(formatKstDate("2026-08-19T15:30:00.000Z", "dot")).toBe(
-      "2026.8.20",
-    );
+    expect(formatKstDate("2026-08-19T15:30:00.000Z", "dot")).toBe("2026.8.20");
   });
 
   it("같은 입력이면 항상 같은 문자열을 반환한다(서버/브라우저 결정적)", () => {

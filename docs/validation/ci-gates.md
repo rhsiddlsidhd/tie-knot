@@ -4,13 +4,15 @@
 
 ## Pull request 게이트
 
-| 게이트   | 책임                                      |
-| -------- | ----------------------------------------- |
-| `static` | ESLint, TypeScript 검사, production build |
+| 게이트   | 책임                                                |
+| -------- | --------------------------------------------------- |
+| `static` | Prettier, ESLint, TypeScript 검사, production build |
 
 정적 검증은 별도 테스트 래퍼 없이 `npm run build`를 직접 실행한다. 테스트 스위트는 로컬에서 필요에 따라 실행하며 PR 필수 게이트가 아니다.
 
-lint/tsc/build는 워크플로 내부에서 별도 job으로 병렬 실행된다 — 브랜치 보호가 요구하는 required status check 이름은 그 세 job을 취합하는 `static` job 하나로 고정돼 있다(job을 쪼개거나 늘려도 이 취합 job 이름만 유지하면 브랜치 보호 설정을 다시 동기화할 필요가 없다).
+`format:check`와 ESLint는 lint job에서 순차 실행되고, lint/tsc/build는 워크플로 내부에서 별도 job으로 병렬 실행된다 — 브랜치 보호가 요구하는 required status check 이름은 그 세 job을 취합하는 `static` job 하나로 고정돼 있다(job을 쪼개거나 늘려도 이 취합 job 이름만 유지하면 브랜치 보호 설정을 다시 동기화할 필요가 없다).
+
+Prettier의 관리 대상은 `npm run format`과 `npm run format:check`로 통일한다. 생성된 `.agents/`, 로컬 worktree와 테스트 산출물, 작업 기록 및 내보낸 디자인 원본은 `.prettierignore`에서 제외한다.
 
 ## 브랜치 보호
 

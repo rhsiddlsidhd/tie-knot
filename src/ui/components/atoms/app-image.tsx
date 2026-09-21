@@ -38,7 +38,8 @@ const AppImage = ({
   const isImageUnavailable = !src || failedSrc === src;
   const resolvedSrc = isImageUnavailable ? FALLBACK_SRC : src;
   const isCloudinarySrc =
-    typeof resolvedSrc === "string" && resolvedSrc.includes("res.cloudinary.com");
+    typeof resolvedSrc === "string" &&
+    resolvedSrc.includes("res.cloudinary.com");
 
   return (
     <Image

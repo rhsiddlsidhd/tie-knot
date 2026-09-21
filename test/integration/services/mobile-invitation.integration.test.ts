@@ -89,10 +89,14 @@ describe("invitation", () => {
       buildContent(),
     );
 
-    const second = await saveMobileInvitationForOrder(order._id.toString(), userId, {
-      ...buildContent(),
-      venue: "변경된 예식장",
-    });
+    const second = await saveMobileInvitationForOrder(
+      order._id.toString(),
+      userId,
+      {
+        ...buildContent(),
+        venue: "변경된 예식장",
+      },
+    );
 
     expect(second._id.toString()).toBe(first._id.toString());
     expect(second.publicKey).toBe(first.publicKey);
@@ -151,7 +155,11 @@ describe("invitation", () => {
     });
 
     await expect(
-      saveMobileInvitationForOrder(order._id.toString(), userId, buildContent()),
+      saveMobileInvitationForOrder(
+        order._id.toString(),
+        userId,
+        buildContent(),
+      ),
     ).rejects.toMatchObject({ category: "VALIDATION" });
   });
 
@@ -189,7 +197,10 @@ describe("invitation", () => {
         "published",
       );
 
-      await setMobileInvitationStatusForCurrentUser(order._id.toString(), "draft");
+      await setMobileInvitationStatusForCurrentUser(
+        order._id.toString(),
+        "draft",
+      );
 
       const updated = await OrderModel.findById(order._id).lean();
       expect(updated?.orderStatus).toBe("CONFIRMED");

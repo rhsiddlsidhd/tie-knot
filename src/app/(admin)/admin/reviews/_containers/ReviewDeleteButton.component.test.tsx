@@ -103,7 +103,10 @@ describe("ReviewDeleteButton", () => {
   });
 
   it("삭제가 진행되는 동안 확인 버튼을 다시 눌러도 중복 호출하지 않는다", async () => {
-    const deferred = createDeferred<{ success: true; data: { message: string } }>();
+    const deferred = createDeferred<{
+      success: true;
+      data: { message: string };
+    }>();
     deleteReviewByAdmin.mockReturnValue(deferred.promise);
     const user = userEvent.setup();
     render(
@@ -117,7 +120,9 @@ describe("ReviewDeleteButton", () => {
     await user.click(screen.getByRole("button", { name: "삭제" }));
     const dialog = screen.getByRole("alertdialog");
     await user.click(within(dialog).getByRole("button", { name: "삭제" }));
-    await user.click(within(dialog).getByRole("button", { name: "삭제 중..." }));
+    await user.click(
+      within(dialog).getByRole("button", { name: "삭제 중..." }),
+    );
 
     expect(deleteReviewByAdmin).toHaveBeenCalledTimes(1);
 

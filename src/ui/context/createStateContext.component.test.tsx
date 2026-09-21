@@ -25,7 +25,7 @@ const CounterDisplay = () => {
       <button onClick={increment}>increment</button>
     </div>
   );
-}
+};
 
 describe("createStateContext", () => {
   it("Provider가 useValue(initialValue) 결과를 하위 Consumer에 노출한다", () => {
@@ -70,9 +70,13 @@ describe("createStateContext", () => {
   it("Provider 밖에서 훅을 사용하면 에러를 던진다", () => {
     // 이 테스트는 의도된 throw 시나리오다 — React가 발생시키는 console.error를
     // 이 테스트 범위에서만 억제하고 종료 전에 복구한다(docs/__test/component.md).
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
 
-    expect(() => renderHook(() => useCounter())).toThrow("Provider is missing!");
+    expect(() => renderHook(() => useCounter())).toThrow(
+      "Provider is missing!",
+    );
 
     consoleErrorSpy.mockRestore();
   });
@@ -85,8 +89,12 @@ describe("createStateContext", () => {
       <CounterProvider initialValue={20}>{children}</CounterProvider>
     );
 
-    const { result: resultA } = renderHook(() => useCounter(), { wrapper: wrapperA });
-    const { result: resultB } = renderHook(() => useCounter(), { wrapper: wrapperB });
+    const { result: resultA } = renderHook(() => useCounter(), {
+      wrapper: wrapperA,
+    });
+    const { result: resultB } = renderHook(() => useCounter(), {
+      wrapper: wrapperB,
+    });
 
     expect(resultA.current.count).toBe(10);
     expect(resultB.current.count).toBe(20);

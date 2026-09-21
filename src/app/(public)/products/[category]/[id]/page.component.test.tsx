@@ -87,7 +87,8 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
 
 const emptyReviews: ReviewListPage = { items: [], nextCursor: null };
 
-const buildParams = () => Promise.resolve({ category: "mobile-invitation", id: "product-1" });
+const buildParams = () =>
+  Promise.resolve({ category: "mobile-invitation", id: "product-1" });
 const buildSearchParams = (
   value: Record<string, string | string[] | undefined> = {},
 ) => Promise.resolve(value);
@@ -104,7 +105,10 @@ describe("상품 상세 페이지", () => {
     getProductServiceMock.mockResolvedValue(null);
 
     await expect(
-      ProductDetailPage({ params: buildParams(), searchParams: buildSearchParams() }),
+      ProductDetailPage({
+        params: buildParams(),
+        searchParams: buildSearchParams(),
+      }),
     ).rejects.toThrow("NEXT_NOT_FOUND");
 
     expect(getPremiumFeatureServiceMock).not.toHaveBeenCalled();
@@ -112,19 +116,34 @@ describe("상품 상세 페이지", () => {
   });
 
   it("상품을 조회한 뒤 그 featureIds로 프리미엄 옵션을 조회한다", async () => {
-    getProductServiceMock.mockResolvedValue(buildProduct({ featureIds: ["feature-1", "feature-2"] }));
+    getProductServiceMock.mockResolvedValue(
+      buildProduct({ featureIds: ["feature-1", "feature-2"] }),
+    );
 
-    await ProductDetailPage({ params: buildParams(), searchParams: buildSearchParams() });
+    await ProductDetailPage({
+      params: buildParams(),
+      searchParams: buildSearchParams(),
+    });
 
     expect(getProductServiceMock).toHaveBeenCalledWith("product-1");
-    expect(getPremiumFeatureServiceMock).toHaveBeenCalledWith(["feature-1", "feature-2"]);
+    expect(getPremiumFeatureServiceMock).toHaveBeenCalledWith([
+      "feature-1",
+      "feature-2",
+    ]);
   });
 
   it("로그인 세션이 있으면 viewerUserId를 포함해 리뷰를 조회한다", async () => {
     getProductServiceMock.mockResolvedValue(buildProduct());
-    getAuthMock.mockResolvedValue({ role: "USER", email: "a@x.com", userId: "user-1" });
+    getAuthMock.mockResolvedValue({
+      role: "USER",
+      email: "a@x.com",
+      userId: "user-1",
+    });
 
-    await ProductDetailPage({ params: buildParams(), searchParams: buildSearchParams() });
+    await ProductDetailPage({
+      params: buildParams(),
+      searchParams: buildSearchParams(),
+    });
 
     expect(getProductReviewsPageServiceMock).toHaveBeenCalledWith({
       productId: "product-1",
@@ -137,7 +156,10 @@ describe("상품 상세 페이지", () => {
   it("세션이 없으면 viewerUserId 없이 리뷰를 조회한다", async () => {
     getProductServiceMock.mockResolvedValue(buildProduct());
 
-    await ProductDetailPage({ params: buildParams(), searchParams: buildSearchParams() });
+    await ProductDetailPage({
+      params: buildParams(),
+      searchParams: buildSearchParams(),
+    });
 
     expect(getProductReviewsPageServiceMock).toHaveBeenCalledWith(
       expect.objectContaining({ viewerUserId: undefined }),
@@ -149,7 +171,10 @@ describe("상품 상세 페이지", () => {
 
     await ProductDetailPage({
       params: buildParams(),
-      searchParams: buildSearchParams({ sort: "RATING_HIGH", reviewCursor: "cursor-abc" }),
+      searchParams: buildSearchParams({
+        sort: "RATING_HIGH",
+        reviewCursor: "cursor-abc",
+      }),
     });
 
     expect(getProductReviewsPageServiceMock).toHaveBeenCalledWith(
@@ -160,7 +185,10 @@ describe("상품 상세 페이지", () => {
   it("sort가 없으면 LATEST를 기본값으로 사용한다", async () => {
     getProductServiceMock.mockResolvedValue(buildProduct());
 
-    await ProductDetailPage({ params: buildParams(), searchParams: buildSearchParams() });
+    await ProductDetailPage({
+      params: buildParams(),
+      searchParams: buildSearchParams(),
+    });
 
     expect(getProductReviewsPageServiceMock).toHaveBeenCalledWith(
       expect.objectContaining({ sort: "LATEST" }),
@@ -168,9 +196,19 @@ describe("상품 상세 페이지", () => {
   });
 
   it("조회한 상품/옵션/리뷰/정렬을 Template props로 전달한다", async () => {
-    getProductServiceMock.mockResolvedValue(buildProduct({ title: "봄맞이 청첩장" }));
+    getProductServiceMock.mockResolvedValue(
+      buildProduct({ title: "봄맞이 청첩장" }),
+    );
     getPremiumFeatureServiceMock.mockResolvedValue([
-      { _id: "feature-1", code: "CUSTOM_FONT", label: "나만의 폰트", description: "", additionalPrice: 0, isActive: true, createdAt: "2026-01-01T00:00:00.000Z" },
+      {
+        _id: "feature-1",
+        code: "CUSTOM_FONT",
+        label: "나만의 폰트",
+        description: "",
+        additionalPrice: 0,
+        isActive: true,
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
     ] as PremiumFeature[]);
     getProductReviewsPageServiceMock.mockResolvedValue({
       items: [
@@ -197,7 +235,9 @@ describe("상품 상세 페이지", () => {
     );
 
     expect(
-      screen.getByText("Template:title=봄맞이 청첩장:options=1:reviews=1:sort=RATING_HIGH"),
+      screen.getByText(
+        "Template:title=봄맞이 청첩장:options=1:reviews=1:sort=RATING_HIGH",
+      ),
     ).toBeInTheDocument();
   });
 });

@@ -13,8 +13,9 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/ui/stores/use-app-store", () => ({
-  useOrderStore: (selector: (s: { setOrder: (item: unknown) => void }) => unknown) =>
-    selector({ setOrder: setOrderMock }),
+  useOrderStore: (
+    selector: (s: { setOrder: (item: unknown) => void }) => unknown,
+  ) => selector({ setOrder: setOrderMock }),
 }));
 
 vi.mock("../_components/ProductSummary", () => ({
@@ -29,7 +30,11 @@ vi.mock("../_components/ProductSummary", () => ({
 }));
 
 const receivedPropsRef: {
-  current: { product: unknown; options: unknown; onPurchase: ((item: CheckoutItem) => void) | null } | null;
+  current: {
+    product: unknown;
+    options: unknown;
+    onPurchase: ((item: CheckoutItem) => void) | null;
+  } | null;
 } = { current: null };
 
 import { ProductSummary } from "./ProductSummary";
@@ -65,7 +70,9 @@ describe("ProductSummary (컨테이너)", () => {
   });
 
   it("구매 시 주문 정보를 store에 저장하고 /payment로 이동한다", () => {
-    render(<ProductSummary product={{ _id: "product-1" } as never} options={[]} />);
+    render(
+      <ProductSummary product={{ _id: "product-1" } as never} options={[]} />,
+    );
 
     receivedPropsRef.current?.onPurchase?.(CHECKOUT_ITEM);
 
@@ -80,7 +87,9 @@ describe("ProductSummary (컨테이너)", () => {
     setOrderMock.mockImplementation(() => callOrder.push("setOrder"));
     pushMock.mockImplementation(() => callOrder.push("push"));
 
-    render(<ProductSummary product={{ _id: "product-1" } as never} options={[]} />);
+    render(
+      <ProductSummary product={{ _id: "product-1" } as never} options={[]} />,
+    );
     receivedPropsRef.current?.onPurchase?.(CHECKOUT_ITEM);
 
     expect(callOrder).toEqual(["setOrder", "push"]);

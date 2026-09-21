@@ -106,7 +106,12 @@ describe("ProductOptions — 총 상품 금액/구매 (수량 반영, 회귀 방
     const user = userEvent.setup();
     render(
       <ProductOptions
-        product={buildProduct({ price: 10000, discountedPrice: 10000, minQuantity: 1, maxQuantity: 5 })}
+        product={buildProduct({
+          price: 10000,
+          discountedPrice: 10000,
+          minQuantity: 1,
+          maxQuantity: 5,
+        })}
         options={[]}
         onPurchase={vi.fn()}
       />,
@@ -124,7 +129,12 @@ describe("ProductOptions — 총 상품 금액/구매 (수량 반영, 회귀 방
     const onPurchase = vi.fn();
     render(
       <ProductOptions
-        product={buildProduct({ price: 10000, discountedPrice: 10000, minQuantity: 1, maxQuantity: 5 })}
+        product={buildProduct({
+          price: 10000,
+          discountedPrice: 10000,
+          minQuantity: 1,
+          maxQuantity: 5,
+        })}
         options={[]}
         onPurchase={onPurchase}
       />,
@@ -145,7 +155,12 @@ describe("ProductOptions — 프리미엄 옵션 선택/해제", () => {
     const user = userEvent.setup();
     render(
       <ProductOptions
-        product={buildProduct({ price: 10000, discountedPrice: 10000, minQuantity: 1, maxQuantity: 1 })}
+        product={buildProduct({
+          price: 10000,
+          discountedPrice: 10000,
+          minQuantity: 1,
+          maxQuantity: 1,
+        })}
         options={[buildOption()]}
         onPurchase={vi.fn()}
       />,
@@ -163,7 +178,10 @@ describe("ProductOptions — 프리미엄 옵션 선택/해제", () => {
     render(
       <ProductOptions
         product={buildProduct({ minQuantity: 1, maxQuantity: 1 })}
-        options={[buildOption(), buildOption({ _id: "feature-2", code: "PHOTO", label: "포토북" })]}
+        options={[
+          buildOption(),
+          buildOption({ _id: "feature-2", code: "PHOTO", label: "포토북" }),
+        ]}
         onPurchase={vi.fn()}
       />,
     );
@@ -182,7 +200,12 @@ describe("ProductOptions — 프리미엄 옵션 선택/해제", () => {
     const user = userEvent.setup();
     render(
       <ProductOptions
-        product={buildProduct({ price: 10000, discountedPrice: 10000, minQuantity: 1, maxQuantity: 1 })}
+        product={buildProduct({
+          price: 10000,
+          discountedPrice: 10000,
+          minQuantity: 1,
+          maxQuantity: 1,
+        })}
         options={[buildOption()]}
         onPurchase={vi.fn()}
       />,
@@ -202,7 +225,12 @@ describe("ProductOptions — 프리미엄 옵션 선택/해제", () => {
     const onPurchase = vi.fn();
     render(
       <ProductOptions
-        product={buildProduct({ price: 10000, discountedPrice: 10000, minQuantity: 1, maxQuantity: 1 })}
+        product={buildProduct({
+          price: 10000,
+          discountedPrice: 10000,
+          minQuantity: 1,
+          maxQuantity: 1,
+        })}
         options={[buildOption()]}
         onPurchase={onPurchase}
       />,
@@ -216,7 +244,11 @@ describe("ProductOptions — 프리미엄 옵션 선택/해제", () => {
       expect.objectContaining({
         finalPrice: 15000,
         selectedFeatures: [
-          expect.objectContaining({ featureId: "feature-1", label: "방명록", price: 5000 }),
+          expect.objectContaining({
+            featureId: "feature-1",
+            label: "방명록",
+            price: 5000,
+          }),
         ],
       }),
     );

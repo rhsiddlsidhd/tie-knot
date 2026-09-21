@@ -14,11 +14,11 @@ import { BotanicalInteraction } from "./BotanicalInteraction";
 const createMotionValue = (initial: number) => {
   const { result } = renderHook(() => useMotionValue(initial));
   return result.current;
-}
+};
 
 const getCurvePath = (container: HTMLElement) => {
   return container.querySelector("path[stroke]");
-}
+};
 
 describe("BotanicalInteraction", () => {
   it("커서 좌표에서 시작해 같은 좌표로 끝나는 곡선을 렌더한다(마운트 직후 tip===anchor)", () => {

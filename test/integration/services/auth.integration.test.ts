@@ -28,7 +28,14 @@ import { deleteCookie } from "@/adapters/server/cookies/delete";
 import { setCookie } from "@/adapters/server/cookies/set";
 import { hashPassword } from "@/adapters/server/bcrypt/hash";
 import { redirect } from "next/navigation";
-import { getUser, getAuth, requireAuth, logoutService, verifySession, loginUserService } from "@/services/auth";
+import {
+  getUser,
+  getAuth,
+  requireAuth,
+  logoutService,
+  verifySession,
+  loginUserService,
+} from "@/services/auth";
 
 describe("auth", () => {
   beforeEach(async () => {
@@ -112,7 +119,11 @@ describe("auth", () => {
       await UserModel.create(input);
 
       await expect(
-        loginUserService({ email: input.email, password: "wrong", remember: false }),
+        loginUserService({
+          email: input.email,
+          password: "wrong",
+          remember: false,
+        }),
       ).rejects.toMatchObject({ category: "UNAUTHENTICATED" });
     });
   });
@@ -129,7 +140,11 @@ describe("auth", () => {
     it("token 쿠키가 유효하면 DB를 재조회해 세션을 리턴한다", async () => {
       const input = buildUserInput({ role: "ADMIN" });
       const saved = await UserModel.create(input);
-      const token = await encrypt({ id: saved._id.toString(), role: "ADMIN", type: "REFRESH" });
+      const token = await encrypt({
+        id: saved._id.toString(),
+        role: "ADMIN",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       const result = await getAuth();
@@ -142,7 +157,10 @@ describe("auth", () => {
     });
 
     it("token이 만료/변조됐으면 null을 리턴한다", async () => {
-      vi.mocked(getCookie).mockResolvedValue({ name: "token", value: "invalid-token" });
+      vi.mocked(getCookie).mockResolvedValue({
+        name: "token",
+        value: "invalid-token",
+      });
 
       const result = await getAuth();
 
@@ -151,7 +169,11 @@ describe("auth", () => {
 
     it("token의 유저가 DB에 없으면(탈퇴 등) null을 리턴한다", async () => {
       const missingId = new mongoose.Types.ObjectId().toString();
-      const token = await encrypt({ id: missingId, role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: missingId,
+        role: "USER",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       const result = await getAuth();
@@ -162,7 +184,11 @@ describe("auth", () => {
     it("유저 조회 자체가 실패하면(인프라 예외) null로 삼키지 않고 AppError(INTERNAL)를 던진다", async () => {
       const input = buildUserInput();
       const saved = await UserModel.create(input);
-      const token = await encrypt({ id: saved._id.toString(), role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: saved._id.toString(),
+        role: "USER",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       const findOneSpy = vi.spyOn(UserModel, "findOne").mockReturnValue({
@@ -182,7 +208,11 @@ describe("auth", () => {
     it("세션이 있으면 세션을 리턴한다", async () => {
       const input = buildUserInput();
       const saved = await UserModel.create(input);
-      const token = await encrypt({ id: saved._id.toString(), role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: saved._id.toString(),
+        role: "USER",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       const result = await requireAuth();
@@ -194,7 +224,9 @@ describe("auth", () => {
       vi.mocked(getCookie).mockResolvedValue(undefined);
 
       await expect(requireAuth()).rejects.toBeInstanceOf(AppError);
-      await expect(requireAuth()).rejects.toMatchObject({ category: "UNAUTHENTICATED" });
+      await expect(requireAuth()).rejects.toMatchObject({
+        category: "UNAUTHENTICATED",
+      });
     });
   });
 
@@ -209,7 +241,11 @@ describe("auth", () => {
     it("세션이 있고 role 요구가 없으면 세션을 리턴한다", async () => {
       const input = buildUserInput();
       const saved = await UserModel.create(input);
-      const token = await encrypt({ id: saved._id.toString(), role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: saved._id.toString(),
+        role: "USER",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       const result = await verifySession();
@@ -221,7 +257,11 @@ describe("auth", () => {
     it("role을 요구했는데 불일치하면 /로 redirect한다", async () => {
       const input = buildUserInput({ role: "USER" });
       const saved = await UserModel.create(input);
-      const token = await encrypt({ id: saved._id.toString(), role: "USER", type: "REFRESH" });
+      const token = await encrypt({
+        id: saved._id.toString(),
+        role: "USER",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       await expect(verifySession("ADMIN")).rejects.toThrow("REDIRECT:/");
@@ -231,7 +271,11 @@ describe("auth", () => {
     it("role이 일치하면 세션을 리턴한다", async () => {
       const input = buildUserInput({ role: "ADMIN" });
       const saved = await UserModel.create(input);
-      const token = await encrypt({ id: saved._id.toString(), role: "ADMIN", type: "REFRESH" });
+      const token = await encrypt({
+        id: saved._id.toString(),
+        role: "ADMIN",
+        type: "REFRESH",
+      });
       vi.mocked(getCookie).mockResolvedValue({ name: "token", value: token });
 
       const result = await verifySession("ADMIN");

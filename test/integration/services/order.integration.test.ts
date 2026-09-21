@@ -522,7 +522,8 @@ describe("order", () => {
       await confirmExpired(orderA._id);
       await confirmExpired(orderB._id);
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result.map((o) => o._id.toString()).sort()).toEqual(
         [orderA._id.toString(), orderB._id.toString()].sort(),
@@ -549,7 +550,8 @@ describe("order", () => {
         galleryImages: [],
       });
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
     });
@@ -580,7 +582,8 @@ describe("order", () => {
         galleryImages: [],
       });
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result.map((o) => o._id.toString())).toEqual([
         orderWithoutMobileInvitation._id.toString(),
@@ -596,7 +599,8 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: oneDayAgo },
       );
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
     });
@@ -610,7 +614,8 @@ describe("order", () => {
         { confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
     });
@@ -618,7 +623,8 @@ describe("order", () => {
     it("후보가 없으면 MobileInvitation 조회 없이 빈 배열을 반환한다", async () => {
       const findSpy = vi.spyOn(MobileInvitationModel, "find");
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result).toEqual([]);
       expect(findSpy).not.toHaveBeenCalled();
@@ -668,7 +674,8 @@ describe("order", () => {
         { orderStatus: "CONFIRMED", confirmedAt: eightDaysAgo },
       );
 
-      const result = await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
+      const result =
+        await findExpiredAwaitingMobileInvitationOrdersForAllUsers();
 
       expect(result.map((o) => o._id.toString())).toEqual([
         trueCandidate._id.toString(),
@@ -691,8 +698,14 @@ describe("order", () => {
     it("서로 다른 두 유저의 만료 PENDING 주문이 함께 반환된다", async () => {
       const orderA = await createOrderService(buildOrderInputForTest());
       const orderB = await createOrderService(buildOrderInputForTest());
-      await setCreatedAt(orderA._id, new Date(Date.now() - 25 * 60 * 60 * 1000));
-      await setCreatedAt(orderB._id, new Date(Date.now() - 30 * 60 * 60 * 1000));
+      await setCreatedAt(
+        orderA._id,
+        new Date(Date.now() - 25 * 60 * 60 * 1000),
+      );
+      await setCreatedAt(
+        orderB._id,
+        new Date(Date.now() - 30 * 60 * 60 * 1000),
+      );
 
       const { orders } = await findExpiredPendingOrdersForAllUsers();
 
@@ -740,9 +753,14 @@ describe("order", () => {
 
       const { orders, deadline } = await findExpiredPendingOrdersForAllUsers();
 
-      expect(deadline.getTime()).toBeCloseTo(Date.now() - 24 * 60 * 60 * 1000, -3);
+      expect(deadline.getTime()).toBeCloseTo(
+        Date.now() - 24 * 60 * 60 * 1000,
+        -3,
+      );
       orders.forEach((o) => {
-        expect(new Date(o.createdAt).getTime()).toBeLessThan(deadline.getTime());
+        expect(new Date(o.createdAt).getTime()).toBeLessThan(
+          deadline.getTime(),
+        );
       });
     });
 
@@ -806,7 +824,9 @@ describe("order", () => {
 
     it("리뷰가 작성된 주문은 review 요약을 채우고, 없으면 null이다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
-      const reviewed = await createOrderService(buildOrderInputForTest({ userId }));
+      const reviewed = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
       const notReviewed = await createOrderService(
         buildOrderInputForTest({ userId }),
       );
@@ -833,7 +853,9 @@ describe("order", () => {
 
     it("상태 필터를 적용한다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
-      const pending = await createOrderService(buildOrderInputForTest({ userId }));
+      const pending = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
       const confirmed = await createOrderService(
         buildOrderInputForTest({ userId }),
       );
@@ -893,7 +915,9 @@ describe("order", () => {
       const sameCreatedAt = new Date("2026-08-01T00:00:00.000Z");
       const created = [];
       for (let i = 0; i < 3; i += 1) {
-        const order = await createOrderService(buildOrderInputForTest({ userId }));
+        const order = await createOrderService(
+          buildOrderInputForTest({ userId }),
+        );
         await setCreatedAt(order._id, sameCreatedAt);
         created.push(order._id.toString());
       }
@@ -928,7 +952,9 @@ describe("order", () => {
 
     it("가상계좌가 발급된 PENDING 주문에는 입금 계좌를 붙인다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
       const payment = await PaymentModel.create({
         merchantUid: order.merchantUid,
         orderId: order._id,
@@ -963,9 +989,7 @@ describe("order", () => {
 
   describe("getAdminOrdersPageService", () => {
     describe("검색(q)", () => {
-      const createOrderWithBuyer = async (
-        overrides: Record<string, string>,
-      ) =>
+      const createOrderWithBuyer = async (overrides: Record<string, string>) =>
         createOrderService(
           buildOrderInputForTest({
             buyerName: "김철수",
@@ -1131,7 +1155,9 @@ describe("order", () => {
 
       const result = await getAdminOrdersPageService({});
 
-      expect(result.items.map((o) => o.id)).toEqual([...created].sort().reverse());
+      expect(result.items.map((o) => o.id)).toEqual(
+        [...created].sort().reverse(),
+      );
     });
 
     it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
@@ -1167,10 +1193,18 @@ describe("order", () => {
     });
 
     it("네 주문 상태(PENDING/CONFIRMED/COMPLETED/CANCELLED)를 모두 포함한다", async () => {
-      const statuses = ["PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"] as const;
+      const statuses = [
+        "PENDING",
+        "CONFIRMED",
+        "COMPLETED",
+        "CANCELLED",
+      ] as const;
       for (const status of statuses) {
         const order = await createOrderService(buildOrderInputForTest());
-        await OrderModel.updateOne({ _id: order._id }, { $set: { orderStatus: status } });
+        await OrderModel.updateOne(
+          { _id: order._id },
+          { $set: { orderStatus: status } },
+        );
       }
 
       const result = await getAdminOrdersPageService({});
@@ -1277,7 +1311,9 @@ describe("order", () => {
     it("본인의 결제 전 주문을 CANCELLED로 전이한다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       authState.userId = userId;
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
 
       await cancelPendingOrderForCurrentUser(order._id.toString());
 
@@ -1305,7 +1341,9 @@ describe("order", () => {
     it("결제가 끝난 주문은 VALIDATION을 던진다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       authState.userId = userId;
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
       await OrderModel.updateOne(
         { _id: order._id },
         { $set: { orderStatus: "CONFIRMED" } },
@@ -1334,7 +1372,9 @@ describe("order", () => {
     it("가상계좌가 발급된 PENDING 주문은 이 경로로 취소하지 않는다", async () => {
       const userId = new mongoose.Types.ObjectId().toString();
       authState.userId = userId;
-      const order = await createOrderService(buildOrderInputForTest({ userId }));
+      const order = await createOrderService(
+        buildOrderInputForTest({ userId }),
+      );
       await OrderModel.updateOne(
         { _id: order._id },
         { $set: { paymentId: new mongoose.Types.ObjectId() } },

@@ -4,13 +4,15 @@ import { Card, CardContent } from "@/ui/components/atoms/card";
 import { Checkbox } from "@/ui/components/atoms/checkbox";
 import { Field, FieldLabel } from "@/ui/components/atoms/field";
 
-
 interface TermsAgreementCardProps {
   agreed: boolean;
   onAgreedChange: (value: boolean) => void;
 }
 
-const TermsAgreementCard = ({ agreed, onAgreedChange }: TermsAgreementCardProps) => {
+const TermsAgreementCard = ({
+  agreed,
+  onAgreedChange,
+}: TermsAgreementCardProps) => {
   return (
     <Card className="border-border">
       <CardContent className="pt-6">
@@ -35,6 +37,6 @@ const TermsAgreementCard = ({ agreed, onAgreedChange }: TermsAgreementCardProps)
       </CardContent>
     </Card>
   );
-}
+};
 
 export { TermsAgreementCard };

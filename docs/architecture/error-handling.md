@@ -40,14 +40,14 @@ ErrorPayload = { 분류, message, fieldErrors? }
 - 클라이언트로 나가는 에러는 단일 `ErrorPayload { 분류, message, fieldErrors? }` 형태로 통일한다 — 채널 A 리턴(`{ success:false, error: ErrorPayload }`)과 채널 B Response body가 같은 객체를 싣는다. `fieldErrors`는 zod 경로에서만 채워지는 optional이라, 클라이언트는 채널을 구분하지 않고 이 한 shape만 소비한다.
 - 민감 분류(INTERNAL/EXTERNAL_SERVICE)의 `message`는 서버 공용 핸들러가 일반 문구로 바꿔 담는다 — 원문은 서버 로그에만 남긴다. 원문을 응답 body에 실어 보낸 뒤 클라이언트에서 가리지 않는다(그 시점엔 이미 네트워크로 노출됨).
 
-| 분류 | HTTP status | 의미 |
-|---|---|---|
-| VALIDATION | 400 | 입력값 검증 실패 |
-| UNAUTHENTICATED | 401 | 인증 필요/세션 만료 |
-| FORBIDDEN | 403 | 인가 실패 |
-| NOT_FOUND | 404 | 리소스 없음 |
-| INTERNAL | 500 | 서버/DB 처리 실패 |
-| EXTERNAL_SERVICE | 502 | 외부 연동 실패 |
+| 분류             | HTTP status | 의미                |
+| ---------------- | ----------- | ------------------- |
+| VALIDATION       | 400         | 입력값 검증 실패    |
+| UNAUTHENTICATED  | 401         | 인증 필요/세션 만료 |
+| FORBIDDEN        | 403         | 인가 실패           |
+| NOT_FOUND        | 404         | 리소스 없음         |
+| INTERNAL         | 500         | 서버/DB 처리 실패   |
+| EXTERNAL_SERVICE | 502         | 외부 연동 실패      |
 
 ## 채널 A — Server Action (`src/actions/`)
 
@@ -75,10 +75,10 @@ ErrorPayload = { 분류, message, fieldErrors? }
 
 ## 레이어별 규칙 위치 (index)
 
-| 채널/레이어 | 목적(요약) | 상세 규칙 |
-|---|---|---|
-| services | `AppError` throw / `null` 리턴 — 구조화된 에러 원본 생산, HTTP 모름 | `src/services/AGENTS.md` |
-| Server Action(채널 A) | `AppError` 캐치 → 로깅 + 민감분류 일반화 + `ErrorPayload` 리턴 | 이 문서 §채널 A |
-| route.ts(채널 B) | `AppError` 캐치 → 로깅 + 민감분류 일반화 + 분류→status 매핑 + Response 번역 | 이 문서 §채널 B |
-| 에러 타입 정의 | `AppError`/분류 taxonomy/`ErrorPayload` — 여러 레이어 공유 계약 | `src/core/types/AGENTS.md` |
-| 클라이언트 소비(채널 C) | `useSWR` `error` 렌더 + `useActionState` state 렌더 — 서버가 준 `ErrorPayload` 그대로, 판단 로직 없음 | 이 문서 §채널 C |
+| 채널/레이어             | 목적(요약)                                                                                            | 상세 규칙                  |
+| ----------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------- |
+| services                | `AppError` throw / `null` 리턴 — 구조화된 에러 원본 생산, HTTP 모름                                   | `src/services/AGENTS.md`   |
+| Server Action(채널 A)   | `AppError` 캐치 → 로깅 + 민감분류 일반화 + `ErrorPayload` 리턴                                        | 이 문서 §채널 A            |
+| route.ts(채널 B)        | `AppError` 캐치 → 로깅 + 민감분류 일반화 + 분류→status 매핑 + Response 번역                           | 이 문서 §채널 B            |
+| 에러 타입 정의          | `AppError`/분류 taxonomy/`ErrorPayload` — 여러 레이어 공유 계약                                       | `src/core/types/AGENTS.md` |
+| 클라이언트 소비(채널 C) | `useSWR` `error` 렌더 + `useActionState` state 렌더 — 서버가 준 `ErrorPayload` 그대로, 판단 로직 없음 | 이 문서 §채널 C            |

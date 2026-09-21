@@ -18,8 +18,14 @@ const HeaderNavigationMenu = () => {
   return (
     <NavigationMenu className="hidden lg:flex" viewport={false}>
       <NavigationMenuList aria-label="카테고리">
-        <CategoryNavigationGroup items={CATEGORY_NAVIGATION_ITEMS} pathname={pathname} />
-        <GeneralNavigationLinks items={GENERAL_NAVIGATION_ITEMS} pathname={pathname} />
+        <CategoryNavigationGroup
+          items={CATEGORY_NAVIGATION_ITEMS}
+          pathname={pathname}
+        />
+        <GeneralNavigationLinks
+          items={GENERAL_NAVIGATION_ITEMS}
+          pathname={pathname}
+        />
       </NavigationMenuList>
     </NavigationMenu>
   );

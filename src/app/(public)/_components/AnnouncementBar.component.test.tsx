@@ -13,7 +13,12 @@ describe("AnnouncementBar", () => {
     render(
       <AnnouncementBar
         items={[
-          { id: "1", text: "신규 가입 시 프리미엄 템플릿 즉시 할인!", link: "/signup", isActive: true },
+          {
+            id: "1",
+            text: "신규 가입 시 프리미엄 템플릿 즉시 할인!",
+            link: "/signup",
+            isActive: true,
+          },
         ]}
       />,
     );
@@ -25,7 +30,11 @@ describe("AnnouncementBar", () => {
   });
 
   it("링크가 없으면 CTA를 렌더하지 않는다", () => {
-    render(<AnnouncementBar items={[{ id: "1", text: "공지 문구", isActive: true }]} />);
+    render(
+      <AnnouncementBar
+        items={[{ id: "1", text: "공지 문구", isActive: true }]}
+      />,
+    );
 
     expect(screen.getByText("공지 문구")).toBeInTheDocument();
     expect(screen.queryByText("지금 확인")).not.toBeInTheDocument();

@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import type { DashboardRecentOrder, DashboardStats } from "@/core/domain/dashboard";
+import type {
+  DashboardRecentOrder,
+  DashboardStats,
+} from "@/core/domain/dashboard";
 import { AdminDashboardTemplate } from "./AdminDashboardTemplate";
 
 const buildRecentOrder = (
@@ -43,10 +46,14 @@ describe("AdminDashboardTemplate", () => {
     expect(getCard("등록 상품").getByText("+2개 이번 달")).toBeInTheDocument();
 
     expect(getCard("총 매출").getByText("₩1,234,000")).toBeInTheDocument();
-    expect(getCard("총 매출").getByText("+23.4% 지난 달 대비")).toBeInTheDocument();
+    expect(
+      getCard("총 매출").getByText("+23.4% 지난 달 대비"),
+    ).toBeInTheDocument();
 
     expect(getCard("결제 주문").getByText("89")).toBeInTheDocument();
-    expect(getCard("결제 주문").getByText("+11.3% 지난 달 대비")).toBeInTheDocument();
+    expect(
+      getCard("결제 주문").getByText("+11.3% 지난 달 대비"),
+    ).toBeInTheDocument();
 
     expect(getCard("활동 회원").getByText("342")).toBeInTheDocument();
     expect(getCard("활동 회원").getByText("+23명 이번 달")).toBeInTheDocument();

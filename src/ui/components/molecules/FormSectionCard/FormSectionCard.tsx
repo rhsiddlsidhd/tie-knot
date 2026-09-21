@@ -8,8 +8,10 @@ import {
   CardTitle,
 } from "@/ui/components/atoms/card";
 
-interface FormSectionCardProps
-  extends Omit<React.ComponentProps<typeof Card>, "title"> {
+interface FormSectionCardProps extends Omit<
+  React.ComponentProps<typeof Card>,
+  "title"
+> {
   title: React.ReactNode;
   description?: React.ReactNode;
   required?: boolean;

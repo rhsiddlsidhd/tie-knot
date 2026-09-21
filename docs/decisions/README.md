@@ -38,13 +38,13 @@ ADR(Architecture Decision Record)은 프로젝트에 장기간 영향을 주는 
 
 `대체` 항목은 다른 ADR의 결정을 바꿀 때만 남기고 그렇지 않으면 줄을 삭제한다. 각 섹션은 다음 질문 하나에만 답한다.
 
-| 섹션 | 답할 질문 | 형식과 분량 |
-|---|---|---|
-| 맥락 | 무엇이 문제였고 어떤 사실이 결정을 강제했나 | 산문 3문단 이하. 해결책과 규칙은 쓰지 않는다 |
-| 결정 | 앞으로 무엇을 기준으로 삼나 | 산문과 구조도. 규칙 목록은 나열하지 않고 원칙과 불변식만 남긴다 |
-| 검토한 대안 | 왜 다른 선택을 하지 않았나 | 대안 2~4개. 각 `###` 아래 장점 1문장과 기각 사유 1~2문장 |
-| 결과 | 무엇을 얻고 무엇을 잃으며 남은 위험은 무엇을 가드하나 | 얻는 것, 트레이드오프, 잔여 위험과 가드를 모두 포함 |
-| 관련 이력 | 이 결정이 어떤 변경으로 남았나 | 커밋·PR·ADR 링크 목록만. 설명 문장은 쓰지 않는다 |
+| 섹션        | 답할 질문                                             | 형식과 분량                                                     |
+| ----------- | ----------------------------------------------------- | --------------------------------------------------------------- |
+| 맥락        | 무엇이 문제였고 어떤 사실이 결정을 강제했나           | 산문 3문단 이하. 해결책과 규칙은 쓰지 않는다                    |
+| 결정        | 앞으로 무엇을 기준으로 삼나                           | 산문과 구조도. 규칙 목록은 나열하지 않고 원칙과 불변식만 남긴다 |
+| 검토한 대안 | 왜 다른 선택을 하지 않았나                            | 대안 2~4개. 각 `###` 아래 장점 1문장과 기각 사유 1~2문장        |
+| 결과        | 무엇을 얻고 무엇을 잃으며 남은 위험은 무엇을 가드하나 | 얻는 것, 트레이드오프, 잔여 위험과 가드를 모두 포함             |
+| 관련 이력   | 이 결정이 어떤 변경으로 남았나                        | 커밋·PR·ADR 링크 목록만. 설명 문장은 쓰지 않는다                |
 
 본문 전체는 120줄을 넘기지 않는다. 코드 펜스는 구조를 보여주는 `text` 블록에만 쓰고 구현 코드는 넣지 않는다.
 
@@ -58,14 +58,14 @@ ADR(Architecture Decision Record)은 프로젝트에 장기간 영향을 주는 
 
 ## 기록
 
-| ADR | 상태 | 결정일 | 결정 |
-|---|---|---|---|
-| [0001](0001-role-based-directory-architecture.md) | Superseded | 2026-08-17 | 역할 기반 디렉터리 아키텍처 |
-| [0002](0002-adapter-runtime-segments.md) | Accepted | 2026-08-19 | Adapter 런타임 세그먼트 |
-| [0003](0003-order-scoped-invitation-model.md) | Accepted | 2026-08-19 | 주문 기반 청첩장 도메인 모델 |
-| [0004](0004-explicit-module-paths-over-barrels.md) | Accepted | 2026-09-02 | 배럴 없는 명시적 모듈 경로 |
-| [0005](0005-mobile-invitation-thumbnail-minimum.md) | Accepted | 2026-09-04 | 모바일 청첩장 발행 최소 요건 — 썸네일 정확히 3장 |
-| [0006](0006-named-exports-over-default.md) | Accepted | 2026-09-14 | src/ 전역 named export 강제와 Next.js 파일 컨벤션 예외 |
-| [0007](0007-per-component-directory-barrel.md) | Accepted | 2026-09-14 | 컴포넌트 디렉토리 단일 재수출 배럴 예외 |
-| [0008](0008-list-style-named-exports.md) | Superseded | 2026-09-14 | 컴포넌트 티어 list 스타일 named export 강제 |
-| [0009](0009-project-wide-list-style-named-exports.md) | Accepted | 2026-09-14 | 저장소 전역 list 스타일 named export 강제 |
+| ADR                                                   | 상태       | 결정일     | 결정                                                   |
+| ----------------------------------------------------- | ---------- | ---------- | ------------------------------------------------------ |
+| [0001](0001-role-based-directory-architecture.md)     | Superseded | 2026-08-17 | 역할 기반 디렉터리 아키텍처                            |
+| [0002](0002-adapter-runtime-segments.md)              | Accepted   | 2026-08-19 | Adapter 런타임 세그먼트                                |
+| [0003](0003-order-scoped-invitation-model.md)         | Accepted   | 2026-08-19 | 주문 기반 청첩장 도메인 모델                           |
+| [0004](0004-explicit-module-paths-over-barrels.md)    | Accepted   | 2026-09-02 | 배럴 없는 명시적 모듈 경로                             |
+| [0005](0005-mobile-invitation-thumbnail-minimum.md)   | Accepted   | 2026-09-04 | 모바일 청첩장 발행 최소 요건 — 썸네일 정확히 3장       |
+| [0006](0006-named-exports-over-default.md)            | Accepted   | 2026-09-14 | src/ 전역 named export 강제와 Next.js 파일 컨벤션 예외 |
+| [0007](0007-per-component-directory-barrel.md)        | Accepted   | 2026-09-14 | 컴포넌트 디렉토리 단일 재수출 배럴 예외                |
+| [0008](0008-list-style-named-exports.md)              | Superseded | 2026-09-14 | 컴포넌트 티어 list 스타일 named export 강제            |
+| [0009](0009-project-wide-list-style-named-exports.md) | Accepted   | 2026-09-14 | 저장소 전역 list 스타일 named export 강제              |

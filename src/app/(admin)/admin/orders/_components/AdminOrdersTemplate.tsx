@@ -11,13 +11,19 @@ import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import { QueryFilterSelect } from "@/ui/components/organisms/QueryFilterSelect";
 import { QuerySearchInput } from "@/ui/components/organisms/QuerySearchInput";
 import type { AdminOrderListPage, OrderStatus } from "@/core/domain/order";
-import { ORDER_STATUS_BADGE_VARIANTS, ORDER_STATUS_LABELS } from "@/core/domain/order";
+import {
+  ORDER_STATUS_BADGE_VARIANTS,
+  ORDER_STATUS_LABELS,
+} from "@/core/domain/order";
 import { formatKstDate } from "@/core/utils/date";
 import { ROUTES } from "@/core/domain/routes";
 
 const TABLE_HEADINGS = ["주문번호", "고객명", "상품", "상태", "금액", "주문일"];
 
-const STATUS_FILTER_OPTIONS: Array<{ value: OrderStatus | "ALL"; label: string }> = [
+const STATUS_FILTER_OPTIONS: Array<{
+  value: OrderStatus | "ALL";
+  label: string;
+}> = [
   { value: "ALL", label: "전체 상태" },
   { value: "PENDING", label: ORDER_STATUS_LABELS.PENDING },
   { value: "CONFIRMED", label: ORDER_STATUS_LABELS.CONFIRMED },
@@ -74,7 +80,9 @@ const AdminOrdersTemplate = ({
             <Empty>
               <EmptyHeader>
                 <EmptyTitle>
-                  {q ? "검색 결과가 없습니다" : "조건에 해당하는 주문이 없습니다"}
+                  {q
+                    ? "검색 결과가 없습니다"
+                    : "조건에 해당하는 주문이 없습니다"}
                 </EmptyTitle>
                 <EmptyDescription>
                   {q

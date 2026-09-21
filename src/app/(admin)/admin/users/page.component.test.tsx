@@ -32,7 +32,8 @@ vi.mock("@/app/(admin)/admin/users/_components/AdminUsersTemplate", () => ({
     q?: string;
   }) => (
     <div>
-      템플릿:items={page.items.length}:role={role ?? "없음"}:cursor={cursor ?? "없음"}:q={q ?? "없음"}
+      템플릿:items={page.items.length}:role={role ?? "없음"}:cursor=
+      {cursor ?? "없음"}:q={q ?? "없음"}
     </div>
   ),
 }));
@@ -47,7 +48,11 @@ const emptyPage: { items: unknown[]; nextCursor: string | null } = {
 describe("관리자 사용자 목록 페이지", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    verifySessionMock.mockResolvedValue({ role: "ADMIN", email: "a@x.com", userId: "1" });
+    verifySessionMock.mockResolvedValue({
+      role: "ADMIN",
+      email: "a@x.com",
+      userId: "1",
+    });
     getAdminUsersPageServiceMock.mockResolvedValue(emptyPage);
   });
 
@@ -60,7 +65,9 @@ describe("관리자 사용자 목록 페이지", () => {
   it("인증에 실패하면(verifySession이 throw) 목록 service를 호출하지 않는다", async () => {
     verifySessionMock.mockRejectedValue(new Error("redirect"));
 
-    await expect(UsersPage({ searchParams: Promise.resolve({}) })).rejects.toThrow();
+    await expect(
+      UsersPage({ searchParams: Promise.resolve({}) }),
+    ).rejects.toThrow();
 
     expect(getAdminUsersPageServiceMock).not.toHaveBeenCalled();
   });
@@ -83,7 +90,9 @@ describe("관리자 사용자 목록 페이지", () => {
   });
 
   it("role이 배열이면(?role=A&role=B) 필터 없음으로 정규화된다", async () => {
-    await UsersPage({ searchParams: Promise.resolve({ role: ["USER", "ADMIN"] }) });
+    await UsersPage({
+      searchParams: Promise.resolve({ role: ["USER", "ADMIN"] }),
+    });
 
     expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith({});
   });
@@ -99,7 +108,9 @@ describe("관리자 사용자 목록 페이지", () => {
       searchParams: Promise.resolve({ role: "ADMIN", cursor: "!!broken!!" }),
     });
 
-    expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith({ role: "ADMIN" });
+    expect(getAdminUsersPageServiceMock).toHaveBeenCalledWith({
+      role: "ADMIN",
+    });
   });
 
   it("service 결과와 현재 필터/cursor를 Template props로 전달한다", async () => {

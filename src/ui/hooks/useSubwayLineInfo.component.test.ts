@@ -15,7 +15,11 @@ describe("useSubwayLineInfo", () => {
   });
 
   it("station이 없으면 swr key를 null로 전달한다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: false });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: false,
+    });
 
     renderHook(() => useSubwayLineInfo());
 
@@ -25,7 +29,11 @@ describe("useSubwayLineInfo", () => {
   });
 
   it("station이 있으면 encode된 역 이름으로 swr key를 만든다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: true });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: true,
+    });
 
     renderHook(() => useSubwayLineInfo("강남 역"));
 
@@ -37,7 +45,11 @@ describe("useSubwayLineInfo", () => {
   });
 
   it("swr에 전달한 fetcher 함수는 fetcher(url)을 그대로 호출한다", () => {
-    useSWRMock.mockReturnValue({ data: undefined, error: undefined, isLoading: false });
+    useSWRMock.mockReturnValue({
+      data: undefined,
+      error: undefined,
+      isLoading: false,
+    });
 
     renderHook(() => useSubwayLineInfo("강남역"));
 
@@ -48,8 +60,15 @@ describe("useSubwayLineInfo", () => {
   });
 
   it("응답이 도착하면 lineInfo로 노출한다", () => {
-    const lineInfo = { station: "강남역", lines: [{ name: "2호선", color: "#00A84D" }] };
-    useSWRMock.mockReturnValue({ data: lineInfo, error: undefined, isLoading: false });
+    const lineInfo = {
+      station: "강남역",
+      lines: [{ name: "2호선", color: "#00A84D" }],
+    };
+    useSWRMock.mockReturnValue({
+      data: lineInfo,
+      error: undefined,
+      isLoading: false,
+    });
 
     const { result } = renderHook(() => useSubwayLineInfo("강남역"));
 

@@ -15,4 +15,8 @@ const MOBILE_INVITATION_THEME_LABELS: Record<MobileInvitationTheme, string> = {
   midnight: "네이비골드",
 };
 
-export { MOBILE_INVITATION_THEMES, MOBILE_INVITATION_THEME_LABELS, type MobileInvitationTheme };
+export {
+  MOBILE_INVITATION_THEMES,
+  MOBILE_INVITATION_THEME_LABELS,
+  type MobileInvitationTheme,
+};

@@ -27,14 +27,18 @@ beforeAll(() => {
   server.listen({ onUnhandledRequest: "error" });
   const interceptedFetch = globalThis.fetch;
   globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) => {
-    const resolved = typeof input === "string" && input.startsWith("/")
-      ? new URL(input, "http://localhost")
-      : input;
+    const resolved =
+      typeof input === "string" && input.startsWith("/")
+        ? new URL(input, "http://localhost")
+        : input;
     return interceptedFetch(resolved, init);
   }) as typeof fetch;
 });
 afterEach(() => server.resetHandlers());
-afterAll(() => { server.close(); globalThis.fetch = nativeFetch; });
+afterAll(() => {
+  server.close();
+  globalThis.fetch = nativeFetch;
+});
 
 const wrapper = ({ children }: PropsWithChildren) => (
   <SWRConfig value={{ provider: () => new Map(), dedupingInterval: 0 }}>

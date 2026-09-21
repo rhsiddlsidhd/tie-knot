@@ -23,7 +23,10 @@ type SubwayLineInfoRow = {
 // throw하면 캐시 쓰기 자체를 건너뛰므로, 실패가 캐시에 갇히는 문제가 없다.
 const getCachedSubwayStationNames = unstable_cache(
   async (): Promise<string[]> => {
-    const rows = await fetchSeoulOpenApi<SubwayLineInfoRow>(STATION_LIST_SERVICE_NAME, [1, 1000]);
+    const rows = await fetchSeoulOpenApi<SubwayLineInfoRow>(
+      STATION_LIST_SERVICE_NAME,
+      [1, 1000],
+    );
     return [...new Set(rows.map((row) => row.STATION_NM))];
   },
   ["subway-station-names"],
@@ -32,12 +35,12 @@ const getCachedSubwayStationNames = unstable_cache(
 
 const getAllSubwayStationNames = async (): Promise<string[]> => {
   return getCachedSubwayStationNames();
-}
+};
 
 const isValidSubwayStationName = async (name: string): Promise<boolean> => {
   const names = await getAllSubwayStationNames();
   return names.includes(name);
-}
+};
 
 type SubwayNameSearchRow = {
   STATION_NM: string;
@@ -68,6 +71,10 @@ const getSubwayStationLines = async (
       color: SUBWAY_LINE_COLORS[name] ?? DEFAULT_SUBWAY_LINE_COLOR,
     })),
   };
-}
+};
 
-export { getAllSubwayStationNames, isValidSubwayStationName, getSubwayStationLines };
+export {
+  getAllSubwayStationNames,
+  isValidSubwayStationName,
+  getSubwayStationLines,
+};

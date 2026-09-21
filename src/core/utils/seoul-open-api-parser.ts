@@ -28,11 +28,19 @@ const parseSeoulOpenApiResponse = <T>(
 ): SeoulOpenApiResult<T> => {
   const body = json as Record<string, unknown>;
   const service = body[serviceName] as
-    | { list_total_count: number; RESULT: { CODE: string; MESSAGE: string }; row?: T[] }
+    | {
+        list_total_count: number;
+        RESULT: { CODE: string; MESSAGE: string };
+        row?: T[];
+      }
     | undefined;
 
   if (service) {
-    return { kind: "success", totalCount: service.list_total_count, rows: service.row ?? [] };
+    return {
+      kind: "success",
+      totalCount: service.list_total_count,
+      rows: service.row ?? [],
+    };
   }
 
   const bare = body.RESULT as { CODE: string; MESSAGE: string };
@@ -41,7 +49,11 @@ const parseSeoulOpenApiResponse = <T>(
     return { kind: "success", totalCount: 0, rows: [] };
   }
 
-  return { kind: "failure", code: bare?.CODE ?? "UNKNOWN", message: bare?.MESSAGE ?? "알 수 없는 오류" };
-}
+  return {
+    kind: "failure",
+    code: bare?.CODE ?? "UNKNOWN",
+    message: bare?.MESSAGE ?? "알 수 없는 오류",
+  };
+};
 
 export { parseSeoulOpenApiResponse, type SeoulOpenApiResult };

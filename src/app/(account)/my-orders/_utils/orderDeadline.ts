@@ -12,7 +12,8 @@ const getMobileInvitationInputDaysLeft = (
   now: Date = new Date(),
 ): number => {
   const deadline =
-    new Date(confirmedAt).getTime() + MOBILE_INVITATION_INPUT_DEADLINE_DAYS * DAY_IN_MS;
+    new Date(confirmedAt).getTime() +
+    MOBILE_INVITATION_INPUT_DEADLINE_DAYS * DAY_IN_MS;
 
   return Math.floor((deadline - now.getTime()) / DAY_IN_MS);
 };

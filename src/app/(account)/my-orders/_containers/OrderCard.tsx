@@ -209,7 +209,11 @@ const OrderCard = ({ order, onOrderChanged }: OrderCardProps) => {
             {order.mobileInvitationStatus &&
               order.orderStatus !== "CANCELLED" &&
               customerInputRoute && (
-                <LinkButton size="lg" variant="outline" href={customerInputRoute}>
+                <LinkButton
+                  size="lg"
+                  variant="outline"
+                  href={customerInputRoute}
+                >
                   <Edit className="mr-1 h-4 w-4" />
                   수정하기
                 </LinkButton>

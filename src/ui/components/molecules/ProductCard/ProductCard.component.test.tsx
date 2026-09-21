@@ -34,11 +34,21 @@ describe("ProductCard", () => {
     render(<ProductCard product={buildProduct()} />);
 
     const link = screen.getByRole("link");
-    expect(link).toHaveAttribute("href", "/products/mobile-invitation/product-1");
+    expect(link).toHaveAttribute(
+      "href",
+      "/products/mobile-invitation/product-1",
+    );
   });
 
   it("할인이 없으면 원가만 표시하고 할인 배지/취소선을 렌더링하지 않는다", () => {
-    render(<ProductCard product={buildProduct({ price: 10000, discount: { discountType: "rate", value: 0 } })} />);
+    render(
+      <ProductCard
+        product={buildProduct({
+          price: 10000,
+          discount: { discountType: "rate", value: 0 },
+        })}
+      />,
+    );
 
     expect(screen.getByText("10,000원")).toBeInTheDocument();
     expect(screen.queryByText(/%/)).not.toBeInTheDocument();
@@ -48,7 +58,10 @@ describe("ProductCard", () => {
   it("정률 할인이면 반올림된 %와 할인가를 표시한다", () => {
     render(
       <ProductCard
-        product={buildProduct({ price: 10000, discount: { discountType: "rate", value: 0.3 } })}
+        product={buildProduct({
+          price: 10000,
+          discount: { discountType: "rate", value: 0.3 },
+        })}
       />,
     );
 
@@ -60,7 +73,10 @@ describe("ProductCard", () => {
   it("정액 할인이면 원 단위 할인 라벨과 할인가를 표시한다", () => {
     render(
       <ProductCard
-        product={buildProduct({ price: 10000, discount: { discountType: "amount", value: 3000 } })}
+        product={buildProduct({
+          price: 10000,
+          discount: { discountType: "amount", value: 3000 },
+        })}
       />,
     );
 
@@ -71,7 +87,10 @@ describe("ProductCard", () => {
   it("최종가가 0원이면 '무료'로 표시한다", () => {
     render(
       <ProductCard
-        product={buildProduct({ price: 1000, discount: { discountType: "amount", value: 1000 } })}
+        product={buildProduct({
+          price: 1000,
+          discount: { discountType: "amount", value: 1000 },
+        })}
       />,
     );
 
@@ -93,7 +112,11 @@ describe("ProductCard", () => {
   });
 
   it("isPremium/isFeatured 둘 다 아니면 배지를 렌더링하지 않는다", () => {
-    render(<ProductCard product={buildProduct({ isPremium: false, isFeatured: false })} />);
+    render(
+      <ProductCard
+        product={buildProduct({ isPremium: false, isFeatured: false })}
+      />,
+    );
 
     expect(screen.queryByText("Premium")).not.toBeInTheDocument();
     expect(screen.queryByText("추천")).not.toBeInTheDocument();
@@ -106,7 +129,9 @@ describe("ProductCard", () => {
   });
 
   it("likes 개수를 그대로 표시한다", () => {
-    render(<ProductCard product={buildProduct({ likes: ["u1", "u2", "u3"] })} />);
+    render(
+      <ProductCard product={buildProduct({ likes: ["u1", "u2", "u3"] })} />,
+    );
 
     expect(screen.getByText("좋아요 3")).toBeInTheDocument();
   });
@@ -120,7 +145,9 @@ describe("ProductCard", () => {
   it("제목을 표시한다", () => {
     render(<ProductCard product={buildProduct({ title: "여름 청첩장" })} />);
 
-    expect(screen.getByRole("heading", { name: "여름 청첩장" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "여름 청첩장" }),
+    ).toBeInTheDocument();
   });
 
   it("rank 미전달 시 순위 배지를 렌더링하지 않는다", () => {

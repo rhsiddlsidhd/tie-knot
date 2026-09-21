@@ -31,6 +31,6 @@ const useProductSearch = (query: string) => {
     isValidating,
     isIdle: key === null,
   };
-}
+};
 
 export { useProductSearch };

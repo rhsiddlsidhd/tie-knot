@@ -4,10 +4,21 @@ import { useState } from "react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Button } from "@/ui/components/atoms/button";
 import { Card } from "@/ui/components/atoms/card";
-import { TypographyH2, TypographyH3, TypographyMuted } from "@/ui/components/atoms/typography";
+import {
+  TypographyH2,
+  TypographyH3,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import clsx from "clsx";
-import { Check, ChevronDown, Palette, Type, Settings, FileText } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Palette,
+  Type,
+  Settings,
+  FileText,
+} from "lucide-react";
 
 // 상품 상세 이미지가 이 개수를 넘으면 나머지는 "더보기" 뒤로 접는다 — 청첩장 상세페이지가
 // 원래 세로로 긴 이미지 여러 장이라, 다 펼쳐두면 스크롤이 지나치게 길어진다.
@@ -28,7 +39,9 @@ const ProductFeatures = ({ options, images }: ProductFeaturesProps) => {
     <div className="mb-16 space-y-12">
       {/* Features List */}
       <div className={clsx(options.length === 0 && "hidden")}>
-        <TypographyH2 className="text-foreground mb-6 border-none text-3xl font-bold">주요 옵션</TypographyH2>
+        <TypographyH2 className="text-foreground mb-6 border-none text-3xl font-bold">
+          주요 옵션
+        </TypographyH2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
           {options.map((feature, index) => {
             let Icon;
@@ -47,9 +60,7 @@ const ProductFeatures = ({ options, images }: ProductFeaturesProps) => {
                     {feature.label}
                   </TypographyH3>
                 </div>
-                <TypographyMuted>
-                  {feature.description}
-                </TypographyMuted>
+                <TypographyMuted>{feature.description}</TypographyMuted>
               </Card>
             );
           })}
@@ -58,9 +69,13 @@ const ProductFeatures = ({ options, images }: ProductFeaturesProps) => {
 
       {/* Detailed Features */}
       <div>
-        <TypographyH2 className="text-foreground mb-6 border-none text-3xl font-bold">상세 정보</TypographyH2>
+        <TypographyH2 className="text-foreground mb-6 border-none text-3xl font-bold">
+          상세 정보
+        </TypographyH2>
         {images.length === 0 ? (
-          <TypographyMuted>상세 이미지가 아직 등록되지 않았습니다.</TypographyMuted>
+          <TypographyMuted>
+            상세 이미지가 아직 등록되지 않았습니다.
+          </TypographyMuted>
         ) : (
           <div>
             <div className="flex flex-col gap-4">
@@ -121,6 +136,6 @@ const ProductFeatures = ({ options, images }: ProductFeaturesProps) => {
       </div>
     </div>
   );
-}
+};
 
 export { ProductFeatures };

@@ -21,15 +21,11 @@ describe("결제 결과 페이지", () => {
       }),
     );
 
-    expect(
-      screen.getByText("Container:paymentId=order-1"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Container:paymentId=order-1")).toBeInTheDocument();
   });
 
   it("paymentId가 없으면 undefined를 그대로 전달한다", async () => {
-    render(
-      await PaymentResultPage({ searchParams: Promise.resolve({}) }),
-    );
+    render(await PaymentResultPage({ searchParams: Promise.resolve({}) }));
 
     expect(
       screen.getByText("Container:paymentId=undefined"),

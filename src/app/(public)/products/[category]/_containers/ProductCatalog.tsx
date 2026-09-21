@@ -6,7 +6,10 @@ import { fetcher } from "@/ui/fetcher";
 import { usePremiumFeature } from "@/ui/hooks/usePremiumFeatures";
 import { ProductCatalog as ProductCatalogView } from "@/app/(public)/products/[category]/_components/ProductCatalog";
 import type { PublicProductListPage } from "@/core/domain/product";
-import type { ProductCategory, SubCategory } from "@/core/domain/product-category";
+import type {
+  ProductCategory,
+  SubCategory,
+} from "@/core/domain/product-category";
 
 const buildKey = ({
   category,
@@ -50,7 +53,11 @@ const ProductCatalog = ({
       (pageIndex, previousPage: PublicProductListPage | null) => {
         if (pageIndex === 0) return buildKey({ category, subCategory });
         if (!previousPage?.nextCursor) return null;
-        return buildKey({ category, subCategory, cursor: previousPage.nextCursor });
+        return buildKey({
+          category,
+          subCategory,
+          cursor: previousPage.nextCursor,
+        });
       },
       fetcher,
       {
@@ -96,6 +103,6 @@ const ProductCatalog = ({
       sentinelRef={sentinelRef}
     />
   );
-}
+};
 
 export { ProductCatalog };

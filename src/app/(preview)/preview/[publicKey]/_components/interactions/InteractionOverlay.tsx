@@ -19,7 +19,10 @@ interface ThemeInteractionProps {
 // 렌더돼 사실상 안 보였다. ThemeAmbience의 낙하 애니메이션만으로 표현하고,
 // 여기선 default(spotlight)로 폴백한다. botanical은 같은 함정을 피해 고정 %
 // 위치 없이 실제 커서 좌표(x, y)만으로 그려지는 BotanicalInteraction을 쓴다.
-const themeInteractionMap: Record<string, ComponentType<ThemeInteractionProps>> = {
+const themeInteractionMap: Record<
+  string,
+  ComponentType<ThemeInteractionProps>
+> = {
   botanical: BotanicalInteraction,
   midnight: MidnightInteraction,
   default: DefaultInteraction,
@@ -50,8 +53,12 @@ const InteractionOverlay = ({ theme }: InteractionOverlayProps) => {
       setHasInteracted(true);
     };
 
-    window.addEventListener("pointermove", handlePointerInput, { passive: true });
-    window.addEventListener("pointerdown", handlePointerInput, { passive: true });
+    window.addEventListener("pointermove", handlePointerInput, {
+      passive: true,
+    });
+    window.addEventListener("pointerdown", handlePointerInput, {
+      passive: true,
+    });
     return () => {
       window.removeEventListener("pointermove", handlePointerInput);
       window.removeEventListener("pointerdown", handlePointerInput);
@@ -67,6 +74,6 @@ const InteractionOverlay = ({ theme }: InteractionOverlayProps) => {
       <ThemeInteraction x={x} y={y} />
     </div>
   );
-}
+};
 
 export { InteractionOverlay, type ThemeInteractionProps };

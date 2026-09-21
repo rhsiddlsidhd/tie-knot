@@ -20,7 +20,9 @@ describe("SignupForm", () => {
     render(<SignupForm action={action} pending={false} state={null} />);
 
     await user.click(screen.getByRole("checkbox", { name: /이용약관/ }));
-    await user.click(screen.getByRole("checkbox", { name: /개인정보 처리방침/ }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /개인정보 처리방침/ }),
+    );
 
     const submitButton = screen.getByRole("button", { name: "회원가입" });
     expect(submitButton).toBeEnabled();
@@ -38,27 +40,36 @@ describe("SignupForm", () => {
   it("로그인 페이지로 가는 링크를 보여준다", () => {
     render(<SignupForm action={vi.fn()} pending={false} state={null} />);
 
-    expect(screen.getByRole("link", { name: "로그인" })).toHaveAttribute("href", "/login");
+    expect(screen.getByRole("link", { name: "로그인" })).toHaveAttribute(
+      "href",
+      "/login",
+    );
   });
 
   it("Google 버튼은 준비 중 상태로 비활성화되고 안내 문구를 보여준다", () => {
     render(<SignupForm action={vi.fn()} pending={false} state={null} />);
 
     expect(screen.getByRole("button", { name: /Google/ })).toBeDisabled();
-    expect(screen.getByText("소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "소셜 계정 연동은 준비 중입니다. 이메일 계정을 이용해 주세요.",
+      ),
+    ).toBeInTheDocument();
   });
 
   it("이용약관/개인정보 처리방침 링크가 실제 문서 경로로 연결된다", () => {
     render(<SignupForm action={vi.fn()} pending={false} state={null} />);
 
-    expect(screen.getByRole("link", { name: "이용약관" })).toHaveAttribute("href", "/terms");
-    expect(screen.getByRole("link", { name: "개인정보 처리방침" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "이용약관" })).toHaveAttribute(
       "href",
-      "/privacy",
+      "/terms",
     );
+    expect(
+      screen.getByRole("link", { name: "개인정보 처리방침" }),
+    ).toHaveAttribute("href", "/privacy");
   });
 
-  it("빈 앵커(href=\"#\") 링크가 더 이상 남아있지 않다", () => {
+  it('빈 앵커(href="#") 링크가 더 이상 남아있지 않다', () => {
     const { container } = render(
       <SignupForm action={vi.fn()} pending={false} state={null} />,
     );

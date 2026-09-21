@@ -45,7 +45,9 @@ describe("RetryPaymentCard", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "50,000원 재결제하기" }));
+    await user.click(
+      screen.getByRole("button", { name: "50,000원 재결제하기" }),
+    );
 
     expect(onConfirm).toHaveBeenCalledTimes(1);
   });

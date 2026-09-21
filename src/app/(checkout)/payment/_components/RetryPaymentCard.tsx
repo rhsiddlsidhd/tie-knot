@@ -4,7 +4,11 @@ import { AlertCircle } from "lucide-react";
 import type { CreateOrderResult } from "@/actions/createOrder";
 import type { PayStatus } from "@/core/domain/payment";
 import { Button } from "@/ui/components/atoms/button";
-import { TypographyLarge, TypographyMuted, TypographySmall } from "@/ui/components/atoms/typography";
+import {
+  TypographyLarge,
+  TypographyMuted,
+  TypographySmall,
+} from "@/ui/components/atoms/typography";
 import { PaymentPendingOverlay } from "./PaymentPendingOverlay";
 
 interface RetryPaymentCardProps {
@@ -41,8 +45,12 @@ const RetryPaymentCard = ({
         <div className="border-destructive/50 bg-destructive/10 text-destructive flex items-start gap-3 rounded-lg border p-4 text-sm">
           <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
           <div>
-            <TypographySmall className="font-medium">오류가 발생했습니다</TypographySmall>
-            <TypographyMuted className="text-destructive/80 mt-1">{errorMessage}</TypographyMuted>
+            <TypographySmall className="font-medium">
+              오류가 발생했습니다
+            </TypographySmall>
+            <TypographyMuted className="text-destructive/80 mt-1">
+              {errorMessage}
+            </TypographyMuted>
           </div>
         </div>
       )}
@@ -53,10 +61,12 @@ const RetryPaymentCard = ({
         disabled={isProcessing}
         onClick={onConfirm}
       >
-        {isProcessing ? "결제 진행 중..." : `${order.finalPrice.toLocaleString()}원 재결제하기`}
+        {isProcessing
+          ? "결제 진행 중..."
+          : `${order.finalPrice.toLocaleString()}원 재결제하기`}
       </Button>
     </div>
   );
-}
+};
 
 export { RetryPaymentCard };

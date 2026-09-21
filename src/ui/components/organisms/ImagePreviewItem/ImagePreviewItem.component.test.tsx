@@ -6,7 +6,11 @@ import { ImagePreviewItem } from "./ImagePreviewItem";
 describe("ImagePreviewItem", () => {
   it("preview 이미지를 렌더링한다", () => {
     render(
-      <ImagePreviewItem id="1" preview="https://example.com/a.jpg" onRemove={vi.fn()} />,
+      <ImagePreviewItem
+        id="1"
+        preview="https://example.com/a.jpg"
+        onRemove={vi.fn()}
+      />,
     );
 
     expect(screen.getByAltText("Preview 1")).toBeInTheDocument();
@@ -17,7 +21,11 @@ describe("ImagePreviewItem", () => {
     const onRemove = vi.fn();
 
     render(
-      <ImagePreviewItem id="1" preview="https://example.com/a.jpg" onRemove={onRemove} />,
+      <ImagePreviewItem
+        id="1"
+        preview="https://example.com/a.jpg"
+        onRemove={onRemove}
+      />,
     );
 
     await user.click(screen.getByRole("button"));

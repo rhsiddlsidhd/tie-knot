@@ -41,10 +41,15 @@ describe("GET /api/products", () => {
 
   it("category=mobile-invitation으로 필터링하면 해당 카테고리 상품만 반환한다", async () => {
     await createProductService(
-      buildProductInput({ title: "상품1", category: MOBILE_INVITATION_CATEGORY }),
+      buildProductInput({
+        title: "상품1",
+        category: MOBILE_INVITATION_CATEGORY,
+      }),
     );
 
-    const res = await GET(buildRequest(`?category=${MOBILE_INVITATION_CATEGORY}`));
+    const res = await GET(
+      buildRequest(`?category=${MOBILE_INVITATION_CATEGORY}`),
+    );
     const body = await res.json();
 
     expect(res.status).toBe(200);
@@ -57,15 +62,22 @@ describe("GET /api/products", () => {
       buildProductInput({ title: "청첩장", subCategory: "wedding" }),
     );
     await createProductService(
-      buildProductInput({ title: "돌잔치 초대장", subCategory: "first-birthday" }),
+      buildProductInput({
+        title: "돌잔치 초대장",
+        subCategory: "first-birthday",
+      }),
     );
 
     const res = await GET(
-      buildRequest(`?category=${MOBILE_INVITATION_CATEGORY}&subCategory=wedding`),
+      buildRequest(
+        `?category=${MOBILE_INVITATION_CATEGORY}&subCategory=wedding`,
+      ),
     );
     const body = await res.json();
 
-    expect(body.data.items.map((p: { title: string }) => p.title)).toEqual(["청첩장"]);
+    expect(body.data.items.map((p: { title: string }) => p.title)).toEqual([
+      "청첩장",
+    ]);
   });
 
   it("PRODUCT_CATEGORIES에 없는 category 값이면 400 VALIDATION 에러를 반환한다 (orderListRequestSchema와 동일한 enum 검증 방침)", async () => {
@@ -93,9 +105,9 @@ describe("GET /api/products", () => {
 
     expect(res.status).toBe(200);
     expect(body.success).toBe(true);
-    expect(body.data.items.map((product: { title: string }) => product.title)).toEqual([
-      "공개상품",
-    ]);
+    expect(
+      body.data.items.map((product: { title: string }) => product.title),
+    ).toEqual(["공개상품"]);
   });
 
   it("잘못된 형식의 cursor면 400 VALIDATION 에러를 반환한다", async () => {

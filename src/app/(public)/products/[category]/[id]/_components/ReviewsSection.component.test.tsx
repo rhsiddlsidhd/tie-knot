@@ -23,9 +23,16 @@ const buildReviews = (overrides?: Partial<ReviewListPage>): ReviewListPage => ({
 
 describe("ReviewsSection", () => {
   it("리뷰가 없으면 안내 문구를 보여준다", () => {
-    render(<ReviewsSection reviews={{ items: [], nextCursor: null }} sort="LATEST" />);
+    render(
+      <ReviewsSection
+        reviews={{ items: [], nextCursor: null }}
+        sort="LATEST"
+      />,
+    );
 
-    expect(screen.getByText("아직 작성된 리뷰가 없습니다.")).toBeInTheDocument();
+    expect(
+      screen.getByText("아직 작성된 리뷰가 없습니다."),
+    ).toBeInTheDocument();
   });
 
   it("리뷰 목록과 작성자/내용/평점을 렌더링한다", () => {

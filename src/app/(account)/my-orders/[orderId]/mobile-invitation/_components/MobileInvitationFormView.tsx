@@ -8,7 +8,9 @@ import { Skeleton } from "@/ui/components/atoms/skeleton";
 import { Save } from "lucide-react";
 import type { useMobileInvitationForm } from "@/ui/hooks/useMobileInvitationForm";
 
-type MobileInvitationFormViewProps = ReturnType<typeof useMobileInvitationForm> & {
+type MobileInvitationFormViewProps = ReturnType<
+  typeof useMobileInvitationForm
+> & {
   type: "create" | "edit";
 };
 
@@ -29,7 +31,7 @@ const MobileInvitationFormView = ({
     return (
       <div className="space-y-6">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="rounded-lg border p-6 space-y-4">
+          <div key={i} className="space-y-4 rounded-lg border p-6">
             <Skeleton className="h-5 w-32" />
             <div className="grid grid-cols-2 gap-4">
               <Skeleton className="h-10 w-full" />
@@ -43,9 +45,7 @@ const MobileInvitationFormView = ({
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
-      {orderId && (
-        <input type="hidden" name="orderId" value={orderId} />
-      )}
+      {orderId && <input type="hidden" name="orderId" value={orderId} />}
 
       <BasicInfoSection data={data} subwayStations={subwayStations} />
       <CoupleInfoSection data={data} banks={banks} />
@@ -60,6 +60,6 @@ const MobileInvitationFormView = ({
       </BottomActionBar>
     </form>
   );
-}
+};
 
 export { MobileInvitationFormView };

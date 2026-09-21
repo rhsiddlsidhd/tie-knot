@@ -65,7 +65,11 @@ describe("ProductCatalog", () => {
       <ProductCatalog
         products={[
           buildProduct({ title: "봄맞이 청첩장", subCategory: "wedding" }),
-          buildProduct({ _id: "product-2", title: "또 다른 청첩장", subCategory: "wedding" }),
+          buildProduct({
+            _id: "product-2",
+            title: "또 다른 청첩장",
+            subCategory: "wedding",
+          }),
         ]}
         {...defaultProps}
         subCategory="wedding"
@@ -91,7 +95,11 @@ describe("ProductCatalog", () => {
 
   it("hasMore가 false면 더보기 sentinel을 렌더링하지 않는다", () => {
     render(
-      <ProductCatalog products={[buildProduct()]} {...defaultProps} hasMore={false} />,
+      <ProductCatalog
+        products={[buildProduct()]}
+        {...defaultProps}
+        hasMore={false}
+      />,
     );
 
     expect(screen.queryByTestId("load-more-sentinel")).not.toBeInTheDocument();

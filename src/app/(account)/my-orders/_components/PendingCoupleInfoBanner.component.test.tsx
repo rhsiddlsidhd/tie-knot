@@ -34,8 +34,9 @@ describe("PendingCoupleInfoBanner", () => {
   it("정보 입력하기 링크가 해당 주문의 청첩장 편집 화면을 가리킨다", () => {
     render(<PendingCoupleInfoBanner orderId="order-1" />);
 
-    expect(
-      screen.getByRole("link", { name: /정보 입력하기/ }),
-    ).toHaveAttribute("href", "/my-orders/order-1/mobile-invitation");
+    expect(screen.getByRole("link", { name: /정보 입력하기/ })).toHaveAttribute(
+      "href",
+      "/my-orders/order-1/mobile-invitation",
+    );
   });
 });

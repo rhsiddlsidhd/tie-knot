@@ -176,7 +176,10 @@ describe("ProductTableRowAction", () => {
   });
 
   it("삭제가 진행되는 동안 확인 버튼을 다시 눌러도 deleteProduct를 중복 호출하지 않는다", async () => {
-    const deferred = createDeferred<{ success: true; data: { message: string } }>();
+    const deferred = createDeferred<{
+      success: true;
+      data: { message: string };
+    }>();
     vi.mocked(deleteProduct).mockReturnValue(deferred.promise);
     const user = userEvent.setup();
 

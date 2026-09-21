@@ -41,12 +41,7 @@ const OrdersPage = async ({
   const page = await getAdminOrdersPageService({ q, status, cursor });
 
   return (
-    <AdminOrdersTemplate
-      page={page}
-      q={q}
-      status={status}
-      cursor={cursor}
-    />
+    <AdminOrdersTemplate page={page} q={q} status={status} cursor={cursor} />
   );
 };
 
