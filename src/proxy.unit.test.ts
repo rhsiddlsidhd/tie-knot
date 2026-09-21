@@ -77,6 +77,13 @@ describe("proxy", () => {
 
       expect(redirectsTo(res, "/")).toBe(true);
     });
+
+    it("만료/변조된 token 쿠키가 있으면 지우고 통과시킨다", async () => {
+      const res = await proxy(buildRequest("/login", "invalid-token"));
+
+      expect(isNext(res)).toBe(true);
+      expect(res.headers.get("set-cookie")).toMatch(/^token=;/);
+    });
   });
 
   describe("/change-password", () => {

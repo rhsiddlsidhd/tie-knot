@@ -42,9 +42,17 @@ const proxy = async (request: NextRequest) => {
     }
   }
 
-  // 이미 로그인한 유저는 auth 페이지 접근 불가
+  // 이미 로그인한 유저는 auth 페이지 접근 불가 — 단, 토큰이 유효할 때만
   if (tokenCookie?.value) {
-    return NextResponse.redirect(new URL(ROUTES.home, request.url));
+    try {
+      await decrypt({ token: tokenCookie.value, type: "REFRESH" });
+      return NextResponse.redirect(new URL(ROUTES.home, request.url));
+    } catch (e) {
+      console.error("Proxy error:", e);
+      const response = NextResponse.next();
+      response.cookies.delete("token");
+      return response;
+    }
   }
 
   if (pathname === ROUTES.changePw && !request.nextUrl.searchParams.get("t")) {
