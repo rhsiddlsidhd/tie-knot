@@ -14,7 +14,7 @@ export default function AdminLayout({
   return (
     <SidebarProvider>
       <div className="bg-background flex min-h-screen w-full min-w-0 pt-16">
-        <AppSidebar navType="ADMIN" />
+        <AppSidebar navigationType="ADMIN" />
         <main className="min-w-0 flex-1">
           <div className="container mx-auto p-4">
             <SidebarToggle />

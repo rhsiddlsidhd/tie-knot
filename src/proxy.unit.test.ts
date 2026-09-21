@@ -40,6 +40,12 @@ describe("proxy", () => {
   });
 
   describe("admin 라우트", () => {
+    it("/admin 진입점도 인증 없이 접근할 수 없다", async () => {
+      const res = await proxy(buildRequest("/admin"));
+
+      expect(redirectsTo(res, "/login")).toBe(true);
+    });
+
     it("token이 없으면 /login으로 리다이렉트한다", async () => {
       const res = await proxy(buildRequest("/admin/dashboard"));
 
@@ -60,6 +66,14 @@ describe("proxy", () => {
       const res = await proxy(buildRequest("/admin/dashboard", token));
 
       expect(isNext(res)).toBe(true);
+    });
+  });
+
+  describe("결제 라우트", () => {
+    it("결제 성공 콜백도 인증 없이 접근할 수 없다", async () => {
+      const res = await proxy(buildRequest("/payment/success"));
+
+      expect(redirectsTo(res, "/login")).toBe(true);
     });
   });
 
