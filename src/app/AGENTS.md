@@ -52,7 +52,7 @@ root layout을 통째로 대체하기 때문에 생기는 제약:
 - `layout.tsx`는 그 라우트 그룹의 페이지 셸(shell)을 구성한다 — 특정 페이지 하나에만 필요한 데이터 페칭/비즈니스 로직을 여기 두지 않는다(그건 `page.tsx`/`_hooks` 소관).
   - 각 Route Group은 독립적인 셸을 소유한다. 공개 페이지는 `(public)/layout.tsx`, 계정은 `(account)/layout.tsx`, 결제는 `(checkout)/layout.tsx`가 각자의 `<main>`을 렌더링하며 서로의 `<main>`을 중첩하지 않는다.
   - 셸 전용 조각(`Header`/`AuthStatus`/`AccountMenu`/`Footer`/`GuestbookModal`처럼 그 layout.tsx 하나만 쓰는 것)은 그 layout이 속한 라우트 그룹의 `_components/`에 둔다 — Zustand 구독 등 도메인 로직이 있어도 된다(라우트 그룹이 사실상의 소유자이므로).
-  - 여러 layout이 겹치는 셸 조각(예: `SidebarLayout`이 admin/my-order/my-profile 3곳에서 쓰이던 것)은 공용 컴포넌트로 승격하지 않고 각 `layout.tsx`가 직접 정의한다 — 지금은 내용이 같아 보여도 각 레이어가 독립적으로 진화할 수 있어서다.
+  - 여러 layout이 겹치는 셸 조각(예: `SidebarLayout`이 admin/account 2곳에서 쓰이던 것)은 공용 컴포넌트로 승격하지 않고 각 `layout.tsx`가 직접 정의한다 — 지금은 내용이 같아 보여도 각 레이어가 독립적으로 진화할 수 있어서다.
 - 루트 `app/layout.tsx`만 metadata(SEO/OG/Twitter)·전역 CSS import·환경변수 검증을 담당한다 — 하위 `layout.tsx`에서 이걸 중복 정의하지 않는다.
 - `error.tsx`와 `not-found.tsx`를 혼용하지 않는다 — `error.tsx`는 fetch 실패/예외 경계, `not-found.tsx`는 존재하지 않는 리소스 전용이다. 현재는 라우트 개별이 아니라 **라우트 그룹 단위**로 배치돼있다(`(public)/error.tsx`, `(public)/products/error.tsx`, `(admin)/error.tsx`, 루트 `not-found.tsx`) — 그룹 내 여러 라우트가 에러 경계를 공유해도 되면 그룹 레벨, 특정 라우트만 다른 처리가 필요하면 그 라우트에 개별 배치한다.
 - `loading.tsx`는 그 세그먼트의 `page.tsx` + 중첩 `layout.tsx` + `not-found.tsx`를 Suspense로 감싸는 fallback UI다 — 같은 세그먼트의 `layout.tsx`/`template.tsx`/`error.tsx`는 감싸지 않는다(공식문서: layout이 `cookies()`/`headers()` 같은 uncached 데이터를 쓰면 그 부분엔 fallback이 안 먹고 layout 렌더가 끝날 때까지 네비게이션이 블록된다). params를 받지 않아 데이터 의존 분기가 구조적으로 불가능하다 — 순수 정적 skeleton/spinner만 둔다. 실제로 스트리밍이 필요한 세그먼트에만 개별 배치한다(`error.tsx`처럼 그룹 단위로 묶지 않는다) — 현재 `(account)/my-orders/`, `(public)/products/[category]/`.

@@ -170,7 +170,7 @@ const getProductService = async (
 };
 
 // 상품 상세페이지 방문 시 조회수 증가 — getProductService에는 안 넣는다.
-// payment.service.ts(결제 검증용 조회)와 (main)/page.tsx(고정 미리보기)도
+// payment.service.ts(결제 검증용 조회)와 (public)/page.tsx(고정 미리보기)도
 // getProductService를 호출하는데 그 두 호출까지 조회수로 잡히면 안 되기 때문.
 const incrementProductViewsService = async (
   productId: string,

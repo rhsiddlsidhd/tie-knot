@@ -4,7 +4,7 @@
 // 이어지는 배선을 실제로 올바르게 연결하는지 검증한다. 서비스 내부 집계 로직
 // 자체는 src/services/dashboard.integration.test.ts(11건)가, Template 렌더
 // 계약(상태 A~D)은 AdminDashboardTemplate.test.tsx(4케이스)가 이미 담당하므로
-// 여기서 다시 검증하지 않는다. (main)/page.integration.test.ts와 같은 이유로
+// 여기서 다시 검증하지 않는다. (public)/page.integration.test.ts와 같은 이유로
 // JSX는 함수 호출이 아니라 엘리먼트 서술자라, `await page()`가 반환한 엘리먼트의
 // props만 검사하고 렌더링은 하지 않는다(jsdom 불필요, 하위 Template 바디도
 // 실행되지 않는다).

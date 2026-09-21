@@ -52,7 +52,7 @@ const likeNTimes = async (productId: string, n: number) => {
   }
 };
 
-describe("(main)/page — 통합(DB~page.tsx 데이터 배선)", () => {
+describe("(public)/page — 통합(DB~page.tsx 데이터 배선)", () => {
   beforeEach(async () => {
     await dbConnect();
     await clearCollections();
