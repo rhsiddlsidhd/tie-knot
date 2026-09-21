@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CloudinaryWidget } from "./widget";
 
@@ -29,14 +29,18 @@ const buildResponse = (signature: string) =>
     }),
   );
 
-const renderWidget = () =>
+const renderWidget = (onUpload = vi.fn()) =>
   render(
     // eslint-disable-next-line react/no-children-prop
     React.createElement(CloudinaryWidget, {
       folder: "products/images",
-      onUpload: vi.fn(),
-      children: () =>
-        React.createElement("button", { type: "button" }, "업로드"),
+      onUpload,
+      children: ({ open }: { open: () => void }) =>
+        React.createElement(
+          "button",
+          { type: "button", onClick: open },
+          "업로드",
+        ),
     }),
   );
 
@@ -44,6 +48,21 @@ describe("CloudinaryWidget", () => {
   beforeEach(() => {
     capturedOptions = undefined;
     vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  it("E2E 모드에서는 외부 위젯 없이 결정적인 업로드 결과를 전달한다", () => {
+    vi.stubEnv("NEXT_PUBLIC_CLOUDINARY_E2E_MOCK", "enabled");
+    const onUpload = vi.fn();
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    renderWidget(onUpload);
+    fireEvent.click(screen.getByRole("button", { name: "업로드" }));
+
+    expect(onUpload).toHaveBeenCalledWith(
+      "https://res.cloudinary.com/e2e/image/upload/products-images.png",
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("크롭 없는 다중 이미지 위젯으로 초기화한다", async () => {

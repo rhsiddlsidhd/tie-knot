@@ -53,12 +53,15 @@ const CloudinaryWidget = ({
   onUpload,
 }: CloudinaryWidgetProps) => {
   const [config, setConfig] = useState<UploadWidgetConfig | null>(null);
+  const isE2EMock = process.env.NEXT_PUBLIC_CLOUDINARY_E2E_MOCK === "enabled";
 
   useEffect(() => {
+    if (isE2EMock) return;
+
     requestSignature({ folder })
       .then(({ apiKey, cloudName }) => setConfig({ apiKey, cloudName }))
       .catch(() => onError?.());
-  }, [folder, onError]);
+  }, [folder, isE2EMock, onError]);
 
   // CldUploadWidget이 매 렌더 새 options 객체 참조를 옵션 변경으로 오인해
   // 위젯 인스턴스를 다시 만들면서 "이미지 추가"를 반복 클릭할 때 좀비 상태로
@@ -100,6 +103,16 @@ const CloudinaryWidget = ({
         : undefined,
     [config, folder, onError],
   );
+
+  if (isE2EMock) {
+    return children({
+      isLoading: false,
+      open: () =>
+        onUpload(
+          `https://res.cloudinary.com/e2e/image/upload/${folder.replaceAll("/", "-")}.png`,
+        ),
+    });
+  }
 
   if (!config || !cloudConfig || !widgetOptions) {
     return children({ isLoading: true, open: () => undefined });
