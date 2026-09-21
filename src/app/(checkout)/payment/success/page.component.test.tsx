@@ -1,14 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 
-const { redirectMock } = vi.hoisted(() => ({
+const { redirectMock, verifySessionMock } = vi.hoisted(() => ({
   redirectMock: vi.fn(() => {
     throw new Error("NEXT_REDIRECT");
   }),
+  verifySessionMock: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
   redirect: redirectMock,
+}));
+
+vi.mock("@/services/auth", () => ({
+  verifySession: verifySessionMock,
 }));
 
 // PaymentSuccessTemplate 자체의 behavior(주문번호/링크 렌더링)는
