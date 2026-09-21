@@ -14,7 +14,7 @@ import {
   SidebarMenuSubItem,
 } from "@/ui/components/atoms/sidebar";
 
-const SidebarNavMenu = ({
+const SidebarNavigationMenu = ({
   type,
   onNavigate,
 }: {
@@ -101,4 +101,4 @@ const SidebarNavMenu = ({
   );
 };
 
-export { SidebarNavMenu };
+export { SidebarNavigationMenu };

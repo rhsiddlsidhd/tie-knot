@@ -1,7 +1,7 @@
 import { AuthStatus } from "./AuthStatus";
 import { HeaderNavigationMenu } from "./HeaderNavigationMenu";
 import { SheetPanel } from "./SheetPanel";
-import { SheetNavList } from "./SheetNavList";
+import { SheetNavigationList } from "./SheetNavigationList";
 import { Search } from "lucide-react";
 import { ROUTES } from "@/core/domain/routes";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
@@ -12,7 +12,7 @@ const Header = () => {
       <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
         <div className="flex items-center gap-4">
           <SheetPanel hiddenFrom="lg">
-            <SheetNavList type="MAIN" />
+            <SheetNavigationList type="MAIN" />
           </SheetPanel>
           <Logo />
           <HeaderNavigationMenu />

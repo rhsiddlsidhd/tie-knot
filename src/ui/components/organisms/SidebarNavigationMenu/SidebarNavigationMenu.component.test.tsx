@@ -7,7 +7,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/admin/dashboard",
 }));
 
-import { SidebarNavMenu } from "./SidebarNavMenu";
+import { SidebarNavigationMenu } from "./SidebarNavigationMenu";
 
 const renderMenu = (
   type: "ADMIN" | "MY_PROFILE" | "MY_ORDER",
@@ -15,12 +15,12 @@ const renderMenu = (
 ) => {
   return render(
     <SidebarProvider defaultOpen={open}>
-      <SidebarNavMenu type={type} />
+      <SidebarNavigationMenu type={type} />
     </SidebarProvider>,
   );
 };
 
-describe("SidebarNavMenu", () => {
+describe("SidebarNavigationMenu", () => {
   it("링크 항목을 href와 함께 표시한다", () => {
     renderMenu("ADMIN");
 

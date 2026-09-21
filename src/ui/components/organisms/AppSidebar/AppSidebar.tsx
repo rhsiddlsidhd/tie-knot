@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { Sidebar, useSidebar } from "@/ui/components/atoms/sidebar";
 import { Logo } from "@/ui/components/atoms/logo";
-import { SidebarNavMenu } from "@/ui/components/organisms/SidebarNavMenu";
+import { SidebarNavigationMenu } from "@/ui/components/organisms/SidebarNavigationMenu";
 
 interface AppSidebarProps {
   navigationType: "ADMIN" | "MY_PROFILE" | "MY_ORDER";
@@ -41,7 +41,7 @@ const SidebarPanel = ({ navigationType, onClose, onNavigate }: SidebarPanelProps
       </div>
 
       <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-        <SidebarNavMenu type={navigationType} onNavigate={onNavigate} />
+        <SidebarNavigationMenu type={navigationType} onNavigate={onNavigate} />
       </div>
 
       <div className="border-border/40 border-t px-6 py-5 group-data-[collapsible=icon]:hidden">

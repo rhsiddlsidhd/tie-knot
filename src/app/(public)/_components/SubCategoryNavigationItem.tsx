@@ -7,15 +7,15 @@ import {
   type SubCategory,
 } from "@/core/domain/product-category";
 
-interface SubCategoryNavItemProps {
+interface SubCategoryNavigationItemProps {
   category: ProductCategory;
   subCategory: SubCategory;
 }
 
-const SubCategoryNavItem = ({
+const SubCategoryNavigationItem = ({
   category,
   subCategory,
-}: SubCategoryNavItemProps) => {
+}: SubCategoryNavigationItemProps) => {
   return (
     <Link
       href={ROUTES.products.byCategory(category, subCategory)}
@@ -28,4 +28,4 @@ const SubCategoryNavItem = ({
   );
 };
 
-export { SubCategoryNavItem };
+export { SubCategoryNavigationItem };

@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
 } from "@/ui/components/atoms/accordion";
 
-const SheetNavList = ({
+const SheetNavigationList = ({
   type,
 }: {
   type: keyof typeof NAVIGATION_BY_TYPE;
@@ -83,4 +83,4 @@ const SheetNavList = ({
   );
 };
 
-export { SheetNavList };
+export { SheetNavigationList };

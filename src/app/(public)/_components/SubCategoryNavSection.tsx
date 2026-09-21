@@ -3,7 +3,7 @@
 import { TypographyH2 } from "@/ui/components/atoms/typography";
 import { CarouselList } from "@/ui/components/molecules/CarouselList";
 import type { AvailableSubCategory } from "@/core/domain/product-category";
-import { SubCategoryNavItem } from "./SubCategoryNavItem";
+import { SubCategoryNavigationItem } from "./SubCategoryNavigationItem";
 
 interface SubCategoryNavSectionProps {
   availableSubCategories: readonly AvailableSubCategory[];
@@ -24,7 +24,7 @@ const SubCategoryNavSection = ({
           opts={{ align: "start", loop: false, dragFree: true }}
         >
           {availableSubCategories.map(({ category, subCategory }) => (
-            <SubCategoryNavItem
+            <SubCategoryNavigationItem
               key={`${category}-${subCategory}`}
               category={category}
               subCategory={subCategory}
