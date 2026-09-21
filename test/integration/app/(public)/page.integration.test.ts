@@ -22,7 +22,6 @@ import { dbConnect } from "@/db/connect";
 import { buildProductInput, clearCollections } from "@test/support";
 import { ProductModel } from "@/models/product.model";
 import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
-import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 
 // getPopularProductsService만 vi.fn으로 감싸 개별 테스트에서 override할 수
 // 있게 하고, 기본 동작은 실제 구현(actual)을 그대로 위임한다 — 그 외
@@ -33,13 +32,14 @@ vi.mock("@/services/product", async (importOriginal) => {
   return {
     ...actual,
     getPopularProductsService: vi.fn(actual.getPopularProductsService),
-    getAvailableSubCategoriesService: vi.fn(
-      actual.getAvailableSubCategoriesService,
-    ),
   };
 });
 
-import { createProductService, updateProductLikeService, getPopularProductsService, getAvailableSubCategoriesService } from "@/services/product";
+import {
+  createProductService,
+  getPopularProductsService,
+  updateProductLikeService,
+} from "@/services/product";
 import page from "@/app/(public)/page";
 
 // product.service.test.ts / PopularProductsSection.integration.test.tsx와 동일한 헬퍼.
@@ -57,7 +57,6 @@ describe("(public)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     await dbConnect();
     await clearCollections();
     vi.mocked(getPopularProductsService).mockClear();
-    vi.mocked(getAvailableSubCategoriesService).mockClear();
   });
 
   afterAll(async () => {
@@ -84,7 +83,7 @@ describe("(public)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     expect(
       element.props.popularProducts.map((p: { title: string }) => p.title),
     ).toEqual(["1위", "2위", "3위", "4위"]);
-    // ISR 공유 캐시(revalidate=3600)라 userId를 넘기지 않는다 — 항상 isLiked: false
+    // ISR 공유 캐시(revalidate=600)라 userId를 넘기지 않는다 — 항상 isLiked: false
     // (01_api_contract.md §3, 01_ui_flow.md §1.1).
     expect(
       element.props.popularProducts.every(
@@ -95,9 +94,6 @@ describe("(public)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     expect(getPopularProductsService).toHaveBeenCalledWith(
       POPULAR_PRODUCTS_LIMIT,
     );
-    expect(element.props.availableSubCategories).toEqual([
-      { category: MOBILE_INVITATION_CATEGORY, subCategory: "wedding" },
-    ]);
   });
 
   it("에러 흐름: getPopularProductsService가 throw해도 page()는 reject하지 않고 popularProducts가 빈 배열로 흡수된다 (.catch(() => []))", async () => {
@@ -110,15 +106,5 @@ describe("(public)/page — 통합(DB~page.tsx 데이터 배선)", () => {
     const element = (await page()) as any;
 
     expect(element.props.popularProducts).toEqual([]);
-  });
-
-  it("가용 서브카테고리 조회가 실패하면 빈 배열로 축약한다", async () => {
-    vi.mocked(getAvailableSubCategoriesService).mockRejectedValueOnce(
-      new Error("DB 커넥션 실패 시뮬레이션"),
-    );
-
-    const element = (await page()) as any;
-
-    expect(element.props.availableSubCategories).toEqual([]);
   });
 });

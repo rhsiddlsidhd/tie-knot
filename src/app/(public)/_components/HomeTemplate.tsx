@@ -3,28 +3,21 @@ import { PromotionHero } from "./PromotionHero";
 import { LiveDemoSection } from "./LiveDemoSection";
 import { SubCategoryNavigationSection } from "./SubCategoryNavigationSection";
 import { PopularProductsSection } from "./PopularProductsSection";
-import type { AvailableSubCategory } from "@/core/domain/product-category";
 
 interface HomeTemplateProps {
   popularProducts: Product[];
-  availableSubCategories: readonly AvailableSubCategory[];
-  liveDemoThumbnail: string | null;
 }
 
-const HomeTemplate = ({
-  popularProducts,
-  availableSubCategories,
-  liveDemoThumbnail,
-}: HomeTemplateProps) => {
+const HomeTemplate = ({ popularProducts }: HomeTemplateProps) => {
   return (
     <div className="flex flex-col">
       <PromotionHero />
 
-      <SubCategoryNavigationSection availableSubCategories={availableSubCategories} />
+      <SubCategoryNavigationSection />
 
       <PopularProductsSection products={popularProducts} />
 
-      <LiveDemoSection thumbnail={liveDemoThumbnail} />
+      <LiveDemoSection />
     </div>
   );
 };
