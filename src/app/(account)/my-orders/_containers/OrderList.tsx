@@ -46,9 +46,8 @@ const buildKey = ({
 };
 
 /**
- * 첫 페이지는 Server Component가 이미 렌더한 결과를 fallbackData로 받고, 더보기부터만
- * route handler를 탄다. SWR key에 status/category가 들어 있어 필터가 바뀌면 누적분이
- * 자동으로 리셋된다.
+ * 첫 페이지·더보기 경로와 SWR 옵션은 docs/architecture/data-access.md
+ * "목록 페이지네이션"을 따른다.
  */
 const OrderList = ({ firstPage, status, category }: OrderListProps) => {
   const { data, error, size, setSize, isValidating, mutate } =
@@ -62,9 +61,6 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
       {
         fallbackData: [firstPage],
         revalidateFirstPage: false,
-        // 첫 페이지는 방금 Server Component가 조회해 넘겨준 값이다 — 마운트 시
-        // 같은 쿼리를 한 번 더 돌리지 않는다. 갱신이 필요한 시점(취소 등)에는
-        // mutate로 명시적으로 다시 받아온다.
         revalidateOnMount: false,
       },
     );
