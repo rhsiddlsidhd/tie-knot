@@ -34,10 +34,9 @@ interface ProductCatalogProps {
 }
 
 /**
- * 첫 페이지는 Server Component가 이미 렌더한 결과를 fallbackData로 받고, 더보기부터만
- * route handler를 탄다. SWR key에 category/subCategory가 들어 있어 필터(URL)가 바뀌면
- * 누적분이 자동으로 리셋된다(OrderList.tsx와 동일 패턴). 더보기는 버튼이 아니라 목록
- * 하단 sentinel의 IntersectionObserver로 트리거한다(LiveGuestbookSection.tsx 패턴).
+ * 첫 페이지·더보기 경로와 SWR 옵션은 docs/architecture/data-access.md
+ * "목록 페이지네이션"을 따른다. 더보기는 버튼이 아니라 목록 하단 sentinel의
+ * IntersectionObserver로 트리거한다(LiveGuestbookSection.tsx 패턴).
  */
 const ProductCatalog = ({
   firstPage,
@@ -63,8 +62,6 @@ const ProductCatalog = ({
       {
         fallbackData: [firstPage],
         revalidateFirstPage: false,
-        // 첫 페이지는 방금 Server Component가 조회해 넘겨준 값이다 — 마운트 시
-        // 같은 쿼리를 한 번 더 돌리지 않는다.
         revalidateOnMount: false,
       },
     );

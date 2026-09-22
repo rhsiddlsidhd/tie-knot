@@ -1,4 +1,3 @@
-import { Button } from "@/ui/components/atoms/button";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 
 interface CursorPaginationProps {
@@ -32,25 +31,22 @@ const CursorPagination = ({
 
   return (
     <div className="flex items-center justify-end gap-2">
-      {hasCursor ? (
-        <LinkButton variant="outline" size="sm" href={firstPageHref}>
-          첫 페이지
-        </LinkButton>
-      ) : (
-        <Button variant="outline" size="sm" disabled>
-          첫 페이지
-        </Button>
-      )}
-
-      {nextCursor ? (
-        <LinkButton variant="outline" size="sm" href={nextPageHref}>
-          다음 페이지
-        </LinkButton>
-      ) : (
-        <Button variant="outline" size="sm" disabled>
-          다음 페이지
-        </Button>
-      )}
+      <LinkButton
+        variant="outline"
+        size="sm"
+        href={firstPageHref}
+        disabled={!hasCursor}
+      >
+        첫 페이지
+      </LinkButton>
+      <LinkButton
+        variant="outline"
+        size="sm"
+        href={nextPageHref}
+        disabled={nextCursor === null}
+      >
+        다음 페이지
+      </LinkButton>
     </div>
   );
 };
