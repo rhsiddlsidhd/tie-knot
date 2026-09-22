@@ -62,6 +62,72 @@ Unit → Component → Integration → E2E 4단계 테스트 피라미드를 따
 경계, 파일 명명·위치 규칙은 [`docs/__test/README.md`](docs/__test/README.md)에 정의돼
 있다.
 
+## Design Highlights
+
+### 컴포넌트 계층 (Atomic Design)
+
+`src/ui/components/`는 `atoms → molecules → organisms → templates` 4단계로 구성한다.
+계층별 조립 규칙(디렉터리·파일명 일치 등)은
+[`docs/conventions/naming-convention.md`](docs/conventions/naming-convention.md)에
+정의돼 있다. 실제 데이터 바인딩까지 이어지는 예시로 관리자 목록 화면의 커서
+페이지네이션을 든다:
+
+```
+atoms/table.tsx, atoms/button.tsx
+  └─ molecules/TableShell        헤더 렌더링
+  └─ molecules/CursorPagination  ─ / + 페이지 이동 (molecules/LinkButton 사용)
+       └─ organisms/PaginatedTable   TableShell + CursorPagination 조합
+            └─ admin 6개 페이지(products/orders/users/reviews 등)
+               MongoDB 커서 기반 실데이터 바인딩
+```
+
+각 molecule은 자신을 감싸는 organism이 무엇인지 모른다 — `CursorPagination`은
+`basePath`/`query`/`cursor` 같은 순수 prop만 받고 호출부(admin Template)가 실제
+필터·커서 상태를 주입한다. 컴포넌트 디렉터리 구조 결정 배경은
+[`docs/decisions/0007-per-component-directory-barrel.md`](docs/decisions/0007-per-component-directory-barrel.md)
+참고.
+
+### 인증 흐름
+
+세션은 `token` httpOnly 쿠키 단일 트랙(access/refresh 이중 토큰 없음)으로 관리하며,
+보호 라우트 접근은 Proxy(낙관적) → `page.tsx`(`verifySession()`) → Service(재검증)
+3중 게이트를 통과한다. 자세한 설계 배경은
+[`docs/security/page-access-control.md`](docs/security/page-access-control.md) 참고.
+
+**1. 로그인 발급**
+
+```
+Browser
+  │  POST 이메일/비밀번호
+  ▼
+Server Action (loginUserService)
+  │  getUser(email) + comparePasswords  ──▶  MongoDB
+  │  encrypt(JWT, type=REFRESH)
+  ▼
+Browser  ◀──  Set-Cookie: token (httpOnly)
+```
+
+**2. 보호 라우트 접근 — 3중 게이트**
+
+```
+Browser
+  │  GET /admin/orders  (Cookie: token)
+  ▼
+Proxy (middleware)                      decrypt(token) 낙관적 검사
+  │  실패(토큰 없음/만료/role 불일치) ──▶  redirect(/login 또는 /)
+  ▼  통과
+page.tsx: verifySession()               getAuth() 재검증 (cache)
+  │  실패(세션 없음/role 불일치)     ──▶  redirect(/login 또는 /)
+  ▼  통과
+Service: requireAuth() / requireAdmin() 재확인
+  ▼
+MongoDB 쿼리  ──▶  렌더링된 페이지
+```
+
+Proxy 통과를 인가 완료로 취급하지 않는다 — 낙관적 체크일 뿐이라 `page.tsx`가 항상
+재검증하고, service 레이어도 page 게이트 존재를 전제하지 않고 다시 확인한다
+(`src/proxy.ts`, `src/services/auth.ts`).
+
 ## Documentation
 
 프로젝트 컨벤션과 아키텍처 결정 사항은 코드 옆 `AGENTS.md`(계층별 규칙)와 `docs/`
