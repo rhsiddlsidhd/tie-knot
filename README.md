@@ -43,18 +43,18 @@ npm run dev
 
 ## Scripts
 
-| Command                    | 설명                                    |
-| --------------------------- | --------------------------------------- |
-| `npm run dev`                | 개발 서버 실행(Turbopack)               |
-| `npm run build`              | 프로덕션 빌드                           |
-| `npm run start`              | 프로덕션 서버 실행                      |
-| `npm run lint`                | ESLint 검사                             |
-| `npm run tsc`                 | 타입 검사(`next typegen` 포함)          |
-| `npm run format` / `format:check` | Prettier 포맷 적용 / 검사           |
-| `npm run test:unit`           | Unit 테스트(Vitest)                     |
-| `npm run test:component`      | Component 테스트(Vitest + Testing Library) |
-| `npm run test:integration`    | Integration 테스트(실제 MongoDB, mongodb-memory-server) |
-| `npm run test:e2e`            | E2E 테스트(Playwright)                  |
+| Command                           | 설명                                                    |
+| --------------------------------- | ------------------------------------------------------- |
+| `npm run dev`                     | 개발 서버 실행(Turbopack)                               |
+| `npm run build`                   | 프로덕션 빌드                                           |
+| `npm run start`                   | 프로덕션 서버 실행                                      |
+| `npm run lint`                    | ESLint 검사                                             |
+| `npm run tsc`                     | 타입 검사(`next typegen` 포함)                          |
+| `npm run format` / `format:check` | Prettier 포맷 적용 / 검사                               |
+| `npm run test:unit`               | Unit 테스트(Vitest)                                     |
+| `npm run test:component`          | Component 테스트(Vitest + Testing Library)              |
+| `npm run test:integration`        | Integration 테스트(실제 MongoDB, mongodb-memory-server) |
+| `npm run test:e2e`                | E2E 테스트(Playwright)                                  |
 
 ## Testing
 
