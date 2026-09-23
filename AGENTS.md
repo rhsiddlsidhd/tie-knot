@@ -38,8 +38,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Cross-cutting References (Lazy Loading)
 
-- 데이터 접근 경로를 선택하거나 Server Component·Server Action·Route Handler 사이의 경계를 변경할 때는 먼저 `docs/architecture/data-access.md`를 끝까지 읽는다.
-- services·Server Actions·Route Handlers·클라이언트에 걸친 에러 처리 흐름, 분류 또는 응답 채널을 변경할 때는 먼저 `docs/architecture/error-handling.md`를 끝까지 읽는다.
+- 서버↔브라우저 경계에서 데이터가 오가는 방식, 캐싱·재검증, 에러 처리 흐름을 정하거나 바꿀 때는 먼저 `docs/architecture/README.md`에서 해당 문서를 골라 끝까지 읽는다.
 - 인증·인가, 세션, Proxy 또는 `page.tsx` 접근 제어를 변경할 때는 먼저 `docs/security/page-access-control.md`를 끝까지 읽는다.
 - 새 라우트 세그먼트의 이름을 정하거나 기존 세그먼트 이름을 변경할 때는 먼저 `docs/conventions/route-naming.md`를 끝까지 읽는다.
 - 테스트를 추가·수정하거나 unit/component/integration/E2E를 분류할 때는 먼저 `docs/__test/README.md`(및 해당 티어의 `docs/__test/{unit,component,integration,e2e}.md`)를 끝까지 읽는다.
