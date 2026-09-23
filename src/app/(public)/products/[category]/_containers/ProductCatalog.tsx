@@ -34,7 +34,6 @@ interface ProductCatalogProps {
 }
 
 /**
- * 첫 페이지·더보기 경로와 SWR 옵션은 docs/architecture/data-access.md
  * "목록 페이지네이션"을 따른다. 더보기는 버튼이 아니라 목록 하단 sentinel의
  * IntersectionObserver로 트리거한다(LiveGuestbookSection.tsx 패턴).
  */
