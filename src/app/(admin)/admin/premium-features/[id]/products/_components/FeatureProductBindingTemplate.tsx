@@ -30,7 +30,6 @@ const FeatureProductBindingTemplate = ({
   featureLabel,
   page,
   q,
-  cursor,
 }: FeatureProductBindingTemplateProps) => (
   <div className="space-y-6">
     <div className="space-y-4">
@@ -59,8 +58,8 @@ const FeatureProductBindingTemplate = ({
       headings={TABLE_HEADINGS}
       basePath={ROUTES.admin.premiumFeatures.products(featureId)}
       query={q ? { q } : {}}
-      hasCursor={!!cursor}
-      nextCursor={page.nextCursor}
+      hasCursor={false}
+      nextCursor={null}
     >
       {page.items.length === 0 ? (
         <TableRow>

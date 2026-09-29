@@ -1,4 +1,3 @@
-import type { CursorPage } from "./cursor";
 import type { OffsetPage } from "./offset";
 import type { ProductStatus } from "./product";
 
@@ -49,13 +48,22 @@ type FeatureProductBinding = {
   attached: boolean;
 };
 
-type FeatureProductBindingPage = CursorPage<FeatureProductBinding>;
+const FEATURE_PRODUCT_BINDING_SORT_KEYS = [
+  "createdAt",
+  "title",
+  "price",
+] as const;
+type FeatureProductBindingSortKey =
+  (typeof FEATURE_PRODUCT_BINDING_SORT_KEYS)[number];
+type FeatureProductBindingPage = OffsetPage<FeatureProductBinding>;
 
 export {
   IMPLEMENTED_PREMIUM_FEATURE_CODES,
   ADMIN_PREMIUM_FEATURE_SORT_KEYS,
+  FEATURE_PRODUCT_BINDING_SORT_KEYS,
   type FeatureProductBinding,
   type FeatureProductBindingPage,
+  type FeatureProductBindingSortKey,
   type ImplementedPremiumFeatureCode,
   type PremiumFeature,
   type AdminPremiumFeatureListPage,

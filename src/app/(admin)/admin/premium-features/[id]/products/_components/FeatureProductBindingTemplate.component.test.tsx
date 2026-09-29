@@ -31,7 +31,10 @@ const buildPage = (
       attached: true,
     },
   ],
-  nextCursor: null,
+  total: 1,
+  page: 1,
+  limit: 10,
+  totalPages: 1,
   ...overrides,
 });
 

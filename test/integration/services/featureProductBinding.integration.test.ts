@@ -141,7 +141,7 @@ describe("featureProductBinding", () => {
       expect(page.items.map((item) => item.title)).toEqual(["청첩장 (봄)"]);
     });
 
-    it("커서로 다음 페이지를 이어서 준다", async () => {
+    it("offset 페이지가 total과 totalPages를 반환한다", async () => {
       for (let i = 0; i < 3; i += 1) {
         await createProduct(`청첩장 ${i}`, {
           isPremium: true,
@@ -152,30 +152,81 @@ describe("featureProductBinding", () => {
       const first = await getFeatureProductBindingsPageService({
         featureId,
         limit: 2,
+        page: 1,
       });
       expect(first.items).toHaveLength(2);
-      expect(first.nextCursor).not.toBeNull();
+      expect(first).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
 
       const second = await getFeatureProductBindingsPageService({
         featureId,
         limit: 2,
-        cursor: first.nextCursor!,
+        page: 2,
       });
 
       expect(second.items).toHaveLength(1);
-      expect(second.nextCursor).toBeNull();
+      expect(second.totalPages).toBe(2);
       const titles = [...first.items, ...second.items].map((i) => i.title);
       expect(new Set(titles).size).toBe(3);
     });
 
-    it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
-      await expect(
-        getFeatureProductBindingsPageService({
-          featureId,
-          cursor: "!!!broken!!!",
-        }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
+      await createProduct("청첩장", {
+        isPremium: true,
+        featureIds: [featureId],
+      });
+      const result = await getFeatureProductBindingsPageService({
+        featureId,
+        page: 2,
+      });
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
+
+    it.each(["createdAt", "title", "price"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const firstId = await createProduct("가 상품", {
+          isPremium: true,
+          featureIds: [featureId],
+          price: 1000,
+        });
+        const secondId = await createProduct("나 상품", {
+          isPremium: true,
+          featureIds: [featureId],
+          price: 2000,
+        });
+        if (sort === "createdAt") {
+          await ProductModel.updateOne(
+            { _id: firstId },
+            { $set: { createdAt: new Date("2026-01-01") } },
+            { timestamps: false, overwriteImmutable: true },
+          );
+          await ProductModel.updateOne(
+            { _id: secondId },
+            { $set: { createdAt: new Date("2026-02-01") } },
+            { timestamps: false, overwriteImmutable: true },
+          );
+        }
+        const asc = await getFeatureProductBindingsPageService({
+          featureId,
+          sort,
+          direction: "asc",
+        });
+        const desc = await getFeatureProductBindingsPageService({
+          featureId,
+          sort,
+          direction: "desc",
+        });
+        expect(asc.items.map((item) => item._id)).toEqual([
+          firstId,
+          secondId,
+        ]);
+        expect(desc.items.map((item) => item._id)).toEqual([
+          secondId,
+          firstId,
+        ]);
+      },
+    );
   });
 
   describe("attachPremiumFeatureToProductService", () => {
