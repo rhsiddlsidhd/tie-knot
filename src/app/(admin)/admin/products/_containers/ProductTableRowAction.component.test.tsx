@@ -3,6 +3,7 @@ import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const refreshMock = vi.fn();
+const onRefreshed = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
@@ -64,10 +65,10 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
 // 마운트 시점에 throw한다 — 테스트마다 새 store 인스턴스를 만들어 주입한다.
 let testStore: AppStoreApi;
 
-const renderAction = (props: ProductTableRowProps) =>
+const renderAction = (props: Omit<ProductTableRowProps, "onRefreshed">) =>
   render(
     <StoreProvider store={testStore}>
-      <ProductTableRowAction {...props} />
+      <ProductTableRowAction {...props} onRefreshed={onRefreshed} />
     </StoreProvider>,
   );
 
@@ -95,6 +96,19 @@ describe("ProductTableRowAction", () => {
     expect(screen.queryByText("영구 삭제")).not.toBeInTheDocument();
   });
 
+  it("수정 버튼을 누르면 상품과 목록 갱신 callback으로 편집 모달을 연다", async () => {
+    const user = userEvent.setup();
+    const product = buildProduct();
+    renderAction({ product });
+
+    await user.click(screen.getByRole("button", { name: "상품 수정" }));
+
+    expect(testStore.getState()).toMatchObject({
+      adminModalType: "EDIT-PRODUCT",
+      props: { product, onRefreshed },
+    });
+  });
+
   it("view가 trash면 복구/영구 삭제 버튼을 렌더링한다", () => {
     renderAction({ product: buildProduct(), view: "trash" });
 
@@ -120,7 +134,8 @@ describe("ProductTableRowAction", () => {
     await user.click(dialogButton("복구"));
 
     expect(restoreProduct).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
-    expect(refreshMock).toHaveBeenCalledOnce();
+    expect(onRefreshed).toHaveBeenCalledOnce();
+    expect(refreshMock).not.toHaveBeenCalled();
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 
@@ -142,7 +157,8 @@ describe("ProductTableRowAction", () => {
     await user.click(dialogButton("삭제"));
 
     expect(deleteProduct).toHaveBeenCalledWith("507f1f77bcf86cd799439011");
-    expect(refreshMock).toHaveBeenCalledOnce();
+    expect(onRefreshed).toHaveBeenCalledOnce();
+    expect(refreshMock).not.toHaveBeenCalled();
   });
 
   it("삭제를 취소하면 deleteProduct를 호출하지 않는다", async () => {
@@ -169,7 +185,7 @@ describe("ProductTableRowAction", () => {
     await user.click(dialogButton("삭제"));
 
     expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(onRefreshed).not.toHaveBeenCalled();
 
     await user.click(dialogButton("삭제"));
     expect(deleteProduct).toHaveBeenCalledTimes(2);
@@ -221,7 +237,8 @@ describe("ProductTableRowAction", () => {
     expect(permanentlyDeleteProduct).toHaveBeenCalledWith(
       "507f1f77bcf86cd799439011",
     );
-    expect(refreshMock).toHaveBeenCalledOnce();
+    expect(onRefreshed).toHaveBeenCalledOnce();
+    expect(refreshMock).not.toHaveBeenCalled();
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 });

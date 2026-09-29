@@ -38,7 +38,7 @@ const buildProduct = (overrides?: Partial<Product>): Product =>
     images: [],
     minQuantity: 1,
     maxQuantity: 0,
-    createdAt: new Date().toISOString(),
+    createdAt: "2026-09-01T03:00:00.000Z",
     updatedAt: new Date().toISOString(),
     deletedAt: null,
     ...overrides,
@@ -49,7 +49,7 @@ describe("ProductTableRow", () => {
     render(
       <table>
         <tbody>
-          <ProductTableRow product={buildProduct()} />
+          <ProductTableRow product={buildProduct()} onRefreshed={vi.fn()} />
         </tbody>
       </table>,
     );
@@ -67,6 +67,7 @@ describe("ProductTableRow", () => {
         <tbody>
           <ProductTableRow
             product={buildProduct({ isPremium: true, isFeatured: true })}
+            onRefreshed={vi.fn()}
           />
         </tbody>
       </table>,
@@ -80,12 +81,52 @@ describe("ProductTableRow", () => {
     render(
       <table>
         <tbody>
-          <ProductTableRow product={buildProduct()} />
+          <ProductTableRow product={buildProduct()} onRefreshed={vi.fn()} />
         </tbody>
       </table>,
     );
 
     expect(screen.queryByText("프리미엄")).not.toBeInTheDocument();
     expect(screen.queryByText("추천")).not.toBeInTheDocument();
+  });
+
+  it("조회수·좋아요·판매량을 각각의 칸에, 등록일을 우선순위 뒤 칸에 렌더링한다", () => {
+    render(
+      <table>
+        <tbody>
+          <ProductTableRow product={buildProduct()} onRefreshed={vi.fn()} />
+        </tbody>
+      </table>,
+    );
+
+    const cells = screen.getAllByRole("cell");
+    expect(cells).toHaveLength(12);
+    expect(cells.slice(6, 11).map((cell) => cell.textContent)).toEqual([
+      "120",
+      "2",
+      "7",
+      "3",
+      "2026.9.1",
+    ]);
+  });
+
+  it("휴지통 view면 상태 칸에 삭제 배지와 삭제일을 렌더링한다", () => {
+    render(
+      <table>
+        <tbody>
+          <ProductTableRow
+            product={buildProduct({ deletedAt: "2026-09-10T03:00:00.000Z" })}
+            view="trash"
+            onRefreshed={vi.fn()}
+          />
+        </tbody>
+      </table>,
+    );
+
+    const statusCell = screen.getAllByRole("cell")[5];
+    expect(statusCell).toHaveTextContent("삭제됨");
+    expect(statusCell).toHaveTextContent(
+      new Date("2026-09-10T03:00:00.000Z").toLocaleDateString("ko-KR"),
+    );
   });
 });

@@ -89,6 +89,11 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
   ...overrides,
 });
 
+const onRefreshed = vi.fn();
+
+const renderDialog = (product: Product) =>
+  render(<ProductEditDialog product={product} onRefreshed={onRefreshed} />);
+
 describe("ProductEditDialog (컨테이너)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -104,15 +109,13 @@ describe("ProductEditDialog (컨테이너)", () => {
       loading: true,
     });
 
-    render(<ProductEditDialog product={buildProduct()} />);
+    renderDialog(buildProduct());
 
     expect(screen.queryByLabelText(/상품명/)).not.toBeInTheDocument();
   });
 
   it("로딩이 끝나면 상품 값을 각 필드의 기본값으로 렌더링한다", () => {
-    const { container } = render(
-      <ProductEditDialog product={buildProduct()} />,
-    );
+    const { container } = renderDialog(buildProduct());
 
     expect(screen.getByLabelText(/상품명/)).toHaveValue("봄맞이 청첩장");
     expect(screen.getByLabelText(/상품 설명/)).toHaveValue(
@@ -130,7 +133,7 @@ describe("ProductEditDialog (컨테이너)", () => {
 
   it("취소 버튼을 클릭하면 모달을 닫는다", async () => {
     const user = userEvent.setup();
-    render(<ProductEditDialog product={buildProduct()} />);
+    renderDialog(buildProduct());
 
     await user.click(screen.getByRole("button", { name: "취소" }));
 
@@ -143,9 +146,7 @@ describe("ProductEditDialog (컨테이너)", () => {
       loading: false,
     });
     const user = userEvent.setup();
-    const { container } = render(
-      <ProductEditDialog product={buildProduct()} />,
-    );
+    const { container } = renderDialog(buildProduct());
 
     await user.click(screen.getByRole("switch", { name: /프리미엄 상품/ }));
     expect(screen.getByText("프리미엄 기능 선택")).toBeInTheDocument();
@@ -165,9 +166,7 @@ describe("ProductEditDialog (컨테이너)", () => {
 
   it("무제한 체크박스를 켜면 최대 수량 입력이 비활성 표시로 바뀌고 hidden 값이 0이 된다", async () => {
     const user = userEvent.setup();
-    const { container } = render(
-      <ProductEditDialog product={buildProduct({ maxQuantity: 50 })} />,
-    );
+    const { container } = renderDialog(buildProduct({ maxQuantity: 50 }));
 
     await user.click(screen.getByLabelText("무제한"));
 
@@ -192,7 +191,7 @@ describe("ProductEditDialog (컨테이너)", () => {
       },
     });
     const user = userEvent.setup();
-    render(<ProductEditDialog product={buildProduct()} />);
+    renderDialog(buildProduct());
 
     await user.click(screen.getByRole("button", { name: "상품 수정" }));
 
@@ -203,19 +202,20 @@ describe("ProductEditDialog (컨테이너)", () => {
     expect(closeModalMock).not.toHaveBeenCalled();
   });
 
-  it("수정에 성공하면 성공 메시지를 toast로 표시하고 모달을 닫는다", async () => {
+  it("수정에 성공하면 성공 메시지를 toast로 표시하고 목록을 갱신한 뒤 모달을 닫는다", async () => {
     vi.mocked(updateProduct).mockResolvedValue({
       success: true,
       data: { message: "상품이 수정되었습니다." },
     });
     const user = userEvent.setup();
-    render(<ProductEditDialog product={buildProduct()} />);
+    renderDialog(buildProduct());
 
     await user.click(screen.getByRole("button", { name: "상품 수정" }));
 
     await waitFor(() =>
       expect(toast.message).toHaveBeenCalledWith("상품이 수정되었습니다."),
     );
+    expect(onRefreshed).toHaveBeenCalledTimes(1);
     expect(closeModalMock).toHaveBeenCalledTimes(1);
   });
 
@@ -228,7 +228,7 @@ describe("ProductEditDialog (컨테이너)", () => {
       },
     });
     const user = userEvent.setup();
-    render(<ProductEditDialog product={buildProduct()} />);
+    renderDialog(buildProduct());
 
     await user.click(screen.getByRole("button", { name: "상품 수정" }));
 
@@ -237,6 +237,7 @@ describe("ProductEditDialog (컨테이너)", () => {
         "알 수 없는 오류가 발생했습니다.",
       ),
     );
+    expect(onRefreshed).not.toHaveBeenCalled();
     expect(closeModalMock).not.toHaveBeenCalled();
   });
 });
