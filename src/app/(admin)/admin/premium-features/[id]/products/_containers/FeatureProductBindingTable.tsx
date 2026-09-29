@@ -59,20 +59,25 @@ const FeatureProductBindingTable = ({
         sort={table.sort}
         direction={table.direction}
         onSort={table.toggleSort}
-        searchValue={table.q}
-        onSearch={table.setSearch}
-        searchLabel="상품 검색"
-        searchPlaceholder="상품명으로 검색"
-        page={table.page}
-        totalPages={table.totalPages}
-        total={table.total}
-        onPageChange={table.setPage}
+        search={{
+          value: table.q,
+          onSearch: table.setSearch,
+          label: "상품 검색",
+          placeholder: "상품명으로 검색",
+        }}
+        pagination={{
+          page: table.page,
+          onPageChange: table.setPage,
+          pageInfo: table.pageInfo,
+        }}
         isLoading={table.isLoading}
         isValidating={table.isValidating}
         error={table.error}
         onRetry={refresh}
-        emptyMessage="연결할 수 있는 프리미엄 상품이 없습니다"
-        searchEmptyMessage="검색 결과가 없습니다"
+        empty={{
+          default: "연결할 수 있는 프리미엄 상품이 없습니다",
+          search: "검색 결과가 없습니다",
+        }}
       />
     </ListPage>
   );

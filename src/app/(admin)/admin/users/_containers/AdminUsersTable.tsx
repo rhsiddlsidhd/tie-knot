@@ -54,20 +54,25 @@ const AdminUsersTable = () => {
         sort={table.sort}
         direction={table.direction}
         onSort={table.toggleSort}
-        searchValue={table.q}
-        onSearch={table.setSearch}
-        searchLabel="사용자 검색"
-        searchPlaceholder="이름, 이메일"
-        page={table.page}
-        totalPages={table.totalPages}
-        total={table.total}
-        onPageChange={table.setPage}
+        search={{
+          value: table.q,
+          onSearch: table.setSearch,
+          label: "사용자 검색",
+          placeholder: "이름, 이메일",
+        }}
+        pagination={{
+          page: table.page,
+          onPageChange: table.setPage,
+          pageInfo: table.pageInfo,
+        }}
         isLoading={table.isLoading}
         isValidating={table.isValidating}
         error={table.error}
         onRetry={() => void table.mutate()}
-        emptyMessage="해당 역할의 사용자가 없습니다"
-        searchEmptyMessage="검색 결과가 없습니다"
+        empty={{
+          default: "해당 역할의 사용자가 없습니다",
+          search: "검색 결과가 없습니다",
+        }}
       />
     </ListPage>
   );

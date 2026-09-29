@@ -6,4 +6,6 @@ type OffsetPage<T> = {
   totalPages: number;
 };
 
-export type { OffsetPage };
+type OffsetPageInfo = Pick<OffsetPage<unknown>, "total" | "totalPages">;
+
+export type { OffsetPage, OffsetPageInfo };

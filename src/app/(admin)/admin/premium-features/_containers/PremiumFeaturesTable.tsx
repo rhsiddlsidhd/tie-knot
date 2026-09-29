@@ -76,20 +76,25 @@ const PremiumFeaturesTable = () => {
         sort={table.sort}
         direction={table.direction}
         onSort={table.toggleSort}
-        searchValue={table.q}
-        onSearch={table.setSearch}
-        searchLabel="기능 검색"
-        searchPlaceholder="기능 코드, 기능 이름"
-        page={table.page}
-        totalPages={table.totalPages}
-        total={table.total}
-        onPageChange={table.setPage}
+        search={{
+          value: table.q,
+          onSearch: table.setSearch,
+          label: "기능 검색",
+          placeholder: "기능 코드, 기능 이름",
+        }}
+        pagination={{
+          page: table.page,
+          onPageChange: table.setPage,
+          pageInfo: table.pageInfo,
+        }}
         isLoading={table.isLoading}
         isValidating={table.isValidating}
         error={table.error}
         onRetry={refresh}
-        emptyMessage="등록된 기능이 없습니다"
-        searchEmptyMessage="검색 결과가 없습니다"
+        empty={{
+          default: "등록된 기능이 없습니다",
+          search: "검색 결과가 없습니다",
+        }}
       />
     </ListPage>
   );

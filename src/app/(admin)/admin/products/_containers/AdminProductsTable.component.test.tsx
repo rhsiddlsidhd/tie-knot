@@ -62,8 +62,7 @@ const buildProduct = (overrides?: Partial<Product>): Product => ({
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
   items: [buildProduct()],
-  total: 21,
-  totalPages: 3,
+  pageInfo: { total: 21, totalPages: 3 },
   isLoading: false,
   isValidating: false,
   error: undefined as { message: string } | undefined,
@@ -262,7 +261,7 @@ describe("AdminProductsTable", () => {
 
   it("상품 목록 view의 빈 목록 문구를 보여준다", () => {
     useOffsetListMock.mockReturnValue(
-      buildTable({ items: [], total: 0, totalPages: 0 }),
+      buildTable({ items: [], pageInfo: { total: 0, totalPages: 0 } }),
     );
     renderTable();
 
@@ -273,13 +272,28 @@ describe("AdminProductsTable", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({
         items: [],
-        total: 0,
-        totalPages: 0,
+        pageInfo: { total: 0, totalPages: 0 },
         params: { view: "trash" },
       }),
     );
     renderTable();
 
     expect(screen.getByText("삭제된 상품이 없습니다.")).toBeInTheDocument();
+  });
+
+  it("검색 결과가 비었으면 검색 빈 결과 문구를 보여준다", () => {
+    useOffsetListMock.mockReturnValue(
+      buildTable({
+        items: [],
+        pageInfo: { total: 0, totalPages: 0 },
+        q: "없는 상품",
+      }),
+    );
+    renderTable();
+
+    expect(screen.getByText("검색 결과가 없습니다.")).toBeInTheDocument();
+    expect(
+      screen.queryByText("등록된 상품이 없습니다."),
+    ).not.toBeInTheDocument();
   });
 });

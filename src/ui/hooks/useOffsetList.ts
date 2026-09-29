@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 
 import type { ErrorPayload } from "@/core/domain/error";
-import type { OffsetPage } from "@/core/domain/offset";
+import type { OffsetPage, OffsetPageInfo } from "@/core/domain/offset";
 import type { SortDirection } from "@/core/utils/sort-cycle";
 import { getNextSortState } from "@/core/utils/sort-cycle";
 import { fetcher } from "@/ui/fetcher";
@@ -124,27 +124,32 @@ const useOffsetList = <T, S extends string, P extends string = string>({
     [createHref],
   );
 
-  useEffect(() => {
-    if (!data || data.page !== page) return;
+  // 응답 전에는 건수를 모른다 — 0건과 구분하려고 null로 둔다.
+  const pageInfo = useMemo<OffsetPageInfo | null>(
+    () => (data ? { total: data.total, totalPages: data.totalPages } : null),
+    [data],
+  );
 
-    if (data.total === 0 && page > 1) {
+  useEffect(() => {
+    if (!pageInfo || data?.page !== page) return;
+
+    if (pageInfo.total === 0 && page > 1) {
       const href = createHref((nextParams) => nextParams.delete("page"));
       window.history.replaceState(null, "", href);
       return;
     }
 
-    if (data.totalPages > 0 && page > data.totalPages) {
+    if (pageInfo.totalPages > 0 && page > pageInfo.totalPages) {
       const href = createHref((nextParams) =>
-        nextParams.set("page", String(data.totalPages)),
+        nextParams.set("page", String(pageInfo.totalPages)),
       );
       window.history.replaceState(null, "", href);
     }
-  }, [createHref, data, page]);
+  }, [createHref, data?.page, page, pageInfo]);
 
   return {
     items: data?.items,
-    total: data?.total ?? 0,
-    totalPages: data?.totalPages ?? 0,
+    pageInfo,
     isLoading,
     isValidating,
     error,

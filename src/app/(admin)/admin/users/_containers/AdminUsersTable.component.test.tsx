@@ -23,8 +23,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
       deletedAt: null as string | null,
     },
   ],
-  total: 21,
-  totalPages: 3,
+  pageInfo: { total: 21, totalPages: 3 },
   isLoading: false,
   isValidating: false,
   error: undefined as { message: string } | undefined,
@@ -59,7 +58,7 @@ describe("AdminUsersTable", () => {
     ).toBeInTheDocument();
     expect(
       screen.getAllByRole("columnheader").map((header) => header.textContent),
-    ).toEqual(["이름", "이메일", "가입일", "역할", "상태", ""]);
+    ).toEqual(["이름", "이메일", "가입일", "역할", "상태", "관리"]);
     expect(screen.getByText("minjun@example.com")).toBeInTheDocument();
     expect(screen.getByText("활동중")).toBeInTheDocument();
   });

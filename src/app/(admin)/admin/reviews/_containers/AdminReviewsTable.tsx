@@ -51,20 +51,25 @@ const AdminReviewsTable = () => {
         sort={table.sort}
         direction={table.direction}
         onSort={table.toggleSort}
-        searchValue={table.q}
-        onSearch={table.setSearch}
-        searchLabel="리뷰 검색"
-        searchPlaceholder="작성자 이메일, 상품명"
-        page={table.page}
-        totalPages={table.totalPages}
-        total={table.total}
-        onPageChange={table.setPage}
+        search={{
+          value: table.q,
+          onSearch: table.setSearch,
+          label: "리뷰 검색",
+          placeholder: "작성자 이메일, 상품명",
+        }}
+        pagination={{
+          page: table.page,
+          onPageChange: table.setPage,
+          pageInfo: table.pageInfo,
+        }}
         isLoading={table.isLoading}
         isValidating={table.isValidating}
         error={table.error}
         onRetry={refresh}
-        emptyMessage="등록된 리뷰가 없습니다"
-        searchEmptyMessage="검색 결과가 없습니다"
+        empty={{
+          default: "등록된 리뷰가 없습니다",
+          search: "검색 결과가 없습니다",
+        }}
       />
     </ListPage>
   );

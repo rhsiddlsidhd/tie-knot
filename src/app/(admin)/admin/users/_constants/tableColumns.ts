@@ -7,7 +7,7 @@ const USER_TABLE_COLUMNS = [
   { label: "가입일", sort: "createdAt" },
   { label: "역할" },
   { label: "상태" },
-  { label: "" },
+  { label: "관리" },
 ] as const satisfies readonly DataTableColumn<AdminUserSortKey>[];
 
 export { USER_TABLE_COLUMNS };

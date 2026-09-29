@@ -72,21 +72,27 @@ const AdminProductsTable = () => {
         sort={table.sort}
         direction={table.direction}
         onSort={table.toggleSort}
-        searchValue={table.q}
-        onSearch={table.setSearch}
-        searchLabel="상품 검색"
-        searchPlaceholder="상품명, 카테고리"
-        page={table.page}
-        totalPages={table.totalPages}
-        total={table.total}
-        onPageChange={table.setPage}
+        search={{
+          value: table.q,
+          onSearch: table.setSearch,
+          label: "상품 검색",
+          placeholder: "상품명, 카테고리",
+        }}
+        pagination={{
+          page: table.page,
+          onPageChange: table.setPage,
+          pageInfo: table.pageInfo,
+        }}
         isLoading={table.isLoading}
         isValidating={table.isValidating}
         error={table.error}
         onRetry={refresh}
-        emptyMessage={
-          isTrash ? "삭제된 상품이 없습니다." : "등록된 상품이 없습니다."
-        }
+        empty={{
+          default: isTrash
+            ? "삭제된 상품이 없습니다."
+            : "등록된 상품이 없습니다.",
+          search: "검색 결과가 없습니다.",
+        }}
       />
     </ListPage>
   );

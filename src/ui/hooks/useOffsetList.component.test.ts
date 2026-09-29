@@ -91,8 +91,7 @@ describe("useOffsetList", () => {
 
     expect(result.current).toMatchObject({
       items: data.items,
-      total: 1,
-      totalPages: 1,
+      pageInfo: { total: 1, totalPages: 1 },
       page: 1,
       q: "",
       sort: undefined,
@@ -101,6 +100,17 @@ describe("useOffsetList", () => {
       isLoading: false,
     });
     expect(result.current.mutate).toBe(mutate);
+  });
+
+  it("응답 전에는 pageInfo를 null로 둔다", () => {
+    const { result } = renderHook(() =>
+      useOffsetList<{ id: string }, "createdAt">({
+        endpoint: "/api/admin/products",
+      }),
+    );
+
+    expect(result.current.pageInfo).toBeNull();
+    expect(result.current.items).toBeUndefined();
   });
 
   it("페이지 이동은 기본 page를 URL에서 빼고 push한다", () => {

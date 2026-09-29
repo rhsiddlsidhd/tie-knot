@@ -27,8 +27,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
       createdAt: "2026-09-01T00:00:00.000Z",
     },
   ],
-  total: 21,
-  totalPages: 3,
+  pageInfo: { total: 21, totalPages: 3 },
   isLoading: false,
   isValidating: false,
   error: undefined as { message: string } | undefined,
@@ -130,7 +129,11 @@ describe("AdminReviewsTable", () => {
 
   it("검색 결과가 없으면 검색 빈 문구를 보여준다", () => {
     useOffsetListMock.mockReturnValue(
-      buildTable({ items: [], total: 0, totalPages: 0, q: "없는 리뷰" }),
+      buildTable({
+        items: [],
+        pageInfo: { total: 0, totalPages: 0 },
+        q: "없는 리뷰",
+      }),
     );
     render(<AdminReviewsTable />);
 

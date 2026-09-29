@@ -3,6 +3,8 @@
 import { Fragment } from "react";
 import type { ReactNode } from "react";
 
+import type { OffsetPageInfo } from "@/core/domain/offset";
+
 import { OffsetPagination } from "@/ui/components/molecules/OffsetPagination/OffsetPagination";
 import { SearchInputBar } from "@/ui/components/molecules/SearchInputBar/SearchInputBar";
 import { TableColumnHeader } from "@/ui/components/molecules/TableColumnHeader/TableColumnHeader";
@@ -29,6 +31,24 @@ interface DataTableError {
   message: string;
 }
 
+interface DataTableSearch {
+  value: string;
+  onSearch: (value: string) => void;
+  label: string;
+  placeholder?: string;
+}
+
+interface DataTablePagination {
+  page: number;
+  onPageChange: (page: number) => void;
+  pageInfo: OffsetPageInfo | null;
+}
+
+interface DataTableEmpty {
+  default: string;
+  search: string;
+}
+
 interface DataTableProps<T, S extends string> {
   columns: readonly DataTableColumn<S>[];
   items: T[] | undefined;
@@ -37,20 +57,13 @@ interface DataTableProps<T, S extends string> {
   sort?: S;
   direction?: DataTableSortDirection;
   onSort: (key: S) => void;
-  searchValue?: string;
-  onSearch?: (value: string) => void;
-  searchPlaceholder?: string;
-  searchLabel?: string;
-  page?: number;
-  totalPages?: number;
-  total?: number;
-  onPageChange?: (page: number) => void;
+  search: DataTableSearch | null;
+  pagination: DataTablePagination;
   isLoading: boolean;
   isValidating: boolean;
   error?: DataTableError;
   onRetry: () => void;
-  emptyMessage?: string;
-  searchEmptyMessage?: string | ((query: string) => string);
+  empty: DataTableEmpty;
   toolbar?: ReactNode;
 }
 
@@ -64,49 +77,34 @@ const DataTable = <T, S extends string>({
   sort,
   direction,
   onSort,
-  searchValue = "",
-  onSearch,
-  searchPlaceholder,
-  searchLabel = "목록 검색",
-  page,
-  totalPages,
-  total,
-  onPageChange,
+  search,
+  pagination,
   isLoading,
   isValidating,
   error,
   onRetry,
-  emptyMessage = "결과가 없습니다",
-  searchEmptyMessage,
+  empty,
   toolbar,
 }: DataTableProps<T, S>) => {
   const visibleItems = items ?? [];
   const hasItems = visibleItems.length > 0;
   const isRefreshing = !error && isValidating && hasItems;
-  const emptyDescription =
-    searchValue && searchEmptyMessage
-      ? typeof searchEmptyMessage === "function"
-        ? searchEmptyMessage(searchValue)
-        : searchEmptyMessage
-      : emptyMessage;
-  const showPagination =
-    page !== undefined &&
-    totalPages !== undefined &&
-    total !== undefined &&
-    onPageChange !== undefined;
+  const emptyDescription = search?.value ? empty.search : empty.default;
+  // 첫 로딩·오류 중에는 건수를 모른다 — "총 0건"으로 보이지 않게 숨긴다.
+  const pageInfo = error ? null : pagination.pageInfo;
 
   return (
     <div className="space-y-4">
-      {(toolbar || onSearch) && (
+      {(toolbar || search) && (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           {toolbar && <div>{toolbar}</div>}
-          {onSearch && (
+          {search && (
             <div className="w-full sm:max-w-sm">
               <SearchInputBar
-                value={searchValue}
-                onSearch={onSearch}
-                placeholder={searchPlaceholder}
-                label={searchLabel}
+                value={search.value}
+                onSearch={search.onSearch}
+                placeholder={search.placeholder}
+                label={search.label}
               />
             </div>
           )}
@@ -116,9 +114,9 @@ const DataTable = <T, S extends string>({
       <Table>
         <TableHeader className="bg-muted border-b">
           <TableRow>
-            {columns.map((column) => (
+            {columns.map((column, index) => (
               <TableColumnHeader
-                key={column.label}
+                key={index}
                 label={column.label}
                 sortKey={column.sort}
                 sort={sort}
@@ -149,8 +147,8 @@ const DataTable = <T, S extends string>({
           ) : isLoading ? (
             Array.from({ length: DATA_TABLE_SKELETON_ROW_COUNT }, (_, row) => (
               <TableRow key={row}>
-                {columns.map((column) => (
-                  <TableCell key={column.label}>
+                {columns.map((_, index) => (
+                  <TableCell key={index}>
                     <Skeleton className="h-5 w-full" />
                   </TableCell>
                 ))}
@@ -172,12 +170,12 @@ const DataTable = <T, S extends string>({
         </TableBody>
       </Table>
 
-      {showPagination && (
+      {pageInfo && (
         <OffsetPagination
-          page={page}
-          totalPages={totalPages}
-          total={total}
-          onPageChange={onPageChange}
+          page={pagination.page}
+          totalPages={pageInfo.totalPages}
+          total={pageInfo.total}
+          onPageChange={pagination.onPageChange}
         />
       )}
     </div>
@@ -187,7 +185,10 @@ const DataTable = <T, S extends string>({
 export { DataTable };
 export type {
   DataTableColumn,
+  DataTableEmpty,
   DataTableError,
+  DataTablePagination,
   DataTableProps,
+  DataTableSearch,
   DataTableSortDirection,
 };

@@ -58,20 +58,25 @@ const AdminOrdersTable = () => {
         sort={table.sort}
         direction={table.direction}
         onSort={table.toggleSort}
-        searchValue={table.q}
-        onSearch={table.setSearch}
-        searchLabel="주문 검색"
-        searchPlaceholder="주문번호, 고객명, 이메일, 전화번호"
-        page={table.page}
-        totalPages={table.totalPages}
-        total={table.total}
-        onPageChange={table.setPage}
+        search={{
+          value: table.q,
+          onSearch: table.setSearch,
+          label: "주문 검색",
+          placeholder: "주문번호, 고객명, 이메일, 전화번호",
+        }}
+        pagination={{
+          page: table.page,
+          onPageChange: table.setPage,
+          pageInfo: table.pageInfo,
+        }}
         isLoading={table.isLoading}
         isValidating={table.isValidating}
         error={table.error}
         onRetry={() => void table.mutate()}
-        emptyMessage="조건에 해당하는 주문이 없습니다"
-        searchEmptyMessage="검색 결과가 없습니다"
+        empty={{
+          default: "조건에 해당하는 주문이 없습니다",
+          search: "검색 결과가 없습니다",
+        }}
       />
     </ListPage>
   );

@@ -29,9 +29,15 @@ const renderTable = (
       getRowKey={(item) => item.id}
       renderRow={renderRow}
       onSort={vi.fn()}
+      search={null}
+      pagination={{ page: 1, onPageChange: vi.fn(), pageInfo: null }}
       isLoading={false}
       isValidating={false}
       onRetry={vi.fn()}
+      empty={{
+        default: "등록된 항목이 없습니다",
+        search: "검색 결과가 없습니다",
+      }}
       {...props}
     />,
   );
@@ -49,7 +55,9 @@ describe("DataTable", () => {
 
     expect(screen.getByText("목록을 불러오지 못했습니다")).toBeVisible();
     expect(screen.getByRole("button", { name: "다시 시도" })).toBeVisible();
-    expect(screen.queryByText("결과가 없습니다")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("등록된 항목이 없습니다"),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("rowgroup", { name: "목록" })).not.toHaveAttribute(
       "aria-busy",
     );
@@ -71,7 +79,7 @@ describe("DataTable", () => {
   it("항목이 없으면 기본 빈 결과 문구를 표시한다", () => {
     renderTable({ items: [] });
 
-    expect(screen.getByText("결과가 없습니다")).toBeVisible();
+    expect(screen.getByText("등록된 항목이 없습니다")).toBeVisible();
   });
 
   it("항목이 있으면 renderRow 결과를 표시한다", () => {
@@ -80,16 +88,25 @@ describe("DataTable", () => {
     expect(screen.getByRole("cell", { name: "청첩장" })).toBeVisible();
   });
 
-  it("검색 결과가 비었으면 검색어를 반영한 문구를 표시한다", () => {
+  it("검색어가 있는데 결과가 비었으면 검색 빈 결과 문구를 표시한다", () => {
     renderTable({
       items: [],
-      searchValue: "카드",
-      onSearch: vi.fn(),
-      searchLabel: "상품 검색",
-      searchEmptyMessage: (query) => `'${query}' 검색 결과가 없습니다`,
+      search: { value: "카드", onSearch: vi.fn(), label: "상품 검색" },
     });
 
-    expect(screen.getByText("'카드' 검색 결과가 없습니다")).toBeVisible();
+    expect(screen.getByText("검색 결과가 없습니다")).toBeVisible();
+    expect(
+      screen.queryByText("등록된 항목이 없습니다"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("검색어가 비어 있으면 기본 빈 결과 문구를 표시한다", () => {
+    renderTable({
+      items: [],
+      search: { value: "", onSearch: vi.fn(), label: "상품 검색" },
+    });
+
+    expect(screen.getByText("등록된 항목이 없습니다")).toBeVisible();
   });
 
   it("재검증 중에는 이전 항목을 유지하고 body를 busy 상태로 표시한다", () => {
@@ -101,29 +118,70 @@ describe("DataTable", () => {
     expect(screen.getByText("청첩장")).toBeVisible();
   });
 
-  it("toolbar와 검색과 페이지네이션은 전달하지 않으면 숨긴다", () => {
+  it("toolbar와 검색은 전달하지 않으면 숨기고 pageInfo가 없으면 페이지네이션을 숨긴다", () => {
     renderTable();
 
     expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+    expect(screen.queryByText(/^총 /)).not.toBeInTheDocument();
     expect(screen.queryByText("필터 도구")).not.toBeInTheDocument();
   });
 
-  it("toolbar와 검색과 페이지네이션을 전달하면 표시한다", () => {
+  it("toolbar와 검색과 페이지 정보를 전달하면 표시한다", () => {
     renderTable({
       toolbar: <button type="button">필터 도구</button>,
-      searchValue: "",
-      onSearch: vi.fn(),
-      searchLabel: "상품 검색",
-      page: 1,
-      totalPages: 3,
-      total: 25,
-      onPageChange: vi.fn(),
+      search: {
+        value: "",
+        onSearch: vi.fn(),
+        label: "상품 검색",
+        placeholder: "상품명",
+      },
+      pagination: {
+        page: 1,
+        onPageChange: vi.fn(),
+        pageInfo: { total: 25, totalPages: 3 },
+      },
     });
 
     expect(screen.getByRole("button", { name: "필터 도구" })).toBeVisible();
     expect(screen.getByRole("searchbox", { name: "상품 검색" })).toBeVisible();
     expect(screen.getByRole("navigation")).toBeVisible();
     expect(screen.getByText("총 25건")).toBeVisible();
+  });
+
+  it("오류가 있으면 이전 페이지 정보가 있어도 총 건수와 페이지를 숨긴다", () => {
+    renderTable({
+      error: { message: "목록을 불러오지 못했습니다" },
+      pagination: {
+        page: 1,
+        onPageChange: vi.fn(),
+        pageInfo: { total: 25, totalPages: 3 },
+      },
+    });
+
+    expect(screen.queryByText("총 25건")).not.toBeInTheDocument();
+    expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
+  });
+
+  it("같은 label의 열이 있어도 각 열을 렌더링한다", () => {
+    render(
+      <DataTable
+        columns={[{ label: "관리" }, { label: "관리" }]}
+        items={[]}
+        getRowKey={(item: Item) => item.id}
+        renderRow={renderRow}
+        onSort={vi.fn()}
+        search={null}
+        pagination={{ page: 1, onPageChange: vi.fn(), pageInfo: null }}
+        isLoading={false}
+        isValidating={false}
+        onRetry={vi.fn()}
+        empty={{ default: "없음", search: "검색 없음" }}
+      />,
+    );
+
+    expect(screen.getAllByRole("columnheader", { name: "관리" })).toHaveLength(
+      2,
+    );
   });
 });
