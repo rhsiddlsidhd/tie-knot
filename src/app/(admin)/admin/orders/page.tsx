@@ -3,13 +3,9 @@ export const dynamic = "force-dynamic";
 import { verifySession } from "@/services/auth";
 import { getAdminOrdersPageService } from "@/services/order";
 import { AdminOrderListRequestSchema } from "@/core/schemas/request/adminOrderList.schema";
-import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminOrdersTemplate } from "@/app/(admin)/admin/orders/_components/AdminOrdersTemplate";
 
-// 필터/커서는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은
-// status는 스키마가, 형식이 깨진 cursor는 decodeCursor가 걸러 "필터/커서 없음"으로
-// 떨어뜨린다. 그 뒤에도 남는 방어(예: 직접 조작된 요청)는 service의 AppError가 맡는다.
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
@@ -17,17 +13,13 @@ const resolveFilters = (
     q: typeof searchParams.q === "string" ? searchParams.q : null,
     status:
       typeof searchParams.status === "string" ? searchParams.status : null,
-    cursor:
-      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+    page: typeof searchParams.page === "string" ? searchParams.page : null,
+    limit: typeof searchParams.limit === "string" ? searchParams.limit : null,
+    sort: typeof searchParams.sort === "string" ? searchParams.sort : null,
+    direction: typeof searchParams.direction === "string" ? searchParams.direction : null,
   });
 
-  if (!parsed.success) return {};
-
-  const { q, status, cursor } = parsed.data;
-  if (cursor && !decodeCursor(cursor)) {
-    return { q, status };
-  }
-  return { q, status, cursor };
+  return parsed.success ? parsed.data : AdminOrderListRequestSchema.parse({});
 };
 
 const OrdersPage = async ({
@@ -37,12 +29,10 @@ const OrdersPage = async ({
 }) => {
   await verifySession("ADMIN");
 
-  const { q, status, cursor } = resolveFilters(await searchParams);
-  const page = await getAdminOrdersPageService({ q, status, cursor });
+  const filters = resolveFilters(await searchParams);
+  const page = await getAdminOrdersPageService(filters);
 
-  return (
-    <AdminOrdersTemplate page={page} q={q} status={status} cursor={cursor} />
-  );
+  return <AdminOrdersTemplate page={page} q={filters.q} status={filters.status} />;
 };
 
 export default OrdersPage;

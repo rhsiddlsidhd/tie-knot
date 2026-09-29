@@ -24,7 +24,10 @@ const buildPage = (
       createdAt: new Date("2026-08-19T15:30:00.000Z"), // KST 2026-08-20
     },
   ],
-  nextCursor: null,
+  total: 1,
+  page: 1,
+  limit: 10,
+  totalPages: 1,
   ...overrides,
 });
 
@@ -77,27 +80,8 @@ describe("AdminOrdersTemplate", () => {
     ).toBeInTheDocument();
   });
 
-  it("현재 status 필터를 Pagination 링크에 그대로 전달한다(cursor는 제거)", () => {
-    render(
-      <AdminOrdersTemplate
-        page={buildPage({ nextCursor: "next-cursor" })}
-        status="CONFIRMED"
-        cursor="current-cursor"
-      />,
-    );
-
-    const nextLink = screen.getByRole("link", { name: "다음 페이지" });
-    expect(nextLink).toHaveAttribute(
-      "href",
-      "/admin/orders?status=CONFIRMED&cursor=next-cursor",
-    );
-    const firstLink = screen.getByRole("link", { name: "첫 페이지" });
-    expect(firstLink).toHaveAttribute("href", "/admin/orders?status=CONFIRMED");
-  });
-
-  it("nextCursor가 없으면 다음 페이지 버튼이 비활성화된다", () => {
-    render(<AdminOrdersTemplate page={buildPage({ nextCursor: null })} />);
-
+  it("offset 전환 중에는 기존 cursor 페이지 이동을 비활성화한다", () => {
+    render(<AdminOrdersTemplate page={buildPage()} />);
     expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });
 });

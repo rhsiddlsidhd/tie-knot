@@ -35,14 +35,12 @@ interface AdminOrdersTemplateProps {
   page: AdminOrderListPage;
   q?: string;
   status?: OrderStatus;
-  cursor?: string;
 }
 
 const AdminOrdersTemplate = ({
   page,
   q,
   status,
-  cursor,
 }: AdminOrdersTemplateProps) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
@@ -71,8 +69,8 @@ const AdminOrdersTemplate = ({
         ...(status ? { status } : {}),
         ...(q ? { q } : {}),
       }}
-      hasCursor={!!cursor}
-      nextCursor={page.nextCursor}
+      hasCursor={false}
+      nextCursor={null}
     >
       {page.items.length === 0 ? (
         <TableRow>

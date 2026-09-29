@@ -1,6 +1,7 @@
 import type { PayMethod, PayStatus } from "./payment";
 import type { ProductCategory } from "./product-category";
 import type { CursorPage } from "./cursor";
+import type { OffsetPage } from "./offset";
 import { DEFAULT_PAGE_SIZE } from "./cursor";
 
 // 결제완료 후 청첩장 콘텐츠를 이 기간(일) 안에 입력하지 않으면
@@ -143,7 +144,9 @@ type AdminOrderListItem = {
   createdAt: Date;
 };
 
-type AdminOrderListPage = CursorPage<AdminOrderListItem>;
+const ADMIN_ORDER_SORT_KEYS = ["createdAt", "finalPrice"] as const;
+type AdminOrderSortKey = (typeof ADMIN_ORDER_SORT_KEYS)[number];
+type AdminOrderListPage = OffsetPage<AdminOrderListItem>;
 
 // 주문 상세의 결제 내역 — Payment 문서에서 화면이 실제로 그리는 필드만 추린다.
 type OrderPaymentSummary = {
@@ -175,6 +178,7 @@ export {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_BADGE_VARIANTS,
   ORDER_PAGE_SIZE,
+  ADMIN_ORDER_SORT_KEYS,
   type ExpiredPendingOrderBatchResult,
   type ExpiredAwaitingMobileInvitationBatchResult,
   type OrderStatus,
@@ -185,6 +189,7 @@ export {
   type OrderListPage,
   type AdminOrderListItem,
   type AdminOrderListPage,
+  type AdminOrderSortKey,
   type OrderPaymentSummary,
   type OrderDetail,
 };
