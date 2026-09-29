@@ -1,8 +1,4 @@
-import {
-  Empty,
-  EmptyHeader,
-  EmptyDescription,
-} from "@/ui/components/ui/empty";
+import { Empty, EmptyHeader, EmptyDescription } from "@/ui/components/ui/empty";
 import { TypographyH1 } from "@/ui/components/atoms/typography";
 
 interface MobileInvitationNoticeProps {

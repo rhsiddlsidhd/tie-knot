@@ -4,11 +4,7 @@ import { useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Button } from "@/ui/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@/ui/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/ui/components/ui/dialog";
 import { cn } from "@/core/utils/cn";
 
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";

@@ -19,11 +19,7 @@ import {
   TypographyH3,
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
-import {
-  Alert,
-  AlertTitle,
-  AlertDescription,
-} from "@/ui/components/ui/alert";
+import { Alert, AlertTitle, AlertDescription } from "@/ui/components/ui/alert";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { useCopy } from "@/ui/hooks/useCopy";
