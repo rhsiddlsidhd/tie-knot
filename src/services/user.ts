@@ -5,6 +5,7 @@ import type { Types } from "mongoose";
 import type {
   AdminUserListPage,
   AdminUserSortKey,
+  AdminUserStatusFilter,
   UserRole,
 } from "@/core/domain/user";
 import { AppError } from "@/core/domain/error";
@@ -209,6 +210,7 @@ const resetUserPasswordService = async ({
 type AdminUserListQuery = {
   q?: string;
   role?: UserRole;
+  status?: AdminUserStatusFilter;
   page?: number;
   limit?: number;
   sort?: AdminUserSortKey;
@@ -232,6 +234,7 @@ type AdminUserListRow = {
 const getAdminUsersPageService = async ({
   q,
   role,
+  status,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
   sort = "createdAt",
@@ -256,6 +259,11 @@ const getAdminUsersPageService = async ({
 
   if (role) {
     filter.role = role;
+  }
+  if (status === "active") {
+    filter.deletedAt = null;
+  } else if (status === "withdrawn") {
+    filter.deletedAt = { $ne: null };
   }
 
   const conditions: mongoose.FilterQuery<UserDocument>[] = [];

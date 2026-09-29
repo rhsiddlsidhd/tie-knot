@@ -43,6 +43,16 @@ describe("AdminUserListRequestSchema", () => {
     expect(parse({ role: "SUPERADMIN" }).success).toBe(false);
   });
 
+  it("탈퇴 여부 필터를 통과시킨다", () => {
+    const result = parse({ status: "withdrawn" });
+
+    expect(result.success && result.data.status).toBe("withdrawn");
+  });
+
+  it("허용되지 않은 status를 거부한다", () => {
+    expect(parse({ status: "banned" }).success).toBe(false);
+  });
+
   it("offset과 정렬 입력을 정규화한다", () => {
     expect(
       parse({ page: "2", limit: "20", sort: "name", direction: "asc" }).data,
