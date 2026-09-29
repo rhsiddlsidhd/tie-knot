@@ -31,13 +31,11 @@ const TABLE_HEADINGS = [
 interface PremiumFeaturesTemplateProps {
   page: AdminPremiumFeatureListPage;
   q?: string;
-  cursor?: string;
 }
 
 const PremiumFeaturesTemplate = ({
   page,
   q,
-  cursor,
 }: PremiumFeaturesTemplateProps) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
@@ -64,8 +62,8 @@ const PremiumFeaturesTemplate = ({
       headings={TABLE_HEADINGS}
       basePath={ROUTES.admin.premiumFeatures.root}
       query={q ? { q } : {}}
-      hasCursor={!!cursor}
-      nextCursor={page.nextCursor}
+      hasCursor={false}
+      nextCursor={null}
     >
       {page.items.length === 0 ? (
         <TableRow>

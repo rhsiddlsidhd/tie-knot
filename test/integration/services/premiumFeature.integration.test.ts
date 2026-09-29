@@ -164,19 +164,19 @@ describe("premiumFeature", () => {
       ]);
     });
 
-    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+    it("offset 페이지가 total과 totalPages를 반환하고 행이 중복/누락되지 않는다", async () => {
       const created = await createFeatures(3);
 
-      const firstPage = await getAdminPremiumFeaturesPageService({ limit: 2 });
+      const firstPage = await getAdminPremiumFeaturesPageService({ limit: 2, page: 1 });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage.nextCursor).not.toBe(null);
+      expect(firstPage).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
 
       const secondPage = await getAdminPremiumFeaturesPageService({
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
       expect(secondPage.items).toHaveLength(1);
-      expect(secondPage.nextCursor).toBe(null);
+      expect(secondPage.totalPages).toBe(2);
 
       const paged = [...firstPage.items, ...secondPage.items].map(
         (feature) => feature._id,
@@ -185,18 +185,11 @@ describe("premiumFeature", () => {
       expect(paged.sort()).toEqual([...created].sort());
     });
 
-    it("마지막 페이지는 nextCursor가 null이다", async () => {
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
       await createFeatures(1);
-
-      const result = await getAdminPremiumFeaturesPageService({});
-
-      expect(result.nextCursor).toBe(null);
-    });
-
-    it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
-      await expect(
-        getAdminPremiumFeaturesPageService({ cursor: "!!!broken!!!" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+      const result = await getAdminPremiumFeaturesPageService({ page: 2 });
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
 
     it("limit이 허용 범위를 벗어나면 VALIDATION을 던진다", async () => {
@@ -204,6 +197,40 @@ describe("premiumFeature", () => {
         getAdminPremiumFeaturesPageService({ limit: 0 }),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
+
+    it.each(["createdAt", "label", "additionalPrice"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await FeatureModel.create(
+          buildFeatureDocumentInput({
+            code: "SORT_A",
+            label: "가",
+            additionalPrice: 1000,
+          }),
+        );
+        const second = await FeatureModel.create(
+          buildFeatureDocumentInput({
+            code: "SORT_B",
+            label: "나",
+            additionalPrice: 2000,
+          }),
+        );
+        if (sort === "createdAt") {
+          await setCreatedAt(first._id, new Date("2026-01-01"));
+          await setCreatedAt(second._id, new Date("2026-02-01"));
+        }
+        const asc = await getAdminPremiumFeaturesPageService({ sort, direction: "asc" });
+        const desc = await getAdminPremiumFeaturesPageService({ sort, direction: "desc" });
+        expect(asc.items.map((item) => item._id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item._id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
 
     describe("검색(q)", () => {
       it("code 부분일치로 찾는다", async () => {
