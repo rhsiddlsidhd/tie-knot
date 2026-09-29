@@ -2,10 +2,15 @@ import "server-only";
 import type { ProductDb, ProductDocument } from "@/models/product.model";
 import type {
   EditableProductStatus,
+  AdminProductSortKey,
   ProductJson,
   ProductStatus,
 } from "@/core/domain/product";
-import type { FeatureProductBindingPage } from "@/core/domain/premium-feature";
+import type {
+  FeatureProductBindingPage,
+  FeatureProductBindingSortKey,
+} from "@/core/domain/premium-feature";
+import { FEATURE_PRODUCT_BINDING_SORT_KEYS } from "@/core/domain/premium-feature";
 import { FeatureModel } from "@/models/feature.model";
 import {
   ProductModel,
@@ -40,7 +45,10 @@ import {
   PRODUCT_CATEGORIES,
   SUB_CATEGORY_MAP,
 } from "@/core/domain/product-category";
-import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  POPULAR_PRODUCTS_LIMIT,
+} from "@/core/domain/product";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 import { requireAdmin, requireAuth } from "./auth";
@@ -210,33 +218,39 @@ const incrementProductViewsService = async (
 type AdminProductListQuery = {
   view?: "active" | "trash";
   q?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: AdminProductSortKey;
+  direction?: "asc" | "desc";
 };
 
 /**
- * 관리자 상품 목록 한 페이지 — orders/users(getAdminOrdersPageService,
- * getAdminUsersPageService)와 동일한 cursor 계약(createdAt desc, _id tie-break,
- * limit+1)을 쓴다. getPublicProductsPageService와 달리 isFeatured/priority 정렬을 쓰지
- * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
+ * 관리자 상품 목록 한 페이지. 공개 목록의 cursor 계약과 분리해 offset과 관리자
+ * 테이블 정렬 키를 사용한다.
  */
 const getAdminProductsPageService = async ({
   view = "active",
   q,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort,
+  direction = "desc",
 }: AdminProductListQuery): Promise<AdminProductListPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (sort && !ADMIN_PRODUCT_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: Record<string, unknown> =
     view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
 
-  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
-  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
   const conditions: Record<string, unknown>[] = [];
 
   const term = q?.trim();
@@ -255,58 +269,43 @@ const getAdminProductsPageService = async ({
     conditions.push({ $or: or });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({
-      $or: [
-        { createdAt: { $lt: decoded.createdAt } },
-        {
-          createdAt: decoded.createdAt,
-          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-        },
-      ],
-    });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await ProductModel.find(filter)
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<LeanProduct[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
-      );
-    });
+  const sortKey = sort ?? (view === "trash" ? "deletedAt" : "createdAt");
+  const sortDirection = direction === "asc" ? 1 : -1;
 
-  const hasMore = found.length > limit;
-  const products = hasMore ? found.slice(0, limit) : found;
-  const lastProduct = products.at(-1);
+  const [products, total] = await Promise.all([
+    ProductModel.find(filter)
+      .sort({ [sortKey]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<LeanProduct[]>(),
+    ProductModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: products.map((product) => transformProduct(product)),
-    nextCursor:
-      hasMore && lastProduct
-        ? encodeCursor({
-            createdAt: lastProduct.createdAt,
-            id: lastProduct._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 
 type FeatureProductBindingsQuery = {
   featureId: string;
   q?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: FeatureProductBindingSortKey;
+  direction?: "asc" | "desc";
 };
 
 type LeanBindableProduct = {
@@ -319,7 +318,7 @@ type LeanBindableProduct = {
 };
 
 /**
- * 기능 하나를 붙일 상품 후보 한 페이지 — 정렬·커서 계약은 다른 admin 목록과 같다.
+ * 기능 하나를 붙일 상품 후보의 offset 페이지.
  *
  * `isPremium: true`, `deletedAt: null`만 후보다. 프리미엄이 아닌 상품은 create/update
  * 서비스가 featureIds를 강제로 비우므로 붙여도 조용히 사라지고, 휴지통 상품에 붙이는
@@ -328,13 +327,21 @@ type LeanBindableProduct = {
 const getFeatureProductBindingsPageService = async ({
   featureId,
   q,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort = "createdAt",
+  direction = "desc",
 }: FeatureProductBindingsQuery): Promise<FeatureProductBindingPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (!FEATURE_PRODUCT_BINDING_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: mongoose.FilterQuery<ProductDocument> = {
@@ -349,35 +356,21 @@ const getFeatureProductBindingsPageService = async ({
     filter.title = { $regex: escapeRegExp(term), $options: "i" };
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
-  }
-
-  const found = await ProductModel.find(filter)
-    .select("title price status featureIds createdAt")
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<LeanBindableProduct[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
-      );
-    });
-
-  const hasMore = found.length > limit;
-  const products = hasMore ? found.slice(0, limit) : found;
-  const lastProduct = products.at(-1);
+  const sortDirection = direction === "asc" ? 1 : -1;
+  const [products, total] = await Promise.all([
+    ProductModel.find(filter)
+      .select("title price status featureIds createdAt")
+      .sort({ [sort]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<LeanBindableProduct[]>(),
+    ProductModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: products.map((product) => ({
@@ -389,13 +382,10 @@ const getFeatureProductBindingsPageService = async ({
         (id) => id.toString() === featureId,
       ),
     })),
-    nextCursor:
-      hasMore && lastProduct
-        ? encodeCursor({
-            createdAt: lastProduct.createdAt,
-            id: lastProduct._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 

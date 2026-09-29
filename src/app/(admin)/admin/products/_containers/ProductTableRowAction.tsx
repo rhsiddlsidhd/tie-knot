@@ -8,16 +8,15 @@ import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { ProductPermanentDeleteDialog } from "../_components/ProductPermanentDeleteDialog";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";
 import { Edit, RotateCcw, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "sonner";
 
 const ProductTableRowAction = ({
   product,
-  view = "active",
+  view,
+  onRefreshed,
 }: ProductTableRowProps) => {
   const open = useAdminModalStore((state) => state.openModal);
-  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
@@ -39,7 +38,7 @@ const ProductTableRowAction = ({
 
       toast.success(result.data.message);
       setIsDeleteOpen(false);
-      router.refresh();
+      onRefreshed();
     } catch {
       toast.error("삭제 중 오류가 발생했습니다.");
     } finally {
@@ -60,7 +59,7 @@ const ProductTableRowAction = ({
 
       toast.success(result.data.message);
       setIsRestoreOpen(false);
-      router.refresh();
+      onRefreshed();
     } catch {
       toast.error("복구 중 오류가 발생했습니다.");
     } finally {
@@ -81,7 +80,7 @@ const ProductTableRowAction = ({
 
       toast.success(result.data.message);
       setIsPurgeOpen(false);
-      router.refresh();
+      onRefreshed();
     } catch {
       toast.error("영구 삭제 중 오류가 발생했습니다.");
     } finally {
@@ -139,7 +138,7 @@ const ProductTableRowAction = ({
         size="sm"
         variant="outline"
         aria-label="상품 수정"
-        onClick={() => open("EDIT-PRODUCT", { product })}
+        onClick={() => open("EDIT-PRODUCT", { product, onRefreshed })}
       >
         <Edit className="h-4 w-4" />
       </Button>

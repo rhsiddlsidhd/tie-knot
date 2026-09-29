@@ -69,21 +69,24 @@ Unit → Component → Integration → E2E 4단계 테스트 피라미드를 따
 `src/ui/components/`는 `atoms → molecules → organisms → templates` 4단계로 구성한다.
 계층별 조립 규칙(디렉터리·파일명 일치 등)은
 [`docs/conventions/naming-convention.md`](docs/conventions/naming-convention.md)에
-정의돼 있다. 실제 데이터 바인딩까지 이어지는 예시로 관리자 목록 화면의 커서
-페이지네이션을 든다:
+정의돼 있다. 실제 데이터 바인딩까지 이어지는 예시로 관리자 목록 화면의 offset
+페이지네이션 표를 든다:
 
 ```
-atoms/table.tsx, atoms/button.tsx
-  └─ molecules/TableShell        헤더 렌더링
-  └─ molecules/CursorPagination  ─ / + 페이지 이동 (molecules/LinkButton 사용)
-       └─ organisms/PaginatedTable   TableShell + CursorPagination 조합
-            └─ admin 6개 페이지(products/orders/users/reviews 등)
-               MongoDB 커서 기반 실데이터 바인딩
+ui/table.tsx, ui/pagination.tsx, ui/toggle-group.tsx
+  └─ molecules/TableColumnHeader  정렬 헤더
+  └─ molecules/SearchInputBar     debounce 검색 입력
+  └─ molecules/OffsetPagination   페이지 번호 이동
+       └─ organisms/DataTable     위 molecule 조합 + 로딩·빈 결과·오류 상태
+            └─ templates/ListPage 제목·actions·본문 배치
+                 (molecules/FilterToggleGroup은 컨테이너가 toolbar로 주입)
+                 └─ admin 6개 목록 컨테이너(products/orders/users/reviews 등)
+                    useOffsetList → SWR → GET /api/admin/* 실데이터 바인딩
 ```
 
-각 molecule은 자신을 감싸는 organism이 무엇인지 모른다 — `CursorPagination`은
-`basePath`/`query`/`cursor` 같은 순수 prop만 받고 호출부(admin Template)가 실제
-필터·커서 상태를 주입한다. 컴포넌트 디렉터리 구조 결정 배경은
+각 molecule은 자신을 감싸는 organism이 무엇인지 모른다 — `OffsetPagination`은
+`page`/`totalPages`/`onPageChange` 같은 순수 prop만 받고, 호출부(라우트 컨테이너)가
+URL이 소유한 목록 상태를 `useOffsetList`로 읽어 주입한다. 컴포넌트 디렉터리 구조 결정 배경은
 [`docs/decisions/0007-per-component-directory-barrel.md`](docs/decisions/0007-per-component-directory-barrel.md)
 참고.
 

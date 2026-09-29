@@ -5,8 +5,12 @@ const parse = (input: Record<string, unknown>) =>
   AdminUserListRequestSchema.safeParse(input);
 
 describe("AdminUserListRequestSchema", () => {
-  it("아무 조건이 없어도 통과한다", () => {
-    expect(parse({}).success).toBe(true);
+  it("목록 기본값을 적용한다", () => {
+    expect(parse({}).data).toMatchObject({
+      page: 1,
+      limit: 10,
+      direction: "desc",
+    });
   });
 
   it("검색어 앞뒤 공백을 제거한다", () => {
@@ -37,5 +41,15 @@ describe("AdminUserListRequestSchema", () => {
 
   it("허용되지 않은 역할은 거부한다", () => {
     expect(parse({ role: "SUPERADMIN" }).success).toBe(false);
+  });
+
+  it("offset과 정렬 입력을 정규화한다", () => {
+    expect(
+      parse({ page: "2", limit: "20", sort: "name", direction: "asc" }).data,
+    ).toMatchObject({ page: 2, limit: 20, sort: "name", direction: "asc" });
+  });
+
+  it("허용되지 않은 sort를 거부한다", () => {
+    expect(parse({ sort: "email" }).success).toBe(false);
   });
 });

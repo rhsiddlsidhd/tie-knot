@@ -39,9 +39,13 @@ import {
 } from "../_utils/productEditFormReducer";
 interface ProductEditDialogProps {
   product: Product;
+  onRefreshed: () => void;
 }
 
-const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
+const ProductEditDialog = ({
+  product,
+  onRefreshed,
+}: ProductEditDialogProps) => {
   const [state, action, pending] = useActionState(
     updateProduct.bind(null, product._id),
     null,
@@ -75,11 +79,12 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
     if (!state) return;
     if (state.success) {
       toast.message(state.data.message);
+      onRefreshed();
       closeModal();
     } else if (!hasFieldErrors(state.error)) {
       toast.error(state.error.message);
     }
-  }, [state, closeModal]);
+  }, [state, closeModal, onRefreshed]);
 
   if (loading) {
     return (

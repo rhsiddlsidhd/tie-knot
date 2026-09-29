@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const refreshMock = vi.fn();
+const onRefreshed = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
@@ -56,13 +57,16 @@ describe("ProductTableRowSelect", () => {
 
   it("현재 상품 status를 선택값으로 렌더링한다", () => {
     render(
-      <ProductTableRowSelect product={buildProduct({ status: "active" })} />,
+      <ProductTableRowSelect
+        product={buildProduct({ status: "active" })}
+        onRefreshed={onRefreshed}
+      />,
     );
 
     expect(screen.getByText("판매중")).toBeInTheDocument();
   });
 
-  it("status 변경 성공 시 서버 액션을 호출하고 라우터를 refresh한다", async () => {
+  it("status 변경 성공 시 서버 액션을 호출하고 목록을 갱신한다", async () => {
     const user = userEvent.setup();
     vi.mocked(updateProductStatus).mockResolvedValue({
       success: true,
@@ -70,7 +74,10 @@ describe("ProductTableRowSelect", () => {
     });
 
     render(
-      <ProductTableRowSelect product={buildProduct({ status: "active" })} />,
+      <ProductTableRowSelect
+        product={buildProduct({ status: "active" })}
+        onRefreshed={onRefreshed}
+      />,
     );
 
     await user.click(screen.getByRole("combobox"));
@@ -80,7 +87,8 @@ describe("ProductTableRowSelect", () => {
       "507f1f77bcf86cd799439011",
       "inactive",
     );
-    expect(refreshMock).toHaveBeenCalledOnce();
+    expect(onRefreshed).toHaveBeenCalledOnce();
+    expect(refreshMock).not.toHaveBeenCalled();
   });
 
   it("status 변경 실패 시 이전 status로 되돌린다", async () => {
@@ -91,13 +99,16 @@ describe("ProductTableRowSelect", () => {
     });
 
     render(
-      <ProductTableRowSelect product={buildProduct({ status: "active" })} />,
+      <ProductTableRowSelect
+        product={buildProduct({ status: "active" })}
+        onRefreshed={onRefreshed}
+      />,
     );
 
     await user.click(screen.getByRole("combobox"));
     await user.click(await screen.findByRole("option", { name: "비활성" }));
 
     expect(await screen.findByText("판매중")).toBeInTheDocument();
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(onRefreshed).not.toHaveBeenCalled();
   });
 });

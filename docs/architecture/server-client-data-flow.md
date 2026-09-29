@@ -1,6 +1,6 @@
 # 서버-클라이언트 데이터 흐름
 
-> Last updated: 2026-09-23
+> Last updated: 2026-09-29
 
 ## 역할
 
@@ -21,13 +21,14 @@
 
 ## 2. Convention
 
-| 항목               | 결정                                                                                                                                            | 공식 입장                                                                                     |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 서버 데이터 접근   | `src/services/*` 단일 계층 — DB(`@/models`·`dbConnect`·`mongoose`)와 외부 API(`adapters/server/*`)의 접근 지점은 여기뿐                         | `data-security.md` § Data fetching approaches — HTTP APIs·DAL·Component-Level 3택1, 섞지 말라 |
-| 클라 조회          | SWR. 서버가 진실인 데이터는 SWR 캐시에만 두고 Zustand·Context로 복사하지 않는다                                                                 | `06-fetching-data.md` § Client Components — `use` API·React Query도 허용                      |
-| 클라 HTTP 호출     | `src/ui/fetcher.ts`만 — 시그니처가 `(url) => Promise<T>`라 GET 전용. envelope을 벗겨 `data`를 반환하고 실패 시 서버가 준 `ErrorPayload`를 throw | 언급 없음                                                                                     |
-| mutation 채널      | `src/actions/*` Server Action 전용. `"use server"`는 여기에만 둔다. route.ts는 GET만 — POST·PUT·PATCH·DELETE 없음                               | `backend-for-frontend.md` § Manipulating data — route.ts mutation도 허용                      |
-| Server Action 호출 | 폼은 `useActionState`. 폼 밖(이벤트 핸들러·`useEffect`)은 `useTransition`으로 감싼다 — 직접 `await` 금지                                        | `07-mutating-data.md` § Event Handlers — 직접 `await`도 허용                                  |
+| 항목               | 결정                                                                                                                                                                                                                                                                                   | 공식 입장                                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| 서버 데이터 접근   | `src/services/*` 단일 계층 — DB(`@/models`·`dbConnect`·`mongoose`)와 외부 API(`adapters/server/*`)의 접근 지점은 여기뿐                                                                                                                                                                | `data-security.md` § Data fetching approaches — HTTP APIs·DAL·Component-Level 3택1, 섞지 말라 |
+| 클라 조회          | SWR. 서버가 진실인 데이터는 SWR 캐시에만 두고 Zustand·Context로 복사하지 않는다                                                                                                                                                                                                        | `06-fetching-data.md` § Client Components — `use` API·React Query도 허용                      |
+| admin 목록         | URL 상태(`page`·`q`·`sort`·`direction`·필터) → History API(`useOffsetList`) → SWR → `GET /api/admin/*`. page.tsx는 `verifySession`만 하고 searchParams를 읽지 않으며, URL에 따라 바뀌는 화면은 클라이언트 컨테이너가 그린다. 근거는 [ADR-0010](../decisions/0010-admin-offset-list.md) | `02-guides/single-page-applications.md` § Using the native History API                        |
+| 클라 HTTP 호출     | `src/ui/fetcher.ts`만 — 시그니처가 `(url) => Promise<T>`라 GET 전용. envelope을 벗겨 `data`를 반환하고 실패 시 서버가 준 `ErrorPayload`를 throw                                                                                                                                        | 언급 없음                                                                                     |
+| mutation 채널      | `src/actions/*` Server Action 전용. `"use server"`는 여기에만 둔다. route.ts는 GET만 — POST·PUT·PATCH·DELETE 없음                                                                                                                                                                      | `backend-for-frontend.md` § Manipulating data — route.ts mutation도 허용                      |
+| Server Action 호출 | 폼은 `useActionState`. 폼 밖(이벤트 핸들러·`useEffect`)은 `useTransition`으로 감싼다 — 직접 `await` 금지                                                                                                                                                                               | `07-mutating-data.md` § Event Handlers — 직접 `await`도 허용                                  |
 
 ## 3. 예외
 

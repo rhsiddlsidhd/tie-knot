@@ -1,4 +1,4 @@
-import type { CursorPage } from "./cursor";
+import type { OffsetPage } from "./offset";
 
 const USER_ROLES = ["USER", "ADMIN"] as const;
 type UserRole = (typeof USER_ROLES)[number];
@@ -13,11 +13,15 @@ type AdminUserListItem = {
   deletedAt: Date | null;
 };
 
-type AdminUserListPage = CursorPage<AdminUserListItem>;
+const ADMIN_USER_SORT_KEYS = ["createdAt", "name"] as const;
+type AdminUserSortKey = (typeof ADMIN_USER_SORT_KEYS)[number];
+type AdminUserListPage = OffsetPage<AdminUserListItem>;
 
 export {
   USER_ROLES,
+  ADMIN_USER_SORT_KEYS,
   type UserRole,
   type AdminUserListItem,
   type AdminUserListPage,
+  type AdminUserSortKey,
 };

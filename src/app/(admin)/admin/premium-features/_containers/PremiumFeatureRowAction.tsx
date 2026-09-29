@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Edit, Link2, Trash2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { deletePremiumFeature } from "@/actions/deletePremiumFeature";
@@ -15,11 +14,12 @@ import { useAdminModalStore } from "@/ui/stores/use-app-store";
 
 const PremiumFeatureRowAction = ({
   premiumFeature,
+  onRefreshed,
 }: {
   premiumFeature: PremiumFeature;
+  onRefreshed: () => void;
 }) => {
   const openModal = useAdminModalStore((state) => state.openModal);
-  const router = useRouter();
   const [isDeleting, setIsDeleting] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
@@ -38,7 +38,7 @@ const PremiumFeatureRowAction = ({
 
       toast.success(result.data.message);
       setIsDeleteOpen(false);
-      router.refresh();
+      onRefreshed();
     } catch {
       toast.error("삭제 중 오류가 발생했습니다.");
     } finally {
@@ -52,7 +52,9 @@ const PremiumFeatureRowAction = ({
         size="sm"
         variant="outline"
         aria-label="기능 수정"
-        onClick={() => openModal("EDIT-PREMIUMFEATURE", { premiumFeature })}
+        onClick={() =>
+          openModal("EDIT-PREMIUMFEATURE", { premiumFeature, onRefreshed })
+        }
       >
         <Edit className="h-4 w-4" />
       </Button>

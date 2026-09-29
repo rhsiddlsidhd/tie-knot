@@ -10,7 +10,7 @@
 
 - header, filters, content, actions, pagination 같은 페이지 영역의 배치를 정의한다.
 - organism을 조합하고 페이지가 콘텐츠를 주입할 수 있는 slots 또는 children API를 제공한다.
-- 예: `LegalDocumentTemplate`, `ListPageTemplate`, `DetailPageTemplate`.
+- 예: `LegalDocument`, `ListPage`, `DetailPage`.
 
 ## Boundaries
 
@@ -28,14 +28,16 @@
 
 ```text
 src/ui/components/templates/
-├── LegalDocumentTemplate/
-│   ├── LegalDocumentTemplate.tsx
-│   ├── LegalDocumentTemplate.component.test.tsx
+├── LegalDocument/
+│   ├── LegalDocument.tsx
+│   ├── LegalDocument.component.test.tsx
 │   └── index.ts
 └── ...
 ```
 
 컴포넌트마다 동일 이름 디렉토리를 두고 export 이름은 PascalCase로 짓는다.
+
+공용 templates 계층은 폴더가 계층을 드러내므로 `Template` 접미사를 붙이지 않는다(`ListPage`, `LegalDocument`). 라우트 `_components/{Name}Template.tsx`는 계층 폴더가 없어 접미사가 유일한 표시이므로 `src/app/AGENTS.md` 규칙을 그대로 따른다.
 
 ## 관련 문서
 

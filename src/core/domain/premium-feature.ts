@@ -1,4 +1,4 @@
-import type { CursorPage } from "./cursor";
+import type { OffsetPage } from "./offset";
 import type { ProductStatus } from "./product";
 
 /**
@@ -27,7 +27,14 @@ type PremiumFeature = {
   createdAt: string;
 };
 
-type AdminPremiumFeatureListPage = CursorPage<PremiumFeature>;
+const ADMIN_PREMIUM_FEATURE_SORT_KEYS = [
+  "createdAt",
+  "label",
+  "additionalPrice",
+] as const;
+type AdminPremiumFeatureSortKey =
+  (typeof ADMIN_PREMIUM_FEATURE_SORT_KEYS)[number];
+type AdminPremiumFeatureListPage = OffsetPage<PremiumFeature>;
 
 /**
  * 기능 하나를 어떤 상품에 붙일지 고르는 화면의 행. 상품 전체(ProductJson)를 내리지
@@ -41,13 +48,24 @@ type FeatureProductBinding = {
   attached: boolean;
 };
 
-type FeatureProductBindingPage = CursorPage<FeatureProductBinding>;
+const FEATURE_PRODUCT_BINDING_SORT_KEYS = [
+  "createdAt",
+  "title",
+  "price",
+] as const;
+type FeatureProductBindingSortKey =
+  (typeof FEATURE_PRODUCT_BINDING_SORT_KEYS)[number];
+type FeatureProductBindingPage = OffsetPage<FeatureProductBinding>;
 
 export {
   IMPLEMENTED_PREMIUM_FEATURE_CODES,
+  ADMIN_PREMIUM_FEATURE_SORT_KEYS,
+  FEATURE_PRODUCT_BINDING_SORT_KEYS,
   type FeatureProductBinding,
   type FeatureProductBindingPage,
+  type FeatureProductBindingSortKey,
   type ImplementedPremiumFeatureCode,
   type PremiumFeature,
   type AdminPremiumFeatureListPage,
+  type AdminPremiumFeatureSortKey,
 };

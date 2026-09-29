@@ -5,10 +5,14 @@ const parse = (input: Record<string, unknown>) =>
   FeatureProductBindingListRequestSchema.safeParse(input);
 
 describe("FeatureProductBindingListRequestSchema", () => {
-  it("q와 cursor가 없어도 통과한다", () => {
+  it("목록 기본값을 적용한다", () => {
     const result = parse({});
 
-    expect(result.success).toBe(true);
+    expect(result.data).toMatchObject({
+      page: 1,
+      limit: 10,
+      direction: "desc",
+    });
   });
 
   it("검색어 앞뒤 공백을 제거한다", () => {
@@ -31,15 +35,13 @@ describe("FeatureProductBindingListRequestSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("빈 cursor는 조건 없음으로 정규화한다", () => {
-    const result = parse({ cursor: "" });
-
-    expect(result.success && result.data.cursor).toBeUndefined();
+  it("offset과 정렬 입력을 정규화한다", () => {
+    expect(
+      parse({ page: "2", limit: "20", sort: "price", direction: "asc" }).data,
+    ).toMatchObject({ page: 2, limit: 20, sort: "price", direction: "asc" });
   });
 
-  it("cursor 문자열을 그대로 통과시킨다", () => {
-    const result = parse({ cursor: "abc123" });
-
-    expect(result.success && result.data.cursor).toBe("abc123");
+  it("허용되지 않은 sort를 거부한다", () => {
+    expect(parse({ sort: "status" }).success).toBe(false);
   });
 });

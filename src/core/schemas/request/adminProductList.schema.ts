@@ -1,17 +1,19 @@
 import * as z from "zod";
-import { SearchTermSchema } from "./productSearch.schema";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_VIEWS,
+} from "@/core/domain/product";
+import { emptyToUndefined, OffsetListRequestSchema } from "./offsetList.schema";
 
-// URL searchParams는 "값 없음"을 빈 문자열로도 표현한다(`?view=`) — 빈 값은 필터
-// 해제와 같은 의미이므로 스키마 진입 전에 undefined로 정규화해 서비스가 조건 유무만 보게 한다.
-const emptyToUndefined = (value: unknown) =>
-  value === "" || value === null ? undefined : value;
-
-const AdminProductListRequestSchema = z.object({
-  // 검색어 정규화(trim·길이 제한·빈 값 처리)는 목록마다 갈리면 안 된다 — 공용
-  // SearchTermSchema를 import해 쓴다(#309).
-  q: z.preprocess(emptyToUndefined, SearchTermSchema),
-  view: z.preprocess(emptyToUndefined, z.enum(["active", "trash"]).optional()),
-  cursor: z.preprocess(emptyToUndefined, z.string().min(1).optional()),
+const AdminProductListRequestSchema = OffsetListRequestSchema.extend({
+  sort: z.preprocess(
+    emptyToUndefined,
+    z.enum(ADMIN_PRODUCT_SORT_KEYS).optional(),
+  ),
+  view: z.preprocess(
+    emptyToUndefined,
+    z.enum(ADMIN_PRODUCT_VIEWS).default("active"),
+  ),
 });
 
 type AdminProductListRequest = z.infer<typeof AdminProductListRequestSchema>;

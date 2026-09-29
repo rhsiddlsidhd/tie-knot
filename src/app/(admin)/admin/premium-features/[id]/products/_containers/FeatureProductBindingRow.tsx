@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { setProductPremiumFeature } from "@/actions/setProductPremiumFeature";
@@ -18,11 +17,12 @@ import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
 const FeatureProductBindingRow = ({
   product,
   featureId,
+  onRefreshed,
 }: {
   product: FeatureProductBinding;
   featureId: string;
+  onRefreshed: () => void;
 }) => {
-  const router = useRouter();
   const [attached, setAttached] = useState(product.attached);
   const [isPending, setIsPending] = useState(false);
 
@@ -44,7 +44,7 @@ const FeatureProductBindingRow = ({
       }
 
       toast.success(result.data.message);
-      router.refresh();
+      onRefreshed();
     } catch {
       toast.error("변경 중 오류가 발생했습니다.");
       setAttached(!next);

@@ -1,4 +1,3 @@
-import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
 import { Badge } from "@/ui/components/ui/badge";
 import { TableRow, TableCell } from "@/ui/components/ui/table";
@@ -6,8 +5,9 @@ import {
   TypographyMuted,
   TypographySmall,
 } from "@/ui/components/atoms/typography";
-import type { Product } from "@/core/domain/product";
+import type { AdminProductView, Product } from "@/core/domain/product";
 import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
+import { formatKstDate } from "@/core/utils/date";
 import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
 import { ProductTableRowSelect } from "../_containers/ProductTableRowSelect";
 import type {
@@ -21,12 +21,14 @@ import {
 
 interface ProductTableRowProps {
   product: Product;
-  view?: "active" | "trash";
+  view: AdminProductView;
+  onRefreshed: () => void;
 }
 
 const ProductTableRow = ({
   product,
-  view = "active",
+  view,
+  onRefreshed,
 }: ProductTableRowProps) => {
   return (
     <TableRow>
@@ -93,30 +95,22 @@ const ProductTableRow = ({
             )}
           </div>
         ) : (
-          <ProductTableRowSelect product={product} />
+          <ProductTableRowSelect product={product} onRefreshed={onRefreshed} />
         )}
       </TableCell>
-      <TableCell>
-        <div className="text-muted-foreground flex flex-col gap-1 text-sm">
-          <div className="flex items-center gap-1">
-            <Eye className="h-3 w-3" />
-            <span>{product.views}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Heart className="h-3 w-3" />
-            <span>{product.likes.length}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <ShoppingCart className="h-3 w-3" />
-            <span>{product.salesCount}</span>
-          </div>
-        </div>
-      </TableCell>
+      <TableCell>{product.views}</TableCell>
+      <TableCell>{product.likes.length}</TableCell>
+      <TableCell>{product.salesCount}</TableCell>
       <TableCell>
         <span className="font-mono text-sm">{product.priority}</span>
       </TableCell>
+      <TableCell>{formatKstDate(product.createdAt)}</TableCell>
       <TableCell>
-        <ProductTableRowAction product={product} view={view} />
+        <ProductTableRowAction
+          product={product}
+          view={view}
+          onRefreshed={onRefreshed}
+        />
       </TableCell>
     </TableRow>
   );
