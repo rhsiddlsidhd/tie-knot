@@ -22,9 +22,9 @@ const getPageRange = (
 
   return visiblePages.flatMap((page, index) => {
     const previousPage = visiblePages[index - 1];
-    return previousPage !== undefined && page - previousPage > 1
-      ? ["ellipsis" as const, page]
-      : [page];
+    if (previousPage === undefined || page - previousPage === 1) return [page];
+    if (page - previousPage === 2) return [previousPage + 1, page];
+    return ["ellipsis" as const, page];
   });
 };
 
