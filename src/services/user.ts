@@ -2,10 +2,14 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import type { Types } from "mongoose";
 import mongoose from "mongoose";
-import type { AdminUserListPage, UserRole } from "@/core/domain/user";
+import type {
+  AdminUserListPage,
+  AdminUserSortKey,
+  UserRole,
+} from "@/core/domain/user";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import { USER_ROLES } from "@/core/domain/user";
+import { ADMIN_USER_SORT_KEYS, USER_ROLES } from "@/core/domain/user";
 import type { BaseUser, UserDocument } from "@/models/user.model";
 import { UserModel } from "@/models/user.model";
 import { dbConnect } from "@/db/connect";
@@ -16,11 +20,7 @@ import { encrypt } from "@/adapters/server/jose/encrypt";
 import { deleteCookie } from "@/adapters/server/cookies/delete";
 import { sendEmail } from "@/adapters/server/nodemailer/send";
 import { ROUTES } from "@/core/domain/routes";
-import {
-  decodeCursor,
-  encodeCursor,
-  isValidPageLimit,
-} from "@/core/utils/cursor";
+import { isValidPageLimit } from "@/core/utils/cursor";
 
 const PASSWORD_RESET_COOLDOWN_MS = 60_000;
 
@@ -209,8 +209,10 @@ const resetUserPasswordService = async ({
 type AdminUserListQuery = {
   q?: string;
   role?: UserRole;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: AdminUserSortKey;
+  direction?: "asc" | "desc";
 };
 
 type AdminUserListRow = {
@@ -224,24 +226,30 @@ type AdminUserListRow = {
 
 /**
  * 관리자 전역 사용자 목록 한 페이지 — 활동/탈퇴 여부와 무관하게 전체 사용자를
- * 대상으로 한다(deletedAt으로 걸러내지 않는다). 정렬·커서 계약(createdAt desc, _id
- * tie-break, limit+1)은 주문 목록과 동일하되, 비밀번호·전화번호·인증 관련 필드는
- * select 단계에서부터 제외한다. 검색(q)은 이름/이메일 부분일치를 하나의 $or로
- * 묶는다(#309).
+ * 대상으로 한다(deletedAt으로 걸러내지 않는다). 비밀번호·전화번호·인증 관련 필드는
+ * select 단계에서부터 제외한다. 검색(q)은 이름/이메일 부분일치를 쓴다.
  */
 const getAdminUsersPageService = async ({
   q,
   role,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort = "createdAt",
+  direction = "desc",
 }: AdminUserListQuery): Promise<AdminUserListPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
   }
   if (role && !USER_ROLES.includes(role)) {
     throw new AppError("VALIDATION", "잘못된 사용자 역할입니다.");
+  }
+  if (!ADMIN_USER_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: mongoose.FilterQuery<UserDocument> = {};
@@ -250,8 +258,6 @@ const getAdminUsersPageService = async ({
     filter.role = role;
   }
 
-  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
-  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
   const conditions: mongoose.FilterQuery<UserDocument>[] = [];
 
   const term = q?.trim();
@@ -264,41 +270,25 @@ const getAdminUsersPageService = async ({
     });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({
-      $or: [
-        { createdAt: { $lt: decoded.createdAt } },
-        {
-          createdAt: decoded.createdAt,
-          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-        },
-      ],
-    });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await UserModel.find(filter)
-    .select("name email createdAt role deletedAt")
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<AdminUserListRow[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "사용자 목록 조회에 실패했습니다.",
-      );
-    });
-
-  const hasMore = found.length > limit;
-  const users = hasMore ? found.slice(0, limit) : found;
-  const lastUser = users.at(-1);
+  const sortDirection = direction === "asc" ? 1 : -1;
+  const [users, total] = await Promise.all([
+    UserModel.find(filter)
+      .select("name email createdAt role deletedAt")
+      .sort({ [sort]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<AdminUserListRow[]>(),
+    UserModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "사용자 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: users.map((user) => ({
@@ -309,13 +299,10 @@ const getAdminUsersPageService = async ({
       role: user.role,
       deletedAt: user.deletedAt,
     })),
-    nextCursor:
-      hasMore && lastUser
-        ? encodeCursor({
-            createdAt: lastUser.createdAt,
-            id: lastUser._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 

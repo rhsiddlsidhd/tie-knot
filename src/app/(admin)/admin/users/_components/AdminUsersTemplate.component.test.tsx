@@ -23,7 +23,10 @@ const buildPage = (
       deletedAt: null,
     },
   ],
-  nextCursor: null,
+  total: 1,
+  page: 1,
+  limit: 10,
+  totalPages: 1,
   ...overrides,
 });
 
@@ -128,21 +131,8 @@ describe("AdminUsersTemplate", () => {
     expect(screen.getByRole("searchbox")).toHaveValue("김철수");
   });
 
-  it("현재 role 필터를 Pagination 링크에 그대로 전달한다(cursor는 제거)", () => {
-    render(
-      <AdminUsersTemplate
-        page={buildPage({ nextCursor: "next-cursor" })}
-        role="ADMIN"
-        cursor="current-cursor"
-      />,
-    );
-
-    const nextLink = screen.getByRole("link", { name: "다음 페이지" });
-    expect(nextLink).toHaveAttribute(
-      "href",
-      "/admin/users?role=ADMIN&cursor=next-cursor",
-    );
-    const firstLink = screen.getByRole("link", { name: "첫 페이지" });
-    expect(firstLink).toHaveAttribute("href", "/admin/users?role=ADMIN");
+  it("offset 전환 중에는 기존 cursor 페이지 이동을 비활성화한다", () => {
+    render(<AdminUsersTemplate page={buildPage()} />);
+    expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });
 });
