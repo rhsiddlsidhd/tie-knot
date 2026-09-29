@@ -200,6 +200,19 @@ ProductSchema.index({
 // 커버하는 패턴).
 ProductSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
 
+// Home 인기 상품 섹션(getPopularProductsService) 전용 — deletedAt/status는 equality,
+// likesCount는 $gt 필터와 정렬을 겸하고, 나머지는 정렬 전용 필드다(위 공개 목록
+// index들과 동일하게 equality → range/sort → 나머지 sort 순서를 따른다).
+ProductSchema.index({
+  deletedAt: 1,
+  status: 1,
+  likesCount: -1,
+  isFeatured: -1,
+  priority: -1,
+  createdAt: -1,
+  _id: -1,
+});
+
 const ProductModel =
   (mongoose.models.Product as Model<ProductDocument>) ||
   model<ProductDocument>("Product", ProductSchema);

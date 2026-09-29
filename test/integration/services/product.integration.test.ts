@@ -1064,7 +1064,7 @@ describe("product", () => {
       expect(withoutUser[0].isLiked).toBe(false);
     });
 
-    it("응답 객체에 likesCount 내부 계산 필드가 섞여 나가지 않는다 ($unset 확인)", async () => {
+    it("응답 객체에 likesCount 내부 카운터 필드가 섞여 나가지 않는다 (select exclude 확인)", async () => {
       await createProductService(buildProductInput({ title: "unset확인" }));
       const p = await ProductModel.findOne({ title: "unset확인" }).lean();
       await likeNTimes(p!._id.toString(), 1);

@@ -645,47 +645,42 @@ const searchProductsService = async (
   return products.map((p) => transformProduct(p, userId));
 };
 
-// Home 인기 상품 섹션 — 좋아요 수(likes.length) 내림차순 Top N 조회.
-// 배열 길이 정렬은 find().sort()로 불가능해 aggregation을 쓴다(01_db_schema.md §2-1).
+// Home 인기 상품 섹션 — likesCount 내림차순 Top N 조회. likesCount는 좋아요 토글이
+// likes 배열과 원자적으로 동기화하는 비정규화 카운터라(src/models/product.model.ts,
+// updateProductLikeService) find().sort()로 바로 정렬할 수 있다 — 배열 길이(likes.length)
+// 자체를 정렬 기준으로 쓰던 이전 버전만 aggregation이 필요했다.
 const getPopularProductsService = async (
   limit: number = POPULAR_PRODUCTS_LIMIT,
   userId?: string,
 ): Promise<ProductJson[]> => {
   await dbConnect();
 
-  // $limit은 0 이하를 받으면 빈 배열이 아니라 MongoServerError를 던진다 — 서비스가 방어한다.
+  // 0 이하를 받으면 빈 배열이 아니라 의미 없는 조회가 되므로 서비스가 방어한다.
   const take = Math.min(Math.max(Math.trunc(limit), 1), 50);
 
-  // 파이프라인은 함수 안에서 매번 새 배열 리터럴로 만든다(모듈 상수로 빼지 않는다) —
-  // mongoose가 discriminator 모델 aggregate 시 첫 $match를 직접 mutate하므로,
-  // 상수로 빼면 discriminator 호출 한 번에 이후 모든 호출이 오염된다.
-  const products = await ProductModel.aggregate<LeanProduct>([
-    {
-      $match: {
-        deletedAt: null,
-        status: "active",
-        "likes.0": { $exists: true },
-      },
-    },
-    // $ifNull은 방어적 중복이지만 유지한다 — $size는 인자가 missing이면 null이 아니라 에러(Location17124)를 던진다.
-    { $addFields: { likesCount: { $size: { $ifNull: ["$likes", []] } } } },
-    {
-      $sort: {
-        likesCount: -1,
-        isFeatured: -1,
-        priority: -1,
-        createdAt: -1,
-        _id: -1,
-      },
-    },
-    { $limit: take },
-    { $unset: "likesCount" },
-  ]).catch((err) => {
-    throw new AppError(
-      "INTERNAL",
-      err instanceof Error ? err.message : "인기 상품 조회에 실패했습니다.",
-    );
-  });
+  const products = await ProductModel.find({
+    deletedAt: null,
+    status: "active",
+    likesCount: { $gt: 0 },
+  })
+    // likesCount는 필터·정렬 전용 내부 카운터라 응답에는 노출하지 않는다
+    // (기존 aggregate 버전의 $addFields+$unset과 동일한 효과).
+    .select("-likesCount")
+    .sort({
+      likesCount: -1,
+      isFeatured: -1,
+      priority: -1,
+      createdAt: -1,
+      _id: -1,
+    })
+    .limit(take)
+    .lean()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "인기 상품 조회에 실패했습니다.",
+      );
+    });
 
   return products.map((p) => transformProduct(p, userId));
 };
