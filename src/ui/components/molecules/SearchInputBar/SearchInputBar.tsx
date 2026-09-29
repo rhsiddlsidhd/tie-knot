@@ -23,23 +23,23 @@ const SearchInputBar = ({
 }: SearchInputBarProps) => {
   const inputId = useId();
   const [inputValue, setInputValue] = useState(value);
-  const syncingExternalValue = useRef(true);
+  const lastSearchValue = useRef(value);
   const debouncedValue = useDebouncedValue(inputValue, SEARCH_DEBOUNCE_MS);
 
   useEffect(() => {
-    syncingExternalValue.current = true;
-    setInputValue(value);
-  }, [value]);
+    const nextValue = debouncedValue.trim();
+    if (nextValue === lastSearchValue.current) return;
+
+    lastSearchValue.current = nextValue;
+    onSearch(nextValue);
+  }, [debouncedValue, onSearch]);
 
   useEffect(() => {
-    if (syncingExternalValue.current) {
-      if (debouncedValue === value) syncingExternalValue.current = false;
-      return;
-    }
+    if (value === lastSearchValue.current) return;
 
-    const nextValue = debouncedValue.trim();
-    if (nextValue !== value) onSearch(nextValue);
-  }, [debouncedValue, onSearch, value]);
+    lastSearchValue.current = value;
+    setInputValue(value);
+  }, [value]);
 
   return (
     <div className="space-y-2">
@@ -49,10 +49,7 @@ const SearchInputBar = ({
         type="search"
         value={inputValue}
         placeholder={placeholder}
-        onChange={(event) => {
-          syncingExternalValue.current = false;
-          setInputValue(event.target.value);
-        }}
+        onChange={(event) => setInputValue(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter") event.preventDefault();
         }}

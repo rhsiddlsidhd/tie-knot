@@ -48,6 +48,45 @@ describe("SearchInputBar", () => {
     expect(onSearch).not.toHaveBeenCalled();
   });
 
+  it("보낸 검색값이 돌아와도 그 뒤에 입력한 내용을 유지한다", () => {
+    vi.useFakeTimers();
+    const onSearch = vi.fn();
+    const { rerender } = render(
+      <SearchInputBar value="" label="상품 검색" onSearch={onSearch} />,
+    );
+    const input = screen.getByRole("searchbox", { name: "상품 검색" });
+
+    fireEvent.change(input, { target: { value: "abc" } });
+    act(() => vi.advanceTimersByTime(300));
+    expect(onSearch).toHaveBeenCalledWith("abc");
+
+    fireEvent.change(input, { target: { value: "abcd" } });
+    rerender(
+      <SearchInputBar value="abc" label="상품 검색" onSearch={onSearch} />,
+    );
+
+    expect(input).toHaveValue("abcd");
+  });
+
+  it("trim한 검색값이 돌아와도 입력 끝의 공백을 유지한다", () => {
+    vi.useFakeTimers();
+    const onSearch = vi.fn();
+    const { rerender } = render(
+      <SearchInputBar value="" label="상품 검색" onSearch={onSearch} />,
+    );
+    const input = screen.getByRole("searchbox", { name: "상품 검색" });
+
+    fireEvent.change(input, { target: { value: "청첩장 " } });
+    act(() => vi.advanceTimersByTime(300));
+    expect(onSearch).toHaveBeenCalledWith("청첩장");
+
+    rerender(
+      <SearchInputBar value="청첩장" label="상품 검색" onSearch={onSearch} />,
+    );
+
+    expect(input).toHaveValue("청첩장 ");
+  });
+
   it("외부 value 변경을 입력에 반영하고 검색을 다시 호출하지 않는다", () => {
     vi.useFakeTimers();
     const onSearch = vi.fn();
