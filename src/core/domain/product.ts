@@ -1,6 +1,7 @@
 import type { MobileInvitationTheme } from "./theme";
 import type { ProductCategory, SubCategory } from "./product-category";
 import type { CursorPage } from "./cursor";
+import type { OffsetPage } from "./offset";
 
 // 0. Home 인기 상품 섹션(좋아요순 Top N) 관련 상수 — service 기본값과 UI 노출 게이트가 같은 값을 본다.
 const POPULAR_PRODUCTS_LIMIT = 8;
@@ -83,7 +84,20 @@ interface ProductJson {
 
 type Product = ProductJson;
 
-type AdminProductListPage = CursorPage<ProductJson>;
+const ADMIN_PRODUCT_SORT_KEYS = [
+  "createdAt",
+  "title",
+  "price",
+  "views",
+  "likesCount",
+  "salesCount",
+  "priority",
+  "deletedAt",
+] as const;
+
+type AdminProductSortKey = (typeof ADMIN_PRODUCT_SORT_KEYS)[number];
+
+type AdminProductListPage = OffsetPage<ProductJson>;
 
 type PublicProductListPage = CursorPage<ProductJson>;
 
@@ -140,6 +154,7 @@ export {
   PRODUCT_PRICE_KEYS,
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
+  ADMIN_PRODUCT_SORT_KEYS,
   type DiscountType,
   type Discount,
   type ProductStatus,
@@ -147,6 +162,7 @@ export {
   type ProductJson,
   type Product,
   type AdminProductListPage,
+  type AdminProductSortKey,
   type PublicProductListPage,
   type ProductSortType,
   type ProductPriceType,

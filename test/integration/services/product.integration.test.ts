@@ -463,7 +463,7 @@ describe("product", () => {
         expect(result.items.map((p) => p.title)).toEqual(["삭제될 청첩장"]);
       });
 
-      it("검색어와 커서를 함께 적용한다", async () => {
+      it("검색어와 offset 페이지를 함께 적용한다", async () => {
         const created: string[] = [];
         for (let i = 0; i < 3; i += 1) {
           const product = await createTitled(`청첩장${i}`);
@@ -475,18 +475,19 @@ describe("product", () => {
         const first = await getAdminProductsPageService({
           q: "청첩장",
           limit: 2,
+          page: 1,
         });
         expect(first.items).toHaveLength(2);
-        expect(first.nextCursor).not.toBeNull();
+        expect(first.total).toBe(3);
 
         const second = await getAdminProductsPageService({
           q: "청첩장",
           limit: 2,
-          cursor: first.nextCursor!,
+          page: 2,
         });
 
         expect(second.items).toHaveLength(1);
-        expect(second.nextCursor).toBeNull();
+        expect(second.totalPages).toBe(2);
         expect(
           [...first.items, ...second.items].every((p) =>
             p.title.startsWith("청첩장"),
@@ -495,7 +496,7 @@ describe("product", () => {
       });
     });
 
-    it("createdAt 내림차순으로 정렬한다", async () => {
+    it("createdAt 내림차순으로 기본 정렬한다", async () => {
       const older = await createAndFetch("older");
       const newer = await createAndFetch("newer");
       await setCreatedAt(older!._id, new Date("2026-01-01T00:00:00.000Z"));
@@ -525,7 +526,7 @@ describe("product", () => {
       );
     });
 
-    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+    it("offset 페이지가 total과 totalPages를 반환하고 행이 중복/누락되지 않는다", async () => {
       const created = [];
       for (let i = 0; i < 3; i += 1) {
         const product = await createAndFetch(`상품${i}`);
@@ -533,16 +534,16 @@ describe("product", () => {
         created.push(product!._id.toString());
       }
 
-      const firstPage = await getAdminProductsPageService({ limit: 2 });
+      const firstPage = await getAdminProductsPageService({ limit: 2, page: 1 });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage.nextCursor).not.toBe(null);
+      expect(firstPage).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
 
       const secondPage = await getAdminProductsPageService({
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
       expect(secondPage.items).toHaveLength(1);
-      expect(secondPage.nextCursor).toBe(null);
+      expect(secondPage).toMatchObject({ total: 3, page: 2, limit: 2, totalPages: 2 });
 
       const paged = [...firstPage.items, ...secondPage.items].map((p) => p._id);
       expect(new Set(paged).size).toBe(3);
@@ -565,7 +566,7 @@ describe("product", () => {
       ]);
     });
 
-    it("view 필터와 cursor를 동시에 적용한다", async () => {
+    it("view 필터와 offset 페이지를 동시에 적용한다", async () => {
       const products = [];
       for (let i = 0; i < 3; i += 1) {
         const product = await createAndFetch(`상품${i}`);
@@ -575,10 +576,10 @@ describe("product", () => {
       const trashed = await createAndFetch("삭제될상품");
       await deleteProductService(trashed!._id.toString());
 
-      const firstPage = await getAdminProductsPageService({ limit: 2 });
+      const firstPage = await getAdminProductsPageService({ limit: 2, page: 1 });
       const secondPage = await getAdminProductsPageService({
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
 
       expect(secondPage.items).toHaveLength(1);
@@ -589,16 +590,25 @@ describe("product", () => {
       ).toBe(false);
     });
 
-    it("빈 DB면 빈 목록과 null 커서를 리턴한다", async () => {
+    it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminProductsPageService({});
 
-      expect(result).toEqual({ items: [], nextCursor: null });
+      expect(result).toEqual({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+      });
     });
 
-    it("형식이 깨진 cursor는 VALIDATION을 던진다", async () => {
-      await expect(
-        getAdminProductsPageService({ cursor: "!!broken!!" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
+      await createAndFetch("상품");
+
+      const result = await getAdminProductsPageService({ page: 2 });
+
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
 
     it("잘못된 limit(소수)은 VALIDATION을 던진다", async () => {
@@ -616,6 +626,70 @@ describe("product", () => {
       expect(result.items[0].title).toBe("특별한 청첩장");
       expect(result.items[0].isLiked).toBe(false);
       expect(typeof result.items[0].discountedPrice).toBe("number");
+    });
+
+    it.each([
+      ["createdAt", new Date("2026-01-01"), new Date("2026-02-01")],
+      ["title", "가 상품", "나 상품"],
+      ["price", 1000, 2000],
+      ["views", 1, 2],
+      ["likesCount", 1, 2],
+      ["salesCount", 1, 2],
+      ["priority", 1, 2],
+    ] as const)("%s를 양방향 정렬하고 _id로 tie-break한다", async (sort, low, high) => {
+      const first = await createAndFetch("첫 상품");
+      const second = await createAndFetch("둘째 상품");
+      await ProductModel.updateOne(
+        { _id: first!._id },
+        { $set: { [sort]: low } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+      await ProductModel.updateOne(
+        { _id: second!._id },
+        { $set: { [sort]: high } },
+        { timestamps: false, overwriteImmutable: true },
+      );
+
+      const asc = await getAdminProductsPageService({ sort, direction: "asc" });
+      const desc = await getAdminProductsPageService({ sort, direction: "desc" });
+
+      expect(asc.items.map((item) => item._id)).toEqual([
+        first!._id.toString(),
+        second!._id.toString(),
+      ]);
+      expect(desc.items.map((item) => item._id)).toEqual([
+        second!._id.toString(),
+        first!._id.toString(),
+      ]);
+    });
+
+    it("trash 목록의 기본 정렬은 deletedAt 내림차순이며 명시적 오름차순도 지원한다", async () => {
+      const first = await createAndFetch("먼저 삭제");
+      const second = await createAndFetch("나중 삭제");
+      await ProductModel.updateOne(
+        { _id: first!._id },
+        { $set: { deletedAt: new Date("2026-01-01") } },
+      );
+      await ProductModel.updateOne(
+        { _id: second!._id },
+        { $set: { deletedAt: new Date("2026-02-01") } },
+      );
+
+      const defaults = await getAdminProductsPageService({ view: "trash" });
+      const asc = await getAdminProductsPageService({
+        view: "trash",
+        sort: "deletedAt",
+        direction: "asc",
+      });
+
+      expect(defaults.items.map((item) => item._id)).toEqual([
+        second!._id.toString(),
+        first!._id.toString(),
+      ]);
+      expect(asc.items.map((item) => item._id)).toEqual([
+        first!._id.toString(),
+        second!._id.toString(),
+      ]);
     });
   });
 

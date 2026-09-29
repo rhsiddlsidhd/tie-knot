@@ -15,7 +15,6 @@ interface AdminProductsTemplateProps {
   page: AdminProductListPage;
   view?: "active" | "trash";
   q?: string;
-  cursor?: string;
 }
 
 // view 전환은 QueryFilterSelect가 아니라 Link 버튼이라 q를 자동으로 실어주지
@@ -35,7 +34,6 @@ const AdminProductsTemplate = ({
   page,
   view = "active",
   q,
-  cursor,
 }: AdminProductsTemplateProps) => {
   const isTrash = view === "trash";
   const products = page.items;
@@ -88,9 +86,9 @@ const AdminProductsTemplate = ({
         query={{
           ...(isTrash ? { view: "trash" } : {}),
           ...(q ? { q } : {}),
-        }}
-        hasCursor={!!cursor}
-        nextCursor={page.nextCursor}
+      }}
+        hasCursor={false}
+        nextCursor={null}
       >
         {products.length === 0 ? (
           <TableRow>

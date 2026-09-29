@@ -3,30 +3,25 @@ export const dynamic = "force-dynamic";
 import { verifySession } from "@/services/auth";
 import { getAdminProductsPageService } from "@/services/product";
 import { AdminProductListRequestSchema } from "@/core/schemas/request/adminProductList.schema";
-import { decodeCursor } from "@/core/utils/cursor";
 import { validateAndFlatten } from "@/core/utils/validate-and-flatten";
 import { AdminProductsTemplate } from "@/app/(admin)/admin/products/_components/AdminProductsTemplate";
 
-// 필터/커서는 URL이 소유하므로 어떤 입력이 와도 throw하지 않는다 — 유효하지 않은
-// view는 스키마가, 형식이 깨진 cursor는 decodeCursor가 걸러 "필터/커서 없음"으로
-// 떨어뜨린다. 그 뒤에도 남는 방어(예: 직접 조작된 요청)는 service의 AppError가 맡는다.
 const resolveFilters = (
   searchParams: Record<string, string | string[] | undefined>,
 ) => {
   const parsed = validateAndFlatten(AdminProductListRequestSchema, {
     q: typeof searchParams.q === "string" ? searchParams.q : null,
     view: typeof searchParams.view === "string" ? searchParams.view : null,
-    cursor:
-      typeof searchParams.cursor === "string" ? searchParams.cursor : null,
+    page: typeof searchParams.page === "string" ? searchParams.page : null,
+    limit: typeof searchParams.limit === "string" ? searchParams.limit : null,
+    sort: typeof searchParams.sort === "string" ? searchParams.sort : null,
+    direction:
+      typeof searchParams.direction === "string"
+        ? searchParams.direction
+        : null,
   });
 
-  if (!parsed.success) return {};
-
-  const { q, view, cursor } = parsed.data;
-  if (cursor && !decodeCursor(cursor)) {
-    return { q, view };
-  }
-  return { q, view, cursor };
+  return parsed.success ? parsed.data : AdminProductListRequestSchema.parse({});
 };
 
 export default async function ProductsPage({
@@ -36,10 +31,8 @@ export default async function ProductsPage({
 }) {
   await verifySession("ADMIN");
 
-  const { view = "active", q, cursor } = resolveFilters(await searchParams);
-  const page = await getAdminProductsPageService({ view, q, cursor });
+  const filters = resolveFilters(await searchParams);
+  const page = await getAdminProductsPageService(filters);
 
-  return (
-    <AdminProductsTemplate page={page} view={view} q={q} cursor={cursor} />
-  );
+  return <AdminProductsTemplate page={page} view={filters.view} q={filters.q} />;
 }

@@ -23,7 +23,10 @@ const buildPage = (
   overrides?: Partial<AdminProductListPage>,
 ): AdminProductListPage => ({
   items: [buildProduct()],
-  nextCursor: null,
+  total: 1,
+  page: 1,
+  limit: 10,
+  totalPages: 1,
   ...overrides,
 });
 
@@ -87,11 +90,9 @@ describe("AdminProductsTemplate", () => {
     expect(screen.queryByText("상품 등록")).not.toBeInTheDocument();
   });
 
-  it("nextCursor가 있으면 다음 페이지 버튼이 활성화된다", () => {
-    render(<AdminProductsTemplate page={buildPage({ nextCursor: "abc" })} />);
+  it("offset 전환 중에는 기존 cursor 페이지 이동을 노출하지 않는다", () => {
+    render(<AdminProductsTemplate page={buildPage()} />);
 
-    expect(
-      screen.getByRole("link", { name: "다음 페이지" }),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "다음 페이지" })).toBeNull();
   });
 });

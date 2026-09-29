@@ -2,6 +2,7 @@ import "server-only";
 import type { ProductDb, ProductDocument } from "@/models/product.model";
 import type {
   EditableProductStatus,
+  AdminProductSortKey,
   ProductJson,
   ProductStatus,
 } from "@/core/domain/product";
@@ -40,7 +41,10 @@ import {
   PRODUCT_CATEGORIES,
   SUB_CATEGORY_MAP,
 } from "@/core/domain/product-category";
-import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  POPULAR_PRODUCTS_LIMIT,
+} from "@/core/domain/product";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 import { requireAdmin, requireAuth } from "./auth";
@@ -210,33 +214,39 @@ const incrementProductViewsService = async (
 type AdminProductListQuery = {
   view?: "active" | "trash";
   q?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: AdminProductSortKey;
+  direction?: "asc" | "desc";
 };
 
 /**
- * 관리자 상품 목록 한 페이지 — orders/users(getAdminOrdersPageService,
- * getAdminUsersPageService)와 동일한 cursor 계약(createdAt desc, _id tie-break,
- * limit+1)을 쓴다. getPublicProductsPageService와 달리 isFeatured/priority 정렬을 쓰지
- * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
+ * 관리자 상품 목록 한 페이지. 공개 목록의 cursor 계약과 분리해 offset과 관리자
+ * 테이블 정렬 키를 사용한다.
  */
 const getAdminProductsPageService = async ({
   view = "active",
   q,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort,
+  direction = "desc",
 }: AdminProductListQuery): Promise<AdminProductListPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (sort && !ADMIN_PRODUCT_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: Record<string, unknown> =
     view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
 
-  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
-  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
   const conditions: Record<string, unknown>[] = [];
 
   const term = q?.trim();
@@ -255,50 +265,33 @@ const getAdminProductsPageService = async ({
     conditions.push({ $or: or });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({
-      $or: [
-        { createdAt: { $lt: decoded.createdAt } },
-        {
-          createdAt: decoded.createdAt,
-          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-        },
-      ],
-    });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await ProductModel.find(filter)
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<LeanProduct[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
-      );
-    });
+  const sortKey = sort ?? (view === "trash" ? "deletedAt" : "createdAt");
+  const sortDirection = direction === "asc" ? 1 : -1;
 
-  const hasMore = found.length > limit;
-  const products = hasMore ? found.slice(0, limit) : found;
-  const lastProduct = products.at(-1);
+  const [products, total] = await Promise.all([
+    ProductModel.find(filter)
+      .sort({ [sortKey]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<LeanProduct[]>(),
+    ProductModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: products.map((product) => transformProduct(product)),
-    nextCursor:
-      hasMore && lastProduct
-        ? encodeCursor({
-            createdAt: lastProduct.createdAt,
-            id: lastProduct._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 
