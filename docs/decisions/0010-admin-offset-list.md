@@ -63,3 +63,4 @@ Next.js 라우터가 URL과 history를 일관되게 관리한다. 목록 조작�
 - `3de411c` feat(api): add offset page contract and base list schema
 - `97e7f70` feat(ui): add useOffsetList hook for url-synced offset lists
 - `a0543a9` feat(ui): add generic DataTable organism
+- [PR #396](https://github.com/rhsiddlsidhd/tie-knot/pull/396)
