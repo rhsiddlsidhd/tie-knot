@@ -24,7 +24,9 @@ vi.mock("@/actions/updateProductStatus", () => ({
 import type { Product } from "@/core/domain/product";
 import {
   ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_TYPE_FILTERS,
   ADMIN_PRODUCT_VIEWS,
+  EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { createAppStore } from "@/ui/stores/app.store";
@@ -74,7 +76,11 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: { view: null } as { view: string | null },
+  params: { view: null, status: null, type: null } as {
+    view: string | null;
+    status: string | null;
+    type: string | null;
+  },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -109,7 +115,11 @@ describe("AdminProductsTable", () => {
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/products",
       sortKeys: ADMIN_PRODUCT_SORT_KEYS,
-      params: { view: ADMIN_PRODUCT_VIEWS },
+      params: {
+        view: ADMIN_PRODUCT_VIEWS,
+        status: EDITABLE_PRODUCT_STATUSES,
+        type: ADMIN_PRODUCT_TYPE_FILTERS,
+      },
     });
   });
 
@@ -184,6 +194,42 @@ describe("AdminProductsTable", () => {
     await user.click(screen.getByRole("radio", { name: "휴지통" }));
 
     expect(table.setParam).toHaveBeenCalledWith("view", "trash");
+  });
+
+  it("상태 필터를 고르면 status 파라미터를 바꾼다", async () => {
+    const table = buildTable();
+    useOffsetListMock.mockReturnValue(table);
+    const user = userEvent.setup();
+    renderTable();
+
+    await user.click(screen.getByRole("radio", { name: "비활성" }));
+
+    expect(table.setParam).toHaveBeenCalledWith("status", "inactive");
+  });
+
+  it("타입 필터를 고르면 type 파라미터를 바꾼다", async () => {
+    const table = buildTable();
+    useOffsetListMock.mockReturnValue(table);
+    const user = userEvent.setup();
+    renderTable();
+
+    await user.click(screen.getByRole("radio", { name: "프리미엄" }));
+
+    expect(table.setParam).toHaveBeenCalledWith("type", "premium");
+  });
+
+  it("휴지통 view에서는 상태 필터를 숨기고 타입 필터는 유지한다", () => {
+    useOffsetListMock.mockReturnValue(
+      buildTable({ params: { view: "trash", status: null, type: null } }),
+    );
+    renderTable();
+
+    expect(
+      screen.queryByRole("radio", { name: "전체 상태" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("radio", { name: "전체 타입" }),
+    ).toBeInTheDocument();
   });
 
   it("통계·등록일 열로 정렬을 바꾸고 휴지통에서는 삭제일로 정렬한다", async () => {

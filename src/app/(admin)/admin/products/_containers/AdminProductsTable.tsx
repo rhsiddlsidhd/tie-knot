@@ -10,10 +10,16 @@ import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminProductSortKey, Product } from "@/core/domain/product";
 import {
   ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_TYPE_FILTERS,
   ADMIN_PRODUCT_VIEWS,
+  EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
 import { ROUTES } from "@/core/domain/routes";
-import { VIEW_FILTER_OPTIONS } from "@/app/(admin)/admin/products/_constants/filterOptions";
+import {
+  STATUS_FILTER_OPTIONS,
+  TYPE_FILTER_OPTIONS,
+  VIEW_FILTER_OPTIONS,
+} from "@/app/(admin)/admin/products/_constants/filterOptions";
 import {
   ACTIVE_PRODUCT_TABLE_COLUMNS,
   TRASH_PRODUCT_TABLE_COLUMNS,
@@ -24,11 +30,19 @@ const AdminProductsTable = () => {
   const table = useOffsetList<
     Product,
     AdminProductSortKey,
-    { view: typeof ADMIN_PRODUCT_VIEWS }
+    {
+      view: typeof ADMIN_PRODUCT_VIEWS;
+      status: typeof EDITABLE_PRODUCT_STATUSES;
+      type: typeof ADMIN_PRODUCT_TYPE_FILTERS;
+    }
   >({
     endpoint: "/api/admin/products",
     sortKeys: ADMIN_PRODUCT_SORT_KEYS,
-    params: { view: ADMIN_PRODUCT_VIEWS },
+    params: {
+      view: ADMIN_PRODUCT_VIEWS,
+      status: EDITABLE_PRODUCT_STATUSES,
+      type: ADMIN_PRODUCT_TYPE_FILTERS,
+    },
   });
   const view = table.params.view ?? "active";
   const isTrash = view === "trash";
@@ -69,12 +83,28 @@ const AdminProductsTable = () => {
           />
         )}
         toolbar={
-          <FilterToggleGroup
-            label="상품 보기"
-            options={VIEW_FILTER_OPTIONS}
-            value={table.params.view}
-            onValueChange={(value) => table.setParam("view", value)}
-          />
+          <div className="flex flex-wrap gap-4">
+            <FilterToggleGroup
+              label="상품 보기"
+              options={VIEW_FILTER_OPTIONS}
+              value={table.params.view}
+              onValueChange={(value) => table.setParam("view", value)}
+            />
+            {!isTrash && (
+              <FilterToggleGroup
+                label="상태 필터"
+                options={STATUS_FILTER_OPTIONS}
+                value={table.params.status}
+                onValueChange={(value) => table.setParam("status", value)}
+              />
+            )}
+            <FilterToggleGroup
+              label="타입 필터"
+              options={TYPE_FILTER_OPTIONS}
+              value={table.params.type}
+              onValueChange={(value) => table.setParam("type", value)}
+            />
+          </div>
         }
         sortState={table.sortState}
         onSort={table.toggleSort}

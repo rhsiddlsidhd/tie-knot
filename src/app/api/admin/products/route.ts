@@ -21,6 +21,8 @@ const GET = async (
       sort: searchParams.get("sort"),
       direction: searchParams.get("direction"),
       view: searchParams.get("view"),
+      status: searchParams.get("status"),
+      type: searchParams.get("type"),
     });
 
     if (!parsed.success) {

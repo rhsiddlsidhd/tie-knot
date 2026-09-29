@@ -217,6 +217,8 @@ const incrementProductViewsService = async (
 
 type AdminProductListQuery = {
   view?: "active" | "trash";
+  status?: EditableProductStatus;
+  type?: "premium" | "featured";
   q?: string;
   page?: number;
   limit?: number;
@@ -230,6 +232,8 @@ type AdminProductListQuery = {
  */
 const getAdminProductsPageService = async ({
   view = "active",
+  status,
+  type,
   q,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
@@ -250,6 +254,15 @@ const getAdminProductsPageService = async ({
 
   const filter: Record<string, unknown> =
     view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
+
+  if (status) {
+    filter.status = status;
+  }
+  if (type === "premium") {
+    filter.isPremium = true;
+  } else if (type === "featured") {
+    filter.isFeatured = true;
+  }
 
   const conditions: Record<string, unknown>[] = [];
 

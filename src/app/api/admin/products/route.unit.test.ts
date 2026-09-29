@@ -77,4 +77,24 @@ describe("GET /api/admin/products", () => {
       view: "trash",
     });
   });
+
+  it("status·type 파라미터를 서비스에 그대로 전달한다", async () => {
+    vi.mocked(getAdminProductsPageService).mockResolvedValue(emptyPage);
+
+    const response = await GET(
+      buildRequest("?status=inactive&type=premium"),
+    );
+
+    expect(response.status).toBe(200);
+    expect(getAdminProductsPageService).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "inactive", type: "premium" }),
+    );
+  });
+
+  it("허용되지 않은 status는 400을 반환한다", async () => {
+    const response = await GET(buildRequest("?status=deleted"));
+
+    expect(response.status).toBe(400);
+    expect(getAdminProductsPageService).not.toHaveBeenCalled();
+  });
 });

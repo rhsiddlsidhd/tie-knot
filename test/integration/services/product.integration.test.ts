@@ -606,6 +606,66 @@ describe("product", () => {
       ).toBe(false);
     });
 
+    it("status 필터로 특정 상태의 상품만 좁힌다", async () => {
+      await createProductService(
+        buildProductInput({ title: "판매중", status: "active" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "비활성", status: "inactive" }),
+      );
+      await createProductService(
+        buildProductInput({ title: "품절", status: "soldOut" }),
+      );
+
+      const result = await getAdminProductsPageService({ status: "inactive" });
+
+      expect(result.items.map((p) => p.title)).toEqual(["비활성"]);
+    });
+
+    it("type=premium이면 isPremium 상품만, type=featured면 isFeatured 상품만 좁힌다", async () => {
+      await createProductService(
+        buildProductInput({ title: "프리미엄", isPremium: true }),
+      );
+      await createProductService(
+        buildProductInput({ title: "추천", isFeatured: true }),
+      );
+      await createProductService(buildProductInput({ title: "일반" }));
+
+      const premiumResult = await getAdminProductsPageService({
+        type: "premium",
+      });
+      const featuredResult = await getAdminProductsPageService({
+        type: "featured",
+      });
+
+      expect(premiumResult.items.map((p) => p.title)).toEqual(["프리미엄"]);
+      expect(featuredResult.items.map((p) => p.title)).toEqual(["추천"]);
+    });
+
+    it("status와 검색어를 함께 적용한다", async () => {
+      await createProductService(
+        buildProductInput({
+          title: "봄맞이 카드",
+          subCategory: "first-birthday",
+          status: "inactive",
+        }),
+      );
+      await createProductService(
+        buildProductInput({
+          title: "봄맞이 청첩장",
+          subCategory: "first-birthday",
+          status: "active",
+        }),
+      );
+
+      const result = await getAdminProductsPageService({
+        q: "봄맞이",
+        status: "inactive",
+      });
+
+      expect(result.items.map((p) => p.title)).toEqual(["봄맞이 카드"]);
+    });
+
     it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminProductsPageService({});
 
