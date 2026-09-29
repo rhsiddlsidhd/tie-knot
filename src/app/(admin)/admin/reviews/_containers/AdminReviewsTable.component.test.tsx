@@ -15,6 +15,7 @@ vi.mock("@/actions/deleteReviewByAdmin", () => ({
 }));
 
 import { ADMIN_REVIEW_SORT_KEYS } from "@/core/domain/review";
+import { RATING_FILTER_VALUES } from "@/app/(admin)/admin/reviews/_constants/filterOptions";
 import { AdminReviewsTable } from "./AdminReviewsTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -36,7 +37,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: {},
+  params: { rating: null } as { rating: string | null },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -56,7 +57,7 @@ describe("AdminReviewsTable", () => {
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/reviews",
       sortKeys: ADMIN_REVIEW_SORT_KEYS,
-      params: {},
+      params: { rating: RATING_FILTER_VALUES },
     });
     expect(
       screen.getByRole("heading", { name: "리뷰 관리" }),
@@ -68,6 +69,17 @@ describe("AdminReviewsTable", () => {
     expect(
       screen.queryByRole("button", { name: "내용 정렬" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("평점 필터를 고르면 rating 파라미터를 바꾼다", async () => {
+    const table = buildTable();
+    useOffsetListMock.mockReturnValue(table);
+    const user = userEvent.setup();
+    render(<AdminReviewsTable />);
+
+    await user.click(screen.getByRole("radio", { name: "★5" }));
+
+    expect(table.setParam).toHaveBeenCalledWith("rating", "5");
   });
 
   it("정렬 가능한 열을 누르면 해당 sort 키로 정렬을 바꾼다", async () => {

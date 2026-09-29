@@ -53,4 +53,17 @@ describe("GET /api/admin/reviews", () => {
       direction: "asc",
     });
   });
+
+  it("rating 파라미터를 서비스에 그대로 전달한다", async () => {
+    vi.mocked(getAdminReviewsPageService).mockResolvedValue(emptyPage);
+    await GET(request("?rating=5"));
+    expect(getAdminReviewsPageService).toHaveBeenCalledWith(
+      expect.objectContaining({ rating: 5 }),
+    );
+  });
+
+  it("범위를 벗어난 rating은 400을 반환한다", async () => {
+    expect((await GET(request("?rating=6"))).status).toBe(400);
+    expect(getAdminReviewsPageService).not.toHaveBeenCalled();
+  });
 });

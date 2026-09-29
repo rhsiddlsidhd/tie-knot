@@ -45,6 +45,10 @@ const ReviewSchema = new Schema<ReviewDocument>(
 // 상품 상세의 리뷰 목록(최신순) 조회 전용.
 ReviewSchema.index({ productId: 1, createdAt: -1 });
 
+// 관리자 리뷰 목록의 rating 필터 전용 — 이 목록 자체엔 전용 index가 아직 없었다
+// (기존 갭). rating 필터를 추가하는 김에 그 경로만 최소한으로 커버한다.
+ReviewSchema.index({ rating: 1, createdAt: -1, _id: -1 });
+
 // 주문 하나당 리뷰 1개만 허용 — 중복 작성 방지 + "이 주문 이미 리뷰 썼는지" 조회도 겸한다.
 ReviewSchema.index({ orderId: 1 }, { unique: true });
 

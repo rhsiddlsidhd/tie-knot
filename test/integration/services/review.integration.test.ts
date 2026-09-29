@@ -502,5 +502,36 @@ describe("review", () => {
         [first._id.toString(), second._id.toString()].sort().reverse(),
       );
     });
+
+    it("rating 필터로 해당 평점의 리뷰만 좁힌다", async () => {
+      const target = await createReviewFixture({ rating: 2 });
+      await createReviewFixture({ rating: 5 });
+
+      const result = await getAdminReviewsPageService({ rating: 2 });
+
+      expect(result.items.map((item) => item.id)).toEqual([
+        target._id.toString(),
+      ]);
+    });
+
+    it("rating 필터와 검색어를 함께 적용한다", async () => {
+      const target = await createReviewFixture({
+        rating: 4,
+        userInput: { email: "rated-match@example.com" },
+      });
+      await createReviewFixture({
+        rating: 1,
+        userInput: { email: "rated-match2@example.com" },
+      });
+
+      const result = await getAdminReviewsPageService({
+        rating: 4,
+        q: "rated-match",
+      });
+
+      expect(result.items.map((item) => item.id)).toEqual([
+        target._id.toString(),
+      ]);
+    });
   });
 });
