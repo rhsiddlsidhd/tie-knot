@@ -63,7 +63,7 @@ describe("GET /api/admin/products", () => {
 
     const response = await GET(
       buildRequest(
-        "?page=2&limit=25&q=%20card%20&sort=price&direction=asc&view=trash",
+        "?page=2&limit=25&q=%20card%20&sort=price&direction=asc&softDeleted=true",
       ),
     );
 
@@ -74,7 +74,7 @@ describe("GET /api/admin/products", () => {
       q: "card",
       sort: "price",
       direction: "asc",
-      view: "trash",
+      softDeleted: true,
     });
   });
 

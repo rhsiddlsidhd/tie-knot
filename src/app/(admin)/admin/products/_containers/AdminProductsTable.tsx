@@ -4,21 +4,21 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/ui/button";
 import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { LabeledSwitch } from "@/ui/components/molecules/LabeledSwitch";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminProductSortKey, Product } from "@/core/domain/product";
 import {
+  ADMIN_PRODUCT_SOFT_DELETED_VALUES,
   ADMIN_PRODUCT_SORT_KEYS,
   ADMIN_PRODUCT_TYPE_FILTERS,
-  ADMIN_PRODUCT_VIEWS,
   EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
 import { ROUTES } from "@/core/domain/routes";
 import {
   STATUS_FILTER_OPTIONS,
   TYPE_FILTER_OPTIONS,
-  VIEW_FILTER_OPTIONS,
 } from "@/app/(admin)/admin/products/_constants/filterOptions";
 import {
   ACTIVE_PRODUCT_TABLE_COLUMNS,
@@ -31,7 +31,7 @@ const AdminProductsTable = () => {
     Product,
     AdminProductSortKey,
     {
-      view: typeof ADMIN_PRODUCT_VIEWS;
+      softDeleted: typeof ADMIN_PRODUCT_SOFT_DELETED_VALUES;
       status: typeof EDITABLE_PRODUCT_STATUSES;
       type: typeof ADMIN_PRODUCT_TYPE_FILTERS;
     }
@@ -39,13 +39,12 @@ const AdminProductsTable = () => {
     endpoint: "/api/admin/products",
     sortKeys: ADMIN_PRODUCT_SORT_KEYS,
     params: {
-      view: ADMIN_PRODUCT_VIEWS,
+      softDeleted: ADMIN_PRODUCT_SOFT_DELETED_VALUES,
       status: EDITABLE_PRODUCT_STATUSES,
       type: ADMIN_PRODUCT_TYPE_FILTERS,
     },
   });
-  const view = table.params.view ?? "active";
-  const isTrash = view === "trash";
+  const isTrash = table.params.softDeleted === "true";
   const refresh = () => {
     void table.mutate();
   };
@@ -78,17 +77,19 @@ const AdminProductsTable = () => {
         renderRow={(product) => (
           <ProductTableRow
             product={product}
-            view={view}
+            softDeleted={isTrash}
             onRefreshed={refresh}
           />
         )}
         toolbar={
           <div className="flex flex-wrap gap-4">
-            <FilterToggleGroup
-              label="상품 보기"
-              options={VIEW_FILTER_OPTIONS}
-              value={table.params.view}
-              onValueChange={(value) => table.setParam("view", value)}
+            <LabeledSwitch
+              id="admin-products-soft-deleted"
+              label="휴지통"
+              checked={isTrash}
+              onCheckedChange={(checked) =>
+                table.setParam("softDeleted", checked ? "true" : null)
+              }
             />
             {!isTrash && (
               <FilterToggleGroup

@@ -89,8 +89,8 @@ describe("ProductTableRowAction", () => {
     testStore = createAppStore();
   });
 
-  it("view가 active면 복구/영구 삭제 버튼은 없다", () => {
-    renderAction({ product: buildProduct(), view: "active" });
+  it("softDeleted가 false면 복구/영구 삭제 버튼은 없다", () => {
+    renderAction({ product: buildProduct(), softDeleted: false });
 
     expect(screen.queryByText("복구")).not.toBeInTheDocument();
     expect(screen.queryByText("영구 삭제")).not.toBeInTheDocument();
@@ -99,7 +99,7 @@ describe("ProductTableRowAction", () => {
   it("수정 버튼을 누르면 상품과 목록 갱신 callback으로 편집 모달을 연다", async () => {
     const user = userEvent.setup();
     const product = buildProduct();
-    renderAction({ product, view: "active" });
+    renderAction({ product, softDeleted: false });
 
     await user.click(screen.getByRole("button", { name: "상품 수정" }));
 
@@ -109,8 +109,8 @@ describe("ProductTableRowAction", () => {
     });
   });
 
-  it("view가 trash면 복구/영구 삭제 버튼을 렌더링한다", () => {
-    renderAction({ product: buildProduct(), view: "trash" });
+  it("softDeleted가 true면 복구/영구 삭제 버튼을 렌더링한다", () => {
+    renderAction({ product: buildProduct(), softDeleted: true });
 
     expect(screen.getByText("복구")).toBeInTheDocument();
     expect(screen.getByText("영구 삭제")).toBeInTheDocument();
@@ -123,7 +123,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 성공적으로 복구되었습니다." },
     });
 
-    renderAction({ product: buildProduct(), view: "trash" });
+    renderAction({ product: buildProduct(), softDeleted: true });
 
     await user.click(screen.getByRole("button", { name: "복구" }));
 
@@ -146,7 +146,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 성공적으로 삭제되었습니다." },
     });
 
-    renderAction({ product: buildProduct(), view: "active" });
+    renderAction({ product: buildProduct(), softDeleted: false });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
 
@@ -163,7 +163,7 @@ describe("ProductTableRowAction", () => {
 
   it("삭제를 취소하면 deleteProduct를 호출하지 않는다", async () => {
     const user = userEvent.setup();
-    renderAction({ product: buildProduct(), view: "active" });
+    renderAction({ product: buildProduct(), softDeleted: false });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
     await user.click(dialogButton("취소"));
@@ -179,7 +179,7 @@ describe("ProductTableRowAction", () => {
       error: { category: "INTERNAL", message: "삭제에 실패했습니다." },
     });
 
-    renderAction({ product: buildProduct(), view: "active" });
+    renderAction({ product: buildProduct(), softDeleted: false });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
     await user.click(dialogButton("삭제"));
@@ -199,7 +199,7 @@ describe("ProductTableRowAction", () => {
     vi.mocked(deleteProduct).mockReturnValue(deferred.promise);
     const user = userEvent.setup();
 
-    renderAction({ product: buildProduct(), view: "active" });
+    renderAction({ product: buildProduct(), softDeleted: false });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
     await user.click(dialogButton("삭제"));
@@ -219,7 +219,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 영구적으로 삭제되었습니다." },
     });
 
-    renderAction({ product: buildProduct(), view: "trash" });
+    renderAction({ product: buildProduct(), softDeleted: true });
 
     await user.click(screen.getByRole("button", { name: "영구 삭제" }));
 

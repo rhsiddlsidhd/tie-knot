@@ -51,7 +51,7 @@ describe("ProductTableRow", () => {
         <tbody>
           <ProductTableRow
             product={buildProduct()}
-            view="active"
+            softDeleted={false}
             onRefreshed={vi.fn()}
           />
         </tbody>
@@ -71,7 +71,7 @@ describe("ProductTableRow", () => {
         <tbody>
           <ProductTableRow
             product={buildProduct({ isPremium: true, isFeatured: true })}
-            view="active"
+            softDeleted={false}
             onRefreshed={vi.fn()}
           />
         </tbody>
@@ -88,7 +88,7 @@ describe("ProductTableRow", () => {
         <tbody>
           <ProductTableRow
             product={buildProduct()}
-            view="active"
+            softDeleted={false}
             onRefreshed={vi.fn()}
           />
         </tbody>
@@ -105,7 +105,7 @@ describe("ProductTableRow", () => {
         <tbody>
           <ProductTableRow
             product={buildProduct()}
-            view="active"
+            softDeleted={false}
             onRefreshed={vi.fn()}
           />
         </tbody>
@@ -123,13 +123,13 @@ describe("ProductTableRow", () => {
     ]);
   });
 
-  it("휴지통 view면 상태 칸에 삭제 배지와 삭제일을 렌더링한다", () => {
+  it("softDeleted면 상태 칸에 삭제 배지와 삭제일을 렌더링한다", () => {
     render(
       <table>
         <tbody>
           <ProductTableRow
             product={buildProduct({ deletedAt: "2026-09-10T03:00:00.000Z" })}
-            view="trash"
+            softDeleted
             onRefreshed={vi.fn()}
           />
         </tbody>

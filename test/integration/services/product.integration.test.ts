@@ -446,9 +446,9 @@ describe("product", () => {
         expect(result.items).toEqual([]);
       });
 
-      // 검색과 view(trash)가 각자 $or를 쓰면 서로를 덮어쓴다 — 둘이 동시에 걸렸을
+      // 검색과 softDeleted(true)가 각자 $or를 쓰면 서로를 덮어쓴다 — 둘이 동시에 걸렸을
       // 때 전부 적용되는지가 이 계약의 핵심이다.
-      it("검색어와 view(trash)를 함께 적용한다", async () => {
+      it("검색어와 softDeleted(true)를 함께 적용한다", async () => {
         const target = await createTitled("삭제될 청첩장");
         await deleteProductService(target!._id.toString());
         await createTitled("삭제안된 청첩장");
@@ -457,7 +457,7 @@ describe("product", () => {
 
         const result = await getAdminProductsPageService({
           q: "청첩장",
-          view: "trash",
+          softDeleted: true,
         });
 
         expect(result.items.map((p) => p.title)).toEqual(["삭제될 청첩장"]);
@@ -563,13 +563,15 @@ describe("product", () => {
       expect(paged.sort()).toEqual([...created].sort());
     });
 
-    it("view가 trash면 소프트 삭제된 상품만, 기본값은 삭제되지 않은 상품만 포함한다", async () => {
+    it("softDeleted가 true면 소프트 삭제된 상품만, 기본값은 삭제되지 않은 상품만 포함한다", async () => {
       const active = await createAndFetch("정상상품");
       const trashed = await createAndFetch("삭제될상품");
       await deleteProductService(trashed!._id.toString());
 
       const activeResult = await getAdminProductsPageService({});
-      const trashResult = await getAdminProductsPageService({ view: "trash" });
+      const trashResult = await getAdminProductsPageService({
+        softDeleted: true,
+      });
 
       expect(activeResult.items.map((p) => p._id)).toEqual([
         active!._id.toString(),
@@ -579,7 +581,7 @@ describe("product", () => {
       ]);
     });
 
-    it("view 필터와 offset 페이지를 동시에 적용한다", async () => {
+    it("softDeleted 스위치와 offset 페이지를 동시에 적용한다", async () => {
       const products = [];
       for (let i = 0; i < 3; i += 1) {
         const product = await createAndFetch(`상품${i}`);
@@ -760,9 +762,9 @@ describe("product", () => {
         { $set: { deletedAt: new Date("2026-02-01") } },
       );
 
-      const defaults = await getAdminProductsPageService({ view: "trash" });
+      const defaults = await getAdminProductsPageService({ softDeleted: true });
       const asc = await getAdminProductsPageService({
-        view: "trash",
+        softDeleted: true,
         sort: "deletedAt",
         direction: "asc",
       });

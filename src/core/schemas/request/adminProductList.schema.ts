@@ -1,8 +1,8 @@
 import * as z from "zod";
 import {
   ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_SOFT_DELETED_VALUES,
   ADMIN_PRODUCT_TYPE_FILTERS,
-  ADMIN_PRODUCT_VIEWS,
   EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
 import { emptyToUndefined, OffsetListRequestSchema } from "./offsetList.schema";
@@ -12,9 +12,12 @@ const AdminProductListRequestSchema = OffsetListRequestSchema.extend({
     emptyToUndefined,
     z.enum(ADMIN_PRODUCT_SORT_KEYS).optional(),
   ),
-  view: z.preprocess(
+  softDeleted: z.preprocess(
     emptyToUndefined,
-    z.enum(ADMIN_PRODUCT_VIEWS).default("active"),
+    z
+      .enum(ADMIN_PRODUCT_SOFT_DELETED_VALUES)
+      .transform((value) => value === "true")
+      .default(false),
   ),
   status: z.preprocess(
     emptyToUndefined,
