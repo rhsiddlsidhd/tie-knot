@@ -113,6 +113,48 @@ describe("SearchInputBar", () => {
     expect(onSearch).not.toHaveBeenCalled();
   });
 
+  it("debounce 도중 onSearch가 바뀌면 마지막 onSearch로 한 번만 검색한다", () => {
+    vi.useFakeTimers();
+    const previousOnSearch = vi.fn();
+    const nextOnSearch = vi.fn();
+    const { rerender } = render(
+      <SearchInputBar value="" label="상품 검색" onSearch={previousOnSearch} />,
+    );
+
+    fireEvent.change(screen.getByRole("searchbox", { name: "상품 검색" }), {
+      target: { value: "카드" },
+    });
+    rerender(
+      <SearchInputBar value="" label="상품 검색" onSearch={nextOnSearch} />,
+    );
+    act(() => vi.advanceTimersByTime(300));
+
+    expect(previousOnSearch).not.toHaveBeenCalled();
+    expect(nextOnSearch).toHaveBeenCalledOnce();
+    expect(nextOnSearch).toHaveBeenCalledWith("카드");
+  });
+
+  // 외부에서 검색어가 지워진 직후(뒤로 가기 등) 300ms 안에 다른 URL 변경으로
+  // onSearch가 다시 바뀌어도, debounce가 아직 들고 있는 이전 검색어를 보내지 않는다.
+  it("외부에서 검색어가 지워진 뒤 onSearch가 바뀌어도 이전 검색어를 다시 보내지 않는다", () => {
+    vi.useFakeTimers();
+    const onSearch = vi.fn();
+    const { rerender } = render(
+      <SearchInputBar value="카드" label="상품 검색" onSearch={vi.fn()} />,
+    );
+
+    rerender(<SearchInputBar value="" label="상품 검색" onSearch={vi.fn()} />);
+    rerender(
+      <SearchInputBar value="" label="상품 검색" onSearch={onSearch} />,
+    );
+    act(() => vi.advanceTimersByTime(300));
+
+    expect(screen.getByRole("searchbox", { name: "상품 검색" })).toHaveValue(
+      "",
+    );
+    expect(onSearch).not.toHaveBeenCalled();
+  });
+
   it("Enter 입력으로 폼 제출이 전파되지 않는다", async () => {
     const onSearch = vi.fn();
     const onSubmit = vi.fn((event: FormEvent) => event.preventDefault());

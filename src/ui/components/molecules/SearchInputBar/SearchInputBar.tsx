@@ -24,15 +24,22 @@ const SearchInputBar = ({
   const inputId = useId();
   const [inputValue, setInputValue] = useState(value);
   const lastSearchValue = useRef(value);
+  const onSearchRef = useRef(onSearch);
   const debouncedValue = useDebouncedValue(inputValue, SEARCH_DEBOUNCE_MS);
+
+  // onSearch는 URL이 바뀔 때마다 새 함수로 올 수 있다 — effect 의존성에 두면
+  // debounce가 아직 들고 있는 이전 값으로 검색이 다시 실행된다.
+  useEffect(() => {
+    onSearchRef.current = onSearch;
+  }, [onSearch]);
 
   useEffect(() => {
     const nextValue = debouncedValue.trim();
     if (nextValue === lastSearchValue.current) return;
 
     lastSearchValue.current = nextValue;
-    onSearch(nextValue);
-  }, [debouncedValue, onSearch]);
+    onSearchRef.current(nextValue);
+  }, [debouncedValue]);
 
   useEffect(() => {
     if (value === lastSearchValue.current) return;
