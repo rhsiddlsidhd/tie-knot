@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
@@ -79,6 +79,88 @@ describe("writeTurnSnapshot / readTurnSnapshot / computeTurnChanges", () => {
 
   it("스냅샷이 없으면 null을 반환한다", () => {
     expect(computeTurnChanges("no-such-session")).toBeNull();
+  });
+});
+
+describe("computeTurnChanges — 턴 중 HEAD 이동", () => {
+  // 메인 저장소 HEAD 를 건드리지 않도록 격리된 임시 저장소에서 커밋·checkout 을 재현한다.
+  // 턴 시작 전 커밋은 committer date 를 과거로 고정해 "pull 로 받은 남의 커밋"을 흉내 낸다.
+  const OLD_DATE = "2020-01-01T00:00:00Z";
+  let repoDir;
+
+  function repoGit(args, env = {}) {
+    return execFileSync(
+      "git",
+      [
+        "-c",
+        "user.name=probe",
+        "-c",
+        "user.email=probe@example.com",
+        "-c",
+        "commit.gpgsign=false",
+        "-c",
+        "core.hooksPath=/dev/null",
+        ...args,
+      ],
+      { cwd: repoDir, encoding: "utf8", env: { ...process.env, ...env } },
+    );
+  }
+
+  function commitFile(relPath, content, env) {
+    fs.mkdirSync(path.dirname(path.join(repoDir, relPath)), {
+      recursive: true,
+    });
+    fs.writeFileSync(path.join(repoDir, relPath), content);
+    repoGit(["add", relPath]);
+    repoGit(["commit", "-q", "-m", `touch ${relPath}`], env);
+  }
+
+  const oldCommit = {
+    GIT_AUTHOR_DATE: OLD_DATE,
+    GIT_COMMITTER_DATE: OLD_DATE,
+  };
+
+  beforeEach(() => {
+    repoDir = fs.realpathSync(
+      fs.mkdtempSync(path.join(os.tmpdir(), "tdd-gate-head-")),
+    );
+    repoGit(["init", "-q", "-b", "base"]);
+    commitFile("src/base.ts", "export const base = 1;\n", oldCommit);
+    resolveRootFromCwd(repoDir);
+  });
+
+  afterEach(() => {
+    resolveRootFromCwd(MAIN_ROOT);
+    fs.rmSync(repoDir, { recursive: true, force: true });
+  });
+
+  it("턴 안에서 만든 커밋의 src/ 변경은 잡는다", () => {
+    writeTurnSnapshot(SESSION_ID);
+
+    commitFile("src/edited.ts", "export const edited = 1;\n");
+
+    expect(computeTurnChanges(SESSION_ID)).toEqual(["src/edited.ts"]);
+  });
+
+  it("턴 시작 전에 만들어진 커밋을 fast-forward로 받아오면 잡지 않는다", () => {
+    repoGit(["checkout", "-q", "-b", "upstream"]);
+    commitFile("src/pulled.ts", "export const pulled = 1;\n", oldCommit);
+    repoGit(["checkout", "-q", "base"]);
+    writeTurnSnapshot(SESSION_ID);
+
+    repoGit(["merge", "-q", "--ff-only", "upstream"]);
+
+    expect(computeTurnChanges(SESSION_ID)).toEqual([]);
+  });
+
+  it("스냅샷에 있던 커밋이 빠진 브랜치로 checkout하면 잡지 않는다", () => {
+    repoGit(["checkout", "-q", "-b", "ahead"]);
+    commitFile("src/ahead-only.ts", "export const ahead = 1;\n", oldCommit);
+    writeTurnSnapshot(SESSION_ID);
+
+    repoGit(["checkout", "-q", "base"]);
+
+    expect(computeTurnChanges(SESSION_ID)).toEqual([]);
   });
 });
 

@@ -108,18 +108,25 @@ function gitDirtySrcHashes() {
   return hashes;
 }
 
-/** snapshotHead 이후 커밋된 src/ 변경 경로. */
-function gitChangedSrcSince(snapshotHead) {
+/**
+ * snapshotHead 이후 HEAD 에 새로 들어온 커밋 중 startedAt(unix 초) 이후 만든 커밋의 src/ 변경 경로.
+ * 트리 diff 가 아니라 커밋 단위로 보는 이유: pull·checkout 으로 HEAD 가 옮겨가면 턴 안에서
+ * 편집하지 않은 파일까지 트리 차이로 잡힌다. 턴 시작 전에 만들어진 커밋(pull 로 받은 커밋)과
+ * HEAD 에서 빠진 커밋(과거 브랜치로 checkout)은 이번 턴의 편집이 아니다.
+ */
+function gitChangedSrcSince(snapshotHead, startedAt) {
   if (!snapshotHead) return [];
   const out = git([
-    "diff",
+    "log",
+    "--format=",
     "--name-only",
+    ...(startedAt ? [`--since=@${startedAt}`] : []),
     `${snapshotHead}..HEAD`,
     "--",
     "src",
   ]);
   if (!out) return [];
-  return out.split("\n").filter(Boolean).map(toPosix);
+  return [...new Set(out.split("\n").filter(Boolean).map(toPosix))];
 }
 
 function writeTurnSnapshot(sessionId) {
@@ -134,7 +141,12 @@ function writeTurnSnapshot(sessionId) {
       // 읽을 수 없는 dirty 파일은 hash만 남기고 format-only 판정은 fail-closed 한다.
     }
   }
-  const snapshot = { head: gitHead(), hashes, contents };
+  const snapshot = {
+    head: gitHead(),
+    startedAt: Math.floor(Date.now() / 1000),
+    hashes,
+    contents,
+  };
   fs.writeFileSync(snapshotFile(sessionId), JSON.stringify(snapshot));
 }
 
@@ -162,7 +174,9 @@ function computeTurnChanges(sessionId) {
 
   const currentHead = gitHead();
   if (snapshot.head && currentHead && snapshot.head !== currentHead) {
-    for (const rel of gitChangedSrcSince(snapshot.head)) changed.add(rel);
+    for (const rel of gitChangedSrcSince(snapshot.head, snapshot.startedAt)) {
+      changed.add(rel);
+    }
   }
 
   return [...changed];
