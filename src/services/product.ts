@@ -74,8 +74,20 @@ const transformProduct = (
   product: LeanProduct,
   userId?: string,
 ): ProductJson => {
-  const { deletedAt, _id, featureIds, likes, createdAt, updatedAt, ...rest } =
-    product;
+  const {
+    deletedAt,
+    _id,
+    featureIds,
+    likes,
+    createdAt,
+    updatedAt,
+    // likesCount는 좋아요 토글이 likes 배열과 함께 원자적으로 갱신하는 내부 비정규화
+    // 카운터다(src/models/product.model.ts) — ProductJson엔 없는 필드라 spread에
+    // 섞여 나가지 않도록 여기서 제외한다.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    likesCount: _likesCount,
+    ...rest
+  } = product;
 
   return {
     ...rest,

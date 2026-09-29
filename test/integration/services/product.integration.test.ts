@@ -188,6 +188,18 @@ describe("product", () => {
       expect(result?.minQuantity).toBe(1);
       expect(result?.maxQuantity).toBe(0);
     });
+
+    it("likesCount 내부 카운터 필드가 응답에 섞여 나가지 않는다", async () => {
+      const input = buildProductInput();
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      const userId = new mongoose.Types.ObjectId().toString();
+      await updateProductLikeService(saved!._id.toString(), userId);
+
+      const result = await getProductService(saved!._id.toString());
+
+      expect(result).not.toHaveProperty("likesCount");
+    });
   });
 
   describe("updateProductLikeService", () => {
