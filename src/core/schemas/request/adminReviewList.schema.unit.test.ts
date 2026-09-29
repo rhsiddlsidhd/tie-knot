@@ -39,4 +39,21 @@ describe("AdminReviewListRequestSchema", () => {
   it("허용되지 않은 sort를 거부한다", () => {
     expect(parse({ sort: "content" }).success).toBe(false);
   });
+
+  it("rating 필터를 숫자로 정규화한다", () => {
+    const result = parse({ rating: "4" });
+
+    expect(result.success && result.data.rating).toBe(4);
+  });
+
+  it("범위를 벗어난 rating을 거부한다", () => {
+    expect(parse({ rating: "0" }).success).toBe(false);
+    expect(parse({ rating: "6" }).success).toBe(false);
+  });
+
+  it("빈 rating은 조건 없음으로 정규화한다", () => {
+    expect(
+      parse({ rating: "" }).success && parse({ rating: "" }).data.rating,
+    ).toBeUndefined();
+  });
 });

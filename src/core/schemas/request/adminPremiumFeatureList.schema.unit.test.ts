@@ -31,4 +31,17 @@ describe("AdminPremiumFeatureListRequestSchema", () => {
       AdminPremiumFeatureListRequestSchema.safeParse({ sort: "code" }).success,
     ).toBe(false);
   });
+
+  it("status 필터를 통과시킨다", () => {
+    expect(
+      AdminPremiumFeatureListRequestSchema.parse({ status: "inactive" }),
+    ).toMatchObject({ status: "inactive" });
+  });
+
+  it("허용되지 않은 status를 거부한다", () => {
+    expect(
+      AdminPremiumFeatureListRequestSchema.safeParse({ status: "pending" })
+        .success,
+    ).toBe(false);
+  });
 });

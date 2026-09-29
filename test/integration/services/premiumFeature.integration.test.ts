@@ -206,6 +206,29 @@ describe("premiumFeature", () => {
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
 
+    it("status=active면 활성 기능만, status=inactive면 비활성 기능만 좁힌다", async () => {
+      const active = await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "ACTIVE_1", isActive: true }),
+      );
+      const inactive = await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "INACTIVE_1", isActive: false }),
+      );
+
+      const activeResult = await getAdminPremiumFeaturesPageService({
+        status: "active",
+      });
+      const inactiveResult = await getAdminPremiumFeaturesPageService({
+        status: "inactive",
+      });
+
+      expect(activeResult.items.map((f) => f._id)).toEqual([
+        active._id.toString(),
+      ]);
+      expect(inactiveResult.items.map((f) => f._id)).toEqual([
+        inactive._id.toString(),
+      ]);
+    });
+
     it.each(["createdAt", "label", "additionalPrice"] as const)(
       "%s를 양방향 정렬한다",
       async (sort) => {

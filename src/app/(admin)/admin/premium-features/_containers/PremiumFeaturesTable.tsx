@@ -6,6 +6,7 @@ import { Badge } from "@/ui/components/ui/badge";
 import { Button } from "@/ui/components/ui/button";
 import { TableCell, TableRow } from "@/ui/components/ui/table";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
+import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -13,17 +14,25 @@ import type {
   AdminPremiumFeatureSortKey,
   PremiumFeature,
 } from "@/core/domain/premium-feature";
-import { ADMIN_PREMIUM_FEATURE_SORT_KEYS } from "@/core/domain/premium-feature";
+import {
+  ADMIN_PREMIUM_FEATURE_SORT_KEYS,
+  ADMIN_PREMIUM_FEATURE_STATUS_FILTERS,
+} from "@/core/domain/premium-feature";
 import { formatKstDate } from "@/core/utils/date";
 import { ROUTES } from "@/core/domain/routes";
+import { STATUS_FILTER_OPTIONS } from "@/app/(admin)/admin/premium-features/_constants/filterOptions";
 import { PREMIUM_FEATURE_TABLE_COLUMNS } from "@/app/(admin)/admin/premium-features/_constants/tableColumns";
 import { PremiumFeatureRowAction } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureRowAction";
 
 const PremiumFeaturesTable = () => {
-  const table = useOffsetList<PremiumFeature, AdminPremiumFeatureSortKey>({
+  const table = useOffsetList<
+    PremiumFeature,
+    AdminPremiumFeatureSortKey,
+    { status: typeof ADMIN_PREMIUM_FEATURE_STATUS_FILTERS }
+  >({
     endpoint: "/api/admin/premium-features",
     sortKeys: ADMIN_PREMIUM_FEATURE_SORT_KEYS,
-    params: {},
+    params: { status: ADMIN_PREMIUM_FEATURE_STATUS_FILTERS },
   });
   const refresh = () => {
     void table.mutate();
@@ -76,6 +85,14 @@ const PremiumFeaturesTable = () => {
             </TableCell>
           </TableRow>
         )}
+        toolbar={
+          <FilterToggleGroup
+            label="상태 필터"
+            options={STATUS_FILTER_OPTIONS}
+            value={table.params.status}
+            onValueChange={(value) => table.setParam("status", value)}
+          />
+        }
         sortState={table.sortState}
         onSort={table.toggleSort}
         search={{

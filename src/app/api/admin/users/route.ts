@@ -19,6 +19,7 @@ const GET = async (
       limit: searchParams.get("limit"),
       q: searchParams.get("q"),
       role: searchParams.get("role"),
+      status: searchParams.get("status"),
       sort: searchParams.get("sort"),
       direction: searchParams.get("direction"),
     });

@@ -200,6 +200,25 @@ ProductSchema.index({
 // 커버하는 패턴).
 ProductSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
 
+// 관리자 상품 목록의 status/type(isPremium|isFeatured) 필터 전용 — 위 admin cursor
+// index와 동일하게 equality 필드(deletedAt + 필터 1개)를 앞에, 기본 정렬(createdAt/_id)을
+// 뒤에 둔다. 세 인덱스는 필터 1개짜리 조회만 커버한다 — status+type을 동시에 거는
+// 조합은 이번 스코프 밖(#389에 그런 UI 없음)이라 만들지 않는다.
+ProductSchema.index({ deletedAt: 1, status: 1, createdAt: -1, _id: -1 });
+ProductSchema.index({ deletedAt: 1, isPremium: 1, createdAt: -1, _id: -1 });
+ProductSchema.index({ deletedAt: 1, isFeatured: 1, createdAt: -1, _id: -1 });
+
+// 기능-상품 연결 목록(getFeatureProductBindingsPageService)의 attached 필터 전용.
+// featureIds가 multikey라 같은 index에 array 필드는 이것 하나까지만 둘 수 있다
+// (MongoDB 제약) — isPremium/deletedAt은 scalar라 함께 둬도 문제없다.
+ProductSchema.index({
+  isPremium: 1,
+  deletedAt: 1,
+  featureIds: 1,
+  createdAt: -1,
+  _id: -1,
+});
+
 // Home 인기 상품 섹션(getPopularProductsService) 전용 — deletedAt/status는 equality,
 // likesCount는 $gt 필터와 정렬을 겸하고, 나머지는 정렬 전용 필드다(위 공개 목록
 // index들과 동일하게 equality → range/sort → 나머지 sort 순서를 따른다).

@@ -217,6 +217,8 @@ const incrementProductViewsService = async (
 
 type AdminProductListQuery = {
   view?: "active" | "trash";
+  status?: EditableProductStatus;
+  type?: "premium" | "featured";
   q?: string;
   page?: number;
   limit?: number;
@@ -230,6 +232,8 @@ type AdminProductListQuery = {
  */
 const getAdminProductsPageService = async ({
   view = "active",
+  status,
+  type,
   q,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
@@ -250,6 +254,15 @@ const getAdminProductsPageService = async ({
 
   const filter: Record<string, unknown> =
     view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
+
+  if (status) {
+    filter.status = status;
+  }
+  if (type === "premium") {
+    filter.isPremium = true;
+  } else if (type === "featured") {
+    filter.isFeatured = true;
+  }
 
   const conditions: Record<string, unknown>[] = [];
 
@@ -301,6 +314,7 @@ const getAdminProductsPageService = async ({
 
 type FeatureProductBindingsQuery = {
   featureId: string;
+  attached?: "attached" | "unattached";
   q?: string;
   page?: number;
   limit?: number;
@@ -326,6 +340,7 @@ type LeanBindableProduct = {
  */
 const getFeatureProductBindingsPageService = async ({
   featureId,
+  attached,
   q,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
@@ -348,6 +363,12 @@ const getFeatureProductBindingsPageService = async ({
     isPremium: true,
     deletedAt: null,
   };
+
+  if (attached === "attached") {
+    filter.featureIds = new mongoose.Types.ObjectId(featureId);
+  } else if (attached === "unattached") {
+    filter.featureIds = { $ne: new mongoose.Types.ObjectId(featureId) };
+  }
 
   const term = q?.trim();
   if (term) {

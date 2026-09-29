@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -10,7 +10,11 @@ vi.mock("@/ui/hooks/useOffsetList", () => ({
   useOffsetList: useOffsetListMock,
 }));
 
-import { ADMIN_USER_SORT_KEYS, USER_ROLES } from "@/core/domain/user";
+import {
+  ADMIN_USER_SORT_KEYS,
+  ADMIN_USER_STATUS_FILTERS,
+  USER_ROLES,
+} from "@/core/domain/user";
 import { AdminUsersTable } from "./AdminUsersTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -32,7 +36,10 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: { role: null } as { role: string | null },
+  params: { role: null, status: null } as {
+    role: string | null;
+    status: string | null;
+  },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -52,7 +59,7 @@ describe("AdminUsersTable", () => {
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/users",
       sortKeys: ADMIN_USER_SORT_KEYS,
-      params: { role: USER_ROLES },
+      params: { role: USER_ROLES, status: ADMIN_USER_STATUS_FILTERS },
     });
     expect(
       screen.getByRole("heading", { name: "사용자 관리" }),
@@ -60,8 +67,8 @@ describe("AdminUsersTable", () => {
     expect(
       screen.getAllByRole("columnheader").map((header) => header.textContent),
     ).toEqual(["이름", "이메일", "가입일", "역할", "상태", "관리"]);
-    expect(screen.getByText("minjun@example.com")).toBeInTheDocument();
-    expect(screen.getByText("활동중")).toBeInTheDocument();
+    const row = screen.getByText("minjun@example.com").closest("tr")!;
+    expect(within(row).getByText("활동중")).toBeInTheDocument();
   });
 
   it("역할 필터를 고르면 role 파라미터를 바꾸고 전체로 돌리면 지운다", async () => {
@@ -77,6 +84,17 @@ describe("AdminUsersTable", () => {
 
     expect(table.setParam).toHaveBeenNthCalledWith(1, "role", "ADMIN");
     expect(table.setParam).toHaveBeenNthCalledWith(2, "role", null);
+  });
+
+  it("상태 필터를 고르면 status 파라미터를 바꾼다", async () => {
+    const table = buildTable();
+    useOffsetListMock.mockReturnValue(table);
+    const user = userEvent.setup();
+    render(<AdminUsersTable />);
+
+    await user.click(screen.getByRole("radio", { name: "탈퇴" }));
+
+    expect(table.setParam).toHaveBeenCalledWith("status", "withdrawn");
   });
 
   it("이름·가입일 열로 정렬을 바꾼다", async () => {

@@ -14,7 +14,10 @@ vi.mock("@/actions/deletePremiumFeature", () => ({
   deletePremiumFeature: deletePremiumFeatureMock,
 }));
 
-import { ADMIN_PREMIUM_FEATURE_SORT_KEYS } from "@/core/domain/premium-feature";
+import {
+  ADMIN_PREMIUM_FEATURE_SORT_KEYS,
+  ADMIN_PREMIUM_FEATURE_STATUS_FILTERS,
+} from "@/core/domain/premium-feature";
 import { createAppStore } from "@/ui/stores/app.store";
 import type { AppStoreApi } from "@/ui/stores/app.store";
 import { StoreProvider } from "@/ui/stores/provider";
@@ -40,7 +43,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: {},
+  params: { status: null } as { status: string | null },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -72,7 +75,7 @@ describe("PremiumFeaturesTable", () => {
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/premium-features",
       sortKeys: ADMIN_PREMIUM_FEATURE_SORT_KEYS,
-      params: {},
+      params: { status: ADMIN_PREMIUM_FEATURE_STATUS_FILTERS },
     });
     expect(
       screen.getByRole("heading", { name: "프리미엄 기능 관리" }),
@@ -96,6 +99,17 @@ describe("PremiumFeaturesTable", () => {
       "관리",
     ]);
     expect(screen.getByText("+3,000원")).toBeInTheDocument();
+  });
+
+  it("상태 필터를 고르면 status 파라미터를 바꾼다", async () => {
+    const table = buildTable();
+    useOffsetListMock.mockReturnValue(table);
+    const user = userEvent.setup();
+    renderTable();
+
+    await user.click(screen.getByRole("radio", { name: "등록 중단" }));
+
+    expect(table.setParam).toHaveBeenCalledWith("status", "inactive");
   });
 
   it("기능 이름·추가 비용·등록일 열로 정렬을 바꾼다", async () => {

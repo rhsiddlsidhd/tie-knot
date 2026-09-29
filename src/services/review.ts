@@ -411,6 +411,7 @@ type LeanAdminReview = Omit<ReviewDocument, "userId" | "productId"> & {
 
 type AdminReviewsQuery = {
   q?: string;
+  rating?: number;
   page?: number;
   limit?: number;
   sort?: AdminReviewSortKey;
@@ -419,6 +420,7 @@ type AdminReviewsQuery = {
 
 const getAdminReviewsPageService = async ({
   q,
+  rating,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
   sort = "createdAt",
@@ -437,6 +439,10 @@ const getAdminReviewsPageService = async ({
   }
 
   const filter: Record<string, unknown> = {};
+
+  if (rating) {
+    filter.rating = rating;
+  }
 
   // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
   // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.

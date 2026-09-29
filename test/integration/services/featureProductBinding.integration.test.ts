@@ -90,6 +90,32 @@ describe("featureProductBinding", () => {
       ).toEqual({ "붙은 청첩장": true, "안 붙은 청첩장": false });
     });
 
+    it("attached=attached면 연결된 상품만, unattached면 연결 안 된 상품만 좁힌다", async () => {
+      await createProduct("붙은 청첩장", {
+        isPremium: true,
+        featureIds: [featureId],
+      });
+      await createProduct("안 붙은 청첩장", {
+        isPremium: true,
+      });
+
+      const attachedPage = await getFeatureProductBindingsPageService({
+        featureId,
+        attached: "attached",
+      });
+      const unattachedPage = await getFeatureProductBindingsPageService({
+        featureId,
+        attached: "unattached",
+      });
+
+      expect(attachedPage.items.map((item) => item.title)).toEqual([
+        "붙은 청첩장",
+      ]);
+      expect(unattachedPage.items.map((item) => item.title)).toEqual([
+        "안 붙은 청첩장",
+      ]);
+    });
+
     it("검색어로 상품명을 부분일치 조회한다", async () => {
       await createProduct("봄맞이 청첩장", {
         isPremium: true,

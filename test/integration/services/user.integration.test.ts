@@ -438,6 +438,46 @@ describe("user", () => {
       );
     });
 
+    it("status=active면 활동 사용자만, status=withdrawn이면 탈퇴 사용자만 좁힌다", async () => {
+      const active = await UserModel.create(
+        buildUserInput({ deletedAt: null }),
+      );
+      const withdrawn = await UserModel.create(
+        buildUserInput({ deletedAt: new Date() }),
+      );
+
+      const activeResult = await getAdminUsersPageService({
+        status: "active",
+      });
+      const withdrawnResult = await getAdminUsersPageService({
+        status: "withdrawn",
+      });
+
+      expect(activeResult.items.map((u) => u.id)).toEqual([
+        active._id.toString(),
+      ]);
+      expect(withdrawnResult.items.map((u) => u.id)).toEqual([
+        withdrawn._id.toString(),
+      ]);
+    });
+
+    it("role과 status를 동시에 적용한다", async () => {
+      const target = await UserModel.create(
+        buildUserInput({ role: "ADMIN", deletedAt: null }),
+      );
+      await UserModel.create(
+        buildUserInput({ role: "ADMIN", deletedAt: new Date() }),
+      );
+      await UserModel.create(buildUserInput({ role: "USER", deletedAt: null }));
+
+      const result = await getAdminUsersPageService({
+        role: "ADMIN",
+        status: "active",
+      });
+
+      expect(result.items.map((u) => u.id)).toEqual([target._id.toString()]);
+    });
+
     it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminUsersPageService({});
 

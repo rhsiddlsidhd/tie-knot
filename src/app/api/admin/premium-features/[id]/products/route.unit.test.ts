@@ -68,4 +68,16 @@ describe("GET /api/admin/premium-features/[id]/products", () => {
       direction: "asc",
     });
   });
+
+  it("attached 파라미터를 서비스에 그대로 전달한다", async () => {
+    await GET(request("?attached=unattached"), context());
+    expect(getFeatureProductBindingsPageService).toHaveBeenCalledWith(
+      expect.objectContaining({ attached: "unattached" }),
+    );
+  });
+
+  it("허용되지 않은 attached는 400을 반환한다", async () => {
+    expect((await GET(request("?attached=yes"), context())).status).toBe(400);
+    expect(getFeatureProductBindingsPageService).not.toHaveBeenCalled();
+  });
 });

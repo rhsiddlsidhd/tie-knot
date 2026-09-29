@@ -102,6 +102,12 @@ const ADMIN_PRODUCT_VIEWS = ["active", "trash"] as const;
 
 type AdminProductView = (typeof ADMIN_PRODUCT_VIEWS)[number];
 
+// 상품 목록 "타입" 필터 — isPremium/isFeatured 두 boolean 컬럼을 단일값 필터 하나로
+// 노출한다. 두 조건을 동시에 켜는 UI는 없다(FilterToggleGroup은 단일값 전용).
+const ADMIN_PRODUCT_TYPE_FILTERS = ["premium", "featured"] as const;
+
+type AdminProductTypeFilter = (typeof ADMIN_PRODUCT_TYPE_FILTERS)[number];
+
 type AdminProductListPage = OffsetPage<ProductJson>;
 
 type PublicProductListPage = CursorPage<ProductJson>;
@@ -161,6 +167,7 @@ export {
   PRODUCT_PRICE_OPTIONS,
   ADMIN_PRODUCT_SORT_KEYS,
   ADMIN_PRODUCT_VIEWS,
+  ADMIN_PRODUCT_TYPE_FILTERS,
   type DiscountType,
   type Discount,
   type ProductStatus,
@@ -170,6 +177,7 @@ export {
   type AdminProductListPage,
   type AdminProductSortKey,
   type AdminProductView,
+  type AdminProductTypeFilter,
   type PublicProductListPage,
   type ProductSortType,
   type ProductPriceType,

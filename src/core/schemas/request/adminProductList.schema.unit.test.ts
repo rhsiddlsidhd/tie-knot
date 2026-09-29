@@ -44,6 +44,31 @@ describe("AdminProductListRequestSchema", () => {
     expect(parse({ view: "NOT_A_VIEW" }).success).toBe(false);
   });
 
+  it("status·type 필터를 함께 통과시킨다", () => {
+    const result = parse({ status: "inactive", type: "premium" });
+
+    expect(result.success && result.data).toMatchObject({
+      status: "inactive",
+      type: "premium",
+    });
+  });
+
+  it("허용되지 않은 status를 거부한다", () => {
+    expect(parse({ status: "deleted" }).success).toBe(false);
+    expect(parse({ status: "NOT_A_STATUS" }).success).toBe(false);
+  });
+
+  it("허용되지 않은 type을 거부한다", () => {
+    expect(parse({ type: "NOT_A_TYPE" }).success).toBe(false);
+  });
+
+  it("빈 status·type은 조건 없음으로 정규화한다", () => {
+    const result = parse({ status: "", type: "" });
+
+    expect(result.success && result.data.status).toBeUndefined();
+    expect(result.success && result.data.type).toBeUndefined();
+  });
+
   it("page·limit·sort·direction을 정규화한다", () => {
     const result = parse({
       page: "2",

@@ -7,9 +7,16 @@ import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminUserListItem, AdminUserSortKey } from "@/core/domain/user";
-import { ADMIN_USER_SORT_KEYS, USER_ROLES } from "@/core/domain/user";
+import {
+  ADMIN_USER_SORT_KEYS,
+  ADMIN_USER_STATUS_FILTERS,
+  USER_ROLES,
+} from "@/core/domain/user";
 import { formatKstDate } from "@/core/utils/date";
-import { ROLE_FILTER_OPTIONS } from "@/app/(admin)/admin/users/_constants/filterOptions";
+import {
+  ROLE_FILTER_OPTIONS,
+  STATUS_FILTER_OPTIONS,
+} from "@/app/(admin)/admin/users/_constants/filterOptions";
 import { USER_ROLE_LABELS } from "@/app/(admin)/admin/users/_constants/labels";
 import { USER_TABLE_COLUMNS } from "@/app/(admin)/admin/users/_constants/tableColumns";
 import { UserActionsMenu } from "@/app/(admin)/admin/users/_components/UserActionsMenu";
@@ -18,11 +25,11 @@ const AdminUsersTable = () => {
   const table = useOffsetList<
     AdminUserListItem,
     AdminUserSortKey,
-    { role: typeof USER_ROLES }
+    { role: typeof USER_ROLES; status: typeof ADMIN_USER_STATUS_FILTERS }
   >({
     endpoint: "/api/admin/users",
     sortKeys: ADMIN_USER_SORT_KEYS,
-    params: { role: USER_ROLES },
+    params: { role: USER_ROLES, status: ADMIN_USER_STATUS_FILTERS },
   });
 
   return (
@@ -48,12 +55,20 @@ const AdminUsersTable = () => {
           </TableRow>
         )}
         toolbar={
-          <FilterToggleGroup
-            label="역할 필터"
-            options={ROLE_FILTER_OPTIONS}
-            value={table.params.role}
-            onValueChange={(value) => table.setParam("role", value)}
-          />
+          <div className="flex flex-wrap gap-4">
+            <FilterToggleGroup
+              label="역할 필터"
+              options={ROLE_FILTER_OPTIONS}
+              value={table.params.role}
+              onValueChange={(value) => table.setParam("role", value)}
+            />
+            <FilterToggleGroup
+              label="상태 필터"
+              options={STATUS_FILTER_OPTIONS}
+              value={table.params.status}
+              onValueChange={(value) => table.setParam("status", value)}
+            />
+          </div>
         }
         sortState={table.sortState}
         onSort={table.toggleSort}

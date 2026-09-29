@@ -33,6 +33,7 @@ const GET = async (
       q: searchParams.get("q"),
       sort: searchParams.get("sort"),
       direction: searchParams.get("direction"),
+      attached: searchParams.get("attached"),
     });
     if (!parsed.success) {
       throw new AppError("VALIDATION", "요청 값을 확인해주세요.", parsed.error);

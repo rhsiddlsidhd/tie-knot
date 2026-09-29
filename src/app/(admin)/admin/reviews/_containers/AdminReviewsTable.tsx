@@ -1,6 +1,7 @@
 "use client";
 
 import { TableCell, TableRow } from "@/ui/components/ui/table";
+import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import { ListPage } from "@/ui/components/templates/ListPage";
@@ -11,14 +12,22 @@ import type {
 } from "@/core/domain/review";
 import { ADMIN_REVIEW_SORT_KEYS } from "@/core/domain/review";
 import { formatKstDate } from "@/core/utils/date";
+import {
+  RATING_FILTER_OPTIONS,
+  RATING_FILTER_VALUES,
+} from "@/app/(admin)/admin/reviews/_constants/filterOptions";
 import { REVIEW_TABLE_COLUMNS } from "@/app/(admin)/admin/reviews/_constants/tableColumns";
 import { ReviewDeleteButton } from "@/app/(admin)/admin/reviews/_containers/ReviewDeleteButton";
 
 const AdminReviewsTable = () => {
-  const table = useOffsetList<AdminReviewListItem, AdminReviewSortKey>({
+  const table = useOffsetList<
+    AdminReviewListItem,
+    AdminReviewSortKey,
+    { rating: typeof RATING_FILTER_VALUES }
+  >({
     endpoint: "/api/admin/reviews",
     sortKeys: ADMIN_REVIEW_SORT_KEYS,
-    params: {},
+    params: { rating: RATING_FILTER_VALUES },
   });
   const refresh = () => {
     void table.mutate();
@@ -51,6 +60,14 @@ const AdminReviewsTable = () => {
             </TableCell>
           </TableRow>
         )}
+        toolbar={
+          <FilterToggleGroup
+            label="평점 필터"
+            options={RATING_FILTER_OPTIONS}
+            value={table.params.rating}
+            onValueChange={(value) => table.setParam("rating", value)}
+          />
+        }
         sortState={table.sortState}
         onSort={table.toggleSort}
         search={{

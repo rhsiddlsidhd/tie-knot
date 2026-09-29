@@ -1,4 +1,4 @@
-import type { UserRole } from "@/core/domain/user";
+import type { AdminUserStatusFilter, UserRole } from "@/core/domain/user";
 import type { FilterToggleGroupOption } from "@/ui/components/molecules/FilterToggleGroup/FilterToggleGroup";
 import { USER_ROLE_LABELS } from "@/app/(admin)/admin/users/_constants/labels";
 
@@ -8,4 +8,12 @@ const ROLE_FILTER_OPTIONS: ReadonlyArray<FilterToggleGroupOption<UserRole>> = [
   { value: "ADMIN", label: USER_ROLE_LABELS.ADMIN },
 ];
 
-export { ROLE_FILTER_OPTIONS };
+const STATUS_FILTER_OPTIONS: ReadonlyArray<
+  FilterToggleGroupOption<AdminUserStatusFilter>
+> = [
+  { value: null, label: "전체" },
+  { value: "active", label: "활동중" },
+  { value: "withdrawn", label: "탈퇴" },
+];
+
+export { ROLE_FILTER_OPTIONS, STATUS_FILTER_OPTIONS };

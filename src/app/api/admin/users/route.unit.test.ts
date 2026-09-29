@@ -61,4 +61,17 @@ describe("GET /api/admin/users", () => {
       direction: "asc",
     });
   });
+
+  it("status 파라미터를 서비스에 그대로 전달한다", async () => {
+    vi.mocked(getAdminUsersPageService).mockResolvedValue(emptyPage);
+    await GET(request("?status=withdrawn"));
+    expect(getAdminUsersPageService).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "withdrawn" }),
+    );
+  });
+
+  it("허용되지 않은 status는 400을 반환한다", async () => {
+    expect((await GET(request("?status=banned"))).status).toBe(400);
+    expect(getAdminUsersPageService).not.toHaveBeenCalled();
+  });
 });
