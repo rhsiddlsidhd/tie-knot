@@ -307,7 +307,7 @@ describe("premiumFeature", () => {
 
       // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이
       // 조용히 무시된다 — 둘이 동시에 걸렸을 때 전부 적용되는지가 이 계약의 핵심이다.
-      it("검색어와 커서를 함께 적용한다", async () => {
+      it("검색 결과를 offset 페이지로 나눠 반환한다", async () => {
         for (let i = 0; i < 3; i += 1) {
           const feature = await FeatureModel.create(
             buildFeatureDocumentInput({
@@ -325,18 +325,19 @@ describe("premiumFeature", () => {
         const first = await getAdminPremiumFeaturesPageService({
           q: "방명록",
           limit: 2,
+          page: 1,
         });
         expect(first.items).toHaveLength(2);
-        expect(first.nextCursor).not.toBeNull();
+        expect(first).toMatchObject({ total: 3, totalPages: 2 });
 
         const second = await getAdminPremiumFeaturesPageService({
           q: "방명록",
           limit: 2,
-          cursor: first.nextCursor!,
+          page: 2,
         });
 
         expect(second.items).toHaveLength(1);
-        expect(second.nextCursor).toBeNull();
+        expect(second).toMatchObject({ total: 3, page: 2, totalPages: 2 });
         expect(
           [...first.items, ...second.items].every((f) => f.label === "방명록"),
         ).toBe(true);
