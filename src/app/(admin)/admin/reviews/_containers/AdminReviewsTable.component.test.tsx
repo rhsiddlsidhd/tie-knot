@@ -14,6 +14,7 @@ vi.mock("@/actions/deleteReviewByAdmin", () => ({
   deleteReviewByAdmin: deleteReviewByAdminMock,
 }));
 
+import { ADMIN_REVIEW_SORT_KEYS } from "@/core/domain/review";
 import { AdminReviewsTable } from "./AdminReviewsTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -54,6 +55,8 @@ describe("AdminReviewsTable", () => {
 
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/reviews",
+      sortKeys: ADMIN_REVIEW_SORT_KEYS,
+      params: {},
     });
     expect(
       screen.getByRole("heading", { name: "리뷰 관리" }),

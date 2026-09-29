@@ -22,6 +22,10 @@ vi.mock("@/actions/updateProductStatus", () => ({
 }));
 
 import type { Product } from "@/core/domain/product";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_VIEWS,
+} from "@/core/domain/product";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import { createAppStore } from "@/ui/stores/app.store";
 import type { AppStoreApi } from "@/ui/stores/app.store";
@@ -70,7 +74,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: {} as { view?: string },
+  params: { view: null } as { view: string | null },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -104,7 +108,8 @@ describe("AdminProductsTable", () => {
 
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/products",
-      params: ["view"],
+      sortKeys: ADMIN_PRODUCT_SORT_KEYS,
+      params: { view: ADMIN_PRODUCT_VIEWS },
     });
   });
 
@@ -167,7 +172,7 @@ describe("AdminProductsTable", () => {
 
     await user.click(screen.getByRole("radio", { name: "상품 목록" }));
 
-    expect(table.setParam).toHaveBeenCalledWith("view", undefined);
+    expect(table.setParam).toHaveBeenCalledWith("view", null);
   });
 
   it("상품 목록 view에서 휴지통을 고르면 view=trash로 바꾼다", async () => {

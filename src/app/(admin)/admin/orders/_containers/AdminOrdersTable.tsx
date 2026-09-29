@@ -11,17 +11,25 @@ import type {
   AdminOrderSortKey,
 } from "@/core/domain/order";
 import {
+  ADMIN_ORDER_SORT_KEYS,
   ORDER_STATUS_BADGE_VARIANTS,
   ORDER_STATUS_LABELS,
+  ORDER_STATUSES,
 } from "@/core/domain/order";
 import { formatKstDate } from "@/core/utils/date";
 import { STATUS_FILTER_OPTIONS } from "@/app/(admin)/admin/orders/_constants/filterOptions";
 import { ORDER_TABLE_COLUMNS } from "@/app/(admin)/admin/orders/_constants/tableColumns";
 
 const AdminOrdersTable = () => {
-  const table = useOffsetList<AdminOrderListItem, AdminOrderSortKey, "status">(
-    { endpoint: "/api/admin/orders", params: ["status"] },
-  );
+  const table = useOffsetList<
+    AdminOrderListItem,
+    AdminOrderSortKey,
+    { status: typeof ORDER_STATUSES }
+  >({
+    endpoint: "/api/admin/orders",
+    sortKeys: ADMIN_ORDER_SORT_KEYS,
+    params: { status: ORDER_STATUSES },
+  });
 
   return (
     <ListPage title="주문 관리">
@@ -49,10 +57,8 @@ const AdminOrdersTable = () => {
           <FilterToggleGroup
             label="주문 상태 필터"
             options={STATUS_FILTER_OPTIONS}
-            value={table.params.status ?? "ALL"}
-            onValueChange={(value) =>
-              table.setParam("status", value === "ALL" ? undefined : value)
-            }
+            value={table.params.status}
+            onValueChange={(value) => table.setParam("status", value)}
           />
         }
         sortState={table.sortState}

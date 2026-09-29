@@ -10,6 +10,7 @@ vi.mock("@/ui/hooks/useOffsetList", () => ({
   useOffsetList: useOffsetListMock,
 }));
 
+import { ADMIN_ORDER_SORT_KEYS, ORDER_STATUSES } from "@/core/domain/order";
 import { AdminOrdersTable } from "./AdminOrdersTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -32,7 +33,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: {} as { status?: string },
+  params: { status: null } as { status: string | null },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -51,7 +52,8 @@ describe("AdminOrdersTable", () => {
 
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/orders",
-      params: ["status"],
+      sortKeys: ADMIN_ORDER_SORT_KEYS,
+      params: { status: ORDER_STATUSES },
     });
     expect(
       screen.getByRole("heading", { name: "주문 관리" }),
@@ -82,7 +84,7 @@ describe("AdminOrdersTable", () => {
     await user.click(screen.getByRole("radio", { name: "전체 상태" }));
 
     expect(table.setParam).toHaveBeenNthCalledWith(1, "status", "CANCELLED");
-    expect(table.setParam).toHaveBeenNthCalledWith(2, "status", undefined);
+    expect(table.setParam).toHaveBeenNthCalledWith(2, "status", null);
   });
 
   it("금액·주문일 열로 정렬을 바꾼다", async () => {

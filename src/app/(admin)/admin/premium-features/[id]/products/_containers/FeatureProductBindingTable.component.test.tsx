@@ -14,6 +14,7 @@ vi.mock("@/actions/setProductPremiumFeature", () => ({
   setProductPremiumFeature: setProductPremiumFeatureMock,
 }));
 
+import { FEATURE_PRODUCT_BINDING_SORT_KEYS } from "@/core/domain/premium-feature";
 import { FeatureProductBindingTable } from "./FeatureProductBindingTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -61,6 +62,8 @@ describe("FeatureProductBindingTable", () => {
 
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/premium-features/feature-1/products",
+      sortKeys: FEATURE_PRODUCT_BINDING_SORT_KEYS,
+      params: {},
     });
     expect(
       screen.getByRole("heading", { name: '"갤러리 확대 보기" 연결 상품' }),

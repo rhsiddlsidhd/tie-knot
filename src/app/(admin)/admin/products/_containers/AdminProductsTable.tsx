@@ -8,6 +8,10 @@ import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminProductSortKey, Product } from "@/core/domain/product";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_VIEWS,
+} from "@/core/domain/product";
 import { ROUTES } from "@/core/domain/routes";
 import { VIEW_FILTER_OPTIONS } from "@/app/(admin)/admin/products/_constants/filterOptions";
 import {
@@ -17,11 +21,16 @@ import {
 import { ProductTableRow } from "@/app/(admin)/admin/products/_components/ProductTableRow";
 
 const AdminProductsTable = () => {
-  const table = useOffsetList<Product, AdminProductSortKey, "view">({
+  const table = useOffsetList<
+    Product,
+    AdminProductSortKey,
+    { view: typeof ADMIN_PRODUCT_VIEWS }
+  >({
     endpoint: "/api/admin/products",
-    params: ["view"],
+    sortKeys: ADMIN_PRODUCT_SORT_KEYS,
+    params: { view: ADMIN_PRODUCT_VIEWS },
   });
-  const view = table.params.view === "trash" ? "trash" : "active";
+  const view = table.params.view ?? "active";
   const isTrash = view === "trash";
   const refresh = () => {
     void table.mutate();
@@ -63,10 +72,8 @@ const AdminProductsTable = () => {
           <FilterToggleGroup
             label="상품 보기"
             options={VIEW_FILTER_OPTIONS}
-            value={view}
-            onValueChange={(value) =>
-              table.setParam("view", value === "active" ? undefined : value)
-            }
+            value={table.params.view}
+            onValueChange={(value) => table.setParam("view", value)}
           />
         }
         sortState={table.sortState}

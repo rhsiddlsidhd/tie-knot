@@ -13,6 +13,7 @@ import type {
   AdminPremiumFeatureSortKey,
   PremiumFeature,
 } from "@/core/domain/premium-feature";
+import { ADMIN_PREMIUM_FEATURE_SORT_KEYS } from "@/core/domain/premium-feature";
 import { formatKstDate } from "@/core/utils/date";
 import { ROUTES } from "@/core/domain/routes";
 import { PREMIUM_FEATURE_TABLE_COLUMNS } from "@/app/(admin)/admin/premium-features/_constants/tableColumns";
@@ -21,6 +22,8 @@ import { PremiumFeatureRowAction } from "@/app/(admin)/admin/premium-features/_c
 const PremiumFeaturesTable = () => {
   const table = useOffsetList<PremiumFeature, AdminPremiumFeatureSortKey>({
     endpoint: "/api/admin/premium-features",
+    sortKeys: ADMIN_PREMIUM_FEATURE_SORT_KEYS,
+    params: {},
   });
   const refresh = () => {
     void table.mutate();

@@ -7,6 +7,7 @@ import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminUserListItem, AdminUserSortKey } from "@/core/domain/user";
+import { ADMIN_USER_SORT_KEYS, USER_ROLES } from "@/core/domain/user";
 import { formatKstDate } from "@/core/utils/date";
 import { ROLE_FILTER_OPTIONS } from "@/app/(admin)/admin/users/_constants/filterOptions";
 import { USER_ROLE_LABELS } from "@/app/(admin)/admin/users/_constants/labels";
@@ -14,9 +15,14 @@ import { USER_TABLE_COLUMNS } from "@/app/(admin)/admin/users/_constants/tableCo
 import { UserActionsMenu } from "@/app/(admin)/admin/users/_components/UserActionsMenu";
 
 const AdminUsersTable = () => {
-  const table = useOffsetList<AdminUserListItem, AdminUserSortKey, "role">({
+  const table = useOffsetList<
+    AdminUserListItem,
+    AdminUserSortKey,
+    { role: typeof USER_ROLES }
+  >({
     endpoint: "/api/admin/users",
-    params: ["role"],
+    sortKeys: ADMIN_USER_SORT_KEYS,
+    params: { role: USER_ROLES },
   });
 
   return (
@@ -45,10 +51,8 @@ const AdminUsersTable = () => {
           <FilterToggleGroup
             label="역할 필터"
             options={ROLE_FILTER_OPTIONS}
-            value={table.params.role ?? "ALL"}
-            onValueChange={(value) =>
-              table.setParam("role", value === "ALL" ? undefined : value)
-            }
+            value={table.params.role}
+            onValueChange={(value) => table.setParam("role", value)}
           />
         }
         sortState={table.sortState}

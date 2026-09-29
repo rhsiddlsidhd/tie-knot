@@ -1,5 +1,8 @@
 import * as z from "zod";
-import { ADMIN_PRODUCT_SORT_KEYS } from "@/core/domain/product";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_VIEWS,
+} from "@/core/domain/product";
 import {
   emptyToUndefined,
   OffsetListRequestSchema,
@@ -12,7 +15,7 @@ const AdminProductListRequestSchema = OffsetListRequestSchema.extend({
   ),
   view: z.preprocess(
     emptyToUndefined,
-    z.enum(["active", "trash"]).default("active"),
+    z.enum(ADMIN_PRODUCT_VIEWS).default("active"),
   ),
 });
 

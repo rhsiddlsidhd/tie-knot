@@ -49,7 +49,11 @@ describe("ProductTableRow", () => {
     render(
       <table>
         <tbody>
-          <ProductTableRow product={buildProduct()} onRefreshed={vi.fn()} />
+          <ProductTableRow
+            product={buildProduct()}
+            view="active"
+            onRefreshed={vi.fn()}
+          />
         </tbody>
       </table>,
     );
@@ -67,6 +71,7 @@ describe("ProductTableRow", () => {
         <tbody>
           <ProductTableRow
             product={buildProduct({ isPremium: true, isFeatured: true })}
+            view="active"
             onRefreshed={vi.fn()}
           />
         </tbody>
@@ -81,7 +86,11 @@ describe("ProductTableRow", () => {
     render(
       <table>
         <tbody>
-          <ProductTableRow product={buildProduct()} onRefreshed={vi.fn()} />
+          <ProductTableRow
+            product={buildProduct()}
+            view="active"
+            onRefreshed={vi.fn()}
+          />
         </tbody>
       </table>,
     );
@@ -94,7 +103,11 @@ describe("ProductTableRow", () => {
     render(
       <table>
         <tbody>
-          <ProductTableRow product={buildProduct()} onRefreshed={vi.fn()} />
+          <ProductTableRow
+            product={buildProduct()}
+            view="active"
+            onRefreshed={vi.fn()}
+          />
         </tbody>
       </table>,
     );

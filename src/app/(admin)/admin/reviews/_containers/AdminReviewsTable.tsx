@@ -9,6 +9,7 @@ import type {
   AdminReviewListItem,
   AdminReviewSortKey,
 } from "@/core/domain/review";
+import { ADMIN_REVIEW_SORT_KEYS } from "@/core/domain/review";
 import { formatKstDate } from "@/core/utils/date";
 import { REVIEW_TABLE_COLUMNS } from "@/app/(admin)/admin/reviews/_constants/tableColumns";
 import { ReviewDeleteButton } from "@/app/(admin)/admin/reviews/_containers/ReviewDeleteButton";
@@ -16,6 +17,8 @@ import { ReviewDeleteButton } from "@/app/(admin)/admin/reviews/_containers/Revi
 const AdminReviewsTable = () => {
   const table = useOffsetList<AdminReviewListItem, AdminReviewSortKey>({
     endpoint: "/api/admin/reviews",
+    sortKeys: ADMIN_REVIEW_SORT_KEYS,
+    params: {},
   });
   const refresh = () => {
     void table.mutate();

@@ -97,6 +97,11 @@ const ADMIN_PRODUCT_SORT_KEYS = [
 
 type AdminProductSortKey = (typeof ADMIN_PRODUCT_SORT_KEYS)[number];
 
+// 관리자 상품 목록의 보기 — 서버 요청 스키마와 클라이언트 URL 파싱이 같은 값을 본다.
+const ADMIN_PRODUCT_VIEWS = ["active", "trash"] as const;
+
+type AdminProductView = (typeof ADMIN_PRODUCT_VIEWS)[number];
+
 type AdminProductListPage = OffsetPage<ProductJson>;
 
 type PublicProductListPage = CursorPage<ProductJson>;
@@ -155,6 +160,7 @@ export {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
   ADMIN_PRODUCT_SORT_KEYS,
+  ADMIN_PRODUCT_VIEWS,
   type DiscountType,
   type Discount,
   type ProductStatus,
@@ -163,6 +169,7 @@ export {
   type Product,
   type AdminProductListPage,
   type AdminProductSortKey,
+  type AdminProductView,
   type PublicProductListPage,
   type ProductSortType,
   type ProductPriceType,

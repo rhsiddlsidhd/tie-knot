@@ -10,6 +10,7 @@ vi.mock("@/ui/hooks/useOffsetList", () => ({
   useOffsetList: useOffsetListMock,
 }));
 
+import { ADMIN_USER_SORT_KEYS, USER_ROLES } from "@/core/domain/user";
 import { AdminUsersTable } from "./AdminUsersTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -31,7 +32,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: {} as { role?: string },
+  params: { role: null } as { role: string | null },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -50,7 +51,8 @@ describe("AdminUsersTable", () => {
 
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/users",
-      params: ["role"],
+      sortKeys: ADMIN_USER_SORT_KEYS,
+      params: { role: USER_ROLES },
     });
     expect(
       screen.getByRole("heading", { name: "사용자 관리" }),
@@ -74,7 +76,7 @@ describe("AdminUsersTable", () => {
     await user.click(screen.getByRole("radio", { name: "전체 역할" }));
 
     expect(table.setParam).toHaveBeenNthCalledWith(1, "role", "ADMIN");
-    expect(table.setParam).toHaveBeenNthCalledWith(2, "role", undefined);
+    expect(table.setParam).toHaveBeenNthCalledWith(2, "role", null);
   });
 
   it("이름·가입일 열로 정렬을 바꾼다", async () => {

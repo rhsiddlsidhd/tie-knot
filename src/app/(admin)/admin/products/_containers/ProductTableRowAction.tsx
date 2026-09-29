@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 const ProductTableRowAction = ({
   product,
-  view = "active",
+  view,
   onRefreshed,
 }: ProductTableRowProps) => {
   const open = useAdminModalStore((state) => state.openModal);

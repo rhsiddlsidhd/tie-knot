@@ -10,9 +10,20 @@ import type { SortState } from "@/core/utils/sort-cycle";
 import { getNextSortState } from "@/core/utils/sort-cycle";
 import { fetcher } from "@/ui/fetcher";
 
-interface UseOffsetListOptions<P extends string> {
+// 페이지 전용 URL 값 이름 → 허용값 목록. 허용값 밖의 URL 값은 null로 본다.
+type OffsetListParamSpec = Record<string, readonly string[]>;
+
+type OffsetListParams<P extends OffsetListParamSpec> = {
+  [K in keyof P]: P[K][number] | null;
+};
+
+interface UseOffsetListOptions<
+  S extends string,
+  P extends OffsetListParamSpec,
+> {
   endpoint: string;
-  params?: readonly P[];
+  sortKeys: readonly S[];
+  params: P;
 }
 
 const getPage = (value: string | null): number => {
@@ -20,33 +31,55 @@ const getPage = (value: string | null): number => {
   return Number.isInteger(page) && page >= 1 ? page : 1;
 };
 
-const useOffsetList = <T, S extends string, P extends string = string>({
+const getAllowedValue = <V extends string>(
+  value: string | null,
+  allowedValues: readonly V[],
+): V | null => {
+  const trimmedValue = value?.trim();
+  return allowedValues.find((allowed) => allowed === trimmedValue) ?? null;
+};
+
+const useOffsetList = <
+  T,
+  S extends string,
+  P extends OffsetListParamSpec = Record<never, never>,
+>({
   endpoint,
-  params: paramNames = [],
-}: UseOffsetListOptions<P>) => {
+  sortKeys,
+  params: paramSpec,
+}: UseOffsetListOptions<S, P>) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
   const page = getPage(searchParams.get("page"));
   const q = searchParams.get("q")?.trim() ?? "";
-  const sortValue = searchParams.get("sort")?.trim();
+  const sortKey = getAllowedValue(searchParams.get("sort"), sortKeys);
   const directionValue = searchParams.get("direction");
   const sortState = useMemo<SortState<S>>(
     () =>
-      sortValue
+      sortKey
         ? {
-            key: sortValue as S,
+            key: sortKey,
             direction: directionValue === "asc" ? "asc" : "desc",
           }
         : null,
-    [directionValue, sortValue],
+    [directionValue, sortKey],
   );
+  const paramNames = Object.keys(paramSpec) as (keyof P & string)[];
   const params = Object.fromEntries(
-    paramNames.map((name) => {
-      const value = searchParams.get(name)?.trim();
-      return [name, value || undefined];
-    }),
-  ) as Record<P, string | undefined>;
+    paramNames.map((name) => [
+      name,
+      getAllowedValue(searchParams.get(name), paramSpec[name]),
+    ]),
+  ) as OffsetListParams<P>;
+
+  // 허용되지 않은 URL 값은 SWR key에서 빠져 서버 기본값이 적용된다.
+  // URL은 다음 조작 때 함께 정리한다.
+  const invalidNames = [
+    ...(sortState ? [] : ["sort", "direction"]),
+    ...paramNames.filter((name) => params[name] === null),
+  ].filter((name) => searchParams.has(name));
+  const invalidKey = invalidNames.join(" ");
 
   const keyParams = new URLSearchParams();
   keyParams.set("page", String(page));
@@ -69,11 +102,12 @@ const useOffsetList = <T, S extends string, P extends string = string>({
   const createHref = useCallback(
     (update: (nextParams: URLSearchParams) => void) => {
       const nextParams = new URLSearchParams(searchParams.toString());
+      invalidKey.split(" ").forEach((name) => nextParams.delete(name));
       update(nextParams);
       const query = nextParams.toString();
       return query ? `${pathname}?${query}` : pathname;
     },
-    [pathname, searchParams],
+    [invalidKey, pathname, searchParams],
   );
 
   const setPage = useCallback(
@@ -119,7 +153,7 @@ const useOffsetList = <T, S extends string, P extends string = string>({
   );
 
   const setParam = useCallback(
-    (name: P, value?: string) => {
+    <K extends keyof P & string>(name: K, value: P[K][number] | null) => {
       const href = createHref((nextParams) => {
         nextParams.delete("page");
         if (value) nextParams.set(name, value);
@@ -172,4 +206,4 @@ const useOffsetList = <T, S extends string, P extends string = string>({
 };
 
 export { useOffsetList };
-export type { UseOffsetListOptions };
+export type { OffsetListParamSpec, OffsetListParams, UseOffsetListOptions };

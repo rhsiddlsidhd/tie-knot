@@ -5,7 +5,7 @@ import {
   TypographyMuted,
   TypographySmall,
 } from "@/ui/components/atoms/typography";
-import type { Product } from "@/core/domain/product";
+import type { AdminProductView, Product } from "@/core/domain/product";
 import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
 import { formatKstDate } from "@/core/utils/date";
 import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
@@ -21,13 +21,13 @@ import {
 
 interface ProductTableRowProps {
   product: Product;
-  view?: "active" | "trash";
+  view: AdminProductView;
   onRefreshed: () => void;
 }
 
 const ProductTableRow = ({
   product,
-  view = "active",
+  view,
   onRefreshed,
 }: ProductTableRowProps) => {
   return (

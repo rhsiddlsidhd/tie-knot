@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { FilterToggleGroup } from "./FilterToggleGroup";
 
 const options = [
-  { value: "ALL", label: "전체" },
+  { value: null, label: "전체" },
   { value: "USER", label: "일반회원" },
   { value: "ADMIN", label: "관리자" },
 ] as const;
@@ -34,7 +34,7 @@ describe("FilterToggleGroup", () => {
       <FilterToggleGroup
         label="역할 필터"
         options={options}
-        value="ALL"
+        value={null}
         onValueChange={onValueChange}
       />,
     );
@@ -61,5 +61,32 @@ describe("FilterToggleGroup", () => {
 
     expect(onValueChange).not.toHaveBeenCalled();
     expect(screen.getByRole("radio", { name: "관리자" })).toBeChecked();
+  });
+
+  it("null 옵션은 값이 null일 때 선택되고 누르면 null을 전달한다", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    const { rerender } = render(
+      <FilterToggleGroup
+        label="역할 필터"
+        options={options}
+        value={null}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    expect(screen.getByRole("radio", { name: "전체" })).toBeChecked();
+
+    rerender(
+      <FilterToggleGroup
+        label="역할 필터"
+        options={options}
+        value="USER"
+        onValueChange={onValueChange}
+      />,
+    );
+    await user.click(screen.getByRole("radio", { name: "전체" }));
+
+    expect(onValueChange).toHaveBeenCalledWith(null);
   });
 });

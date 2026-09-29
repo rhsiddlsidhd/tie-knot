@@ -89,8 +89,8 @@ describe("ProductTableRowAction", () => {
     testStore = createAppStore();
   });
 
-  it("view가 active(기본값)면 복구/영구 삭제 버튼은 없다", () => {
-    renderAction({ product: buildProduct() });
+  it("view가 active면 복구/영구 삭제 버튼은 없다", () => {
+    renderAction({ product: buildProduct(), view: "active" });
 
     expect(screen.queryByText("복구")).not.toBeInTheDocument();
     expect(screen.queryByText("영구 삭제")).not.toBeInTheDocument();
@@ -99,7 +99,7 @@ describe("ProductTableRowAction", () => {
   it("수정 버튼을 누르면 상품과 목록 갱신 callback으로 편집 모달을 연다", async () => {
     const user = userEvent.setup();
     const product = buildProduct();
-    renderAction({ product });
+    renderAction({ product, view: "active" });
 
     await user.click(screen.getByRole("button", { name: "상품 수정" }));
 
@@ -146,7 +146,7 @@ describe("ProductTableRowAction", () => {
       data: { message: "상품이 성공적으로 삭제되었습니다." },
     });
 
-    renderAction({ product: buildProduct() });
+    renderAction({ product: buildProduct(), view: "active" });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
 
@@ -163,7 +163,7 @@ describe("ProductTableRowAction", () => {
 
   it("삭제를 취소하면 deleteProduct를 호출하지 않는다", async () => {
     const user = userEvent.setup();
-    renderAction({ product: buildProduct() });
+    renderAction({ product: buildProduct(), view: "active" });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
     await user.click(dialogButton("취소"));
@@ -179,7 +179,7 @@ describe("ProductTableRowAction", () => {
       error: { category: "INTERNAL", message: "삭제에 실패했습니다." },
     });
 
-    renderAction({ product: buildProduct() });
+    renderAction({ product: buildProduct(), view: "active" });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
     await user.click(dialogButton("삭제"));
@@ -199,7 +199,7 @@ describe("ProductTableRowAction", () => {
     vi.mocked(deleteProduct).mockReturnValue(deferred.promise);
     const user = userEvent.setup();
 
-    renderAction({ product: buildProduct() });
+    renderAction({ product: buildProduct(), view: "active" });
 
     await user.click(screen.getByRole("button", { name: "상품 삭제" }));
     await user.click(dialogButton("삭제"));

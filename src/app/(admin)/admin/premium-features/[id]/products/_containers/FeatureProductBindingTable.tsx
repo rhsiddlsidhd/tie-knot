@@ -9,6 +9,7 @@ import type {
   FeatureProductBinding,
   FeatureProductBindingSortKey,
 } from "@/core/domain/premium-feature";
+import { FEATURE_PRODUCT_BINDING_SORT_KEYS } from "@/core/domain/premium-feature";
 import { ROUTES } from "@/core/domain/routes";
 import { FEATURE_PRODUCT_BINDING_TABLE_COLUMNS } from "@/app/(admin)/admin/premium-features/[id]/products/_constants/tableColumns";
 import { FeatureProductBindingRow } from "@/app/(admin)/admin/premium-features/[id]/products/_containers/FeatureProductBindingRow";
@@ -25,7 +26,11 @@ const FeatureProductBindingTable = ({
   const table = useOffsetList<
     FeatureProductBinding,
     FeatureProductBindingSortKey
-  >({ endpoint: `/api/admin/premium-features/${featureId}/products` });
+  >({
+    endpoint: `/api/admin/premium-features/${featureId}/products`,
+    sortKeys: FEATURE_PRODUCT_BINDING_SORT_KEYS,
+    params: {},
+  });
   const refresh = () => {
     void table.mutate();
   };
