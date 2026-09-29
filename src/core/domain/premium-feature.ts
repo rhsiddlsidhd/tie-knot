@@ -62,14 +62,24 @@ type FeatureProductBindingSortKey =
   (typeof FEATURE_PRODUCT_BINDING_SORT_KEYS)[number];
 type FeatureProductBindingPage = OffsetPage<FeatureProductBinding>;
 
+// 기능-상품 연결 목록의 연결 여부 필터 — attached(파생 필드)를 단일값으로 노출한다.
+const FEATURE_PRODUCT_BINDING_STATUS_FILTERS = [
+  "attached",
+  "unattached",
+] as const;
+type FeatureProductBindingStatusFilter =
+  (typeof FEATURE_PRODUCT_BINDING_STATUS_FILTERS)[number];
+
 export {
   IMPLEMENTED_PREMIUM_FEATURE_CODES,
   ADMIN_PREMIUM_FEATURE_SORT_KEYS,
   ADMIN_PREMIUM_FEATURE_STATUS_FILTERS,
   FEATURE_PRODUCT_BINDING_SORT_KEYS,
+  FEATURE_PRODUCT_BINDING_STATUS_FILTERS,
   type FeatureProductBinding,
   type FeatureProductBindingPage,
   type FeatureProductBindingSortKey,
+  type FeatureProductBindingStatusFilter,
   type ImplementedPremiumFeatureCode,
   type PremiumFeature,
   type AdminPremiumFeatureListPage,

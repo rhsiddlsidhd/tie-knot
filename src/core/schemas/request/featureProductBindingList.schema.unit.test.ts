@@ -44,4 +44,14 @@ describe("FeatureProductBindingListRequestSchema", () => {
   it("허용되지 않은 sort를 거부한다", () => {
     expect(parse({ sort: "status" }).success).toBe(false);
   });
+
+  it("연결 여부 필터를 통과시킨다", () => {
+    const result = parse({ attached: "unattached" });
+
+    expect(result.success && result.data.attached).toBe("unattached");
+  });
+
+  it("허용되지 않은 attached를 거부한다", () => {
+    expect(parse({ attached: "yes" }).success).toBe(false);
+  });
 });

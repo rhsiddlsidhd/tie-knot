@@ -314,6 +314,7 @@ const getAdminProductsPageService = async ({
 
 type FeatureProductBindingsQuery = {
   featureId: string;
+  attached?: "attached" | "unattached";
   q?: string;
   page?: number;
   limit?: number;
@@ -339,6 +340,7 @@ type LeanBindableProduct = {
  */
 const getFeatureProductBindingsPageService = async ({
   featureId,
+  attached,
   q,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
@@ -361,6 +363,12 @@ const getFeatureProductBindingsPageService = async ({
     isPremium: true,
     deletedAt: null,
   };
+
+  if (attached === "attached") {
+    filter.featureIds = new mongoose.Types.ObjectId(featureId);
+  } else if (attached === "unattached") {
+    filter.featureIds = { $ne: new mongoose.Types.ObjectId(featureId) };
+  }
 
   const term = q?.trim();
   if (term) {

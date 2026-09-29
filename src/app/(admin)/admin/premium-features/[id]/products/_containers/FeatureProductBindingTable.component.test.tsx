@@ -14,7 +14,10 @@ vi.mock("@/actions/setProductPremiumFeature", () => ({
   setProductPremiumFeature: setProductPremiumFeatureMock,
 }));
 
-import { FEATURE_PRODUCT_BINDING_SORT_KEYS } from "@/core/domain/premium-feature";
+import {
+  FEATURE_PRODUCT_BINDING_SORT_KEYS,
+  FEATURE_PRODUCT_BINDING_STATUS_FILTERS,
+} from "@/core/domain/premium-feature";
 import { FeatureProductBindingTable } from "./FeatureProductBindingTable";
 
 const buildTable = (overrides: Record<string, unknown> = {}) => ({
@@ -35,7 +38,7 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: {},
+  params: { attached: null } as { attached: string | null },
   setPage: vi.fn(),
   setSearch: vi.fn(),
   toggleSort: vi.fn(),
@@ -63,7 +66,7 @@ describe("FeatureProductBindingTable", () => {
     expect(useOffsetListMock).toHaveBeenCalledWith({
       endpoint: "/api/admin/premium-features/feature-1/products",
       sortKeys: FEATURE_PRODUCT_BINDING_SORT_KEYS,
-      params: {},
+      params: { attached: FEATURE_PRODUCT_BINDING_STATUS_FILTERS },
     });
     expect(
       screen.getByRole("heading", { name: '"갤러리 확대 보기" 연결 상품' }),
@@ -76,6 +79,17 @@ describe("FeatureProductBindingTable", () => {
       screen.getAllByRole("columnheader").map((header) => header.textContent),
     ).toEqual(["연결", "상품명", "가격", "상태"]);
     expect(screen.getByText("봄맞이 청첩장")).toBeInTheDocument();
+  });
+
+  it("연결 여부 필터를 고르면 attached 파라미터를 바꾼다", async () => {
+    const table = buildTable();
+    useOffsetListMock.mockReturnValue(table);
+    const user = userEvent.setup();
+    renderTable();
+
+    await user.click(screen.getByRole("radio", { name: "연결됨" }));
+
+    expect(table.setParam).toHaveBeenCalledWith("attached", "attached");
   });
 
   it("상품명·가격 열로 정렬을 바꾼다", async () => {

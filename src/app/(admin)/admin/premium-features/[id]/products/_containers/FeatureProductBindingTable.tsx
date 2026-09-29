@@ -2,6 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
+import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -9,8 +10,12 @@ import type {
   FeatureProductBinding,
   FeatureProductBindingSortKey,
 } from "@/core/domain/premium-feature";
-import { FEATURE_PRODUCT_BINDING_SORT_KEYS } from "@/core/domain/premium-feature";
+import {
+  FEATURE_PRODUCT_BINDING_SORT_KEYS,
+  FEATURE_PRODUCT_BINDING_STATUS_FILTERS,
+} from "@/core/domain/premium-feature";
 import { ROUTES } from "@/core/domain/routes";
+import { ATTACHED_FILTER_OPTIONS } from "@/app/(admin)/admin/premium-features/[id]/products/_constants/filterOptions";
 import { FEATURE_PRODUCT_BINDING_TABLE_COLUMNS } from "@/app/(admin)/admin/premium-features/[id]/products/_constants/tableColumns";
 import { FeatureProductBindingRow } from "@/app/(admin)/admin/premium-features/[id]/products/_containers/FeatureProductBindingRow";
 
@@ -25,11 +30,12 @@ const FeatureProductBindingTable = ({
 }: FeatureProductBindingTableProps) => {
   const table = useOffsetList<
     FeatureProductBinding,
-    FeatureProductBindingSortKey
+    FeatureProductBindingSortKey,
+    { attached: typeof FEATURE_PRODUCT_BINDING_STATUS_FILTERS }
   >({
     endpoint: `/api/admin/premium-features/${featureId}/products`,
     sortKeys: FEATURE_PRODUCT_BINDING_SORT_KEYS,
-    params: {},
+    params: { attached: FEATURE_PRODUCT_BINDING_STATUS_FILTERS },
   });
   const refresh = () => {
     void table.mutate();
@@ -61,6 +67,14 @@ const FeatureProductBindingTable = ({
             onRefreshed={refresh}
           />
         )}
+        toolbar={
+          <FilterToggleGroup
+            label="연결 여부 필터"
+            options={ATTACHED_FILTER_OPTIONS}
+            value={table.params.attached}
+            onValueChange={(value) => table.setParam("attached", value)}
+          />
+        }
         sortState={table.sortState}
         onSort={table.toggleSort}
         search={{
