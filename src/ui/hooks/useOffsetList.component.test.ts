@@ -1,20 +1,14 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const navigationMocks = vi.hoisted(() => ({
   pathname: "/admin/products",
-  push: vi.fn(),
-  replace: vi.fn(),
   searchParams: new URLSearchParams(),
 }));
 const { useSWRMock } = vi.hoisted(() => ({ useSWRMock: vi.fn() }));
 
 vi.mock("next/navigation", () => ({
   usePathname: () => navigationMocks.pathname,
-  useRouter: () => ({
-    push: navigationMocks.push,
-    replace: navigationMocks.replace,
-  }),
   useSearchParams: () => navigationMocks.searchParams,
 }));
 vi.mock("swr", () => ({ default: useSWRMock }));
@@ -23,6 +17,12 @@ vi.mock("@/ui/fetcher", () => ({ fetcher: vi.fn() }));
 import { useOffsetList } from "./useOffsetList";
 
 const mutate = vi.fn();
+const pushStateSpy = vi
+  .spyOn(window.history, "pushState")
+  .mockImplementation(() => undefined);
+const replaceStateSpy = vi
+  .spyOn(window.history, "replaceState")
+  .mockImplementation(() => undefined);
 
 const mockSWR = (data?: {
   items: { id: string }[];
@@ -46,6 +46,11 @@ describe("useOffsetList", () => {
     navigationMocks.pathname = "/admin/products";
     navigationMocks.searchParams = new URLSearchParams();
     mockSWR();
+  });
+
+  afterAll(() => {
+    pushStateSpy.mockRestore();
+    replaceStateSpy.mockRestore();
   });
 
   it("정해진 순서로 빈 값을 제외한 SWR key를 만든다", () => {
@@ -108,11 +113,12 @@ describe("useOffsetList", () => {
 
     act(() => result.current.setPage(1));
 
-    expect(navigationMocks.push).toHaveBeenCalledWith(
+    expect(pushStateSpy).toHaveBeenCalledWith(
+      null,
+      "",
       "/admin/products?q=%EC%B9%B4%EB%93%9C",
-      { scroll: false },
     );
-    expect(navigationMocks.replace).not.toHaveBeenCalled();
+    expect(replaceStateSpy).not.toHaveBeenCalled();
   });
 
   it("검색 변경은 값을 trim하고 page를 제거해 replace한다", () => {
@@ -126,9 +132,10 @@ describe("useOffsetList", () => {
 
     act(() => result.current.setSearch("  웨딩 카드  "));
 
-    expect(navigationMocks.replace).toHaveBeenCalledWith(
+    expect(replaceStateSpy).toHaveBeenCalledWith(
+      null,
+      "",
       "/admin/products?view=trash&q=%EC%9B%A8%EB%94%A9+%EC%B9%B4%EB%93%9C",
-      { scroll: false },
     );
   });
 
@@ -141,9 +148,10 @@ describe("useOffsetList", () => {
     );
 
     act(() => first.result.current.toggleSort("createdAt"));
-    expect(navigationMocks.replace).toHaveBeenLastCalledWith(
+    expect(replaceStateSpy).toHaveBeenLastCalledWith(
+      null,
+      "",
       "/admin/products?sort=createdAt&direction=desc",
-      { scroll: false },
     );
 
     first.unmount();
@@ -156,9 +164,10 @@ describe("useOffsetList", () => {
       }),
     );
     act(() => second.result.current.toggleSort("createdAt"));
-    expect(navigationMocks.replace).toHaveBeenLastCalledWith(
+    expect(replaceStateSpy).toHaveBeenLastCalledWith(
+      null,
+      "",
       "/admin/products?sort=createdAt&direction=asc",
-      { scroll: false },
     );
 
     second.unmount();
@@ -171,9 +180,10 @@ describe("useOffsetList", () => {
       }),
     );
     act(() => third.result.current.toggleSort("createdAt"));
-    expect(navigationMocks.replace).toHaveBeenLastCalledWith(
+    expect(replaceStateSpy).toHaveBeenLastCalledWith(
+      null,
+      "",
       "/admin/products",
-      { scroll: false },
     );
   });
 
@@ -188,9 +198,11 @@ describe("useOffsetList", () => {
 
     act(() => result.current.setParam("view", undefined));
 
-    expect(navigationMocks.replace).toHaveBeenCalledWith("/admin/products", {
-      scroll: false,
-    });
+    expect(replaceStateSpy).toHaveBeenCalledWith(
+      null,
+      "",
+      "/admin/products",
+    );
   });
 
   it("응답 범위를 넘은 page는 마지막 페이지로 replace한다", async () => {
@@ -204,9 +216,10 @@ describe("useOffsetList", () => {
     );
 
     await waitFor(() =>
-      expect(navigationMocks.replace).toHaveBeenCalledWith(
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        null,
+        "",
         "/admin/products?page=5&q=%EC%B9%B4%EB%93%9C",
-        { scroll: false },
       ),
     );
   });
@@ -223,9 +236,10 @@ describe("useOffsetList", () => {
     );
 
     await waitFor(() =>
-      expect(navigationMocks.replace).toHaveBeenCalledWith(
+      expect(replaceStateSpy).toHaveBeenCalledWith(
+        null,
+        "",
         "/admin/products?view=trash",
-        { scroll: false },
       ),
     );
   });

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import useSWR from "swr";
 
 import type { ErrorPayload } from "@/core/domain/error";
@@ -24,7 +24,6 @@ const useOffsetList = <T, S extends string, P extends string = string>({
   endpoint,
   params: paramNames = [],
 }: UseOffsetListOptions<P>) => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -77,9 +76,9 @@ const useOffsetList = <T, S extends string, P extends string = string>({
         if (nextPage <= 1) nextParams.delete("page");
         else nextParams.set("page", String(nextPage));
       });
-      router.push(href, { scroll: false });
+      window.history.pushState(null, "", href);
     },
-    [createHref, router],
+    [createHref],
   );
 
   const setSearch = useCallback(
@@ -90,9 +89,9 @@ const useOffsetList = <T, S extends string, P extends string = string>({
         if (trimmedSearch) nextParams.set("q", trimmedSearch);
         else nextParams.delete("q");
       });
-      router.replace(href, { scroll: false });
+      window.history.replaceState(null, "", href);
     },
-    [createHref, router],
+    [createHref],
   );
 
   const toggleSort = useCallback(
@@ -108,9 +107,9 @@ const useOffsetList = <T, S extends string, P extends string = string>({
           nextParams.delete("direction");
         }
       });
-      router.replace(href, { scroll: false });
+      window.history.replaceState(null, "", href);
     },
-    [createHref, direction, router, sort],
+    [createHref, direction, sort],
   );
 
   const setParam = useCallback(
@@ -120,9 +119,9 @@ const useOffsetList = <T, S extends string, P extends string = string>({
         if (value) nextParams.set(name, value);
         else nextParams.delete(name);
       });
-      router.replace(href, { scroll: false });
+      window.history.replaceState(null, "", href);
     },
-    [createHref, router],
+    [createHref],
   );
 
   useEffect(() => {
@@ -130,7 +129,7 @@ const useOffsetList = <T, S extends string, P extends string = string>({
 
     if (data.total === 0 && page > 1) {
       const href = createHref((nextParams) => nextParams.delete("page"));
-      router.replace(href, { scroll: false });
+      window.history.replaceState(null, "", href);
       return;
     }
 
@@ -138,9 +137,9 @@ const useOffsetList = <T, S extends string, P extends string = string>({
       const href = createHref((nextParams) =>
         nextParams.set("page", String(data.totalPages)),
       );
-      router.replace(href, { scroll: false });
+      window.history.replaceState(null, "", href);
     }
-  }, [createHref, data, page, router]);
+  }, [createHref, data, page]);
 
   return {
     items: data?.items,
