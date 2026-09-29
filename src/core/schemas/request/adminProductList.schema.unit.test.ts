@@ -10,7 +10,7 @@ describe("AdminProductListRequestSchema", () => {
       page: 1,
       limit: 10,
       direction: "desc",
-      view: "active",
+      softDeleted: false,
     });
   });
 
@@ -31,17 +31,24 @@ describe("AdminProductListRequestSchema", () => {
     expect(parse({ q: "가".repeat(101) }).success).toBe(false);
   });
 
-  it("검색어와 view 필터를 함께 통과시킨다", () => {
-    const result = parse({ q: "청첩장", view: "trash" });
+  it("검색어와 softDeleted 스위치를 함께 통과시킨다", () => {
+    const result = parse({ q: "청첩장", softDeleted: "true" });
 
     expect(result.success && result.data).toMatchObject({
       q: "청첩장",
-      view: "trash",
+      softDeleted: true,
     });
   });
 
-  it("허용되지 않은 view는 거부한다", () => {
-    expect(parse({ view: "NOT_A_VIEW" }).success).toBe(false);
+  it("softDeleted=false 문자열은 boolean false로 변환한다", () => {
+    const result = parse({ softDeleted: "false" });
+
+    expect(result.success && result.data.softDeleted).toBe(false);
+  });
+
+  it("허용되지 않은 softDeleted 값은 거부한다", () => {
+    expect(parse({ softDeleted: "yes" }).success).toBe(false);
+    expect(parse({ softDeleted: "trash" }).success).toBe(false);
   });
 
   it("status·type 필터를 함께 통과시킨다", () => {
@@ -95,7 +102,7 @@ describe("AdminProductListRequestSchema", () => {
       limit: "",
       sort: "",
       direction: "",
-      view: "",
+      softDeleted: "",
     });
 
     expect(result.success && result.data).toMatchObject({
@@ -103,7 +110,7 @@ describe("AdminProductListRequestSchema", () => {
       limit: 10,
       sort: undefined,
       direction: "desc",
-      view: "active",
+      softDeleted: false,
     });
   });
 });

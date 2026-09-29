@@ -13,7 +13,7 @@ import { toast } from "sonner";
 
 const ProductTableRowAction = ({
   product,
-  view,
+  softDeleted,
   onRefreshed,
 }: ProductTableRowProps) => {
   const open = useAdminModalStore((state) => state.openModal);
@@ -88,7 +88,7 @@ const ProductTableRowAction = ({
     }
   };
 
-  if (view === "trash") {
+  if (softDeleted) {
     return (
       <div className="flex items-center justify-center gap-2">
         <Button

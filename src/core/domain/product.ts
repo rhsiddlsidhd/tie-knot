@@ -97,10 +97,9 @@ const ADMIN_PRODUCT_SORT_KEYS = [
 
 type AdminProductSortKey = (typeof ADMIN_PRODUCT_SORT_KEYS)[number];
 
-// 관리자 상품 목록의 보기 — 서버 요청 스키마와 클라이언트 URL 파싱이 같은 값을 본다.
-const ADMIN_PRODUCT_VIEWS = ["active", "trash"] as const;
-
-type AdminProductView = (typeof ADMIN_PRODUCT_VIEWS)[number];
+// 관리자 상품 목록의 휴지통(soft delete) 스위치 값 — 서버 요청 스키마와 클라이언트 URL
+// 파싱이 같은 값을 본다. URL 쿼리는 문자열이라 boolean을 "true"/"false"로 싣는다.
+const ADMIN_PRODUCT_SOFT_DELETED_VALUES = ["true", "false"] as const;
 
 // 상품 목록 "타입" 필터 — isPremium/isFeatured 두 boolean 컬럼을 단일값 필터 하나로
 // 노출한다. 두 조건을 동시에 켜는 UI는 없다(FilterToggleGroup은 단일값 전용).
@@ -166,7 +165,7 @@ export {
   PRODUCT_SORT_OPTIONS,
   PRODUCT_PRICE_OPTIONS,
   ADMIN_PRODUCT_SORT_KEYS,
-  ADMIN_PRODUCT_VIEWS,
+  ADMIN_PRODUCT_SOFT_DELETED_VALUES,
   ADMIN_PRODUCT_TYPE_FILTERS,
   type DiscountType,
   type Discount,
@@ -176,7 +175,6 @@ export {
   type Product,
   type AdminProductListPage,
   type AdminProductSortKey,
-  type AdminProductView,
   type AdminProductTypeFilter,
   type PublicProductListPage,
   type ProductSortType,

@@ -20,7 +20,7 @@ const GET = async (
       q: searchParams.get("q"),
       sort: searchParams.get("sort"),
       direction: searchParams.get("direction"),
-      view: searchParams.get("view"),
+      softDeleted: searchParams.get("softDeleted"),
       status: searchParams.get("status"),
       type: searchParams.get("type"),
     });

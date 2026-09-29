@@ -216,7 +216,7 @@ const incrementProductViewsService = async (
 };
 
 type AdminProductListQuery = {
-  view?: "active" | "trash";
+  softDeleted?: boolean;
   status?: EditableProductStatus;
   type?: "premium" | "featured";
   q?: string;
@@ -231,7 +231,7 @@ type AdminProductListQuery = {
  * 테이블 정렬 키를 사용한다.
  */
 const getAdminProductsPageService = async ({
-  view = "active",
+  softDeleted = false,
   status,
   type,
   q,
@@ -252,8 +252,9 @@ const getAdminProductsPageService = async ({
     throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
-  const filter: Record<string, unknown> =
-    view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
+  const filter: Record<string, unknown> = softDeleted
+    ? { deletedAt: { $ne: null } }
+    : { deletedAt: null };
 
   if (status) {
     filter.status = status;
@@ -286,7 +287,7 @@ const getAdminProductsPageService = async ({
     filter.$and = conditions;
   }
 
-  const sortKey = sort ?? (view === "trash" ? "deletedAt" : "createdAt");
+  const sortKey = sort ?? (softDeleted ? "deletedAt" : "createdAt");
   const sortDirection = direction === "asc" ? 1 : -1;
 
   const [products, total] = await Promise.all([

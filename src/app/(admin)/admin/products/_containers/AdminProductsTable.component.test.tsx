@@ -23,9 +23,9 @@ vi.mock("@/actions/updateProductStatus", () => ({
 
 import type { Product } from "@/core/domain/product";
 import {
+  ADMIN_PRODUCT_SOFT_DELETED_VALUES,
   ADMIN_PRODUCT_SORT_KEYS,
   ADMIN_PRODUCT_TYPE_FILTERS,
-  ADMIN_PRODUCT_VIEWS,
   EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
@@ -76,8 +76,8 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
   page: 1,
   q: "",
   sortState: null as { key: string; direction: "asc" | "desc" } | null,
-  params: { view: null, status: null, type: null } as {
-    view: string | null;
+  params: { softDeleted: null, status: null, type: null } as {
+    softDeleted: string | null;
     status: string | null;
     type: string | null;
   },
@@ -108,7 +108,7 @@ describe("AdminProductsTable", () => {
     testStore = createAppStore();
   });
 
-  it("관리자 상품 API를 view 파라미터와 함께 조회한다", () => {
+  it("관리자 상품 API를 softDeleted 파라미터와 함께 조회한다", () => {
     useOffsetListMock.mockReturnValue(buildTable());
     renderTable();
 
@@ -116,14 +116,14 @@ describe("AdminProductsTable", () => {
       endpoint: "/api/admin/products",
       sortKeys: ADMIN_PRODUCT_SORT_KEYS,
       params: {
-        view: ADMIN_PRODUCT_VIEWS,
+        softDeleted: ADMIN_PRODUCT_SOFT_DELETED_VALUES,
         status: EDITABLE_PRODUCT_STATUSES,
         type: ADMIN_PRODUCT_TYPE_FILTERS,
       },
     });
   });
 
-  it("상품 목록 view는 제목·등록 버튼·상태 열을 렌더링한다", () => {
+  it("휴지통 스위치가 꺼진 상태는 제목·등록 버튼·상태 열을 렌더링한다", () => {
     useOffsetListMock.mockReturnValue(buildTable());
     renderTable();
 
@@ -137,7 +137,7 @@ describe("AdminProductsTable", () => {
       "href",
       "/admin/products/new",
     );
-    expect(screen.getByRole("radio", { name: "상품 목록" })).toBeChecked();
+    expect(screen.getByRole("switch", { name: "휴지통" })).not.toBeChecked();
     expect(columnHeaders()).toEqual([
       "썸네일",
       "상품명",
@@ -154,16 +154,17 @@ describe("AdminProductsTable", () => {
     ]);
   });
 
-  it("휴지통 view는 제목을 바꾸고 등록 버튼 없이 삭제일 열을 렌더링한다", () => {
+  it("휴지통 스위치가 켜진 상태는 제목을 바꾸고 등록 버튼 없이 삭제일 열을 렌더링한다", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({
-        params: { view: "trash" },
+        params: { softDeleted: "true" },
         items: [buildProduct({ deletedAt: "2026-09-10T03:00:00.000Z" })],
       }),
     );
     renderTable();
 
     expect(screen.getByRole("heading", { name: "휴지통" })).toBeInTheDocument();
+    expect(screen.getByRole("switch", { name: "휴지통" })).toBeChecked();
     expect(
       screen.getByText("삭제된 상품을 조회하고 복구합니다."),
     ).toBeInTheDocument();
@@ -174,26 +175,38 @@ describe("AdminProductsTable", () => {
     expect(screen.getByRole("button", { name: "복구" })).toBeInTheDocument();
   });
 
-  it("휴지통 view에서 상품 목록을 고르면 view 파라미터를 지운다", async () => {
-    const table = buildTable({ params: { view: "trash" } });
+  it("휴지통 스위치를 끄면 softDeleted 파라미터를 지운다", async () => {
+    const table = buildTable({ params: { softDeleted: "true" } });
     useOffsetListMock.mockReturnValue(table);
     const user = userEvent.setup();
     renderTable();
 
-    await user.click(screen.getByRole("radio", { name: "상품 목록" }));
+    await user.click(screen.getByRole("switch", { name: "휴지통" }));
 
-    expect(table.setParam).toHaveBeenCalledWith("view", null);
+    expect(table.setParam).toHaveBeenCalledWith("softDeleted", null);
   });
 
-  it("상품 목록 view에서 휴지통을 고르면 view=trash로 바꾼다", async () => {
+  it("휴지통 스위치를 켜면 softDeleted=true로 바꾼다", async () => {
     const table = buildTable();
     useOffsetListMock.mockReturnValue(table);
     const user = userEvent.setup();
     renderTable();
 
-    await user.click(screen.getByRole("radio", { name: "휴지통" }));
+    await user.click(screen.getByRole("switch", { name: "휴지통" }));
 
-    expect(table.setParam).toHaveBeenCalledWith("view", "trash");
+    expect(table.setParam).toHaveBeenCalledWith("softDeleted", "true");
+  });
+
+  it("URL에 softDeleted=false가 있으면 스위치는 꺼진 상태다", () => {
+    useOffsetListMock.mockReturnValue(
+      buildTable({ params: { softDeleted: "false" } }),
+    );
+    renderTable();
+
+    expect(screen.getByRole("switch", { name: "휴지통" })).not.toBeChecked();
+    expect(
+      screen.getByRole("heading", { name: "상품 목록" }),
+    ).toBeInTheDocument();
   });
 
   it("상태 필터를 고르면 status 파라미터를 바꾼다", async () => {
@@ -218,9 +231,11 @@ describe("AdminProductsTable", () => {
     expect(table.setParam).toHaveBeenCalledWith("type", "premium");
   });
 
-  it("휴지통 view에서는 상태 필터를 숨기고 타입 필터는 유지한다", () => {
+  it("휴지통이 켜지면 상태 필터를 숨기고 타입 필터는 유지한다", () => {
     useOffsetListMock.mockReturnValue(
-      buildTable({ params: { view: "trash", status: null, type: null } }),
+      buildTable({
+        params: { softDeleted: "true", status: null, type: null },
+      }),
     );
     renderTable();
 
@@ -233,7 +248,7 @@ describe("AdminProductsTable", () => {
   });
 
   it("통계·등록일 열로 정렬을 바꾸고 휴지통에서는 삭제일로 정렬한다", async () => {
-    const table = buildTable({ params: { view: "trash" } });
+    const table = buildTable({ params: { softDeleted: "true" } });
     useOffsetListMock.mockReturnValue(table);
     const user = userEvent.setup();
     renderTable();
@@ -309,7 +324,7 @@ describe("AdminProductsTable", () => {
     expect(table.mutate).toHaveBeenCalledOnce();
   });
 
-  it("상품 목록 view의 빈 목록 문구를 보여준다", () => {
+  it("휴지통이 꺼진 상태의 빈 목록 문구를 보여준다", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({ items: [], pageInfo: { total: 0, totalPages: 0 } }),
     );
@@ -318,12 +333,12 @@ describe("AdminProductsTable", () => {
     expect(screen.getByText("등록된 상품이 없습니다.")).toBeInTheDocument();
   });
 
-  it("휴지통 view의 빈 목록 문구를 보여준다", () => {
+  it("휴지통이 켜진 상태의 빈 목록 문구를 보여준다", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({
         items: [],
         pageInfo: { total: 0, totalPages: 0 },
-        params: { view: "trash" },
+        params: { softDeleted: "true" },
       }),
     );
     renderTable();

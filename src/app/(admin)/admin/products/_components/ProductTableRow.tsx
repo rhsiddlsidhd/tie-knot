@@ -5,7 +5,7 @@ import {
   TypographyMuted,
   TypographySmall,
 } from "@/ui/components/atoms/typography";
-import type { AdminProductView, Product } from "@/core/domain/product";
+import type { Product } from "@/core/domain/product";
 import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
 import { formatKstDate } from "@/core/utils/date";
 import { ProductTableRowAction } from "../_containers/ProductTableRowAction";
@@ -21,13 +21,13 @@ import {
 
 interface ProductTableRowProps {
   product: Product;
-  view: AdminProductView;
+  softDeleted: boolean;
   onRefreshed: () => void;
 }
 
 const ProductTableRow = ({
   product,
-  view,
+  softDeleted,
   onRefreshed,
 }: ProductTableRowProps) => {
   return (
@@ -83,7 +83,7 @@ const ProductTableRow = ({
         </div>
       </TableCell>
       <TableCell>
-        {view === "trash" ? (
+        {softDeleted ? (
           <div className="flex flex-col gap-1">
             <Badge variant="outline" className="w-fit">
               {PRODUCT_STATUS_LABELS.deleted}
@@ -108,7 +108,7 @@ const ProductTableRow = ({
       <TableCell>
         <ProductTableRowAction
           product={product}
-          view={view}
+          softDeleted={softDeleted}
           onRefreshed={onRefreshed}
         />
       </TableCell>
