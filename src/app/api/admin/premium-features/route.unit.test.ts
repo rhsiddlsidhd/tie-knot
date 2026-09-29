@@ -53,4 +53,19 @@ describe("GET /api/admin/premium-features", () => {
       direction: "asc",
     });
   });
+
+  it("status 파라미터를 서비스에 그대로 전달한다", async () => {
+    vi.mocked(getAdminPremiumFeaturesPageService).mockResolvedValue(
+      emptyPage,
+    );
+    await GET(request("?status=inactive"));
+    expect(getAdminPremiumFeaturesPageService).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "inactive" }),
+    );
+  });
+
+  it("허용되지 않은 status는 400을 반환한다", async () => {
+    expect((await GET(request("?status=pending"))).status).toBe(400);
+    expect(getAdminPremiumFeaturesPageService).not.toHaveBeenCalled();
+  });
 });

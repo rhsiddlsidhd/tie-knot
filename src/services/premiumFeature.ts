@@ -6,6 +6,7 @@ import type { PremiumFeatureDto } from "@/core/schemas/request/premiumFeature.sc
 import type {
   AdminPremiumFeatureListPage,
   AdminPremiumFeatureSortKey,
+  AdminPremiumFeatureStatusFilter,
   PremiumFeature,
 } from "@/core/domain/premium-feature";
 import { ADMIN_PREMIUM_FEATURE_SORT_KEYS } from "@/core/domain/premium-feature";
@@ -61,6 +62,7 @@ const getSelectablePremiumFeatureService = async (): Promise<
 
 type AdminPremiumFeatureListQuery = {
   q?: string;
+  status?: AdminPremiumFeatureStatusFilter;
   page?: number;
   limit?: number;
   sort?: AdminPremiumFeatureSortKey;
@@ -73,6 +75,7 @@ type AdminPremiumFeatureListQuery = {
  */
 const getAdminPremiumFeaturesPageService = async ({
   q,
+  status,
   page = 1,
   limit = DEFAULT_PAGE_SIZE,
   sort = "createdAt",
@@ -91,6 +94,12 @@ const getAdminPremiumFeaturesPageService = async ({
   }
 
   const filter: mongoose.FilterQuery<FeatureDocument> = {};
+
+  if (status === "active") {
+    filter.isActive = true;
+  } else if (status === "inactive") {
+    filter.isActive = false;
+  }
 
   const conditions: mongoose.FilterQuery<FeatureDocument>[] = [];
 

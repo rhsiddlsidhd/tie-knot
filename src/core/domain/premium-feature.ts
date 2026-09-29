@@ -36,6 +36,11 @@ type AdminPremiumFeatureSortKey =
   (typeof ADMIN_PREMIUM_FEATURE_SORT_KEYS)[number];
 type AdminPremiumFeatureListPage = OffsetPage<PremiumFeature>;
 
+// 관리자 프리미엄 기능 목록의 활성 여부 필터 — isActive를 단일값으로 노출한다.
+const ADMIN_PREMIUM_FEATURE_STATUS_FILTERS = ["active", "inactive"] as const;
+type AdminPremiumFeatureStatusFilter =
+  (typeof ADMIN_PREMIUM_FEATURE_STATUS_FILTERS)[number];
+
 /**
  * 기능 하나를 어떤 상품에 붙일지 고르는 화면의 행. 상품 전체(ProductJson)를 내리지
  * 않는다 — 이 화면이 쓰는 건 식별·표시용 네 값과 현재 연결 여부뿐이다.
@@ -60,6 +65,7 @@ type FeatureProductBindingPage = OffsetPage<FeatureProductBinding>;
 export {
   IMPLEMENTED_PREMIUM_FEATURE_CODES,
   ADMIN_PREMIUM_FEATURE_SORT_KEYS,
+  ADMIN_PREMIUM_FEATURE_STATUS_FILTERS,
   FEATURE_PRODUCT_BINDING_SORT_KEYS,
   type FeatureProductBinding,
   type FeatureProductBindingPage,
@@ -68,4 +74,5 @@ export {
   type PremiumFeature,
   type AdminPremiumFeatureListPage,
   type AdminPremiumFeatureSortKey,
+  type AdminPremiumFeatureStatusFilter,
 };
