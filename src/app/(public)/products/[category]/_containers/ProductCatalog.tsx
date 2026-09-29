@@ -34,8 +34,8 @@ interface ProductCatalogProps {
 }
 
 /**
- * "목록 페이지네이션"을 따른다. 더보기는 버튼이 아니라 목록 하단 sentinel의
- * IntersectionObserver로 트리거한다(LiveGuestbookSection.tsx 패턴).
+ * 더보기는 버튼이 아니라 목록 하단 sentinel의 IntersectionObserver로
+ * 트리거한다(LiveGuestbookSection.tsx 패턴).
  */
 const ProductCatalog = ({
   firstPage,

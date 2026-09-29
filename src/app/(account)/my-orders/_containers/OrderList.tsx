@@ -45,9 +45,6 @@ const buildKey = ({
   return query ? `/api/orders?${query}` : "/api/orders";
 };
 
-/**
- * "목록 페이지네이션"을 따른다.
- */
 const OrderList = ({ firstPage, status, category }: OrderListProps) => {
   const { data, error, size, setSize, isValidating, mutate } =
     useSWRInfinite<OrderListPage>(
