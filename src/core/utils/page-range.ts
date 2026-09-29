@@ -5,6 +5,9 @@ const getPageRange = (
   totalPages: number,
 ): PageRangeItem[] => {
   if (totalPages <= 0) return [];
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1);
+  }
 
   const visiblePages = [
     1,
