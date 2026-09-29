@@ -28,6 +28,7 @@ const renderTable = (
       items={items}
       getRowKey={(item) => item.id}
       renderRow={renderRow}
+      sortState={null}
       onSort={vi.fn()}
       search={null}
       pagination={{ page: 1, onPageChange: vi.fn(), pageInfo: null }}
@@ -163,13 +164,36 @@ describe("DataTable", () => {
     expect(screen.queryByRole("navigation")).not.toBeInTheDocument();
   });
 
+  it("정렬 키가 null인 열은 정렬 버튼 없이 표시하고 활성 열에 방향을 표시한다", () => {
+    renderTable({
+      columns: [
+        { label: "이름", sort: "name" },
+        { label: "메모", sort: null },
+      ],
+      sortState: { key: "name", direction: "desc" },
+    });
+
+    expect(screen.getByRole("button", { name: "이름 정렬" })).toBeVisible();
+    expect(
+      screen.queryByRole("button", { name: "메모 정렬" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByRole("columnheader")[0]).toHaveAttribute(
+      "aria-sort",
+      "descending",
+    );
+  });
+
   it("같은 label의 열이 있어도 각 열을 렌더링한다", () => {
     render(
       <DataTable
-        columns={[{ label: "관리" }, { label: "관리" }]}
+        columns={[
+          { label: "관리", sort: null },
+          { label: "관리", sort: null },
+        ]}
         items={[]}
         getRowKey={(item: Item) => item.id}
         renderRow={renderRow}
+        sortState={null}
         onSort={vi.fn()}
         search={null}
         pagination={{ page: 1, onPageChange: vi.fn(), pageInfo: null }}

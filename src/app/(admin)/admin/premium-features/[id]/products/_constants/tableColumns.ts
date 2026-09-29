@@ -3,10 +3,10 @@ import type { DataTableColumn } from "@/ui/components/organisms/DataTable/DataTa
 
 // createdAt은 열 없이 기본 정렬로만 쓴다.
 const FEATURE_PRODUCT_BINDING_TABLE_COLUMNS = [
-  { label: "연결" },
+  { label: "연결", sort: null },
   { label: "상품명", sort: "title" },
   { label: "가격", sort: "price" },
-  { label: "상태" },
+  { label: "상태", sort: null },
 ] as const satisfies readonly DataTableColumn<FeatureProductBindingSortKey>[];
 
 export { FEATURE_PRODUCT_BINDING_TABLE_COLUMNS };

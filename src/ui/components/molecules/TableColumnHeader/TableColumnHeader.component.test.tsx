@@ -15,7 +15,12 @@ describe("TableColumnHeader", () => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableColumnHeader label="상태" onSort={vi.fn()} />
+            <TableColumnHeader
+              label="상태"
+              sortKey={null}
+              sortState={null}
+              onSort={vi.fn()}
+            />
           </TableRow>
         </TableHeader>
       </Table>,
@@ -33,8 +38,7 @@ describe("TableColumnHeader", () => {
             <TableColumnHeader
               label="가격"
               sortKey="price"
-              sort="price"
-              direction="asc"
+              sortState={{ key: "price", direction: "asc" }}
               onSort={vi.fn()}
             />
           </TableRow>
@@ -48,6 +52,25 @@ describe("TableColumnHeader", () => {
     );
   });
 
+  it("다른 열이 정렬 중이면 aria-sort를 두지 않는다", () => {
+    render(
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableColumnHeader
+              label="가격"
+              sortKey="price"
+              sortState={{ key: "createdAt", direction: "desc" }}
+              onSort={vi.fn()}
+            />
+          </TableRow>
+        </TableHeader>
+      </Table>,
+    );
+
+    expect(screen.getByRole("columnheader")).not.toHaveAttribute("aria-sort");
+  });
+
   it("정렬 버튼을 누르면 열의 키를 전달한다", async () => {
     const onSort = vi.fn();
     const user = userEvent.setup();
@@ -58,6 +81,7 @@ describe("TableColumnHeader", () => {
             <TableColumnHeader
               label="가격"
               sortKey="price"
+              sortState={null}
               onSort={onSort}
             />
           </TableRow>

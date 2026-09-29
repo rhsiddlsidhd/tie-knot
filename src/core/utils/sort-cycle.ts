@@ -1,28 +1,20 @@
 type SortDirection = "asc" | "desc";
 
-interface SortState<S extends string> {
-  sort?: S;
-  direction?: SortDirection;
-}
+type SortState<S extends string> = { key: S; direction: SortDirection } | null;
 
 const getNextSortState = <S extends string>(
-  currentSort: S | undefined,
-  currentDirection: SortDirection | undefined,
-  nextSort: S,
+  current: SortState<S>,
+  nextKey: S,
 ): SortState<S> => {
-  if (currentSort !== nextSort) {
-    return { sort: nextSort, direction: "desc" };
+  if (current?.key !== nextKey) {
+    return { key: nextKey, direction: "desc" };
   }
 
-  if (currentDirection === "desc") {
-    return { sort: nextSort, direction: "asc" };
+  if (current.direction === "desc") {
+    return { key: nextKey, direction: "asc" };
   }
 
-  if (currentDirection === "asc") {
-    return { sort: undefined, direction: undefined };
-  }
-
-  return { sort: nextSort, direction: "desc" };
+  return null;
 };
 
 export { getNextSortState };

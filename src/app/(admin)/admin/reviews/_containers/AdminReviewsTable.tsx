@@ -48,8 +48,7 @@ const AdminReviewsTable = () => {
             </TableCell>
           </TableRow>
         )}
-        sort={table.sort}
-        direction={table.direction}
+        sortState={table.sortState}
         onSort={table.toggleSort}
         search={{
           value: table.q,

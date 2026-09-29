@@ -94,8 +94,7 @@ describe("useOffsetList", () => {
       pageInfo: { total: 1, totalPages: 1 },
       page: 1,
       q: "",
-      sort: undefined,
-      direction: undefined,
+      sortState: null,
       params: { view: undefined },
       isLoading: false,
     });
@@ -111,6 +110,22 @@ describe("useOffsetList", () => {
 
     expect(result.current.pageInfo).toBeNull();
     expect(result.current.items).toBeUndefined();
+  });
+
+  it("URL의 sort와 direction을 하나의 정렬 상태로 노출한다", () => {
+    navigationMocks.searchParams = new URLSearchParams(
+      "sort=createdAt&direction=asc",
+    );
+    const { result } = renderHook(() =>
+      useOffsetList<{ id: string }, "createdAt">({
+        endpoint: "/api/admin/products",
+      }),
+    );
+
+    expect(result.current.sortState).toEqual({
+      key: "createdAt",
+      direction: "asc",
+    });
   });
 
   it("페이지 이동은 기본 page를 URL에서 빼고 push한다", () => {

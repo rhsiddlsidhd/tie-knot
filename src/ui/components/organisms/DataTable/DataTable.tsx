@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import type { ReactNode } from "react";
 
 import type { OffsetPageInfo } from "@/core/domain/offset";
+import type { SortState } from "@/core/utils/sort-cycle";
 
 import { OffsetPagination } from "@/ui/components/molecules/OffsetPagination/OffsetPagination";
 import { SearchInputBar } from "@/ui/components/molecules/SearchInputBar/SearchInputBar";
@@ -19,11 +20,9 @@ import {
   TableRow,
 } from "@/ui/components/ui/table";
 
-type DataTableSortDirection = "asc" | "desc";
-
 interface DataTableColumn<S extends string> {
   label: string;
-  sort?: S;
+  sort: S | null;
   className?: string;
 }
 
@@ -54,8 +53,7 @@ interface DataTableProps<T, S extends string> {
   items: T[] | undefined;
   getRowKey: (item: T) => string;
   renderRow: (item: T) => ReactNode;
-  sort?: S;
-  direction?: DataTableSortDirection;
+  sortState: SortState<S>;
   onSort: (key: S) => void;
   search: DataTableSearch | null;
   pagination: DataTablePagination;
@@ -74,8 +72,7 @@ const DataTable = <T, S extends string>({
   items,
   getRowKey,
   renderRow,
-  sort,
-  direction,
+  sortState,
   onSort,
   search,
   pagination,
@@ -119,8 +116,7 @@ const DataTable = <T, S extends string>({
                 key={index}
                 label={column.label}
                 sortKey={column.sort}
-                sort={sort}
-                direction={direction}
+                sortState={sortState}
                 onSort={onSort}
                 className={column.className}
               />
@@ -190,5 +186,4 @@ export type {
   DataTablePagination,
   DataTableProps,
   DataTableSearch,
-  DataTableSortDirection,
 };

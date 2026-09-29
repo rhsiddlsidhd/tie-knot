@@ -1,14 +1,13 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
-import type { SortDirection } from "@/core/utils/sort-cycle";
+import type { SortState } from "@/core/utils/sort-cycle";
 import { Button } from "@/ui/components/ui/button";
 import { TableHead } from "@/ui/components/ui/table";
 
 interface TableColumnHeaderProps<S extends string> {
   label: string;
-  sortKey?: S;
-  sort?: S;
-  direction?: SortDirection;
+  sortKey: S | null;
+  sortState: SortState<S>;
   onSort: (key: S) => void;
   className?: string;
 }
@@ -16,21 +15,24 @@ interface TableColumnHeaderProps<S extends string> {
 const TableColumnHeader = <S extends string>({
   label,
   sortKey,
-  sort,
-  direction,
+  sortState,
   onSort,
   className,
 }: TableColumnHeaderProps<S>) => {
-  const isActive = sortKey !== undefined && sort === sortKey;
-  const ariaSort = isActive
-    ? direction === "asc"
+  const activeDirection =
+    sortKey !== null && sortState?.key === sortKey
+      ? sortState.direction
+      : null;
+  const ariaSort =
+    activeDirection === "asc"
       ? "ascending"
-      : "descending"
-    : undefined;
+      : activeDirection === "desc"
+        ? "descending"
+        : undefined;
 
   return (
     <TableHead className={className} aria-sort={ariaSort}>
-      {sortKey === undefined ? (
+      {sortKey === null ? (
         label
       ) : (
         <Button
@@ -42,9 +44,9 @@ const TableColumnHeader = <S extends string>({
           onClick={() => onSort(sortKey)}
         >
           {label}
-          {isActive && direction === "asc" ? (
+          {activeDirection === "asc" ? (
             <ArrowUp aria-hidden="true" />
-          ) : isActive ? (
+          ) : activeDirection === "desc" ? (
             <ArrowDown aria-hidden="true" />
           ) : (
             <ArrowUpDown aria-hidden="true" />

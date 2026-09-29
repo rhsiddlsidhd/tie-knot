@@ -6,7 +6,7 @@ import useSWR from "swr";
 
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OffsetPage, OffsetPageInfo } from "@/core/domain/offset";
-import type { SortDirection } from "@/core/utils/sort-cycle";
+import type { SortState } from "@/core/utils/sort-cycle";
 import { getNextSortState } from "@/core/utils/sort-cycle";
 import { fetcher } from "@/ui/fetcher";
 
@@ -30,13 +30,17 @@ const useOffsetList = <T, S extends string, P extends string = string>({
   const page = getPage(searchParams.get("page"));
   const q = searchParams.get("q")?.trim() ?? "";
   const sortValue = searchParams.get("sort")?.trim();
-  const sort = (sortValue || undefined) as S | undefined;
   const directionValue = searchParams.get("direction");
-  const direction: SortDirection | undefined = sort
-    ? directionValue === "asc"
-      ? "asc"
-      : "desc"
-    : undefined;
+  const sortState = useMemo<SortState<S>>(
+    () =>
+      sortValue
+        ? {
+            key: sortValue as S,
+            direction: directionValue === "asc" ? "asc" : "desc",
+          }
+        : null,
+    [directionValue, sortValue],
+  );
   const params = Object.fromEntries(
     paramNames.map((name) => {
       const value = searchParams.get(name)?.trim();
@@ -47,8 +51,10 @@ const useOffsetList = <T, S extends string, P extends string = string>({
   const keyParams = new URLSearchParams();
   keyParams.set("page", String(page));
   if (q) keyParams.set("q", q);
-  if (sort) keyParams.set("sort", sort);
-  if (direction) keyParams.set("direction", direction);
+  if (sortState) {
+    keyParams.set("sort", sortState.key);
+    keyParams.set("direction", sortState.direction);
+  }
   paramNames.forEach((name) => {
     const value = params[name];
     if (value) keyParams.set(name, value);
@@ -96,11 +102,11 @@ const useOffsetList = <T, S extends string, P extends string = string>({
 
   const toggleSort = useCallback(
     (nextSort: S) => {
-      const nextState = getNextSortState(sort, direction, nextSort);
+      const nextState = getNextSortState(sortState, nextSort);
       const href = createHref((nextParams) => {
         nextParams.delete("page");
-        if (nextState.sort && nextState.direction) {
-          nextParams.set("sort", nextState.sort);
+        if (nextState) {
+          nextParams.set("sort", nextState.key);
           nextParams.set("direction", nextState.direction);
         } else {
           nextParams.delete("sort");
@@ -109,7 +115,7 @@ const useOffsetList = <T, S extends string, P extends string = string>({
       });
       window.history.replaceState(null, "", href);
     },
-    [createHref, direction, sort],
+    [createHref, sortState],
   );
 
   const setParam = useCallback(
@@ -156,8 +162,7 @@ const useOffsetList = <T, S extends string, P extends string = string>({
     mutate,
     page,
     q,
-    sort,
-    direction,
+    sortState,
     params,
     setPage,
     setSearch,
