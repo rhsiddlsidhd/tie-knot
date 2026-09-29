@@ -8,7 +8,7 @@ import { AppError } from "@/core/domain/error";
 import type { PublicProductListPage } from "@/core/domain/product";
 
 /**
- * 상품 목록의 "더보기" 전용 — docs/architecture/data-access.md "목록 페이지네이션".
+ * 상품 목록의 "더보기" 전용.
  */
 const GET = async (
   request: NextRequest,

@@ -45,10 +45,6 @@ const buildKey = ({
   return query ? `/api/orders?${query}` : "/api/orders";
 };
 
-/**
- * 첫 페이지·더보기 경로와 SWR 옵션은 docs/architecture/data-access.md
- * "목록 페이지네이션"을 따른다.
- */
 const OrderList = ({ firstPage, status, category }: OrderListProps) => {
   const { data, error, size, setSize, isValidating, mutate } =
     useSWRInfinite<OrderListPage>(
