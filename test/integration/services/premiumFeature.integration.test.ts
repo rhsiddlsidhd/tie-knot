@@ -167,9 +167,17 @@ describe("premiumFeature", () => {
     it("offset 페이지가 total과 totalPages를 반환하고 행이 중복/누락되지 않는다", async () => {
       const created = await createFeatures(3);
 
-      const firstPage = await getAdminPremiumFeaturesPageService({ limit: 2, page: 1 });
+      const firstPage = await getAdminPremiumFeaturesPageService({
+        limit: 2,
+        page: 1,
+      });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminPremiumFeaturesPageService({
         limit: 2,
@@ -219,8 +227,14 @@ describe("premiumFeature", () => {
           await setCreatedAt(first._id, new Date("2026-01-01"));
           await setCreatedAt(second._id, new Date("2026-02-01"));
         }
-        const asc = await getAdminPremiumFeaturesPageService({ sort, direction: "asc" });
-        const desc = await getAdminPremiumFeaturesPageService({ sort, direction: "desc" });
+        const asc = await getAdminPremiumFeaturesPageService({
+          sort,
+          direction: "asc",
+        });
+        const desc = await getAdminPremiumFeaturesPageService({
+          sort,
+          direction: "desc",
+        });
         expect(asc.items.map((item) => item._id)).toEqual([
           first._id.toString(),
           second._id.toString(),

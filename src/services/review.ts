@@ -22,10 +22,7 @@ import type {
   ReviewListPage,
   ReviewSortType,
 } from "@/core/domain/review";
-import {
-  ADMIN_REVIEW_SORT_KEYS,
-  REVIEW_PAGE_SIZE,
-} from "@/core/domain/review";
+import { ADMIN_REVIEW_SORT_KEYS, REVIEW_PAGE_SIZE } from "@/core/domain/review";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
 import { getUser, requireAdmin, requireAuth } from "./auth";
 

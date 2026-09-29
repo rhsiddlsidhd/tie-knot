@@ -1,8 +1,5 @@
 import * as z from "zod";
-import {
-  DEFAULT_PAGE_SIZE,
-  MAX_PAGE_SIZE,
-} from "@/core/domain/cursor";
+import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "@/core/domain/cursor";
 import { SearchTermSchema } from "./productSearch.schema";
 
 const emptyToUndefined = (value: unknown) =>
@@ -31,8 +28,4 @@ const OffsetListRequestSchema = z.object({
 
 type OffsetListRequest = z.infer<typeof OffsetListRequestSchema>;
 
-export {
-  emptyToUndefined,
-  OffsetListRequestSchema,
-  type OffsetListRequest,
-};
+export { emptyToUndefined, OffsetListRequestSchema, type OffsetListRequest };

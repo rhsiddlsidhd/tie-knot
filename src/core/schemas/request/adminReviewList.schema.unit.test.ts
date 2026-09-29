@@ -32,8 +32,7 @@ describe("AdminReviewListRequestSchema", () => {
 
   it("offset과 정렬 입력을 정규화한다", () => {
     expect(
-      parse({ page: "2", limit: "20", sort: "rating", direction: "asc" })
-        .data,
+      parse({ page: "2", limit: "20", sort: "rating", direction: "asc" }).data,
     ).toMatchObject({ page: 2, limit: 20, sort: "rating", direction: "asc" });
   });
 

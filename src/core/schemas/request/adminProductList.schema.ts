@@ -3,10 +3,7 @@ import {
   ADMIN_PRODUCT_SORT_KEYS,
   ADMIN_PRODUCT_VIEWS,
 } from "@/core/domain/product";
-import {
-  emptyToUndefined,
-  OffsetListRequestSchema,
-} from "./offsetList.schema";
+import { emptyToUndefined, OffsetListRequestSchema } from "./offsetList.schema";
 
 const AdminProductListRequestSchema = OffsetListRequestSchema.extend({
   sort: z.preprocess(

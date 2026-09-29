@@ -37,16 +37,19 @@ describe("GET /api/admin/products", () => {
   it.each([
     ["UNAUTHENTICATED", 401],
     ["FORBIDDEN", 403],
-  ] as const)("관리자 인증 실패 %s를 %i로 반환한다", async (category, status) => {
-    vi.mocked(requireAdmin).mockRejectedValue(
-      new AppError(category, "관리자 인증 실패"),
-    );
+  ] as const)(
+    "관리자 인증 실패 %s를 %i로 반환한다",
+    async (category, status) => {
+      vi.mocked(requireAdmin).mockRejectedValue(
+        new AppError(category, "관리자 인증 실패"),
+      );
 
-    const response = await GET(buildRequest());
+      const response = await GET(buildRequest());
 
-    expect(response.status).toBe(status);
-    expect(getAdminProductsPageService).not.toHaveBeenCalled();
-  });
+      expect(response.status).toBe(status);
+      expect(getAdminProductsPageService).not.toHaveBeenCalled();
+    },
+  );
 
   it("형식이 잘못된 요청은 400을 반환한다", async () => {
     const response = await GET(buildRequest("?page=0&sort=unknown"));

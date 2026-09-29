@@ -11,13 +11,7 @@ describe("SearchInputBar", () => {
   it("입력값을 trim해 300ms 뒤 한 번 검색한다", () => {
     vi.useFakeTimers();
     const onSearch = vi.fn();
-    render(
-      <SearchInputBar
-        value=""
-        label="상품 검색"
-        onSearch={onSearch}
-      />,
-    );
+    render(<SearchInputBar value="" label="상품 검색" onSearch={onSearch} />);
 
     fireEvent.change(screen.getByRole("searchbox", { name: "상품 검색" }), {
       target: { value: "  카드  " },
@@ -34,11 +28,7 @@ describe("SearchInputBar", () => {
     vi.useFakeTimers();
     const onSearch = vi.fn();
     render(
-      <SearchInputBar
-        value="카드"
-        label="상품 검색"
-        onSearch={onSearch}
-      />,
+      <SearchInputBar value="카드" label="상품 검색" onSearch={onSearch} />,
     );
 
     const input = screen.getByRole("searchbox", { name: "상품 검색" });
@@ -99,11 +89,7 @@ describe("SearchInputBar", () => {
     );
 
     rerender(
-      <SearchInputBar
-        value="새 검색"
-        label="상품 검색"
-        onSearch={onSearch}
-      />,
+      <SearchInputBar value="새 검색" label="상품 검색" onSearch={onSearch} />,
     );
     act(() => vi.advanceTimersByTime(300));
 
@@ -144,9 +130,7 @@ describe("SearchInputBar", () => {
     );
 
     rerender(<SearchInputBar value="" label="상품 검색" onSearch={vi.fn()} />);
-    rerender(
-      <SearchInputBar value="" label="상품 검색" onSearch={onSearch} />,
-    );
+    rerender(<SearchInputBar value="" label="상품 검색" onSearch={onSearch} />);
     act(() => vi.advanceTimersByTime(300));
 
     expect(screen.getByRole("searchbox", { name: "상품 검색" })).toHaveValue(
@@ -161,11 +145,7 @@ describe("SearchInputBar", () => {
     const user = userEvent.setup();
     render(
       <form onSubmit={onSubmit}>
-        <SearchInputBar
-          value=""
-          label="상품 검색"
-          onSearch={onSearch}
-        />
+        <SearchInputBar value="" label="상품 검색" onSearch={onSearch} />
       </form>,
     );
 

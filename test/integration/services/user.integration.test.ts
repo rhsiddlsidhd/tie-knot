@@ -314,7 +314,11 @@ describe("user", () => {
           buildUserInput({ name: "박영희", email: "young@example.com" }),
         );
 
-        const first = await getAdminUsersPageService({ q: "철수", limit: 2, page: 1 });
+        const first = await getAdminUsersPageService({
+          q: "철수",
+          limit: 2,
+          page: 1,
+        });
         expect(first.items).toHaveLength(2);
         expect(first.total).toBe(3);
 
@@ -372,7 +376,12 @@ describe("user", () => {
 
       const firstPage = await getAdminUsersPageService({ limit: 2, page: 1 });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminUsersPageService({
         limit: 2,
@@ -432,7 +441,13 @@ describe("user", () => {
     it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminUsersPageService({});
 
-      expect(result).toEqual({ items: [], total: 0, page: 1, limit: 10, totalPages: 0 });
+      expect(result).toEqual({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+      });
     });
 
     it("잘못된 role은 서비스가 방어적으로 VALIDATION을 던진다", async () => {
@@ -454,22 +469,34 @@ describe("user", () => {
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
 
-    it.each(["createdAt", "name"] as const)("%s를 양방향 정렬한다", async (sort) => {
-      const first = await UserModel.create(buildUserInput({ name: "가 사용자" }));
-      const second = await UserModel.create(buildUserInput({ name: "나 사용자" }));
-      if (sort === "createdAt") {
-        await setCreatedAt(first._id, new Date("2026-01-01"));
-        await setCreatedAt(second._id, new Date("2026-02-01"));
-      }
-      const asc = await getAdminUsersPageService({ sort, direction: "asc" });
-      const desc = await getAdminUsersPageService({ sort, direction: "desc" });
-      expect(asc.items.map((item) => item.id)).toEqual([
-        first._id.toString(), second._id.toString(),
-      ]);
-      expect(desc.items.map((item) => item.id)).toEqual([
-        second._id.toString(), first._id.toString(),
-      ]);
-    });
+    it.each(["createdAt", "name"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await UserModel.create(
+          buildUserInput({ name: "가 사용자" }),
+        );
+        const second = await UserModel.create(
+          buildUserInput({ name: "나 사용자" }),
+        );
+        if (sort === "createdAt") {
+          await setCreatedAt(first._id, new Date("2026-01-01"));
+          await setCreatedAt(second._id, new Date("2026-02-01"));
+        }
+        const asc = await getAdminUsersPageService({ sort, direction: "asc" });
+        const desc = await getAdminUsersPageService({
+          sort,
+          direction: "desc",
+        });
+        expect(asc.items.map((item) => item.id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item.id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
 
     it("DTO에 password/phone 등 인증 관련 필드가 없다", async () => {
       await UserModel.create(buildUserInput());

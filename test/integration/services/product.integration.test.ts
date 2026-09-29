@@ -534,16 +534,29 @@ describe("product", () => {
         created.push(product!._id.toString());
       }
 
-      const firstPage = await getAdminProductsPageService({ limit: 2, page: 1 });
+      const firstPage = await getAdminProductsPageService({
+        limit: 2,
+        page: 1,
+      });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminProductsPageService({
         limit: 2,
         page: 2,
       });
       expect(secondPage.items).toHaveLength(1);
-      expect(secondPage).toMatchObject({ total: 3, page: 2, limit: 2, totalPages: 2 });
+      expect(secondPage).toMatchObject({
+        total: 3,
+        page: 2,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const paged = [...firstPage.items, ...secondPage.items].map((p) => p._id);
       expect(new Set(paged).size).toBe(3);
@@ -576,7 +589,10 @@ describe("product", () => {
       const trashed = await createAndFetch("삭제될상품");
       await deleteProductService(trashed!._id.toString());
 
-      const firstPage = await getAdminProductsPageService({ limit: 2, page: 1 });
+      const firstPage = await getAdminProductsPageService({
+        limit: 2,
+        page: 1,
+      });
       const secondPage = await getAdminProductsPageService({
         limit: 2,
         page: 2,
@@ -636,32 +652,41 @@ describe("product", () => {
       ["likesCount", 1, 2],
       ["salesCount", 1, 2],
       ["priority", 1, 2],
-    ] as const)("%s를 양방향 정렬하고 _id로 tie-break한다", async (sort, low, high) => {
-      const first = await createAndFetch("첫 상품");
-      const second = await createAndFetch("둘째 상품");
-      await ProductModel.updateOne(
-        { _id: first!._id },
-        { $set: { [sort]: low } },
-        { timestamps: false, overwriteImmutable: true },
-      );
-      await ProductModel.updateOne(
-        { _id: second!._id },
-        { $set: { [sort]: high } },
-        { timestamps: false, overwriteImmutable: true },
-      );
+    ] as const)(
+      "%s를 양방향 정렬하고 _id로 tie-break한다",
+      async (sort, low, high) => {
+        const first = await createAndFetch("첫 상품");
+        const second = await createAndFetch("둘째 상품");
+        await ProductModel.updateOne(
+          { _id: first!._id },
+          { $set: { [sort]: low } },
+          { timestamps: false, overwriteImmutable: true },
+        );
+        await ProductModel.updateOne(
+          { _id: second!._id },
+          { $set: { [sort]: high } },
+          { timestamps: false, overwriteImmutable: true },
+        );
 
-      const asc = await getAdminProductsPageService({ sort, direction: "asc" });
-      const desc = await getAdminProductsPageService({ sort, direction: "desc" });
+        const asc = await getAdminProductsPageService({
+          sort,
+          direction: "asc",
+        });
+        const desc = await getAdminProductsPageService({
+          sort,
+          direction: "desc",
+        });
 
-      expect(asc.items.map((item) => item._id)).toEqual([
-        first!._id.toString(),
-        second!._id.toString(),
-      ]);
-      expect(desc.items.map((item) => item._id)).toEqual([
-        second!._id.toString(),
-        first!._id.toString(),
-      ]);
-    });
+        expect(asc.items.map((item) => item._id)).toEqual([
+          first!._id.toString(),
+          second!._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item._id)).toEqual([
+          second!._id.toString(),
+          first!._id.toString(),
+        ]);
+      },
+    );
 
     it("trash 목록의 기본 정렬은 deletedAt 내림차순이며 명시적 오름차순도 지원한다", async () => {
       const first = await createAndFetch("먼저 삭제");

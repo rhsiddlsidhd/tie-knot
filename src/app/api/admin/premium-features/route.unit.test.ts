@@ -33,9 +33,7 @@ describe("GET /api/admin/premium-features", () => {
     ["UNAUTHENTICATED", 401],
     ["FORBIDDEN", 403],
   ] as const)("%s를 %i로 반환한다", async (category, status) => {
-    vi.mocked(requireAdmin).mockRejectedValue(
-      new AppError(category, "실패"),
-    );
+    vi.mocked(requireAdmin).mockRejectedValue(new AppError(category, "실패"));
     expect((await GET(request())).status).toBe(status);
     expect(getAdminPremiumFeaturesPageService).not.toHaveBeenCalled();
   });

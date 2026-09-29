@@ -31,16 +31,14 @@ describe("GET /api/admin/orders", () => {
     });
   });
 
-  it.each([["UNAUTHENTICATED", 401], ["FORBIDDEN", 403]] as const)(
-    "%s를 %i로 반환한다",
-    async (category, status) => {
-      vi.mocked(requireAdmin).mockRejectedValue(
-        new AppError(category, "실패"),
-      );
-      expect((await GET(request())).status).toBe(status);
-      expect(getAdminOrdersPageService).not.toHaveBeenCalled();
-    },
-  );
+  it.each([
+    ["UNAUTHENTICATED", 401],
+    ["FORBIDDEN", 403],
+  ] as const)("%s를 %i로 반환한다", async (category, status) => {
+    vi.mocked(requireAdmin).mockRejectedValue(new AppError(category, "실패"));
+    expect((await GET(request())).status).toBe(status);
+    expect(getAdminOrdersPageService).not.toHaveBeenCalled();
+  });
 
   it("형식 오류를 400으로 반환한다", async () => {
     expect((await GET(request("?limit=51"))).status).toBe(400);

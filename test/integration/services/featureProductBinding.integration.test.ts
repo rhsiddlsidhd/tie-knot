@@ -155,7 +155,12 @@ describe("featureProductBinding", () => {
         page: 1,
       });
       expect(first.items).toHaveLength(2);
-      expect(first).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
+      expect(first).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const second = await getFeatureProductBindingsPageService({
         featureId,
@@ -217,14 +222,8 @@ describe("featureProductBinding", () => {
           sort,
           direction: "desc",
         });
-        expect(asc.items.map((item) => item._id)).toEqual([
-          firstId,
-          secondId,
-        ]);
-        expect(desc.items.map((item) => item._id)).toEqual([
-          secondId,
-          firstId,
-        ]);
+        expect(asc.items.map((item) => item._id)).toEqual([firstId, secondId]);
+        expect(desc.items.map((item) => item._id)).toEqual([secondId, firstId]);
       },
     );
   });

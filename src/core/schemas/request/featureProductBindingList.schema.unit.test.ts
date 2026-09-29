@@ -8,7 +8,11 @@ describe("FeatureProductBindingListRequestSchema", () => {
   it("목록 기본값을 적용한다", () => {
     const result = parse({});
 
-    expect(result.data).toMatchObject({ page: 1, limit: 10, direction: "desc" });
+    expect(result.data).toMatchObject({
+      page: 1,
+      limit: 10,
+      direction: "desc",
+    });
   });
 
   it("검색어 앞뒤 공백을 제거한다", () => {
@@ -32,8 +36,9 @@ describe("FeatureProductBindingListRequestSchema", () => {
   });
 
   it("offset과 정렬 입력을 정규화한다", () => {
-    expect(parse({ page: "2", limit: "20", sort: "price", direction: "asc" }).data)
-      .toMatchObject({ page: 2, limit: 20, sort: "price", direction: "asc" });
+    expect(
+      parse({ page: "2", limit: "20", sort: "price", direction: "asc" }).data,
+    ).toMatchObject({ page: 2, limit: 20, sort: "price", direction: "asc" });
   });
 
   it("허용되지 않은 sort를 거부한다", () => {

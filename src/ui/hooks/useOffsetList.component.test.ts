@@ -239,11 +239,7 @@ describe("useOffsetList", () => {
 
     act(() => result.current.setParam("view", null));
 
-    expect(replaceStateSpy).toHaveBeenCalledWith(
-      null,
-      "",
-      "/admin/products",
-    );
+    expect(replaceStateSpy).toHaveBeenCalledWith(null, "", "/admin/products");
   });
 
   it("응답 범위를 넘은 page는 마지막 페이지로 replace한다", async () => {

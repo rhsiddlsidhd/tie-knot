@@ -433,7 +433,11 @@ describe("review", () => {
         userInput: { email: "unrelated@example.com" },
       });
 
-      const first = await getAdminReviewsPageService({ q: "match", limit: 2, page: 1 });
+      const first = await getAdminReviewsPageService({
+        q: "match",
+        limit: 2,
+        page: 1,
+      });
       expect(first.items).toHaveLength(2);
       expect(first.total).toBe(3);
 
@@ -454,30 +458,41 @@ describe("review", () => {
       expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
 
-    it.each(["createdAt", "rating"] as const)("%s를 양방향 정렬한다", async (sort) => {
-      const first = await createReviewFixture({ rating: 1 });
-      const second = await createReviewFixture({ rating: 5 });
-      if (sort === "createdAt") {
-        await ReviewModel.updateOne(
-          { _id: first._id },
-          { $set: { createdAt: new Date("2026-01-01") } },
-          { timestamps: false, overwriteImmutable: true },
-        );
-        await ReviewModel.updateOne(
-          { _id: second._id },
-          { $set: { createdAt: new Date("2026-02-01") } },
-          { timestamps: false, overwriteImmutable: true },
-        );
-      }
-      const asc = await getAdminReviewsPageService({ sort, direction: "asc" });
-      const desc = await getAdminReviewsPageService({ sort, direction: "desc" });
-      expect(asc.items.map((item) => item.id)).toEqual([
-        first._id.toString(), second._id.toString(),
-      ]);
-      expect(desc.items.map((item) => item.id)).toEqual([
-        second._id.toString(), first._id.toString(),
-      ]);
-    });
+    it.each(["createdAt", "rating"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await createReviewFixture({ rating: 1 });
+        const second = await createReviewFixture({ rating: 5 });
+        if (sort === "createdAt") {
+          await ReviewModel.updateOne(
+            { _id: first._id },
+            { $set: { createdAt: new Date("2026-01-01") } },
+            { timestamps: false, overwriteImmutable: true },
+          );
+          await ReviewModel.updateOne(
+            { _id: second._id },
+            { $set: { createdAt: new Date("2026-02-01") } },
+            { timestamps: false, overwriteImmutable: true },
+          );
+        }
+        const asc = await getAdminReviewsPageService({
+          sort,
+          direction: "asc",
+        });
+        const desc = await getAdminReviewsPageService({
+          sort,
+          direction: "desc",
+        });
+        expect(asc.items.map((item) => item.id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item.id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
 
     it("같은 정렬 값이면 _id로 tie-break한다", async () => {
       const first = await createReviewFixture({ rating: 3 });

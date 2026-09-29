@@ -28,7 +28,9 @@ describe("GET /api/admin/premium-features/[id]/products", () => {
       role: "ADMIN",
       email: "a@x.com",
     });
-    vi.mocked(getPremiumFeatureService).mockResolvedValue([{ _id: id } as never]);
+    vi.mocked(getPremiumFeatureService).mockResolvedValue([
+      { _id: id } as never,
+    ]);
     vi.mocked(getFeatureProductBindingsPageService).mockResolvedValue({
       items: [],
       total: 0,
@@ -41,9 +43,7 @@ describe("GET /api/admin/premium-features/[id]/products", () => {
     ["UNAUTHENTICATED", 401],
     ["FORBIDDEN", 403],
   ] as const)("%s를 %i로 반환한다", async (category, status) => {
-    vi.mocked(requireAdmin).mockRejectedValue(
-      new AppError(category, "실패"),
-    );
+    vi.mocked(requireAdmin).mockRejectedValue(new AppError(category, "실패"));
     expect((await GET(request(), context())).status).toBe(status);
   });
   it("ObjectId 형식이 아니면 400을 반환한다", async () => {

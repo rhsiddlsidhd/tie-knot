@@ -1108,7 +1108,11 @@ describe("order", () => {
           buyerEmail: "young@example.com",
         });
 
-        const first = await getAdminOrdersPageService({ q: "철수", limit: 2, page: 1 });
+        const first = await getAdminOrdersPageService({
+          q: "철수",
+          limit: 2,
+          page: 1,
+        });
         expect(first.items).toHaveLength(2);
         expect(first.total).toBe(3);
 
@@ -1168,7 +1172,12 @@ describe("order", () => {
 
       const firstPage = await getAdminOrdersPageService({ limit: 2, page: 1 });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage).toMatchObject({ total: 3, page: 1, limit: 2, totalPages: 2 });
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminOrdersPageService({
         limit: 2,
@@ -1248,7 +1257,13 @@ describe("order", () => {
     it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminOrdersPageService({});
 
-      expect(result).toEqual({ items: [], total: 0, page: 1, limit: 10, totalPages: 0 });
+      expect(result).toEqual({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+      });
     });
 
     it("잘못된 status는 서비스가 방어적으로 VALIDATION을 던진다", async () => {
@@ -1289,13 +1304,18 @@ describe("order", () => {
         );
 
         const asc = await getAdminOrdersPageService({ sort, direction: "asc" });
-        const desc = await getAdminOrdersPageService({ sort, direction: "desc" });
+        const desc = await getAdminOrdersPageService({
+          sort,
+          direction: "desc",
+        });
 
         expect(asc.items.map((item) => item.id)).toEqual([
-          first._id.toString(), second._id.toString(),
+          first._id.toString(),
+          second._id.toString(),
         ]);
         expect(desc.items.map((item) => item.id)).toEqual([
-          second._id.toString(), first._id.toString(),
+          second._id.toString(),
+          first._id.toString(),
         ]);
       },
     );
