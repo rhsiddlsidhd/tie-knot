@@ -190,6 +190,71 @@ describe("product", () => {
     });
   });
 
+  describe("updateProductLikeService", () => {
+    it("좋아요하면 likesCount가 1 증가한다", async () => {
+      const input = buildProductInput();
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      const userId = new mongoose.Types.ObjectId().toString();
+
+      await updateProductLikeService(saved!._id.toString(), userId);
+
+      const updated = await ProductModel.findById(saved!._id).lean();
+      expect(updated?.likesCount).toBe(1);
+    });
+
+    it("좋아요를 취소하면 likesCount가 1 감소한다", async () => {
+      const input = buildProductInput();
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      const userId = new mongoose.Types.ObjectId().toString();
+      await updateProductLikeService(saved!._id.toString(), userId);
+
+      await updateProductLikeService(saved!._id.toString(), userId);
+
+      const updated = await ProductModel.findById(saved!._id).lean();
+      expect(updated?.likesCount).toBe(0);
+    });
+
+    it("같은 사용자의 좋아요 요청이 동시에 들어와도 likesCount가 이중 증가하지 않는다 (경쟁 상황)", async () => {
+      const input = buildProductInput();
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      const userId = new mongoose.Types.ObjectId().toString();
+
+      const results = await Promise.all([
+        updateProductLikeService(saved!._id.toString(), userId),
+        updateProductLikeService(saved!._id.toString(), userId),
+      ]);
+
+      // 두 요청이 모두 findOne 시점엔 hasLiked=false를 읽을 수 있다. 한쪽이 먼저
+      // 커밋되면 다른 쪽의 findOneAndUpdate 필터(likes: { $ne: userId })가
+      // 더 이상 매치하지 않아 false를 리턴한다 — 최소 하나는 false다.
+      expect(results).toContain(false);
+      const updated = await ProductModel.findById(saved!._id).lean();
+      expect(updated?.likesCount).toBe(1);
+      expect(updated?.likes).toHaveLength(1);
+    });
+
+    it("같은 사용자의 취소 요청이 동시에 들어와도 likesCount가 음수가 되지 않는다 (경쟁 상황)", async () => {
+      const input = buildProductInput();
+      await createProductService(input);
+      const saved = await ProductModel.findOne({ title: input.title }).lean();
+      const userId = new mongoose.Types.ObjectId().toString();
+      await updateProductLikeService(saved!._id.toString(), userId);
+
+      const results = await Promise.all([
+        updateProductLikeService(saved!._id.toString(), userId),
+        updateProductLikeService(saved!._id.toString(), userId),
+      ]);
+
+      expect(results).toContain(false);
+      const updated = await ProductModel.findById(saved!._id).lean();
+      expect(updated?.likesCount).toBe(0);
+      expect(updated?.likes).toHaveLength(0);
+    });
+  });
+
   describe("getProductQuantityBoundsService", () => {
     it("정상 문서는 저장된 minQuantity/maxQuantity를 그대로 리턴한다", async () => {
       const input = buildProductInput({ minQuantity: 2, maxQuantity: 5 });

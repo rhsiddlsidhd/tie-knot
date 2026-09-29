@@ -847,11 +847,17 @@ const updateProductLikeService = async (
 
   const hasLiked = product.likes.some((id) => id.equals(userObjectId));
 
+  // 배열 변경과 카운터 증감을 한 update에서 원자적으로 묶는다. 필터에 멤버십
+  // 조건(likes: userObjectId 있음/없음)을 넣어 findOne 이후 동시 요청으로 멤버십이
+  // 바뀌었으면 이 update가 아무 문서도 매칭하지 않게 한다 — updated는 null이 되고
+  // 아래에서 기존 "잘못된 id·존재하지 않는 상품" 케이스와 동일하게 false를 반환한다.
   const updated = await ProductModel.findOneAndUpdate(
-    { _id: productId, deletedAt: null },
     hasLiked
-      ? { $pull: { likes: userObjectId } }
-      : { $addToSet: { likes: userObjectId } },
+      ? { _id: productId, deletedAt: null, likes: userObjectId }
+      : { _id: productId, deletedAt: null, likes: { $ne: userObjectId } },
+    hasLiked
+      ? { $pull: { likes: userObjectId }, $inc: { likesCount: -1 } }
+      : { $push: { likes: userObjectId }, $inc: { likesCount: 1 } },
     { new: true, runValidators: true },
   ).catch((err) => {
     throw new AppError(

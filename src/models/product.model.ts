@@ -55,6 +55,7 @@ interface ProductDb {
   isFeatured: boolean;
   priority: number;
   likes: mongoose.Types.ObjectId[];
+  likesCount: number;
   views: number;
   salesCount: number;
   discount: Discount;
@@ -135,6 +136,7 @@ const ProductSchema = new Schema<ProductDocument>(
       type: [{ type: Schema.Types.ObjectId, ref: "User" }],
       default: [],
     },
+    likesCount: { type: Number, default: 0, min: 0 },
     views: { type: Number, default: 0 },
     salesCount: { type: Number, default: 0 },
     discount: {
