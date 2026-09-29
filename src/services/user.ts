@@ -1,7 +1,7 @@
 import "server-only";
 import { randomUUID } from "node:crypto";
+import type mongoose from "mongoose";
 import type { Types } from "mongoose";
-import mongoose from "mongoose";
 import type {
   AdminUserListPage,
   AdminUserSortKey,

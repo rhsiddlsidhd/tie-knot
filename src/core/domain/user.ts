@@ -1,4 +1,3 @@
-import type { CursorPage } from "./cursor";
 import type { OffsetPage } from "./offset";
 
 const USER_ROLES = ["USER", "ADMIN"] as const;
