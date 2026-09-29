@@ -19,13 +19,11 @@ const TABLE_HEADINGS = ["상품", "작성자", "평점", "내용", "작성일", 
 interface AdminReviewsTemplateProps {
   page: AdminReviewListPage;
   q?: string;
-  cursor?: string;
 }
 
 const AdminReviewsTemplate = ({
   page,
   q,
-  cursor,
 }: AdminReviewsTemplateProps) => (
   <div className="space-y-6">
     <AdminListHeading title="리뷰 관리" />
@@ -41,8 +39,8 @@ const AdminReviewsTemplate = ({
       headings={TABLE_HEADINGS}
       basePath={ROUTES.admin.reviews}
       query={q ? { q } : {}}
-      hasCursor={!!cursor}
-      nextCursor={page.nextCursor}
+      hasCursor={false}
+      nextCursor={null}
     >
       {page.items.length === 0 ? (
         <TableRow>

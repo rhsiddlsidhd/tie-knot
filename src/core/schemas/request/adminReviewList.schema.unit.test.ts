@@ -5,8 +5,12 @@ const parse = (input: Record<string, unknown>) =>
   AdminReviewListRequestSchema.safeParse(input);
 
 describe("AdminReviewListRequestSchema", () => {
-  it("아무 조건이 없어도 통과한다", () => {
-    expect(parse({}).success).toBe(true);
+  it("목록 기본값을 적용한다", () => {
+    expect(parse({}).data).toMatchObject({
+      page: 1,
+      limit: 10,
+      direction: "desc",
+    });
   });
 
   it("검색어 앞뒤 공백을 제거한다", () => {
@@ -26,9 +30,14 @@ describe("AdminReviewListRequestSchema", () => {
     expect(parse({ q: "가".repeat(101) }).success).toBe(false);
   });
 
-  it("빈 cursor는 조건 없음으로 정규화한다", () => {
-    const result = parse({ cursor: "" });
+  it("offset과 정렬 입력을 정규화한다", () => {
+    expect(
+      parse({ page: "2", limit: "20", sort: "rating", direction: "asc" })
+        .data,
+    ).toMatchObject({ page: 2, limit: 20, sort: "rating", direction: "asc" });
+  });
 
-    expect(result.success && result.data.cursor).toBeUndefined();
+  it("허용되지 않은 sort를 거부한다", () => {
+    expect(parse({ sort: "content" }).success).toBe(false);
   });
 });

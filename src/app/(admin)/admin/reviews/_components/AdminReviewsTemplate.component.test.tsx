@@ -21,7 +21,10 @@ const buildPage = (
       createdAt: new Date("2026-08-19T15:30:00.000Z"), // KST 2026-08-20
     },
   ],
-  nextCursor: null,
+  total: 1,
+  page: 1,
+  limit: 10,
+  totalPages: 1,
   ...overrides,
 });
 
@@ -43,8 +46,8 @@ describe("AdminReviewsTemplate", () => {
     expect(screen.getByText("등록된 리뷰가 없습니다")).toBeInTheDocument();
   });
 
-  it("nextCursor가 없으면 다음 페이지 버튼이 비활성화된다", () => {
-    render(<AdminReviewsTemplate page={buildPage({ nextCursor: null })} />);
+  it("offset 전환 중에는 기존 cursor 페이지 이동을 비활성화한다", () => {
+    render(<AdminReviewsTemplate page={buildPage()} />);
 
     expect(screen.getByRole("button", { name: "다음 페이지" })).toBeDisabled();
   });
