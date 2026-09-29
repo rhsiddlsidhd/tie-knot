@@ -11,17 +11,17 @@ interface LegalSection {
   items?: readonly string[];
 }
 
-interface LegalDocumentTemplateProps {
+interface LegalDocumentProps {
   title: string;
   effectiveDate: string;
   sections: readonly LegalSection[];
 }
 
-const LegalDocumentTemplate = ({
+const LegalDocument = ({
   title,
   effectiveDate,
   sections,
-}: LegalDocumentTemplateProps) => {
+}: LegalDocumentProps) => {
   return (
     <div className="max-w-2xl space-y-10">
       <div className="space-y-2">
@@ -59,4 +59,4 @@ const LegalDocumentTemplate = ({
   );
 };
 
-export { LegalDocumentTemplate };
+export { LegalDocument };

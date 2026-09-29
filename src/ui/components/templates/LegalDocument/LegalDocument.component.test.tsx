@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { LegalDocumentTemplate } from "./LegalDocumentTemplate";
+import { LegalDocument } from "./LegalDocument";
 
 const sections = [
   {
@@ -13,10 +13,10 @@ const sections = [
   },
 ];
 
-describe("LegalDocumentTemplate", () => {
+describe("LegalDocument", () => {
   it("title/effectiveDate와 섹션 heading·본문을 렌더링한다", () => {
     render(
-      <LegalDocumentTemplate
+      <LegalDocument
         title="이용약관"
         effectiveDate="2026-08-21"
         sections={sections}
@@ -37,7 +37,7 @@ describe("LegalDocumentTemplate", () => {
 
   it("섹션이 여러 개면 모두 렌더링한다", () => {
     render(
-      <LegalDocumentTemplate
+      <LegalDocument
         title="개인정보 처리방침"
         effectiveDate="2026-08-21"
         sections={sections}
