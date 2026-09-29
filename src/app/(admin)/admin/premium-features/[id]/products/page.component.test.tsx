@@ -1,78 +1,71 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-const { verifySessionMock, featureMock, bindingsMock, notFoundMock } =
-  vi.hoisted(() => ({
-    verifySessionMock: vi.fn(),
-    featureMock: vi.fn(),
-    bindingsMock: vi.fn(),
-    notFoundMock: vi.fn(() => {
-      throw new Error("NEXT_NOT_FOUND");
-    }),
-  }));
+
+const { verifySessionMock, featureMock, notFoundMock } = vi.hoisted(() => ({
+  verifySessionMock: vi.fn(),
+  featureMock: vi.fn(),
+  notFoundMock: vi.fn(() => {
+    throw new Error("NEXT_NOT_FOUND");
+  }),
+}));
 vi.mock("@/services/auth", () => ({ verifySession: verifySessionMock }));
 vi.mock("@/services/premiumFeature", () => ({
   getPremiumFeatureService: featureMock,
 }));
-vi.mock("@/services/product", () => ({
-  getFeatureProductBindingsPageService: bindingsMock,
-}));
 vi.mock("next/navigation", () => ({ notFound: notFoundMock }));
 vi.mock(
-  "@/app/(admin)/admin/premium-features/[id]/products/_components/FeatureProductBindingTemplate",
+  "@/app/(admin)/admin/premium-features/[id]/products/_containers/FeatureProductBindingTable",
   () => ({
-    FeatureProductBindingTemplate: ({
+    FeatureProductBindingTable: ({
+      featureId,
       featureLabel,
-      q,
-      page,
     }: {
+      featureId: string;
       featureLabel: string;
-      q?: string;
-      page: { items: unknown[] };
-    }) => (
-      <div>{`Template:${featureLabel}:q=${q ?? ""}:${page.items.length}`}</div>
-    ),
+    }) => <div>{`테이블:${featureId}:${featureLabel}`}</div>,
   }),
 );
+
 import FeatureProductsPage from "./page";
-const feature = { _id: "feature-1", label: "갤러리 확대 보기" };
-const emptyPage = { items: [], total: 0, page: 1, limit: 10, totalPages: 0 };
-const callPage = (searchParams: Record<string, string> = {}) =>
-  FeatureProductsPage({
-    params: Promise.resolve({ id: "feature-1" }),
-    searchParams: Promise.resolve(searchParams),
-  });
+
+const callPage = () =>
+  FeatureProductsPage({ params: Promise.resolve({ id: "feature-1" }) });
+
 describe("기능별 연결 상품 페이지", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     verifySessionMock.mockResolvedValue({ role: "ADMIN" });
-    featureMock.mockResolvedValue([feature]);
-    bindingsMock.mockResolvedValue(emptyPage);
+    featureMock.mockResolvedValue([
+      { _id: "feature-1", label: "갤러리 확대 보기" },
+    ]);
   });
-  it("ADMIN 권한을 확인하고 offset·정렬·검색을 서비스에 전달한다", async () => {
-    await callPage({
-      page: "2",
-      limit: "20",
-      q: "봄",
-      sort: "price",
-      direction: "asc",
-    });
+
+  it("ADMIN 권한을 확인한 뒤 기능 id로 기능을 조회한다", async () => {
+    await callPage();
+
     expect(verifySessionMock).toHaveBeenCalledWith("ADMIN");
-    expect(bindingsMock).toHaveBeenCalledWith({
-      featureId: "feature-1",
-      page: 2,
-      limit: 20,
-      q: "봄",
-      sort: "price",
-      direction: "asc",
-    });
+    expect(featureMock).toHaveBeenCalledWith(["feature-1"]);
   });
-  it("존재하지 않는 기능이면 notFound를 호출한다", async () => {
+
+  it("기능 id와 이름을 테이블에 전달한다", async () => {
+    render(await callPage());
+
+    expect(
+      screen.getByText("테이블:feature-1:갤러리 확대 보기"),
+    ).toBeInTheDocument();
+  });
+
+  it("기능이 없으면 notFound를 호출한다", async () => {
     featureMock.mockResolvedValue([]);
+
     await expect(callPage()).rejects.toThrow("NEXT_NOT_FOUND");
-    expect(bindingsMock).not.toHaveBeenCalled();
+    expect(notFoundMock).toHaveBeenCalledOnce();
   });
-  it("기능 이름과 조회 결과를 템플릿에 전달한다", async () => {
-    render(await callPage({ q: "봄" }));
-    expect(screen.getByText("Template:갤러리 확대 보기:q=봄:0")).toBeInTheDocument();
+
+  it("인증에 실패하면(verifySession이 throw) 기능을 조회하지 않는다", async () => {
+    verifySessionMock.mockRejectedValue(new Error("redirect"));
+
+    await expect(callPage()).rejects.toThrow("redirect");
+    expect(featureMock).not.toHaveBeenCalled();
   });
 });
