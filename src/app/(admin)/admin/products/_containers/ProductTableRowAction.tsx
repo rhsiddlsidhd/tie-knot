@@ -3,7 +3,7 @@ import { deleteProduct } from "@/actions/deleteProduct";
 import { permanentlyDeleteProduct } from "@/actions/permanentlyDeleteProduct";
 import { restoreProduct } from "@/actions/restoreProduct";
 import type { ProductTableRowProps } from "../_components/ProductTableRow";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { ProductPermanentDeleteDialog } from "../_components/ProductPermanentDeleteDialog";
 import { useAdminModalStore } from "@/ui/stores/use-app-store";

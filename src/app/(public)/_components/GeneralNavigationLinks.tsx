@@ -4,7 +4,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   navigationMenuTriggerStyle,
-} from "@/ui/components/atoms/navigation-menu";
+} from "@/ui/components/ui/navigation-menu";
 
 interface GeneralNavigationLinksProps {
   items: NavigationLinkItem[];

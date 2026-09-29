@@ -5,7 +5,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/admin/products/new",
 }));
 
-import { SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarProvider } from "@/ui/components/ui/sidebar";
 import { SidebarToggle } from "./SidebarToggle";
 
 describe("SidebarToggle", () => {

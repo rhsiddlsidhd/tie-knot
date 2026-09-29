@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Button } from "@/ui/components/atoms/button";
-import { Card } from "@/ui/components/atoms/card";
+import { Button } from "@/ui/components/ui/button";
+import { Card } from "@/ui/components/ui/card";
 import {
   TypographyH2,
   TypographyH3,

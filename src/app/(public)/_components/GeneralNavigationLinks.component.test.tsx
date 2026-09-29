@@ -6,7 +6,7 @@ import { GeneralNavigationLinks } from "./GeneralNavigationLinks";
 import {
   NavigationMenu,
   NavigationMenuList,
-} from "@/ui/components/atoms/navigation-menu";
+} from "@/ui/components/ui/navigation-menu";
 
 const items: NavigationLinkItem[] = [
   { id: "support", label: "고객 센터", href: "/support", icon: null },

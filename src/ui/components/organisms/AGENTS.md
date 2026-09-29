@@ -1,52 +1,49 @@
 # AGENTS.md — src/ui/components/organisms/
 
-> Last updated: 2026-08-31
+> Last updated: 2026-09-29
 
 ## Overview
 
-`organisms/`는 표시, 입력, 검증, 삭제, 탐색처럼 사용자가 인식하는 동작을 두 종류 이상 묶은 순수 컴포넌트를 모아둔다. 프로젝트 UI 조합 수는 보조 지표이며, 동작이 두 종류 이상이면 조합이 없어도 organism이다.
+이 디렉터리는 여러 atom과 molecule을 조합한 독립적인 UI 영역을 관리한다.
 
-props로 주입받은 핸들러를 하위 요소에 전달하기만 해도 해당 상호작용을 동작으로 센다. 이 규칙을 적용하지 않으면 핸들러를 props로 받는 순수 컴포넌트 대부분이 표시 한 종류로 잘못 축소된다.
+## Responsibilities
 
-## 현재 예시
+- 여러 하위 컴포넌트의 상태와 상호작용을 조율한다.
+- 예: `DataTable`, `InputField`, `BankField`, `RatingStars`.
+- 로딩, 빈 상태, 오류 표시처럼 해당 UI 영역에 필요한 상태 표현을 제공한다.
 
-| 파일                  | 동작 근거                     |
-| --------------------- | ----------------------------- |
-| `DiscountField.tsx`   | 할인 방식 선택과 값 입력·검증 |
-| `InputField.tsx`      | 라벨·오류 표시와 입력 전달    |
-| `ClipboardButton.tsx` | 아이콘 표시와 복사 클릭 전달  |
-| `RatingStars.tsx`     | 별점 표시와 별점 입력         |
-| `BankField.tsx`       | 은행 선택과 계좌번호 입력     |
-| `BottomActionBar.tsx` | 가시성 표시와 제출 전달       |
+## Boundaries
 
-`RatingStars.tsx`처럼 프로젝트 UI 조합이 0개여도 동작이 두 종류면 atom이 아니라 organism이다.
+- `ui`, `atoms`, `molecules`를 import할 수 있다.
+- `templates`를 import하지 않는다.
+- 범용 organism은 API 호출, 라우팅, 전역 스토어에 직접 접근하지 않는다.
+- 도메인 전용 organism은 이름에 도메인을 표시하고, 데이터 변경은 명시적인 callback 또는 주입된 adapter를 통해 요청한다.
+- 페이지 전체 레이아웃이나 라우트 책임을 포함하지 않는다.
+
+## DataTable rules
+
+- shadcn/ui의 `Table` primitive는 직접 대체하지 않고 내부 구성 요소로 사용한다.
+- 정렬, 필터, 선택, 페이지네이션은 controlled state를 우선 지원한다.
+- 컬럼 정의와 row 데이터 타입은 generic으로 유지한다.
+- toolbar, pagination, empty state는 교체하거나 숨길 수 있는 명확한 API를 제공한다.
+- loading, empty, error 상태의 우선순위를 일관되게 처리한다.
+- 대규모 데이터의 서버 페이지네이션과 클라이언트 페이지네이션을 혼합하지 않는다.
+- 테이블 구조가 비대해지면 toolbar, header, pagination 등의 molecule로 분리한다.
 
 ## Structure
 
 ```text
 src/ui/components/organisms/
-├── BankField/
-│   ├── BankField.tsx
-│   ├── BankField.component.test.tsx
-│   └── index.ts
-├── ClipboardButton/
-│   ├── ClipboardButton.tsx
-│   └── index.ts
-├── FieldFrame/
-│   ├── FieldFrame.tsx
-│   ├── FieldFrame.component.test.tsx
+├── InputField/
+│   ├── InputField.tsx
+│   ├── InputField.component.test.tsx
 │   └── index.ts
 └── ...
 ```
 
-## Critical Convention
-
-- export 이름은 PascalCase로 짓는다.
-- 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다. 해당 로직은 라우트의 `_containers/`가 소유하고 organism에는 props로 전달한다.
-- 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.
-- 여러 도메인이나 라우트에서 쓰는 구현은 특정 소비처 이름을 피하고 역할 중심으로 이름 짓는다.
+컴포넌트마다 동일 이름 디렉토리를 두고 export 이름은 PascalCase로 짓는다.
 
 ## 관련 문서
 
-- 공통 판정 순서와 공용 여부: `src/ui/components/AGENTS.md`
+- 공통 판정 순서와 계층 경계: `src/ui/components/AGENTS.md`
 - 라우트 컨테이너 배치: `src/app/AGENTS.md`

@@ -1,7 +1,7 @@
 import * as React from "react";
 import Link from "next/link";
 import type { VariantProps } from "class-variance-authority";
-import { Button, type buttonVariants } from "@/ui/components/atoms/button";
+import { Button, type buttonVariants } from "@/ui/components/ui/button";
 
 type LinkButtonProps = React.ComponentProps<typeof Link> &
   VariantProps<typeof buttonVariants> & {

@@ -3,9 +3,9 @@
 import { memo, type Dispatch } from "react";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
-import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Field, FieldLabel } from "@/ui/components/atoms/field";
-import { Input } from "@/ui/components/atoms/input";
+import { Checkbox } from "@/ui/components/ui/checkbox";
+import { Field, FieldLabel } from "@/ui/components/ui/field";
+import { Input } from "@/ui/components/ui/input";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { InputField } from "@/ui/components/organisms/InputField";
 import type { ProductFormAction } from "../_types/productForm";

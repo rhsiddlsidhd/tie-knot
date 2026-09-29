@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { deleteReviewByAdmin } from "@/actions/deleteReviewByAdmin";
 

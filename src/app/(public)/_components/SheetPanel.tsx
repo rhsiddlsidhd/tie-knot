@@ -8,8 +8,8 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/ui/components/atoms/sheet";
-import { Button } from "@/ui/components/atoms/button";
+} from "@/ui/components/ui/sheet";
+import { Button } from "@/ui/components/ui/button";
 import { Logo } from "@/ui/components/atoms/logo";
 import { cn } from "@/core/utils/cn";
 

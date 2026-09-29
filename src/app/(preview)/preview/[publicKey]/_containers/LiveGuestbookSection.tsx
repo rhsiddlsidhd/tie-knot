@@ -2,7 +2,7 @@
 
 import useSWRInfinite from "swr/infinite";
 import { fetcher } from "@/ui/fetcher";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { EyebrowSection } from "../_components/EyebrowSection";
 import { GuestbookList } from "../_components/GuestbookList";
 import { PenLine } from "lucide-react";

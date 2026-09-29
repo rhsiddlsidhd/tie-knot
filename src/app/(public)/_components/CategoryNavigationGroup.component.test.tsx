@@ -7,7 +7,7 @@ import { CategoryNavigationGroup } from "./CategoryNavigationGroup";
 import {
   NavigationMenu,
   NavigationMenuList,
-} from "@/ui/components/atoms/navigation-menu";
+} from "@/ui/components/ui/navigation-menu";
 
 const items: NavigationGroup[] = [
   {

@@ -1,12 +1,12 @@
 import { InputField } from "@/ui/components/organisms/InputField";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/ui/components/atoms/dialog";
+} from "@/ui/components/ui/dialog";
 
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";

@@ -2,7 +2,7 @@
 
 import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import {
@@ -12,7 +12,7 @@ import {
   EmptyTitle,
   EmptyDescription,
   EmptyContent,
-} from "@/ui/components/atoms/empty";
+} from "@/ui/components/ui/empty";
 import { fetcher } from "@/ui/fetcher";
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";

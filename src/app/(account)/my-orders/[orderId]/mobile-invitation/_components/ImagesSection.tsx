@@ -5,7 +5,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { ImageField } from "@/ui/components/organisms/ImageField";

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { CreditCard } from "lucide-react";
 import { useOrderStore } from "@/ui/stores/use-app-store";
 import type { OrderJson } from "@/core/domain/order";

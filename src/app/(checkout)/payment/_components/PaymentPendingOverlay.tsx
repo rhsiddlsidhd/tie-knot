@@ -1,4 +1,4 @@
-import { Spinner } from "@/ui/components/atoms/spinner";
+import { Spinner } from "@/ui/components/ui/spinner";
 import {
   TypographyLarge,
   TypographyMuted,

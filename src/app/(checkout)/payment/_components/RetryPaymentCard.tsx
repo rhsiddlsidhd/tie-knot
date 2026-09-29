@@ -3,7 +3,7 @@
 import { AlertCircle } from "lucide-react";
 import type { CreateOrderResult } from "@/actions/createOrder";
 import type { PayStatus } from "@/core/domain/payment";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   TypographyLarge,
   TypographyMuted,

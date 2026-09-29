@@ -3,7 +3,7 @@
 import { ProductCard } from "@/ui/components/molecules/ProductCard";
 
 import { useVisibleProducts } from "@/ui/hooks/useVisibleProducts";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import type {
   ProductFilterAction,
   ProductFilterState,

@@ -1,16 +1,28 @@
 # AGENTS.md — src/ui/components/templates/
 
-> Last updated: 2026-08-31
+> Last updated: 2026-09-29
 
 ## Overview
 
-`templates/`는 `page.tsx`가 페이지 몸통 전체를 위임하는 순수 컴포넌트를 모아둔다. template은 organism의 복잡한 버전이 아니라 페이지 범위를 소유하는 별도 티어다.
+이 디렉터리는 페이지의 구조와 슬롯 배치를 정의하는 재사용 레이아웃을 관리한다.
 
-페이지 범위는 다른 모든 판정 축보다 우선한다. atom만 사용하거나 동작이 한 종류뿐이어도 페이지 몸통 전체를 담당하면 template이다. template이 반드시 molecule이나 organism을 재료로 사용해야 한다는 조건은 없다.
+## Responsibilities
 
-## 현재 예시
+- header, filters, content, actions, pagination 같은 페이지 영역의 배치를 정의한다.
+- organism을 조합하고 페이지가 콘텐츠를 주입할 수 있는 slots 또는 children API를 제공한다.
+- 예: `LegalDocumentTemplate`, `ListPageTemplate`, `DetailPageTemplate`.
 
-`LegalDocumentTemplate.tsx`는 terms와 privacy 두 `page.tsx`가 제목, 시행일, 섹션 데이터만 전달하고 페이지 몸통 전체를 위임하므로 공용 template이다.
+## Boundaries
+
+- `ui`, `atoms`, `molecules`, `organisms`를 import할 수 있다.
+- 실제 API 호출, 라우트 파라미터 해석, 권한 판정, 도메인 데이터 변환을 수행하지 않는다.
+- 실제 사용자명, 상품명 같은 화면별 콘텐츠를 하드코딩하지 않는다.
+
+## Layout rules
+
+- 데이터보다 레이아웃과 콘텐츠 위치를 props로 표현한다.
+- responsive layout과 주요 landmark 구조를 책임진다.
+- 특정 페이지에서만 쓰이는 조건 분기가 늘어나면 template API를 확장하기보다 route 또는 feature entry에서 조합한다.
 
 ## Structure
 
@@ -20,17 +32,12 @@ src/ui/components/templates/
 │   ├── LegalDocumentTemplate.tsx
 │   ├── LegalDocumentTemplate.component.test.tsx
 │   └── index.ts
-└── ...                        # {Name}/ — 페이지 몸통 전체를 공유하는 라우트가 2곳 이상일 때 추가
+└── ...
 ```
 
-## Critical Convention
-
-- export 이름은 PascalCase로 짓는다.
-- 데이터 페칭, Server Actions, mutation, 도메인 로직을 두지 않고 완성된 콘텐츠를 props로 받는다.
-- 한 라우트만 사용하는 template은 해당 라우트의 `_components/`에 두고, 의도적으로 같은 전체 배치를 공유하는 라우트가 2곳 이상일 때 이 폴더로 승격한다.
-- `page.tsx` 추출 기준과 `layout.tsx` 경계는 `src/app/AGENTS.md`를 따른다.
+컴포넌트마다 동일 이름 디렉토리를 두고 export 이름은 PascalCase로 짓는다.
 
 ## 관련 문서
 
-- 공통 판정 순서와 공용 여부: `src/ui/components/AGENTS.md`
+- 공통 판정 순서와 계층 경계: `src/ui/components/AGENTS.md`
 - Pages, private 폴더, layout 경계: `src/app/AGENTS.md`

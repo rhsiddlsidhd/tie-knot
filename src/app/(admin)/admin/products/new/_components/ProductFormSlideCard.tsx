@@ -1,6 +1,6 @@
 import type React from "react";
 import { Asterisk } from "lucide-react";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,7 +8,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 
 interface ProductFormSlideCardProps {
   step: string;

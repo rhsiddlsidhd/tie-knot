@@ -2,7 +2,7 @@
 
 import { AutoCompleteList } from "@/ui/components/molecules/AutoCompleteList";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
-import { Command, CommandInput } from "@/ui/components/atoms/command";
+import { Command, CommandInput } from "@/ui/components/ui/command";
 import type { FieldBase } from "@/core/domain/field";
 import { useMemo, useState } from "react";
 

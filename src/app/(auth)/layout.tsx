@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "@/ui/components/atoms/card";
+import { Card } from "@/ui/components/ui/card";
 
 const AuthLayout = ({
   children,

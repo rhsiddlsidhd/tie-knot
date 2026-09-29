@@ -3,8 +3,8 @@
 import React from "react";
 import { Minus, Plus } from "lucide-react";
 
-import { Button } from "@/ui/components/atoms/button";
-import { Input } from "@/ui/components/atoms/input";
+import { Button } from "@/ui/components/ui/button";
+import { Input } from "@/ui/components/ui/input";
 
 interface QuantityStepperProps {
   id: string;

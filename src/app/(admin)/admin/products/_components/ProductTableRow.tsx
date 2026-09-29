@@ -1,7 +1,7 @@
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Badge } from "@/ui/components/atoms/badge";
-import { TableRow, TableCell } from "@/ui/components/atoms/table";
+import { Badge } from "@/ui/components/ui/badge";
+import { TableRow, TableCell } from "@/ui/components/ui/table";
 import {
   TypographyMuted,
   TypographySmall,

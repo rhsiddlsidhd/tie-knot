@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { setMobileInvitationStatus } from "@/actions/setMobileInvitationStatus";
 import { ROUTES } from "@/core/domain/routes";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 
 const MobileInvitationStatusControls = ({
