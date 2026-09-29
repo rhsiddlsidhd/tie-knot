@@ -82,7 +82,7 @@ const DataTable = <T, S extends string>({
 }: DataTableProps<T, S>) => {
   const visibleItems = items ?? [];
   const hasItems = visibleItems.length > 0;
-  const isRefreshing = isValidating && hasItems;
+  const isRefreshing = !error && isValidating && hasItems;
   const emptyDescription =
     searchValue && searchEmptyMessage
       ? typeof searchEmptyMessage === "function"
@@ -132,7 +132,7 @@ const DataTable = <T, S extends string>({
 
         <TableBody
           aria-label={isLoading && !error ? "목록 불러오는 중" : "목록"}
-          aria-busy={isLoading || isRefreshing ? "true" : undefined}
+          aria-busy={!error && (isLoading || isRefreshing) ? "true" : undefined}
           className={isRefreshing ? "opacity-50" : undefined}
         >
           {error ? (

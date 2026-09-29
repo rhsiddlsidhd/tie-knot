@@ -50,6 +50,9 @@ describe("DataTable", () => {
     expect(screen.getByText("목록을 불러오지 못했습니다")).toBeVisible();
     expect(screen.getByRole("button", { name: "다시 시도" })).toBeVisible();
     expect(screen.queryByText("결과가 없습니다")).not.toBeInTheDocument();
+    expect(screen.getByRole("rowgroup", { name: "목록" })).not.toHaveAttribute(
+      "aria-busy",
+    );
 
     await user.click(screen.getByRole("button", { name: "다시 시도" }));
     expect(onRetry).toHaveBeenCalledOnce();

@@ -42,10 +42,9 @@ describe("TableColumnHeader", () => {
       </Table>,
     );
 
-    expect(screen.getByRole("columnheader", { name: "가격" })).toHaveAttribute(
-      "aria-sort",
-      "ascending",
-    );
+    expect(
+      screen.getByRole("columnheader", { name: "가격 정렬" }),
+    ).toHaveAttribute("aria-sort", "ascending");
   });
 
   it("정렬 버튼을 누르면 열의 키를 전달한다", async () => {
