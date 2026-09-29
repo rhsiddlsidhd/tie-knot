@@ -52,7 +52,8 @@ describe("AdminReviewListRequestSchema", () => {
   });
 
   it("빈 rating은 조건 없음으로 정규화한다", () => {
-    expect(parse({ rating: "" }).success && parse({ rating: "" }).data.rating)
-      .toBeUndefined();
+    expect(
+      parse({ rating: "" }).success && parse({ rating: "" }).data.rating,
+    ).toBeUndefined();
   });
 });

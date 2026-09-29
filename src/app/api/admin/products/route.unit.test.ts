@@ -81,9 +81,7 @@ describe("GET /api/admin/products", () => {
   it("status·type 파라미터를 서비스에 그대로 전달한다", async () => {
     vi.mocked(getAdminProductsPageService).mockResolvedValue(emptyPage);
 
-    const response = await GET(
-      buildRequest("?status=inactive&type=premium"),
-    );
+    const response = await GET(buildRequest("?status=inactive&type=premium"));
 
     expect(response.status).toBe(200);
     expect(getAdminProductsPageService).toHaveBeenCalledWith(

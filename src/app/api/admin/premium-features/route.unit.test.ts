@@ -55,9 +55,7 @@ describe("GET /api/admin/premium-features", () => {
   });
 
   it("status 파라미터를 서비스에 그대로 전달한다", async () => {
-    vi.mocked(getAdminPremiumFeaturesPageService).mockResolvedValue(
-      emptyPage,
-    );
+    vi.mocked(getAdminPremiumFeaturesPageService).mockResolvedValue(emptyPage);
     await GET(request("?status=inactive"));
     expect(getAdminPremiumFeaturesPageService).toHaveBeenCalledWith(
       expect.objectContaining({ status: "inactive" }),
