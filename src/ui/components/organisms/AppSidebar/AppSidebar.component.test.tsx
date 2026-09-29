@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarProvider } from "@/ui/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 
 vi.mock("next/navigation", () => ({

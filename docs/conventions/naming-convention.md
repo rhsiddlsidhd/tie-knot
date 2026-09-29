@@ -107,7 +107,8 @@ Next.js·React·Radix·shadcn·SDK·Webhook·DB·프로토콜이 이름을 인�
 파일·폴더 이름은 심볼의 역할과 디렉터리 규칙을 함께 따른다.
 
 - `src/core/` 파일은 kebab-case를 사용한다.
-- `src/ui/components/atoms/`의 flat 파일은 기존 atom·shadcn 규칙을 따른다.
+- `src/ui/components/ui/`의 flat 파일은 shadcn/Radix CLI 산출물 규칙(kebab-case)을 따른다.
+- `src/ui/components/atoms/`의 flat 파일도 kebab-case 파일명을 유지한다.
 - `molecules/`, `organisms/`, `templates/`는 컴포넌트 이름의 디렉터리와 파일 이름을 맞춘다.
 - 라우트 세그먼트는 [라우트 명명 규칙](route-naming.md)을 따른다.
 - 훅 파일은 export 심볼의 `useX`와 해당 폴더의 기존 파일명 규칙을 따르며, `use-`·`use_` 표기를 임의로 섞지 않는다.

@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   TypographyP,
   TypographyLarge,
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
-import { Separator } from "@/ui/components/atoms/separator";
+import { Separator } from "@/ui/components/ui/separator";
 import { EyebrowSection } from "./EyebrowSection";
 
 import { useGuestbookModalStore } from "@/ui/stores/use-app-store";

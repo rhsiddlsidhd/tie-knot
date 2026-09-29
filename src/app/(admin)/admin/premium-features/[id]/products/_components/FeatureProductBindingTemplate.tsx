@@ -6,8 +6,8 @@ import {
   EmptyHeader,
   EmptyTitle,
   EmptyDescription,
-} from "@/ui/components/atoms/empty";
-import { TableRow, TableCell } from "@/ui/components/atoms/table";
+} from "@/ui/components/ui/empty";
+import { TableRow, TableCell } from "@/ui/components/ui/table";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";
 import { QuerySearchInput } from "@/ui/components/organisms/QuerySearchInput";

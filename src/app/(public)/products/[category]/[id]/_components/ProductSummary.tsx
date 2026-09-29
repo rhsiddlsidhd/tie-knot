@@ -4,13 +4,13 @@ import { Eye, Share2 } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Badge } from "@/ui/components/atoms/badge";
+import { Badge } from "@/ui/components/ui/badge";
 import {
   Card,
   CardAction,
   CardContent,
   CardHeader,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import {
   TypographyH1,
   TypographyMuted,

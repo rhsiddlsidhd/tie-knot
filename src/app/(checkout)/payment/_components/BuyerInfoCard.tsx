@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import { InputField } from "@/ui/components/organisms/InputField";
 import type { BuyerInfo } from "@/core/schemas/request/order.schema";
 

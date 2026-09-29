@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@/ui/components/atoms/button";
-import { Card, CardContent } from "@/ui/components/atoms/card";
+import { Button } from "@/ui/components/ui/button";
+import { Card, CardContent } from "@/ui/components/ui/card";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/ui/components/atoms/accordion";
-import { Input } from "@/ui/components/atoms/input";
-import { Field, FieldGroup, FieldLabel } from "@/ui/components/atoms/field";
+} from "@/ui/components/ui/accordion";
+import { Input } from "@/ui/components/ui/input";
+import { Field, FieldGroup, FieldLabel } from "@/ui/components/ui/field";
 import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import {
   TypographyH1,

@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { Badge } from "@/ui/components/atoms/badge";
-import { Button } from "@/ui/components/atoms/button";
+import { Badge } from "@/ui/components/ui/badge";
+import { Button } from "@/ui/components/ui/button";
 import {
   Empty,
   EmptyHeader,
   EmptyTitle,
   EmptyDescription,
-} from "@/ui/components/atoms/empty";
-import { TableRow, TableCell } from "@/ui/components/atoms/table";
+} from "@/ui/components/ui/empty";
+import { TableRow, TableCell } from "@/ui/components/ui/table";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
 import { PaginatedTable } from "@/ui/components/organisms/PaginatedTable";

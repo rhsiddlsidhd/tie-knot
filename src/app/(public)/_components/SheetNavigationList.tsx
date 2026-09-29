@@ -8,7 +8,7 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/ui/components/atoms/accordion";
+} from "@/ui/components/ui/accordion";
 
 const SheetNavigationList = ({
   type,

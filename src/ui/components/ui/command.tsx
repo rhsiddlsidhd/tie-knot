@@ -9,7 +9,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/ui/components/atoms/dialog";
+} from "@/ui/components/ui/dialog";
 function Command({
   className,
   ...props

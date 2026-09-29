@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { setProductPremiumFeature } from "@/actions/setProductPremiumFeature";
-import { Badge } from "@/ui/components/atoms/badge";
-import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { TableCell, TableRow } from "@/ui/components/atoms/table";
+import { Badge } from "@/ui/components/ui/badge";
+import { Checkbox } from "@/ui/components/ui/checkbox";
+import { TableCell, TableRow } from "@/ui/components/ui/table";
 import type { FeatureProductBinding } from "@/core/domain/premium-feature";
 import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
 

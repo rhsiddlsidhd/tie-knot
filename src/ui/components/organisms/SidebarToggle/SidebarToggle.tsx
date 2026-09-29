@@ -6,8 +6,8 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "@/ui/components/atoms/breadcrumb";
-import { SidebarTrigger } from "@/ui/components/atoms/sidebar";
+} from "@/ui/components/ui/breadcrumb";
+import { SidebarTrigger } from "@/ui/components/ui/sidebar";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";

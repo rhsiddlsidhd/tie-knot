@@ -6,7 +6,7 @@ import type {
   ShippingInfo,
 } from "@/core/schemas/request/order.schema";
 
-import { Spinner } from "@/ui/components/atoms/spinner";
+import { Spinner } from "@/ui/components/ui/spinner";
 import { PaymentPendingOverlay } from "./PaymentPendingOverlay";
 import {
   TypographySmall,

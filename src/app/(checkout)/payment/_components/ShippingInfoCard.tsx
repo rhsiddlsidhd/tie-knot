@@ -3,8 +3,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
-import { Input } from "@/ui/components/atoms/input";
+} from "@/ui/components/ui/card";
+import { Input } from "@/ui/components/ui/input";
 import { AddressField } from "@/ui/components/organisms/AddressField";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import type { ShippingInfo } from "@/core/schemas/request/order.schema";

@@ -1,4 +1,4 @@
-// src/ui/components/AGENTS.md: atoms는 flat 구조를 유지하고, molecules/organisms/templates는
+// src/ui/components/AGENTS.md: ui와 atoms는 flat 구조를 유지하고, molecules/organisms/templates는
 // 컴포넌트마다 동일 이름 디렉토리(`{Component}/{Component}.tsx`)를 둔다.
 //
 // eslint-plugin-check-file은 이름 케이스만 검사하고 "이 파일이 여기 직접 있으면 안 된다"는
@@ -7,16 +7,19 @@ import fs from "node:fs";
 import path from "node:path";
 
 const COMPONENTS = path.join(process.cwd(), "src", "ui", "components");
+const FLAT_TIERS = ["ui", "atoms"];
 const NESTED_TIERS = ["molecules", "organisms", "templates"];
 
 const problems = [];
 
-const atomsDir = path.join(COMPONENTS, "atoms");
-for (const entry of fs.readdirSync(atomsDir, { withFileTypes: true })) {
-  if (entry.isDirectory()) {
-    problems.push(
-      `src/ui/components/atoms/${entry.name}/ — atoms는 하위 폴더를 두지 않는다`,
-    );
+for (const tier of FLAT_TIERS) {
+  const dir = path.join(COMPONENTS, tier);
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      problems.push(
+        `src/ui/components/${tier}/${entry.name}/ — ${tier}는 하위 폴더를 두지 않는다`,
+      );
+    }
   }
 }
 
@@ -40,5 +43,5 @@ if (problems.length > 0) {
 }
 
 console.log(
-  "컴포넌트 티어 구조 정상 — atoms는 flat, molecules/organisms/templates는 컴포넌트별 디렉토리.",
+  "컴포넌트 티어 구조 정상 — ui/atoms는 flat, molecules/organisms/templates는 컴포넌트별 디렉토리.",
 );

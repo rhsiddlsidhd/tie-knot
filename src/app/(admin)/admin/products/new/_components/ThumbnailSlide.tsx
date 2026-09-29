@@ -3,7 +3,7 @@
 import { memo } from "react";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
-import { FieldError } from "@/ui/components/atoms/field";
+import { FieldError } from "@/ui/components/ui/field";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import type { ImageItem } from "@/ui/hooks/useImageList";
 import { ProductFormSlideCard } from "./ProductFormSlideCard";

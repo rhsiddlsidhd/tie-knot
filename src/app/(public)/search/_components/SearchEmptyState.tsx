@@ -7,7 +7,7 @@ import {
   EmptyTitle,
   EmptyDescription,
   EmptyContent,
-} from "@/ui/components/atoms/empty";
+} from "@/ui/components/ui/empty";
 import { ROUTES } from "@/core/domain/routes";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 

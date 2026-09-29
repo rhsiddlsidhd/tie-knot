@@ -2,7 +2,7 @@
 
 import { X } from "lucide-react";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 interface ImagePreviewItemProps {
   id: string;
   preview: string;

@@ -1,13 +1,13 @@
 import { format } from "date-fns";
-import { Badge } from "@/ui/components/atoms/badge";
-import { Button } from "@/ui/components/atoms/button";
+import { Badge } from "@/ui/components/ui/badge";
+import { Button } from "@/ui/components/ui/button";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import {
   TypographyH1,
   TypographyMuted,

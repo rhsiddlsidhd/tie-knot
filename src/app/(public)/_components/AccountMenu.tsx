@@ -4,14 +4,14 @@ import Link from "next/link";
 import React from "react";
 import { useAuth } from "@/ui/hooks/useAuth";
 import { useLogout } from "../_hooks/useLogout";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/ui/components/atoms/dropdown-menu";
+} from "@/ui/components/ui/dropdown-menu";
 
 import { UserIcon, LogOut } from "lucide-react";
 import {

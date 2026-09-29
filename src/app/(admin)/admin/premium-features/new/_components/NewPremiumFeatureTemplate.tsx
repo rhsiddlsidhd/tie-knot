@@ -1,12 +1,12 @@
 import { ROUTES } from "@/core/domain/routes";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import {
   TypographyH1,
   TypographyMuted,

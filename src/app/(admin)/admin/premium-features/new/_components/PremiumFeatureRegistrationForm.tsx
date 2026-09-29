@@ -1,17 +1,17 @@
-import { Button } from "@/ui/components/atoms/button";
-import { Input } from "@/ui/components/atoms/input";
+import { Button } from "@/ui/components/ui/button";
+import { Input } from "@/ui/components/ui/input";
 import {
   Field,
   FieldGroup,
   FieldLabel,
   FieldDescription,
   FieldError,
-} from "@/ui/components/atoms/field";
+} from "@/ui/components/ui/field";
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
-} from "@/ui/components/atoms/input-group";
+} from "@/ui/components/ui/input-group";
 
 import { getFieldError } from "@/core/utils/error";
 import type { ApiResponse } from "@/core/domain/error";

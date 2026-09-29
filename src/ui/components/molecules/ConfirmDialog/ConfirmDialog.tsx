@@ -9,8 +9,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/ui/components/atoms/alert-dialog";
-import { Button } from "@/ui/components/atoms/button";
+} from "@/ui/components/ui/alert-dialog";
+import { Button } from "@/ui/components/ui/button";
 
 interface ConfirmDialogProps {
   open: boolean;

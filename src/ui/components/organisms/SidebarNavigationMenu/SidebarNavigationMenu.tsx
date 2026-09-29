@@ -12,7 +12,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from "@/ui/components/atoms/sidebar";
+} from "@/ui/components/ui/sidebar";
 
 const SidebarNavigationMenu = ({
   type,

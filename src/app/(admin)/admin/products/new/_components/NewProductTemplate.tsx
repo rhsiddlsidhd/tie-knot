@@ -1,6 +1,6 @@
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { ROUTES } from "@/core/domain/routes";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   TypographyH1,
   TypographyMuted,

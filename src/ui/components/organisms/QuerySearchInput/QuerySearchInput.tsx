@@ -1,8 +1,8 @@
 import { Search } from "lucide-react";
 
-import { Button } from "@/ui/components/atoms/button";
-import { Input } from "@/ui/components/atoms/input";
-import { Label } from "@/ui/components/atoms/label";
+import { Button } from "@/ui/components/ui/button";
+import { Input } from "@/ui/components/ui/input";
+import { Label } from "@/ui/components/ui/label";
 
 interface QuerySearchInputProps {
   /** 현재 라우트 pathname — 폼이 그대로 제출되는 곳이다. */

@@ -10,7 +10,7 @@ import { GeneralNavigationLinks } from "./GeneralNavigationLinks";
 import {
   NavigationMenu,
   NavigationMenuList,
-} from "@/ui/components/atoms/navigation-menu";
+} from "@/ui/components/ui/navigation-menu";
 
 const HeaderNavigationMenu = () => {
   const pathname = usePathname();

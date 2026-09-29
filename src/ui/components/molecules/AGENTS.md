@@ -1,45 +1,45 @@
 # AGENTS.md — src/ui/components/molecules/
 
-> Last updated: 2026-08-31
+> Last updated: 2026-09-29
 
 ## Overview
 
-`molecules/`는 프로젝트 UI 컴포넌트를 하나 이상 조합하면서 사용자가 인식하는 동작은 한 종류인 순수 컴포넌트를 모아둔다. 완성품인지 골격인지는 판정 기준이 아니다.
+이 디렉터리는 하나의 작고 명확한 사용자 과업을 수행하는 UI 조합을 관리한다.
 
-props로 받은 핸들러를 전달하는 상호작용도 동작으로 센다. 따라서 표시와 입력, 표시와 삭제처럼 동작이 두 종류가 되면 조합이 단순해도 organism이다.
+## Responsibilities
 
-## 현재 예시
+- `ui`와 `atoms`를 조합해 단일 기능을 제공한다.
+- 예: `TableSearch`, `TableColumnHeader`, `TablePagination`, `TableEmptyState`.
+- 입력과 출력이 props와 callback으로 명확히 드러나게 한다.
 
-| 파일                   | 조합                        | 동작           |
-| ---------------------- | --------------------------- | -------------- |
-| `AdminListHeading.tsx` | Typography                  | 제목 표시      |
-| `TableShell.tsx`       | Table                       | 표 헤더 표시   |
-| `ProductCard.tsx`      | AppImage, Badge, Typography | 상품 요약 표시 |
+## Boundaries
 
-`InputField`와 `FieldFrame`은 현재 `organisms/`에 있다. 이름에 `Field`가 붙었는지, 바로 사용할 수 있는지는 molecule 판정 근거가 아니다.
+- `ui`와 `atoms`만 import한다.
+- `organisms`, `templates`를 import하지 않는다.
+- 서버 데이터 fetching, 라우트 전환, 전역 스토어 접근을 직접 수행하지 않는다.
+- 여러 독립 기능을 조율하거나 넓은 화면 영역을 책임지면 `organisms`로 이동한다.
+
+## State and behavior
+
+- focus, open state, 입력 중인 값처럼 컴포넌트 내부에 국한된 UI 상태만 소유한다.
+- 검색 실행, 페이지 변경 같은 제품 동작은 callback으로 상위에 전달한다.
+- 특정 테이블 라이브러리 타입에 불필요하게 결합하지 않는다.
+- keyboard와 screen reader 사용 흐름을 함께 검증한다.
 
 ## Structure
 
 ```text
 src/ui/components/molecules/
-├── AdminListHeading/
-│   ├── AdminListHeading.tsx
-│   ├── AdminListHeading.component.test.tsx
+├── TableShell/
+│   ├── TableShell.tsx
+│   ├── TableShell.component.test.tsx
 │   └── index.ts
-├── AutoCompleteList/
-│   ├── AutoCompleteList.tsx
-│   └── index.ts
-└── ...              # 축 A/B 판정마다 추가되는 molecule 디렉토리
+└── ...
 ```
 
-## Critical Convention
-
-- export 이름은 PascalCase로 짓는다.
-- 도메인 로직, 데이터 페칭, Server Actions, mutation을 두지 않는다.
-- 최종 소비 라우트가 한 곳이면 해당 라우트의 `_components/`에 두고, 2곳 이상일 때 공용 폴더로 승격한다.
-- 유일한 직접 소비자가 이미 여러 라우트에서 쓰이는 공용 컴포넌트라면 그 하위 molecule은 이 폴더에 둘 수 있다.
+컴포넌트마다 동일 이름 디렉토리를 두고 export 이름은 PascalCase로 짓는다.
 
 ## 관련 문서
 
-- 공통 판정 순서와 공용 여부: `src/ui/components/AGENTS.md`
-- 두 종류 이상의 동작을 다루는 티어: `src/ui/components/organisms/AGENTS.md`
+- 공통 판정 순서와 계층 경계: `src/ui/components/AGENTS.md`
+- 두 종류 이상의 동작을 다루는 다음 계층: `src/ui/components/organisms/AGENTS.md`

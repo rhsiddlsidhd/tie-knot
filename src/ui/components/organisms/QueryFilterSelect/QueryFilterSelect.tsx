@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/ui/components/atoms/select";
+} from "@/ui/components/ui/select";
 
 interface QueryFilterOption<T extends string> {
   value: T | "ALL";

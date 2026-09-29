@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
+import { Dialog, DialogContent } from "@/ui/components/ui/dialog";
 import type { ApiResponse } from "@/core/domain/error";
 import { DeleteGuestbookForm } from "./DeleteGuestbookForm";
 

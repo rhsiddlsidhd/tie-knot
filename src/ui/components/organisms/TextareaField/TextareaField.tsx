@@ -1,5 +1,5 @@
 import type React from "react";
-import { Textarea } from "@/ui/components/atoms/textarea";
+import { Textarea } from "@/ui/components/ui/textarea";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 
 interface TextareaFieldProps extends React.ComponentProps<typeof Textarea> {

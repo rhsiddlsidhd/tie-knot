@@ -2,7 +2,7 @@ import {
   Empty,
   EmptyHeader,
   EmptyDescription,
-} from "@/ui/components/atoms/empty";
+} from "@/ui/components/ui/empty";
 import { TypographyH1 } from "@/ui/components/atoms/typography";
 
 interface MobileInvitationNoticeProps {

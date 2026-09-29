@@ -14,7 +14,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "./sheet";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { Input } from "./input";
 import { Separator } from "./separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";

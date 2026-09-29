@@ -16,7 +16,7 @@ vi.mock("sonner", () => ({
 
 import { createGuestbook } from "@/actions/createGuestbook";
 import { toast } from "sonner";
-import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
+import { Dialog, DialogContent } from "@/ui/components/ui/dialog";
 import { createAppStore, type AppStoreApi } from "@/ui/stores/app.store";
 import { StoreProvider } from "@/ui/stores/provider";
 import {

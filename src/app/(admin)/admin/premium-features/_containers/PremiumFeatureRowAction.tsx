@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { deletePremiumFeature } from "@/actions/deletePremiumFeature";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import type { PremiumFeature } from "@/core/domain/premium-feature";

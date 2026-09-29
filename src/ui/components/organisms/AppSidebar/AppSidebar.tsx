@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { Sidebar, useSidebar } from "@/ui/components/atoms/sidebar";
+import { Sidebar, useSidebar } from "@/ui/components/ui/sidebar";
 import { Logo } from "@/ui/components/atoms/logo";
 import { SidebarNavigationMenu } from "@/ui/components/organisms/SidebarNavigationMenu";
 

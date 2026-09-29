@@ -2,14 +2,14 @@
 
 import React, { useState } from "react";
 import type { LucideIcon } from "lucide-react";
-import { RadioGroup, RadioGroupItem } from "@/ui/components/atoms/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/ui/components/ui/radio-group";
 import {
   Field,
   FieldContent,
   FieldLabel,
   FieldTitle,
   FieldDescription,
-} from "@/ui/components/atoms/field";
+} from "@/ui/components/ui/field";
 import type { FieldBase } from "@/core/domain/field";
 
 type RadioFieldOption<T = string> = {

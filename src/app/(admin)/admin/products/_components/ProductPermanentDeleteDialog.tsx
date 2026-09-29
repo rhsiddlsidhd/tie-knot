@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Input } from "@/ui/components/atoms/input";
+import { Input } from "@/ui/components/ui/input";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 
 interface ProductPermanentDeleteDialogProps {

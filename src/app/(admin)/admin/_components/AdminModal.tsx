@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/ui/components/atoms/dialog";
+} from "@/ui/components/ui/dialog";
 import { PremiumFeatureDialog } from "@/app/(admin)/admin/premium-features/_containers/PremiumFeatureDialog";
 
 const modalCopy: Record<AdminModalType, { title: string; des: string }> = {

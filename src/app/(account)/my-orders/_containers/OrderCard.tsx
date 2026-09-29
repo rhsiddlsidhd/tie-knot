@@ -6,15 +6,15 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Badge } from "@/ui/components/atoms/badge";
-import { Button } from "@/ui/components/atoms/button";
-import { Card, CardContent, CardHeader } from "@/ui/components/atoms/card";
+import { Badge } from "@/ui/components/ui/badge";
+import { Button } from "@/ui/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/ui/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/ui/components/atoms/dropdown-menu";
+} from "@/ui/components/ui/dropdown-menu";
 import {
   TypographyH3,
   TypographyMuted,
@@ -23,7 +23,7 @@ import {
   Alert,
   AlertTitle,
   AlertDescription,
-} from "@/ui/components/atoms/alert";
+} from "@/ui/components/ui/alert";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { useCopy } from "@/ui/hooks/useCopy";
