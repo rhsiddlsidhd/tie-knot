@@ -1,7 +1,9 @@
 import type { AdminProductSortKey } from "@/core/domain/product";
 import type { DataTableColumn } from "@/ui/components/organisms/DataTable/DataTable";
 
-const ACTIVE_PRODUCT_TABLE_COLUMNS = [
+type Column = DataTableColumn<AdminProductSortKey>;
+
+const ACTIVE_PRODUCT_TABLE_COLUMNS: readonly Column[] = [
   { label: "썸네일", sort: null },
   { label: "상품명", sort: "title" },
   { label: "카테고리", sort: null },
@@ -14,10 +16,10 @@ const ACTIVE_PRODUCT_TABLE_COLUMNS = [
   { label: "우선순위", sort: "priority" },
   { label: "등록일", sort: "createdAt" },
   { label: "관리", sort: null },
-] as const satisfies readonly DataTableColumn<AdminProductSortKey>[];
+];
 
 // 휴지통은 상태가 항상 "삭제됨"이라 상태 열 자리를 삭제일 정렬로 쓴다.
-const TRASH_PRODUCT_TABLE_COLUMNS = [
+const TRASH_PRODUCT_TABLE_COLUMNS: readonly Column[] = [
   { label: "썸네일", sort: null },
   { label: "상품명", sort: "title" },
   { label: "카테고리", sort: null },
@@ -30,6 +32,6 @@ const TRASH_PRODUCT_TABLE_COLUMNS = [
   { label: "우선순위", sort: "priority" },
   { label: "등록일", sort: "createdAt" },
   { label: "관리", sort: null },
-] as const satisfies readonly DataTableColumn<AdminProductSortKey>[];
+];
 
 export { ACTIVE_PRODUCT_TABLE_COLUMNS, TRASH_PRODUCT_TABLE_COLUMNS };

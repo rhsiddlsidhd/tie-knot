@@ -1,13 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import type { FilterToggleGroupOption } from "./FilterToggleGroup";
 import { FilterToggleGroup } from "./FilterToggleGroup";
 
-const options = [
+const options: readonly FilterToggleGroupOption<"USER" | "ADMIN">[] = [
   { value: null, label: "전체" },
   { value: "USER", label: "일반회원" },
   { value: "ADMIN", label: "관리자" },
-] as const;
+];
 
 describe("FilterToggleGroup", () => {
   it("label을 그룹의 접근 가능한 이름으로 노출하고 선택값을 표시한다", () => {

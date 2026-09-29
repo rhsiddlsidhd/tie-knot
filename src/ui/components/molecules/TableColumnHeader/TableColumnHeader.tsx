@@ -20,9 +20,7 @@ const TableColumnHeader = <S extends string>({
   className,
 }: TableColumnHeaderProps<S>) => {
   const activeDirection =
-    sortKey !== null && sortState?.key === sortKey
-      ? sortState.direction
-      : null;
+    sortKey !== null && sortState?.key === sortKey ? sortState.direction : null;
   const ariaSort =
     activeDirection === "asc"
       ? "ascending"

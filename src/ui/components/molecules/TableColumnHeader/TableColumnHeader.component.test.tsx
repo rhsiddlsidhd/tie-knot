@@ -2,11 +2,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
-import {
-  Table,
-  TableHeader,
-  TableRow,
-} from "@/ui/components/ui/table";
+import { Table, TableHeader, TableRow } from "@/ui/components/ui/table";
 import { TableColumnHeader } from "./TableColumnHeader";
 
 describe("TableColumnHeader", () => {
