@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { FormEvent } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -8,10 +8,9 @@ import { SearchInputBar } from "./SearchInputBar";
 afterEach(() => vi.useRealTimers());
 
 describe("SearchInputBar", () => {
-  it("입력값을 trim해 300ms 뒤 한 번 검색한다", async () => {
+  it("입력값을 trim해 300ms 뒤 한 번 검색한다", () => {
     vi.useFakeTimers();
     const onSearch = vi.fn();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(
       <SearchInputBar
         value=""
@@ -20,7 +19,9 @@ describe("SearchInputBar", () => {
       />,
     );
 
-    await user.type(screen.getByRole("searchbox", { name: "상품 검색" }), "  카드  ");
+    fireEvent.change(screen.getByRole("searchbox", { name: "상품 검색" }), {
+      target: { value: "  카드  " },
+    });
     expect(onSearch).not.toHaveBeenCalled();
 
     act(() => vi.advanceTimersByTime(300));
@@ -29,10 +30,9 @@ describe("SearchInputBar", () => {
     expect(onSearch).toHaveBeenCalledWith("카드");
   });
 
-  it("trim한 값이 현재 value와 같으면 검색하지 않는다", async () => {
+  it("trim한 값이 현재 value와 같으면 검색하지 않는다", () => {
     vi.useFakeTimers();
     const onSearch = vi.fn();
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(
       <SearchInputBar
         value="카드"
@@ -42,8 +42,7 @@ describe("SearchInputBar", () => {
     );
 
     const input = screen.getByRole("searchbox", { name: "상품 검색" });
-    await user.clear(input);
-    await user.type(input, " 카드 ");
+    fireEvent.change(input, { target: { value: " 카드 " } });
     act(() => vi.advanceTimersByTime(300));
 
     expect(onSearch).not.toHaveBeenCalled();
