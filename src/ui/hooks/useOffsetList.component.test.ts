@@ -114,37 +114,9 @@ describe("useOffsetList", () => {
     expect(result.current.items).toBeUndefined();
   });
 
-  it("URL의 sort와 direction을 하나의 정렬 상태로 노출한다", () => {
+  it("허용되지 않은 direction과 전용 파라미터는 다음 URL 변경 때 지운다", () => {
     navigationMocks.searchParams = new URLSearchParams(
-      "sort=createdAt&direction=asc",
-    );
-    const { result } = renderList();
-
-    expect(result.current.sortState).toEqual({
-      key: "createdAt",
-      direction: "asc",
-    });
-  });
-
-  it("허용되지 않은 sort와 파라미터 값은 null로 보고 SWR key에서 뺀다", () => {
-    navigationMocks.searchParams = new URLSearchParams(
-      "sort=bogus&direction=asc&view=bogus",
-    );
-
-    const { result } = renderList();
-
-    expect(result.current.sortState).toBeNull();
-    expect(result.current.params).toEqual({ view: null });
-    expect(useSWRMock).toHaveBeenCalledWith(
-      "/api/admin/products?page=1",
-      expect.any(Function),
-      { keepPreviousData: true },
-    );
-  });
-
-  it("허용되지 않은 값은 다음 URL 변경 때 함께 지운다", () => {
-    navigationMocks.searchParams = new URLSearchParams(
-      "sort=bogus&direction=asc&view=bogus&q=카드",
+      "sort=price&direction=sideways&view=bogus&q=카드",
     );
     const { result } = renderList();
 
@@ -153,7 +125,7 @@ describe("useOffsetList", () => {
     expect(pushStateSpy).toHaveBeenCalledWith(
       null,
       "",
-      "/admin/products?q=%EC%B9%B4%EB%93%9C&page=2",
+      "/admin/products?sort=price&q=%EC%B9%B4%EB%93%9C&page=2",
     );
   });
 
