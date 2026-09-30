@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { CarouselApi } from "@/ui/components/atoms/carousel";
+import type { CarouselApi } from "@/ui/components/ui/carousel";
 
 interface UseAutoplayCarouselOptions {
   itemCount: number;

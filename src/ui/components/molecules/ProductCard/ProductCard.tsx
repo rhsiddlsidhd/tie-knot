@@ -5,8 +5,8 @@ import type { SubCategory } from "@/core/domain/product-category";
 import { ROUTES } from "@/core/domain/routes";
 import { SUB_CATEGORY_LABELS } from "@/core/domain/product-category";
 import { calculatePrice, formatDiscountLabel } from "@/core/utils/price";
-import { Badge } from "@/ui/components/atoms/badge";
-import { CardAction, CardFooter, CardHeader } from "@/ui/components/atoms/card";
+import { Badge } from "@/ui/components/ui/badge";
+import { CardAction, CardFooter, CardHeader } from "@/ui/components/ui/card";
 import {
   TypographyH3,
   TypographyMuted,

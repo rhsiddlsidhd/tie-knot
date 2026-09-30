@@ -4,7 +4,7 @@ import type { GuestbookModalType } from "@/ui/stores/use-app-store";
 import { useGuestbookModalStore } from "@/ui/stores/use-app-store";
 import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useMemo, useState } from "react";
-import { Dialog, DialogContent } from "@/ui/components/atoms/dialog";
+import { Dialog, DialogContent } from "@/ui/components/ui/dialog";
 import { ViewContact } from "./ViewContact";
 import { cn } from "@/core/utils/cn";
 import clsx from "clsx";

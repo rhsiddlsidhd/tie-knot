@@ -1,10 +1,10 @@
 import type React from "react";
-import { Input } from "@/ui/components/atoms/input";
+import { Input } from "@/ui/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/ui/components/atoms/input-group";
+} from "@/ui/components/ui/input-group";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 
 interface InputFieldProps extends React.ComponentProps<typeof Input> {

@@ -29,7 +29,7 @@ Phase1에서 확정된 `01_api_contract.md`/`01_db_schema.md`를 실제 코드�
 
 ## TDD gate (이 저장소 필수)
 
-`.claude/settings.json`의 PreToolUse 훅(`tooling/tdd-gate/hook.mjs`)이 `src/` 소스 편집을 가로챈다. 제외 목록은 `tooling/tdd-gate/policy.json`에만 있다(`src/core/domain/**`, `src/ui/components/atoms/**` 등).
+`.claude/settings.json`의 PreToolUse 훅(`tooling/tdd-gate/hook.mjs`)이 `src/` 소스 편집을 가로챈다. 제외 목록은 `tooling/tdd-gate/policy.json`에만 있다(`src/core/domain/**`, `src/ui/components/ui/**` 등).
 
 - 대응 형제 테스트가 없는 소스 파일을 쓰면 **차단**된다 — 테스트를 먼저 만들어라
 - 신규 파일인데 형제 테스트가 이미 통과하면 **차단**된다 — 그 파일이 없으면 실패하는 테스트로 red를 먼저 만들어라

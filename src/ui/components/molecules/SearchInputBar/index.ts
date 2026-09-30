@@ -1,0 +1,1 @@
+export { SearchInputBar } from "./SearchInputBar";

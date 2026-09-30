@@ -423,7 +423,7 @@ describe("review", () => {
       expect(result.items).toEqual([]);
     });
 
-    it("검색어와 커서를 함께 적용한다", async () => {
+    it("검색어와 offset 페이지를 함께 적용한다", async () => {
       for (let i = 0; i < 3; i += 1) {
         await createReviewFixture({
           userInput: { email: `match${i}@example.com` },
@@ -433,24 +433,105 @@ describe("review", () => {
         userInput: { email: "unrelated@example.com" },
       });
 
-      const first = await getAdminReviewsPageService({ q: "match", limit: 2 });
+      const first = await getAdminReviewsPageService({
+        q: "match",
+        limit: 2,
+        page: 1,
+      });
       expect(first.items).toHaveLength(2);
-      expect(first.nextCursor).not.toBeNull();
+      expect(first.total).toBe(3);
 
       const second = await getAdminReviewsPageService({
         q: "match",
         limit: 2,
-        cursor: first.nextCursor!,
+        page: 2,
       });
 
       expect(second.items).toHaveLength(1);
-      expect(second.nextCursor).toBeNull();
+      expect(second.totalPages).toBe(2);
     });
 
-    it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
-      await expect(
-        getAdminReviewsPageService({ cursor: "!!!broken!!!" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
+      await createReviewFixture({});
+      const result = await getAdminReviewsPageService({ page: 2 });
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
+    });
+
+    it.each(["createdAt", "rating"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await createReviewFixture({ rating: 1 });
+        const second = await createReviewFixture({ rating: 5 });
+        if (sort === "createdAt") {
+          await ReviewModel.updateOne(
+            { _id: first._id },
+            { $set: { createdAt: new Date("2026-01-01") } },
+            { timestamps: false, overwriteImmutable: true },
+          );
+          await ReviewModel.updateOne(
+            { _id: second._id },
+            { $set: { createdAt: new Date("2026-02-01") } },
+            { timestamps: false, overwriteImmutable: true },
+          );
+        }
+        const asc = await getAdminReviewsPageService({
+          sort,
+          direction: "asc",
+        });
+        const desc = await getAdminReviewsPageService({
+          sort,
+          direction: "desc",
+        });
+        expect(asc.items.map((item) => item.id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item.id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
+
+    it("같은 정렬 값이면 _id로 tie-break한다", async () => {
+      const first = await createReviewFixture({ rating: 3 });
+      const second = await createReviewFixture({ rating: 3 });
+      const result = await getAdminReviewsPageService({ sort: "rating" });
+      expect(result.items.map((item) => item.id)).toEqual(
+        [first._id.toString(), second._id.toString()].sort().reverse(),
+      );
+    });
+
+    it("rating 필터로 해당 평점의 리뷰만 좁힌다", async () => {
+      const target = await createReviewFixture({ rating: 2 });
+      await createReviewFixture({ rating: 5 });
+
+      const result = await getAdminReviewsPageService({ rating: 2 });
+
+      expect(result.items.map((item) => item.id)).toEqual([
+        target._id.toString(),
+      ]);
+    });
+
+    it("rating 필터와 검색어를 함께 적용한다", async () => {
+      const target = await createReviewFixture({
+        rating: 4,
+        userInput: { email: "rated-match@example.com" },
+      });
+      await createReviewFixture({
+        rating: 1,
+        userInput: { email: "rated-match2@example.com" },
+      });
+
+      const result = await getAdminReviewsPageService({
+        rating: 4,
+        q: "rated-match",
+      });
+
+      expect(result.items.map((item) => item.id)).toEqual([
+        target._id.toString(),
+      ]);
     });
   });
 });

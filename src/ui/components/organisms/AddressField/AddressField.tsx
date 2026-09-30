@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@/ui/components/atoms/input";
+import { Input } from "@/ui/components/ui/input";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { InputField } from "@/ui/components/organisms/InputField";
 import { useDaumPopup } from "@/adapters/browser/daum/useDaumPopup";

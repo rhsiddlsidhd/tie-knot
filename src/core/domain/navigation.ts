@@ -27,6 +27,7 @@ interface NavigationLinkItem {
   label: string;
   href: string;
   icon: NavigationIcon | null;
+  order?: number;
 }
 
 interface NavigationGroup {
@@ -34,6 +35,7 @@ interface NavigationGroup {
   label: string;
   icon: NavigationIcon | null;
   submenu: NavigationLinkItem[];
+  order?: number;
 }
 
 interface NavigationSection {
@@ -79,6 +81,7 @@ const adminNavigationGroups: NavigationGroup[] = [
     id: "products",
     label: "상품 관리",
     icon: Package,
+    order: 1,
     submenu: [
       {
         id: "products-list",
@@ -98,6 +101,7 @@ const adminNavigationGroups: NavigationGroup[] = [
     id: "premium-features",
     label: "프리미엄 기능 관리",
     icon: Star,
+    order: 2,
     submenu: [
       {
         id: "premium-features-list",
@@ -121,30 +125,35 @@ const adminNavigationLinks: NavigationLinkItem[] = [
     label: "대시보드",
     href: ROUTES.admin.dashboard,
     icon: LayoutDashboard,
+    order: 0,
   },
   {
     id: "orders",
     label: "주문 관리",
     href: ROUTES.admin.orders,
     icon: ShoppingCart,
+    order: 3,
   },
   {
     id: "reviews",
     label: "리뷰 관리",
     href: ROUTES.admin.reviews,
     icon: MessageSquareText,
+    order: 4,
   },
   {
     id: "users",
     label: "회원 관리",
     href: ROUTES.admin.users,
     icon: Users,
+    order: 5,
   },
   {
     id: "settings",
     label: "설정",
     href: ROUTES.admin.settings,
     icon: Settings,
+    order: 6,
   },
 ];
 

@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useEffect, useMemo, useReducer, useRef, useState } from "react";
-import type { CarouselApi } from "@/ui/components/atoms/carousel";
+import type { CarouselApi } from "@/ui/components/ui/carousel";
 import { MOBILE_INVITATION_CATEGORY } from "@/core/domain/product-category";
 import type { ApiResponse } from "@/core/domain/error";
 import { useImageList } from "@/ui/hooks/useImageList";

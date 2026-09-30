@@ -18,6 +18,7 @@ import { generateUid } from "@/core/utils/id";
 import { dbConnect } from "@/db/connect";
 import type {
   AdminOrderListPage,
+  AdminOrderSortKey,
   OrderDetail,
   OrderListItem,
   OrderListPage,
@@ -30,6 +31,7 @@ import {
   EXPIRED_ORDER_BATCH_LIMIT,
   MOBILE_INVITATION_INPUT_DEADLINE_DAYS,
   ORDER_PAGE_SIZE,
+  ADMIN_ORDER_SORT_KEYS,
   ORDER_STATUSES,
   PENDING_ORDER_EXPIRE_HOURS,
 } from "@/core/domain/order";
@@ -399,8 +401,10 @@ const getOrdersPageForUser = async ({
 type AdminOrderListQuery = {
   q?: string;
   status?: OrderStatus;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: AdminOrderSortKey;
+  direction?: "asc" | "desc";
 };
 
 type AdminOrderListRow = {
@@ -414,25 +418,30 @@ type AdminOrderListRow = {
 };
 
 /**
- * 관리자 전역 주문 목록 한 페이지 — 소유자 스코프 없이 전체 주문을 대상으로 한다.
- * my-orders(getOrdersPageForUser)와 정렬·커서 계약(createdAt desc, _id tie-break,
- * limit+1)은 공유하지만, MobileInvitation/Payment 조인 없이 주문 스냅샷만으로 채울 수 있는
- * 최소 필드만 select한다 — 목록에 필요 이상의 문서 필드나 Mongoose 인스턴스를
- * 노출하지 않는다.
+ * 관리자 전역 주문 목록 한 페이지 — 소유자 스코프 없이 전체 주문을 대상으로 하고,
+ * MobileInvitation/Payment 조인 없이 주문 스냅샷만으로 채울 수 있는 필드만 select한다.
  */
 const getAdminOrdersPageService = async ({
   q,
   status,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort = "createdAt",
+  direction = "desc",
 }: AdminOrderListQuery): Promise<AdminOrderListPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
   }
   if (status && !ORDER_STATUSES.includes(status)) {
     throw new AppError("VALIDATION", "잘못된 주문 상태입니다.");
+  }
+  if (!ADMIN_ORDER_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: mongoose.FilterQuery<OrderDocument> = {};
@@ -441,8 +450,6 @@ const getAdminOrdersPageService = async ({
     filter.orderStatus = status;
   }
 
-  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
-  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
   const conditions: mongoose.FilterQuery<OrderDocument>[] = [];
 
   const term = q?.trim();
@@ -458,43 +465,27 @@ const getAdminOrdersPageService = async ({
     });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({
-      $or: [
-        { createdAt: { $lt: decoded.createdAt } },
-        {
-          createdAt: decoded.createdAt,
-          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-        },
-      ],
-    });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await OrderModel.find(filter)
-    .select(
-      "merchantUid buyerName product.title orderStatus finalPrice createdAt",
-    )
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<AdminOrderListRow[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "주문 목록 조회에 실패했습니다.",
-      );
-    });
-
-  const hasMore = found.length > limit;
-  const orders = hasMore ? found.slice(0, limit) : found;
-  const lastOrder = orders.at(-1);
+  const sortDirection = direction === "asc" ? 1 : -1;
+  const [orders, total] = await Promise.all([
+    OrderModel.find(filter)
+      .select(
+        "merchantUid buyerName product.title orderStatus finalPrice createdAt",
+      )
+      .sort({ [sort]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<AdminOrderListRow[]>(),
+    OrderModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "주문 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: orders.map((order) => ({
@@ -506,13 +497,10 @@ const getAdminOrdersPageService = async ({
       finalPrice: order.finalPrice,
       createdAt: order.createdAt,
     })),
-    nextCursor:
-      hasMore && lastOrder
-        ? encodeCursor({
-            createdAt: lastOrder.createdAt,
-            id: lastOrder._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 

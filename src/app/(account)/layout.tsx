@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarProvider } from "@/ui/components/ui/sidebar";
 import { SidebarToggle } from "@/ui/components/organisms/SidebarToggle";
 import { AppSidebar } from "@/ui/components/organisms/AppSidebar/AppSidebar";
 import { usePathname } from "next/navigation";

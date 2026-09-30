@@ -2,12 +2,12 @@
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import type { ApiResponse } from "@/core/domain/error";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/ui/components/atoms/carousel";
+} from "@/ui/components/ui/carousel";
 import { useProductForm } from "../_hooks/useProductForm";
 import { BasicInfoSlide } from "./BasicInfoSlide";
 import { DetailImagesSlide } from "./DetailImagesSlide";

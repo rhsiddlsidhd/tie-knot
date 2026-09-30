@@ -1,8 +1,8 @@
 import { X } from "lucide-react";
 import { ROUTES } from "@/core/domain/routes";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
-import { Card, CardContent } from "@/ui/components/atoms/card";
-import { Spinner } from "@/ui/components/atoms/spinner";
+import { Card, CardContent } from "@/ui/components/ui/card";
+import { Spinner } from "@/ui/components/ui/spinner";
 import {
   TypographyH1,
   TypographyMuted,

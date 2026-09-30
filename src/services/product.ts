@@ -2,10 +2,15 @@ import "server-only";
 import type { ProductDb, ProductDocument } from "@/models/product.model";
 import type {
   EditableProductStatus,
+  AdminProductSortKey,
   ProductJson,
   ProductStatus,
 } from "@/core/domain/product";
-import type { FeatureProductBindingPage } from "@/core/domain/premium-feature";
+import type {
+  FeatureProductBindingPage,
+  FeatureProductBindingSortKey,
+} from "@/core/domain/premium-feature";
+import { FEATURE_PRODUCT_BINDING_SORT_KEYS } from "@/core/domain/premium-feature";
 import { FeatureModel } from "@/models/feature.model";
 import {
   ProductModel,
@@ -40,7 +45,10 @@ import {
   PRODUCT_CATEGORIES,
   SUB_CATEGORY_MAP,
 } from "@/core/domain/product-category";
-import { POPULAR_PRODUCTS_LIMIT } from "@/core/domain/product";
+import {
+  ADMIN_PRODUCT_SORT_KEYS,
+  POPULAR_PRODUCTS_LIMIT,
+} from "@/core/domain/product";
 import type { Model, Types } from "mongoose";
 import mongoose from "mongoose";
 import { requireAdmin, requireAuth } from "./auth";
@@ -74,8 +82,20 @@ const transformProduct = (
   product: LeanProduct,
   userId?: string,
 ): ProductJson => {
-  const { deletedAt, _id, featureIds, likes, createdAt, updatedAt, ...rest } =
-    product;
+  const {
+    deletedAt,
+    _id,
+    featureIds,
+    likes,
+    createdAt,
+    updatedAt,
+    // likesCount는 좋아요 토글이 likes 배열과 함께 원자적으로 갱신하는 내부 비정규화
+    // 카운터다(src/models/product.model.ts) — ProductJson엔 없는 필드라 spread에
+    // 섞여 나가지 않도록 여기서 제외한다.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    likesCount: _likesCount,
+    ...rest
+  } = product;
 
   return {
     ...rest,
@@ -196,35 +216,55 @@ const incrementProductViewsService = async (
 };
 
 type AdminProductListQuery = {
-  view?: "active" | "trash";
+  softDeleted?: boolean;
+  status?: EditableProductStatus;
+  type?: "premium" | "featured";
   q?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: AdminProductSortKey;
+  direction?: "asc" | "desc";
 };
 
 /**
- * 관리자 상품 목록 한 페이지 — orders/users(getAdminOrdersPageService,
- * getAdminUsersPageService)와 동일한 cursor 계약(createdAt desc, _id tie-break,
- * limit+1)을 쓴다. getPublicProductsPageService와 달리 isFeatured/priority 정렬을 쓰지
- * 않는다 — 그 정렬은 공개 노출 우선순위 의미라 관리자 목록의 커서 안정성과 맞지 않는다.
+ * 관리자 상품 목록 한 페이지. 공개 목록의 cursor 계약과 분리해 offset과 관리자
+ * 테이블 정렬 키를 사용한다.
  */
 const getAdminProductsPageService = async ({
-  view = "active",
+  softDeleted = false,
+  status,
+  type,
   q,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort,
+  direction = "desc",
 }: AdminProductListQuery): Promise<AdminProductListPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
   }
+  if (sort && !ADMIN_PRODUCT_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
+  }
 
-  const filter: Record<string, unknown> =
-    view === "trash" ? { deletedAt: { $ne: null } } : { deletedAt: null };
+  const filter: Record<string, unknown> = softDeleted
+    ? { deletedAt: { $ne: null } }
+    : { deletedAt: null };
 
-  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
-  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  if (status) {
+    filter.status = status;
+  }
+  if (type === "premium") {
+    filter.isPremium = true;
+  } else if (type === "featured") {
+    filter.isFeatured = true;
+  }
+
   const conditions: Record<string, unknown>[] = [];
 
   const term = q?.trim();
@@ -243,58 +283,44 @@ const getAdminProductsPageService = async ({
     conditions.push({ $or: or });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({
-      $or: [
-        { createdAt: { $lt: decoded.createdAt } },
-        {
-          createdAt: decoded.createdAt,
-          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-        },
-      ],
-    });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await ProductModel.find(filter)
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<LeanProduct[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
-      );
-    });
+  const sortKey = sort ?? (softDeleted ? "deletedAt" : "createdAt");
+  const sortDirection = direction === "asc" ? 1 : -1;
 
-  const hasMore = found.length > limit;
-  const products = hasMore ? found.slice(0, limit) : found;
-  const lastProduct = products.at(-1);
+  const [products, total] = await Promise.all([
+    ProductModel.find(filter)
+      .sort({ [sortKey]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<LeanProduct[]>(),
+    ProductModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: products.map((product) => transformProduct(product)),
-    nextCursor:
-      hasMore && lastProduct
-        ? encodeCursor({
-            createdAt: lastProduct.createdAt,
-            id: lastProduct._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 
 type FeatureProductBindingsQuery = {
   featureId: string;
+  attached?: "attached" | "unattached";
   q?: string;
-  cursor?: string;
+  page?: number;
   limit?: number;
+  sort?: FeatureProductBindingSortKey;
+  direction?: "asc" | "desc";
 };
 
 type LeanBindableProduct = {
@@ -307,7 +333,7 @@ type LeanBindableProduct = {
 };
 
 /**
- * 기능 하나를 붙일 상품 후보 한 페이지 — 정렬·커서 계약은 다른 admin 목록과 같다.
+ * 기능 하나를 붙일 상품 후보의 offset 페이지.
  *
  * `isPremium: true`, `deletedAt: null`만 후보다. 프리미엄이 아닌 상품은 create/update
  * 서비스가 featureIds를 강제로 비우므로 붙여도 조용히 사라지고, 휴지통 상품에 붙이는
@@ -315,20 +341,35 @@ type LeanBindableProduct = {
  */
 const getFeatureProductBindingsPageService = async ({
   featureId,
+  attached,
   q,
-  cursor,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort = "createdAt",
+  direction = "desc",
 }: FeatureProductBindingsQuery): Promise<FeatureProductBindingPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (!FEATURE_PRODUCT_BINDING_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: mongoose.FilterQuery<ProductDocument> = {
     isPremium: true,
     deletedAt: null,
   };
+
+  if (attached === "attached") {
+    filter.featureIds = new mongoose.Types.ObjectId(featureId);
+  } else if (attached === "unattached") {
+    filter.featureIds = { $ne: new mongoose.Types.ObjectId(featureId) };
+  }
 
   const term = q?.trim();
   if (term) {
@@ -337,35 +378,21 @@ const getFeatureProductBindingsPageService = async ({
     filter.title = { $regex: escapeRegExp(term), $options: "i" };
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    filter.$or = [
-      { createdAt: { $lt: decoded.createdAt } },
-      {
-        createdAt: decoded.createdAt,
-        _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-      },
-    ];
-  }
-
-  const found = await ProductModel.find(filter)
-    .select("title price status featureIds createdAt")
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<LeanBindableProduct[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
-      );
-    });
-
-  const hasMore = found.length > limit;
-  const products = hasMore ? found.slice(0, limit) : found;
-  const lastProduct = products.at(-1);
+  const sortDirection = direction === "asc" ? 1 : -1;
+  const [products, total] = await Promise.all([
+    ProductModel.find(filter)
+      .select("title price status featureIds createdAt")
+      .sort({ [sort]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<LeanBindableProduct[]>(),
+    ProductModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "상품 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: products.map((product) => ({
@@ -377,13 +404,10 @@ const getFeatureProductBindingsPageService = async ({
         (id) => id.toString() === featureId,
       ),
     })),
-    nextCursor:
-      hasMore && lastProduct
-        ? encodeCursor({
-            createdAt: lastProduct.createdAt,
-            id: lastProduct._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 
@@ -645,47 +669,42 @@ const searchProductsService = async (
   return products.map((p) => transformProduct(p, userId));
 };
 
-// Home 인기 상품 섹션 — 좋아요 수(likes.length) 내림차순 Top N 조회.
-// 배열 길이 정렬은 find().sort()로 불가능해 aggregation을 쓴다(01_db_schema.md §2-1).
+// Home 인기 상품 섹션 — likesCount 내림차순 Top N 조회. likesCount는 좋아요 토글이
+// likes 배열과 원자적으로 동기화하는 비정규화 카운터라(src/models/product.model.ts,
+// updateProductLikeService) find().sort()로 바로 정렬할 수 있다 — 배열 길이(likes.length)
+// 자체를 정렬 기준으로 쓰던 이전 버전만 aggregation이 필요했다.
 const getPopularProductsService = async (
   limit: number = POPULAR_PRODUCTS_LIMIT,
   userId?: string,
 ): Promise<ProductJson[]> => {
   await dbConnect();
 
-  // $limit은 0 이하를 받으면 빈 배열이 아니라 MongoServerError를 던진다 — 서비스가 방어한다.
+  // 0 이하를 받으면 빈 배열이 아니라 의미 없는 조회가 되므로 서비스가 방어한다.
   const take = Math.min(Math.max(Math.trunc(limit), 1), 50);
 
-  // 파이프라인은 함수 안에서 매번 새 배열 리터럴로 만든다(모듈 상수로 빼지 않는다) —
-  // mongoose가 discriminator 모델 aggregate 시 첫 $match를 직접 mutate하므로,
-  // 상수로 빼면 discriminator 호출 한 번에 이후 모든 호출이 오염된다.
-  const products = await ProductModel.aggregate<LeanProduct>([
-    {
-      $match: {
-        deletedAt: null,
-        status: "active",
-        "likes.0": { $exists: true },
-      },
-    },
-    // $ifNull은 방어적 중복이지만 유지한다 — $size는 인자가 missing이면 null이 아니라 에러(Location17124)를 던진다.
-    { $addFields: { likesCount: { $size: { $ifNull: ["$likes", []] } } } },
-    {
-      $sort: {
-        likesCount: -1,
-        isFeatured: -1,
-        priority: -1,
-        createdAt: -1,
-        _id: -1,
-      },
-    },
-    { $limit: take },
-    { $unset: "likesCount" },
-  ]).catch((err) => {
-    throw new AppError(
-      "INTERNAL",
-      err instanceof Error ? err.message : "인기 상품 조회에 실패했습니다.",
-    );
-  });
+  const products = await ProductModel.find({
+    deletedAt: null,
+    status: "active",
+    likesCount: { $gt: 0 },
+  })
+    // likesCount는 필터·정렬 전용 내부 카운터라 응답에는 노출하지 않는다
+    // (기존 aggregate 버전의 $addFields+$unset과 동일한 효과).
+    .select("-likesCount")
+    .sort({
+      likesCount: -1,
+      isFeatured: -1,
+      priority: -1,
+      createdAt: -1,
+      _id: -1,
+    })
+    .limit(take)
+    .lean()
+    .catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error ? err.message : "인기 상품 조회에 실패했습니다.",
+      );
+    });
 
   return products.map((p) => transformProduct(p, userId));
 };
@@ -847,11 +866,17 @@ const updateProductLikeService = async (
 
   const hasLiked = product.likes.some((id) => id.equals(userObjectId));
 
+  // 배열 변경과 카운터 증감을 한 update에서 원자적으로 묶는다. 필터에 멤버십
+  // 조건(likes: userObjectId 있음/없음)을 넣어 findOne 이후 동시 요청으로 멤버십이
+  // 바뀌었으면 이 update가 아무 문서도 매칭하지 않게 한다 — updated는 null이 되고
+  // 아래에서 기존 "잘못된 id·존재하지 않는 상품" 케이스와 동일하게 false를 반환한다.
   const updated = await ProductModel.findOneAndUpdate(
-    { _id: productId, deletedAt: null },
     hasLiked
-      ? { $pull: { likes: userObjectId } }
-      : { $addToSet: { likes: userObjectId } },
+      ? { _id: productId, deletedAt: null, likes: userObjectId }
+      : { _id: productId, deletedAt: null, likes: { $ne: userObjectId } },
+    hasLiked
+      ? { $pull: { likes: userObjectId }, $inc: { likesCount: -1 } }
+      : { $push: { likes: userObjectId }, $inc: { likesCount: 1 } },
     { new: true, runValidators: true },
   ).catch((err) => {
     throw new AppError(

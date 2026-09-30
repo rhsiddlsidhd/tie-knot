@@ -5,15 +5,14 @@ import { ProductModel } from "@/models/product.model";
 import type { PremiumFeatureDto } from "@/core/schemas/request/premiumFeature.schema";
 import type {
   AdminPremiumFeatureListPage,
+  AdminPremiumFeatureSortKey,
+  AdminPremiumFeatureStatusFilter,
   PremiumFeature,
 } from "@/core/domain/premium-feature";
+import { ADMIN_PREMIUM_FEATURE_SORT_KEYS } from "@/core/domain/premium-feature";
 import { AppError } from "@/core/domain/error";
 import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
-import {
-  decodeCursor,
-  encodeCursor,
-  isValidPageLimit,
-} from "@/core/utils/cursor";
+import { isValidPageLimit } from "@/core/utils/cursor";
 import { escapeRegExp } from "@/core/utils/escape-regexp";
 import { dbConnect } from "@/db/connect";
 
@@ -63,30 +62,45 @@ const getSelectablePremiumFeatureService = async (): Promise<
 
 type AdminPremiumFeatureListQuery = {
   q?: string;
-  cursor?: string;
+  status?: AdminPremiumFeatureStatusFilter;
+  page?: number;
   limit?: number;
+  sort?: AdminPremiumFeatureSortKey;
+  direction?: "asc" | "desc";
 };
 
 /**
- * 관리자 프리미엄 기능 목록 한 페이지 — 정렬·커서 계약(createdAt desc, _id tie-break,
- * limit+1 조회로 다음 페이지 판정)은 다른 admin 목록과 동일하다. 전체 목록이 필요한
- * 소비처(상품 등록 폼, `/api/premium-features`)는 페이징 없는 getAllPremiumFeatureService를 쓴다.
+ * 관리자 프리미엄 기능 목록 한 페이지. 전체 목록이 필요한 소비처(상품 등록 폼,
+ * `/api/premium-features`)는 페이징 없는 getAllPremiumFeatureService를 쓴다.
  */
 const getAdminPremiumFeaturesPageService = async ({
   q,
-  cursor,
+  status,
+  page = 1,
   limit = DEFAULT_PAGE_SIZE,
+  sort = "createdAt",
+  direction = "desc",
 }: AdminPremiumFeatureListQuery): Promise<AdminPremiumFeatureListPage> => {
   await dbConnect();
 
-  if (!isValidPageLimit(limit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (!ADMIN_PREMIUM_FEATURE_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: mongoose.FilterQuery<FeatureDocument> = {};
 
-  // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
-  // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
+  if (status === "active") {
+    filter.isActive = true;
+  } else if (status === "inactive") {
+    filter.isActive = false;
+  }
+
   const conditions: mongoose.FilterQuery<FeatureDocument>[] = [];
 
   const term = q?.trim();
@@ -99,52 +113,33 @@ const getAdminPremiumFeaturesPageService = async ({
     });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({
-      $or: [
-        { createdAt: { $lt: decoded.createdAt } },
-        {
-          createdAt: decoded.createdAt,
-          _id: { $lt: new mongoose.Types.ObjectId(decoded.id) },
-        },
-      ],
-    });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await FeatureModel.find(filter)
-    .sort({ createdAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<FeatureDocument[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error
-          ? err.message
-          : "프리미엄 기능 목록 조회에 실패했습니다.",
-      );
-    });
-
-  const hasMore = found.length > limit;
-  const features = hasMore ? found.slice(0, limit) : found;
-  const lastFeature = features.at(-1);
+  const sortDirection = direction === "asc" ? 1 : -1;
+  const [features, total] = await Promise.all([
+    FeatureModel.find(filter)
+      .sort({ [sort]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean<FeatureDocument[]>(),
+    FeatureModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error
+        ? err.message
+        : "프리미엄 기능 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: features.map(mapToPremiumFeature),
-    nextCursor:
-      hasMore && lastFeature
-        ? encodeCursor({
-            createdAt: lastFeature.createdAt,
-            id: lastFeature._id.toString(),
-          })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 

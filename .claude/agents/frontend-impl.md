@@ -16,7 +16,7 @@ Phase1에서 확정된 `01_ui_flow.md`/`01_api_contract.md`를 실제 코드로 
 2. `01_api_contract.md`의 응답 shape 그대로 mock 데이터/mock fetch 작성 (실제 API shape과 다르면 그게 버그 — mock을 임의로 편하게 바꾸지 않는다)
 3. 페이지(`src/app/(main)/...`, 관리자 화면이면 `src/app/(admin)/...`), 훅(`src/ui/hooks/`), 상태(`src/ui/stores/`, `src/ui/context/`) 구현
 4. `01_ui_flow.md`의 상태 머신을 실제 상태 업데이트 코드로 반영
-5. 컴포넌트는 atomic design 계층(`atoms/molecules/organisms/templates`) 규칙에 맞게 배치 — 티어 판정 기준은 각 티어의 `src/ui/components/{tier}/AGENTS.md`
+5. 컴포넌트는 atomic design 계층(`ui/atoms/molecules/organisms/templates`) 규칙에 맞게 배치 — 티어 판정 기준은 각 티어의 `src/ui/components/{tier}/AGENTS.md`
 6. backend-impl이 엔드포인트 완성 알림을 보내면, mock을 실제 API 호출로 교체하고 boundary-verifier의 검증을 기다린다
 
 ## 작업 원칙
@@ -29,7 +29,7 @@ Phase1에서 확정된 `01_ui_flow.md`/`01_api_contract.md`를 실제 코드로 
 
 ## TDD gate (이 저장소 필수)
 
-`.claude/settings.json`의 PreToolUse 훅(`tooling/tdd-gate/hook.mjs`)이 `src/` 소스 편집을 가로챈다. 제외 목록은 `tooling/tdd-gate/policy.json`에만 있다(`src/core/domain/**`, `src/ui/components/atoms/**` 등).
+`.claude/settings.json`의 PreToolUse 훅(`tooling/tdd-gate/hook.mjs`)이 `src/` 소스 편집을 가로챈다. 제외 목록은 `tooling/tdd-gate/policy.json`에만 있다(`src/core/domain/**`, `src/ui/components/ui/**` 등).
 
 - 대응 형제 테스트가 없는 소스 파일을 쓰면 **차단**된다 — 테스트를 먼저 만들어라
 - 신규 파일인데 형제 테스트가 이미 통과하면 **차단**된다 — 그 파일이 없으면 실패하는 테스트로 red를 먼저 만들어라

@@ -2,7 +2,7 @@
 
 import useSWRInfinite from "swr/infinite";
 import { Inbox } from "lucide-react";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import {
@@ -12,7 +12,7 @@ import {
   EmptyTitle,
   EmptyDescription,
   EmptyContent,
-} from "@/ui/components/atoms/empty";
+} from "@/ui/components/ui/empty";
 import { fetcher } from "@/ui/fetcher";
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OrderListPage, OrderStatus } from "@/core/domain/order";
@@ -45,11 +45,6 @@ const buildKey = ({
   return query ? `/api/orders?${query}` : "/api/orders";
 };
 
-/**
- * 첫 페이지는 Server Component가 이미 렌더한 결과를 fallbackData로 받고, 더보기부터만
- * route handler를 탄다. SWR key에 status/category가 들어 있어 필터가 바뀌면 누적분이
- * 자동으로 리셋된다.
- */
 const OrderList = ({ firstPage, status, category }: OrderListProps) => {
   const { data, error, size, setSize, isValidating, mutate } =
     useSWRInfinite<OrderListPage>(
@@ -62,9 +57,6 @@ const OrderList = ({ firstPage, status, category }: OrderListProps) => {
       {
         fallbackData: [firstPage],
         revalidateFirstPage: false,
-        // 첫 페이지는 방금 Server Component가 조회해 넘겨준 값이다 — 마운트 시
-        // 같은 쿼리를 한 번 더 돌리지 않는다. 갱신이 필요한 시점(취소 등)에는
-        // mutate로 명시적으로 다시 받아온다.
         revalidateOnMount: false,
       },
     );

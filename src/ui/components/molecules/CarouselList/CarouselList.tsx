@@ -7,7 +7,7 @@ import {
   CarouselContent,
   CarouselItem,
   type CarouselProps,
-} from "@/ui/components/atoms/carousel";
+} from "@/ui/components/ui/carousel";
 
 interface CarouselListProps extends CarouselProps {
   id: string;

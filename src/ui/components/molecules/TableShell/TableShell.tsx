@@ -5,7 +5,7 @@ import {
   TableRow,
   TableHead,
   TableBody,
-} from "@/ui/components/atoms/table";
+} from "@/ui/components/ui/table";
 
 interface TableShellProps {
   headings: string[];

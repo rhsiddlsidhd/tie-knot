@@ -10,8 +10,10 @@ import { hasFieldErrors } from "@/core/utils/error";
 import { PremiumFeatureDialog as PurePremiumFeatureDialog } from "../_components/PremiumFeatureDialog";
 const PremiumFeatureDialog = ({
   premiumFeature,
+  onRefreshed,
 }: {
   premiumFeature: PremiumFeature;
+  onRefreshed: () => void;
 }) => {
   const [state, action, pending] = useActionState<
     ApiResponse<{ message: string }>,
@@ -22,12 +24,13 @@ const PremiumFeatureDialog = ({
     if (!state) return;
     if (state.success === true) {
       toast.success(state.data.message);
+      onRefreshed();
     } else {
       if (!hasFieldErrors(state.error)) {
         toast.error(state.error.message);
       }
     }
-  }, [state]);
+  }, [state, onRefreshed]);
 
   return (
     <PurePremiumFeatureDialog

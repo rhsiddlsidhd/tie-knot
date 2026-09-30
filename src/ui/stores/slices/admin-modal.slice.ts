@@ -4,8 +4,11 @@ import type { Product } from "@/core/domain/product";
 import type { AppStore } from "../app.store";
 
 interface AdminModalPropsMap {
-  "EDIT-PRODUCT": { product: Product };
-  "EDIT-PREMIUMFEATURE": { premiumFeature: PremiumFeature };
+  "EDIT-PRODUCT": { product: Product; onRefreshed: () => void };
+  "EDIT-PREMIUMFEATURE": {
+    premiumFeature: PremiumFeature;
+    onRefreshed: () => void;
+  };
 }
 
 type AdminModalType = keyof AdminModalPropsMap;

@@ -1,13 +1,17 @@
 "use client";
-import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { updateProductStatus } from "@/actions/updateProductStatus";
 import { toast } from "sonner";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
 import type { Product } from "@/core/domain/product";
 import { EDITABLE_PRODUCT_STATUS_OPTIONS } from "@/core/domain/product";
-const ProductTableRowSelect = ({ product }: { product: Product }) => {
-  const router = useRouter();
+const ProductTableRowSelect = ({
+  product,
+  onRefreshed,
+}: {
+  product: Product;
+  onRefreshed: () => void;
+}) => {
   const [status, setStatus] = useState<string>(product.status);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const handleStatusChange = async (newStatus: string) => {
@@ -28,7 +32,7 @@ const ProductTableRowSelect = ({ product }: { product: Product }) => {
         return;
       }
 
-      router.refresh();
+      onRefreshed();
     } catch {
       toast.error("상태 변경 중 오류가 발생했습니다.");
       setStatus(product.status);

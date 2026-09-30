@@ -1,12 +1,12 @@
-import { Button } from "@/ui/components/atoms/button";
-import { DialogFooter } from "@/ui/components/atoms/dialog";
+import { Button } from "@/ui/components/ui/button";
+import { DialogFooter } from "@/ui/components/ui/dialog";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { Field, FieldLabel, FieldError } from "@/ui/components/atoms/field";
+import { Field, FieldLabel, FieldError } from "@/ui/components/ui/field";
 import {
   InputGroup,
   InputGroupInput,
   InputGroupAddon,
-} from "@/ui/components/atoms/input-group";
+} from "@/ui/components/ui/input-group";
 
 import type { PremiumFeature } from "@/core/domain/premium-feature";
 import { InputField } from "@/ui/components/organisms/InputField";

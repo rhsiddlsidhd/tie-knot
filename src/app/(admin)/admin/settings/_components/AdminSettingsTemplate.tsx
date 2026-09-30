@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/ui/components/atoms/button";
-import { Input } from "@/ui/components/atoms/input";
+import { Button } from "@/ui/components/ui/button";
+import { Input } from "@/ui/components/ui/input";
 import {
   Field,
   FieldContent,
   FieldLabel,
   FieldTitle,
   FieldDescription,
-} from "@/ui/components/atoms/field";
-import { Switch } from "@/ui/components/atoms/switch";
+} from "@/ui/components/ui/field";
+import { Switch } from "@/ui/components/ui/switch";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/ui/components/atoms/tabs";
+} from "@/ui/components/ui/tabs";
 import {
   TypographyH1,
   TypographyMuted,

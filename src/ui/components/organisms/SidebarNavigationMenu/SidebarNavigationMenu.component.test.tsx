@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarProvider } from "@/ui/components/ui/sidebar";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/admin/dashboard",
@@ -65,5 +65,20 @@ describe("SidebarNavigationMenu", () => {
     await user.hover(dashboardLink);
 
     expect(await screen.findAllByText("대시보드")).not.toHaveLength(0);
+  });
+
+  it("collapse(icon) 상태에서 그룹 버튼을 클릭하면 Popover로 하위 항목을 노출한다", async () => {
+    const user = userEvent.setup();
+    renderMenu("ADMIN", { open: false });
+
+    await user.click(screen.getByRole("button", { name: /상품 관리/ }));
+
+    expect(
+      await screen.findByRole("link", { name: "상품 목록" }),
+    ).toHaveAttribute("href", "/admin/products");
+    expect(screen.getByRole("link", { name: "상품 등록" })).toHaveAttribute(
+      "href",
+      "/admin/products/new",
+    );
   });
 });

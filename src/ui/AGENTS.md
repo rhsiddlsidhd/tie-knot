@@ -16,7 +16,7 @@
 
 ```
 src/ui/
-├── components/   # atoms/molecules/organisms/templates — src/ui/components/AGENTS.md
+├── components/   # ui/atoms/molecules/organisms/templates — src/ui/components/AGENTS.md
 ├── hooks/        # 프로젝트 자체 로직 커스텀 훅(외부 SDK 결합 훅 제외) — src/ui/hooks/AGENTS.md
 ├── stores/       # 전역 클라이언트 상태(Zustand) — src/ui/stores/AGENTS.md
 ├── context/      # 특정 도메인/UI 트리 한정 React Context 상태 — src/ui/context/AGENTS.md

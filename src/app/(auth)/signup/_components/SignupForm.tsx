@@ -5,9 +5,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { Globe } from "lucide-react";
 
-import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Button } from "@/ui/components/atoms/button";
-import { Field, FieldLabel } from "@/ui/components/atoms/field";
+import { Checkbox } from "@/ui/components/ui/checkbox";
+import { Button } from "@/ui/components/ui/button";
+import { Field, FieldLabel } from "@/ui/components/ui/field";
 import {
   TypographyH1,
   TypographyMuted,

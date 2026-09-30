@@ -2,7 +2,7 @@
 
 import { EyebrowSection } from "./EyebrowSection";
 import React, { useMemo, useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "@/ui/components/atoms/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/ui/components/ui/tabs";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import { PersonValueCard } from "@/ui/components/organisms/PersonValueCard";
 import { useCopy } from "@/ui/hooks/useCopy";

@@ -4,7 +4,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/ui/components/atoms/dialog";
+} from "@/ui/components/ui/dialog";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
 import React from "react";
 

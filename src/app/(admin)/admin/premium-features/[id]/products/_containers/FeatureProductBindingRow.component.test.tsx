@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import type { FeatureProductBinding } from "@/core/domain/premium-feature";
 
 const refreshMock = vi.hoisted(() => vi.fn());
+const onRefreshed = vi.hoisted(() => vi.fn());
 const toastErrorMock = vi.hoisted(() => vi.fn());
 const toastSuccessMock = vi.hoisted(() => vi.fn());
 
@@ -35,6 +36,7 @@ const renderRow = (overrides?: Partial<FeatureProductBinding>) =>
         <FeatureProductBindingRow
           product={{ ...product, ...overrides }}
           featureId="feature-1"
+          onRefreshed={onRefreshed}
         />
       </tbody>
     </table>,
@@ -79,7 +81,8 @@ describe("FeatureProductBindingRow", () => {
       featureId: "feature-1",
       attached: true,
     });
-    expect(refreshMock).toHaveBeenCalledOnce();
+    expect(onRefreshed).toHaveBeenCalledOnce();
+    expect(refreshMock).not.toHaveBeenCalled();
   });
 
   it("체크를 해제하면 attached: false로 호출한다", async () => {
@@ -113,6 +116,6 @@ describe("FeatureProductBindingRow", () => {
       '"봄맞이 청첩장"의 마지막 프리미엄 기능이라 뗄 수 없습니다.',
     );
     expect(screen.getByRole("checkbox")).toBeChecked();
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(onRefreshed).not.toHaveBeenCalled();
   });
 });

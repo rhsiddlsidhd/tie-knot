@@ -2,7 +2,7 @@ import {
   CommandGroup,
   CommandItem,
   CommandList,
-} from "@/ui/components/atoms/command";
+} from "@/ui/components/ui/command";
 import clsx from "clsx";
 import React from "react";
 

@@ -4,7 +4,7 @@ import { useAuth } from "@/ui/hooks/useAuth";
 import { AccountMenu } from "./AccountMenu";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
 import { ROUTES } from "@/core/domain/routes";
-import { Skeleton } from "@/ui/components/atoms/skeleton";
+import { Skeleton } from "@/ui/components/ui/skeleton";
 
 const AuthStatus = () => {
   const { session, isLoading } = useAuth();

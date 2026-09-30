@@ -1,54 +1,24 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { encodeCursor } from "@/core/utils/cursor";
 
-const validCursor = encodeCursor({
-  createdAt: new Date("2026-08-01T00:00:00.000Z"),
-  id: "68a3f0c1c2d3e4f5a6b7c8d9",
-});
-
-const { verifySessionMock, getAdminProductsPageServiceMock } = vi.hoisted(
-  () => ({
-    verifySessionMock: vi.fn(),
-    getAdminProductsPageServiceMock: vi.fn(),
-  }),
-);
-
-vi.mock("@/services/auth", () => ({
-  verifySession: verifySessionMock,
+const { verifySessionMock, adminProductsTableMock } = vi.hoisted(() => ({
+  verifySessionMock: vi.fn(),
+  adminProductsTableMock: vi.fn(),
 }));
-vi.mock("@/services/product", () => ({
-  getAdminProductsPageService: getAdminProductsPageServiceMock,
+vi.mock("@/services/auth", () => ({ verifySession: verifySessionMock }));
+vi.mock("@/app/(admin)/admin/products/_containers/AdminProductsTable", () => ({
+  AdminProductsTable: (props: { isDelete: boolean }) => {
+    adminProductsTableMock(props);
+    return <div>상품 테이블</div>;
+  },
 }));
-
-vi.mock(
-  "@/app/(admin)/admin/products/_components/AdminProductsTemplate",
-  () => ({
-    AdminProductsTemplate: ({
-      page,
-      view,
-      q,
-      cursor,
-    }: {
-      page: { items: unknown[]; nextCursor: string | null };
-      view?: string;
-      q?: string;
-      cursor?: string;
-    }) => (
-      <div>
-        템플릿:items={page.items.length}:view={view ?? "없음"}:q=
-        {q ?? "없음"}:cursor={cursor ?? "없음"}
-      </div>
-    ),
-  }),
-);
 
 import ProductsPage from "./page";
 
-const emptyPage: { items: unknown[]; nextCursor: string | null } = {
-  items: [],
-  nextCursor: null,
-};
+const renderPage = async (
+  searchParams: Record<string, string | undefined> = {},
+) =>
+  render(await ProductsPage({ searchParams: Promise.resolve(searchParams) }));
 
 describe("관리자 상품 목록 페이지", () => {
   beforeEach(() => {
@@ -58,140 +28,57 @@ describe("관리자 상품 목록 페이지", () => {
       email: "a@x.com",
       userId: "1",
     });
-    getAdminProductsPageServiceMock.mockResolvedValue(emptyPage);
   });
 
-  it("ADMIN 권한으로 verifySession을 호출한다", async () => {
-    await ProductsPage({ searchParams: Promise.resolve({}) });
+  it("ADMIN 권한을 확인한 뒤 상품 테이블을 렌더링한다", async () => {
+    await renderPage();
 
     expect(verifySessionMock).toHaveBeenCalledWith("ADMIN");
+    expect(screen.getByText("상품 테이블")).toBeInTheDocument();
   });
 
-  it("인증에 실패하면(verifySession이 throw) 목록 service를 호출하지 않는다", async () => {
+  it("인증에 실패하면(verifySession이 throw) 테이블을 렌더링하지 않는다", async () => {
     verifySessionMock.mockRejectedValue(new Error("redirect"));
 
     await expect(
       ProductsPage({ searchParams: Promise.resolve({}) }),
-    ).rejects.toThrow();
-
-    expect(getAdminProductsPageServiceMock).not.toHaveBeenCalled();
+    ).rejects.toThrow("redirect");
   });
 
-  it("view가 없으면 기본값 'active'로 service를 호출한다", async () => {
-    await ProductsPage({ searchParams: Promise.resolve({}) });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith({
-      view: "active",
-      cursor: undefined,
-    });
-  });
-
-  it("인증 성공 후 URL의 view/cursor를 service에 그대로 전달한다", async () => {
-    await ProductsPage({
-      searchParams: Promise.resolve({ view: "trash", cursor: validCursor }),
-    });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith({
-      view: "trash",
-      cursor: validCursor,
-    });
-  });
-
-  it("잘못된 view는 기본값 'active'로 정규화되고 cursor도 함께 버려진다", async () => {
-    await ProductsPage({
-      searchParams: Promise.resolve({
-        view: "NOT_A_VIEW",
-        cursor: validCursor,
-      }),
-    });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith({
-      view: "active",
-      cursor: undefined,
-    });
-  });
-
-  it("view가 배열이면(?view=A&view=B) 기본값 'active'로 정규화된다", async () => {
-    await ProductsPage({
-      searchParams: Promise.resolve({ view: ["active", "trash"] }),
-    });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith({
-      view: "active",
-      cursor: undefined,
-    });
-  });
-
-  it("형식이 깨진 cursor는 제거하고 view는 유지한다", async () => {
-    await ProductsPage({
-      searchParams: Promise.resolve({ view: "trash", cursor: "!!broken!!" }),
-    });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith({
-      view: "trash",
-      cursor: undefined,
-    });
-  });
-
-  it("service 결과와 현재 필터/cursor를 Template props로 전달한다", async () => {
-    getAdminProductsPageServiceMock.mockResolvedValue({
-      items: [{ id: "1" }],
-      nextCursor: "next",
-    });
-
-    render(
-      await ProductsPage({
-        searchParams: Promise.resolve({ view: "trash", cursor: validCursor }),
-      }),
-    );
+  it("softDeleted가 없으면 상품 목록 제목·등록 버튼·휴지통 이동 링크를 보여준다", async () => {
+    await renderPage();
 
     expect(
-      screen.getByText(
-        `템플릿:items=1:view=trash:q=없음:cursor=${validCursor}`,
-      ),
+      screen.getByRole("heading", { name: "상품 목록" }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText("등록된 템플릿 상품을 관리합니다."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "상품 등록" })).toHaveAttribute(
+      "href",
+      "/admin/products/new",
+    );
+    expect(screen.getByRole("link", { name: "휴지통" })).toHaveAttribute(
+      "href",
+      "/admin/products?softDeleted=true",
+    );
+    expect(adminProductsTableMock).toHaveBeenCalledWith({ isDelete: false });
   });
 
-  it("검색어를 서비스에 넘기고 Template에 전달한다", async () => {
-    render(
-      await ProductsPage({
-        searchParams: Promise.resolve({ q: "청첩장" }),
-      }),
+  it("softDeleted=true면 휴지통 제목·상품 목록 이동 링크를 보여주고 등록 버튼을 숨긴다", async () => {
+    await renderPage({ softDeleted: "true" });
+
+    expect(screen.getByRole("heading", { name: "휴지통" })).toBeInTheDocument();
+    expect(
+      screen.getByText("삭제된 상품을 조회하고 복구합니다."),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "상품 등록" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "상품 목록" })).toHaveAttribute(
+      "href",
+      "/admin/products",
     );
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
-      expect.objectContaining({ q: "청첩장" }),
-    );
-    expect(screen.getByText(/q=청첩장/)).toBeInTheDocument();
-  });
-
-  it("빈 검색어는 조건 없음으로 정규화한다", async () => {
-    await ProductsPage({ searchParams: Promise.resolve({ q: "   " }) });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
-      expect.objectContaining({ q: undefined }),
-    );
-  });
-
-  it("검색어와 view 필터를 함께 넘긴다", async () => {
-    await ProductsPage({
-      searchParams: Promise.resolve({ q: "청첩장", view: "trash" }),
-    });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
-      expect.objectContaining({ q: "청첩장", view: "trash" }),
-    );
-  });
-
-  // 검색어가 100자를 넘으면 스키마가 통째로 거부한다 — 필터/커서 없음으로 떨어뜨려
-  // 페이지가 throw하지 않게 한다(URL이 소유하는 값이라 어떤 입력도 올 수 있다).
-  it("지나치게 긴 검색어는 조건 없이 조회한다", async () => {
-    await ProductsPage({
-      searchParams: Promise.resolve({ q: "가".repeat(101) }),
-    });
-
-    expect(getAdminProductsPageServiceMock).toHaveBeenCalledWith(
-      expect.objectContaining({ q: undefined }),
-    );
+    expect(adminProductsTableMock).toHaveBeenCalledWith({ isDelete: true });
   });
 });

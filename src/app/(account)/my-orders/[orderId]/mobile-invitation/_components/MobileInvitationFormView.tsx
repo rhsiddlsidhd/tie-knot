@@ -3,8 +3,8 @@ import { CoupleInfoSection } from "./CoupleInfoSection";
 import { ParentsInfoSection } from "./ParentsInfoSection";
 import { ImagesSection } from "./ImagesSection";
 import { BottomActionBar } from "@/ui/components/organisms/BottomActionBar";
-import { Progress } from "@/ui/components/atoms/progress";
-import { Skeleton } from "@/ui/components/atoms/skeleton";
+import { Progress } from "@/ui/components/ui/progress";
+import { Skeleton } from "@/ui/components/ui/skeleton";
 import { Save } from "lucide-react";
 import type { useMobileInvitationForm } from "@/ui/hooks/useMobileInvitationForm";
 

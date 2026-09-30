@@ -17,11 +17,13 @@ import { maskName } from "@/core/utils/mask";
 import { AppError } from "@/core/domain/error";
 import type {
   AdminReviewListPage,
+  AdminReviewSortKey,
   ReviewJson,
   ReviewListPage,
   ReviewSortType,
 } from "@/core/domain/review";
-import { REVIEW_PAGE_SIZE } from "@/core/domain/review";
+import { ADMIN_REVIEW_SORT_KEYS, REVIEW_PAGE_SIZE } from "@/core/domain/review";
+import { DEFAULT_PAGE_SIZE } from "@/core/domain/cursor";
 import { getUser, requireAdmin, requireAuth } from "./auth";
 
 const REVIEW_SORT_SPEC: Record<ReviewSortType, Record<string, 1 | -1>> = {
@@ -407,21 +409,40 @@ type LeanAdminReview = Omit<ReviewDocument, "userId" | "productId"> & {
   productId: { title: string } | null;
 };
 
-type AdminReviewsQuery = { q?: string; cursor?: string; limit?: number };
+type AdminReviewsQuery = {
+  q?: string;
+  rating?: number;
+  page?: number;
+  limit?: number;
+  sort?: AdminReviewSortKey;
+  direction?: "asc" | "desc";
+};
 
 const getAdminReviewsPageService = async ({
   q,
-  cursor,
-  limit,
+  rating,
+  page = 1,
+  limit = DEFAULT_PAGE_SIZE,
+  sort = "createdAt",
+  direction = "desc",
 }: AdminReviewsQuery): Promise<AdminReviewListPage> => {
   await dbConnect();
 
-  const pageLimit = limit ?? REVIEW_PAGE_SIZE;
-  if (!isValidPageLimit(pageLimit)) {
+  if (!isValidPageLimit(limit) || !Number.isInteger(page) || page < 1) {
     throw new AppError("VALIDATION", "잘못된 페이지 크기입니다.");
+  }
+  if (!ADMIN_REVIEW_SORT_KEYS.includes(sort)) {
+    throw new AppError("VALIDATION", "잘못된 정렬 기준입니다.");
+  }
+  if (direction !== "asc" && direction !== "desc") {
+    throw new AppError("VALIDATION", "잘못된 정렬 방향입니다.");
   }
 
   const filter: Record<string, unknown> = {};
+
+  if (rating) {
+    filter.rating = rating;
+  }
 
   // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이 조용히
   // 무시된다 — 둘 다 $and 아래 독립 절로 넣어 함께 적용되게 한다.
@@ -445,34 +466,26 @@ const getAdminReviewsPageService = async ({
     });
   }
 
-  if (cursor) {
-    const decoded = decodeCursor(cursor);
-    if (!decoded) {
-      throw new AppError("VALIDATION", "잘못된 페이지 커서입니다.");
-    }
-    conditions.push({ $or: buildReviewCursorOr("LATEST", decoded) });
-  }
-
   if (conditions.length > 0) {
     filter.$and = conditions;
   }
 
-  const found = await ReviewModel.find(filter)
-    .sort(REVIEW_SORT_SPEC.LATEST)
-    .limit(pageLimit + 1)
-    .populate<{ userId: { name: string } | null }>("userId", "name")
-    .populate<{ productId: { title: string } | null }>("productId", "title")
-    .lean<LeanAdminReview[]>()
-    .catch((err) => {
-      throw new AppError(
-        "INTERNAL",
-        err instanceof Error ? err.message : "리뷰 목록 조회에 실패했습니다.",
-      );
-    });
-
-  const hasMore = found.length > pageLimit;
-  const reviews = hasMore ? found.slice(0, pageLimit) : found;
-  const last = reviews.at(-1);
+  const sortDirection = direction === "asc" ? 1 : -1;
+  const [reviews, total] = await Promise.all([
+    ReviewModel.find(filter)
+      .sort({ [sort]: sortDirection, _id: sortDirection })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate<{ userId: { name: string } | null }>("userId", "name")
+      .populate<{ productId: { title: string } | null }>("productId", "title")
+      .lean<LeanAdminReview[]>(),
+    ReviewModel.countDocuments(filter),
+  ]).catch((err) => {
+    throw new AppError(
+      "INTERNAL",
+      err instanceof Error ? err.message : "리뷰 목록 조회에 실패했습니다.",
+    );
+  });
 
   return {
     items: reviews.map((review) => ({
@@ -483,10 +496,10 @@ const getAdminReviewsPageService = async ({
       content: review.content,
       createdAt: review.createdAt,
     })),
-    nextCursor:
-      hasMore && last
-        ? encodeCursor({ createdAt: last.createdAt, id: last._id.toString() })
-        : null,
+    total,
+    page,
+    limit,
+    totalPages: Math.ceil(total / limit),
   };
 };
 

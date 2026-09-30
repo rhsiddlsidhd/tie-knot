@@ -1,4 +1,5 @@
 import type { CursorPage } from "./cursor";
+import type { OffsetPage } from "./offset";
 import { DEFAULT_PAGE_SIZE } from "./cursor";
 
 const REVIEW_RATING_MIN = 1;
@@ -43,7 +44,9 @@ type AdminReviewListItem = {
   createdAt: Date;
 };
 
-type AdminReviewListPage = CursorPage<AdminReviewListItem>;
+const ADMIN_REVIEW_SORT_KEYS = ["createdAt", "rating"] as const;
+type AdminReviewSortKey = (typeof ADMIN_REVIEW_SORT_KEYS)[number];
+type AdminReviewListPage = OffsetPage<AdminReviewListItem>;
 
 export {
   REVIEW_RATING_MIN,
@@ -51,9 +54,11 @@ export {
   REVIEW_SORT_KEYS,
   REVIEW_SORT_OPTIONS,
   REVIEW_PAGE_SIZE,
+  ADMIN_REVIEW_SORT_KEYS,
   type ReviewSortType,
   type ReviewJson,
   type ReviewListPage,
   type AdminReviewListItem,
   type AdminReviewListPage,
+  type AdminReviewSortKey,
 };

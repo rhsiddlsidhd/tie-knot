@@ -14,6 +14,8 @@ import { updatePremiumFeature } from "@/actions/updatePremiumFeature";
 import { toast } from "sonner";
 import { PremiumFeatureDialog } from "./PremiumFeatureDialog";
 
+const onRefreshed = vi.fn();
+
 const feature: PremiumFeature = {
   _id: "feature-1",
   code: "GUESTBOOK",
@@ -29,13 +31,18 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
     vi.clearAllMocks();
   });
 
-  it("수정에 성공하면 성공 메시지를 toast로 표시한다", async () => {
+  it("수정에 성공하면 성공 메시지를 toast로 표시하고 목록을 갱신한다", async () => {
     vi.mocked(updatePremiumFeature).mockResolvedValue({
       success: true,
       data: { message: "프리미엄 기능이 수정되었습니다." },
     });
     const user = userEvent.setup();
-    render(<PremiumFeatureDialog premiumFeature={feature} />);
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={feature}
+        onRefreshed={onRefreshed}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "수정" }));
 
@@ -44,6 +51,7 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
         "프리미엄 기능이 수정되었습니다.",
       ),
     );
+    expect(onRefreshed).toHaveBeenCalledOnce();
   });
 
   it("필드 에러 없는 실패면 에러 메시지를 toast로 표시한다", async () => {
@@ -55,7 +63,12 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
       },
     });
     const user = userEvent.setup();
-    render(<PremiumFeatureDialog premiumFeature={feature} />);
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={feature}
+        onRefreshed={onRefreshed}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "수정" }));
 
@@ -64,6 +77,7 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
         "알 수 없는 오류가 발생했습니다.",
       ),
     );
+    expect(onRefreshed).not.toHaveBeenCalled();
   });
 
   it("필드 에러가 있는 실패면 toast 대신 필드 에러를 인라인으로 표시한다", async () => {
@@ -76,7 +90,12 @@ describe("PremiumFeatureDialog (컨테이너)", () => {
       },
     });
     const user = userEvent.setup();
-    render(<PremiumFeatureDialog premiumFeature={feature} />);
+    render(
+      <PremiumFeatureDialog
+        premiumFeature={feature}
+        onRefreshed={onRefreshed}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "수정" }));
 

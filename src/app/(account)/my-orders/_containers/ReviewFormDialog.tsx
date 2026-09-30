@@ -4,7 +4,7 @@ import { useRef, useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/ui/components/atoms/dialog";
+} from "@/ui/components/ui/dialog";
 import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import { ConfirmDialog } from "@/ui/components/molecules/ConfirmDialog";
 import { ImageField } from "@/ui/components/organisms/ImageField";
