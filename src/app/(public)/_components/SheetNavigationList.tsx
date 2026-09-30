@@ -1,71 +1,92 @@
 "use client";
-import { NAVIGATION_BY_TYPE } from "@/core/domain/navigation";
+import type { NavigationSection } from "@/core/domain/navigation";
+import { resolveActiveNavigationHref } from "@/core/utils/navigation";
 import { cn } from "@/core/utils/cn";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/ui/components/ui/accordion";
+import { SheetClose } from "@/ui/components/ui/sheet";
 
-const SheetNavigationList = ({
-  type,
-}: {
-  type: keyof typeof NAVIGATION_BY_TYPE;
-}) => {
+const SheetNavigationList = ({ groups, links }: NavigationSection) => {
   const pathname = usePathname();
-  const { groups, links } = NAVIGATION_BY_TYPE[type];
+  const searchParams = useSearchParams();
+  const activeHref = resolveActiveNavigationHref(
+    pathname,
+    searchParams.get("subCategory"),
+  );
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-4 pt-4">
       <Accordion type="multiple">
-        {groups.map((item, index) => (
-          <AccordionItem key={item.id} value={item.id} className="border-b-0">
-            <AccordionTrigger className="group text-muted-foreground hover:text-foreground [&>svg]:text-muted-foreground/40 relative gap-3 rounded-lg px-3 py-3.5 transition-all duration-200 hover:no-underline">
-              <span className="flex items-center gap-3">
-                <span className="text-muted-foreground/40 group-hover:text-muted-foreground/60 w-4 text-right text-[11px] font-medium tabular-nums transition-colors">
-                  {String(index + 1).padStart(2, "0")}
+        {groups.map((item, index) => {
+          // 그룹 자체는 링크가 아니라 열림/닫힘 트리거라, 현재 경로가 그 그룹의
+          // 하위 항목 중 하나일 때를 활성으로 본다(데스크톱 nav와 같은 기준).
+          const isGroupActive = item.submenu.some(
+            (subItem) => subItem.href === pathname,
+          );
+
+          return (
+            <AccordionItem key={item.id} value={item.id} className="border-b-0">
+              <AccordionTrigger className="group text-muted-foreground hover:text-foreground hover:bg-muted/50 [&>svg]:text-muted-foreground/40 relative gap-3 rounded-lg px-3 py-3.5 transition-all duration-200 hover:no-underline">
+                <span
+                  className={cn(
+                    "bg-foreground/80 absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-full transition-all duration-200",
+                    isGroupActive
+                      ? "opacity-100"
+                      : "opacity-0 group-hover:opacity-100",
+                  )}
+                />
+                <span className="flex items-center gap-3">
+                  <span className="text-muted-foreground/40 group-hover:text-muted-foreground/60 w-4 text-right text-[11px] font-medium tabular-nums transition-colors">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="text-sm font-medium tracking-wide">
+                    {item.label}
+                  </span>
                 </span>
-                <span className="text-sm font-medium tracking-wide">
-                  {item.label}
-                </span>
-              </span>
-            </AccordionTrigger>
-            <AccordionContent className="pt-0 pb-1">
-              <div className="flex flex-col gap-0.5 pl-11">
-                {item.submenu.map((subItem) => (
-                  <Link
-                    key={subItem.id}
-                    href={subItem.href}
-                    className={cn(
-                      "text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm transition-colors",
-                      pathname === subItem.href &&
-                        "text-foreground bg-muted/50 font-medium",
-                    )}
-                  >
-                    {subItem.label}
-                  </Link>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-        {links.map((item, index) => (
+              </AccordionTrigger>
+              <AccordionContent className="pt-0 pb-1">
+                <div className="flex flex-col gap-0.5 pl-11">
+                  {item.submenu.map((subItem) => (
+                    <SheetClose key={subItem.id} asChild>
+                      <Link
+                        href={subItem.href}
+                        className={cn(
+                          "text-muted-foreground hover:text-foreground rounded-md px-3 py-2 text-sm transition-colors",
+                          activeHref === subItem.href &&
+                            "text-foreground bg-muted/50 font-medium",
+                        )}
+                      >
+                        {subItem.label}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+      {/* Accordion.Root의 직계 자식은 아코디언 아이템으로 수집된다 — 일반 링크를
+          안에 두면 Radix의 방향키 순회 대상에서만 빠져 키보드로 닿지 않는다. */}
+      {links.map((item, index) => (
+        <SheetClose key={item.id} asChild>
           <Link
-            key={item.id}
             href={item.href}
             className={cn(
               "group text-muted-foreground hover:text-foreground hover:bg-muted/50 relative flex items-center gap-3 rounded-lg px-3 py-3.5 transition-all duration-200",
-              pathname === item.href && "text-foreground bg-muted/50",
+              activeHref === item.href && "text-foreground bg-muted/50",
             )}
-            style={{ animationDelay: `${(groups.length + index) * 60}ms` }}
           >
             <span
               className={cn(
                 "bg-foreground/80 absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-full transition-all duration-200",
-                pathname === item.href
+                activeHref === item.href
                   ? "opacity-100"
                   : "opacity-0 group-hover:opacity-100",
               )}
@@ -77,8 +98,8 @@ const SheetNavigationList = ({
               {item.label}
             </span>
           </Link>
-        ))}
-      </Accordion>
+        </SheetClose>
+      ))}
     </nav>
   );
 };
