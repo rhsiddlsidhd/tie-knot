@@ -11,9 +11,18 @@ import {
 } from "@/ui/components/ui/sheet";
 import { Button } from "@/ui/components/ui/button";
 import { Logo } from "@/ui/components/atoms/logo";
-import { cn } from "@/core/utils/cn";
 
 type Breakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
+
+// Tailwind는 소스에 박힌 클래스 문자열만 스캔한다 — `${hiddenFrom}:hidden`처럼
+// 조합하면 CSS가 생성되지 않아 트리거가 어느 폭에서도 안 숨는다.
+const HIDDEN_FROM_CLASS = {
+  sm: "sm:hidden",
+  md: "md:hidden",
+  lg: "lg:hidden",
+  xl: "xl:hidden",
+  "2xl": "2xl:hidden",
+} as const satisfies Record<Breakpoint, string>;
 
 interface SheetPanelProps {
   side?: "top" | "right" | "bottom" | "left";
@@ -31,7 +40,7 @@ const SheetPanel = ({
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild className={cn(`${hiddenFrom}:hidden`)}>
+      <SheetTrigger asChild className={HIDDEN_FROM_CLASS[hiddenFrom]}>
         <Button
           variant="ghost"
           size="icon"
