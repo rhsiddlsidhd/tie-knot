@@ -1,1 +1,0 @@
-export { AllOptionSelect } from "./AllOptionSelect";

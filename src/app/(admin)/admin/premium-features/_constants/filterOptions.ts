@@ -1,8 +1,8 @@
 import type { AdminPremiumFeatureStatusFilter } from "@/core/domain/premium-feature";
-import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionSelect/AllOptionSelect";
+import type { FilterSelectOption } from "@/ui/components/molecules/FilterSelect/FilterSelect";
 
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
-  AllOptionSelectOption<AdminPremiumFeatureStatusFilter>
+  FilterSelectOption<AdminPremiumFeatureStatusFilter>
 > = [
   { value: "active", label: "등록 가능" },
   { value: "inactive", label: "등록 중단" },

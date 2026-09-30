@@ -1,20 +1,20 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import type { AllOptionSelectOption } from "./AllOptionSelect";
-import { AllOptionSelect } from "./AllOptionSelect";
+import type { FilterSelectOption } from "./FilterSelect";
+import { FilterSelect } from "./FilterSelect";
 
-const options: readonly AllOptionSelectOption<"USER" | "ADMIN">[] = [
+const options: readonly FilterSelectOption<"USER" | "ADMIN">[] = [
   { value: "USER", label: "일반회원" },
   { value: "ADMIN", label: "관리자" },
 ];
 
-describe("AllOptionSelect", () => {
+describe("FilterSelect", () => {
   it("label을 접근 가능한 이름으로 노출하고 현재 선택값을 표시한다", () => {
     render(
-      <AllOptionSelect
-        label="역할 필터"
-        allLabel="전체"
+      <FilterSelect
+        ariaLabel="역할 필터"
+        allOptionLabel="전체"
         options={options}
         value="USER"
         onValueChange={vi.fn()}
@@ -31,9 +31,9 @@ describe("AllOptionSelect", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(
-      <AllOptionSelect
-        label="역할 필터"
-        allLabel="전체"
+      <FilterSelect
+        ariaLabel="역할 필터"
+        allOptionLabel="전체"
         options={options}
         value={null}
         onValueChange={onValueChange}
@@ -50,9 +50,9 @@ describe("AllOptionSelect", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(
-      <AllOptionSelect
-        label="역할 필터"
-        allLabel="전체"
+      <FilterSelect
+        ariaLabel="역할 필터"
+        allOptionLabel="전체"
         options={options}
         value="ADMIN"
         onValueChange={onValueChange}
@@ -69,9 +69,9 @@ describe("AllOptionSelect", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
     render(
-      <AllOptionSelect
-        label="예약값 필터"
-        allLabel="전체"
+      <FilterSelect
+        ariaLabel="예약값 필터"
+        allOptionLabel="전체"
         options={[{ value: "__all__", label: "예약값" }]}
         value={null}
         onValueChange={onValueChange}

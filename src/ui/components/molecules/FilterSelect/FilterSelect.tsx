@@ -9,28 +9,28 @@ import {
 const ALL_OPTION_VALUE = "__all__";
 const OPTION_VALUE_PREFIX = "__option__:";
 
-interface AllOptionSelectOption<V extends string> {
+interface FilterSelectOption<V extends string> {
   value: V;
   label: string;
 }
 
-interface AllOptionSelectProps<V extends string> {
-  label: string;
-  allLabel: string;
-  options: readonly AllOptionSelectOption<V>[];
+interface FilterSelectProps<V extends string> {
+  ariaLabel: string;
+  allOptionLabel: string;
+  options: readonly FilterSelectOption<V>[];
   value: V | null;
   onValueChange: (value: V | null) => void;
 }
 
 const encodeOptionValue = (value: string) => `${OPTION_VALUE_PREFIX}${value}`;
 
-const AllOptionSelect = <V extends string>({
-  label,
-  allLabel,
+const FilterSelect = <V extends string>({
+  ariaLabel,
+  allOptionLabel,
   options,
   value,
   onValueChange,
-}: AllOptionSelectProps<V>) => (
+}: FilterSelectProps<V>) => (
   <Select
     value={value === null ? ALL_OPTION_VALUE : encodeOptionValue(value)}
     onValueChange={(nextValue) => {
@@ -45,12 +45,12 @@ const AllOptionSelect = <V extends string>({
       if (option) onValueChange(option.value);
     }}
   >
-    <SelectTrigger aria-label={label} className="w-fit">
+    <SelectTrigger aria-label={ariaLabel} className="w-fit">
       <SelectValue />
     </SelectTrigger>
     <SelectContent>
-      <SelectItem key={allLabel} value={ALL_OPTION_VALUE}>
-        {allLabel}
+      <SelectItem key={allOptionLabel} value={ALL_OPTION_VALUE}>
+        {allOptionLabel}
       </SelectItem>
       {options.map((option) => (
         <SelectItem key={option.label} value={encodeOptionValue(option.value)}>
@@ -61,5 +61,5 @@ const AllOptionSelect = <V extends string>({
   </Select>
 );
 
-export { AllOptionSelect };
-export type { AllOptionSelectOption, AllOptionSelectProps };
+export { FilterSelect };
+export type { FilterSelectOption, FilterSelectProps };
