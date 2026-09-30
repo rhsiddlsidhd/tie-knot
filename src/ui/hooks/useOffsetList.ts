@@ -6,16 +6,16 @@ import useSWR from "swr";
 
 import type { ErrorPayload } from "@/core/domain/error";
 import type { OffsetPage, OffsetPageInfo } from "@/core/domain/offset";
-import type { SortState } from "@/core/utils/sort-cycle";
+import type {
+  OffsetListParams,
+  OffsetListParamSpec,
+} from "@/core/utils/offset-list-query";
+import {
+  buildOffsetListKey,
+  parseOffsetListQuery,
+} from "@/core/utils/offset-list-query";
 import { getNextSortState } from "@/core/utils/sort-cycle";
 import { fetcher } from "@/ui/fetcher";
-
-// 페이지 전용 URL 값 이름 → 허용값 목록. 허용값 밖의 URL 값은 null로 본다.
-type OffsetListParamSpec = Record<string, readonly string[]>;
-
-type OffsetListParams<P extends OffsetListParamSpec> = {
-  [K in keyof P]: P[K][number] | null;
-};
 
 interface UseOffsetListOptions<
   S extends string,
@@ -25,19 +25,6 @@ interface UseOffsetListOptions<
   sortKeys: readonly S[];
   params: P;
 }
-
-const getPage = (value: string | null): number => {
-  const page = Number(value);
-  return Number.isInteger(page) && page >= 1 ? page : 1;
-};
-
-const getAllowedValue = <V extends string>(
-  value: string | null,
-  allowedValues: readonly V[],
-): V | null => {
-  const trimmedValue = value?.trim();
-  return allowedValues.find((allowed) => allowed === trimmedValue) ?? null;
-};
 
 const useOffsetList = <
   T,
@@ -50,49 +37,16 @@ const useOffsetList = <
 }: UseOffsetListOptions<S, P>) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-
-  const page = getPage(searchParams.get("page"));
-  const q = searchParams.get("q")?.trim() ?? "";
-  const sortKey = getAllowedValue(searchParams.get("sort"), sortKeys);
-  const directionValue = searchParams.get("direction");
-  const sortState = useMemo<SortState<S>>(
-    () =>
-      sortKey
-        ? {
-            key: sortKey,
-            direction: directionValue === "asc" ? "asc" : "desc",
-          }
-        : null,
-    [directionValue, sortKey],
-  );
-  const paramNames = Object.keys(paramSpec) as (keyof P & string)[];
-  const params = Object.fromEntries(
-    paramNames.map((name) => [
-      name,
-      getAllowedValue(searchParams.get(name), paramSpec[name]),
-    ]),
-  ) as OffsetListParams<P>;
-
-  // 허용되지 않은 URL 값은 SWR key에서 빠져 서버 기본값이 적용된다.
-  // URL은 다음 조작 때 함께 정리한다.
-  const invalidNames = [
-    ...(sortState ? [] : ["sort", "direction"]),
-    ...paramNames.filter((name) => params[name] === null),
-  ].filter((name) => searchParams.has(name));
-  const invalidKey = invalidNames.join(" ");
-
-  const keyParams = new URLSearchParams();
-  keyParams.set("page", String(page));
-  if (q) keyParams.set("q", q);
-  if (sortState) {
-    keyParams.set("sort", sortState.key);
-    keyParams.set("direction", sortState.direction);
-  }
-  paramNames.forEach((name) => {
-    const value = params[name];
-    if (value) keyParams.set(name, value);
+  const queryState = parseOffsetListQuery(searchParams, {
+    sortKeys,
+    params: paramSpec,
   });
-  const key = `${endpoint}?${keyParams.toString()}`;
+  const { page, q, sortState, params, namesToRemove } = queryState;
+
+  // 기본값이나 허용되지 않은 값은 SWR key에서 정규화한다.
+  // URL은 다음 조작 때 함께 정리한다.
+  const cleanupKey = namesToRemove.join("\0");
+  const key = buildOffsetListKey(endpoint, queryState);
 
   const { data, error, isLoading, isValidating, mutate } = useSWR<
     OffsetPage<T>,
@@ -102,12 +56,14 @@ const useOffsetList = <
   const createHref = useCallback(
     (update: (nextParams: URLSearchParams) => void) => {
       const nextParams = new URLSearchParams(searchParams.toString());
-      invalidKey.split(" ").forEach((name) => nextParams.delete(name));
+      if (cleanupKey) {
+        cleanupKey.split("\0").forEach((name) => nextParams.delete(name));
+      }
       update(nextParams);
       const query = nextParams.toString();
       return query ? `${pathname}?${query}` : pathname;
     },
-    [invalidKey, pathname, searchParams],
+    [cleanupKey, pathname, searchParams],
   );
 
   const setPage = useCallback(
