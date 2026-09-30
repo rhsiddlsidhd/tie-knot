@@ -2,7 +2,7 @@
 
 import { Badge } from "@/ui/components/ui/badge";
 import { TableCell, TableRow } from "@/ui/components/ui/table";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { FilterSelect } from "@/ui/components/molecules/FilterSelect";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -54,8 +54,9 @@ const AdminOrdersTable = () => {
           </TableRow>
         )}
         toolbar={
-          <FilterToggleGroup
-            label="주문 상태 필터"
+          <FilterSelect
+            ariaLabel="주문 상태 필터"
+            allOptionLabel="전체 상태"
             options={STATUS_FILTER_OPTIONS}
             value={table.params.status}
             onValueChange={(value) => table.setParam("status", value)}

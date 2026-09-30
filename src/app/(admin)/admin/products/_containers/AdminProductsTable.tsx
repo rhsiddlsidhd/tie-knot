@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { Button } from "@/ui/components/ui/button";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { FilterSelect } from "@/ui/components/molecules/FilterSelect";
 import { LabeledSwitch } from "@/ui/components/molecules/LabeledSwitch";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
@@ -92,19 +92,23 @@ const AdminProductsTable = () => {
               }
             />
             {!isTrash && (
-              <FilterToggleGroup
-                label="상태 필터"
+              <FilterSelect
+                ariaLabel="상태 필터"
+                allOptionLabel="전체 상태"
                 options={STATUS_FILTER_OPTIONS}
                 value={table.params.status}
                 onValueChange={(value) => table.setParam("status", value)}
               />
             )}
-            <FilterToggleGroup
-              label="타입 필터"
-              options={TYPE_FILTER_OPTIONS}
-              value={table.params.type}
-              onValueChange={(value) => table.setParam("type", value)}
-            />
+            {!isTrash && (
+              <FilterSelect
+                ariaLabel="타입 필터"
+                allOptionLabel="전체 타입"
+                options={TYPE_FILTER_OPTIONS}
+                value={table.params.type}
+                onValueChange={(value) => table.setParam("type", value)}
+              />
+            )}
           </div>
         }
         sortState={table.sortState}

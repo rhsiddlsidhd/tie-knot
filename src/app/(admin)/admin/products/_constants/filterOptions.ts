@@ -3,21 +3,19 @@ import type {
   EditableProductStatus,
 } from "@/core/domain/product";
 import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
-import type { FilterToggleGroupOption } from "@/ui/components/molecules/FilterToggleGroup/FilterToggleGroup";
+import type { FilterSelectOption } from "@/ui/components/molecules/FilterSelect/FilterSelect";
 
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<EditableProductStatus>
+  FilterSelectOption<EditableProductStatus>
 > = [
-  { value: null, label: "전체 상태" },
   { value: "active", label: PRODUCT_STATUS_LABELS.active },
   { value: "inactive", label: PRODUCT_STATUS_LABELS.inactive },
   { value: "soldOut", label: PRODUCT_STATUS_LABELS.soldOut },
 ];
 
 const TYPE_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<AdminProductTypeFilter>
+  FilterSelectOption<AdminProductTypeFilter>
 > = [
-  { value: null, label: "전체 타입" },
   { value: "premium", label: "프리미엄" },
   { value: "featured", label: "추천" },
 ];

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -69,7 +69,8 @@ describe("AdminOrdersTable", () => {
     useOffsetListMock.mockReturnValue(buildTable());
     render(<AdminOrdersTable />);
 
-    expect(screen.getByRole("radio", { name: "전체 상태" })).toBeChecked();
+    const combobox = screen.getByRole("combobox", { name: "주문 상태 필터" });
+    expect(within(combobox).getByText("전체 상태")).toBeInTheDocument();
   });
 
   it("상태 필터를 고르면 status 파라미터를 바꾸고 전체로 돌리면 지운다", async () => {
@@ -78,10 +79,13 @@ describe("AdminOrdersTable", () => {
     const user = userEvent.setup();
     render(<AdminOrdersTable />);
 
-    expect(screen.getByRole("radio", { name: "주문대기" })).toBeChecked();
+    const combobox = screen.getByRole("combobox", { name: "주문 상태 필터" });
+    expect(within(combobox).getByText("주문대기")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("radio", { name: "취소" }));
-    await user.click(screen.getByRole("radio", { name: "전체 상태" }));
+    await user.click(combobox);
+    await user.click(await screen.findByRole("option", { name: "취소" }));
+    await user.click(combobox);
+    await user.click(await screen.findByRole("option", { name: "전체 상태" }));
 
     expect(table.setParam).toHaveBeenNthCalledWith(1, "status", "CANCELLED");
     expect(table.setParam).toHaveBeenNthCalledWith(2, "status", null);

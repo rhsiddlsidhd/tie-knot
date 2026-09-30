@@ -77,7 +77,8 @@ describe("AdminReviewsTable", () => {
     const user = userEvent.setup();
     render(<AdminReviewsTable />);
 
-    await user.click(screen.getByRole("radio", { name: "★5" }));
+    await user.click(screen.getByRole("combobox", { name: "평점 필터" }));
+    await user.click(await screen.findByRole("option", { name: "★5" }));
 
     expect(table.setParam).toHaveBeenCalledWith("rating", "5");
   });

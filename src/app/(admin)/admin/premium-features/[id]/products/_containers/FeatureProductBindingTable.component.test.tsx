@@ -87,7 +87,8 @@ describe("FeatureProductBindingTable", () => {
     const user = userEvent.setup();
     renderTable();
 
-    await user.click(screen.getByRole("radio", { name: "연결됨" }));
+    await user.click(screen.getByRole("combobox", { name: "연결 여부 필터" }));
+    await user.click(await screen.findByRole("option", { name: "연결됨" }));
 
     expect(table.setParam).toHaveBeenCalledWith("attached", "attached");
   });

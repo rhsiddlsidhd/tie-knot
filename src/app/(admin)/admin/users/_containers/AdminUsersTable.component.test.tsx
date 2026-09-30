@@ -77,10 +77,13 @@ describe("AdminUsersTable", () => {
     const user = userEvent.setup();
     render(<AdminUsersTable />);
 
-    expect(screen.getByRole("radio", { name: "일반회원" })).toBeChecked();
+    const combobox = screen.getByRole("combobox", { name: "역할 필터" });
+    expect(within(combobox).getByText("일반회원")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("radio", { name: "관리자" }));
-    await user.click(screen.getByRole("radio", { name: "전체 역할" }));
+    await user.click(combobox);
+    await user.click(await screen.findByRole("option", { name: "관리자" }));
+    await user.click(combobox);
+    await user.click(await screen.findByRole("option", { name: "전체 역할" }));
 
     expect(table.setParam).toHaveBeenNthCalledWith(1, "role", "ADMIN");
     expect(table.setParam).toHaveBeenNthCalledWith(2, "role", null);
@@ -92,7 +95,8 @@ describe("AdminUsersTable", () => {
     const user = userEvent.setup();
     render(<AdminUsersTable />);
 
-    await user.click(screen.getByRole("radio", { name: "탈퇴" }));
+    await user.click(screen.getByRole("combobox", { name: "상태 필터" }));
+    await user.click(await screen.findByRole("option", { name: "탈퇴" }));
 
     expect(table.setParam).toHaveBeenCalledWith("status", "withdrawn");
   });

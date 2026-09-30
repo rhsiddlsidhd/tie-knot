@@ -6,7 +6,7 @@ import { Badge } from "@/ui/components/ui/badge";
 import { Button } from "@/ui/components/ui/button";
 import { TableCell, TableRow } from "@/ui/components/ui/table";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { FilterSelect } from "@/ui/components/molecules/FilterSelect";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -86,8 +86,9 @@ const PremiumFeaturesTable = () => {
           </TableRow>
         )}
         toolbar={
-          <FilterToggleGroup
-            label="상태 필터"
+          <FilterSelect
+            ariaLabel="상태 필터"
+            allOptionLabel="전체"
             options={STATUS_FILTER_OPTIONS}
             value={table.params.status}
             onValueChange={(value) => table.setParam("status", value)}
