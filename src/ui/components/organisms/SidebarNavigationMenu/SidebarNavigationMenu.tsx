@@ -101,9 +101,7 @@ const SidebarNavigationMenu = ({
             type="button"
             tooltip={isCollapsedRail ? undefined : entry.label}
             aria-expanded={isCollapsedRail ? undefined : isOpen}
-            onClick={
-              isCollapsedRail ? undefined : () => toggleGroup(entry.id)
-            }
+            onClick={isCollapsedRail ? undefined : () => toggleGroup(entry.id)}
           >
             {GroupIcon ? <GroupIcon /> : null}
             <span>{entry.label}</span>
@@ -123,12 +121,8 @@ const SidebarNavigationMenu = ({
             <SidebarMenuItem key={entry.id}>
               <Popover>
                 <PopoverTrigger asChild>{groupButton}</PopoverTrigger>
-                <PopoverContent
-                  side="right"
-                  align="start"
-                  className="w-48 p-1"
-                >
-                  <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                <PopoverContent side="right" align="start" className="w-48 p-1">
+                  <p className="text-muted-foreground px-2 py-1.5 text-xs font-medium">
                     {entry.label}
                   </p>
                   {entry.submenu.map((subItem) => (
@@ -137,7 +131,7 @@ const SidebarNavigationMenu = ({
                       href={subItem.href}
                       onClick={onNavigate}
                       className={cn(
-                        "block rounded-sm px-2 py-1.5 text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground block rounded-sm px-2 py-1.5 text-sm",
                         pathname === subItem.href &&
                           "bg-sidebar-accent text-sidebar-accent-foreground",
                       )}
