@@ -66,29 +66,66 @@ Unit → Component → Integration → E2E 4단계 테스트 피라미드를 따
 
 ### 컴포넌트 계층 (Atomic Design)
 
-`src/ui/components/`는 `atoms → molecules → organisms → templates` 4단계로 구성한다.
-계층별 조립 규칙(디렉터리·파일명 일치 등)은
-[`docs/conventions/naming-convention.md`](docs/conventions/naming-convention.md)에
-정의돼 있다. 실제 데이터 바인딩까지 이어지는 예시로 관리자 목록 화면의 offset
-페이지네이션 표를 든다:
+`src/ui/components/`는 `ui → atoms → molecules → organisms → templates` 5개 폴더로
+구성하고, 각 계층은 자신보다 왼쪽 계층만 import한다. `ui/`는 shadcn/Radix primitive
+관리 영역이라 Atomic 계층으로 세지 않고, `atoms/`는 프로젝트가 직접 만든 최소 단위를
+맡는다. 같은 계층끼리 결합하는 대신 공통 책임을 더 낮은 계층으로 내린다. 계층별 조립
+규칙과 파일명 규칙은
+[`docs/conventions/naming-convention.md`](docs/conventions/naming-convention.md),
+디렉터리·배럴 구조의 결정 배경은
+[`docs/decisions/0007-per-component-directory-barrel.md`](docs/decisions/0007-per-component-directory-barrel.md)에
+정의돼 있다.
+
+### 컴포넌트 활용 예시 — 관리자 목록 화면
+
+`ui/table.tsx` 하나를 계층을 거쳐 조립하면 관리자 목록 6개 화면(상품·주문·사용자·리뷰·
+프리미엄 기능·기능별 상품 연결)이 같은 골격을 공유한다. 화면마다 다른 것은 열 정의,
+필터 옵션, 행 렌더뿐이다.
 
 ```
-ui/table.tsx, ui/pagination.tsx, ui/toggle-group.tsx
-  └─ molecules/TableColumnHeader  정렬 헤더
-  └─ molecules/SearchInputBar     debounce 검색 입력
-  └─ molecules/OffsetPagination   페이지 번호 이동
-       └─ organisms/DataTable     위 molecule 조합 + 로딩·빈 결과·오류 상태
-            └─ templates/ListPage 제목·actions·본문 배치
-                 (molecules/FilterToggleGroup은 컨테이너가 toolbar로 주입)
-                 └─ admin 6개 목록 컨테이너(products/orders/users/reviews 등)
-                    useOffsetList → SWR → GET /api/admin/* 실데이터 바인딩
+ui/       table, select, pagination, button, skeleton, empty   ← shadcn primitive
+atoms/    typography
+molecules/
+  TableColumnHeader   정렬 토글 헤더 셀 (asc → desc → 해제)
+  TableQueryState     TableBody 직속 상태 행 — 오류·스켈레톤·빈 결과
+  SearchInputBar      debounce 검색 입력
+  FilterSelect        "전체" 옵션을 포함한 단일 선택 필터
+  OffsetPagination    총 건수 + 페이지 번호 이동
+organisms/
+  DataTable           columns → 헤더 반복 + aria-busy/opacity 갱신 표시
+templates/
+  ListPage            제목·설명 + 본문 배치
 ```
 
-각 molecule은 자신을 감싸는 organism이 무엇인지 모른다 — `OffsetPagination`은
-`page`/`totalPages`/`onPageChange` 같은 순수 prop만 받고, 호출부(라우트 컨테이너)가
-URL이 소유한 목록 상태를 `useOffsetList`로 읽어 주입한다. 컴포넌트 디렉터리 구조 결정 배경은
-[`docs/decisions/0007-per-component-directory-barrel.md`](docs/decisions/0007-per-component-directory-barrel.md)
-참고.
+라우트 컨테이너(`_containers/AdminUsersTable.tsx` 등)가 이 부품들을 실데이터에 묶는다.
+
+```
+useOffsetList({ endpoint, sortKeys, params })
+  │  searchParams 파싱 → page / q / sort+direction / 필터
+  │  SWR key 생성 ──▶ GET /api/admin/users?page=2&sort=name&role=ADMIN
+  ▼  setPage(pushState) · setSearch/toggleSort/setParam(replaceState)
+ListPage
+  ├─ FilterSelect × n  +  SearchInputBar
+  ├─ DataTable        columns, sortState, onSort, isLoading, isRefreshing
+  │    └─ TableQueryState   error, hasItems, emptyDescription, onRetry
+  │         └─ TableRow     화면별 행 렌더
+  └─ OffsetPagination page, totalPages, total, onPageChange
+```
+
+각 molecule은 자신을 감싸는 organism도, 어느 API를 보는지도 모른다 —
+`OffsetPagination`은 `page`/`totalPages`/`onPageChange` 같은 순수 prop만 받고, 목록
+상태는 URL이 소유하며 컨테이너가 `useOffsetList`로 읽어 주입한다. 그래서 어떤 조건으로
+걸러낸 목록이든 주소를 그대로 공유할 수 있다. 다만 이력에 남기는 조작은 페이지
+이동(`pushState`)뿐이고, 검색·정렬·필터는 `replaceState`라 뒤로 가기가 중간 입력마다
+걸리지 않는다. 화면마다 달라지는 값은 컨테이너 옆 `_constants/`(`tableColumns`,
+`filterOptions`, `labels`)가 소유해서 공용 컴포넌트에 도메인 지식이 새지 않는다.
+
+상태 표시를 `DataTable`이 아니라 `TableQueryState`가 맡는 이유는 HTML 제약이다 —
+`<TableBody>`의 직속 자식은 `<TableRow>`뿐이라 `<div>`로 감싸면 브라우저가 그 요소를
+표 밖으로 끌어낸다. 오류·빈 결과도 `colSpan` 한 행으로 그려야 하고, 그래서 이 molecule만
+`columnsCount`를 받는다. `ListPage`의 위치도 화면에 따라 갈린다. 목록만 있는 화면은
+클라이언트 컨테이너가 직접 감싸지만, 상품 목록처럼 서버에서 결정되는 액션(휴지통 전환,
+상품 등록)이 붙는 화면은 `page.tsx`가 `ListPage`를 소유하고 컨테이너를 children으로 넣는다.
 
 ### 인증 흐름
 
