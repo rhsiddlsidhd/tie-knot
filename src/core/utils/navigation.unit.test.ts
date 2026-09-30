@@ -30,7 +30,9 @@ describe("buildCategoryNavigationItems", () => {
       label: "전체보기",
       href: "/products/guestbook",
     });
-    expect(group!.submenu[1]!.href).toBe("/products/guestbook?subCategory=stamp");
+    expect(group!.submenu[1]!.href).toBe(
+      "/products/guestbook?subCategory=stamp",
+    );
   });
 
   it("사용 가능한 서브카테고리가 없는 카테고리는 그룹째 제외한다", () => {

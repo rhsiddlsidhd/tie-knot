@@ -95,9 +95,9 @@ describe("SheetNavigationList", () => {
     expect(screen.getByRole("link", { name: "스탬프" }).className).toContain(
       "bg-muted/50",
     );
-    expect(screen.getByRole("link", { name: "전체보기" }).className).not.toContain(
-      "bg-muted/50",
-    );
+    expect(
+      screen.getByRole("link", { name: "전체보기" }).className,
+    ).not.toContain("bg-muted/50");
   });
 
   it("현재 경로가 속한 그룹 트리거를 active로 표시한다", () => {
@@ -124,8 +124,8 @@ describe("SheetNavigationList", () => {
 
     await user.click(screen.getByRole("button", { name: /방명록 굿즈/ }));
 
-    expect(
-      screen.getByRole("link", { name: "전체보기" }).className,
-    ).toContain("bg-muted/50");
+    expect(screen.getByRole("link", { name: "전체보기" }).className).toContain(
+      "bg-muted/50",
+    );
   });
 });
