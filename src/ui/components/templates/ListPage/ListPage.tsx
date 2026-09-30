@@ -1,19 +1,23 @@
 import type { ReactNode } from "react";
 
-import { AdminListHeading } from "@/ui/components/molecules/AdminListHeading";
+import {
+  TypographyH1,
+  TypographyMuted,
+} from "@/ui/components/atoms/typography";
 
 interface ListPageProps {
   title: string;
   description?: string;
-  actions?: ReactNode;
   children: ReactNode;
 }
 
-const ListPage = ({ title, description, actions, children }: ListPageProps) => (
+const ListPage = ({ title, description, children }: ListPageProps) => (
   <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <AdminListHeading title={title} subtitle={description} />
-      {actions}
+    <div>
+      <TypographyH1 className="mb-2 text-left text-3xl font-bold">
+        {title}
+      </TypographyH1>
+      {description && <TypographyMuted>{description}</TypographyMuted>}
     </div>
     {children}
   </div>

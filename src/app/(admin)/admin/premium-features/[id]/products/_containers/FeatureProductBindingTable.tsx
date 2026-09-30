@@ -45,7 +45,8 @@ const FeatureProductBindingTable = ({
     <ListPage
       title={`"${featureLabel}" 연결 상품`}
       description="체크하면 바로 반영됩니다. 프리미엄 상품만 목록에 표시됩니다."
-      actions={
+    >
+      <div className="flex justify-end">
         <LinkButton
           variant="ghost"
           size="sm"
@@ -54,8 +55,7 @@ const FeatureProductBindingTable = ({
           <ArrowLeft className="mr-1 h-4 w-4" />
           기능 목록
         </LinkButton>
-      }
-    >
+      </div>
       <DataTable
         columns={FEATURE_PRODUCT_BINDING_TABLE_COLUMNS}
         items={table.items}

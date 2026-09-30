@@ -42,15 +42,15 @@ const PremiumFeaturesTable = () => {
     <ListPage
       title="프리미엄 기능 관리"
       description="상품에 추가할 수 있는 유료 기능을 관리합니다."
-      actions={
+    >
+      <div className="flex justify-end">
         <Button size="lg" asChild>
           <Link href={ROUTES.admin.premiumFeatures.new}>
             <Plus className="mr-2 h-5 w-5" />
             기능 등록
           </Link>
         </Button>
-      }
-    >
+      </div>
       <DataTable
         columns={PREMIUM_FEATURE_TABLE_COLUMNS}
         items={table.items}

@@ -1,12 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/ui/components/ui/button";
 import { FilterSelect } from "@/ui/components/molecules/FilterSelect";
-import { LabeledSwitch } from "@/ui/components/molecules/LabeledSwitch";
 import { DataTable } from "@/ui/components/organisms/DataTable";
-import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminProductSortKey, Product } from "@/core/domain/product";
 import {
@@ -15,7 +10,6 @@ import {
   ADMIN_PRODUCT_TYPE_FILTERS,
   EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
-import { ROUTES } from "@/core/domain/routes";
 import {
   STATUS_FILTER_OPTIONS,
   TYPE_FILTER_OPTIONS,
@@ -26,7 +20,7 @@ import {
 } from "@/app/(admin)/admin/products/_constants/tableColumns";
 import { ProductTableRow } from "@/app/(admin)/admin/products/_components/ProductTableRow";
 
-const AdminProductsTable = () => {
+const AdminProductsTable = ({isDelete}:{isDelete:boolean}) => {
   const table = useOffsetList<
     Product,
     AdminProductSortKey,
@@ -44,54 +38,28 @@ const AdminProductsTable = () => {
       type: ADMIN_PRODUCT_TYPE_FILTERS,
     },
   });
-  const isTrash = table.params.softDeleted === "true";
+
   const refresh = () => {
     void table.mutate();
   };
 
   return (
-    <ListPage
-      title={isTrash ? "휴지통" : "상품 목록"}
-      description={
-        isTrash
-          ? "삭제된 상품을 조회하고 복구합니다."
-          : "등록된 템플릿 상품을 관리합니다."
-      }
-      actions={
-        !isTrash && (
-          <Button size="lg" asChild>
-            <Link href={ROUTES.admin.products.new}>
-              <Plus className="mr-2 h-5 w-5" />
-              상품 등록
-            </Link>
-          </Button>
-        )
-      }
-    >
       <DataTable
         columns={
-          isTrash ? TRASH_PRODUCT_TABLE_COLUMNS : ACTIVE_PRODUCT_TABLE_COLUMNS
+          isDelete ? TRASH_PRODUCT_TABLE_COLUMNS : ACTIVE_PRODUCT_TABLE_COLUMNS
         }
         items={table.items}
         getRowKey={(product) => product._id}
         renderRow={(product) => (
           <ProductTableRow
             product={product}
-            softDeleted={isTrash}
+            softDeleted={isDelete}
             onRefreshed={refresh}
           />
         )}
         toolbar={
           <div className="flex flex-wrap gap-4">
-            <LabeledSwitch
-              id="admin-products-soft-deleted"
-              label="휴지통"
-              checked={isTrash}
-              onCheckedChange={(checked) =>
-                table.setParam("softDeleted", checked ? "true" : null)
-              }
-            />
-            {!isTrash && (
+            {!isDelete && (
               <FilterSelect
                 ariaLabel="상태 필터"
                 allOptionLabel="전체 상태"
@@ -100,7 +68,7 @@ const AdminProductsTable = () => {
                 onValueChange={(value) => table.setParam("status", value)}
               />
             )}
-            {!isTrash && (
+            {!isDelete && (
               <FilterSelect
                 ariaLabel="타입 필터"
                 allOptionLabel="전체 타입"
@@ -129,13 +97,12 @@ const AdminProductsTable = () => {
         error={table.error}
         onRetry={refresh}
         empty={{
-          default: isTrash
+          default: isDelete
             ? "삭제된 상품이 없습니다."
             : "등록된 상품이 없습니다.",
           search: "검색 결과가 없습니다.",
         }}
       />
-    </ListPage>
   );
 };
 
