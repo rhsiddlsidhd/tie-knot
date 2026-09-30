@@ -1,11 +1,11 @@
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   DialogClose,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/ui/components/atoms/dialog";
+} from "@/ui/components/ui/dialog";
 
 import { SwitchField } from "@/ui/components/organisms/SwitchField";
 import { InputField } from "@/ui/components/organisms/InputField";

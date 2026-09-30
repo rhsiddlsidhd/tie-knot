@@ -164,19 +164,27 @@ describe("premiumFeature", () => {
       ]);
     });
 
-    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+    it("offset 페이지가 total과 totalPages를 반환하고 행이 중복/누락되지 않는다", async () => {
       const created = await createFeatures(3);
 
-      const firstPage = await getAdminPremiumFeaturesPageService({ limit: 2 });
+      const firstPage = await getAdminPremiumFeaturesPageService({
+        limit: 2,
+        page: 1,
+      });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage.nextCursor).not.toBe(null);
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminPremiumFeaturesPageService({
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
       expect(secondPage.items).toHaveLength(1);
-      expect(secondPage.nextCursor).toBe(null);
+      expect(secondPage.totalPages).toBe(2);
 
       const paged = [...firstPage.items, ...secondPage.items].map(
         (feature) => feature._id,
@@ -185,18 +193,11 @@ describe("premiumFeature", () => {
       expect(paged.sort()).toEqual([...created].sort());
     });
 
-    it("마지막 페이지는 nextCursor가 null이다", async () => {
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
       await createFeatures(1);
-
-      const result = await getAdminPremiumFeaturesPageService({});
-
-      expect(result.nextCursor).toBe(null);
-    });
-
-    it("형식이 깨진 커서면 VALIDATION을 던진다", async () => {
-      await expect(
-        getAdminPremiumFeaturesPageService({ cursor: "!!!broken!!!" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+      const result = await getAdminPremiumFeaturesPageService({ page: 2 });
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
 
     it("limit이 허용 범위를 벗어나면 VALIDATION을 던진다", async () => {
@@ -204,6 +205,69 @@ describe("premiumFeature", () => {
         getAdminPremiumFeaturesPageService({ limit: 0 }),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
+
+    it("status=active면 활성 기능만, status=inactive면 비활성 기능만 좁힌다", async () => {
+      const active = await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "ACTIVE_1", isActive: true }),
+      );
+      const inactive = await FeatureModel.create(
+        buildFeatureDocumentInput({ code: "INACTIVE_1", isActive: false }),
+      );
+
+      const activeResult = await getAdminPremiumFeaturesPageService({
+        status: "active",
+      });
+      const inactiveResult = await getAdminPremiumFeaturesPageService({
+        status: "inactive",
+      });
+
+      expect(activeResult.items.map((f) => f._id)).toEqual([
+        active._id.toString(),
+      ]);
+      expect(inactiveResult.items.map((f) => f._id)).toEqual([
+        inactive._id.toString(),
+      ]);
+    });
+
+    it.each(["createdAt", "label", "additionalPrice"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await FeatureModel.create(
+          buildFeatureDocumentInput({
+            code: "SORT_A",
+            label: "가",
+            additionalPrice: 1000,
+          }),
+        );
+        const second = await FeatureModel.create(
+          buildFeatureDocumentInput({
+            code: "SORT_B",
+            label: "나",
+            additionalPrice: 2000,
+          }),
+        );
+        if (sort === "createdAt") {
+          await setCreatedAt(first._id, new Date("2026-01-01"));
+          await setCreatedAt(second._id, new Date("2026-02-01"));
+        }
+        const asc = await getAdminPremiumFeaturesPageService({
+          sort,
+          direction: "asc",
+        });
+        const desc = await getAdminPremiumFeaturesPageService({
+          sort,
+          direction: "desc",
+        });
+        expect(asc.items.map((item) => item._id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item._id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
 
     describe("검색(q)", () => {
       it("code 부분일치로 찾는다", async () => {
@@ -280,7 +344,7 @@ describe("premiumFeature", () => {
 
       // 검색과 커서가 각자 최상위 $or를 쓰면 뒤에 쓴 쪽이 앞을 덮어써 한쪽이
       // 조용히 무시된다 — 둘이 동시에 걸렸을 때 전부 적용되는지가 이 계약의 핵심이다.
-      it("검색어와 커서를 함께 적용한다", async () => {
+      it("검색 결과를 offset 페이지로 나눠 반환한다", async () => {
         for (let i = 0; i < 3; i += 1) {
           const feature = await FeatureModel.create(
             buildFeatureDocumentInput({
@@ -298,18 +362,19 @@ describe("premiumFeature", () => {
         const first = await getAdminPremiumFeaturesPageService({
           q: "방명록",
           limit: 2,
+          page: 1,
         });
         expect(first.items).toHaveLength(2);
-        expect(first.nextCursor).not.toBeNull();
+        expect(first).toMatchObject({ total: 3, totalPages: 2 });
 
         const second = await getAdminPremiumFeaturesPageService({
           q: "방명록",
           limit: 2,
-          cursor: first.nextCursor!,
+          page: 2,
         });
 
         expect(second.items).toHaveLength(1);
-        expect(second.nextCursor).toBeNull();
+        expect(second).toMatchObject({ total: 3, page: 2, totalPages: 2 });
         expect(
           [...first.items, ...second.items].every((f) => f.label === "방명록"),
         ).toBe(true);

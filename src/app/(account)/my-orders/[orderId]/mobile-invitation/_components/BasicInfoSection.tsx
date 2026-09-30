@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import { format } from "date-fns";
 import { ComboboxField } from "./ComboboxField";
 import { DateField } from "./DateField";

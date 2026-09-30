@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import type { PayMethod } from "@/core/domain/payment";
 import {
   ArrowRightLeft,
@@ -14,7 +14,7 @@ import {
   Wallet,
 } from "lucide-react";
 import React from "react";
-import { FieldError } from "@/ui/components/atoms/field";
+import { FieldError } from "@/ui/components/ui/field";
 import type { RadioFieldOption } from "@/ui/components/organisms/RadioField";
 import { RadioField } from "@/ui/components/organisms/RadioField";
 

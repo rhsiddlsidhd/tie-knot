@@ -3,7 +3,7 @@
 import { memo, type Dispatch } from "react";
 import type { ApiResponse } from "@/core/domain/error";
 import { getFieldError } from "@/core/utils/error";
-import { FieldDescription } from "@/ui/components/atoms/field";
+import { FieldDescription } from "@/ui/components/ui/field";
 import { InputField } from "@/ui/components/organisms/InputField";
 import { SwitchField } from "@/ui/components/organisms/SwitchField";
 import type { ProductFormAction } from "../_types/productForm";

@@ -5,12 +5,12 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/ui/components/atoms/collapsible";
+} from "@/ui/components/ui/collapsible";
 import {
   TypographyH3,
   TypographySmall,

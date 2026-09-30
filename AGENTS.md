@@ -32,14 +32,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 | 2026-07-31 | 초기 구성 (agent 7개 + skill 2개) | 전체 | 풀스택 기능 구현 자동화 요청 |
 | 2026-07-31 | git 통합 — 브랜치 `{domain}/{name}` 재정의(git prefix/슬러그), Phase0 브랜치확정, Phase2+3 워크트리 격리+유닛단위 커밋+리더전용 병합, Phase5 PR자동생성(merge는 항상 사람), 스코프 `feat` 전용 명시 | feature-team-orchestrator/SKILL.md, backend-impl.md, frontend-impl.md | GIT 워크플로우 그릴링 세션 확정 반영 |
 | 2026-09-17 | 경로 drift 수정 — `src/server/*`→`src/{actions,models,services}`+`src/boundary.ts`, `src/client/*`→`src/ui/*`, `src/shared/schemas/*`→`src/core/schemas/*`, `src/client/store/`→`src/ui/stores/` 로 전면 갱신 | api-designer.md, backend-impl.md, frontend-impl.md, ui-designer.md, db-migrator.md, boundary-verify/SKILL.md | 8/17 UI레이어 통합 리팩토링(#36) 이후 미반영 방치(8/28 감사 지적, 9/3 수정 때도 누락) 확인 후 정리 |
+| 2026-09-29 | atomic design 5티어 전환 반영 — shadcn 산출물이 `atoms/`에서 `ui/`로 분리되고 `atoms/`는 프로젝트 자체 최소 컴포넌트 전담으로 의미 변경(`atoms/molecules/organisms/templates`→`ui/atoms/molecules/organisms/templates`) | ui-designer.md, frontend-impl.md, backend-impl.md | ui/atoms 계층 분리 리팩토링 반영, tdd-gate 제외 대상도 atoms→ui로 이전 |
 | 2026-09-17 | Phase별 전수 감사 반영 — TDD gate 절차 명문화(impl 2종+api-designer), test-suite의 Playwright 부재 오서술·티어 위반·배치 위치 교정, 워크트리 부트스트랩을 `npm ci`+`.env` 복사로 수정, boundary-verify 판정 파일 규약(verdict enum·파일명) 추가, PR 제목 한국어 규칙과 CI 범위 명시 | 에이전트 7종 + 스킬 2종 + AGENTS.md | 정의서와 저장소 실측·과거 실행 로그 6건 대조 감사 |
 
 ---
 
 ## Cross-cutting References (Lazy Loading)
 
-- 데이터 접근 경로를 선택하거나 Server Component·Server Action·Route Handler 사이의 경계를 변경할 때는 먼저 `docs/architecture/data-access.md`를 끝까지 읽는다.
-- services·Server Actions·Route Handlers·클라이언트에 걸친 에러 처리 흐름, 분류 또는 응답 채널을 변경할 때는 먼저 `docs/architecture/error-handling.md`를 끝까지 읽는다.
+- 서버↔브라우저 경계에서 데이터가 오가는 방식, 캐싱·재검증, 에러 처리 흐름을 정하거나 바꿀 때는 먼저 `docs/architecture/README.md`에서 해당 문서를 골라 끝까지 읽는다.
 - 인증·인가, 세션, Proxy 또는 `page.tsx` 접근 제어를 변경할 때는 먼저 `docs/security/page-access-control.md`를 끝까지 읽는다.
 - 새 라우트 세그먼트의 이름을 정하거나 기존 세그먼트 이름을 변경할 때는 먼저 `docs/conventions/route-naming.md`를 끝까지 읽는다.
 - 테스트를 추가·수정하거나 unit/component/integration/E2E를 분류할 때는 먼저 `docs/__test/README.md`(및 해당 티어의 `docs/__test/{unit,component,integration,e2e}.md`)를 끝까지 읽는다.

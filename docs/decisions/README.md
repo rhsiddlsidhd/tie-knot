@@ -69,3 +69,4 @@ ADR(Architecture Decision Record)은 프로젝트에 장기간 영향을 주는 
 | [0007](0007-per-component-directory-barrel.md)        | Accepted   | 2026-09-14 | 컴포넌트 디렉토리 단일 재수출 배럴 예외                |
 | [0008](0008-list-style-named-exports.md)              | Superseded | 2026-09-14 | 컴포넌트 티어 list 스타일 named export 강제            |
 | [0009](0009-project-wide-list-style-named-exports.md) | Accepted   | 2026-09-14 | 저장소 전역 list 스타일 named export 강제              |
+| [0010](0010-admin-offset-list.md)                     | Accepted   | 2026-09-29 | admin 목록의 URL 소유 offset 페이지네이션              |

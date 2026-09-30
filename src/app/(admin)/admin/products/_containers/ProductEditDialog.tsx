@@ -5,7 +5,7 @@ import { useActionState, useEffect, useReducer } from "react";
 import { updateProduct } from "@/actions/updateProduct";
 import type { Product } from "@/core/domain/product";
 import { EDITABLE_PRODUCT_STATUS_OPTIONS } from "@/core/domain/product";
-import { Spinner } from "@/ui/components/atoms/spinner";
+import { Spinner } from "@/ui/components/ui/spinner";
 import { DiscountField } from "@/ui/components/organisms/DiscountField";
 import { ImageField } from "@/ui/components/organisms/ImageField";
 import { InputField } from "@/ui/components/organisms/InputField";
@@ -14,10 +14,10 @@ import { SwitchField } from "@/ui/components/organisms/SwitchField";
 import { TextareaField } from "@/ui/components/organisms/TextareaField";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import { FormSectionCard } from "@/ui/components/molecules/FormSectionCard";
-import { Input } from "@/ui/components/atoms/input";
-import { Button } from "@/ui/components/atoms/button";
-import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Field, FieldLabel, FieldError } from "@/ui/components/atoms/field";
+import { Input } from "@/ui/components/ui/input";
+import { Button } from "@/ui/components/ui/button";
+import { Checkbox } from "@/ui/components/ui/checkbox";
+import { Field, FieldLabel, FieldError } from "@/ui/components/ui/field";
 import { TypographyH4 } from "@/ui/components/atoms/typography";
 
 import { usePremiumFeature } from "@/ui/hooks/usePremiumFeatures";
@@ -39,9 +39,13 @@ import {
 } from "../_utils/productEditFormReducer";
 interface ProductEditDialogProps {
   product: Product;
+  onRefreshed: () => void;
 }
 
-const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
+const ProductEditDialog = ({
+  product,
+  onRefreshed,
+}: ProductEditDialogProps) => {
   const [state, action, pending] = useActionState(
     updateProduct.bind(null, product._id),
     null,
@@ -75,11 +79,12 @@ const ProductEditDialog = ({ product }: ProductEditDialogProps) => {
     if (!state) return;
     if (state.success) {
       toast.message(state.data.message);
+      onRefreshed();
       closeModal();
     } else if (!hasFieldErrors(state.error)) {
       toast.error(state.error.message);
     }
-  }, [state, closeModal]);
+  }, [state, closeModal, onRefreshed]);
 
   if (loading) {
     return (

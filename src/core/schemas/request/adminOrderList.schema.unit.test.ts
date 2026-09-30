@@ -5,8 +5,12 @@ const parse = (input: Record<string, unknown>) =>
   AdminOrderListRequestSchema.safeParse(input);
 
 describe("AdminOrderListRequestSchema", () => {
-  it("아무 조건이 없어도 통과한다", () => {
-    expect(parse({}).success).toBe(true);
+  it("목록 기본값을 적용한다", () => {
+    expect(parse({}).data).toMatchObject({
+      page: 1,
+      limit: 10,
+      direction: "desc",
+    });
   });
 
   it("검색어 앞뒤 공백을 제거한다", () => {
@@ -37,5 +41,25 @@ describe("AdminOrderListRequestSchema", () => {
 
   it("허용되지 않은 상태는 거부한다", () => {
     expect(parse({ status: "NOT_A_STATUS" }).success).toBe(false);
+  });
+
+  it("offset과 정렬 입력을 정규화한다", () => {
+    expect(
+      parse({
+        page: "2",
+        limit: "25",
+        sort: "finalPrice",
+        direction: "asc",
+      }).data,
+    ).toMatchObject({
+      page: 2,
+      limit: 25,
+      sort: "finalPrice",
+      direction: "asc",
+    });
+  });
+
+  it("허용되지 않은 sort를 거부한다", () => {
+    expect(parse({ sort: "unknown" }).success).toBe(false);
   });
 });

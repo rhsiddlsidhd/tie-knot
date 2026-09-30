@@ -5,9 +5,9 @@ import { SearchBar } from "./SearchBar";
 import { SearchEmptyState } from "./SearchEmptyState";
 import { useDebouncedValue } from "@/ui/hooks/useDebouncedValue";
 import { useProductSearch } from "@/ui/hooks/useProductSearch";
-import { Spinner } from "@/ui/components/atoms/spinner";
+import { Spinner } from "@/ui/components/ui/spinner";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { Alert, AlertDescription } from "@/ui/components/atoms/alert";
+import { Alert, AlertDescription } from "@/ui/components/ui/alert";
 import { ProductGrid } from "@/ui/components/organisms/ProductGrid";
 import { initialFilterState } from "@/ui/context/productFilter/reducer";
 

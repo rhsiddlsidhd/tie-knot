@@ -3,7 +3,7 @@
 import React, { useState, useTransition } from "react";
 import { Heart } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "@/ui/components/atoms/badge";
+import { Badge } from "@/ui/components/ui/badge";
 import { cn } from "@/core/utils/cn";
 import { toggleProductLike } from "@/actions/toggleProductLike";
 import { useAuth } from "@/ui/hooks/useAuth";

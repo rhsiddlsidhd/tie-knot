@@ -1,1 +1,0 @@
-export { QueryFilterSelect } from "./QueryFilterSelect";

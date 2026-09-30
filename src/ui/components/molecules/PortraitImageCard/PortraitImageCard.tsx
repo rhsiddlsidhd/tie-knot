@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/core/utils/cn";
 import { AppImage } from "@/ui/components/atoms/app-image";
-import { Card, CardContent } from "@/ui/components/atoms/card";
+import { Card, CardContent } from "@/ui/components/ui/card";
 
 interface PortraitImageCardProps {
   src: string;

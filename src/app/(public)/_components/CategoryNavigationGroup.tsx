@@ -6,7 +6,7 @@ import {
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuTrigger,
-} from "@/ui/components/atoms/navigation-menu";
+} from "@/ui/components/ui/navigation-menu";
 
 interface CategoryNavigationGroupProps {
   items: NavigationGroup[];

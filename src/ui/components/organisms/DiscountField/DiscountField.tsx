@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FieldDescription } from "@/ui/components/atoms/field";
+import { FieldDescription } from "@/ui/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
-} from "@/ui/components/atoms/input-group";
+} from "@/ui/components/ui/input-group";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";
 import type { DiscountType } from "@/core/domain/product";

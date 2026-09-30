@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import { EyebrowSection } from "./EyebrowSection";
 import { GuestbookList } from "./GuestbookList";
 import { PenLine } from "lucide-react";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge } from "@/ui/components/atoms/badge";
+import { Badge } from "@/ui/components/ui/badge";
 import { ClipboardButton } from "@/ui/components/organisms/ClipboardButton";
 import { useCopy } from "@/ui/hooks/useCopy";
 import { useNavigationGeo } from "@/ui/hooks/useNavigationGeo";

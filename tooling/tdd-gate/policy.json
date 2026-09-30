@@ -14,7 +14,7 @@
     "src/ui/stores/use-app-store.ts",
     "src/ui/context/*/provider.tsx",
     "src/ui/components/*/*/index.ts",
-    "src/ui/components/atoms/**",
+    "src/ui/components/ui/**",
     "src/app/**/page.tsx",
     "src/app/**/layout.tsx",
     "src/app/**/loading.tsx",

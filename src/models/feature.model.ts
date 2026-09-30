@@ -28,6 +28,10 @@ const FeatureSchema = new Schema<FeatureDocument>(
   },
 );
 
+// 관리자 프리미엄 기능 목록의 활성 여부(status) 필터 전용 — 컬렉션이 작아 필수는
+// 아니지만, 이 저장소 admin 목록 index 컨벤션(equality → 정렬) 일관성을 위해 둔다.
+FeatureSchema.index({ isActive: 1, createdAt: -1, _id: -1 });
+
 const FeatureModel =
   (mongoose.models.Feature as Model<FeatureDocument>) ||
   mongoose.model<FeatureDocument>("Feature", FeatureSchema);

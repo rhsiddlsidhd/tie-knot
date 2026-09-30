@@ -3,6 +3,7 @@ import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 const refreshMock = vi.fn();
+const onRefreshed = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: refreshMock }),
 }));
@@ -25,10 +26,11 @@ const createDeferred = <T,>() => {
 describe("ReviewDeleteButton", () => {
   beforeEach(() => {
     refreshMock.mockClear();
+    onRefreshed.mockClear();
     deleteReviewByAdmin.mockClear();
   });
 
-  it("삭제 확인창은 대상 리뷰와 복구 불가를 알리고, 확인하면 삭제 후 새로고침한다", async () => {
+  it("삭제 확인창은 대상 리뷰와 복구 불가를 알리고, 확인하면 삭제 후 목록을 갱신한다", async () => {
     deleteReviewByAdmin.mockResolvedValue({
       success: true,
       data: { message: "리뷰가 삭제되었습니다." },
@@ -39,6 +41,7 @@ describe("ReviewDeleteButton", () => {
         reviewId="review-1"
         authorName="김민준"
         productTitle="봄빛 청첩장 세트"
+        onRefreshed={onRefreshed}
       />,
     );
 
@@ -52,7 +55,8 @@ describe("ReviewDeleteButton", () => {
     await user.click(within(dialog).getByRole("button", { name: "삭제" }));
 
     expect(deleteReviewByAdmin).toHaveBeenCalledWith("review-1");
-    expect(refreshMock).toHaveBeenCalledTimes(1);
+    expect(onRefreshed).toHaveBeenCalledTimes(1);
+    expect(refreshMock).not.toHaveBeenCalled();
     expect(screen.queryByRole("alertdialog")).toBeNull();
   });
 
@@ -63,6 +67,7 @@ describe("ReviewDeleteButton", () => {
         reviewId="review-1"
         authorName="김민준"
         productTitle="봄빛 청첩장 세트"
+        onRefreshed={onRefreshed}
       />,
     );
 
@@ -88,6 +93,7 @@ describe("ReviewDeleteButton", () => {
         reviewId="review-1"
         authorName="김민준"
         productTitle="봄빛 청첩장 세트"
+        onRefreshed={onRefreshed}
       />,
     );
 
@@ -99,7 +105,7 @@ describe("ReviewDeleteButton", () => {
     );
 
     expect(screen.getByRole("alertdialog")).toBeInTheDocument();
-    expect(refreshMock).not.toHaveBeenCalled();
+    expect(onRefreshed).not.toHaveBeenCalled();
   });
 
   it("삭제가 진행되는 동안 확인 버튼을 다시 눌러도 중복 호출하지 않는다", async () => {
@@ -114,6 +120,7 @@ describe("ReviewDeleteButton", () => {
         reviewId="review-1"
         authorName="김민준"
         productTitle="봄빛 청첩장 세트"
+        onRefreshed={onRefreshed}
       />,
     );
 

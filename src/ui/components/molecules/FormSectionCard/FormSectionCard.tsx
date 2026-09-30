@@ -6,7 +6,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 
 interface FormSectionCardProps extends Omit<
   React.ComponentProps<typeof Card>,

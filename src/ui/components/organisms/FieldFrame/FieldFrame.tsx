@@ -1,5 +1,5 @@
 import type React from "react";
-import { Field, FieldError, FieldLabel } from "@/ui/components/atoms/field";
+import { Field, FieldError, FieldLabel } from "@/ui/components/ui/field";
 
 interface FieldFrameProps {
   id?: string;

@@ -1079,8 +1079,6 @@ describe("order", () => {
         expect(result.items).toEqual([]);
       });
 
-      // 검색·상태 필터·커서가 각자 $or를 쓰면 서로를 덮어쓴다 — 셋이 동시에
-      // 걸렸을 때 전부 적용되는지가 이 계약의 핵심이다.
       it("검색어와 상태 필터를 함께 적용한다", async () => {
         const target = await createOrderWithBuyer({});
         await OrderModel.updateOne(
@@ -1101,7 +1099,7 @@ describe("order", () => {
         expect(result.items.map((o) => o.id)).toEqual([target._id.toString()]);
       });
 
-      it("검색어와 커서를 함께 적용한다", async () => {
+      it("검색어와 offset 페이지를 함께 적용한다", async () => {
         for (let i = 0; i < 3; i += 1) {
           await createOrderWithBuyer({});
         }
@@ -1110,18 +1108,22 @@ describe("order", () => {
           buyerEmail: "young@example.com",
         });
 
-        const first = await getAdminOrdersPageService({ q: "철수", limit: 2 });
+        const first = await getAdminOrdersPageService({
+          q: "철수",
+          limit: 2,
+          page: 1,
+        });
         expect(first.items).toHaveLength(2);
-        expect(first.nextCursor).not.toBeNull();
+        expect(first.total).toBe(3);
 
         const second = await getAdminOrdersPageService({
           q: "철수",
           limit: 2,
-          cursor: first.nextCursor!,
+          page: 2,
         });
 
         expect(second.items).toHaveLength(1);
-        expect(second.nextCursor).toBeNull();
+        expect(second.totalPages).toBe(2);
         expect(
           [...first.items, ...second.items].every(
             (o) => o.buyerName === "김철수",
@@ -1160,7 +1162,7 @@ describe("order", () => {
       );
     });
 
-    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+    it("offset 페이지가 total과 totalPages를 반환하고 행이 중복/누락되지 않는다", async () => {
       const created = [];
       for (let i = 0; i < 3; i += 1) {
         const order = await createOrderService(buildOrderInputForTest());
@@ -1168,28 +1170,25 @@ describe("order", () => {
         created.push(order._id.toString());
       }
 
-      const firstPage = await getAdminOrdersPageService({ limit: 2 });
+      const firstPage = await getAdminOrdersPageService({ limit: 2, page: 1 });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage.nextCursor).not.toBe(null);
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminOrdersPageService({
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
       expect(secondPage.items).toHaveLength(1);
-      expect(secondPage.nextCursor).toBe(null);
+      expect(secondPage.totalPages).toBe(2);
 
       const paged = [...firstPage.items, ...secondPage.items].map((o) => o.id);
       expect(new Set(paged).size).toBe(3);
       expect(paged.sort()).toEqual([...created].sort());
-    });
-
-    it("첫 페이지는 항목이 limit을 넘을 때만 nextCursor를 갖는다", async () => {
-      await createOrderService(buildOrderInputForTest());
-
-      const result = await getAdminOrdersPageService({});
-
-      expect(result.nextCursor).toBe(null);
     });
 
     it("네 주문 상태(PENDING/CONFIRMED/COMPLETED/CANCELLED)를 모두 포함한다", async () => {
@@ -1227,7 +1226,7 @@ describe("order", () => {
       expect(result.items.map((o) => o.id)).toEqual([pending._id.toString()]);
     });
 
-    it("status 필터와 cursor를 동시에 적용한다", async () => {
+    it("status 필터와 offset 페이지를 동시에 적용한다", async () => {
       const orders = [];
       for (let i = 0; i < 3; i += 1) {
         const order = await createOrderService(buildOrderInputForTest());
@@ -1240,24 +1239,31 @@ describe("order", () => {
         { $set: { orderStatus: "CONFIRMED" } },
       );
 
-      const firstPage = await getAdminOrdersPageService({
+      await getAdminOrdersPageService({
         status: "PENDING",
         limit: 2,
+        page: 1,
       });
       const secondPage = await getAdminOrdersPageService({
         status: "PENDING",
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
 
       expect(secondPage.items).toHaveLength(1);
       expect(secondPage.items[0].orderStatus).toBe("PENDING");
     });
 
-    it("빈 DB면 빈 목록과 null 커서를 리턴한다", async () => {
+    it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminOrdersPageService({});
 
-      expect(result).toEqual({ items: [], nextCursor: null });
+      expect(result).toEqual({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+      });
     });
 
     it("잘못된 status는 서비스가 방어적으로 VALIDATION을 던진다", async () => {
@@ -1266,10 +1272,11 @@ describe("order", () => {
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
 
-    it("형식이 깨진 cursor는 VALIDATION을 던진다", async () => {
-      await expect(
-        getAdminOrdersPageService({ cursor: "!!broken!!" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
+      await createOrderService(buildOrderInputForTest());
+      const result = await getAdminOrdersPageService({ page: 2 });
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
 
     it("잘못된 limit(소수)은 VALIDATION을 던진다", async () => {
@@ -1277,6 +1284,41 @@ describe("order", () => {
         getAdminOrdersPageService({ limit: 1.5 }),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
+
+    it.each(["createdAt", "finalPrice"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await createOrderService(buildOrderInputForTest());
+        const second = await createOrderService(buildOrderInputForTest());
+        const low = sort === "createdAt" ? new Date("2026-01-01") : 1000;
+        const high = sort === "createdAt" ? new Date("2026-02-01") : 2000;
+        await OrderModel.updateOne(
+          { _id: first._id },
+          { $set: { [sort]: low } },
+          { timestamps: false, overwriteImmutable: true },
+        );
+        await OrderModel.updateOne(
+          { _id: second._id },
+          { $set: { [sort]: high } },
+          { timestamps: false, overwriteImmutable: true },
+        );
+
+        const asc = await getAdminOrdersPageService({ sort, direction: "asc" });
+        const desc = await getAdminOrdersPageService({
+          sort,
+          direction: "desc",
+        });
+
+        expect(asc.items.map((item) => item.id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item.id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
 
     it("DTO는 문자열 id와 평탄화된 productTitle을 가지며 불필요한 문서 필드가 없다", async () => {
       await createOrderService(

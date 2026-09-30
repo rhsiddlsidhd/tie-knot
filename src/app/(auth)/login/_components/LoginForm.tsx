@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Globe } from "lucide-react";
 
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   TypographyH1,
   TypographyMuted,
 } from "@/ui/components/atoms/typography";
-import { Checkbox } from "@/ui/components/atoms/checkbox";
-import { Field, FieldLabel } from "@/ui/components/atoms/field";
+import { Checkbox } from "@/ui/components/ui/checkbox";
+import { Field, FieldLabel } from "@/ui/components/ui/field";
 
 import { InputField } from "@/ui/components/organisms/InputField";
 import { ROUTES } from "@/core/domain/routes";

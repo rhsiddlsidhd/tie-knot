@@ -1,12 +1,12 @@
 "use client";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 
 import { InputField } from "@/ui/components/organisms/InputField";
 import clsx from "clsx";

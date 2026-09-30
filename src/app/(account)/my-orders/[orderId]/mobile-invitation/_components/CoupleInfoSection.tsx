@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import { TypographyH3 } from "@/ui/components/atoms/typography";
 
 import { BankField } from "@/ui/components/organisms/BankField";

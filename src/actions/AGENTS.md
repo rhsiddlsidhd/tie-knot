@@ -4,7 +4,7 @@
 
 ## Overview
 
-Server Component가 `src/services/*`를 직접 import해서 호출하는 것과 같은 축이다 — route.ts를 안 거치고 함수를 직접 호출한다는 점은 동일하다(`docs/architecture/data-access.md` 참고). 다른 점은 호출 트리거뿐이다: Client Component가 이 폴더의 함수를 `useActionState`나 form `action`에 직접 넘기면, Next.js가 그 함수 참조를 RPC로 변환해 서버에서 실행한다
+Server Component가 `src/services/*`를 직접 import해서 호출하는 것과 같은 축이다 — route.ts를 안 거치고 함수를 직접 호출한다는 점은 동일하다(`docs/architecture/README.md` 참고). 다른 점은 호출 트리거뿐이다: Client Component가 이 폴더의 함수를 `useActionState`나 form `action`에 직접 넘기면, Next.js가 그 함수 참조를 RPC로 변환해 서버에서 실행한다
 
 ## Structure
 

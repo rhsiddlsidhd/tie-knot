@@ -1,5 +1,5 @@
-import { Badge } from "@/ui/components/atoms/badge";
-import { Card } from "@/ui/components/atoms/card";
+import { Badge } from "@/ui/components/ui/badge";
+import { Card } from "@/ui/components/ui/card";
 import {
   TypographyLarge,
   TypographyMuted,

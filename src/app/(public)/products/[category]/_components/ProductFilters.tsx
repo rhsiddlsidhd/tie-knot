@@ -3,16 +3,16 @@
 import { ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AutoCompleteList } from "@/ui/components/molecules/AutoCompleteList";
-import { Command, CommandInput } from "@/ui/components/atoms/command";
-import { Button } from "@/ui/components/atoms/button";
+import { Command, CommandInput } from "@/ui/components/ui/command";
+import { Button } from "@/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
-} from "@/ui/components/atoms/dropdown-menu";
-import { Badge } from "@/ui/components/atoms/badge";
+} from "@/ui/components/ui/dropdown-menu";
+import { Badge } from "@/ui/components/ui/badge";
 import {
   TypographyMuted,
   TypographySmall,

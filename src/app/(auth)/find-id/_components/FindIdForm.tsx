@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Mail } from "lucide-react";
 
-import { Card } from "@/ui/components/atoms/card";
-import { Button } from "@/ui/components/atoms/button";
+import { Card } from "@/ui/components/ui/card";
+import { Button } from "@/ui/components/ui/button";
 import {
   TypographyH1,
   TypographyLarge,

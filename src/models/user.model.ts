@@ -43,6 +43,11 @@ UserSchema.index({ createdAt: -1, _id: -1 });
 // 관리자 전역 사용자 목록의 역할 필터 조회 전용.
 UserSchema.index({ role: 1, createdAt: -1, _id: -1 });
 
+// 관리자 전역 사용자 목록의 탈퇴 여부(status) 필터 전용 — role과 status를 동시에
+// 거는 조합까지 커버한다(role만 걸리는 조회는 위 index가 이미 커버).
+UserSchema.index({ deletedAt: 1, createdAt: -1, _id: -1 });
+UserSchema.index({ role: 1, deletedAt: 1, createdAt: -1, _id: -1 });
+
 const UserModel =
   (mongoose.models.User as Model<UserDocument>) ||
   mongoose.model<UserDocument>("User", UserSchema);

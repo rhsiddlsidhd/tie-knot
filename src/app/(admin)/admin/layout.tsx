@@ -1,6 +1,6 @@
 "use client";
 
-import { SidebarProvider } from "@/ui/components/atoms/sidebar";
+import { SidebarProvider } from "@/ui/components/ui/sidebar";
 import { SidebarToggle } from "@/ui/components/organisms/SidebarToggle";
 import type React from "react";
 import { Toaster } from "sonner";

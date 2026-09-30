@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { Badge } from "@/ui/components/atoms/badge";
+import { Badge } from "@/ui/components/ui/badge";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/ui/components/atoms/card";
+} from "@/ui/components/ui/card";
 import {
   Empty,
   EmptyHeader,
   EmptyTitle,
   EmptyDescription,
-} from "@/ui/components/atoms/empty";
-import { TableRow, TableCell } from "@/ui/components/atoms/table";
+} from "@/ui/components/ui/empty";
+import { TableRow, TableCell } from "@/ui/components/ui/table";
 import { TableShell } from "@/ui/components/molecules/TableShell";
 import type { DashboardRecentOrder } from "@/core/domain/dashboard";
 import {

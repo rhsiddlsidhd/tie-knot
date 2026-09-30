@@ -1,13 +1,13 @@
 "use client";
 
 import type React from "react";
-import { Switch } from "@/ui/components/atoms/switch";
+import { Switch } from "@/ui/components/ui/switch";
 import {
   Field,
   FieldContent,
   FieldLabel,
   FieldDescription,
-} from "@/ui/components/atoms/field";
+} from "@/ui/components/ui/field";
 
 interface SwitchFieldProps extends Omit<
   React.ComponentProps<typeof Switch>,

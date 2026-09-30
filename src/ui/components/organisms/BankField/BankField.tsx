@@ -1,5 +1,5 @@
 "use client";
-import { Input } from "@/ui/components/atoms/input";
+import { Input } from "@/ui/components/ui/input";
 import type { BanksResponse } from "@/core/schemas/response/banks.schema";
 import { BaseSelect } from "@/ui/components/molecules/BaseSelect";
 import { FieldFrame } from "@/ui/components/organisms/FieldFrame";

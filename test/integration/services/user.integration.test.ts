@@ -306,7 +306,7 @@ describe("user", () => {
         expect(result.items.map((u) => u.id)).toEqual([target._id.toString()]);
       });
 
-      it("검색어와 커서를 함께 적용한다", async () => {
+      it("검색어와 offset 페이지를 함께 적용한다", async () => {
         for (let i = 0; i < 3; i += 1) {
           await UserModel.create(buildUserInput({ name: "김철수" }));
         }
@@ -314,18 +314,22 @@ describe("user", () => {
           buildUserInput({ name: "박영희", email: "young@example.com" }),
         );
 
-        const first = await getAdminUsersPageService({ q: "철수", limit: 2 });
+        const first = await getAdminUsersPageService({
+          q: "철수",
+          limit: 2,
+          page: 1,
+        });
         expect(first.items).toHaveLength(2);
-        expect(first.nextCursor).not.toBeNull();
+        expect(first.total).toBe(3);
 
         const second = await getAdminUsersPageService({
           q: "철수",
           limit: 2,
-          cursor: first.nextCursor!,
+          page: 2,
         });
 
         expect(second.items).toHaveLength(1);
-        expect(second.nextCursor).toBeNull();
+        expect(second.totalPages).toBe(2);
         expect(
           [...first.items, ...second.items].every((u) => u.name === "김철수"),
         ).toBe(true);
@@ -362,7 +366,7 @@ describe("user", () => {
       );
     });
 
-    it("limit을 넘으면 nextCursor로 다음 페이지가 이어지고 행이 중복/누락되지 않는다", async () => {
+    it("offset 페이지가 total과 totalPages를 반환하고 행이 중복/누락되지 않는다", async () => {
       const created = [];
       for (let i = 0; i < 3; i += 1) {
         const user = await UserModel.create(buildUserInput());
@@ -370,28 +374,25 @@ describe("user", () => {
         created.push(user._id.toString());
       }
 
-      const firstPage = await getAdminUsersPageService({ limit: 2 });
+      const firstPage = await getAdminUsersPageService({ limit: 2, page: 1 });
       expect(firstPage.items).toHaveLength(2);
-      expect(firstPage.nextCursor).not.toBe(null);
+      expect(firstPage).toMatchObject({
+        total: 3,
+        page: 1,
+        limit: 2,
+        totalPages: 2,
+      });
 
       const secondPage = await getAdminUsersPageService({
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
       expect(secondPage.items).toHaveLength(1);
-      expect(secondPage.nextCursor).toBe(null);
+      expect(secondPage.totalPages).toBe(2);
 
       const paged = [...firstPage.items, ...secondPage.items].map((u) => u.id);
       expect(new Set(paged).size).toBe(3);
       expect(paged.sort()).toEqual([...created].sort());
-    });
-
-    it("마지막 페이지는 nextCursor가 null이다", async () => {
-      await UserModel.create(buildUserInput());
-
-      const result = await getAdminUsersPageService({});
-
-      expect(result.nextCursor).toBe(null);
     });
 
     it("role 필터를 DB 쿼리 단계에서 적용한다", async () => {
@@ -403,7 +404,7 @@ describe("user", () => {
       expect(result.items.map((u) => u.id)).toEqual([user._id.toString()]);
     });
 
-    it("role 필터와 cursor를 동시에 적용한다", async () => {
+    it("role 필터와 offset 페이지를 동시에 적용한다", async () => {
       const users = [];
       for (let i = 0; i < 3; i += 1) {
         const user = await UserModel.create(buildUserInput({ role: "USER" }));
@@ -412,14 +413,10 @@ describe("user", () => {
       }
       await UserModel.create(buildUserInput({ role: "ADMIN" }));
 
-      const firstPage = await getAdminUsersPageService({
-        role: "USER",
-        limit: 2,
-      });
       const secondPage = await getAdminUsersPageService({
         role: "USER",
         limit: 2,
-        cursor: firstPage.nextCursor!,
+        page: 2,
       });
 
       expect(secondPage.items).toHaveLength(1);
@@ -441,10 +438,56 @@ describe("user", () => {
       );
     });
 
-    it("빈 DB면 빈 목록과 null 커서를 리턴한다", async () => {
+    it("status=active면 활동 사용자만, status=withdrawn이면 탈퇴 사용자만 좁힌다", async () => {
+      const active = await UserModel.create(
+        buildUserInput({ deletedAt: null }),
+      );
+      const withdrawn = await UserModel.create(
+        buildUserInput({ deletedAt: new Date() }),
+      );
+
+      const activeResult = await getAdminUsersPageService({
+        status: "active",
+      });
+      const withdrawnResult = await getAdminUsersPageService({
+        status: "withdrawn",
+      });
+
+      expect(activeResult.items.map((u) => u.id)).toEqual([
+        active._id.toString(),
+      ]);
+      expect(withdrawnResult.items.map((u) => u.id)).toEqual([
+        withdrawn._id.toString(),
+      ]);
+    });
+
+    it("role과 status를 동시에 적용한다", async () => {
+      const target = await UserModel.create(
+        buildUserInput({ role: "ADMIN", deletedAt: null }),
+      );
+      await UserModel.create(
+        buildUserInput({ role: "ADMIN", deletedAt: new Date() }),
+      );
+      await UserModel.create(buildUserInput({ role: "USER", deletedAt: null }));
+
+      const result = await getAdminUsersPageService({
+        role: "ADMIN",
+        status: "active",
+      });
+
+      expect(result.items.map((u) => u.id)).toEqual([target._id.toString()]);
+    });
+
+    it("빈 DB면 빈 offset 페이지를 리턴한다", async () => {
       const result = await getAdminUsersPageService({});
 
-      expect(result).toEqual({ items: [], nextCursor: null });
+      expect(result).toEqual({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 10,
+        totalPages: 0,
+      });
     });
 
     it("잘못된 role은 서비스가 방어적으로 VALIDATION을 던진다", async () => {
@@ -453,10 +496,11 @@ describe("user", () => {
       ).rejects.toBeInstanceOf(AppError);
     });
 
-    it("형식이 깨진 cursor는 VALIDATION을 던진다", async () => {
-      await expect(
-        getAdminUsersPageService({ cursor: "!!broken!!" }),
-      ).rejects.toMatchObject({ category: "VALIDATION" });
+    it("범위를 벗어난 page는 빈 페이지와 전체 건수를 반환한다", async () => {
+      await UserModel.create(buildUserInput());
+      const result = await getAdminUsersPageService({ page: 2 });
+      expect(result.items).toEqual([]);
+      expect(result).toMatchObject({ total: 1, page: 2, totalPages: 1 });
     });
 
     it("잘못된 limit(0)은 VALIDATION을 던진다", async () => {
@@ -464,6 +508,35 @@ describe("user", () => {
         getAdminUsersPageService({ limit: 0 }),
       ).rejects.toMatchObject({ category: "VALIDATION" });
     });
+
+    it.each(["createdAt", "name"] as const)(
+      "%s를 양방향 정렬한다",
+      async (sort) => {
+        const first = await UserModel.create(
+          buildUserInput({ name: "가 사용자" }),
+        );
+        const second = await UserModel.create(
+          buildUserInput({ name: "나 사용자" }),
+        );
+        if (sort === "createdAt") {
+          await setCreatedAt(first._id, new Date("2026-01-01"));
+          await setCreatedAt(second._id, new Date("2026-02-01"));
+        }
+        const asc = await getAdminUsersPageService({ sort, direction: "asc" });
+        const desc = await getAdminUsersPageService({
+          sort,
+          direction: "desc",
+        });
+        expect(asc.items.map((item) => item.id)).toEqual([
+          first._id.toString(),
+          second._id.toString(),
+        ]);
+        expect(desc.items.map((item) => item.id)).toEqual([
+          second._id.toString(),
+          first._id.toString(),
+        ]);
+      },
+    );
 
     it("DTO에 password/phone 등 인증 관련 필드가 없다", async () => {
       await UserModel.create(buildUserInput());

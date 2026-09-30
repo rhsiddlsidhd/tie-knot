@@ -397,7 +397,7 @@ const eslintConfig = [
     },
   },
   {
-    // atoms는 shadcn/Radix 컨벤션(kebab-case 파일명) 예외, molecules/organisms/templates는
+    // ui와 atoms는 flat 구조라 kebab-case 파일명, molecules/organisms/templates는
     // 컴포넌트별 디렉토리(PascalCase)와 파일명이 일치해야 한다 — src/ui/components/AGENTS.md
     files: ["src/ui/components/**/*.{ts,tsx}"],
     plugins: {
@@ -407,6 +407,7 @@ const eslintConfig = [
       "check-file/filename-naming-convention": [
         "error",
         {
+          "src/ui/components/ui/*.{ts,tsx}": "KEBAB_CASE",
           "src/ui/components/atoms/*.{ts,tsx}": "KEBAB_CASE",
           "src/ui/components/{molecules,organisms,templates}/*/!(index).{ts,tsx}":
             "<1>",
@@ -491,7 +492,7 @@ const eslintConfig = [
   },
   {
     files: ["src/**/*.{ts,tsx}"],
-    ignores: ["src/ui/components/atoms/**"],
+    ignores: ["src/ui/components/ui/**", "src/ui/components/atoms/**"],
     rules: {
       "func-style": ["error", "expression"],
     },

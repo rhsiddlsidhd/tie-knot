@@ -2,13 +2,13 @@
 
 import { MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/ui/components/atoms/button";
+import { Button } from "@/ui/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/ui/components/atoms/dropdown-menu";
+} from "@/ui/components/ui/dropdown-menu";
 
 const notifyPreparing = () =>
   toast.message("사용자 관리 기능은 준비 중입니다.");
