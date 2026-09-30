@@ -90,10 +90,10 @@ const buildTable = (overrides: Record<string, unknown> = {}) => ({
 
 let testStore: AppStoreApi;
 
-const renderTable = () =>
+const renderTable = (isDelete = false) =>
   render(
     <StoreProvider store={testStore}>
-      <AdminProductsTable />
+      <AdminProductsTable isDelete={isDelete} />
     </StoreProvider>,
   );
 
@@ -123,21 +123,10 @@ describe("AdminProductsTable", () => {
     });
   });
 
-  it("휴지통 스위치가 꺼진 상태는 제목·등록 버튼·상태 열을 렌더링한다", () => {
+  it("isDelete가 false면 상태 열을 렌더링한다", () => {
     useOffsetListMock.mockReturnValue(buildTable());
-    renderTable();
+    renderTable(false);
 
-    expect(
-      screen.getByRole("heading", { name: "상품 목록" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("등록된 템플릿 상품을 관리합니다."),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "상품 등록" })).toHaveAttribute(
-      "href",
-      "/admin/products/new",
-    );
-    expect(screen.getByRole("switch", { name: "휴지통" })).not.toBeChecked();
     expect(columnHeaders()).toEqual([
       "썸네일",
       "상품명",
@@ -154,59 +143,16 @@ describe("AdminProductsTable", () => {
     ]);
   });
 
-  it("휴지통 스위치가 켜진 상태는 제목을 바꾸고 등록 버튼 없이 삭제일 열을 렌더링한다", () => {
+  it("isDelete가 true면 삭제일 열을 렌더링하고 복구 버튼을 보여준다", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({
-        params: { softDeleted: "true" },
         items: [buildProduct({ deletedAt: "2026-09-10T03:00:00.000Z" })],
       }),
     );
-    renderTable();
+    renderTable(true);
 
-    expect(screen.getByRole("heading", { name: "휴지통" })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "휴지통" })).toBeChecked();
-    expect(
-      screen.getByText("삭제된 상품을 조회하고 복구합니다."),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: "상품 등록" }),
-    ).not.toBeInTheDocument();
     expect(columnHeaders()[5]).toBe("삭제일");
     expect(screen.getByRole("button", { name: "복구" })).toBeInTheDocument();
-  });
-
-  it("휴지통 스위치를 끄면 softDeleted 파라미터를 지운다", async () => {
-    const table = buildTable({ params: { softDeleted: "true" } });
-    useOffsetListMock.mockReturnValue(table);
-    const user = userEvent.setup();
-    renderTable();
-
-    await user.click(screen.getByRole("switch", { name: "휴지통" }));
-
-    expect(table.setParam).toHaveBeenCalledWith("softDeleted", null);
-  });
-
-  it("휴지통 스위치를 켜면 softDeleted=true로 바꾼다", async () => {
-    const table = buildTable();
-    useOffsetListMock.mockReturnValue(table);
-    const user = userEvent.setup();
-    renderTable();
-
-    await user.click(screen.getByRole("switch", { name: "휴지통" }));
-
-    expect(table.setParam).toHaveBeenCalledWith("softDeleted", "true");
-  });
-
-  it("URL에 softDeleted=false가 있으면 스위치는 꺼진 상태다", () => {
-    useOffsetListMock.mockReturnValue(
-      buildTable({ params: { softDeleted: "false" } }),
-    );
-    renderTable();
-
-    expect(screen.getByRole("switch", { name: "휴지통" })).not.toBeChecked();
-    expect(
-      screen.getByRole("heading", { name: "상품 목록" }),
-    ).toBeInTheDocument();
   });
 
   it("상태 필터를 고르면 status 파라미터를 바꾼다", async () => {
@@ -233,13 +179,9 @@ describe("AdminProductsTable", () => {
     expect(table.setParam).toHaveBeenCalledWith("type", "premium");
   });
 
-  it("휴지통이 켜지면 상태 필터와 타입 필터를 모두 숨긴다", () => {
-    useOffsetListMock.mockReturnValue(
-      buildTable({
-        params: { softDeleted: "true", status: null, type: null },
-      }),
-    );
-    renderTable();
+  it("isDelete가 true면 상태 필터와 타입 필터를 모두 숨긴다", () => {
+    useOffsetListMock.mockReturnValue(buildTable());
+    renderTable(true);
 
     expect(
       screen.queryByRole("combobox", { name: "상태 필터" }),
@@ -250,10 +192,10 @@ describe("AdminProductsTable", () => {
   });
 
   it("통계·등록일 열로 정렬을 바꾸고 휴지통에서는 삭제일로 정렬한다", async () => {
-    const table = buildTable({ params: { softDeleted: "true" } });
+    const table = buildTable();
     useOffsetListMock.mockReturnValue(table);
     const user = userEvent.setup();
-    renderTable();
+    renderTable(true);
 
     await user.click(screen.getByRole("button", { name: "좋아요 정렬" }));
     await user.click(screen.getByRole("button", { name: "등록일 정렬" }));
@@ -330,20 +272,16 @@ describe("AdminProductsTable", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({ items: [], pageInfo: { total: 0, totalPages: 0 } }),
     );
-    renderTable();
+    renderTable(false);
 
     expect(screen.getByText("등록된 상품이 없습니다.")).toBeInTheDocument();
   });
 
   it("휴지통이 켜진 상태의 빈 목록 문구를 보여준다", () => {
     useOffsetListMock.mockReturnValue(
-      buildTable({
-        items: [],
-        pageInfo: { total: 0, totalPages: 0 },
-        params: { softDeleted: "true" },
-      }),
+      buildTable({ items: [], pageInfo: { total: 0, totalPages: 0 } }),
     );
-    renderTable();
+    renderTable(true);
 
     expect(screen.getByText("삭제된 상품이 없습니다.")).toBeInTheDocument();
   });

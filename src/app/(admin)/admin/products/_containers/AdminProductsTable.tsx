@@ -1,12 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { Button } from "@/ui/components/ui/button";
 import { FilterSelect } from "@/ui/components/molecules/FilterSelect";
-import { LabeledSwitch } from "@/ui/components/molecules/LabeledSwitch";
+import { OffsetPagination } from "@/ui/components/molecules/OffsetPagination/OffsetPagination";
+import { SearchInputBar } from "@/ui/components/molecules/SearchInputBar/SearchInputBar";
+import { TableQueryState } from "@/ui/components/molecules/TableQueryState/TableQueryState";
 import { DataTable } from "@/ui/components/organisms/DataTable";
-import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
 import type { AdminProductSortKey, Product } from "@/core/domain/product";
 import {
@@ -15,7 +13,7 @@ import {
   ADMIN_PRODUCT_TYPE_FILTERS,
   EDITABLE_PRODUCT_STATUSES,
 } from "@/core/domain/product";
-import { ROUTES } from "@/core/domain/routes";
+import { PRODUCT_EMPTY_MESSAGES } from "@/app/(admin)/admin/products/_constants/emptyMessages";
 import {
   STATUS_FILTER_OPTIONS,
   TYPE_FILTER_OPTIONS,
@@ -26,7 +24,11 @@ import {
 } from "@/app/(admin)/admin/products/_constants/tableColumns";
 import { ProductTableRow } from "@/app/(admin)/admin/products/_components/ProductTableRow";
 
-const AdminProductsTable = () => {
+interface AdminProductsTableProps {
+  isDelete: boolean;
+}
+
+const AdminProductsTable = ({ isDelete }: AdminProductsTableProps) => {
   const table = useOffsetList<
     Product,
     AdminProductSortKey,
@@ -44,99 +46,97 @@ const AdminProductsTable = () => {
       type: ADMIN_PRODUCT_TYPE_FILTERS,
     },
   });
-  const isTrash = table.params.softDeleted === "true";
+
   const refresh = () => {
     void table.mutate();
   };
 
+  const columns = isDelete
+    ? TRASH_PRODUCT_TABLE_COLUMNS
+    : ACTIVE_PRODUCT_TABLE_COLUMNS;
+  const items = table.items ?? [];
+  const hasItems = items.length > 0;
+  // TableQueryState는 오류를 먼저 판정하므로 두 곳에 같은 값을 넘겨도 된다.
+  const isLoadingRows = !table.error && table.isLoading;
+  const isRefreshing = !table.error && table.isValidating && hasItems;
+  const emptyDescription = table.q
+    ? PRODUCT_EMPTY_MESSAGES.search
+    : isDelete
+      ? PRODUCT_EMPTY_MESSAGES.trash
+      : PRODUCT_EMPTY_MESSAGES.active;
+  // 첫 로딩·오류 중에는 건수를 모른다 — "총 0건"으로 보이지 않게 숨긴다.
+  const pageInfo = table.error ? null : table.pageInfo;
+
   return (
-    <ListPage
-      title={isTrash ? "휴지통" : "상품 목록"}
-      description={
-        isTrash
-          ? "삭제된 상품을 조회하고 복구합니다."
-          : "등록된 템플릿 상품을 관리합니다."
-      }
-      actions={
-        !isTrash && (
-          <Button size="lg" asChild>
-            <Link href={ROUTES.admin.products.new}>
-              <Plus className="mr-2 h-5 w-5" />
-              상품 등록
-            </Link>
-          </Button>
-        )
-      }
-    >
-      <DataTable
-        columns={
-          isTrash ? TRASH_PRODUCT_TABLE_COLUMNS : ACTIVE_PRODUCT_TABLE_COLUMNS
-        }
-        items={table.items}
-        getRowKey={(product) => product._id}
-        renderRow={(product) => (
-          <ProductTableRow
-            product={product}
-            softDeleted={isTrash}
-            onRefreshed={refresh}
-          />
-        )}
-        toolbar={
-          <div className="flex flex-wrap gap-4">
-            <LabeledSwitch
-              id="admin-products-soft-deleted"
-              label="휴지통"
-              checked={isTrash}
-              onCheckedChange={(checked) =>
-                table.setParam("softDeleted", checked ? "true" : null)
-              }
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex flex-wrap gap-4">
+          {!isDelete && (
+            <FilterSelect
+              ariaLabel="상태 필터"
+              allOptionLabel="전체 상태"
+              options={STATUS_FILTER_OPTIONS}
+              value={table.params.status}
+              onValueChange={(value) => table.setParam("status", value)}
             />
-            {!isTrash && (
-              <FilterSelect
-                ariaLabel="상태 필터"
-                allOptionLabel="전체 상태"
-                options={STATUS_FILTER_OPTIONS}
-                value={table.params.status}
-                onValueChange={(value) => table.setParam("status", value)}
-              />
-            )}
-            {!isTrash && (
-              <FilterSelect
-                ariaLabel="타입 필터"
-                allOptionLabel="전체 타입"
-                options={TYPE_FILTER_OPTIONS}
-                value={table.params.type}
-                onValueChange={(value) => table.setParam("type", value)}
-              />
-            )}
-          </div>
-        }
+          )}
+          {!isDelete && (
+            <FilterSelect
+              ariaLabel="타입 필터"
+              allOptionLabel="전체 타입"
+              options={TYPE_FILTER_OPTIONS}
+              value={table.params.type}
+              onValueChange={(value) => table.setParam("type", value)}
+            />
+          )}
+        </div>
+        <div className="w-full sm:max-w-sm">
+          <SearchInputBar
+            value={table.q}
+            onSearch={table.setSearch}
+            label="상품 검색"
+            placeholder="상품명, 카테고리"
+          />
+        </div>
+      </div>
+
+      <DataTable
+        columns={columns}
         sortState={table.sortState}
         onSort={table.toggleSort}
-        search={{
-          value: table.q,
-          onSearch: table.setSearch,
-          label: "상품 검색",
-          placeholder: "상품명, 카테고리",
-        }}
-        pagination={{
-          page: table.page,
-          onPageChange: table.setPage,
-          pageInfo: table.pageInfo,
-        }}
-        isLoading={table.isLoading}
-        isValidating={table.isValidating}
-        error={table.error}
-        onRetry={refresh}
-        empty={{
-          default: isTrash
-            ? "삭제된 상품이 없습니다."
-            : "등록된 상품이 없습니다.",
-          search: "검색 결과가 없습니다.",
-        }}
-      />
-    </ListPage>
+        isLoading={isLoadingRows}
+        isRefreshing={isRefreshing}
+      >
+        <TableQueryState
+          columnsCount={columns.length}
+          error={table.error}
+          isLoading={isLoadingRows}
+          hasItems={hasItems}
+          emptyDescription={emptyDescription}
+          onRetry={refresh}
+        >
+          {items.map((product) => (
+            <ProductTableRow
+              key={product._id}
+              product={product}
+              softDeleted={isDelete}
+              onRefreshed={refresh}
+            />
+          ))}
+        </TableQueryState>
+      </DataTable>
+
+      {pageInfo && (
+        <OffsetPagination
+          page={table.page}
+          totalPages={pageInfo.totalPages}
+          total={pageInfo.total}
+          onPageChange={table.setPage}
+        />
+      )}
+    </div>
   );
 };
 
 export { AdminProductsTable };
+export type { AdminProductsTableProps };

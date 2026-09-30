@@ -1,1 +1,0 @@
-export { AdminListHeading } from "./AdminListHeading";
