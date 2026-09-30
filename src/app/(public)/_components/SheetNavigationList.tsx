@@ -55,34 +55,35 @@ const SheetNavigationList = ({ groups, links }: NavigationSection) => {
             </AccordionContent>
           </AccordionItem>
         ))}
-        {links.map((item, index) => (
-          <SheetClose key={item.id} asChild>
-            <Link
-              href={item.href}
-              className={cn(
-                "group text-muted-foreground hover:text-foreground hover:bg-muted/50 relative flex items-center gap-3 rounded-lg px-3 py-3.5 transition-all duration-200",
-                activeHref === item.href && "text-foreground bg-muted/50",
-              )}
-              style={{ animationDelay: `${(groups.length + index) * 60}ms` }}
-            >
-              <span
-                className={cn(
-                  "bg-foreground/80 absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-full transition-all duration-200",
-                  activeHref === item.href
-                    ? "opacity-100"
-                    : "opacity-0 group-hover:opacity-100",
-                )}
-              />
-              <span className="text-muted-foreground/40 group-hover:text-muted-foreground/60 w-4 text-right text-[11px] font-medium tabular-nums transition-colors">
-                {String(groups.length + index + 1).padStart(2, "0")}
-              </span>
-              <span className="text-sm font-medium tracking-wide">
-                {item.label}
-              </span>
-            </Link>
-          </SheetClose>
-        ))}
       </Accordion>
+      {/* Accordion.Root의 직계 자식은 아코디언 아이템으로 수집된다 — 일반 링크를
+          안에 두면 Radix의 방향키 순회 대상에서만 빠져 키보드로 닿지 않는다. */}
+      {links.map((item, index) => (
+        <SheetClose key={item.id} asChild>
+          <Link
+            href={item.href}
+            className={cn(
+              "group text-muted-foreground hover:text-foreground hover:bg-muted/50 relative flex items-center gap-3 rounded-lg px-3 py-3.5 transition-all duration-200",
+              activeHref === item.href && "text-foreground bg-muted/50",
+            )}
+          >
+            <span
+              className={cn(
+                "bg-foreground/80 absolute top-1/2 left-0 h-5 w-0.5 -translate-y-1/2 rounded-full transition-all duration-200",
+                activeHref === item.href
+                  ? "opacity-100"
+                  : "opacity-0 group-hover:opacity-100",
+              )}
+            />
+            <span className="text-muted-foreground/40 group-hover:text-muted-foreground/60 w-4 text-right text-[11px] font-medium tabular-nums transition-colors">
+              {String(groups.length + index + 1).padStart(2, "0")}
+            </span>
+            <span className="text-sm font-medium tracking-wide">
+              {item.label}
+            </span>
+          </Link>
+        </SheetClose>
+      ))}
     </nav>
   );
 };

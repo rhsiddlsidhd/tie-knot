@@ -67,6 +67,20 @@ describe("SheetNavigationList", () => {
     );
   });
 
+  it("그룹 없는 링크는 아코디언 바깥에 둔다", () => {
+    pathnameMock.mockReturnValue("/admin/dashboard");
+    searchParamsMock.mockReturnValue(new URLSearchParams());
+
+    renderInSheet(admin);
+
+    // 아코디언 안에 있으면 Radix가 아이템으로 수집하지 않아 방향키 순회에서 빠진다.
+    expect(
+      screen
+        .getByRole("link", { name: /대시보드/ })
+        .closest('[data-slot="accordion"]'),
+    ).toBeNull();
+  });
+
   it("쿼리까지 일치하는 서브카테고리 링크만 active로 표시한다", async () => {
     pathnameMock.mockReturnValue("/products/guestbook");
     searchParamsMock.mockReturnValue(
