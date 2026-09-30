@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { LinkButton } from "@/ui/components/molecules/LinkButton";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { AllOptionSelect } from "@/ui/components/molecules/AllOptionSelect";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -68,7 +68,7 @@ const FeatureProductBindingTable = ({
           />
         )}
         toolbar={
-          <FilterToggleGroup
+          <AllOptionSelect
             label="연결 여부 필터"
             options={ATTACHED_FILTER_OPTIONS}
             value={table.params.attached}

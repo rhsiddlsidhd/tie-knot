@@ -1,8 +1,8 @@
 import type { FeatureProductBindingStatusFilter } from "@/core/domain/premium-feature";
-import type { FilterToggleGroupOption } from "@/ui/components/molecules/FilterToggleGroup/FilterToggleGroup";
+import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionSelect/AllOptionSelect";
 
 const ATTACHED_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<FeatureProductBindingStatusFilter>
+  AllOptionSelectOption<FeatureProductBindingStatusFilter>
 > = [
   { value: null, label: "전체" },
   { value: "attached", label: "연결됨" },

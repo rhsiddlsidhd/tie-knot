@@ -6,7 +6,7 @@ import { Badge } from "@/ui/components/ui/badge";
 import { Button } from "@/ui/components/ui/button";
 import { TableCell, TableRow } from "@/ui/components/ui/table";
 import { TypographyMuted } from "@/ui/components/atoms/typography";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { AllOptionSelect } from "@/ui/components/molecules/AllOptionSelect";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -86,7 +86,7 @@ const PremiumFeaturesTable = () => {
           </TableRow>
         )}
         toolbar={
-          <FilterToggleGroup
+          <AllOptionSelect
             label="상태 필터"
             options={STATUS_FILTER_OPTIONS}
             value={table.params.status}

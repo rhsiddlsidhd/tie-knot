@@ -102,7 +102,7 @@ type AdminProductSortKey = (typeof ADMIN_PRODUCT_SORT_KEYS)[number];
 const ADMIN_PRODUCT_SOFT_DELETED_VALUES = ["true", "false"] as const;
 
 // 상품 목록 "타입" 필터 — isPremium/isFeatured 두 boolean 컬럼을 단일값 필터 하나로
-// 노출한다. 두 조건을 동시에 켜는 UI는 없다(FilterToggleGroup은 단일값 전용).
+// 노출한다. 두 조건을 동시에 켜는 UI는 없다(AllOptionSelect는 단일값 전용).
 const ADMIN_PRODUCT_TYPE_FILTERS = ["premium", "featured"] as const;
 
 type AdminProductTypeFilter = (typeof ADMIN_PRODUCT_TYPE_FILTERS)[number];

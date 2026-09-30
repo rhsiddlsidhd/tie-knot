@@ -1,9 +1,9 @@
 import type { OrderStatus } from "@/core/domain/order";
 import { ORDER_STATUS_LABELS } from "@/core/domain/order";
-import type { FilterToggleGroupOption } from "@/ui/components/molecules/FilterToggleGroup/FilterToggleGroup";
+import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionSelect/AllOptionSelect";
 
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<OrderStatus>
+  AllOptionSelectOption<OrderStatus>
 > = [
   { value: null, label: "전체 상태" },
   { value: "PENDING", label: ORDER_STATUS_LABELS.PENDING },

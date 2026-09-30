@@ -1,8 +1,8 @@
 import type { AdminPremiumFeatureStatusFilter } from "@/core/domain/premium-feature";
-import type { FilterToggleGroupOption } from "@/ui/components/molecules/FilterToggleGroup/FilterToggleGroup";
+import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionSelect/AllOptionSelect";
 
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<AdminPremiumFeatureStatusFilter>
+  AllOptionSelectOption<AdminPremiumFeatureStatusFilter>
 > = [
   { value: null, label: "전체" },
   { value: "active", label: "등록 가능" },

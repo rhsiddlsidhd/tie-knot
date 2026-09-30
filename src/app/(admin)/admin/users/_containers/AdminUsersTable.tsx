@@ -2,7 +2,7 @@
 
 import { Badge } from "@/ui/components/ui/badge";
 import { TableCell, TableRow } from "@/ui/components/ui/table";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { AllOptionSelect } from "@/ui/components/molecules/AllOptionSelect";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { ListPage } from "@/ui/components/templates/ListPage";
 import { useOffsetList } from "@/ui/hooks/useOffsetList";
@@ -56,13 +56,13 @@ const AdminUsersTable = () => {
         )}
         toolbar={
           <div className="flex flex-wrap gap-4">
-            <FilterToggleGroup
+            <AllOptionSelect
               label="역할 필터"
               options={ROLE_FILTER_OPTIONS}
               value={table.params.role}
               onValueChange={(value) => table.setParam("role", value)}
             />
-            <FilterToggleGroup
+            <AllOptionSelect
               label="상태 필터"
               options={STATUS_FILTER_OPTIONS}
               value={table.params.status}

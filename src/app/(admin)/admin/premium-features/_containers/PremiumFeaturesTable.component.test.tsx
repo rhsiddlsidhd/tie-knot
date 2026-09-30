@@ -107,7 +107,8 @@ describe("PremiumFeaturesTable", () => {
     const user = userEvent.setup();
     renderTable();
 
-    await user.click(screen.getByRole("radio", { name: "등록 중단" }));
+    await user.click(screen.getByRole("combobox", { name: "상태 필터" }));
+    await user.click(await screen.findByRole("option", { name: "등록 중단" }));
 
     expect(table.setParam).toHaveBeenCalledWith("status", "inactive");
   });

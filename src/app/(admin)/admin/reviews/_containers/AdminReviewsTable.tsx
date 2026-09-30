@@ -1,7 +1,7 @@
 "use client";
 
 import { TableCell, TableRow } from "@/ui/components/ui/table";
-import { FilterToggleGroup } from "@/ui/components/molecules/FilterToggleGroup";
+import { AllOptionSelect } from "@/ui/components/molecules/AllOptionSelect";
 import { DataTable } from "@/ui/components/organisms/DataTable";
 import { RatingStars } from "@/ui/components/organisms/RatingStars";
 import { ListPage } from "@/ui/components/templates/ListPage";
@@ -61,7 +61,7 @@ const AdminReviewsTable = () => {
           </TableRow>
         )}
         toolbar={
-          <FilterToggleGroup
+          <AllOptionSelect
             label="평점 필터"
             options={RATING_FILTER_OPTIONS}
             value={table.params.rating}

@@ -3,10 +3,10 @@ import type {
   EditableProductStatus,
 } from "@/core/domain/product";
 import { PRODUCT_STATUS_LABELS } from "@/core/domain/product";
-import type { FilterToggleGroupOption } from "@/ui/components/molecules/FilterToggleGroup/FilterToggleGroup";
+import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionSelect/AllOptionSelect";
 
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<EditableProductStatus>
+  AllOptionSelectOption<EditableProductStatus>
 > = [
   { value: null, label: "전체 상태" },
   { value: "active", label: PRODUCT_STATUS_LABELS.active },
@@ -15,7 +15,7 @@ const STATUS_FILTER_OPTIONS: ReadonlyArray<
 ];
 
 const TYPE_FILTER_OPTIONS: ReadonlyArray<
-  FilterToggleGroupOption<AdminProductTypeFilter>
+  AllOptionSelectOption<AdminProductTypeFilter>
 > = [
   { value: null, label: "전체 타입" },
   { value: "premium", label: "프리미엄" },

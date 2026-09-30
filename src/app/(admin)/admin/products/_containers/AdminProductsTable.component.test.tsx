@@ -215,7 +215,8 @@ describe("AdminProductsTable", () => {
     const user = userEvent.setup();
     renderTable();
 
-    await user.click(screen.getByRole("radio", { name: "비활성" }));
+    await user.click(screen.getByRole("combobox", { name: "상태 필터" }));
+    await user.click(await screen.findByRole("option", { name: "비활성" }));
 
     expect(table.setParam).toHaveBeenCalledWith("status", "inactive");
   });
@@ -226,12 +227,13 @@ describe("AdminProductsTable", () => {
     const user = userEvent.setup();
     renderTable();
 
-    await user.click(screen.getByRole("radio", { name: "프리미엄" }));
+    await user.click(screen.getByRole("combobox", { name: "타입 필터" }));
+    await user.click(await screen.findByRole("option", { name: "프리미엄" }));
 
     expect(table.setParam).toHaveBeenCalledWith("type", "premium");
   });
 
-  it("휴지통이 켜지면 상태 필터를 숨기고 타입 필터는 유지한다", () => {
+  it("휴지통이 켜지면 상태 필터와 타입 필터를 모두 숨긴다", () => {
     useOffsetListMock.mockReturnValue(
       buildTable({
         params: { softDeleted: "true", status: null, type: null },
@@ -240,11 +242,11 @@ describe("AdminProductsTable", () => {
     renderTable();
 
     expect(
-      screen.queryByRole("radio", { name: "전체 상태" }),
+      screen.queryByRole("combobox", { name: "상태 필터" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.getByRole("radio", { name: "전체 타입" }),
-    ).toBeInTheDocument();
+      screen.queryByRole("combobox", { name: "타입 필터" }),
+    ).not.toBeInTheDocument();
   });
 
   it("통계·등록일 열로 정렬을 바꾸고 휴지통에서는 삭제일로 정렬한다", async () => {
