@@ -9,18 +9,18 @@ import { SidebarProvider } from "@/ui/components/ui/sidebar";
 import { SidebarToggle } from "./SidebarToggle";
 
 describe("SidebarToggle", () => {
-  it("숨김 대상이 아닌 경로 segment마다 breadcrumb 링크를 표시한다", () => {
+  it("숨김 대상이 아닌 경로 segment마다 navigation 라벨로 breadcrumb 링크를 표시한다", () => {
     render(
       <SidebarProvider>
         <SidebarToggle />
       </SidebarProvider>,
     );
 
-    expect(screen.getByRole("link", { name: "PRODUCTS" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "상품 목록" })).toHaveAttribute(
       "href",
       "/admin/products",
     );
-    expect(screen.getByRole("link", { name: "NEW" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "상품 등록" })).toHaveAttribute(
       "href",
       "/admin/products/new",
     );
