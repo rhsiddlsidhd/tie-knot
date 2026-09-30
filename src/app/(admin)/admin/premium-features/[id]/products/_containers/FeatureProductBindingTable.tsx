@@ -70,6 +70,7 @@ const FeatureProductBindingTable = ({
         toolbar={
           <AllOptionSelect
             label="연결 여부 필터"
+            allLabel="전체"
             options={ATTACHED_FILTER_OPTIONS}
             value={table.params.attached}
             onValueChange={(value) => table.setParam("attached", value)}

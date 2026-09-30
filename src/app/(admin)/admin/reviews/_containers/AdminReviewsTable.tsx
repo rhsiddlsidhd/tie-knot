@@ -63,6 +63,7 @@ const AdminReviewsTable = () => {
         toolbar={
           <AllOptionSelect
             label="평점 필터"
+            allLabel="전체 평점"
             options={RATING_FILTER_OPTIONS}
             value={table.params.rating}
             onValueChange={(value) => table.setParam("rating", value)}

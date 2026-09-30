@@ -3,7 +3,6 @@ import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionS
 import { USER_ROLE_LABELS } from "@/app/(admin)/admin/users/_constants/labels";
 
 const ROLE_FILTER_OPTIONS: ReadonlyArray<AllOptionSelectOption<UserRole>> = [
-  { value: null, label: "전체 역할" },
   { value: "USER", label: USER_ROLE_LABELS.USER },
   { value: "ADMIN", label: USER_ROLE_LABELS.ADMIN },
 ];
@@ -11,7 +10,6 @@ const ROLE_FILTER_OPTIONS: ReadonlyArray<AllOptionSelectOption<UserRole>> = [
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
   AllOptionSelectOption<AdminUserStatusFilter>
 > = [
-  { value: null, label: "전체" },
   { value: "active", label: "활동중" },
   { value: "withdrawn", label: "탈퇴" },
 ];

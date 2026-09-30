@@ -5,7 +5,6 @@ import type { AllOptionSelectOption } from "./AllOptionSelect";
 import { AllOptionSelect } from "./AllOptionSelect";
 
 const options: readonly AllOptionSelectOption<"USER" | "ADMIN">[] = [
-  { value: null, label: "전체" },
   { value: "USER", label: "일반회원" },
   { value: "ADMIN", label: "관리자" },
 ];
@@ -15,6 +14,7 @@ describe("AllOptionSelect", () => {
     render(
       <AllOptionSelect
         label="역할 필터"
+        allLabel="전체"
         options={options}
         value="USER"
         onValueChange={vi.fn()}
@@ -33,6 +33,7 @@ describe("AllOptionSelect", () => {
     render(
       <AllOptionSelect
         label="역할 필터"
+        allLabel="전체"
         options={options}
         value={null}
         onValueChange={onValueChange}
@@ -51,6 +52,7 @@ describe("AllOptionSelect", () => {
     render(
       <AllOptionSelect
         label="역할 필터"
+        allLabel="전체"
         options={options}
         value="ADMIN"
         onValueChange={onValueChange}
@@ -61,5 +63,24 @@ describe("AllOptionSelect", () => {
     await user.click(await screen.findByRole("option", { name: "전체" }));
 
     expect(onValueChange).toHaveBeenCalledWith(null);
+  });
+
+  it("실제 옵션 값이 전체 옵션의 예약값과 같아도 구분한다", async () => {
+    const user = userEvent.setup();
+    const onValueChange = vi.fn();
+    render(
+      <AllOptionSelect
+        label="예약값 필터"
+        allLabel="전체"
+        options={[{ value: "__all__", label: "예약값" }]}
+        value={null}
+        onValueChange={onValueChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("combobox"));
+    await user.click(await screen.findByRole("option", { name: "예약값" }));
+
+    expect(onValueChange).toHaveBeenCalledWith("__all__");
   });
 });

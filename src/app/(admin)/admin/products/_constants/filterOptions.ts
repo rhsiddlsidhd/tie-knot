@@ -8,7 +8,6 @@ import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionS
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
   AllOptionSelectOption<EditableProductStatus>
 > = [
-  { value: null, label: "전체 상태" },
   { value: "active", label: PRODUCT_STATUS_LABELS.active },
   { value: "inactive", label: PRODUCT_STATUS_LABELS.inactive },
   { value: "soldOut", label: PRODUCT_STATUS_LABELS.soldOut },
@@ -17,7 +16,6 @@ const STATUS_FILTER_OPTIONS: ReadonlyArray<
 const TYPE_FILTER_OPTIONS: ReadonlyArray<
   AllOptionSelectOption<AdminProductTypeFilter>
 > = [
-  { value: null, label: "전체 타입" },
   { value: "premium", label: "프리미엄" },
   { value: "featured", label: "추천" },
 ];

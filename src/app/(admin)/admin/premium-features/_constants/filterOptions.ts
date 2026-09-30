@@ -4,7 +4,6 @@ import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionS
 const STATUS_FILTER_OPTIONS: ReadonlyArray<
   AllOptionSelectOption<AdminPremiumFeatureStatusFilter>
 > = [
-  { value: null, label: "전체" },
   { value: "active", label: "등록 가능" },
   { value: "inactive", label: "등록 중단" },
 ];

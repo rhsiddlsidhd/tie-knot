@@ -6,34 +6,41 @@ import {
   SelectValue,
 } from "@/ui/components/ui/select";
 
-// Select는 string 값만 다룬다 — null 옵션("전체" 등)을 이 값으로 바꿔 넘긴다.
-const NULL_OPTION_VALUE = "__null__";
+const ALL_OPTION_VALUE = "__all__";
+const OPTION_VALUE_PREFIX = "__option__:";
 
 interface AllOptionSelectOption<V extends string> {
-  value: V | null;
+  value: V;
   label: string;
 }
 
 interface AllOptionSelectProps<V extends string> {
   label: string;
+  allLabel: string;
   options: readonly AllOptionSelectOption<V>[];
   value: V | null;
   onValueChange: (value: V | null) => void;
 }
 
-const toItemValue = (value: string | null) => value ?? NULL_OPTION_VALUE;
+const encodeOptionValue = (value: string) => `${OPTION_VALUE_PREFIX}${value}`;
 
 const AllOptionSelect = <V extends string>({
   label,
+  allLabel,
   options,
   value,
   onValueChange,
 }: AllOptionSelectProps<V>) => (
   <Select
-    value={toItemValue(value)}
+    value={value === null ? ALL_OPTION_VALUE : encodeOptionValue(value)}
     onValueChange={(nextValue) => {
+      if (nextValue === ALL_OPTION_VALUE) {
+        onValueChange(null);
+        return;
+      }
+
       const option = options.find(
-        (candidate) => toItemValue(candidate.value) === nextValue,
+        (candidate) => encodeOptionValue(candidate.value) === nextValue,
       );
       if (option) onValueChange(option.value);
     }}
@@ -42,11 +49,11 @@ const AllOptionSelect = <V extends string>({
       <SelectValue />
     </SelectTrigger>
     <SelectContent>
+      <SelectItem key={allLabel} value={ALL_OPTION_VALUE}>
+        {allLabel}
+      </SelectItem>
       {options.map((option) => (
-        <SelectItem
-          key={toItemValue(option.value)}
-          value={toItemValue(option.value)}
-        >
+        <SelectItem key={option.label} value={encodeOptionValue(option.value)}>
           {option.label}
         </SelectItem>
       ))}

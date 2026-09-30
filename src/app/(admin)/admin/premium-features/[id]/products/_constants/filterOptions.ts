@@ -4,7 +4,6 @@ import type { AllOptionSelectOption } from "@/ui/components/molecules/AllOptionS
 const ATTACHED_FILTER_OPTIONS: ReadonlyArray<
   AllOptionSelectOption<FeatureProductBindingStatusFilter>
 > = [
-  { value: null, label: "전체" },
   { value: "attached", label: "연결됨" },
   { value: "unattached", label: "미연결" },
 ];

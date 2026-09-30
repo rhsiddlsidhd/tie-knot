@@ -8,7 +8,6 @@ type RatingFilterValue = (typeof RATING_FILTER_VALUES)[number];
 const RATING_FILTER_OPTIONS: ReadonlyArray<
   AllOptionSelectOption<RatingFilterValue>
 > = [
-  { value: null, label: "전체 평점" },
   { value: "1", label: "★1" },
   { value: "2", label: "★2" },
   { value: "3", label: "★3" },

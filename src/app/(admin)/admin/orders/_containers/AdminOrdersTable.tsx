@@ -56,6 +56,7 @@ const AdminOrdersTable = () => {
         toolbar={
           <AllOptionSelect
             label="주문 상태 필터"
+            allLabel="전체 상태"
             options={STATUS_FILTER_OPTIONS}
             value={table.params.status}
             onValueChange={(value) => table.setParam("status", value)}

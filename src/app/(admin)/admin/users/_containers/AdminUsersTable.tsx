@@ -58,12 +58,14 @@ const AdminUsersTable = () => {
           <div className="flex flex-wrap gap-4">
             <AllOptionSelect
               label="역할 필터"
+              allLabel="전체 역할"
               options={ROLE_FILTER_OPTIONS}
               value={table.params.role}
               onValueChange={(value) => table.setParam("role", value)}
             />
             <AllOptionSelect
               label="상태 필터"
+              allLabel="전체"
               options={STATUS_FILTER_OPTIONS}
               value={table.params.status}
               onValueChange={(value) => table.setParam("status", value)}

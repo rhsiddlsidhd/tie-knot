@@ -88,6 +88,7 @@ const PremiumFeaturesTable = () => {
         toolbar={
           <AllOptionSelect
             label="상태 필터"
+            allLabel="전체"
             options={STATUS_FILTER_OPTIONS}
             value={table.params.status}
             onValueChange={(value) => table.setParam("status", value)}

@@ -94,6 +94,7 @@ const AdminProductsTable = () => {
             {!isTrash && (
               <AllOptionSelect
                 label="상태 필터"
+                allLabel="전체 상태"
                 options={STATUS_FILTER_OPTIONS}
                 value={table.params.status}
                 onValueChange={(value) => table.setParam("status", value)}
@@ -102,6 +103,7 @@ const AdminProductsTable = () => {
             {!isTrash && (
               <AllOptionSelect
                 label="타입 필터"
+                allLabel="전체 타입"
                 options={TYPE_FILTER_OPTIONS}
                 value={table.params.type}
                 onValueChange={(value) => table.setParam("type", value)}
