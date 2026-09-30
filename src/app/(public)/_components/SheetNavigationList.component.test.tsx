@@ -100,6 +100,21 @@ describe("SheetNavigationList", () => {
     );
   });
 
+  it("현재 경로가 속한 그룹 트리거를 active로 표시한다", () => {
+    pathnameMock.mockReturnValue("/products/guestbook");
+    searchParamsMock.mockReturnValue(
+      new URLSearchParams({ subCategory: "stamp" }),
+    );
+
+    renderInSheet(main);
+
+    const activeTrigger = screen.getByRole("button", { name: /방명록 굿즈/ });
+    const otherTrigger = screen.getByRole("button", { name: /답례품/ });
+
+    expect(activeTrigger.querySelector("span")).toHaveClass("opacity-100");
+    expect(otherTrigger.querySelector("span")).toHaveClass("opacity-0");
+  });
+
   it("쿼리가 없으면 전체보기 링크를 active로 표시한다", async () => {
     pathnameMock.mockReturnValue("/products/guestbook");
     searchParamsMock.mockReturnValue(new URLSearchParams());
