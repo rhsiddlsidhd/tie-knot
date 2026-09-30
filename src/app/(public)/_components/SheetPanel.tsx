@@ -5,6 +5,7 @@ import { Menu, X } from "lucide-react";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -53,10 +54,14 @@ const SheetPanel = ({
 
       <SheetContent
         side={side}
-        className="border-border/50 flex w-2/3 flex-col border-r p-0 [&>button:last-of-type]:hidden"
+        className="border-border/50 flex flex-col border-r p-0 [&>button:last-of-type]:hidden"
       >
         <SheetHeader className="sr-only">
           <SheetTitle>메뉴</SheetTitle>
+          {/* Radix는 Description 없는 DialogContent에 콘솔 경고를 낸다 */}
+          <SheetDescription>
+            카테고리와 주요 페이지로 이동하는 메뉴입니다.
+          </SheetDescription>
         </SheetHeader>
 
         <div className="flex h-full min-h-0 flex-col">
