@@ -35,7 +35,7 @@ const ProductsPage = async ({
           {isDelete ? "상품 목록" : "휴지통"}
         </LinkButton>
         {!isDelete && (
-          <LinkButton  href={ROUTES.admin.products.new}>
+          <LinkButton href={ROUTES.admin.products.new}>
             <Plus className="mr-2 h-5 w-5" />
             상품 등록
           </LinkButton>

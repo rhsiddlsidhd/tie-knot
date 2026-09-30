@@ -17,7 +17,8 @@ import ProductsPage from "./page";
 
 const renderPage = async (
   searchParams: Record<string, string | undefined> = {},
-) => render(await ProductsPage({ searchParams: Promise.resolve(searchParams) }));
+) =>
+  render(await ProductsPage({ searchParams: Promise.resolve(searchParams) }));
 
 describe("관리자 상품 목록 페이지", () => {
   beforeEach(() => {
@@ -39,9 +40,9 @@ describe("관리자 상품 목록 페이지", () => {
   it("인증에 실패하면(verifySession이 throw) 테이블을 렌더링하지 않는다", async () => {
     verifySessionMock.mockRejectedValue(new Error("redirect"));
 
-    await expect(ProductsPage({ searchParams: Promise.resolve({}) })).rejects.toThrow(
-      "redirect",
-    );
+    await expect(
+      ProductsPage({ searchParams: Promise.resolve({}) }),
+    ).rejects.toThrow("redirect");
   });
 
   it("softDeleted가 없으면 상품 목록 제목·등록 버튼·휴지통 이동 링크를 보여준다", async () => {
