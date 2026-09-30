@@ -7,7 +7,8 @@ import {
 } from "@/services/product";
 import { isProductCategory } from "@/core/utils/category";
 import { PRODUCT_CATEGORY_LABELS } from "@/core/domain/product-category";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ROUTES } from "@/core/domain/routes";
 import { resolveInitialSubCategory } from "@/app/(public)/products/[category]/_utils/resolveInitialSubCategory";
 
 export default async function ProductsPage({
@@ -36,6 +37,12 @@ export default async function ProductsPage({
     querySubCategory,
     availableSubCategories,
   );
+
+  // 쿼리에 값은 있는데 필터로 쓸 수 없으면 URL과 화면 상태가 어긋난다
+  // (`?subCategory=stamp`인데 필터는 "전체") — 쿼리를 떼서 둘을 맞춘다.
+  if (querySubCategory !== undefined && initialSubCategory === "all") {
+    redirect(ROUTES.products.byCategory(category));
+  }
 
   const firstPage = await getPublicProductsPageService({
     category,

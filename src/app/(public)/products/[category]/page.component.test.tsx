@@ -11,11 +11,15 @@ const {
   getPublicProductsPageServiceMock,
   getAvailableSubCategoriesServiceMock,
   notFoundMock,
+  redirectMock,
 } = vi.hoisted(() => ({
   getPublicProductsPageServiceMock: vi.fn(),
   getAvailableSubCategoriesServiceMock: vi.fn(),
   notFoundMock: vi.fn(() => {
     throw new Error("NEXT_NOT_FOUND");
+  }),
+  redirectMock: vi.fn(() => {
+    throw new Error("NEXT_REDIRECT");
   }),
 }));
 
@@ -25,6 +29,7 @@ vi.mock("@/services/product", () => ({
 }));
 vi.mock("next/navigation", () => ({
   notFound: notFoundMock,
+  redirect: redirectMock,
 }));
 
 vi.mock(
@@ -129,20 +134,33 @@ describe("상품 카테고리 목록 페이지", () => {
     });
   });
 
-  it("쿼리 subCategory가 사용 가능한 목록에 없으면 전체 상품으로 취급한다", async () => {
+  it("쿼리 subCategory가 사용 가능한 목록에 없으면 쿼리를 떼고 리다이렉트한다", async () => {
+    getAvailableSubCategoriesServiceMock.mockResolvedValue(
+      buildAvailable("mobile-invitation", ["wedding"]),
+    );
+
+    await expect(
+      ProductsPage({
+        params: buildParams("mobile-invitation"),
+        searchParams: buildSearchParams("not-available"),
+      }),
+    ).rejects.toThrow("NEXT_REDIRECT");
+
+    expect(redirectMock).toHaveBeenCalledWith("/products/mobile-invitation");
+    expect(getPublicProductsPageServiceMock).not.toHaveBeenCalled();
+  });
+
+  it("쿼리 subCategory가 없으면 리다이렉트하지 않는다", async () => {
     getAvailableSubCategoriesServiceMock.mockResolvedValue(
       buildAvailable("mobile-invitation", ["wedding"]),
     );
 
     await ProductsPage({
       params: buildParams("mobile-invitation"),
-      searchParams: buildSearchParams("not-available"),
+      searchParams: buildSearchParams(),
     });
 
-    expect(getPublicProductsPageServiceMock).toHaveBeenCalledWith({
-      category: "mobile-invitation",
-      subCategory: undefined,
-    });
+    expect(redirectMock).not.toHaveBeenCalled();
   });
 
   it("조회한 상품/서브카테고리와 카테고리 라벨을 Template props로 전달한다", async () => {
