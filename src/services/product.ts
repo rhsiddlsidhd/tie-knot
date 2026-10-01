@@ -172,23 +172,23 @@ const createProductService = async (
 };
 
 // 단일 상품 조회
-const getProductService = async (
-  productId: string,
-  userId?: string,
-): Promise<ProductJson | null> => {
-  await dbConnect();
+// cache()로 감싸 상세 page와 generateMetadata가 같은 id로 두 번 조회하지 않게 한다.
+const getProductService = cache(
+  async (productId: string, userId?: string): Promise<ProductJson | null> => {
+    await dbConnect();
 
-  if (!mongoose.isObjectIdOrHexString(productId)) {
-    return null;
-  }
+    if (!mongoose.isObjectIdOrHexString(productId)) {
+      return null;
+    }
 
-  const product = await ProductModel.findOne({
-    _id: productId,
-    deletedAt: null,
-  }).lean();
+    const product = await ProductModel.findOne({
+      _id: productId,
+      deletedAt: null,
+    }).lean();
 
-  return product ? transformProduct(product, userId) : null;
-};
+    return product ? transformProduct(product, userId) : null;
+  },
+);
 
 // 상품 상세페이지 방문 시 조회수 증가 — getProductService에는 안 넣는다.
 // payment.service.ts(결제 검증용 조회)와 (public)/page.tsx(고정 미리보기)도
