@@ -15,6 +15,12 @@ vi.mock("@/ui/components/molecules/ProductCard", () => ({
 }));
 
 import { HomeTemplate } from "./HomeTemplate";
+import type { AvailableSubCategory } from "@/core/domain/product-category";
+
+const AVAILABLE_SUB_CATEGORIES: AvailableSubCategory[] = [
+  { category: "mobile-invitation", subCategory: "wedding" },
+];
+
 const buildProduct = (overrides?: Partial<Product>): Product =>
   ({ _id: "product-1", title: "봄맞이 청첩장", ...overrides }) as Product;
 
@@ -25,14 +31,24 @@ const buildProducts = (count: number): Product[] =>
 
 describe("HomeTemplate", () => {
   it("hero와 라이브 데모 섹션은 항상 렌더링한다", () => {
-    render(<HomeTemplate popularProducts={[]} />);
+    render(
+      <HomeTemplate
+        popularProducts={[]}
+        availableSubCategories={AVAILABLE_SUB_CATEGORIES}
+      />,
+    );
 
     expect(screen.getByText("hero")).toBeInTheDocument();
     expect(screen.getByText("live-demo")).toBeInTheDocument();
   });
 
   it("SubCategoryNavigationSection → 인기 상품 순서로 배치된다", () => {
-    render(<HomeTemplate popularProducts={buildProducts(3)} />);
+    render(
+      <HomeTemplate
+        popularProducts={buildProducts(3)}
+        availableSubCategories={AVAILABLE_SUB_CATEGORIES}
+      />,
+    );
 
     const html = document.body.innerHTML;
     const subCategoryNavIndex = html.indexOf("카테고리 둘러보기");
@@ -40,5 +56,12 @@ describe("HomeTemplate", () => {
 
     expect(subCategoryNavIndex).toBeGreaterThan(-1);
     expect(popularSectionIndex).toBeGreaterThan(subCategoryNavIndex);
+  });
+
+  it("공개 상품이 없으면 카테고리 둘러보기 섹션이 빠진 채 렌더된다", () => {
+    render(<HomeTemplate popularProducts={[]} availableSubCategories={[]} />);
+
+    expect(screen.queryByText("카테고리 둘러보기")).toBeNull();
+    expect(screen.getByText("hero")).toBeInTheDocument();
   });
 });

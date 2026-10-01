@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import type { ProductDb, ProductDocument } from "@/models/product.model";
 import type {
   EditableProductStatus,
@@ -594,43 +595,50 @@ const getPublicProductsPageService = async ({
 };
 
 // 공개 상품이 하나 이상 있는 유효 pair만 코드 taxonomy 순서로 반환한다.
-const getAvailableSubCategoriesService = async (
-  category?: ProductCategory,
-): Promise<AvailableSubCategory[]> => {
-  await dbConnect();
+// cache()로 감싸 같은 렌더 패스 안 반복 호출(layout의 헤더 nav + 홈의 카테고리
+// 둘러보기)이 같은 aggregate를 두 번 치지 않게 한다.
+const getAvailableSubCategoriesService = cache(
+  async (category?: ProductCategory): Promise<AvailableSubCategory[]> => {
+    await dbConnect();
 
-  const match: Record<string, unknown> = { deletedAt: null, status: "active" };
-  if (category) match.category = category;
+    const match: Record<string, unknown> = {
+      deletedAt: null,
+      status: "active",
+    };
+    if (category) match.category = category;
 
-  const pairs = await ProductModel.aggregate<{
-    _id: { category: string; subCategory: string };
-  }>([
-    { $match: match },
-    { $group: { _id: { category: "$category", subCategory: "$subCategory" } } },
-  ]).catch((err) => {
-    throw new AppError(
-      "INTERNAL",
-      err instanceof Error
-        ? err.message
-        : "사용 가능한 서브카테고리 조회에 실패했습니다.",
+    const pairs = await ProductModel.aggregate<{
+      _id: { category: string; subCategory: string };
+    }>([
+      { $match: match },
+      {
+        $group: { _id: { category: "$category", subCategory: "$subCategory" } },
+      },
+    ]).catch((err) => {
+      throw new AppError(
+        "INTERNAL",
+        err instanceof Error
+          ? err.message
+          : "사용 가능한 서브카테고리 조회에 실패했습니다.",
+      );
+    });
+
+    const availablePairs = new Set(
+      pairs.map(({ _id }) => `${_id.category}:${_id.subCategory}`),
     );
-  });
+    const categories: readonly ProductCategory[] = category
+      ? [category]
+      : PRODUCT_CATEGORIES;
 
-  const availablePairs = new Set(
-    pairs.map(({ _id }) => `${_id.category}:${_id.subCategory}`),
-  );
-  const categories: readonly ProductCategory[] = category
-    ? [category]
-    : PRODUCT_CATEGORIES;
-
-  return categories.flatMap((currentCategory) =>
-    SUB_CATEGORY_MAP[currentCategory]
-      .filter((subCategory) =>
-        availablePairs.has(`${currentCategory}:${subCategory}`),
-      )
-      .map((subCategory) => ({ category: currentCategory, subCategory })),
-  );
-};
+    return categories.flatMap((currentCategory) =>
+      SUB_CATEGORY_MAP[currentCategory]
+        .filter((subCategory) =>
+          availablePairs.has(`${currentCategory}:${subCategory}`),
+        )
+        .map((subCategory) => ({ category: currentCategory, subCategory })),
+    );
+  },
+);
 
 // 상품 검색 — title 부분일치(대소문자 무시) OR 카테고리/서브카테고리 라벨 부분일치(역조회 후 $in).
 // q가 없거나 공백뿐이면 DB를 치지 않고 즉시 빈 배열을 리턴한다 — 빈 $or는 MongoDB가 reject한다.

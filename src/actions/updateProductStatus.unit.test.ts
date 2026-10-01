@@ -7,6 +7,7 @@ vi.mock("@/services/product", () => ({
 
 import { revalidatePath } from "next/cache";
 import { updateProductStatusAsAdminService } from "@/services/product";
+import { ROUTES } from "@/core/domain/routes";
 import { updateProductStatus } from "./updateProductStatus";
 
 describe("updateProductStatus", () => {
@@ -24,7 +25,10 @@ describe("updateProductStatus", () => {
       "product-1",
       "inactive",
     );
-    expect(revalidatePath).toHaveBeenCalledTimes(3);
+    expect(revalidatePath).toHaveBeenCalledTimes(4);
+    // 상태 전환은 카테고리 nav의 가용 서브카테고리 집합을 바꾼다 — 홈도 함께
+    // 재검증해야 ISR 주기(600초)가 끝날 때까지 죽은 링크가 남지 않는다.
+    expect(revalidatePath).toHaveBeenCalledWith(ROUTES.home);
     expect(result.success).toBe(true);
   });
 
