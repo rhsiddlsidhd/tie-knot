@@ -23,38 +23,38 @@ const BASEURL =
     ? process.env.BASE_URL
     : process.env.DEPLOYMENT_BASE_URL;
 
+const DESCRIPTION =
+  "모바일 청첩장부터 답례품·웨딩 소품·방명록 굿즈·예식 용품까지, 결혼 준비에 필요한 웨딩 상품을 한곳에서 만나보세요.";
+
 const metadata: Metadata = {
-  title: "Home - Tie Knot",
-  description: "모바일 청첩장을 쉽고 빠르게 만들어드립니다.",
+  title: { default: "Tie Knot", template: "%s | Tie Knot" },
+  description: DESCRIPTION,
   metadataBase: new URL(BASEURL),
   keywords: [
     "청첩장",
+    "모바일 청첩장",
     "웨딩",
-    "invitation",
-    "mobile",
-    "wedding invitation",
-    "portfolio",
-    "frontend",
-    "next.js",
+    "답례품",
+    "웨딩 소품",
+    "방명록",
+    "예식 용품",
   ],
-  authors: [{ name: "Tie Knot", url: "https://tie-knot-pi.vercel.app" }],
+  authors: [{ name: "Tie Knot", url: BASEURL }],
   creator: "Tie Knot",
   publisher: "Tie Knot",
 
   openGraph: {
     title: "Tie Knot",
-    description: "모바일 청첩장을 쉽고 빠르게 만들어드립니다.",
-    images: ["/wedding-1850.jpg"],
+    description: DESCRIPTION,
     siteName: "Tie Knot",
     type: "website",
-    url: "https://tie-knot-pi.vercel.app",
+    locale: "ko_KR",
+    url: "/",
   },
   twitter: {
     card: "summary_large_image",
     title: "Tie Knot",
-    description: "모바일 청첩장을 쉽고 빠르게 만들어드립니다.",
-    images: ["/wedding-1850.jpg"],
-    creator: "@your_twitter_handle",
+    description: DESCRIPTION,
   },
   robots: {
     index: true,
@@ -74,7 +74,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="ko"
       className={`${notoSansKR.variable} ${gowunBatang.variable}`}
     >
       <body>

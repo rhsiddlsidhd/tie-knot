@@ -1,8 +1,11 @@
+import type { Metadata } from "next";
 import { LegalDocument } from "@/ui/components/templates/LegalDocument";
 import {
   PRIVACY_SECTIONS,
   PRIVACY_EFFECTIVE_DATE,
 } from "./_constants/privacy-sections";
+
+const metadata: Metadata = { title: "개인정보 처리방침" };
 
 // 법무 미검수 초안 — 서비스 오픈 전 검토 필요. 보호책임자 연락처는 TODO(legal).
 export default function PrivacyPage() {
@@ -14,3 +17,5 @@ export default function PrivacyPage() {
     />
   );
 }
+
+export { metadata };
