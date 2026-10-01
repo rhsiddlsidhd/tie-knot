@@ -32,6 +32,10 @@ const updateProductStatus = async (
     revalidatePath(ROUTES.admin.products.root);
     revalidatePath(ROUTES.products.root);
     revalidatePath(ROUTES.products.detail(updated.category, productId));
+    // 가용 서브카테고리 집합이 바뀌면 홈의 카테고리 둘러보기와 헤더 nav가
+    // 같이 틀어진다 — 홈은 ISR(600초)이라 재검증하지 않으면 그동안 죽은
+    // 링크가 남는다.
+    revalidatePath(ROUTES.home);
 
     return {
       success: true,
