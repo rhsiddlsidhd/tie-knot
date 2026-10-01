@@ -39,7 +39,8 @@ const PRIVACY_SECTIONS = [
     items: [
       "PortOne(포트원): 결제 처리 및 결제 정보 관리",
       "Cloudinary: 업로드 이미지 저장 및 전송",
-      "Kakao(카카오): 지도 표시 및 우편번호 검색 API",
+      "Kakao Maps: 지도 표시 API",
+      "Daum(카카오) Postcode: 우편번호 검색 API",
       "Google(Gmail SMTP): 이메일 발송(비밀번호 재설정 등)",
       "MongoDB Atlas: 데이터베이스 호스팅",
       "Vercel: 서비스 애플리케이션 호스팅",
