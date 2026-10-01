@@ -12,11 +12,9 @@ import {
 
 import { ROUTES } from "./routes";
 import {
-  PRODUCT_CATEGORIES,
-  PRODUCT_CATEGORY_LABELS,
-  SUB_CATEGORY_LABELS,
-  SUB_CATEGORY_MAP,
-} from "./product-category";
+  buildAllSubCategoryPairs,
+  buildCategoryNavigationItems,
+} from "@/core/utils/navigation";
 
 type NavigationIcon = React.ForwardRefExoticComponent<
   Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
@@ -43,29 +41,8 @@ interface NavigationSection {
   links: NavigationLinkItem[];
 }
 
-const CATEGORY_NAVIGATION_ITEMS: NavigationGroup[] = PRODUCT_CATEGORIES.map(
-  (category): NavigationGroup => ({
-    id: category,
-    label: PRODUCT_CATEGORY_LABELS[category],
-    icon: null,
-    submenu: [
-      {
-        id: `${category}-all`,
-        label: "전체보기",
-        href: ROUTES.products.byCategory(category),
-        icon: null,
-      },
-      ...SUB_CATEGORY_MAP[category].map(
-        (subCategory): NavigationLinkItem => ({
-          id: subCategory,
-          label: SUB_CATEGORY_LABELS[subCategory],
-          href: ROUTES.products.byCategory(category, subCategory),
-          icon: null,
-        }),
-      ),
-    ],
-  }),
-);
+const CATEGORY_NAVIGATION_ITEMS: NavigationGroup[] =
+  buildCategoryNavigationItems(buildAllSubCategoryPairs());
 
 const GENERAL_NAVIGATION_ITEMS: NavigationLinkItem[] = [
   {
