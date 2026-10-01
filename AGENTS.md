@@ -65,3 +65,24 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 작업 상태와 후속 과제는 GitHub Issues에서 관리한다.
 - 작업 중 목적 밖의 과제를 발견하면 현재 브랜치에서 함께 수정하지 않고 별도 Issue로 등록한다.
 - 현재 변경이 특정 Issue를 직접 해결하면 PR 본문에 `Closes #번호`를, 관련만 있으면 `Related to #번호`를 남긴다.
+
+### 릴리스 병합 방식
+
+- 작업 브랜치는 `dev`를 base로 분기하고, `dev`로 가는 PR은 글로벌 규칙대로 squash merge한다.
+- `dev`를 `main`으로 올리는 릴리스 PR은 **merge commit으로 병합한다**(`gh pr merge <번호> --merge`). squash로 올리면 안 된다.
+- 이유: squash는 head 브랜치를 버린다는 전제의 방식이다. `dev`는 머지 후에도 계속 재사용하는데 squash는 내용만 복사하고 `dev` 커밋을 `main`의 조상으로 기록하지 않는다. 그러면 `merge-base(main, dev)`가 전진을 멈추고, 다음 릴리스에서 git이 그동안의 분기 전체를 다시 비교해 충돌로 보고한다 — 실제 트리 차이가 몇 파일뿐일 때도 그렇다.
+- 실제로 #370·#407·#410을 squash로 올린 결과 `merge-base`가 `723888c2`에 고정되어 #406과 #409가 충돌로 닫혔다. #413을 merge commit으로 올려 ancestry를 복원했다(2026-10-01).
+- 릴리스 PR을 올리기 전 `git merge-base --is-ancestor origin/dev origin/main`으로 상태를 확인한다. 이 명령이 0을 반환하지 않고 `dev`를 head로 한 PR이 충돌하면 ancestry가 끊긴 상태다. 복구 절차:
+
+  ```bash
+  git worktree add <dir> -b chore/release-dev-to-main origin/main
+  git -C <dir> merge --no-commit -s ours origin/dev   # dev를 부모로만 기록(충돌 없음)
+  git -C <dir> read-tree -u --reset origin/dev        # 트리를 dev 것으로 교체
+  git -C <dir> commit -m "chore(release): merge dev into main"
+  git -C <dir> diff origin/dev HEAD                   # 출력 없어야 정상
+  git -C <dir> log --format='%p' -1                   # 부모 2개여야 정상
+  ```
+
+  이 브랜치로 PR을 올려 `--merge`로 병합하면 ancestry가 복원되고, 이후 릴리스는 `dev`를 head로 바로 PR을 올려도 충돌하지 않는다.
+
+- `main`은 직접 push할 수 없다 — 브랜치 보호에 `enforce_admins: true`가 걸려 있어 관리자도 PR을 거쳐야 한다. 필수 체크는 `static` 하나이고 승인자는 0명이라 혼자 병합할 수 있다.
