@@ -4,6 +4,19 @@
 소품, 방명록 굿즈, 예식 용품 5개 카테고리의 상품 판매와 결제·주문 관리, 모바일 초대장
 제작·미리보기를 제공한다.
 
+**배포**: [tie-knot.vercel.app](https://tie-knot.vercel.app/)
+
+### 하이라이트
+
+- **컴포넌트 설계** — `ui/table.tsx` 하나를 Atomic 5계층으로 조립해 관리자 목록 6개
+  화면(상품·주문·사용자·리뷰·프리미엄 기능·기능별 상품 연결)이 같은 골격을 공유한다.
+  ([Design Highlights](#design-highlights) 참고)
+- **인증 흐름** — Proxy(낙관적 검사)→`page.tsx`(재검증)→Service(재확인) 3중 게이트로
+  어느 레이어도 상위 통과를 신뢰하지 않는 인가 구조. ([인증 흐름](#인증-흐름) 참고)
+- **AI 활용 — 하네스 엔지니어링** — 에이전트의 Write/Edit를 hook으로 가로채 테스트
+  없는 구현을 차단하는 자체 TDD 게이트와, 설계→구현→검증→PR을 조율하는 멀티에이전트
+  하네스. ([AI 활용](#ai-활용--하네스-엔지니어링) 참고)
+
 ## Tech Stack
 
 - **Framework**: Next.js 16 (App Router, Turbopack), React 19
@@ -13,7 +26,7 @@
 - **Database**: MongoDB Atlas + Mongoose
 - **Auth**: JWT(`jose`) + `bcryptjs`
 - **Payment**: PortOne (구 아임포트)
-- **External services**: Cloudinary(이미지), Kakao Maps/우편번호, Nodemailer
+- **External services**: Cloudinary(이미지), Kakao Maps(지도), Daum Postcode(우편번호), Nodemailer
 - **Test**: Vitest(unit/component/integration), Playwright(e2e)
 
 ## Getting Started
@@ -167,6 +180,47 @@ MongoDB 쿼리  ──▶  렌더링된 페이지
 Proxy 통과를 인가 완료로 취급하지 않는다 — 낙관적 체크일 뿐이라 `page.tsx`가 항상
 재검증하고, service 레이어도 page 게이트 존재를 전제하지 않고 다시 확인한다
 (`src/proxy.ts`, `src/services/auth.ts`).
+
+## AI 활용 — 하네스 엔지니어링
+
+이 저장소는 Claude Code/Codex 같은 AI 코딩 에이전트를 보조 도구가 아니라 정해진
+프로세스를 따르는 팀원으로 편입시키는 자체 하네스를 갖추고 있다.
+
+### TDD Gate — 에이전트 편집을 테스트 우선으로 강제한다
+
+[`tooling/tdd-gate/`](tooling/tdd-gate)는 Claude Code/Codex 훅(`PreToolUse`,
+`PostToolUse`, `Stop`)에 꽂혀, 에이전트가 테스트 없이 구현 코드부터 쓰는 경로를
+차단한다.
+
+```
+에이전트가 src/*.ts 수정 시도
+  ▼
+PreToolUse hook (hook.mjs pre)
+  │  해당 파일을 커버하는 테스트가 먼저 "실패" 상태로 기록됐는지 확인
+  │  실패 기록 없음 ──▶ permissionDecision: deny (편집 차단, 사유 반환)
+  ▼  통과
+Write / Edit 실행
+  ▼
+PostToolUse hook (hook.mjs post)
+  │  이번 편집을 세션에 기록 (recordEdits)
+  ▼
+Stop hook (hook.mjs stop)
+  │  세션 종료 전 테스트 재실행 — 여전히 실패/미작성 ──▶ decision: block
+```
+
+`policy.json`이 계층별 제외 glob(`page.tsx`/`layout.tsx`/타입 전용 파일처럼 동작을
+직접 소유하지 않는 파일)을 관리하고, Claude Code와 Codex 양쪽 payload를 각각
+`adapters/claude.mjs` / `adapters/codex.mjs`로 정규화해 같은 게이트 로직
+(`core/gate.mjs`)을 공유한다 — 에이전트 종류가 바뀌어도 강제 규칙은 하나다.
+
+### feature-team-orchestrator — 설계 팬아웃 멀티에이전트 하네스
+
+[`.claude/skills/feature-team-orchestrator/`](.claude/skills/feature-team-orchestrator)는
+신규 기능 하나를 API/UI/DB 설계 팬아웃(Phase 1) → 백엔드/프론트 구현 + 경계면 실시간
+검증(Phase 2-3) → 통합 테스트(Phase 4) → PR(Phase 5)까지 끌고 가는 skill이다. 설계자
+3명(api-designer/ui-designer/db-migrator)의 출력 — API 응답 shape, UI 상태, DB
+필드명 — 이 서로 맞물려야 하는 Phase 1만 에이전트 팀으로 묶고, 구현 단계는 동시
+쓰기로 인한 git 레이스를 피하려 워크트리로 격리한다.
 
 ## Documentation
 
