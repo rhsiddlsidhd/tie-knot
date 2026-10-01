@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import type { Metadata } from "next";
 import { ProductCatalogTemplate } from "@/app/(public)/products/[category]/_components/ProductCatalogTemplate";
 import {
   getPublicProductsPageService,
@@ -10,6 +11,24 @@ import { PRODUCT_CATEGORY_LABELS } from "@/core/domain/product-category";
 import { notFound, redirect } from "next/navigation";
 import { ROUTES } from "@/core/domain/routes";
 import { resolveInitialSubCategory } from "@/app/(public)/products/[category]/_utils/resolveInitialSubCategory";
+
+const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ category: string }>;
+}): Promise<Metadata> => {
+  const { category } = await params;
+
+  // 유효하지 않은 세그먼트의 404는 page가 처리한다.
+  if (!isProductCategory(category)) return {};
+
+  const label = PRODUCT_CATEGORY_LABELS[category];
+
+  return {
+    title: label,
+    description: `${label} 카테고리의 웨딩 상품을 Tie Knot에서 만나보세요.`,
+  };
+};
 
 export default async function ProductsPage({
   params,
@@ -61,3 +80,5 @@ export default async function ProductsPage({
     />
   );
 }
+
+export { generateMetadata };
